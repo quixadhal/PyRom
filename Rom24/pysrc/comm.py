@@ -32,7 +32,7 @@
 """
 import random
 from types import MethodType
-from merc import descriptor_list, greeting_list
+from merc import descriptor_list, greeting_list, POS_RESTING
 from db import boot_db
 from nanny import *
 
@@ -63,7 +63,7 @@ def close_socket(d):
     descriptor_list.remove(d)
     d.active = False
 
-def act(format, ch, arg1=None, arg2=None, type, min_pos=POS_RESTING):
+def act(format, ch, arg1, arg2, type, min_pos=POS_RESTING):
     if not format:
         return
     if not ch or not ch.in_room:
@@ -94,7 +94,7 @@ def act(format, ch, arg1=None, arg2=None, type, min_pos=POS_RESTING):
             continue
         if type is TO_VICT and ( to is not vch or to is ch ):
             continue
-        if type is TO_ROOM and to is ch ):
+        if type is TO_ROOM and to is ch:
             continue
         if type is TO_NOTVICT and (to is ch or to is vch):
             continue

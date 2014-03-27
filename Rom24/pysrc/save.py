@@ -41,7 +41,7 @@ def load_char_obj(d, name):
     ch.name = name
     ch.act = PLR_DENY
     found = False
-    pfile = os.join.path(PLAYER_DIR, name+'.js')
+    pfile = os.path.join(PLAYER_DIR, name+'.js')
     if os.path.isfile(pfile):
         ch = json.load( open(pfile,'r').read() )
         found = True

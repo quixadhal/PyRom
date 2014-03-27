@@ -30,6 +30,7 @@
  * Using Miniboa https://code.google.com/p/miniboa/
  ************/
 """
+from merc import *
 from save import load_char_obj
 
 def licheck(c):
@@ -37,7 +38,7 @@ def licheck(c):
         return False
     if c.lower() == 'i':
         return False
-    print c
+    
     return True
 def check_parse_name( name ):
     bad_names = ['All', 'Auto', 'Immortal', 'Self', 'Someone', 'Something', 'The', 'You', 'Loner', 'Alander']
@@ -67,9 +68,9 @@ def con_get_name( self ):
     found,ch = load_char_obj(self,name)
 
     if IS_SET( ch.act, PLR_DENY ):
-        print "Denying access to %s@%s" % (ch.name, d.addrport)
-        d.send("You have been denied access.")
-        d.close()
+        print "Denying access to %s@%s" % (ch.name, self.addrport())
+        self.send("You have been denied access.")
+        self.deactivate()
         return
 
 

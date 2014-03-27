@@ -423,6 +423,42 @@ DAM_HARM=17
 DAM_CHARM=18
 DAM_SOUND=19
 
+#Item constants
+
+OBJ_VNUM_SILVER_ONE = 1
+OBJ_VNUM_GOLD_ONE = 2
+OBJ_VNUM_GOLD_SOME = 3
+OBJ_VNUM_SILVER_SOME = 4
+OBJ_VNUM_COINS = 5
+OBJ_VNUM_CORPSE_NPC = 10
+OBJ_VNUM_CORPSE_PC = 11
+OBJ_VNUM_SEVERED_HEAD = 12
+OBJ_VNUM_TORN_HEART = 13
+OBJ_VNUM_SLICED_ARM = 14
+OBJ_VNUM_SLICED_LEG = 15
+OBJ_VNUM_GUTS = 16
+OBJ_VNUM_BRAINS = 17
+OBJ_VNUM_MUSHROOM = 20
+OBJ_VNUM_LIGHT_BALL = 21
+OBJ_VNUM_SPRING = 22
+OBJ_VNUM_DISC = 23
+OBJ_VNUM_PORTAL = 25
+OBJ_VNUM_ROSE = 1001
+OBJ_VNUM_PIT = 3010
+OBJ_VNUM_SCHOOL_MACE = 3700
+OBJ_VNUM_SCHOOL_DAGGER = 3701
+OBJ_VNUM_SCHOOL_SWORD = 3702
+OBJ_VNUM_SCHOOL_SPEAR = 3717
+OBJ_VNUM_SCHOOL_STAFF = 3718
+OBJ_VNUM_SCHOOL_AXE = 3719
+OBJ_VNUM_SCHOOL_FLAIL = 3720
+OBJ_VNUM_SCHOOL_WHIP = 3721
+OBJ_VNUM_SCHOOL_POLEARM = 3722
+OBJ_VNUM_SCHOOL_VEST = 3703
+OBJ_VNUM_SCHOOL_SHIELD = 3704
+OBJ_VNUM_SCHOOL_BANNER = 3716
+OBJ_VNUM_MAP = 3162
+OBJ_VNUM_WHISTLE = 2116
 
 
 def IS_SET(flag, bit):
@@ -917,7 +953,7 @@ MEM_AFRAID=D
 def prefix_lookup(dict, arg):
     return {k:v for k,v in dict.iteritems() if k.startswith(arg) }[0]
 
-def mass_replace(str, dict)
+def mass_replace(str, dict):
     for k,v in dict.iteritems():
         str.replace(k,v)
 
@@ -947,7 +983,7 @@ def IS_TRUSTED(ch,level):
     return get_trust(ch) >= level
 
 def IS_AFFECTED(ch, bit):
-    return IS_SET(ch.affected_by, bit))
+    return IS_SET(ch.affected_by, bit)
 
 def GET_AGE(ch):
     return int((17 + (ch.played + time.time() - ch.logon)/72000))
@@ -968,10 +1004,10 @@ def GET_AC(ch,type):
     return (ch.armor[type] + ( dex_app[get_curr_stat(ch,STAT_DEX)].defensive if IS_AWAKE(ch) else 0 ) )
 
 def GET_HITROLL(ch):
-    return ((ch.hitroll+str_app[get_curr_stat(ch,STAT_STR)].tohit)
+    return ( ( ch.hitroll+str_app[ get_curr_stat(ch,STAT_STR)].tohit) )
 
 def GET_DAMROLL(ch):
-    return ((ch.damroll+str_app[get_curr_stat(ch,STAT_STR)].todam)
+    return ( (ch.damroll+str_app[get_curr_stat(ch,STAT_STR)].todam) )
 
 def IS_OUTSIDE(ch):
     return not IS_SET( ch.in_room.room_flags, ROOM_INDOORS )
@@ -989,12 +1025,12 @@ def get_carry_weight(ch):
  # Object macros.
 
 def CAN_WEAR(obj, part):
-    return IS_SET((obj.wear_flags,  (part))
+    return IS_SET( obj.wear_flags,  part)
 
 def IS_OBJ_STAT(obj, stat):
-    return IS_SET((obj.extra_flags, (stat))
+    return IS_SET(obj.extra_flags, stat)
 def IS_WEAPON_STAT(obj,stat):
-    return IS_SET((obj.value[4],(stat))
+    return IS_SET(obj.value[4],stat)
 def WEIGHT_MULT(obj):
     return obj.value[4] if obj.item_type is ITEM_CONTAINER else 100
 
