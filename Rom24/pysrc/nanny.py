@@ -30,6 +30,8 @@
  * Using Miniboa https://code.google.com/p/miniboa/
  ************/
 """
+from save import load_char_obj
+
 def licheck(c):
     if c.lower() == 'l':
         return False
@@ -38,7 +40,7 @@ def licheck(c):
     print c
     return True
 def check_parse_name( name ):
-    bad_names = ['All', 'Auto', 'Immortal', 'Self', 'Someone', 'Something', 'The', 'You', 'Loner']
+    bad_names = ['All', 'Auto', 'Immortal', 'Self', 'Someone', 'Something', 'The', 'You', 'Loner', 'Alander']
     if name in bad_names:
         return False
     
@@ -48,7 +50,7 @@ def check_parse_name( name ):
     if not name.isalpha():
         return False
     checked = [licheck(c) for c in name ]
-    print checked
+    
     if True not in checked:
         return False
     
@@ -61,3 +63,16 @@ def con_get_name( self ):
 
     if not check_parse_name(name):
         self.send("Illegal name, try another.\r\nName:")
+
+    found,ch = load_char_obj(self,name)
+
+    if IS_SET( ch.act, PLR_DENY ):
+        print "Denying access to %s@%s" % (ch.name, d.addrport)
+        d.send("You have been denied access.")
+        d.close()
+        return
+
+
+
+
+

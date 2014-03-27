@@ -17,25 +17,35 @@
  ***************************************************************************/
 
 /***************************************************************************
-*	ROM 2.4 is copyright 1993-1998 Russ Taylor			                   *
-*	ROM has been brought to you by the ROM consortium		               *
-*	    Russ Taylor (rtaylor@hypercube.org)				                   *
-*	    Gabrielle Taylor (gtaylor@hypercube.org)			               *
-*	    Brian Moore (zump@rom.org)					                       *
-*	By using this code, you have agreed to follow the terms of the	       *
-*	ROM license, in the file Rom24/doc/rom.license			               *
+*   ROM 2.4 is copyright 1993-1998 Russ Taylor                             *
+*   ROM has been brought to you by the ROM consortium                      *
+*       Russ Taylor (rtaylor@hypercube.org)                                *
+*       Gabrielle Taylor (gtaylor@hypercube.org)                           *
+*       Brian Moore (zump@rom.org)                                         *
+*   By using this code, you have agreed to follow the terms of the         *
+*   ROM license, in the file Rom24/doc/rom.license                         *
 ***************************************************************************/
 /************
  * Ported to Python by Davion of MudBytes.net
  * Using Miniboa https://code.google.com/p/miniboa/
  ************/
 """
+import os
+import json
+from merc import *
+from settings import PLAYER_DIR
 
-from miniboa import TelnetServer
-from settings import PORT
-from comm import game_loop, init_descriptor, close_socket
+def load_char_obj(d, name):
+    ch = CHAR_DATA()
+    ch.pcdata = PC_DATA()
+    ch.name = name
+    ch.act = PLR_DENY
+    found = False
+    pfile = os.join.path(PLAYER_DIR, name+'.js')
+    if os.path.isfile(pfile):
+        ch = json.load( open(pfile,'r').read() )
+        found = True
 
-server = TelnetServer(port=PORT)
-server.on_connect = init_descriptor
-server.on_disconnect = close_socket
-game_loop(server)
+    ch.desc = d
+    return (found,ch)
+    

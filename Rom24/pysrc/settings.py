@@ -1,11 +1,12 @@
 import os
 
-settings = {}
 
-settings['port'] = 1337
+#Game settings
+PORT = 1337
 
 #Files
-settings['area_list'] = 'area.lst'
+AREA_LIST = 'area.lst'
 
 #Folders
-settings['area_dir'] = os.path.join('..', 'area')
+AREA_DIR = os.path.join('..', 'area')
+PLAYER_DIR = os.path.join('..', 'player')

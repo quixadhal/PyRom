@@ -31,7 +31,7 @@
  ************/
 """
 import os, sys
-from settings import settings
+from settings import AREA_DIR, AREA_LIST
 from merc import *
 
 def boot_db():
@@ -48,11 +48,11 @@ def boot_db():
     print "\t...Loaded %d Socials" % len(social_list)
 
 def load_areas():
-    area_list = os.path.join(settings['area_dir'], settings['area_list'])
+    area_list = os.path.join(AREA_DIR, AREA_LIST)
     fp = open(area_list, 'r')
     area = fp.readline().strip()
     while area != "$":
-        afp = open(os.path.join(settings['area_dir'], area ) )
+        afp = open(os.path.join(AREA_DIR, area), 'r' )
         load_area( afp.read() )
         area = fp.readline().strip()
         afp.close()
