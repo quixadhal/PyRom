@@ -107,7 +107,7 @@ def spell_armor( sn, level, ch, victim, target ):
     if is_affected( victim, sn ):
         if victim == ch:
             ch.send("You are already armored.\r\n")
-        else::
+        else:
             act("$N is already armored.",ch,None,victim,TO_CHAR)
         return
     af = AFFECT_DATA()
@@ -141,7 +141,7 @@ def spell_bless( sn, level, ch, victim, target ):
                     act("$p glows a pale blue.",ch,obj,None,TO_ALL)
                     REMOVE_BIT(obj.extra_flags,ITEM_EVIL)
                     return
-                else::
+                else:
                     act("The evil of $p is too powerful for you to overcome.", ch,obj,target=TO_CHAR)
                     return
         af = AFFECT_DATA()
@@ -165,7 +165,7 @@ def spell_bless( sn, level, ch, victim, target ):
     if victim.position == POS_FIGHTING or is_affected( victim, sn ):
         if victim == ch::
             ch.send("You are already blessed.\r\n")
-        else::
+        else:
             act("$N already has divine favor.",ch,None,victim,TO_CHAR)
         return
     
@@ -255,7 +255,7 @@ def spell_calm( sn, level, ch, victim, target ):
             count=count+1
         if IS_NPC(vch):
             mlevel += vch.level
-        else::
+        else:
             mlevel += vch.level/2
         high_level = max(high_level,vch.level)
 
@@ -286,7 +286,7 @@ def spell_calm( sn, level, ch, victim, target ):
             af.location = APPLY_HITROLL
             if !IS_NPC(vch):
               af.modifier = -5
-            else::
+            else:
               af.modifier = -2
             af.bitvector = AFF_CALM
             affect_to_char(vch,af)
@@ -345,7 +345,7 @@ def spell_cancellation( sn, level, ch, victim, target ):
     
     if found:
         ch.send("Ok.\r\n")
-    else::
+    else:
         ch.send("Spell failed.\r\n")
 
 def spell_cause_light( sn, level, ch, victim, target ):
@@ -413,7 +413,7 @@ def spell_change_sex( sn, level, ch, victim, target ):
     if is_affected( victim, sn ):
         if victim == ch:
             ch.send("You've already been changed.\r\n")
-        else::
+        else:
             act("$N has already had $s(?) sex changed.",ch,None,victim,TO_CHAR)
         return
 
@@ -492,7 +492,7 @@ def spell_chill_touch( sn, level, ch, victim, target ):
         af.modifier  = -1
         af.bitvector = 0
         affect_join( victim, af )
-    else::
+    else:
         dam = dam/2
     damage( ch, victim, dam, sn, DAM_COLD,True )
     
@@ -509,7 +509,7 @@ def spell_colour_spray( sn, level, ch, victim, target ):
     dam     = random.randint( dam_each[level] / 2,  dam_each[level] * 2 )
     if saves_spell( level, victim,DAM_LIGHT):
         dam = dam/2
-    else::
+    else:
         spell_blindness(skill_table["blindness"], level/2,ch,victim,TARGET_CHAR)
 
     damage( ch, victim, dam, sn, DAM_LIGHT,True )
@@ -593,7 +593,7 @@ def spell_cure_blindness( sn, level, ch, victim, target ):
     if not is_affected( victim, skill_table['blindness'] ):
         if victim == ch:
             ch.send("You aren't blind.\r\n")
-        else::
+        else:
             act("$N doesn't appear to be blinded.",ch,None,victim,TO_CHAR)
         return
  
