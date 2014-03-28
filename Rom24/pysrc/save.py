@@ -47,5 +47,7 @@ def load_char_obj(d, name):
         found = True
 
     ch.desc = d
+    d.character = ch
+    player_list.append(ch)
     return (found,ch)
     

@@ -302,6 +302,8 @@ class SOCIAL_DATA:
 
 #Global Lists
 descriptor_list = []
+player_list = []
+char_list = []
 mob_index_hash = {}
 obj_index_hash = {}
 room_index_hash = {}
@@ -951,7 +953,11 @@ MEM_AFRAID=D
 #utility functions
 
 def prefix_lookup(dict, arg):
-    return {k:v for k,v in dict.iteritems() if k.startswith(arg) }[0]
+    results = [v for k,v in dict.iteritems() if k.startswith(arg)]
+    if results:
+        return results[0]
+    return None
+
 
 def mass_replace(str, dict):
     for k,v in dict.iteritems():

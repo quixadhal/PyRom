@@ -51,8 +51,12 @@ def process_input():
         if d.active and d.cmd_ready and d.connected:
             d.connected()
 
+def set_connected(self, state):
+    self.connected = MethodType(state,self)
+
 def init_descriptor(d):
-    d.connected = MethodType(con_get_name, d)
+    d.set_connected = MethodType(set_connected,d)
+    d.set_connected(con_get_name)
     greeting = random.choice(greeting_list)
     d.send(greeting.text)
     d.active = True
@@ -62,6 +66,14 @@ def init_descriptor(d):
 def close_socket(d):
     descriptor_list.remove(d)
     d.active = False
+
+def is_reconnecting(d, name):
+    for ch in player_list:
+        if not ch.desc and ch.name == name:
+            return True
+    return False
+
+
 
 def act(format, ch, arg1, arg2, type, min_pos=POS_RESTING):
     if not format:
