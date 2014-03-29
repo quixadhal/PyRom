@@ -425,6 +425,11 @@ DAM_HARM=17
 DAM_CHARM=18
 DAM_SOUND=19
 
+LOG_NORMAL=0
+LOG_ALWAYS=1
+LOG_NEVER=2
+
+
 #Item constants
 
 OBJ_VNUM_SILVER_ONE = 1
@@ -953,6 +958,8 @@ MEM_AFRAID=D
 #utility functions
 
 def prefix_lookup(dict, arg):
+    if not arg:
+        return None
     results = [v for k,v in dict.iteritems() if k.startswith(arg)]
     if results:
         return results[0]
@@ -1045,3 +1052,6 @@ def dice(number, size):
 
 def number_fuzzy(number):
     return random.randint(number-1, number+1)
+
+#ensureall do_functions become class methods
+import interp

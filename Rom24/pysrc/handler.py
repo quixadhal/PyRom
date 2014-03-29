@@ -51,9 +51,9 @@ def check_immune(ch,dam_type):
     else: # magical attack */
         if IS_SET(ch.imm_flags,IMM_MAGIC):
             defence = IS_IMMUNE
-        elif (IS_SET(ch.res_flags,RES_MAGIC):
+        elif IS_SET(ch.res_flags,RES_MAGIC):
             defence = IS_RESISTANT
-        elif (IS_SET(ch.vuln_flags,VULN_MAGIC):
+        elif IS_SET(ch.vuln_flags,VULN_MAGIC):
             defence = IS_VULNERABLE
 
     bit = {  DAM_BASH:IMM_BASH,
@@ -86,11 +86,25 @@ def check_immune(ch,dam_type):
             immune = IS_RESISTANT
         elif immune == IS_RESISTANT:
             immune = IS_NORMAL
-    else
+    else:
         immune = IS_VULNERABLE
 
     if immune == -1:
         return defence
-    else
+    else:
         return immune    
 
+
+
+#* Retrieve a character's trusted level for permission checking.
+def get_trust( ch ):
+    if ch.desc and ch.desc.original:
+        ch = ch.desc.original;
+
+    if ch.trust:
+        return ch.trust
+
+    if IS_NPC(ch) and ch.level >= LEVEL_HERO:
+        return LEVEL_HERO - 1
+    else:
+        return ch.level

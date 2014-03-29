@@ -60,6 +60,8 @@ def init_descriptor(d):
     greeting = random.choice(greeting_list)
     d.send(greeting.text)
     d.active = True
+    d.character = None
+    d.original = None
     d.close = d.deactivate
     descriptor_list.append(d)
 
@@ -72,8 +74,6 @@ def is_reconnecting(d, name):
         if not ch.desc and ch.name == name:
             return True
     return False
-
-
 
 def act(format, ch, arg1, arg2, type, min_pos=POS_RESTING):
     if not format:
@@ -128,6 +128,3 @@ def act(format, ch, arg1, arg2, type, min_pos=POS_RESTING):
         format = mass_replace(format, act_trans)
         to.send(format)
     return
-
-
-

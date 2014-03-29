@@ -41,6 +41,7 @@ class race_type:
         self.off=off
         self.imm=imm
         self.res=res
+        self.vuln=vuln
         self.form=form
         self.parts=parts
 
