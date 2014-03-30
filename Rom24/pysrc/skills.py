@@ -30,25 +30,67 @@
  * Using Miniboa https://code.google.com/p/miniboa/
  ************/
 """
-import os
-import json
+
 from merc import *
-from settings import PLAYER_DIR
+from const import *
 
-def load_char_obj(d, name):
-    ch = CHAR_DATA()
-    ch.pcdata = PC_DATA()
-    ch.name = name
-    ch.act = 0
-    found = False
-    pfile = os.path.join(PLAYER_DIR, name+'.js')
-    if os.path.isfile(pfile):
-        ch = json.load( open(pfile,'r').read() )
-        found = True
+# recursively adds a group given its number -- uses group_add */
+def gn_add( ch, gn):
+    ch.pcdata.group_known[gn.name] = True
+    for i in gn.spells:
+        if not i:
+            break
+        group_add(ch,i,False)
 
-    ch.desc = d
-    d.character = ch
-    ch.send = d.send
-    player_list.append(ch)
-    return (found,ch)
+# recusively removes a group given its number -- uses group_remove */
+def gn_remove( ch, gn):
+    if gn.name in ch.pcdata.group_known:
+        del ch.pcdata.group_known[gn.name]
+
+    for i in gn.spells:
+        if not i:
+            return
+        group_remove(ch,i)
+
+# use for processing a skill or group for addition  */
+def group_add( ch, name, deduct):
+    if IS_NPC(ch): # NPCs do not have skills */
+        return
+    print ch.pcdata.learned
+    if name in skill_table:
+        sn = skill_table[name]
+        if sn.name not in ch.pcdata.learned: # i.e. not known */
+            ch.pcdata.learned[sn.name] = 1
+        if deduct:
+            ch.pcdata.points += sn.rating[ch.guild.name] 
+        return
+
+    # now check groups */
+
+    if name in group_table:
+        gn = group_table[name]
+        if gn.name not in ch.pcdata.group_known:
+            ch.pcdata.group_known[gn.name] = True
+        if deduct:
+            ch.pcdata.points += gn.rating[ch.guild.name]
     
+        gn_add(ch,gn) # make sure all skills in the group are known */
+
+
+# used for processing a skill or group for deletion -- no points back! */
+
+def group_remove(ch, name):
+    
+    if name in skill_table:
+        sn = skill_table[name]
+        if sn.name in ch.pcdata.learned:
+            del ch.pcdata.learned[sn.name]
+            return
+
+    # now check groups */
+    if name in group_table:
+        gn = group_table[name]
+        
+        if gn.name in ch.pcdata.group_known:
+            del ch.pcdata.group_known[gn.name]
+            gn_remove(ch,gn) # be sure to call gn_add on all remaining groups */

@@ -3,6 +3,9 @@ import os
 
 #Game settings
 PORT = 1337
+WIZLOCK = False
+NEWLOCK = False
+ENCRYPT_PASSWORD = True
 
 #Files
 AREA_LIST = 'area.lst'

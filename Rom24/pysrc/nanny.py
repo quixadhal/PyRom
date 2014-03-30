@@ -33,7 +33,13 @@
 import hashlib
 import time
 from merc import *
+from settings import *
+from const import *
 from save import load_char_obj
+from db import read_word
+from skills import group_add
+
+import comm
 
 def licheck(c):
     if c.lower() == 'l':
@@ -76,7 +82,7 @@ def con_get_name( self ):
         return
 
 
-    if is_reconnecting(name):
+    if comm.is_reconnecting(self, name):
         found = True
     
     if WIZLOCK and not IS_IMMORTAL(ch):
@@ -123,14 +129,19 @@ def con_get_new_password(self):
 
     ch.pcdata.pwd = pwdnew
     
-    ch.send("Please retype password: ")01
-0def con_confirm_new_password(self):
+    ch.send("Please retype password: ")
+    self.set_connected(con_confirm_new_password)
+
+def con_confirm_new_password(self):
     argument = self.get_command()
     ch = self.character
 
+    if ENCRYPT_PASSWORD:
+        argument = hashlib.sha512( argument ).hexdigest()
+
     if argument != ch.pcdata.pwd:
         ch.send("Passwords don't match.\r\nRetype password: ")
-        d.set_connected(con_get_new_password)
+        self.set_connected(con_get_new_password)
         return
 
     ch.send("The following races are available:\n\r  ")
@@ -138,7 +149,7 @@ def con_get_new_password(self):
         ch.send("%s " % race_table[race].name )
         
     ch.send("\n\rWhat is your race (help for more information)? ")
-    d.set_connected(con_get_new_race)
+    self.set_connected(con_get_new_race)
 
 def con_get_new_race(self):
     argument = self.get_command().lower()
@@ -147,9 +158,9 @@ def con_get_new_race(self):
         argument, arg = read_word(argument)
         if not argument:
             ch.do_help('race help')
-        else
+        else:
             ch.do_help(argument)
-        ch.send( "What is your race (help for more information)? ")
+        ch.send( "\r\nWhat is your race (help for more information)? ")
         return
 
     race = prefix_lookup(pc_race_table, argument)
@@ -159,13 +170,13 @@ def con_get_new_race(self):
         ch.send("The following races are available:\n\r  ")
         for race in pc_race_table:
             ch.send("%s " % race_table[race].name )
-        ch.send("What is your race? (help for more information) ")
+        ch.send("\r\nWhat is your race? (help for more information) ")
         return
     
     ch.race = race_table[race.name]
     #initialize stats */
     for i in range(MAX_STATS):
-        ch.perm_stat[i] = race[race.name].stats[i]
+        ch.perm_stat[i] = race.stats[i]
     ch.affected_by = ch.affected_by|race_table[race.name].aff
     ch.imm_flags   = ch.imm_flags|race_table[race.name].imm
     ch.res_flags   = ch.res_flags|race_table[race.name].res
@@ -174,10 +185,10 @@ def con_get_new_race(self):
     ch.parts   = race_table[race.name].parts
 
     # add skills */
-    for i in range(5):
-        if not race.skills[i]:
+    for i in race.skills:
+        if not i:
             return
-        group_add(ch,race.skills[i],FALSE)
+        group_add(ch,i,False)
 
     # add cost */
     ch.pcdata.points = race.points
@@ -203,7 +214,7 @@ def con_get_new_sex(self):
         return
 
     ch.send("Select a class [" )
-    for guild in guild_table:
+    for name, guild in guild_table.iteritems():
         ch.send("%s " % guild.name )
     ch.send("]: ")
     self.set_connected(con_get_new_class)
@@ -271,7 +282,7 @@ def con_default_choice(selef):
         ch.send("Please pick a weapon from the following choices:\n\r")
         
         for weapon in weapon_table:
-            if (ch.pcdata.learned[weapon.gsn] > 0)
+            if ch.pcdata.learned[weapon.gsn] > 0:
                 ch.send("%s " % weapon.name)
 
         ch.send("\n\rYour choice? ")
@@ -287,7 +298,7 @@ def con_pick_weapon(self):
     if not weapon or ch.pcdata.learned[weapon.gsn] <= 0:
         ch.send("That's not a valid selection. Choices are:\n\r")
         for weapon in weapon_table:
-            if (ch.pcdata.learned[weapon.gsn] > 0)
+            if ch.pcdata.learned[weapon.gsn] > 0:
                 ch.send("%s " % weapon.name)
 
             ch.send("\n\rYour choice? ")
@@ -318,7 +329,7 @@ def con_gen_groups(self):
         ch.send("Please pick a weapon from the following choices:\n\r")
         
         for weapon in weapon_table:
-            if (ch.pcdata.learned[weapon.gsn] > 0)
+            if ch.pcdata.learned[weapon.gsn] > 0:
                 ch.send("%s " % weapon.name)
 
         ch.send("\n\rYour choice? ")
@@ -344,9 +355,8 @@ def con_read_motd(self):
         ch.send("Type 'password null <new password>' to fix.\n\r")
 
     ch.send("\n\rWelcome to ROM 2.4.  Please do not feed the mobiles.\n\r")
-    ch.next    = char_list
     char_list.append(ch)
-    d.connected(con_playing)
+    self.set_connected(con_playing)
     reset_char(ch)
 
     if ch.level == 0:
@@ -359,7 +369,7 @@ def con_read_motd(self):
         ch.move    = ch.max_move
         ch.train    = 3
         ch.practice = 5
-        buf = "the %s" % title_table[ch.guild.name][ch.level][ch.sex-1] )
+        buf = "the %s" % title_table[ch.guild.name][ch.level][ch.sex-1]
         set_title( ch, buf )
 
         ch.do_outfit("")
@@ -381,3 +391,6 @@ def con_read_motd(self):
     if ch.pet:
         char_to_room(ch.pet,ch.in_room)
         act("$n has entered the game.",ch.pet,NULL,NULL,TO_ROOM)
+
+def con_playing(self):
+    pass
