@@ -56,7 +56,7 @@ def gn_remove( ch, gn):
 def group_add( ch, name, deduct):
     if IS_NPC(ch): # NPCs do not have skills */
         return
-    print ch.pcdata.learned
+    
     if name in skill_table:
         sn = skill_table[name]
         if sn.name not in ch.pcdata.learned: # i.e. not known */

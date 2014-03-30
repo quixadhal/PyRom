@@ -38,6 +38,8 @@ from const import *
 from save import load_char_obj
 from db import read_word
 from skills import group_add
+from act_wiz import wiznet
+from handler import get_trust, reset_char
 
 import comm
 
@@ -234,8 +236,8 @@ def con_get_new_class(self):
 
     log_buf = "%s@%s new player." % ( ch.name, self.addrport() )
     print log_buf
-    wiznet("Newbie alert!  $N sighted.",ch,NULL,WIZ_NEWBIE,0,0)
-    wiznet(log_buf,NULL,NULL,WIZ_SITES,0,get_trust(ch))
+    wiznet("Newbie alert!  $N sighted.",ch,None,WIZ_NEWBIE,0,0)
+    wiznet(log_buf,None,None,WIZ_SITES,0,get_trust(ch))
 
     ch.send("\r\nYou may be good, neutral, or evil.\n\r")
     ch.send("Which alignment (G/N/E)? ")
@@ -247,8 +249,8 @@ def con_get_alignment(self):
     ch = self.character
 
     if argument == 'g': ch.alignment = 750
-    if argument == 'n': ch.alignment = 0
-    if argument == 'e': ch.alignment = -750
+    elif argument == 'n': ch.alignment = 0
+    elif argument == 'e': ch.alignment = -750
     else:
         ch.send("That's not a valid alignment.\n\r")
         ch.send("Which alignment (G/N/E)? ")
@@ -263,7 +265,7 @@ def con_get_alignment(self):
     ch.send("Customize (Y/N)? ")
     self.set_connected(con_default_choice)
 
-def con_default_choice(selef):
+def con_default_choice(self):
     argument = self.get_command()[:1].lower()
     ch = self.character
 
@@ -281,7 +283,7 @@ def con_default_choice(selef):
         group_add(ch,ch.guild.default_group,True)
         ch.send("Please pick a weapon from the following choices:\n\r")
         
-        for weapon in weapon_table:
+        for k,weapon in weapon_table.iteritems():
             if ch.pcdata.learned[weapon.gsn] > 0:
                 ch.send("%s " % weapon.name)
 
@@ -293,11 +295,11 @@ def con_default_choice(selef):
 
 def con_pick_weapon(self):
     argument = self.get_command()
-    
+    ch = self.character
     weapon = prefix_lookup(weapon_table, argument )
     if not weapon or ch.pcdata.learned[weapon.gsn] <= 0:
         ch.send("That's not a valid selection. Choices are:\n\r")
-        for weapon in weapon_table:
+        for k,weapon in weapon_table.iteritems():
             if ch.pcdata.learned[weapon.gsn] > 0:
                 ch.send("%s " % weapon.name)
 
@@ -384,13 +386,13 @@ def con_read_motd(self):
     else:
         char_to_room( ch, room_index_hash[ ROOM_VNUM_TEMPLE ] )
 
-    act( "$n has entered the game.", ch, NULL, NULL, TO_ROOM )
+    act( "$n has entered the game.", ch, None, None, TO_ROOM )
     ch.do_look("auto")
 
-    wiznet("$N has left real life behind.",ch,NULL, WIZ_LOGINS,WIZ_SITES,get_trust(ch))
+    wiznet("$N has left real life behind.",ch,None, WIZ_LOGINS,WIZ_SITES,get_trust(ch))
     if ch.pet:
         char_to_room(ch.pet,ch.in_room)
-        act("$n has entered the game.",ch.pet,NULL,NULL,TO_ROOM)
+        act("$n has entered the game.",ch.pet,None,None,TO_ROOM)
 
 def con_playing(self):
     pass
