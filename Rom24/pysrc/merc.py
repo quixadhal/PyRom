@@ -152,8 +152,8 @@ class PC_DATA:
     true_sex=0
     last_level=0
     condition=[48,48,48,0]
-    learned =[0 for x in range(MAX_SKILL)]
-    group_known=[False for x in range(MAX_GROUP)]
+    learned ={}
+    group_known={}
     points=0
     confirm_delete=False
     alias={}
