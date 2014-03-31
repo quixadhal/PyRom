@@ -31,8 +31,9 @@
  ************/
 """
 from collections import OrderedDict
-from act_info import *
 from merc import *
+from act_info import *
+from act_wiz import *
 
 class cmd_type:
     def __init__(self, name, do_fun, position, level, log, show):
@@ -46,7 +47,8 @@ class cmd_type:
 cmd_table = OrderedDict()
 
 cmd_table['help'] = cmd_type("help", do_help, POS_DEAD, 0, LOG_NORMAL, True)
-
+cmd_table['outfit'] = cmd_type("outfit", do_outfit, POS_RESTING, 0, LOG_NORMAL, True )
+cmd_table['look'] = cmd_type("look", do_look, POS_RESTING, 0, LOG_NORMAL, True )
 #A little python vooodoo to make do_functions methods of char_data
 for k,cmd in cmd_table.iteritems():
     setattr(CHAR_DATA, cmd.do_fun.__name__, cmd.do_fun )

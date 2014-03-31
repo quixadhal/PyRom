@@ -94,3 +94,29 @@ def group_remove(ch, name):
         if gn.name in ch.pcdata.group_known:
             del ch.pcdata.group_known[gn.name]
             gn_remove(ch,gn) # be sure to call gn_add on all remaining groups */
+
+
+def exp_per_level(ch, points):
+    if IS_NPC(ch):
+        return 1000
+
+    expl = 1000
+    inc = 500
+
+    if points < 40:
+        return 1000 * pc_race_table[ch.race.name].class_mult[ch.guild.name]/100 if pc_race_table[ch.race.name].class_mult[ch.guild.name] else 1
+
+    # processing */
+    points -= 40
+
+    while points > 9:
+        expl += inc
+        points -= 10
+        if points > 9:
+            expl += inc
+            inc = inc * 2
+            points -= 10
+
+    expl += points * inc / 10
+
+    return expl * pc_race_table[ch.race.name].class_mult[ch.guild.name]/100

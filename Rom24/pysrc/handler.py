@@ -223,3 +223,208 @@ def reset_char(ch):
     # make sure sex is RIGHT!!!! */
     if ch.sex < 0 or ch.sex > 2:
         ch.sex = ch.pcdata.true_sex
+
+
+# * Find the ac value of an obj, including position effect.
+def apply_ac( obj, iWear, type ):
+    if obj.item_type != ITEM_ARMOR:
+        return 0
+
+    multi = { WEAR_BODY:3, WEAR_HEAD:2, WEAR_LEGS:2, WEAR_ABOUT:2 }
+    if iWear in multi:
+        return multi[iWear] * obj.value[type]
+    else:
+        return obj.value[type]
+
+# Find a piece of eq on a character.
+ 
+def get_eq_char( ch, iWear ):
+    if not ch:
+        return None
+    objs = [ obj for obj in ch.carrying if obj.wear_loc == iWear ]
+    if not objs:
+        return None
+    return objs[0]
+
+
+# * Give an obj to a char.
+def obj_to_char( obj, ch ):
+    ch.carrying.append(obj)
+    obj.carried_by  = ch
+    obj.in_room     = None
+    obj.in_obj      = None
+    ch.carry_number    += get_obj_number( obj )
+    ch.carry_weight    += get_obj_weight( obj )
+
+
+
+# * Return # of objects which an object counts as.
+# * Thanks to Tony Chamberlain for the correct recursive code here.
+
+def get_obj_number( obj ):
+    noweight = [ITEM_CONTAINER, ITEM_MONEY, ITEM_GEM, ITEM_JEWELRY]
+    if obj.item_type in noweight:
+        number = 0
+    else:
+        number = 1
+ 
+    for o in obj.contains:
+        number += get_obj_number( o )
+ 
+    return number
+
+# * Return weight of an object, including weight of contents.
+
+def get_obj_weight( obj ):
+    weight = obj.weight
+    for tobj in obj.contains:
+        weight += get_obj_weight( tobj ) * WEIGHT_MULT(obj) / 100
+
+    return weight
+
+def get_true_weight(obj):
+    weight = obj.weight
+    for o in obj.contains:
+        weight += get_obj_weight( o )
+ 
+    return weight
+
+
+
+# * Equip a char with an obj.
+def equip_char( ch, obj, iWear ):
+    if get_eq_char( ch, iWear ):
+        print "Equip_char: already equipped (%d)." % iWear
+        return
+    
+    if ( IS_OBJ_STAT(obj, ITEM_ANTI_EVIL) and IS_EVIL(ch) ) \
+    or ( IS_OBJ_STAT(obj, ITEM_ANTI_GOOD) and IS_GOOD(ch) ) \
+    or ( IS_OBJ_STAT(obj, ITEM_ANTI_NEUTRAL) and IS_NEUTRAL(ch) ):
+        # Thanks to Morgenes for the bug fix here!
+        act( "You are zapped by $p and drop it.", ch, obj, None, TO_CHAR )
+        act( "$n is zapped by $p and drops it.",  ch, obj, None, TO_ROOM )
+        obj_from_char( obj )
+        obj_to_room( obj, ch.in_room )
+        return
+
+    for i in range(4):
+        ch.armor[i]        -= apply_ac( obj, iWear,i )
+    obj.wear_loc    = iWear
+
+    if not obj.enchanted:
+        for paf in obj.pIndexData.affected:
+            if paf.location != APPLY_SPELL_AFFECT:
+                affect_modify( ch, paf, True )
+    
+    for paf in obj.affected:
+        if paf.location == APPLY_SPELL_AFFECT:
+            affect_to_char ( ch, paf )
+        else:
+            affect_modify( ch, paf, True )
+
+    if obj.item_type == ITEM_LIGHT and   obj.value[2] != 0 and   ch.in_room != None:
+        ch.in_room.light += 1
+    return
+
+# * Unequip a char with an obj.
+def unequip_char( ch, obj ):
+    if obj.wear_loc == WEAR_NONE:
+        print "Unequip_char: already unequipped."
+        return
+
+    for i in range(4):
+        ch.armor[i]    += apply_ac( obj, obj.wear_loc,i )
+    obj.wear_loc    = -1
+
+    if not obj.enchanted:
+        for paf in obj.pIndexData.affected:
+            if paf.location == APPLY_SPELL_AFFECT:
+                for lpaf in ch.affected[:]:
+                    if (lpaf.type == paf.type) and (lpaf.level == paf.level) and (lpaf.location == APPLY_SPELL_AFFECT):
+                        affect_remove( ch, lpaf )
+                        break
+            else:
+                affect_modify( ch, paf, False )
+                affect_check(ch,paf.where,paf.bitvector)
+
+    for paf in obj.affected:
+        if paf.location == APPLY_SPELL_AFFECT:
+            print "Norm-Apply: %d" % paf.location
+            for lpaf in ch.affected:
+                if (lpaf.type == paf.type) and (lpaf.level == paf.level) and (lpaf.location == APPLY_SPELL_AFFECT):
+                    print ( "location = %d" % lpaf.location )
+                    print ( "type = %d" % lpaf.type )
+                    affect_remove( ch, lpaf )
+                    break
+        else:
+            affect_modify( ch, paf, False )
+            affect_check(ch,paf.where,paf.bitvector) 
+        
+    if obj.item_type == ITEM_LIGHT and   obj.value[2] != 0 and   ch.in_room != None and   ch.in_room.light > 0:
+        --ch.in_room.light
+    return
+
+# * Move a char into a room.
+def char_to_room( ch, pRoomIndex ):
+    if not pRoomIndex:
+        print "Char_to_room: NULL."
+        room = room_index_hash[ROOM_VNUM_TEMPLE]
+        char_to_room(ch,room)
+        return
+
+    ch.in_room = pRoomIndex
+    pRoomIndex.people.append(ch)
+
+    if not IS_NPC(ch):
+        if ch.in_room.area.empty:
+            ch.in_room.area.empty = False
+            ch.in_room.area.age = 0
+        
+        ch.in_room.area.nplayer += 1
+
+    obj = get_eq_char(ch, WEAR_LIGHT)
+
+    if obj and obj.item_type == ITEM_LIGHT and obj.value[2] != 0:
+        ch.in_room.light += 1
+    
+    if IS_AFFECTED(ch,AFF_PLAGUE):
+        af = [af for af in ch.affected if af.type == 'plague']
+        if not af:
+            REMOVE_BIT(ch.affected_by,AFF_PLAGUE)
+            return
+        af = af[0]
+        
+        if af.level == 1:
+            return
+        plague = AFFECT_DATA()
+        plague.where        = TO_AFFECTS
+        plague.type         = gsn_plague
+        plague.level        = af.level - 1 
+        plague.duration     = random.randint(1,2 * plague.level)
+        plague.location     = APPLY_STR
+        plague.modifier     = -5
+        plague.bitvector    = AFF_PLAGUE
+        
+        for vch in ch.in_room.people[:]:
+            if not saves_spell(plague.level - 2,vch,DAM_DISEASE) and not IS_IMMORTAL(vch) and not IS_AFFECTED(vch,AFF_PLAGUE) and random.randint(0,5) == 0:
+                send_to_char("You feel hot and feverish.\n\r",vch)
+                act("$n shivers and looks very ill.",vch,None,None,TO_ROOM)
+                affect_join(vch,plague)
+    return
+
+
+# True if room is dark.
+def room_is_dark( pRoomIndex ):
+    if pRoomIndex.light > 0:
+        return False
+
+    if IS_SET(pRoomIndex.room_flags, ROOM_DARK):
+        return True
+
+    if pRoomIndex.sector_type == SECT_INSIDE or pRoomIndex.sector_type == SECT_CITY:
+        return False
+
+    if weather_info.sunlight == SUN_SET or weather_info.sunlight == SUN_DARK:
+        return True
+
+    return False

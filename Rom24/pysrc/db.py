@@ -62,7 +62,7 @@ def load_area(area):
     if not area.strip():
         return
 
-    area, w = read_word(area)
+    area, w = read_word(area,False)
     pArea = None
     while ( area ):
         if w == "#AREA":
@@ -92,11 +92,11 @@ def load_area(area):
         elif w == "#SPECIALS":
             area = load_specials(area)
         elif w == '#$':
-            break;
+            break
         else:
             print "Bad section name: " + w
 
-        area, w = read_word(area)
+        area, w = read_word(area,False)
     
 
 def load_helps(area):
@@ -119,7 +119,7 @@ def load_helps(area):
          
 
 def load_mobiles(area):
-    area, w = read_word(area)
+    area, w = read_word(area,False)
     w = w[1:] # strip the pound
 
     while w != '0':
@@ -152,7 +152,7 @@ def load_mobiles(area):
         area, mob.damage[1] = read_int(area)
         area = read_forward(area)
         area, mob.damage[2] = read_int(area)
-        area, mob.dam_type = read_word(area)
+        area, mob.dam_type = read_word(area,False)
         area, mob.ac[0] = read_int(area)
         area, mob.ac[1] = read_int(area)
         area, mob.ac[2] = read_int(area)
@@ -161,26 +161,26 @@ def load_mobiles(area):
         area, mob.imm_flags = read_flags(area)
         area, mob.res_flags = read_flags(area)
         area, mob.vuln_flags = read_flags(area)
-        area, mob.start_pos = read_word(area)
-        area, mob.default_pos = read_word(area)
-        area, mob.sex = read_word(area)
+        area, mob.start_pos = read_word(area,False)
+        area, mob.default_pos = read_word(area,False)
+        area, mob.sex = read_word(area,False)
         area, mob.wealth = read_int(area)
         area, mob.form = read_flags(area)
         area, mob.parts = read_flags(area)
-        area, mob.size = read_word(area)
-        area, mob.material = read_word(area)
-        area, w = read_word(area)
+        area, mob.size = read_word(area,False)
+        area, mob.material = read_word(area,False)
+        area, w = read_word(area,False)
 
         while w == 'F':
-            area, word = read_word(area)
+            area, word = read_word(area,False)
             area, vector = read_flags(area)
-            area, w = read_word(area)
+            area, w = read_word(area,False)
 
         w = w[1:] # strip the pound         
     return area
 
 def load_objects(area):
-    area, w = read_word(area)
+    area, w = read_word(area,False)
     w = w[1:] # strip the pound
     while w != '0':
         obj = OBJ_INDEX_DATA()
@@ -191,15 +191,15 @@ def load_objects(area):
         
         area, obj.description = read_string(area)
         area, obj.material = read_string(area)
-        area, obj.item_type = read_word(area)
+        area, item_type = read_word(area,False)
         area, obj.extra_flags = read_flags(area)
         area, obj.wear_flags = read_flags(area)
 
         if obj.item_type == ITEM_WEAPON:
-            area, obj.value[0] = read_word(area)
+            area, obj.value[0] = read_word(area,False)
             area, obj.value[1] = read_int(area)
             area, obj.value[2] = read_int(area)
-            area, obj.value[3] = read_word(area)
+            area, obj.value[3] = read_word(area,False)
             area, obj.value[4] = read_flags(area)
         elif obj.item_type == ITEM_CONTAINER:
             area, obj.value[0] = read_int(area)
@@ -210,31 +210,32 @@ def load_objects(area):
         elif obj.item_type == ITEM_DRINK_CON or obj.item_type == ITEM_FOUNTAIN:
             area, obj.value[0] = read_int(area)
             area, obj.value[1] = read_int(area)
-            area, obj.value[2] = read_word(area)
-            area, obj.value[3] = read_int(area)
+            area, obj.value[2] = read_word(area,False)
+            area, obj.value[3] = read_word(area,False)
             area, obj.value[4] = read_int(area)
         elif obj.item_type == ITEM_WAND or obj.item_type == ITEM_STAFF:
             area, obj.value[0] = read_int(area)
             area, obj.value[1] = read_int(area)
             area, obj.value[2] = read_int(area)
-            area, obj.value[3] = read_word(area)
+            area, obj.value[3] = read_word(area,False)
             area, obj.value[4] = read_int(area)
         elif obj.item_type == ITEM_POTION or obj.item_type == ITEM_POTION or obj.item_type == ITEM_PILL:
             area, obj.value[0] = read_int(area)
-            area, obj.value[1] = read_word(area)
-            area, obj.value[2] = read_word(area)
-            area, obj.value[3] = read_word(area)
-            area, obj.value[4] = read_word(area)
+            area, obj.value[1] = read_word(area,False)
+            area, obj.value[2] = read_word(area,False)
+            area, obj.value[3] = read_word(area,False)
+            area, obj.value[4] = read_word(area,False)
         else:
             area, obj.value[0] = read_flags(area)
             area, obj.value[1] = read_flags(area)
             area, obj.value[2] = read_flags(area)
             area, obj.value[3] = read_flags(area)
             area, obj.value[4] = read_flags(area)
+        obj.item_type = item_type
         area, obj.level = read_int(area)
         area, obj.weight = read_int(area)
         area, obj.cost = read_int(area)
-        area, obj.condition = read_word(area)
+        area, obj.condition = read_word(area,False)
         if obj.condition == 'P':
             obj.condition = 100
         elif obj.condition == 'G':
@@ -252,11 +253,11 @@ def load_objects(area):
         else:
             obj.condition = 100
 
-        area, w = read_word(area)
+        area, w = read_word(area,False)
 
         while w == 'F' or w == 'A' or w == 'E':
             if w == 'F':
-                area, word = read_word(area)
+                area, word = read_word(area,False)
                 area, number = read_int(area)
                 area, number = read_int(area)
                 area, flags = read_flags(area)
@@ -267,7 +268,7 @@ def load_objects(area):
                 area, string = read_string(area)
                 area, string = read_string(area)
 
-            area, w = read_word(area)
+            area, w = read_word(area,False)
 
         w = w[1:] # strip the pound         
     return area
@@ -296,7 +297,7 @@ def load_resets(area, pArea):
 
 
 def load_rooms(area, pArea):
-    area, w = read_word(area)
+    area, w = read_word(area,False)
     w = w[1:] # strip the pound
     while w != '0':
         room = ROOM_INDEX_DATA()
@@ -342,7 +343,7 @@ def load_rooms(area, pArea):
             else:
                 print "RoomIndexData(%d) has flag other than SHMCDEO: %s" % ( room.vnum, letter )
                 sys.exit(1)
-        area, w = read_word(area)
+        area, w = read_word(area,False)
         w = w[1:] # strip the pound         
     return area
 
@@ -351,7 +352,7 @@ def load_shops(area):
         area, keeper = read_int(area)
 
         if keeper == 0:
-            break;
+            break
         shop = SHOP_DATA()
         shop.keeper = keeper
         for r in range(MAX_TRADE):
@@ -367,7 +368,7 @@ def load_shops(area):
 
 def load_socials(area):
     while True:
-        area, word = read_word(area)
+        area, word = read_word(area,False)
 
         if word == '#0':
             return
@@ -469,7 +470,7 @@ def load_specials(area):
             return area
         elif letter == 'M':
             area, vnum = read_int(area)
-            area, mob_index_hash[vnum].spec_fun = read_word(area)
+            area, mob_index_hash[vnum].spec_fun = read_word(area,False)
         else:
             print "Load_specials: letter noth *SM: " + letter
     
@@ -484,81 +485,103 @@ def fix_exits():
                 else:
                     e.to_room = room_index_hash[e.to_room]
 
-def read_forward(str, jump=1):
-    return str[jump:]
 
-def read_letter(str):
-    str = str.lstrip()
-    return(str[1:], str[:1])
-def read_word(str):
-    if not str:
-        return (None,None)
-    
-    word = str.split()[0]
-    if word[0] == "'":
-        word = str[:str.find("'", 1)+1]
-        
-    str = str.lstrip()
-    str = str[len(word)+1:]
-    return (str, word.strip())
 
-def read_int(str):
-    if not str:
-        return (None,None)
-    str = str.lstrip()
-    number = ""
-    negative = False
-    for c in str:
-        if c == '-':
-            negative = True
-        elif c.isdigit():
-            number += c
-        else:
-            break;
+# * Create an instance of an object.
+def create_object( pObjIndex, level ):
+    if not pObjIndex:
+        print "Create_object: None pObjIndex."
+        sys.exit( 1 )
 
-    str = str.lstrip()
-    if not negative:
-        str = str[len(number):]
-        return (str, int(number) )
+    obj = OBJ_DATA()
+
+    obj.pIndexData = pObjIndex
+    obj.in_room    = None
+    obj.enchanted  = False
+
+    if pObjIndex.new_format == True:
+        obj.level = pObjIndex.level
     else:
-        str = str[len(number)+1:]
-        return (str, int(number)*-1 )
+        obj.level      = max(0,level)
+    obj.wear_loc   = -1
+
+    obj.name       = pObjIndex.name
+    obj.short_descr    = pObjIndex.short_descr
+    obj.description    = pObjIndex.description
+    obj.material   = pObjIndex.material
+    obj.item_type  = pObjIndex.item_type
+    obj.extra_flags    = pObjIndex.extra_flags
+    obj.wear_flags = pObjIndex.wear_flags
+    obj.value = pObjIndex.value[:]
+    obj.weight     = pObjIndex.weight
+
+    if level == -1 or pObjIndex.new_format:
+        obj.cost   = pObjIndex.cost
+    else:
+        obj.cost   = number_fuzzy( 10 ) * number_fuzzy( level ) * number_fuzzy( level )
 
 
+     # Mess with object properties.
+    if obj.item_type == ITEM_LIGHT:
+        if obj.value[2] == 999:
+            obj.value[2] = -1
+    elif obj.item_type == ITEM_FURNITURE \
+      or obj.item_type == ITEM_TRASH \
+      or obj.item_type == ITEM_CONTAINER \
+      or obj.item_type == ITEM_DRINK_CON \
+      or obj.item_type == ITEM_KEY \
+      or obj.item_type == ITEM_FOOD \
+      or obj.item_type == ITEM_BOAT \
+      or obj.item_type == ITEM_CORPSE_NPC \
+      or obj.item_type == ITEM_CORPSE_PC \
+      or obj.item_type == ITEM_FOUNTAIN \
+      or obj.item_type == ITEM_MAP \
+      or obj.item_type == ITEM_CLOTHING \
+      or obj.item_type == ITEM_PORTAL:
+        if not pObjIndex.new_format:
+            obj.cost /= 5
+    elif obj.item_type == ITEM_TREASURE \
+      or obj.item_type == ITEM_WARP_STONE \
+      or obj.item_type == ITEM_ROOM_KEY \
+      or obj.item_type == ITEM_GEM \
+      or obj.item_type == ITEM_JEWELRY:
+        pass
+    elif obj.item_type == ITEM_JUKEBOX:
+        obj.value = [-1 for i in range(5)]
+    elif obj.item_type == ITEM_SCROLL:
+        if level != -1 and not pObjIndex.new_format:
+            obj.value[0]   = number_fuzzy( obj.value[0] )
+    elif obj.item_type == ITEM_WAND \
+      or obj.item_type == ITEM_STAFF:
+        if level != -1 and not pObjIndex.new_format:
+            obj.value[0]   = number_fuzzy( obj.value[0] )
+            obj.value[1]   = number_fuzzy( obj.value[1] )
+            obj.value[2]   = obj.value[1]
+        if not pObjIndex.new_format:
+            obj.cost *= 2
+    elif obj.item_type == ITEM_WEAPON:
+        if level != -1 and not pObjIndex.new_format:
+            obj.value[1] = number_fuzzy( number_fuzzy( 1 * level / 4 + 2 ) )
+            obj.value[2] = number_fuzzy( number_fuzzy( 3 * level / 4 + 6 ) )
+    elif obj.item_type == ITEM_ARMOR:
+        if level != -1 and not pObjIndex.new_format:
+            obj.value[0]   = number_fuzzy( level / 5 + 3 )
+            obj.value[1]   = number_fuzzy( level / 5 + 3 )
+            obj.value[2]   = number_fuzzy( level / 5 + 3 )
+    elif obj.item_type == ITEM_POTION \
+      or obj.item_type == ITEM_PILL:
+        if level != -1 and not pObjIndex.new_format:
+            obj.value[0] = number_fuzzy( number_fuzzy( obj.value[0] ) )
+    elif obj.item_type == ITEM_MONEY:
+        if not pObjIndex.new_format:
+            obj.value[0]   = obj.cost
+    else:
+        print "Bad item_type pObjIndex vnum: %s(%s)" % (pObjIndex.vnum, obj.item_type )
+  
+    for paf in pObjIndex.affected:
+        if paf.location == APPLY_SPELL_AFFECT:
+            affect_to_obj(obj,paf)
+  
+    object_list.append(obj)
+    return obj
 
-def read_string(str):
-    if not str:
-        return (None,None)
-    end = str.find('~')
-    word = str[0:end]
-    
-    str = str[end+1:]
-
-    return (str, word.strip())
-
-def read_flags(str):
-    if not str:
-        return (None, None)
-    str, w = read_word(str)
-    
-    if w is '0':
-        return (str, 0)
-    flags = 0
-    for c in w:
-        if 'A' <= c and c <= 'Z':
-            flags = 1
-            while c != 'A':
-                flags *= 2
-                c = chr( ord(c)-1 )
-        elif 'a' <= c and c <= 'z':
-            flags = 2 ** 26
-            while c != 'a':
-                c = chr( ord(c)-1 )
-
-    return (str, flags)
-
-def read_to_eol(str):
-    str = str.split('\n')
-    line = str.pop(0)
-    str = "\n".join(str)
-    return (str, line);

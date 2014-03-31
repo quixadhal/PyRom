@@ -36,10 +36,10 @@ from merc import *
 from settings import *
 from const import *
 from save import load_char_obj
-from db import read_word
-from skills import group_add
+from db import read_word, create_object
+from skills import group_add, exp_per_level
 from act_wiz import wiznet
-from handler import get_trust, reset_char
+from handler import get_trust, reset_char, obj_to_char, char_to_room
 
 import comm
 
@@ -284,7 +284,7 @@ def con_default_choice(self):
         ch.send("Please pick a weapon from the following choices:\n\r")
         
         for k,weapon in weapon_table.iteritems():
-            if ch.pcdata.learned[weapon.gsn] > 0:
+            if weapon.gsn in ch.pcdata.learned:
                 ch.send("%s " % weapon.name)
 
         ch.send("\n\rYour choice? ")
@@ -300,7 +300,7 @@ def con_pick_weapon(self):
     if not weapon or ch.pcdata.learned[weapon.gsn] <= 0:
         ch.send("That's not a valid selection. Choices are:\n\r")
         for k,weapon in weapon_table.iteritems():
-            if ch.pcdata.learned[weapon.gsn] > 0:
+            if weapon.gsn in ch.pcdata.learned:
                 ch.send("%s " % weapon.name)
 
             ch.send("\n\rYour choice? ")
@@ -363,7 +363,7 @@ def con_read_motd(self):
 
     if ch.level == 0:
         ch.perm_stat[ch.guild.attr_prime] += 3
-
+        ch.position = POS_STANDING
         ch.level   = 1
         ch.exp = exp_per_level(ch,ch.pcdata.points)
         ch.hit = ch.max_hit
@@ -386,13 +386,13 @@ def con_read_motd(self):
     else:
         char_to_room( ch, room_index_hash[ ROOM_VNUM_TEMPLE ] )
 
-    act( "$n has entered the game.", ch, None, None, TO_ROOM )
+    comm.act( "$n has entered the game.", ch, None, None, TO_ROOM )
     ch.do_look("auto")
 
     wiznet("$N has left real life behind.",ch,None, WIZ_LOGINS,WIZ_SITES,get_trust(ch))
     if ch.pet:
         char_to_room(ch.pet,ch.in_room)
-        act("$n has entered the game.",ch.pet,None,None,TO_ROOM)
+        comm.act("$n has entered the game.",ch.pet,None,None,TO_ROOM)
 
 def con_playing(self):
     pass

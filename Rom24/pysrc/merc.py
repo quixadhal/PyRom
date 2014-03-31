@@ -39,7 +39,9 @@ MAX_GUILDROOMS=2
 MAX_STATS=5
 MAX_SKILL=150
 MAX_GROUP=30
-
+MAX_LEVEL=60
+LEVEL_HERO=(MAX_LEVEL - 9)
+LEVEL_IMMORTAL=(MAX_LEVEL - 8)
 
 #Global Classes
 class CHAR_DATA:
@@ -52,7 +54,7 @@ class CHAR_DATA:
     spec_fun = None
     pIndexData = None
     desc = None
-    affected = None
+    affected = []
     pnote = None
     carrying = []
     on = None
@@ -222,7 +224,7 @@ class MOB_INDEX_DATA:
 
 class OBJ_INDEX_DATA:
     extra_descr = None
-    affected = None
+    affected = []
     new_format = True
     name = ""
     short_descr = ""
@@ -241,6 +243,35 @@ class OBJ_INDEX_DATA:
     value = [0, 0, 0, 0, 0]
     def __repr__(self):
         return "<ObjIndex: %s:%d>" % (self.short_descr, self.vnum)    
+
+# * One object.
+
+class OBJ_DATA:
+    contains=[]
+    in_obj=None
+    on=None
+    carried_by=None
+    extra_descr=None
+    affected=[]
+    pIndexData=None
+    in_room=None
+    valid=False
+    enchanted=False
+    owner=""
+    name=""
+    short_descr=""
+    description=""
+    item_type=0
+    extra_flags=0
+    wear_flags=0
+    wear_loc=0
+    weight=0
+    cost=0
+    level=0
+    condition=0
+    material=""
+    timer=0
+    value = [0 for x in range(5)]
 
 class ROOM_INDEX_DATA:
     people = []
@@ -306,6 +337,7 @@ player_list = []
 char_list = []
 mob_index_hash = {}
 obj_index_hash = {}
+object_list = []
 room_index_hash = {}
 area_list = []
 help_list = []
@@ -325,35 +357,36 @@ STAT_CON=4
 
 
 #Item types
-ITEM_LIGHT=1
-ITEM_SCROLL=2
-ITEM_WAND=3
-ITEM_STAFF=4
-ITEM_WEAPON=5
-ITEM_TREASURE=8
-ITEM_ARMOR=9
-ITEM_POTION=10
-ITEM_CLOTHING=11
-ITEM_FURNITURE=12
-ITEM_TRASH=13
-ITEM_CONTAINER=15
-ITEM_DRINK_CON=17
-ITEM_KEY=18
-ITEM_FOOD=19
-ITEM_MONEY=20
-ITEM_BOAT=22
-ITEM_CORPSE_NPC=23
-ITEM_CORPSE_PC=24
-ITEM_FOUNTAIN=25
-ITEM_PILL=26
-ITEM_PROTECT=27
-ITEM_MAP=28
-ITEM_PORTAL=29
-ITEM_WARP_STONE=30
-ITEM_ROOM_KEY=31
-ITEM_GEM=32
-ITEM_JEWELRY=33
-ITEM_JUKEBOX=34
+ITEM_LIGHT='light'
+ITEM_SCROLL='scroll'
+ITEM_WAND='wand'
+ITEM_STAFF='staff'
+ITEM_WEAPON='weapon'
+ITEM_TREASURE='treasure'
+ITEM_ARMOR='armor'
+ITEM_POTION='potion'
+ITEM_CLOTHING='clothing'
+ITEM_FURNITURE='furniture'
+ITEM_TRASH='trash'
+ITEM_CONTAINER='container'
+ITEM_DRINK_CON='drink'
+ITEM_KEY='key'
+ITEM_FOOD='food'
+ITEM_MONEY='money'
+ITEM_BOAT='boat'
+ITEM_CORPSE_NPC='npc_corpse'
+ITEM_CORPSE_PC='pc_corpse'
+ITEM_FOUNTAIN='fountain'
+ITEM_PILL='pill'
+ITEM_PROTECT='protect'
+ITEM_MAP='map'
+ITEM_PORTAL='portal'
+ITEM_WARP_STONE='warp_stone'
+ITEM_ROOM_KEY='room_key'
+ITEM_GEM='gem'
+ITEM_JEWELRY='jewelry'
+ITEM_JUKEBOX='jukebox'
+
 
 
 #Sexes
@@ -395,6 +428,23 @@ POS_RESTING=5
 POS_SITTING=6
 POS_FIGHTING=7
 POS_STANDING=8
+
+
+# * Sector types.
+# * Used in #ROOMS.
+
+SECT_INSIDE=0
+SECT_CITY=1
+SECT_FIELD=2
+SECT_FOREST=3
+SECT_HILLS=4
+SECT_MOUNTAIN=5
+SECT_WATER_SWIM=6
+SECT_WATER_NOSWIM=7
+SECT_UNUSED=8
+SECT_AIR=9
+SECT_DESERT=10
+SECT_MAX=11
 
 # TO types for act.
 
@@ -501,6 +551,18 @@ OBJ_VNUM_SCHOOL_SHIELD = 3704
 OBJ_VNUM_SCHOOL_BANNER = 3716
 OBJ_VNUM_MAP = 3162
 OBJ_VNUM_WHISTLE = 2116
+
+# * Well known room virtual numbers.
+# * Defined in #ROOMS.
+ROOM_VNUM_LIMBO=2
+ROOM_VNUM_CHAT=1200
+ROOM_VNUM_TEMPLE=3001
+ROOM_VNUM_ALTAR=3054
+ROOM_VNUM_SCHOOL=3700
+ROOM_VNUM_BALANCE=4500
+ROOM_VNUM_CIRCLE=4400
+ROOM_VNUM_DEMISE=4201
+ROOM_VNUM_HONOR=4300
 
 
 def IS_SET(flag, bit):
@@ -1022,7 +1084,8 @@ def IS_NPC(ch):
     return IS_SET(ch.act, ACT_IS_NPC)
 
 def IS_IMMORTAL(ch):
-     return get_trust(ch) >= LEVEL_IMMORTAL
+    from handler import get_trust
+    return get_trust(ch) >= LEVEL_IMMORTAL
 
 def IS_HERO(ch):
      return get_trust(ch) >= LEVEL_HERO
@@ -1087,6 +1150,116 @@ def dice(number, size):
 
 def number_fuzzy(number):
     return random.randint(number-1, number+1)
+
+def set_title(ch, title):
+    if IS_NPC(ch):
+        return
+        
+    nospace = ['.', ',', '!', '?']
+    if title[0] in nospace:
+        ch.pcdata.title = title
+    else:
+        ch.pcdata.title = ' ' + title
+
+def read_forward(str, jump=1):
+    return str[jump:]
+
+def read_letter(str):
+    str = str.lstrip()
+    return(str[1:], str[:1])
+def read_word(str, lower=True):
+    if not str:
+        return (None,None)
+    
+    word = str.split()[0]
+    if word[0] == "'":
+        word = str[:str.find("'", 1)+1]
+    if lower:
+        word = word.lower()
+    str = str.lstrip()
+    str = str[len(word)+1:]
+    return (str, word.strip())
+
+def read_int(str):
+    if not str:
+        return (None,None)
+    str = str.lstrip()
+    number = ""
+    negative = False
+    for c in str:
+        if c == '-':
+            negative = True
+        elif c.isdigit():
+            number += c
+        else:
+            break;
+
+    str = str.lstrip()
+    if not negative:
+        str = str[len(number):]
+        return (str, int(number) )
+    else:
+        str = str[len(number)+1:]
+        return (str, int(number)*-1 )
+
+def read_string(str):
+    if not str:
+        return (None,None)
+    end = str.find('~')
+    word = str[0:end]
+    
+    str = str[end+1:]
+
+    return (str, word.strip())
+
+def read_flags(str):
+    if not str:
+        return (None, None)
+    str, w = read_word(str)
+    
+    if w is '0':
+        return (str, 0)
+    flags = 0
+    for c in w:
+        if 'A' <= c and c <= 'Z':
+            flags = 1
+            while c != 'A':
+                flags *= 2
+                c = chr( ord(c)-1 )
+        elif 'a' <= c and c <= 'z':
+            flags = 2 ** 26
+            while c != 'a':
+                c = chr( ord(c)-1 )
+
+    return (str, flags)
+
+def read_to_eol(str):
+    str = str.split('\n')
+    line = str.pop(0)
+    str = "\n".join(str)
+    return (str, line);
+
+
+
+# * Given a string like 14.foo, return 14 and 'foo'
+def number_argument( argument ):
+    if '.' not in argument:
+        return (1, argument)
+
+    dot = argument.find('.')
+    number = argument[:dot]
+    if number.isdigit():
+        return (int(number), argument[dot+1:])
+    return (1, argument)
+
+def check_blind( ch ):
+    if not IS_NPC(ch) and IS_SET(ch.act,PLR_HOLYLIGHT):
+        return True
+
+    if IS_AFFECTED(ch, AFF_BLIND):
+        ch.send( "You can't see a thing!\n\r") 
+        return False 
+    return True
 
 #ensureall do_functions become class methods
 import interp

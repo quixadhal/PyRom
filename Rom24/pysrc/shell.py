@@ -45,6 +45,7 @@ def send(txt):
     print txt
 
 CHAR_DATA.send = send
+
 vars = globals().copy()
 vars.update(locals())
 shell = code.InteractiveConsole(vars)
