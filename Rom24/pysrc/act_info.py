@@ -83,17 +83,16 @@ def do_help( self, argument ):
         argument = "summary"
 
     found = [h for h in help_list if h.level <= get_trust(self) and argument.lower() in h.keyword.lower()]
-    nokeyword = ['motd', 'imotd']
 
     for pHelp in found:
-        self.send("\n\r============================================================\n\r")
-        if argument not in nokeyword:
+        if ch.desc.connected == con_playing:
+            self.send("\n\r============================================================\n\r")
             ch.send(pHelp.keyword)
             ch.send("\r\n")
         text = pHelp.text
         if pHelp.text[0] == '.':
             text = pHelp.text[1:]
-        ch.send(text)
+        ch.send(text + "\r\n")
         # small hack :) */
         if ch.desc and ch.desc.connected != con_playing and ch.desc.connected != con_gen_groups:
             break

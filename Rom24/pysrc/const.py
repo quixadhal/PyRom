@@ -88,7 +88,7 @@ class pc_race_type:
         self.size = size
 
 pc_race_table={}
-pc_race_table['human'] = pc_race_type("human", "Human", 0, [ 100, 100, 100, 100 ], [ "" ], [13, 13, 13, 13, 13], [18, 18, 18, 18, 18 ], SIZE_MEDIUM)
+pc_race_table['human'] = pc_race_type("human", "Human", 0, { 'mage':100, 'cleric':100, 'thief':100, 'warrior':100 }, [ "" ], [13, 13, 13, 13, 13], [18, 18, 18, 18, 18 ], SIZE_MEDIUM)
 pc_race_table['elf'] = pc_race_type("elf", " Elf ", 5, { 'mage':100, 'cleric':125, 'thief':100, 'warrior':120 }, ["sneak", "hide"], [12, 14, 13, 15, 11], [16, 20, 18, 21, 15], SIZE_SMALL)
 pc_race_table['dwarf'] = pc_race_type("dwarf", "Dwarf", 8, { 'mage':150, 'cleric':100, 'thief':125, 'warrior':100 }, ["berserk"], [14, 12, 14, 10, 15], [20, 16, 19, 14, 21], SIZE_MEDIUM)
 pc_race_table['giant'] = pc_race_type("giant", "Giant", 6, { 'mage':200, 'cleric':150, 'thief':150, 'warrior':105 }, ["bash", "fast healing"], [16, 11, 13, 11, 14], [22, 15, 18, 15, 20], SIZE_LARGE)

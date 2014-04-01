@@ -37,7 +37,7 @@ from settings import *
 from const import *
 from save import load_char_obj
 from db import read_word, create_object
-from skills import group_add, exp_per_level
+from skills import *
 from act_wiz import wiznet
 from handler import get_trust, reset_char, obj_to_char, char_to_room
 
@@ -188,8 +188,6 @@ def con_get_new_race(self):
 
     # add skills */
     for i in race.skills:
-        if not i:
-            return
         group_add(ch,i,False)
 
     # add cost */
@@ -318,8 +316,8 @@ def con_gen_groups(self):
         if ch.pcdata.points == pc_race_table[ch.race.name].points:
             ch.send("You didn't pick anything.\n\r")
             return
-        if ch.pcdata.points <= 40 + pc_race_table[ch.race].points:
-            ch.send("You must take at least %d points of skills and groups" % (40 + pc_race_table[ch.race].points))
+        if ch.pcdata.points < 40 + pc_race_table[ch.race.name].points:
+            ch.send("You must take at least %d points of skills and groups" % (40 + pc_race_table[ch.race.name].points))
             return
 
         ch.send("Creation points: %d\n\r" % ch.pcdata.points )
@@ -330,7 +328,7 @@ def con_gen_groups(self):
         ch.gen_data = None
         ch.send("Please pick a weapon from the following choices:\n\r")
         
-        for weapon in weapon_table:
+        for w, weapon in weapon_table.iteritems():
             if ch.pcdata.learned[weapon.gsn] > 0:
                 ch.send("%s " % weapon.name)
 

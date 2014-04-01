@@ -160,6 +160,13 @@ class PC_DATA:
     confirm_delete=False
     alias={}
 
+class GEN_DATA:
+    valid = False
+    skill_chosen = {}
+    group_chosen = {}
+    points_chosen = 0
+
+
 class AREA_DATA:
     reset_list = []
     file_name = ""
@@ -1169,7 +1176,7 @@ def read_letter(str):
     return(str[1:], str[:1])
 def read_word(str, lower=True):
     if not str:
-        return (None,None)
+        return ("", "")
     
     word = str.split()[0]
     if word[0] == "'":

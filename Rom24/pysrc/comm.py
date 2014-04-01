@@ -126,5 +126,5 @@ def act(format, ch, arg1, arg2, type, min_pos=POS_RESTING):
                       '$d': arg2 if not arg2 else "door"
                     }
         format = mass_replace(format, act_trans)
-        to.send(format)
+        to.send(format+"\r\n")
     return
