@@ -35,7 +35,7 @@ from types import MethodType
 from merc import descriptor_list, greeting_list, POS_RESTING
 from db import boot_db
 from nanny import *
-
+from update import update_handler
 
 def game_loop(server):
     boot_db()
@@ -44,7 +44,7 @@ def game_loop(server):
     while True: 
         server.poll()
         process_input()
-        #update_handler()
+        update_handler()
 
 def process_input():
     for d in descriptor_list:

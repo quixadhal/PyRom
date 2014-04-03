@@ -355,6 +355,13 @@ social_list = []
 
 
 #Global Constants
+PULSE_PER_SECOND=4
+PULSE_VIOLENCE=( 3 * PULSE_PER_SECOND)
+PULSE_MOBILE=( 4 * PULSE_PER_SECOND)
+PULSE_MUSIC=( 6 * PULSE_PER_SECOND)
+PULSE_TICK=(60 * PULSE_PER_SECOND)
+PULSE_AREA=(120 * PULSE_PER_SECOND)
+
 #Stats
 STAT_STR=0
 STAT_INT=1
@@ -1058,7 +1065,8 @@ MEM_SELLER=B
 MEM_HOSTILE=C
 MEM_AFRAID=D
 
-
+boot_time = time.time()
+current_time = 0
 #utility functions
 
 def prefix_lookup(dict, arg):
