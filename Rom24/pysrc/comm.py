@@ -35,10 +35,12 @@ from types import MethodType
 from merc import descriptor_list, greeting_list, POS_RESTING
 from db import boot_db
 from nanny import *
-from update import update_handler
+
 
 def game_loop(server):
+    from update import update_handler
     boot_db()
+
     print "\nPyom is ready to rock on port %d\n" % server.port
 
     while True: 

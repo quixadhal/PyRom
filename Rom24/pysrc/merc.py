@@ -32,6 +32,7 @@
 """
 
 import time
+import random
 
 #Global MAXes       
 MAX_TRADE=5
@@ -44,7 +45,7 @@ LEVEL_HERO=(MAX_LEVEL - 9)
 LEVEL_IMMORTAL=(MAX_LEVEL - 8)
 
 #Global Classes
-class CHAR_DATA:
+class CHAR_DATA(object):
     master = None
     leader = None
     fighting = None
@@ -415,7 +416,11 @@ SIZE_MEDIUM=2
 SIZE_LARGE=3
 SIZE_HUGE=4
 SIZE_GIANT=5
+size_table = ["tiny",  "small", "medium", "large", "huge", "giant" ]
 
+DICE_NUMBER=0
+DICE_TYPE=1
+DICE_BONUS=2
 
 #  Target types.
  
@@ -528,6 +533,14 @@ WEAR_WIELD=16
 WEAR_HOLD=17
 WEAR_FLOAT=18
 MAX_WEAR=19
+
+
+# * Conditions.
+
+COND_DRUNK=0
+COND_FULL=1
+COND_THIRST=2
+COND_HUNGER=3
 
 #Item constants
 
@@ -1107,6 +1120,8 @@ def IS_HERO(ch):
 
 def IS_TRUSTED(ch,level):
     return get_trust(ch) >= level
+def is_affected( ch, sn ):
+    return True if [paf for paf in ch.affected if paf.type == sn ][:1] else False
 
 def IS_AFFECTED(ch, bit):
     return IS_SET(ch.affected_by, bit)
@@ -1275,6 +1290,9 @@ def check_blind( ch ):
         ch.send( "You can't see a thing!\n\r") 
         return False 
     return True
+
+def get_mob_id():
+    return time.time()
 
 #ensureall do_functions become class methods
 import interp

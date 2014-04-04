@@ -30,7 +30,7 @@
  * Using Miniboa https://code.google.com/p/miniboa/
  ************/
 """
-import os, sys
+import os, sys, random
 from settings import AREA_DIR, AREA_LIST
 from merc import *
 
@@ -38,6 +38,7 @@ def boot_db():
     print "Loading Areas..."
     load_areas()
     fix_exits()
+    area_update()
     print "\t...Loaded %d Helpfiles" % len(help_list)
     print "\t...Loaded %d Areas" % len(area_list)
     print "\t...Loaded %d Mobile Indexes" % len(mob_index_hash)
@@ -170,7 +171,7 @@ def load_mobiles(area):
         area, mob.size = read_word(area,False)
         area, mob.material = read_word(area,False)
         area, w = read_word(area,False)
-
+        mob.size = size_table.index(mob.size)
         while w == 'F':
             area, word = read_word(area,False)
             area, vector = read_flags(area)
@@ -516,7 +517,7 @@ def reset_area( pArea ):
     mob     = None
     last    = True
     level   = 0
-    for pReset in pArea.reset_first:
+    for pReset in pArea.reset_list:
         if pReset.command == 'M':
             if pReset.arg1 not in mob_index_hash:
                 print "Reset_area: 'M': bad vnum %d." % pReset.arg1
@@ -722,7 +723,6 @@ def reset_area( pArea ):
 # * Create an instance of a mobile.
 
 def create_mobile( pMobIndex ):
-    mobile_count += 1
     if pMobIndex == None:
         print "Create_mobile: None pMobIndex."
         sys.exit( 1 )
@@ -785,7 +785,7 @@ def create_mobile( pMobIndex ):
         mob.race = pMobIndex.race
         mob.form = pMobIndex.form
         mob.parts = pMobIndex.parts
-        mob.size = pMobIndex.size
+        mob.size = int(pMobIndex.size)
         mob.material = pMobIndex.material
 
         # computed on the spot */

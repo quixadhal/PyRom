@@ -35,6 +35,34 @@ import json
 from merc import *
 from settings import PLAYER_DIR
 
+def save_char_obj( ch ):
+    if IS_NPC(ch):
+        return
+
+    if ch.desc and ch.desc.original:
+        ch = ch.desc.original
+
+    
+    pfile = os.path.join(PLAYER_DIR, ch.name+'.js')
+    fwrite = ch.__dict__
+    print fwrite
+    fwrite['in_room'] = ch.in_room.vnum
+    del fwrite['desc']
+    to_write = json.dumps(fwrite, indent=4)
+    with open(pfile, 'w') as pf:
+        pf.write(to_write)
+
+#    if ( ch.carrying != NULL )
+ #       fwrite_obj( ch, ch.carrying, fp, 0 );
+ #   /* save the pets */
+ #   if (ch.pet != NULL and ch.pet.in_room == ch.in_room)
+ #       fwrite_pet(ch.pet,fp);
+ #   fprintf( fp, "#END\n" );
+ ##   }
+  #  fclose( fp );
+  #  rename(TEMP_FILE,strsave);
+  #  fpReserve = fopen( NULL_FILE, "r" );
+
 def load_char_obj(d, name):
     ch = CHAR_DATA()
     ch.pcdata = PC_DATA()

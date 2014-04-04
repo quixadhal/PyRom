@@ -33,6 +33,9 @@
 from merc import *
 from db import area_update
 from act_wiz import wiznet
+from handler import *
+from comm import act
+from save import save_char_obj
 # * Advancement stuff.
 
 def advance_level( ch, hide ):
@@ -240,8 +243,6 @@ def gain_condition( ch, iCond, value ):
 def mobile_update( ):
     # Examine all mobs. */
     for ch in char_list[:]:
-        ch_next = ch.next
-
         if not IS_NPC(ch) or ch.in_room == None or IS_AFFECTED(ch,AFF_CHARM):
             continue
 
@@ -612,7 +613,6 @@ def obj_update( ):
 # */
 def aggr_update( ):
     for wch in char_list[:]:
-        wch_next = wch.next
         if IS_NPC(wch) \
         or wch.level >= LEVEL_IMMORTAL \
         or wch.in_room == None \
