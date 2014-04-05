@@ -33,6 +33,8 @@
 import os, sys, random
 from settings import AREA_DIR, AREA_LIST
 from merc import *
+from handler import *
+
 
 def boot_db():
     print "Loading Areas..."
@@ -133,6 +135,7 @@ def load_mobiles(area):
         area, mob.description = read_string(area)
         area, mob.race = read_string(area)
         area, mob.act = read_flags(area)
+        mob.act = mob.act | ACT_IS_NPC
         area, mob.affected_by = read_flags(area)
         area, mob.alignment = read_int(area)
         area, mob.group = read_int(area)
@@ -480,14 +483,11 @@ def load_specials(area):
 def fix_exits():
     for k, r in room_index_hash.iteritems():
         for e in r.exit:
-            if type(e.to_room) == int:
+            if e and type(e.to_room) == int:
                 if e.to_room not in room_index_hash:
                     print "Fix_exits: Failed to find to_room for %d: %d" % (room, e.to_room)
                 else:
                     e.to_room = room_index_hash[e.to_room]
-
-
-
 
 # * Repopulate areas periodically.
 def area_update( ):
@@ -495,7 +495,7 @@ def area_update( ):
         pArea.age += 1
         if pArea.age < 3:
             continue
-
+        from act_wiz import wiznet
         #
         #* Check age and reset.
         #* Note: Mud School resets every 3 minutes (not 15).
@@ -601,14 +601,15 @@ def reset_area( pArea ):
                 limit = pReset.arg2
             
             obj_to = get_obj_type(pObjToIndex)
-            count = count_obj_list(pObjIndex, obj_to.contains)
+            
             if pArea.nplayer > 0 \
             or not obj_to \
             or (obj_to.in_room == None and not last) \
             or ( pObjIndex.count >= limit and random.randint(0,4) != 0) \
-            or count > pReset.arg4:
+            or count_obj_list(pObjIndex, obj_to.contains) > pReset.arg4:
                 last = False
                 break
+            count = count_obj_list(pObjIndex, obj_to.contains)
             while count < pReset.arg4:
                 obj = create_object( pObjIndex, number_fuzzy(obj_to.level) )
                 obj_to_obj( obj, obj_to )
@@ -681,7 +682,7 @@ def reset_area( pArea ):
                 continue
 
         elif pReset.command == 'D':
-            if pReset.arg2 not in room_index_hash:
+            if pReset.arg1 not in room_index_hash:
                 print "Reset_area: 'D': bad vnum %d." % pReset.arg1
                 continue
             pRoomIndex = room_index_hash[pReset.arg1]

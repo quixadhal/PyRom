@@ -221,7 +221,7 @@ def move_gain( ch ):
 def gain_condition( ch, iCond, value ):
     if value == 0 or IS_NPC(ch) or ch.level >= LEVEL_IMMORTAL:
         return
-
+    
     condition = ch.pcdata.condition[iCond]
     if condition == -1:
         return

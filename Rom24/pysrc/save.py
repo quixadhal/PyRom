@@ -45,9 +45,13 @@ def save_char_obj( ch ):
     
     pfile = os.path.join(PLAYER_DIR, ch.name+'.js')
     fwrite = ch.__dict__
-    print fwrite
     fwrite['in_room'] = ch.in_room.vnum
     del fwrite['desc']
+    del fwrite['send']
+    fwrite['pcdata'] == ch.pcdata.__dict__
+    fwrite['guild'] = ch.guild.name
+    fwrite['race'] = ch.race.name
+
     to_write = json.dumps(fwrite, indent=4)
     with open(pfile, 'w') as pf:
         pf.write(to_write)

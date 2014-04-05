@@ -17,13 +17,13 @@
  ***************************************************************************/
 
 /***************************************************************************
-*	ROM 2.4 is copyright 1993-1998 Russ Taylor			                   *
-*	ROM has been brought to you by the ROM consortium		               *
-*	    Russ Taylor=rtaylor@hypercube.org)				                   *
-*	    Gabrielle Taylor=gtaylor@hypercube.org)			               *
-*	    Brian Moore=zump@rom.org)					                       *
-*	By using this code, you have agreed to follow the terms of the	       *
-*	ROM license, in the file Rom24/doc/rom.license			               *
+*    ROM 2.4 is copyright 1993-1998 Russ Taylor                               *
+*    ROM has been brought to you by the ROM consortium                       *
+*        Russ Taylor=rtaylor@hypercube.org)                                   *
+*        Gabrielle Taylor=gtaylor@hypercube.org)                           *
+*        Brian Moore=zump@rom.org)                                           *
+*    By using this code, you have agreed to follow the terms of the           *
+*    ROM license, in the file Rom24/doc/rom.license                           *
 ***************************************************************************/
 /************
  * Ported to Python by Davion of MudBytes.net
@@ -46,298 +46,322 @@ LEVEL_IMMORTAL=(MAX_LEVEL - 8)
 
 #Global Classes
 class CHAR_DATA(object):
-    master = None
-    leader = None
-    fighting = None
-    reply = None
-    pet = None
-    memory = None
-    spec_fun = None
-    pIndexData = None
-    desc = None
-    affected = []
-    pnote = None
-    carrying = []
-    on = None
-    in_room = None
-    was_in_room = None
-    zone = None
-    pcdata = None
-    gen_data = None
-    valid = False
-    name = ""
-    id = 0
-    version = 5
-    short_descr = ""
-    long_descr = ""
-    description = ""
-    prompt = "<%%hhp %%mm %%vmv>"
-    prefix = ""
-    group = 0
-    clan = 0
-    sex=0
-    guild=0
-    race=0
-    level=0
-    trust=0
-    played=0
-    lines=20
-    logon=0
-    timer=0
-    wait=0
-    daze=0
-    hit=20
-    max_hit=20
-    mana=100
-    max_mana=100
-    move=100
-    max_move=100
-    gold=0
-    silver=0
-    exp=0
-    act=0
-    comm=0
-    wiznet=0
-    imm_flags=0
-    res_flags=0
-    vuln_flags=0
-    invis_level=0
-    incog_level=0
-    affected_by=0
-    position=0
-    practice=0
-    train=0
-    carry_weight=0
-    carry_number=0
-    saving_throw=0
-    alignment=0
-    hitroll=0
-    damroll=0
-    armor=[100, 100, 100, 100];
-    wimpy=0
-    # stats */
-    perm_stat=[13 for x in range(MAX_STATS)]
-    mod_stat=[0 for x in range(MAX_STATS)]
-    # parts stuff */
-    form=0
-    parts=0
-    size=0
-    material=""
-    # mobile stuff */
-    off_flags=0
-    damage=[0,0,0]
-    dam_type=17
-    start_pos=0
-    default_pos=0
-    def __repr__(self):
-        return self.name
     def __init__(self):
         from const import race_table
+        self.master = None
+        self.leader = None
+        self.fighting = None
+        self.reply = None
+        self.pet = None
+        self.memory = None
+        self.spec_fun = None
+        self.pIndexData = None
+        self.desc = None
+        self.affected = []
+        self.pnote = None
+        self.carrying = []
+        self.on = None
+        self.in_room = None
+        self.was_in_room = None
+        self.zone = None
+        self.pcdata = None
+        self.gen_data = None
+        self.valid = False
+        self.name = ""
+        self.id = 0
+        self.version = 5
+        self.short_descr = ""
+        self.long_descr = ""
+        self.description = ""
+        self.prompt = "<%%hhp %%mm %%vmv>"
+        self.prefix = ""
+        self.group = 0
+        self.clan = 0
+        self.sex =0
+        self.guild =0
+        self.race =0
+        self.level =0
+        self.trust =0
+        self.played =0
+        self.lines =20
+        self.logon =0
+        self.timer =0
+        self.wait =0
+        self.daze =0
+        self.hit =20
+        self.max_hit =20
+        self.mana =100
+        self.max_mana =100
+        self.move =100
+        self.max_move =100
+        self.gold =0
+        self.silver =0
+        self.exp =0
+        self.act =0
+        self.comm =0
+        self.wiznet =0
+        self.imm_flags =0
+        self.res_flags =0
+        self.vuln_flags =0
+        self.invis_level =0
+        self.incog_level =0
+        self.affected_by =0
+        self.position =0
+        self.practice =0
+        self.train =0
+        self.carry_weight =0
+        self.carry_number =0
+        self.saving_throw =0
+        self.alignment =0
+        self.hitroll =0
+        self.damroll =0
+        self.armor =[100, 100, 100, 100];
+        self.wimpy =0
+    # stats */
+        self.perm_stat =[13 for x in range(MAX_STATS)]
+        self.mod_stat =[0 for x in range(MAX_STATS)]
+    # parts stuff */
+        self.form =0
+        self.parts =0
+        self.size =0
+        self.material =""
+    # mobile stuff */
+        self.off_flags =0
+        self.damage =[0,0,0]
+        self.dam_type =17
+        self.start_pos =0
+        self.default_pos =0
         self.race = race_table['human']
         self.act=PLR_NOSUMMON
         self.comm=COMM_COMBINE | COMM_PROMPT
+    def __repr__(self):
+        return self.name
 
 class PC_DATA:
-    buffer=None
-    valid=False
-    pwd=""
-    bamfin=""
-    bamfout=""
-    title=""
-    last_note=0;
-    last_idea=0
-    last_penalty=0
-    last_news=0
-    last_changes=0
-    perm_hit=0
-    perm_mana=0
-    perm_move=0
-    true_sex=0
-    last_level=0
-    condition=[48,48,48,0]
-    learned ={}
-    group_known={}
-    points=0
-    confirm_delete=False
-    alias={}
+    def __init__(self):
+        self.buffer =None
+        self.valid =False
+        self.pwd =""
+        self.bamfin =""
+        self.bamfout =""
+        self.title =""
+        self.last_note =0;
+        self.last_idea =0
+        self.last_penalty =0
+        self.last_news =0
+        self.last_changes =0
+        self.perm_hit =0
+        self.perm_mana =0
+        self.perm_move =0
+        self.true_sex =0
+        self.last_level =0
+        self.condition =[48,48,48,0]
+        self.learned ={}
+        self.group_known ={}
+        self.points =0
+        self.confirm_delete =False
+        self.alias ={}
 
 class GEN_DATA:
-    valid = False
-    skill_chosen = {}
-    group_chosen = {}
-    points_chosen = 0
+    def __init__(self):    
+        self.valid = False
+        self.skill_chosen = {}
+        self.group_chosen = {}
+        self.points_chosen = 0
 
 
 class AREA_DATA:
-    reset_list = []
-    file_name = ""
-    name = ""
-    credits = ""
-    age = 0
-    nplayer = 0
-    low_range = 0
-    high_range = 0
-    min_vnum = 0
-    max_vnum = 0
-    empty = True
+    def __init__(self):    
+        self.reset_list = []
+        self.file_name = ""
+        self.name = ""
+        self.credits = ""
+        self.age = 15
+        self.nplayer = 0
+        self.low_range = 0
+        self.high_range = 0
+        self.min_vnum = 0
+        self.max_vnum = 0
+        self.empty = False
 
     def __repr__(self):
         return "<%s(%s): %d-%d>" % ( self.name, self.file_name, self.min_vnum, self.max_vnum )
 
 class HELP_DATA:
-    level = 0
-    keyword = ""
-    text = ""
+    def __init__(self):    
+        self.level = 0
+        self.keyword = ""
+        self.text = ""
 
     def __repr__(self):
         return "<%s:%d>" % ( self.keyword, self.level)
 
 class MOB_INDEX_DATA:
-    spec_fun = None
-    pShop = None
-    vnum = 0
-    group = 0
-    new_format = True
-    count = 0
-    killed = 0
-    player_name = ""
-    short_descr = ""
-    long_descr = ""
-    description = ""
-    act = 0
-    affected_by = 0
-    alignment = 0
-    level = 0
-    hitroll = 0
-    hit = [0, 0, 0]
-    mana = [0, 0, 0]
-    damage = [0, 0, 0]
-    ac = [0, 0, 0, 0]
-    dam_type = 0
-    off_flags = 0
-    imm_flags = 0
-    res_flags = 0
-    vuln_flags = 0
-    start_pos = 0
-    default_pos = 0
-    sex = 0
-    race = 0
-    wealth = 0
-    form = 0
-    parts = 0
-    size = 0
-    material = ""
+    def __init__(self):    
+        self.spec_fun = None
+        self.pShop = None
+        self.vnum = 0
+        self.group = 0
+        self.new_format = True
+        self.count = 0
+        self.killed = 0
+        self.player_name = ""
+        self.short_descr = ""
+        self.long_descr = ""
+        self.description = ""
+        self.act = 0
+        self.affected_by = 0
+        self.alignment = 0
+        self.level = 0
+        self.hitroll = 0
+        self.hit = [0, 0, 0]
+        self.mana = [0, 0, 0]
+        self.damage = [0, 0, 0]
+        self.ac = [0, 0, 0, 0]
+        self.dam_type = 0
+        self.off_flags = 0
+        self.imm_flags = 0
+        self.res_flags = 0
+        self.vuln_flags = 0
+        self.start_pos = 0
+        self.default_pos = 0
+        self.sex = 0
+        self.race = 0
+        self.wealth = 0
+        self.form = 0
+        self.parts = 0
+        self.size = 0
+        self.material = ""
     def __repr__(self):
         return "<MobIndex: %s:%s>" % ( self.short_descr, self.vnum )
 
 class OBJ_INDEX_DATA:
-    extra_descr = None
-    affected = []
-    new_format = True
-    name = ""
-    short_descr = ""
-    description = ""
-    vnum = 0
-    reset_num = 0
-    material = ""
-    item_type = 0
-    extra_flags = 0
-    wear_flags = 0
-    level = 0
-    condition = 0
-    count = 0
-    weight = 0
-    cost = 0
-    value = [0, 0, 0, 0, 0]
+    def __init__(self):
+        self.extra_descr = None
+        self.affected = []
+        self.new_format = True
+        self.name = ""
+        self.short_descr = ""
+        self.description = ""
+        self.vnum = 0
+        self.reset_num = 0
+        self.material = ""
+        self.item_type = 0
+        self.extra_flags = 0
+        self.wear_flags = 0
+        self.level = 0
+        self.condition = 0
+        self.count = 0
+        self.weight = 0
+        self.cost = 0
+        self.value = [0, 0, 0, 0, 0]
     def __repr__(self):
         return "<ObjIndex: %s:%d>" % (self.short_descr, self.vnum)    
 
 # * One object.
 
 class OBJ_DATA:
-    contains=[]
-    in_obj=None
-    on=None
-    carried_by=None
-    extra_descr=None
-    affected=[]
-    pIndexData=None
-    in_room=None
-    valid=False
-    enchanted=False
-    owner=""
-    name=""
-    short_descr=""
-    description=""
-    item_type=0
-    extra_flags=0
-    wear_flags=0
-    wear_loc=0
-    weight=0
-    cost=0
-    level=0
-    condition=0
-    material=""
-    timer=0
-    value = [0 for x in range(5)]
+    def __init__(self):    
+        self.contains =[]
+        self.in_obj =None
+        self.on =None
+        self.carried_by =None
+        self.extra_descr =None
+        self.affected =[]
+        self.pIndexData =None
+        self.in_room =None
+        self.valid =False
+        self.enchanted =False
+        self.owner =""
+        self.name =""
+        self.short_descr =""
+        self.description =""
+        self.item_type =0
+        self.extra_flags =0
+        self.wear_flags =0
+        self.wear_loc =0
+        self.weight =0
+        self.cost =0
+        self.level =0
+        self.condition =0
+        self.material =""
+        self.timer =0
+        self.value = [0 for x in range(5)]
 
 class ROOM_INDEX_DATA:
-    people = []
-    contents = []
-    extra_descr = []
-    area = None
-    exit = [None, None, None, None, None, None]
-    old_exit = [None, None, None, None, None, None]
-    name = ""
-    description = ""
-    owner = ""
-    vnum = 0
-    room_flags = 0
-    light = 0
-    sector_type = 0
-    heal_rate = 0
-    mana_rate = 0
-    clan = 0
+    def __init__(self):    
+        self.people = []
+        self.contents = []
+        self.extra_descr = []
+        self.area = None
+        self.exit = [None, None, None, None, None, None]
+        self.old_exit = [None, None, None, None, None, None]
+        self.name = ""
+        self.description = ""
+        self.owner = ""
+        self.vnum = 0
+        self.room_flags = 0
+        self.light = 0
+        self.sector_type = 0
+        self.heal_rate = 0
+        self.mana_rate = 0
+        self.clan = 0
     def __repr__(self):
         return "<RoomIndex: %d" % (self.vnum)
 
 class EXTRA_DESCR_DATA:
-    keyword = ""# Keyword in look/examine
-    description = ""
+    def __init__(self):    
+        self.keyword = ""# Keyword in look/examine
+        self.description = ""
 
 class EXIT_DATA:
-    to_room=None
-    exit_info=0
-    key=0
-    keyword=""
-    description=""
+    def __init__(self):    
+        self.to_room =None
+        self.exit_info =0
+        self.key =0
+        self.keyword =""
+        self.description =""
 
 class RESET_DATA:
-    command = ""
-    arg1=0
-    arg2=0
-    arg3=0
-    arg4=0
+    def __init__(self):    
+        self.command = ""
+        self.arg1 =0
+        self.arg2 =0
+        self.arg3 =0
+        self.arg4 =0
 
 class SHOP_DATA:
-    keeper = 0
-    buy_type = {}
-    profit_buy = 0
-    profit_sell = 0
-    open_hour = 0
-    close_hour = 0
+    def __init__(self):    
+        self.keeper = 0
+        self.buy_type = {}
+        self.profit_buy = 0
+        self.profit_sell = 0
+        self.open_hour = 0
+        self.close_hour = 0
 
 class SOCIAL_DATA:
-    name = ""
-    char_no_arg = ""
-    others_no_arg = ""
-    char_found = ""
-    others_found = ""
-    vict_found = ""
-    char_not_found = ""
-    char_auto = ""
-    others_auto = ""
+    def __init__(self):    
+        self.name = ""
+        self.char_no_arg = ""
+        self.others_no_arg = ""
+        self.char_found = ""
+        self.others_found = ""
+        self.vict_found = ""
+        self.char_not_found = ""
+        self.char_auto = ""
+        self.others_auto = ""
 
+# An affect.
+class AFFECT_DATA:
+    def __init__(self):    
+        self.valid =True
+        self.where =0
+        self.type =0
+        self.level =0
+        self.duration =0
+        self.location =0
+        self.modifier =0
+        self.bitvector =0
 
 #Global Lists
 descriptor_list = []

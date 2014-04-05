@@ -267,7 +267,7 @@ def get_obj_number( obj ):
         number = 0
     else:
         number = 1
- 
+    
     for o in obj.contains:
         number += get_obj_number( o )
  
@@ -724,7 +724,7 @@ def unequip_char( ch, obj ):
 #
 # * Count occurrences of an obj in a list.
 def count_obj_list( pObjIndex, list ):
-    return len([o for obj in list if obj.pIndexData == pObjIndex])
+    return len([obj for obj in list if obj.pIndexData == pObjIndex])
 #
 # * Move an obj out of a room.
 # */
@@ -750,8 +750,7 @@ def obj_from_room( obj ):
 # * Move an obj into a room.
 # */
 def obj_to_room( obj, pRoomIndex ):
-    obj.next_content       = pRoomIndex.contents
-    pRoomIndex.contents    = obj
+    pRoomIndex.contents.append(obj)
     obj.in_room        = pRoomIndex
     obj.carried_by     = None
     obj.in_obj         = None
@@ -903,7 +902,8 @@ def get_char_world( ch, argument ):
 # * Find some object with a given index data.
 # * Used by area-reset 'P' command.
 def get_obj_type( pObjIndex ):
-    return [obj for obj in object_list if obj.pIndexData == pObjIndex][:1]
+    search = [obj for obj in object_list if obj.pIndexData == pObjIndex][:1]
+    return search[0] if search else None
 
 # * Find an obj in a list.
 def get_obj_list( ch, argument, list ):
@@ -1028,17 +1028,31 @@ def get_obj_number( obj ):
         number = 0
     else:
         number = 1
- 
-    for o in obj.contains:
-        number += get_obj_number( o )
+    list = obj.contains[:]
+    counted = [obj]
+    for o in list:
+        number += 1
+        if o in counted:
+            print "BUG: Objects contain eachother. %s(%d) - %s(%d)" % (obj.short_descr, obj.pIndexData.vnum, o.short_descr, o.pIndexData.vnum)
+            break
+        counted.append(o)
+        list.extend(o.contains)
  
     return number
 #
 #* Return weight of an object, including weight of contents.
 def get_obj_weight( obj ):
     weight = obj.weight
-    for tobj in obj.contains:
-        weight += get_obj_weight( tobj ) * WEIGHT_MULT(obj) / 100
+    list = obj.contains[:]
+    counted = [obj]
+    for tobj in list:
+        if tobj in counted:
+            print "BUG: Objects contain eachother. %s(%d) - %s(%d)" % (obj.short_descr, obj.pIndexData.vnum, tobj.short_descr, tobj.pIndexData.vnum)
+            break
+        counted.append(tobj)
+
+        weight += tobj.weight * WEIGHT_MULT(obj) / 100
+        list.extend(tobj.contains)
     return weight
 
 def get_true_weight(obj):

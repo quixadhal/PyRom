@@ -30,8 +30,10 @@
  * Using Miniboa https://code.google.com/p/miniboa/
  ************/
 """
+from collections import OrderedDict
 from merc import *
 from magic import *
+
 class race_type:
     def __init__(self, name, pc_race, act, aff, off, imm, res, vuln, form, parts):
         self.name = name
@@ -45,7 +47,7 @@ class race_type:
         self.form=form
         self.parts=parts
 
-race_table = {}
+race_table = OrderedDict()
 race_table["unique"] = race_type("unique", False, 0, 0, 0, 0, 0, 0, 0, 0)
 race_table["human"] = race_type("human", True, 0, 0, 0, 0, 0, 0, A|H|M|V, A|B|C|D|E|F|G|H|I|J|K)
 race_table["elf"] = race_type("elf", True, 0, AFF_INFRARED, 0, 0, RES_CHARM, VULN_IRON, A|H|M|V, A|B|C|D|E|F|G|H|I|J|K)
@@ -87,7 +89,7 @@ class pc_race_type:
         self.max_stats = max_stats
         self.size = size
 
-pc_race_table={}
+pc_race_table= OrderedDict()
 pc_race_table['human'] = pc_race_type("human", "Human", 0, { 'mage':100, 'cleric':100, 'thief':100, 'warrior':100 }, [ "" ], [13, 13, 13, 13, 13], [18, 18, 18, 18, 18 ], SIZE_MEDIUM)
 pc_race_table['elf'] = pc_race_type("elf", " Elf ", 5, { 'mage':100, 'cleric':125, 'thief':100, 'warrior':120 }, ["sneak", "hide"], [12, 14, 13, 15, 11], [16, 20, 18, 21, 15], SIZE_SMALL)
 pc_race_table['dwarf'] = pc_race_type("dwarf", "Dwarf", 8, { 'mage':150, 'cleric':100, 'thief':125, 'warrior':100 }, ["berserk"], [14, 12, 14, 10, 15], [20, 16, 19, 14, 21], SIZE_MEDIUM)
@@ -112,7 +114,7 @@ class skill_type:
         self.msg_off = msg_off
         self.msg_obj = msg_obj
 
-skill_table = {}
+skill_table =  OrderedDict()
 skill_table["reserved"] = skill_type("reserved", { 'mage':99, 'cleric':99, 'thief':99, 'warrior':99 }, { 'mage':99, 'cleric':99, 'thief':99, 'warrior':99 }, 0, TAR_IGNORE, POS_STANDING, None, SLOT( 0), 0, 0, "", "", "")
 skill_table["acid blast"] = skill_type("acid blast", { 'mage':28, 'cleric':53, 'thief':35, 'warrior':32 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_acid_blast, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None, SLOT(70), 20, 12, "acid blast", "!Acid Blast!", "")
 skill_table["armor"] = skill_type("armor", { 'mage':7, 'cleric':2, 'thief':10, 'warrior':5 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_armor, TAR_CHAR_DEFENSIVE, POS_STANDING, None, SLOT( 1), 5, 12, "", "You feel less armored.", "")
@@ -255,7 +257,7 @@ class group_type:
         self.rating=rating
         self.spells=spells
 
-group_table = {}
+group_table =  OrderedDict()
 group_table["rom basics"] = group_type("rom basics", { 'mage':0, 'cleric':0, 'thief':0, 'warrior':0 }, ["scrolls", "staves", "wands", "recall"])
 group_table["mage basics"] = group_type("mage basics", { 'mage':0, 'cleric':-1, 'thief':-1, 'warrior':-1 }, ["dagger"])
 group_table["cleric basics"] = group_type("cleric basics", { 'mage':-1, 'cleric':0, 'thief':-1, 'warrior':-1 }, ["mace"])
@@ -300,7 +302,7 @@ class guild_type:
         self.base_group=base_group      # base skills gained       */
         self.default_group=default_group      # default skills gained    */
 
-guild_table={}
+guild_table= OrderedDict()
 guild_table["mage"] = guild_type("mage", "Mag", STAT_INT, OBJ_VNUM_SCHOOL_DAGGER, [3018,9618], 75, 20, 6, 6, 8, True, "mage basics", "mage default" )
 guild_table["cleric"] = guild_type("cleric", "Cle", STAT_WIS, OBJ_VNUM_SCHOOL_MACE, [3003,9619], 75, 20, 2, 7, 10, True, "cleric basics", "cleric default")
 guild_table["thief"] = guild_type("thief", "Thi", STAT_DEX, OBJ_VNUM_SCHOOL_DAGGER, [3028,9639], 75, 20, -4, 8, 13, False, "thief basics", "thief default")
@@ -313,7 +315,7 @@ class weapon_type:
         self.type=type
         self.gsn=gsn
 
-weapon_table = {}
+weapon_table =  OrderedDict()
 weapon_table['sword'] = weapon_type('sword',   OBJ_VNUM_SCHOOL_SWORD,  WEAPON_SWORD, 'sword'  )
 weapon_table['mace'] = weapon_type('mace',    OBJ_VNUM_SCHOOL_MACE,   WEAPON_MACE,   'mace'   )
 weapon_table['dagger'] = weapon_type('dagger',  OBJ_VNUM_SCHOOL_DAGGER, WEAPON_DAGGER,  'dagger' )
