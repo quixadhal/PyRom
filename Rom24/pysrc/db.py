@@ -34,7 +34,7 @@ import os, sys, random
 from settings import AREA_DIR, AREA_LIST
 from merc import *
 from handler import *
-
+from special import spec_table
 
 def boot_db():
     print "Loading Areas..."
@@ -737,7 +737,8 @@ def create_mobile( pMobIndex ):
     mob.short_descr = pMobIndex.short_descr
     mob.long_descr = pMobIndex.long_descr
     mob.description = pMobIndex.description
-    mob.spec_fun = pMobIndex.spec_fun
+    if pMobIndex.spec_fun:
+        mob.spec_fun = spec_table[pMobIndex.spec_fun]
     mob.prompt = None
 
     if pMobIndex.wealth == 0:

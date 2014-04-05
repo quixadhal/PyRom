@@ -44,11 +44,18 @@ def save_char_obj( ch ):
 
     
     pfile = os.path.join(PLAYER_DIR, ch.name+'.js')
-    fwrite = ch.__dict__
+    fwrite = ch.__dict__.copy()
     fwrite['in_room'] = ch.in_room.vnum
+    fwrite['was_in_room'] = ch.was_in_room.vnum
     del fwrite['desc']
     del fwrite['send']
-    fwrite['pcdata'] == ch.pcdata.__dict__
+    fwrite['carrying'] = [ o.__dict__.copy() for o in ch.carrying ]
+    for c in fwrite['carrying']:
+        c['pIndexData'] = c['pIndexData'].vnum
+        del c['carried_by']
+        fwrite['carrying'].extend([o.__dict__.copy() for o in c['contains']])
+
+    fwrite['pcdata'] = ch.pcdata.__dict__
     fwrite['guild'] = ch.guild.name
     fwrite['race'] = ch.race.name
 
@@ -75,7 +82,7 @@ def load_char_obj(d, name):
     found = False
     pfile = os.path.join(PLAYER_DIR, name+'.js')
     if os.path.isfile(pfile):
-        ch = json.load( open(pfile,'r').read() )
+        ch.__dict__ = json.load( open(pfile,'r') )
         found = True
 
     ch.desc = d

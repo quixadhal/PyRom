@@ -1114,14 +1114,15 @@ def can_see( ch, victim ):
     if IS_AFFECTED(victim, AFF_INVISIBLE) and not IS_AFFECTED(ch, AFF_DETECT_INVIS):
         return False
     # sneaking */
+
     if IS_AFFECTED(victim, AFF_SNEAK) and not IS_AFFECTED(ch,AFF_DETECT_HIDDEN) and victim.fighting == None:
         chance = get_skill(victim,"sneak")
         chance += get_curr_stat(victim,STAT_DEX) * 3/2
         chance -= get_curr_stat(ch,STAT_INT) * 2
         chance -= ch.level - victim.level * 3/2
 
-    if random.randint(1,99) < chance:
-        return False
+        if random.randint(1,99) < chance:
+            return False
 
     if IS_AFFECTED(victim, AFF_HIDE) and not IS_AFFECTED(ch, AFF_DETECT_HIDDEN) and victim.fighting == None:
         return False
