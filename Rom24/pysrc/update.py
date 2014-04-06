@@ -36,6 +36,7 @@ from act_wiz import wiznet
 from handler import *
 from comm import act
 from save import save_char_obj
+from fight import violence_update
 # * Advancement stuff.
 
 def advance_level( ch, hide ):
@@ -684,7 +685,7 @@ def update_handler( ):
         mobile_update   ( )
     if pulse_violence <= 0:
         pulse_violence  = PULSE_VIOLENCE
-    #    violence_update ( )
+        violence_update ( )
     if pulse_point <= 0:
         wiznet("TICK!",None,None,WIZ_TICKS,0,0)
         pulse_point     = PULSE_TICK

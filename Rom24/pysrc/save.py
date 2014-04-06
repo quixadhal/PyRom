@@ -46,7 +46,7 @@ def save_char_obj( ch ):
     pfile = os.path.join(PLAYER_DIR, ch.name+'.js')
     fwrite = ch.__dict__.copy()
     fwrite['in_room'] = ch.in_room.vnum
-    fwrite['was_in_room'] = ch.was_in_room.vnum
+    del fwrite['was_in_room']
     del fwrite['desc']
     del fwrite['send']
     fwrite['carrying'] = [ o.__dict__.copy() for o in ch.carrying ]

@@ -1318,5 +1318,8 @@ def check_blind( ch ):
 def get_mob_id():
     return time.time()
 
+def number_door( ):
+    return random.randint(0,5)
+    
 #ensureall do_functions become class methods
 import interp
