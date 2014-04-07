@@ -31,10 +31,12 @@
  ************/
 """
 import random
+from collections import OrderedDict
 from types import MethodType
 from merc import descriptor_list, greeting_list, POS_RESTING
 from db import boot_db
 from nanny import *
+from alias import *
 
 def game_loop(server):
     from update import update_handler
@@ -69,6 +71,75 @@ def init_descriptor(d):
 def close_socket(d):
     descriptor_list.remove(d)
     d.active = False
+
+ #* Bust a prompt (player settable prompt)
+ #* coded by Morgenes for Aldara Mud
+def bust_a_prompt( ch ):
+    dir_name = ["N","E","S","W","U","D"]
+    str = ch.prompt
+    if not str:
+        ch.send("<%dhp %dm %dmv> %s" % (ch.hit,ch.mana,ch.move,ch.prefix))
+        return
+    if IS_SET(ch.comm,COMM_AFK):
+        ch.send("<AFK> ")
+        return
+    replace = OrderedDict()
+    found = False
+    for pexit in ch.in_room.exit:
+        if pexit \
+        and pexit.to_room \
+        and (can_see_room(ch,pexit.to_room) or (IS_AFFECTED(ch,AFF_INFRARED) \
+        and not IS_AFFECTED(ch,AFF_BLIND))) \
+        and not IS_SET(pexit.exit_info,EX_CLOSED):
+            found = True
+            doors += dir_name[door]
+        if not found:
+            replace['%e'] = "none"
+        else:
+            replace['%e'] = doors
+    replace['%c'] = '\n\r'
+    replace['%h'] = '%s' % ch.hit
+    replace['%H'] = "%s" % ch.max_hit
+    replace['%m'] = "%d" % ch.mana
+    replace['%M'] = "%d" % ch.max_mana
+    replace['%v'] = "%d" % ch.move
+    replace['%V'] = "%d" % ch.max_move
+    replace['%x'] = "%d" % ch.exp
+    replace['%X'] = "%d" % (0 if IS_NPC(ch) else (ch.level + 1) * exp_per_level(ch,ch.pcdata.points) - ch.exp)
+    replace['%g'] = "%ld" % ch.gold
+    replace['%s'] = "%ld" % ch.silver
+    if ch.level > 9:
+        replace['%a'] = "%d" % ch.alignment
+    else:
+        replace['%a'] = "%s" % "good" if IS_GOOD(ch) else "evil" if IS_EVIL(ch) else "neutral"
+    
+    if ch.in_room:
+        if ( not IS_NPC(ch) and IS_SET(ch.act,PLR_HOLYLIGHT)) or \
+        (not IS_AFFECTED(ch,AFF_BLIND) and not room_is_dark( ch.in_room )):
+            replace['%r'] = ch.in_room.name 
+        else: 
+            replace['%r'] = "darkness"
+    else:
+        replace['%r'] = " "
+     
+    if IS_IMMORTAL( ch ) and ch.in_room:
+        replace['%R'] = "%d" % ch.in_room.vnum 
+    else:
+        replace['%R'] = " "
+    
+    if IS_IMMORTAL( ch ) and ch.in_room:
+        replace['%z'] = "%s" % ch.in_room.area.name
+    else:
+        replace['%z'] = " "
+        
+    #replace['%%'] = '%'
+    prompt = ch.prompt
+    prompt = mass_replace(prompt, replace)
+    ch.send(prompt)
+    if ch.prefix:
+        ch.send(ch.prefix)
+    return
+
 
 def is_reconnecting(d, name):
     for ch in player_list:

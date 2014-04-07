@@ -1,9 +1,9 @@
 """
 /***************************************************************************
- *  Original Diku Mud copyright=C) 1990, 1991 by Sebastian Hammer,        *
+ *  Original Diku Mud copyright (C) 1990, 1991 by Sebastian Hammer,        *
  *  Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
  *                                                                         *
- *  Merc Diku Mud improvments copyright=C) 1992, 1993 by Michael          *
+ *  Merc Diku Mud improvments copyright (C) 1992, 1993 by Michael          *
  *  Chastain, Michael Quan, and Mitchell Tse.                              *
  *                                                                         *
  *  In order to use any part of this Merc Diku Mud, you must comply with   *
@@ -17,13 +17,13 @@
  ***************************************************************************/
 
 /***************************************************************************
-*    ROM 2.4 is copyright 1993-1998 Russ Taylor                               *
-*    ROM has been brought to you by the ROM consortium                       *
-*        Russ Taylor=rtaylor@hypercube.org)                                   *
-*        Gabrielle Taylor=gtaylor@hypercube.org)                           *
-*        Brian Moore=zump@rom.org)                                           *
-*    By using this code, you have agreed to follow the terms of the           *
-*    ROM license, in the file Rom24/doc/rom.license                           *
+*   ROM 2.4 is copyright 1993-1998 Russ Taylor                             *
+*   ROM has been brought to you by the ROM consortium                      *
+*       Russ Taylor (rtaylor@hypercube.org)                                *
+*       Gabrielle Taylor (gtaylor@hypercube.org)                           *
+*       Brian Moore (zump@rom.org)                                         *
+*   By using this code, you have agreed to follow the terms of the         *
+*   ROM license, in the file Rom24/doc/rom.license                         *
 ***************************************************************************/
 /************
  * Ported to Python by Davion of MudBytes.net
@@ -73,7 +73,7 @@ class CHAR_DATA(object):
         self.short_descr = ""
         self.long_descr = ""
         self.description = ""
-        self.prompt = "<%%hhp %%mm %%vmv>"
+        self.prompt = "<%hhp %mm %vmv>"
         self.prefix = ""
         self.group = 0
         self.clan = 0
@@ -83,7 +83,7 @@ class CHAR_DATA(object):
         self.level =0
         self.trust =0
         self.played =0
-        self.lines =20
+        self.lines =22
         self.logon =0
         self.timer =0
         self.wait =0
@@ -115,7 +115,7 @@ class CHAR_DATA(object):
         self.alignment =0
         self.hitroll =0
         self.damroll =0
-        self.armor =[100, 100, 100, 100];
+        self.armor =[100, 100, 100, 100]
         self.wimpy =0
     # stats */
         self.perm_stat =[13 for x in range(MAX_STATS)]
@@ -1117,7 +1117,8 @@ def prefix_lookup(dict, arg):
 
 def mass_replace(str, dict):
     for k,v in dict.iteritems():
-        str.replace(k,v)
+        str = str.replace(k,v)
+    return str
 
 def PERS(ch, looker):
     if not can_see(looker, ch):
@@ -1320,6 +1321,8 @@ def get_mob_id():
 
 def number_door( ):
     return random.randint(0,5)
-    
+
+def CH(d): return d.original if d.original else d.character
+
 #ensureall do_functions become class methods
 import interp
