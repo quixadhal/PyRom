@@ -39,7 +39,7 @@ from save import load_char_obj
 from db import read_word, create_object
 from skills import *
 from act_wiz import wiznet
-from handler import get_trust, reset_char, obj_to_char, char_to_room
+from handler import get_trust, reset_char, obj_to_char, char_to_room, room_is_dark
 
 import comm
 
@@ -393,4 +393,5 @@ def con_read_motd(self):
         comm.act("$n has entered the game.",ch.pet,None,None,TO_ROOM)
 
 def con_playing(self):
-    pass
+    self.send("\n")
+    comm.bust_a_prompt(self.character)
