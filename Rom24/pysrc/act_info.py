@@ -56,7 +56,7 @@ where_name = [  "<used as light>     ",
                 "<floating nearby>   " ]
 
 # for  keeping track of the player count */
-int max_on = 0
+max_on = 0
 
 def format_obj_to_char( obj, ch, fShort ):
     buf = ''
@@ -135,9 +135,9 @@ def show_char_to_char_0( victim, ch ):
         buf += victim.pcdata.title
 
     if victim.position == POS_DEAD: buf += " is DEAD!!"
-    elif victim.position == POS_MORTAL: buf += " is mortally wounded." )
+    elif victim.position == POS_MORTAL: buf += " is mortally wounded."
     elif victim.position == POS_INCAP: buf += " is incapacitated."
-    elif victim.position == POS_STUNNED: buf += " is lying here stunned." )
+    elif victim.position == POS_STUNNED: buf += " is lying here stunned."
     elif victim.position == POS_SLEEPING: 
         if victim.on:
             if IS_SET(victim.on.value[2], SLEEP_AT):
@@ -159,7 +159,7 @@ def show_char_to_char_0( victim, ch ):
         else:
             buf += " is resting here."
     elif victim.position == POS_SITTING:  
-        if victim.on
+        if victim.on:
             if IS_SET(victim.on.value[2], SIT_AT):
                 buf += " is sitting at %s." % victim.on.short_descr
             elif IS_SET(victim.on.value[2], SIT_ON):
@@ -169,7 +169,7 @@ def show_char_to_char_0( victim, ch ):
         else:
             buf += " is sitting here."
     elif victim.position == POS_STANDING: 
-        if victim.on
+        if victim.on:
             if IS_SET(victim.on.value[2], STAND_AT):
                 buf += " is standing at %s." % victim.on.short_descr
             elif IS_SET(victim.on.value[2], STAND_ON):
@@ -180,7 +180,7 @@ def show_char_to_char_0( victim, ch ):
             strcat( buf, " is here." )               
     elif victim.position == POS_FIGHTING:
         buf += " is here, fighting "
-        if not victim.fighting
+        if not victim.fighting:
             buf += "thin air??"
         elif victim.fighting == ch:
             buf += "YOU!"
@@ -266,7 +266,7 @@ def do_scroll(self, argument):
     argument, arg = read_word(argument)
     
     if not arg:
-        if (ch.lines == 0)
+        if ch.lines == 0:
             ch.send("You do not page long messages.\n\r")
         else:
             ch.send("You currently display %d lines per page.\n\r" % ch.lines + 2)
@@ -504,8 +504,8 @@ def do_prompt(self, argument):
             ch.send("You will now see prompts.\n\r")
             SET_BIT(ch.comm,COMM_PROMPT)
         return
-    if argument.lower() == "all"
-        buf = "<%hhp %mm %vmv> ")
+    if argument.lower() == "all":
+        buf = "<%hhp %mm %vmv> "
     else:
         if len(argument) > 50:
             argument = argument[:50]
@@ -513,9 +513,9 @@ def do_prompt(self, argument):
         if buf.endswith("%c"):
             buf += " "
   
-   ch.prompt = buf
-   ch.send("Prompt set to %s\n\r" % ch.prompt )
-   return
+    ch.prompt = buf
+    ch.send("Prompt set to %s\n\r" % ch.prompt )
+    return
 
 def do_combine(self, argument):
     ch=self
@@ -789,7 +789,7 @@ def do_exits(self, argument):
                   "Too dark to tell" if room_is_dark( pexit.u1.to_room ) else pexit.u1.to_room.name )
             if IS_IMMORTAL(ch): buf += " (room %d)\n\r" % pexit.u1.to_room.vnum
             else: buf += "\n\r"
-    if not found
+    if not found:
         buf += " none" if fAuto else "None.\n\r"
 
     if fAuto:
@@ -813,8 +813,8 @@ def do_score(self, argument):
 
     if get_trust( ch ) != ch.level:
         ch.send("You are trusted at level %d.\n\r" % get_trust( ch ) )
-    ch.send("Race: %s  Sex: %s  Class: %s\n\r" % (ch.race.name, "sexless" if ch.sex == 0 "male" if ch.sex == 1 else "female",
-              "mobile" if IS_NPC(ch) ch.guild.name) )
+    ch.send("Race: %s  Sex: %s  Class: %s\n\r" % (ch.race.name, "sexless" if ch.sex == 0 else "male" if ch.sex == 1 else "female",
+              "mobile" if IS_NPC(ch) else ch.guild.name) )
     ch.send("You have %d/%d hit, %d/%d mana, %d/%d movement.\n\r" % ( ch.hit,  ch.max_hit,
               ch.mana, ch.max_mana, ch.move, ch.max_move) )
     ch.send("You have %d practices and %d training sessions.\n\r" % (ch.practice, ch.train) )
@@ -915,7 +915,7 @@ def do_affects(self, argument):
     if ch.affected:
         ch.send("You are affected by the following spells:\n\r")
         for paf in ch.affected:
-            if paf_last and paf.type == paf_last.type)
+            if paf_last and paf.type == paf_last.type:
                 if ch.level >= 20:
                     ch.send("                      ")
                 else:
@@ -949,8 +949,8 @@ def do_time(self, argument):
     elif day % 10 == 2: suf = "nd"
     elif day % 10 == 3: suf = "rd"
     else: suf = "th"
-    ch.send( "It is %d o'clock %s, Day of %s, %d%s the Month of %s.\n\r", % (
-        12 if (time_info.hour % 12 == 0) ? else time_info.hour % 12,
+    ch.send( "It is %d o'clock %s, Day of %s, %d%s the Month of %s.\n\r" % (
+        12 if (time_info.hour % 12 == 0) else time_info.hour % 12,
         "pm" if time_info.hour >= 12 else "am",
         day_name[day % 7], day, suf, month_name[time_info.month]) )
     #ch.send("ROM started up at %s\n\rThe system time is %s.\n\r", str_boot_time, (char *) ctime( &current_time )
@@ -1003,7 +1003,7 @@ def do_whois(self, argument):
         ch.send("You must provide a name.\n\r")
         return
     for d in descriptor_list[:]:
-        if d.connected != con_playing or not can_see(ch,d.character)
+        if d.connected != con_playing or not can_see(ch,d.character):
             continue
         wch = CH(d)
         if not can_see(ch,wch):
@@ -1111,7 +1111,7 @@ def do_who(self, argument):
         or ( fClan and not is_clan(wch) ) or ( fClanRestrict and not rgfClan[wch.clan.name]):
             continue
  
-        nMatch++
+        nMatch += 1
  
         #
         # Figure out what to print for class.
@@ -1143,7 +1143,7 @@ def do_who(self, argument):
 
 def do_count(self, argument):
     ch=self
-    count = len([d for d in descriptor_list if d.connected == con_playing and can_see(ch, CH(d))]):
+    count = len([d for d in descriptor_list if d.connected == con_playing and can_see(ch, CH(d))])
     max_on = max(count,max_on)
 
     if max_on == count:
@@ -1192,7 +1192,7 @@ def do_compare(self, argument):
     if not arg2:
         for obj2 in ch.carrying:
             if obj2.wear_loc != WEAR_NONE and  can_see_obj(ch,obj2) and  obj1.item_type == obj2.item_type \
-            and (obj1.wear_flags & obj2.wear_flags & ~ITEM_TAKE) != 0 )
+            and (obj1.wear_flags & obj2.wear_flags & ~ITEM_TAKE) != 0:
                 break
 
         if not obj2:
@@ -1221,7 +1221,7 @@ def do_compare(self, argument):
                 value1 = (1 + obj1.value[2]) * obj1.value[1]
             else:
                 value1 = obj1.value[1] + obj1.value[2]
-            if obj2.pIndexData.new_format
+            if obj2.pIndexData.new_format:
                 value2 = (1 + obj2.value[2]) * obj2.value[1]
             else:
                 value2 = obj2.value[1] + obj2.value[2]
@@ -1244,7 +1244,7 @@ def do_where(self, argument):
     if not arg:
         ch.send("Players near you:\n\r")
         found = False
-        for ( d = descriptor_list d d = d.next )
+        for d in descriptor_list:
             victim = CH(d)
             if d.connected == con_playing \
             and victim \
@@ -1256,12 +1256,12 @@ def do_where(self, argument):
             and can_see( ch, victim ):
                 found = True
                 ch.send("%-28s %s\n\r" % (victim.name, victim.in_room.name))
-        if not found
+        if not found:
             ch.send("None\n\r")
     
     else:
         found = False
-        for victim in char_list[:]
+        for victim in char_list[:]:
             if victim.in_room \
             and victim.in_room.area == ch.in_room.area \
             and not IS_AFFECTED(victim, AFF_HIDE) \
@@ -1408,12 +1408,12 @@ def do_practice(self, argument):
         skill = prefix_lookup(skill_table, argument)
         if not skill or not IS_NPC(ch) \
         and (ch.level < skill.skill_level[ch.guild.name] or ch.pcdata.learned[sn] < 1 \
-        or skill.rating[ch.guild.name] == 0)):
+        or skill.rating[ch.guild.name] == 0):
             ch.send("You can't practice that.\n\r")
             return
         adept = 100 if IS_NPC(ch) else ch.guild.skill_adept
 
-        if ch.pcdata.learned[skill.name] >= adept )
+        if ch.pcdata.learned[skill.name] >= adept:
             ch.send("You are already learned at %s.\n\r" % skill.name )
         else:
             ch.practice -= 1
