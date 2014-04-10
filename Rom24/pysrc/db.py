@@ -377,6 +377,7 @@ def load_socials(area):
         if word == '#0':
             return
         social = SOCIAL_DATA()
+        social.name = word
         area, line = read_to_eol(area)
 
         if line == '$':
