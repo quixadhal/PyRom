@@ -48,7 +48,7 @@ def do_delete(self, argument):
             ch.send("Delete status removed.\n\r")
             ch.pcdata.confirm_delete = False
             return
-        else::
+        else:
             pfile = os.path.join(PLAYER_DIR, ch.name+'.js')
             wiznet("$N turns $Mself into line noise.",ch,None,0,0,0)
             stop_fighting(ch,True)
@@ -150,7 +150,7 @@ def do_deaf(self, argument):
     if IS_SET(ch.comm, COMM_DEAF):
         ch.send("You can now hear tells again.\n\r")
         REMOVE_BIT(ch.comm,COMM_DEAF)
-   else: 
+    else: 
         ch.send("From now on, you won't hear tells.\n\r")
         SET_BIT(ch.comm,COMM_DEAF)
 
@@ -160,7 +160,7 @@ def do_quiet(self, argument):
     if IS_SET(ch.comm, COMM_QUIET):
         ch.send("Quiet mode removed.\n\r")
         REMOVE_BIT(ch.comm,COMM_QUIET)
-   else:
+    else:
         ch.send("From now on, you will only hear says and emotes.\n\r")
         SET_BIT(ch.comm,COMM_QUIET)
 # afk command */
@@ -169,7 +169,7 @@ def do_afk(self, argument):
     if IS_SET(ch.comm, COMM_AFK):
         ch.send("AFK mode removed. Type 'replay' to see tells.\n\r")
         REMOVE_BIT(ch.comm,COMM_AFK)
-   else:
+    else:
         ch.send("You are now in AFK mode.\n\r")
         SET_BIT(ch.comm,COMM_AFK)
 
@@ -533,7 +533,7 @@ def do_yell(self, argument):
         and d.character != ch \
         and d.character.in_room != None \
         and d.character.in_room.area == ch.in_room.area \
-        and not IS_SET(d.character.comm,COMM_QUIET) )
+        and not IS_SET(d.character.comm,COMM_QUIET):
             act("$n yells '$t'",ch,argument,d.character,TO_VICT)
 
 def do_emote(self, argument):
@@ -550,7 +550,6 @@ def do_emote(self, argument):
 
 def do_pmote(self, argument):
     ch=self
-    int matches = 0
 
     if not IS_NPC(ch) and IS_SET(ch.comm, COMM_NOEMOTE):
         ch.send("You can't show your emotions.\n\r")
@@ -560,12 +559,12 @@ def do_pmote(self, argument):
         return
     act( "$n $t", ch, argument, None, TO_CHAR )
     for vch in ch.in_room.people:
-        if (vch.desc == None or vch == ch)
+        if vch.desc == None or vch == ch:
             continue
         if vch.name not in argument:
             act("$N $t",vch,argument,ch,TO_CHAR)
             continue
-        temp = mass_replace({vch.name:"you"}, argument)
+        temp = mass_replace({vch.name:" you "}, argument)
         act("$N $t",vch,temp,ch,TO_CHAR)
     return
 
@@ -781,7 +780,7 @@ def do_quit(self, argument):
     id = ch.id
     d = ch.desc
     extract_char( ch, True )
-    if d != None
+    if d != None:
         close_socket( d )
 
     # toast evil cheating bastards */
@@ -940,8 +939,8 @@ def do_group(self, argument):
         leader = ch.leader if ch.leader else ch
         ch.send("%s's group:\n\r" % PERS(leader, ch) )
 
-        for ( gch = char_list gch != None gch = gch.next )
-            if ( is_same_group( gch, ch ) )
+        for gch in char_list:
+            if is_same_group( gch, ch ):
                 ch.send( "[%2d %s] %-16s %4d/%4d hp %4d/%4d mana %4d/%4d mv %5d xp\n\r" % (
                           gch.level,
                           "Mob" if IS_NPC(gch) else gch.guild.who_name,
@@ -994,7 +993,7 @@ def do_split(self, argument):
         amount_silver = int(arg1)
     if arg2.is_digit():
         amount_gold = int(arg2)
-    if ( amount_gold < 0 or amount_silver < 0)
+    if amount_gold < 0 or amount_silver < 0:
         ch.send("Your group wouldn't like that.\n\r")
         return
     if amount_gold == 0 and amount_silver == 0:
@@ -1024,13 +1023,13 @@ def do_split(self, argument):
     if share_silver > 0:
         ch.send("You split %d silver coins. Your share is %d silver.\n\r" % (amount_silver,share_silver + extra_silver))
     if share_gold > 0:
-        ch.send("You split %d gold coins. Your share is %d gold.\n\r" % (amount_gold,share_gold + extra_gold) )
-    if (share_gold == 0)
-        buf = "$n splits %d silver coins. Your share is %d silver." % (amount_silver,share_silver) )
-    elif: share_silver == 0:
-        buf = "$n splits %d gold coins. Your share is %d gold." % (amount_gold,share_gold) )
+        ch.send("You split %d gold coins. Your share is %d gold.\n\r" % (amount_gold,share_gold + extra_gold))
+    if share_gold == 0:
+        buf = "$n splits %d silver coins. Your share is %d silver." % (amount_silver,share_silver)
+    elif share_silver == 0:
+        buf = "$n splits %d gold coins. Your share is %d gold." % (amount_gold,share_gold)
     else:
-        buf = '$n splits %d silver and %d gold coins, giving you %d silver and %d gold.\n\r" $  amount_silver,amount_gold,share_silver,share_gold)
+        buf = '$n splits %d silver and %d gold coins, giving you %d silver and %d gold.\n\r' % (amount_silver,amount_gold,share_silver,share_gold)
 
     for gch in ch.in_room.people[:]:
         if gch != ch and is_same_group(gch,ch) and not IS_AFFECTED(gch,AFF_CHARM):

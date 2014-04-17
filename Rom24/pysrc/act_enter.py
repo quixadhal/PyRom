@@ -103,7 +103,7 @@ def do_enter(self, argument):
 
         ch.do_look("auto")
         # charges */
-        if (portal.value[0] > 0)
+        if portal.value[0] > 0:
             portal.value[0] -= 1
             if portal.value[0] == 0:
                 portal.value[0] = -1

@@ -1324,5 +1324,16 @@ def number_door( ):
 
 def CH(d): return d.original if d.original else d.character
 
+#Given a string like 14*foo, return 14 and 'foo'
+def mult_argument(argument):
+    if '*' not in argument:
+        return (1, argument)
+    mult = argument.find('*')
+    number = argument[:mult]
+    if not number.isdigit():
+        return (1, argument)
+    rest = argument[mult+1:]
+    return (int(number), rest)
+
 #ensureall do_functions become class methods
 import interp
