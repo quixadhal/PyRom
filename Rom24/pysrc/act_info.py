@@ -33,32 +33,34 @@
 from collections import OrderedDict
 from merc import *
 from nanny import con_playing, con_gen_groups
-from handler import get_trust, room_is_dark
+from handler import *
+from act_move import dir_name
+from db import get_extra_descr
 
-where_name = [  "<used as light>     ",
-                "<worn on finger>    ",
-                "<worn on finger>    ",
-                "<worn around neck>  ",
-                "<worn around neck>  ",
-                "<worn on torso>     ",
-                "<worn on head>      ",
-                "<worn on legs>      ",
-                "<worn on feet>      ",
-                "<worn on hands>     ",
-                "<worn on arms>      ",
-                "<worn as shield>    ",
-                "<worn about body>   ",
-                "<worn about waist>  ",
-                "<worn around wrist> ",
-                "<worn around wrist> ",
-                "<wielded>           ",
-                "<held>              ",
-                "<floating nearby>   " ]
+where_name = ["<used as light>     ",
+              "<worn on finger>    ",
+              "<worn on finger>    ",
+              "<worn around neck>  ",
+              "<worn around neck>  ",
+              "<worn on torso>     ",
+              "<worn on head>      ",
+              "<worn on legs>      ",
+              "<worn on feet>      ",
+              "<worn on hands>     ",
+              "<worn on arms>      ",
+              "<worn as shield>    ",
+              "<worn about body>   ",
+              "<worn about waist>  ",
+              "<worn around wrist> ",
+              "<worn around wrist> ",
+              "<wielded>           ",
+              "<held>              ",
+              "<floating nearby>   "]
 
 # for  keeping track of the player count */
 max_on = 0
 
-def format_obj_to_char( obj, ch, fShort ):
+def format_obj_to_char(obj, ch, fShort):
     buf = ''
     if (fShort and not obj.short_descr) or not obj.description:
         return buf
@@ -67,7 +69,7 @@ def format_obj_to_char( obj, ch, fShort ):
     if IS_AFFECTED(ch, AFF_DETECT_EVIL) \
          and IS_OBJ_STAT(obj, ITEM_EVIL): buf += "(Red Aura) "
     if IS_AFFECTED(ch, AFF_DETECT_GOOD) \
-    and  IS_OBJ_STAT(obj,ITEM_BLESS): buf += "(Blue Aura) "
+    and  IS_OBJ_STAT(obj, ITEM_BLESS): buf += "(Blue Aura) "
     if IS_AFFECTED(ch, AFF_DETECT_MAGIC) \
          and IS_OBJ_STAT(obj, ITEM_MAGIC): buf += "(Magical) "
     if IS_OBJ_STAT(obj, ITEM_GLOW): buf += "(Glowing) "
@@ -83,13 +85,13 @@ def format_obj_to_char( obj, ch, fShort ):
 
 # * Show a list to a character.
 # * Can coalesce duplicated items.
-def show_list_to_char( list, ch, fShort, fShowNothing ):
+def show_list_to_char(clist, ch, fShort, fShowNothing):
     if not ch.desc:
         return
     objects = OrderedDict()
-    for obj in list:
-        if obj.wear_loc == WEAR_NONE and can_see_obj( ch, obj ):
-            frmt = format_obj_to_char( obj, ch, fShort )
+    for obj in clist:
+        if obj.wear_loc == WEAR_NONE and can_see_obj(ch, obj):
+            frmt = format_obj_to_char(obj, ch, fShort)
             if frmt not in objects:
                 objects[frmt] = 1
             else:
@@ -98,20 +100,20 @@ def show_list_to_char( list, ch, fShort, fShowNothing ):
 
     if not objects and fShowNothing:
         if IS_NPC(ch) or IS_SET(ch.comm, COMM_COMBINE):
-            ch.send( "     " )
-        ch.send( "Nothing.\r\n" )
+            ch.send("     ")
+        ch.send("Nothing.\r\n")
 
      #* Output the formatted list.
-    for desc,count in objects:
+    for desc, count in objects:
         if IS_NPC(ch) or IS_SET(ch.comm, COMM_COMBINE) and count > 1:
-            ch.send("(%2d) %s\r\n" % (count,desc) )
+            ch.send("(%2d) %s\r\n" % (count, desc))
         else:
             for i in range(count):
                 ch.send("     %s\r\n")
 
-def show_char_to_char_0( victim, ch ):
+def show_char_to_char_0(victim, ch):
     buf = ''
-    if IS_SET(victim.comm,COMM_AFK): buf += "[AFK] "
+    if IS_SET(victim.comm, COMM_AFK): buf += "[AFK] "
     if IS_AFFECTED(victim, AFF_INVISIBLE): buf += "(Invis) "
     if victim.invis_level >= LEVEL_HERO: buf += "(Wizi) "
     if IS_AFFECTED(victim, AFF_HIDE): buf += "(Hide) "
@@ -121,15 +123,15 @@ def show_char_to_char_0( victim, ch ):
     if IS_EVIL(victim) and IS_AFFECTED(ch, AFF_DETECT_EVIL): buf += "(Red Aura) "
     if IS_GOOD(victim) and IS_AFFECTED(ch, AFF_DETECT_GOOD): buf += "(Golden Aura) "
     if IS_AFFECTED(victim, AFF_SANCTUARY): buf += "(White Aura) "
-    if not IS_NPC(victim) and IS_SET(victim.act, PLR_KILLER ): buf += "(KILLER) "
-    if not IS_NPC(victim) and IS_SET(victim.act, PLR_THIEF  ): buf += "(THIEF) "
+    if not IS_NPC(victim) and IS_SET(victim.act, PLR_KILLER): buf += "(KILLER) "
+    if not IS_NPC(victim) and IS_SET(victim.act, PLR_THIEF): buf += "(THIEF) "
 
     if victim.position == victim.start_pos and victim.long_descr:
         buf += victim.long_descr
         ch.send(buf)
         return
 
-    buf += PERS( victim, ch )
+    buf += PERS(victim, ch)
     if not IS_NPC(victim) and not IS_SET(ch.comm, COMM_BRIEF) \
     and victim.position == POS_STANDING and not ch.on:
         buf += victim.pcdata.title
@@ -138,27 +140,27 @@ def show_char_to_char_0( victim, ch ):
     elif victim.position == POS_MORTAL: buf += " is mortally wounded."
     elif victim.position == POS_INCAP: buf += " is incapacitated."
     elif victim.position == POS_STUNNED: buf += " is lying here stunned."
-    elif victim.position == POS_SLEEPING: 
+    elif victim.position == POS_SLEEPING:
         if victim.on:
             if IS_SET(victim.on.value[2], SLEEP_AT):
                 buf += " is sleeping at %s." % (victim.on.short_descr)
             elif IS_SET(victim.on.value[2], SLEEP_ON):
-                buf += " is sleeping on %s." % (victim.on.short_descr) 
+                buf += " is sleeping on %s." % (victim.on.short_descr)
             else:
                 buf += " is sleeping in %s." % (victim.on.short_descr)
-        else: 
-            strcat(buf," is sleeping here.")
-    elif victim.position == POS_RESTING:  
+        else:
+            buf += " is sleeping here."
+    elif victim.position == POS_RESTING:
         if victim.on:
             if IS_SET(victim.on.value[2], REST_AT):
                 buf += " is resting at %s." % victim.on.short_descr
             elif IS_SET(victim.on.value[2], REST_ON):
                 buf += " is resting on %s." % victim.on.short_descr
-            else: 
+            else:
                 buf += " is resting in %s." % victim.on.short_descr
         else:
             buf += " is resting here."
-    elif victim.position == POS_SITTING:  
+    elif victim.position == POS_SITTING:
         if victim.on:
             if IS_SET(victim.on.value[2], SIT_AT):
                 buf += " is sitting at %s." % victim.on.short_descr
@@ -168,7 +170,7 @@ def show_char_to_char_0( victim, ch ):
                 buf += " is sitting in %s." % victim.on.short_descr
         else:
             buf += " is sitting here."
-    elif victim.position == POS_STANDING: 
+    elif victim.position == POS_STANDING:
         if victim.on:
             if IS_SET(victim.on.value[2], STAND_AT):
                 buf += " is standing at %s." % victim.on.short_descr
@@ -177,7 +179,7 @@ def show_char_to_char_0( victim, ch ):
             else:
                 buf += " is standing in %s." % victim.on.short_descr
         else:
-            strcat( buf, " is here." )               
+            buf += " is here."
     elif victim.position == POS_FIGHTING:
         buf += " is here, fighting "
         if not victim.fighting:
@@ -185,27 +187,27 @@ def show_char_to_char_0( victim, ch ):
         elif victim.fighting == ch:
             buf += "YOU!"
         elif victim.in_room == victim.fighting.in_room:
-            buf += "%s." % PERS( victim.fighting, ch )
+            buf += "%s." % PERS(victim.fighting, ch)
         else:
             buf += "someone who left??"
     buf += "\n\r"
-    buf = buf[0].upper() + buf[1:]
+    buf = buf.capitalize()
     ch.send(buf)
     return
 
-def show_char_to_char_1( victim, ch ):
-    if can_see( victim, ch ):
+def show_char_to_char_1(victim, ch):
+    if can_see(victim, ch):
         if ch == victim:
-            act( "$n looks at $mself.",ch,None,None,TO_ROOM)
+            act("$n looks at $mself.", ch, None, None, TO_ROOM)
         else:
-            act( "$n looks at you.", ch, None, victim, TO_VICT    )
-            act( "$n looks at $N.",  ch, None, victim, TO_NOTVICT )
+            act("$n looks at you.", ch, None, victim, TO_VICT)
+            act("$n looks at $N.",  ch, None, victim, TO_NOTVICT)
     if victim.description:
         ch.send(victim.description)
     else:
-        act( "You see nothing special about $M.", ch, None, victim, TO_CHAR )
+        act("You see nothing special about $M.", ch, None, victim, TO_CHAR)
     if victim.max_hit > 0:
-        percent = ( 100 * victim.hit ) / victim.max_hit
+        percent = (100 * victim.hit) / victim.max_hit
     else:
         percent = -1
     buf = PERS(victim, ch)
@@ -224,22 +226,22 @@ def show_char_to_char_1( victim, ch ):
     found = False
     for iWear in range(MAX_WEAR):
         obj = get_eq_char(victim,iWear)
-        if obj and can_see_obj( ch, obj ):
+        if obj and can_see_obj(ch, obj):
             if not found:
                 ch.send("\n\r")
-                act( "$N is using:", ch, None, victim, TO_CHAR )
+                act("$N is using:", ch, None, victim, TO_CHAR)
                 found = True
             ch.send(where_name[iWear])
-            ch.send(format_obj_to_char( obj, ch, True ))
+            ch.send(format_obj_to_char(obj, ch, True))
             ch.send("\n\r")
 
     if victim != ch and not IS_NPC(ch) and random.randint(1,99) < get_skill(ch,gsn_peek):
         ch.send("\n\rYou peek at the inventory:\n\r")
         check_improve(ch,'peek',True,4)
-        show_list_to_char( victim.carrying, ch, True, True )
+        show_list_to_char(victim.carrying, ch, True, True)
     return
 
-def show_char_to_char( list, ch ):
+def show_char_to_char(list, ch):
     for rch in list:
         if rch == ch:
                 continue
@@ -247,12 +249,12 @@ def show_char_to_char( list, ch ):
         if get_trust(ch) < rch.invis_level:
             continue
 
-        if can_see( ch, rch ):
-            show_char_to_char_0( rch, ch );
-        elif room_is_dark( ch.in_room ) and IS_AFFECTED(rch, AFF_INFRARED ):
-            ch.send( "You see glowing red eyes watching YOU!\r\n")
+        if can_see(ch, rch):
+            show_char_to_char_0(rch, ch);
+        elif room_is_dark(ch.in_room) and IS_AFFECTED(rch, AFF_INFRARED):
+            ch.send("You see glowing red eyes watching YOU!\r\n")
 
-def check_blind( ch ):
+def check_blind(ch):
     if not IS_NPC(ch) and IS_SET(ch.act,PLR_HOLYLIGHT):
         return True
     if IS_AFFECTED(ch, AFF_BLIND):
@@ -401,10 +403,10 @@ def do_autoassist(self, argument):
     
     if IS_SET(ch.act, PLR_AUTOASSIST):
         ch.send("Autoassist removed.\n\r")
-        REMOVE_BIT(ch.act,PLR_AUTOASSIST)
+        ch.act = REMOVE_BIT(ch.act,PLR_AUTOASSIST)
     else:
         ch.send("You will now assist when needed.\n\r")
-        SET_BIT(ch.act,PLR_AUTOASSIST)
+        ch.act = SET_BIT(ch.act,PLR_AUTOASSIST)
 
 def do_autoexit(self, argument):
     ch=self
@@ -416,7 +418,7 @@ def do_autoexit(self, argument):
         REMOVE_BIT(ch.act,PLR_AUTOEXIT)
     else:
         ch.send("Exits will now be displayed.\n\r")
-        SET_BIT(ch.act,PLR_AUTOEXIT)
+        ch.act = SET_BIT(ch.act,PLR_AUTOEXIT)
 
 def do_autogold(self, argument):
     ch=self
@@ -428,7 +430,7 @@ def do_autogold(self, argument):
         REMOVE_BIT(ch.act,PLR_AUTOGOLD)
     else:
         ch.send("Automatic gold looting set.\n\r")
-        SET_BIT(ch.act,PLR_AUTOGOLD)
+        ch.act = SET_BIT(ch.act,PLR_AUTOGOLD)
 
 def do_autoloot(self, argument):
     ch=self
@@ -440,7 +442,7 @@ def do_autoloot(self, argument):
         REMOVE_BIT(ch.act,PLR_AUTOLOOT)
     else:
         ch.send("Automatic corpse looting set.\n\r")
-        SET_BIT(ch.act,PLR_AUTOLOOT)
+        ch.act = SET_BIT(ch.act,PLR_AUTOLOOT)
 
 def do_autosac(self, argument):
     ch=self
@@ -452,7 +454,7 @@ def do_autosac(self, argument):
         REMOVE_BIT(ch.act,PLR_AUTOSAC)
     else:
         ch.send("Automatic corpse sacrificing set.\n\r")
-        SET_BIT(ch.act,PLR_AUTOSAC)
+        ch.act = SET_BIT(ch.act,PLR_AUTOSAC)
 
 def do_autosplit(self, argument):
     ch=self
@@ -464,7 +466,7 @@ def do_autosplit(self, argument):
         REMOVE_BIT(ch.act,PLR_AUTOSPLIT)
     else:
         ch.send("Automatic gold splitting set.\n\r")
-        SET_BIT(ch.act,PLR_AUTOSPLIT)
+        ch.act = SET_BIT(ch.act,PLR_AUTOSPLIT)
 
 def do_brief(self, argument):
     ch=self
@@ -473,7 +475,7 @@ def do_brief(self, argument):
         REMOVE_BIT(ch.comm,COMM_BRIEF)
     else:
         ch.send("Short descriptions activated.\n\r")
-        SET_BIT(ch.comm,COMM_BRIEF)
+        ch.comm = SET_BIT(ch.comm,COMM_BRIEF)
 
 def do_compact(self, argument):
     ch=self
@@ -482,7 +484,7 @@ def do_compact(self, argument):
         REMOVE_BIT(ch.comm,COMM_COMPACT)
     else:
         ch.send("Compact mode set.\n\r")
-        SET_BIT(ch.comm,COMM_COMPACT)
+        ch.comm = SET_BIT(ch.comm,COMM_COMPACT)
 
 def do_show(self, argument):
     ch=self
@@ -491,7 +493,7 @@ def do_show(self, argument):
         REMOVE_BIT(ch.comm,COMM_SHOW_AFFECTS)
     else:
         ch.send("Affects will now be shown in score.\n\r")
-        SET_BIT(ch.comm,COMM_SHOW_AFFECTS)
+        ch.comm = SET_BIT(ch.comm,COMM_SHOW_AFFECTS)
 
 def do_prompt(self, argument):
     ch=self
@@ -502,7 +504,7 @@ def do_prompt(self, argument):
             REMOVE_BIT(ch.comm,COMM_PROMPT)
         else:
             ch.send("You will now see prompts.\n\r")
-            SET_BIT(ch.comm,COMM_PROMPT)
+            ch.comm = SET_BIT(ch.comm,COMM_PROMPT)
         return
     if argument.lower() == "all":
         buf = "<%hhp %mm %vmv> "
@@ -514,7 +516,7 @@ def do_prompt(self, argument):
             buf += " "
   
     ch.prompt = buf
-    ch.send("Prompt set to %s\n\r" % ch.prompt )
+    ch.send("Prompt set to %s\n\r" % ch.prompt)
     return
 
 def do_combine(self, argument):
@@ -524,7 +526,7 @@ def do_combine(self, argument):
         REMOVE_BIT(ch.comm,COMM_COMBINE)
     else:
         ch.send("Combined inventory selected.\n\r")
-        SET_BIT(ch.comm,COMM_COMBINE)
+        ch.comm = SET_BIT(ch.comm,COMM_COMBINE)
 
 def do_noloot(self, argument):
     ch=self
@@ -536,7 +538,7 @@ def do_noloot(self, argument):
         REMOVE_BIT(ch.act,PLR_CANLOOT)
     else:
         ch.send("Your corpse may now be looted.\n\r")
-        SET_BIT(ch.act,PLR_CANLOOT)
+        ch.act = SET_BIT(ch.act,PLR_CANLOOT)
 
 def do_nofollow(self, argument):
     ch=self
@@ -548,8 +550,8 @@ def do_nofollow(self, argument):
         REMOVE_BIT(ch.act,PLR_NOFOLLOW)
     else:
         ch.send("You no longer accept followers.\n\r")
-        SET_BIT(ch.act,PLR_NOFOLLOW)
-        die_follower( ch )
+        ch.act = SET_BIT(ch.act,PLR_NOFOLLOW)
+        die_follower(ch)
 
 def do_nosummon(self, argument):
     ch=self
@@ -559,53 +561,53 @@ def do_nosummon(self, argument):
             REMOVE_BIT(ch.imm_flags,IMM_SUMMON)
         else:
             ch.send("You are now immune to summoning.\n\r")
-            SET_BIT(ch.imm_flags,IMM_SUMMON)
+            ch.imm_flags = SET_BIT(ch.imm_flags,IMM_SUMMON)
     else:
         if IS_SET(ch.act, PLR_NOSUMMON):
             ch.send("You are no longer immune to summon.\n\r")
             REMOVE_BIT(ch.act,PLR_NOSUMMON)
         else:
             ch.send("You are now immune to summoning.\n\r")
-            SET_BIT(ch.act,PLR_NOSUMMON)
+            ch.act = SET_BIT(ch.act,PLR_NOSUMMON)
 
-def do_look( self, argument ):
+def do_look(self, argument):
     ch = self
     if not ch.desc:
         return
 
     if ch.position < POS_SLEEPING:
-        ch.send( "You can't see anything but stars!\r\n")
+        ch.send("You can't see anything but stars!\r\n")
         return
 
     if ch.position == POS_SLEEPING:
-        ch.send( "You can't see anything, you're sleeping!\n\r")
+        ch.send("You can't see anything, you're sleeping!\n\r")
         return
 
-    if not check_blind( ch ):
+    if not check_blind(ch):
         return
 
-    if not IS_NPC(ch) and not IS_SET(ch.act, PLR_HOLYLIGHT) and room_is_dark( ch.in_room ):
-        ch.send( "It is pitch black ... \n\r")
-        show_char_to_char( ch.in_room.people, ch )
+    if not IS_NPC(ch) and not IS_SET(ch.act, PLR_HOLYLIGHT) and room_is_dark(ch.in_room):
+        ch.send("It is pitch black ... \n\r")
+        show_char_to_char(ch.in_room.people, ch)
         return
 
-    argument, arg1 = read_word( argument )
-    argument, arg2 = read_word( argument )
+    argument, arg1 = read_word(argument)
+    argument, arg2 = read_word(argument)
     
     number, arg3 = number_argument(arg1)
     count = 0
 
     if not arg1 or arg1 == "auto":
         # 'look' or 'look auto' */
-        ch.send( ch.in_room.name )
+        ch.send(ch.in_room.name)
 
         if IS_IMMORTAL(ch) and (IS_NPC(ch) or IS_SET(ch.act,PLR_HOLYLIGHT)):
             ch.send(" [Room %d]" % ch.in_room.vnum)
 
         ch.send("\r\n")
 
-        if not arg1[0] or ( not IS_NPC(ch) and not IS_SET(ch.comm, COMM_BRIEF) ):
-            ch.send( "  %s" % ch.in_room.description )
+        if not arg1 or (not IS_NPC(ch) and not IS_SET(ch.comm, COMM_BRIEF)):
+            ch.send("  %s" % ch.in_room.description)
     
 
         if not IS_NPC(ch) and IS_SET(ch.act, PLR_AUTOEXIT):
@@ -613,19 +615,19 @@ def do_look( self, argument ):
             ch.do_exits("auto")
 
 
-        show_list_to_char( ch.in_room.contents, ch, False, False )
-        show_char_to_char( ch.in_room.people,   ch )
+        show_list_to_char(ch.in_room.contents, ch, False, False)
+        show_char_to_char(ch.in_room.people,   ch)
         return
 
     if arg1 == "i" or arg1 == "in" or arg1 == "on":
         # 'look in' */
         if not arg2:
-            ch.send( "Look in what?\n\r")
+            ch.send("Look in what?\n\r")
             return
     
         obj = get_obj_here(ch, arg2)
         if not obj:
-            ch.send( "You do not see that here.\n\r" )
+            ch.send("You do not see that here.\n\r")
             return
         
         if item_type == ITEM_DRINK_CON:
@@ -638,47 +640,47 @@ def do_look( self, argument ):
                 amnt = "abount half-"
             else:
                 amnt = "more than half-"
-            ch.send("It's %sfilled with a %s liquid.\n\r" % ( amnt, liq_table[obj.value[2]].liq_color ) )
+            ch.send("It's %sfilled with a %s liquid.\n\r" % (amnt, liq_table[obj.value[2]].liq_color))
         elif item_type == ITEM_CONTAINER or item_type == ITEM_CORPSE_NPC or item_type == ITEM_CORPSE_PC:
             if IS_SET(obj.value[1], CONT_CLOSED):
-                ch.send( "It is closed.\n\r" )
+                ch.send("It is closed.\n\r")
                 return
-            act( "$p holds:", ch, obj, None, TO_CHAR )
-            show_list_to_char( obj.contains, ch, True, True )
+            act("$p holds:", ch, obj, None, TO_CHAR)
+            show_list_to_char(obj.contains, ch, True, True)
             return
         else:
             ch.send("That is not a container.\r\n")
             return
     victim = get_char_room(ch, arg1)
     if victim:
-        show_char_to_char_1( victim, ch )
+        show_char_to_char_1(victim, ch)
         return
     obj_list = ch.carrying
     obj_list.extend(ch.in_room.contents)
     for obj in obj_list:
-        if can_see_obj( ch, obj ):
+        if can_see_obj(ch, obj):
             #player can see object */
-            pdesc = get_extra_descr( arg3, obj.extra_descr )
+            pdesc = get_extra_descr(arg3, obj.extra_descr)
 
             if pdesc:
                 count += 1
                 if count == number:
-                    ch.send( pdesc )
+                    ch.send(pdesc)
                     return
             else: continue
         
-            pdesc = get_extra_descr( arg3, obj.pIndexData.extra_descr )
+            pdesc = get_extra_descr(arg3, obj.pIndexData.extra_descr)
             if pdesc:
                 count += 1
                 if count == number:
-                    ch.send( pdesc )
+                    ch.send(pdesc)
                     return
             else: continue
         
             if arg3.lower() in obj.name.lower:
                 count += 1
                 if count == number:
-                    ch.send( "%s\r\n" % obj.description )
+                    ch.send("%s\r\n" % obj.description)
                     return
  
 
@@ -703,26 +705,26 @@ def do_look( self, argument ):
     elif "up".startswith(arg1): door = 4
     elif "down".startswith(arg1): door = 5
     else:
-        ch.send( "You do not see that here.\n\r" )
+        ch.send("You do not see that here.\n\r")
         return
     
 
     # 'look direction' */
     if door not in ch.in_room.exit or not ch.in_room.exit[door]:
-        ch.send( "Nothing special there.\n\r")
+        ch.send("Nothing special there.\n\r")
         return
     pexit = ch.in_room.exit[door]
 
     if pexit.description:
-        ch.send( pexit.description )
+        ch.send(pexit.description)
     else:
-        ch.send( "Nothing special there.\n\r" )
+        ch.send("Nothing special there.\n\r")
 
     if pexit.keyword and pexit.keyword.strip():
         if IS_SET(pexit.exit_info, EX_CLOSED):
-            act( "The $d is closed.", ch, None, pexit.keyword, TO_CHAR )
+            act("The $d is closed.", ch, None, pexit.keyword, TO_CHAR)
         elif IS_SET(pexit.exit_info, EX_ISDOOR):
-            act( "The $d is open.",   ch, None, pexit.keyword, TO_CHAR )
+            act("The $d is open.",   ch, None, pexit.keyword, TO_CHAR)
     return
 
 # RT added back for the hell of it */
@@ -732,13 +734,13 @@ def do_read(self, argument):
 
 def do_examine(self, argument):
     ch=self
-    argument, arg = read_word( argument )
+    argument, arg = read_word(argument)
     if not arg:
         ch.send("Examine what?\n\r")
         return
-    ch.do_look(arg )
+    ch.do_look(arg)
     buf = ""
-    obj = get_obj_here( ch, arg )
+    obj = get_obj_here(ch, arg)
     if obj:
         if obj.item_type == ITEM_JUKEBOX:
             ch.do_play("list")
@@ -769,7 +771,7 @@ def do_exits(self, argument):
     ch=self
     fAuto  = argument == "auto"
     buf = ''
-    if not check_blind( ch ):
+    if not check_blind(ch):
         return
     if fAuto:
         buf += "[Exits:"
@@ -779,16 +781,16 @@ def do_exits(self, argument):
         buf += "Obvious exits:\n\r"
 
     found = False
-    for pexit in ch.in_room.exit:
-        if pexit and pexit.u1.to_room and can_see_room(ch,pexit.u1.to_room) and not IS_SET(pexit.exit_info, EX_CLOSED):
+    for door, pexit in enumerate(ch.in_room.exit):
+        if pexit and pexit.to_room and can_see_room(ch,pexit.to_room) and not IS_SET(pexit.exit_info, EX_CLOSED):
             found = True
             if fAuto:
                 buf += " %s" % dir_name[door]
             else:
-                buf += "%-5s - %s" % ( dir_name[door].capitalize(), 
-                  "Too dark to tell" if room_is_dark( pexit.u1.to_room ) else pexit.u1.to_room.name )
-            if IS_IMMORTAL(ch): buf += " (room %d)\n\r" % pexit.u1.to_room.vnum
-            else: buf += "\n\r"
+                buf += "%-5s - %s" % (dir_name[door].capitalize(), 
+                  "Too dark to tell" if room_is_dark(pexit.to_room) else pexit.to_room.name)
+                if IS_IMMORTAL(ch): buf += " (room %d)\n\r" % pexit.to_room.vnum
+                else: buf += "\n\r"
     if not found:
         buf += " none" if fAuto else "None.\n\r"
 
@@ -804,40 +806,40 @@ def do_worth(self, argument):
         ch.send(buf)
         return
     ch.send("You have %ld gold, %ld silver, and %d experience (%d exp to level).\n\r" % (
-        ch.gold, ch.silver,ch.exp, (ch.level + 1) * exp_per_level(ch,ch.pcdata.points) - ch.exp) )
+        ch.gold, ch.silver,ch.exp, (ch.level + 1) * exp_per_level(ch,ch.pcdata.points) - ch.exp))
 
 def do_score(self, argument):
     ch=self
     ch.send("You are %s%s, level %d, %d years old (%d hours).\n\r" % (ch.name, "" if IS_NPC(ch) else ch.pcdata.title,
-            ch.level, get_age(ch), ( ch.played + (int) (current_time - ch.logon) ) / 3600) )
+            ch.level, get_age(ch), (ch.played + (int) (current_time - ch.logon)) / 3600))
 
-    if get_trust( ch ) != ch.level:
-        ch.send("You are trusted at level %d.\n\r" % get_trust( ch ) )
+    if get_trust(ch) != ch.level:
+        ch.send("You are trusted at level %d.\n\r" % get_trust(ch))
     ch.send("Race: %s  Sex: %s  Class: %s\n\r" % (ch.race.name, "sexless" if ch.sex == 0 else "male" if ch.sex == 1 else "female",
-              "mobile" if IS_NPC(ch) else ch.guild.name) )
-    ch.send("You have %d/%d hit, %d/%d mana, %d/%d movement.\n\r" % ( ch.hit,  ch.max_hit,
-              ch.mana, ch.max_mana, ch.move, ch.max_move) )
-    ch.send("You have %d practices and %d training sessions.\n\r" % (ch.practice, ch.train) )
-    ch.send("You are carrying %d/%d items with weight %ld/%d pounds.\n\r" % ( ch.carry_number, can_carry_n(ch),
-              get_carry_weight(ch) / 10, can_carry_w(ch) /10 ) )
-    ch.send( "Str: %d(%d)  Int: %d(%d)  Wis: %d(%d)  Dex: %d(%d)  Con: %d(%d)\n\r" % (
+              "mobile" if IS_NPC(ch) else ch.guild.name))
+    ch.send("You have %d/%d hit, %d/%d mana, %d/%d movement.\n\r" % (ch.hit,  ch.max_hit,
+              ch.mana, ch.max_mana, ch.move, ch.max_move))
+    ch.send("You have %d practices and %d training sessions.\n\r" % (ch.practice, ch.train))
+    ch.send("You are carrying %d/%d items with weight %ld/%d pounds.\n\r" % (ch.carry_number, can_carry_n(ch),
+              get_carry_weight(ch) / 10, can_carry_w(ch) /10))
+    ch.send("Str: %d(%d)  Int: %d(%d)  Wis: %d(%d)  Dex: %d(%d)  Con: %d(%d)\n\r" % (
               ch.perm_stat[STAT_STR], get_curr_stat(ch,STAT_STR),
               ch.perm_stat[STAT_INT], get_curr_stat(ch,STAT_INT),
               ch.perm_stat[STAT_WIS], get_curr_stat(ch,STAT_WIS),
               ch.perm_stat[STAT_DEX], get_curr_stat(ch,STAT_DEX),
-              ch.perm_stat[STAT_CON], get_curr_stat(ch,STAT_CON) ) )
+              ch.perm_stat[STAT_CON], get_curr_stat(ch,STAT_CON)))
 
-    ch.send("You have scored %d exp, and have %ld gold and %ld silver coins.\n\r" %( ch.exp,  ch.gold, ch.silver ))
+    ch.send("You have scored %d exp, and have %ld gold and %ld silver coins.\n\r" %(ch.exp,  ch.gold, ch.silver))
     # RT shows exp to level */
     if not IS_NPC(ch) and ch.level < LEVEL_HERO:
         ch.send("You need %d exp to level.\n\r" % ((ch.level + 1) * exp_per_level(ch,ch.pcdata.points) - ch.exp))
-    ch.send("Wimpy set to %d hit points.\n\r" % ch.wimpy )
+    ch.send("Wimpy set to %d hit points.\n\r" % ch.wimpy)
     if not IS_NPC(ch) and ch.pcdata.condition[COND_DRUNK]   > 10:
-        ch.send( "You are drunk.\n\r")
+        ch.send("You are drunk.\n\r")
     if not IS_NPC(ch) and ch.pcdata.condition[COND_THIRST] ==  0:
         ch.send("You are thirsty.\n\r")   
     if not IS_NPC(ch) and ch.pcdata.condition[COND_HUNGER]   ==  0:
-      ch.send( "You are hungry.\n\r")
+      ch.send("You are hungry.\n\r")
 
     if ch.position == POS_DEAD: ch.send("You are DEAD!!\n\r")
     elif ch.position == POS_MORTAL: ch.send("You are mortally wounded.\n\r")
@@ -894,15 +896,15 @@ def do_score(self, argument):
     if ch.level >= 15:
         ch.send("Hitroll: %d  Damroll: %d.\n\r" % (GET_HITROLL(ch), GET_DAMROLL(ch)))
     if ch.level >= 10:
-        ch.send("Alignment: %d.  " % ch.alignment )
+        ch.send("Alignment: %d.  " % ch.alignment)
     ch.send("You are ")
     if ch.alignment >  900: ch.send("angelic.\n\r")
     elif ch.alignment >  700: ch.send("saintly.\n\r")
-    elif ch.alignment >  350: ch.send( "good.\n\r")
-    elif ch.alignment >  100: ch.send( "kind.\n\r")
+    elif ch.alignment >  350: ch.send("good.\n\r")
+    elif ch.alignment >  100: ch.send("kind.\n\r")
     elif ch.alignment > -100: ch.send("neutral.\n\r")
-    elif ch.alignment > -350: ch.send( "mean.\n\r")
-    elif ch.alignment > -700: ch.send( "evil.\n\r")
+    elif ch.alignment > -350: ch.send("mean.\n\r")
+    elif ch.alignment > -700: ch.send("evil.\n\r")
     elif ch.alignment > -900: ch.send("demonic.\n\r")
     else: ch.send("satanic.\n\r")
 
@@ -921,13 +923,13 @@ def do_affects(self, argument):
                 else:
                     continue
             else:
-                ch.send("Spell: %-15s" % paf.type.name )
+                ch.send("Spell: %-15s" % paf.type.name)
             if ch.level >= 20:
-                ch.send(": modifies %s by %d " % ( affect_loc_name( paf.location ), paf.modifier) )
+                ch.send(": modifies %s by %d " % (affect_loc_name(paf.location), paf.modifier))
             if paf.duration == -1:
                 ch.send("permanently")
             else:
-                ch.send("for %d hours" % paf.duration )
+                ch.send("for %d hours" % paf.duration)
             ch.send("\n\r")
             paf_last = paf
     else: 
@@ -949,11 +951,11 @@ def do_time(self, argument):
     elif day % 10 == 2: suf = "nd"
     elif day % 10 == 3: suf = "rd"
     else: suf = "th"
-    ch.send( "It is %d o'clock %s, Day of %s, %d%s the Month of %s.\n\r" % (
+    ch.send("It is %d o'clock %s, Day of %s, %d%s the Month of %s.\n\r" % (
         12 if (time_info.hour % 12 == 0) else time_info.hour % 12,
         "pm" if time_info.hour >= 12 else "am",
-        day_name[day % 7], day, suf, month_name[time_info.month]) )
-    #ch.send("ROM started up at %s\n\rThe system time is %s.\n\r", str_boot_time, (char *) ctime( &current_time )
+        day_name[day % 7], day, suf, month_name[time_info.month]))
+    #ch.send("ROM started up at %s\n\rThe system time is %s.\n\r", str_boot_time, (char *) ctime(&current_time)
     ch.send(buf)
     return
 
@@ -964,11 +966,11 @@ def do_weather(self, argument):
         ch.send("You can't see the weather indoors.\n\r")
         return
 
-    ch.send("The sky is %s and %s.\n\r" % ( sky_look[weather_info.sky], 
-        "a warm southerly breeze blows" if weather_info.change >= 0 else "a cold northern gust blows" ) )
+    ch.send("The sky is %s and %s.\n\r" % (sky_look[weather_info.sky], 
+        "a warm southerly breeze blows" if weather_info.change >= 0 else "a cold northern gust blows"))
     return
 
-def do_help( self, argument ):
+def do_help(self, argument):
     ch = self
     if not argument:
         argument = "summary"
@@ -989,7 +991,7 @@ def do_help( self, argument ):
             break
 
     if not found:
-        self.send( "No help on that word.\n\r")
+        self.send("No help on that word.\n\r")
 
 
 # whois command */
@@ -1033,7 +1035,7 @@ def do_whois(self, argument):
                     "(KILLER) " if IS_SET(wch.act,PLR_KILLER) else "",
                     "(THIEF) " if IS_SET(wch.act,PLR_THIEF) else "",
                     wch.name, 
-                    "" if IS_NPC(wch) else wch.pcdata.title) )
+                    "" if IS_NPC(wch) else wch.pcdata.title))
 
     if found:
         ch.send("No one of that name is playing.\n\r")
@@ -1063,8 +1065,8 @@ def do_who(self, argument):
             break
         if arg.is_digit():
             nNumber +=1
-            if nNumber == 1: iLevelLower = int( arg )
-            elif nNumber == 2: iLevelUpper = int( arg )
+            if nNumber == 1: iLevelLower = int(arg)
+            elif nNumber == 2: iLevelUpper = int(arg)
             else:
                 ch.send("Only two level numbers allowed.\n\r")
                 return
@@ -1096,7 +1098,7 @@ def do_who(self, argument):
     for d in descriptor_list:
         #* Check for match against restrictions.
         #* Don't use trust as that exposes trusted mortals.
-        if d.connected != con_playing or not can_see( ch, d.character ):
+        if d.connected != con_playing or not can_see(ch, d.character):
             continue
  
         wch   = CH(d)
@@ -1105,10 +1107,10 @@ def do_who(self, argument):
             continue
 
         if wch.level < iLevelLower or wch.level > iLevelUpper \
-        or ( fImmortalOnly  and wch.level < LEVEL_IMMORTAL ) \
-        or ( fClassRestrict and not rgfClass[wch.guild.name] ) \
-        or ( fRaceRestrict and not rgfRace[wch.race.name]) \
-        or ( fClan and not is_clan(wch) ) or ( fClanRestrict and not rgfClan[wch.clan.name]):
+        or (fImmortalOnly  and wch.level < LEVEL_IMMORTAL) \
+        or (fClassRestrict and not rgfClass[wch.guild.name]) \
+        or (fRaceRestrict and not rgfRace[wch.race.name]) \
+        or (fClan and not is_clan(wch)) or (fClanRestrict and not rgfClan[wch.clan.name]):
             continue
  
         nMatch += 1
@@ -1137,8 +1139,8 @@ def do_who(self, argument):
                 "(KILLER) " if IS_SET(wch.act,PLR_KILLER) else "",
                 "(THIEF) " if IS_SET(wch.act,PLR_THIEF) else "",
                 wch.name, 
-                "" if IS_NPC(wch) else wch.pcdata.title) )
-    ch.send("\n\rPlayers found: %d\n\r" % nMatch )
+                "" if IS_NPC(wch) else wch.pcdata.title))
+    ch.send("\n\rPlayers found: %d\n\r" % nMatch)
     return
 
 def do_count(self, argument):
@@ -1154,7 +1156,7 @@ def do_count(self, argument):
 def do_inventory(self, argument):
     ch=self
     ch.send("You are carrying:\n\r")
-    show_list_to_char( ch.carrying, ch, True, True )
+    show_list_to_char(ch.carrying, ch, True, True)
     return
 
 def do_equipment(self, argument):
@@ -1162,13 +1164,13 @@ def do_equipment(self, argument):
     ch.send("You are using:\n\r")
     found = False
     for iWear in range(MAX_WEAR):
-        obj = get_eq_char( ch, iWear )
+        obj = get_eq_char(ch, iWear)
         if not obj:
             continue
 
         ch.send(where_name[iWear])
-        if can_see_obj( ch, obj ):
-            ch.send(format_obj_to_char( obj, ch, True ))
+        if can_see_obj(ch, obj):
+            ch.send(format_obj_to_char(obj, ch, True))
             ch.send("\n\r")
         else:
             ch.send("something.\n\r")
@@ -1184,7 +1186,7 @@ def do_compare(self, argument):
     if not arg1:
         ch.send("Compare what to what?\n\r")
         return
-    obj1 = get_obj_carry( ch, arg1, ch )        
+    obj1 = get_obj_carry(ch, arg1, ch)        
     if not obj1:
         ch.send("You do not have that item.\n\r")
         return
@@ -1230,12 +1232,12 @@ def do_compare(self, argument):
         if value1 == value2: msg = "$p and $P look about the same."
         elif value1 > value2: msg = "$p looks better than $P."
         else: msg = "$p looks worse than $P."
-    act( msg, ch, obj1, obj2, TO_CHAR )
+    act(msg, ch, obj1, obj2, TO_CHAR)
     return
 
 def do_credits(self, argument):
     ch=self
-    ch.do_help("diku" )
+    ch.do_help("diku")
     return
 
 def do_where(self, argument):
@@ -1253,7 +1255,7 @@ def do_where(self, argument):
             and not IS_SET(victim.in_room.room_flags,ROOM_NOWHERE) \
             and (is_room_owner(ch,victim.in_room) or not room_is_private(victim.in_room)) \
             and victim.in_room.area == ch.in_room.area \
-            and can_see( ch, victim ):
+            and can_see(ch, victim):
                 found = True
                 ch.send("%-28s %s\n\r" % (victim.name, victim.in_room.name))
         if not found:
@@ -1266,13 +1268,13 @@ def do_where(self, argument):
             and victim.in_room.area == ch.in_room.area \
             and not IS_AFFECTED(victim, AFF_HIDE) \
             and not IS_AFFECTED(victim, AFF_SNEAK) \
-            and can_see( ch, victim ) \
+            and can_see(ch, victim) \
             and arg in victim.name.lower():
                 found = True
                 ch.send("%-28s %s\n\r" % (PERS(victim, ch), victim.in_room.name))
                 break
         if not found:
-            act( "You didn't find any $T.", ch, None, arg, TO_CHAR )
+            act("You didn't find any $T.", ch, None, arg, TO_CHAR)
     return
 def do_consider(self, argument):
     ch=self
@@ -1281,7 +1283,7 @@ def do_consider(self, argument):
     if not arg:
         ch.send("Consider killing whom?\n\r")
         return
-    victim = get_char_room( ch, arg )
+    victim = get_char_room(ch, arg)
     if not victim:
         ch.send("They're not here.\n\r")
         return
@@ -1298,10 +1300,10 @@ def do_consider(self, argument):
     elif diff <= 4: msg = "$N says 'Do you feel lucky, punk?'."
     elif diff <= 9: msg = "$N laughs at you mercilessly."
     else: msg = "Death will thank you for your gift."
-    act( msg, ch, None, victim, TO_CHAR )
+    act(msg, ch, None, victim, TO_CHAR)
     return
 
-def set_title( ch, title ):
+def set_title(ch, title):
     if IS_NPC(ch):
         print "BUG: Set_title: NPC."
         return
@@ -1324,7 +1326,7 @@ def do_title(self, argument):
     if len(argument) > 45:
         argument = argument[:45]
 
-    set_title( ch, argument )
+    set_title(ch, argument)
     ch.send("Ok.\n\r")
 
 def do_description(self, argument):
@@ -1340,7 +1342,7 @@ def do_description(self, argument):
             ch.description = '\n'.join(buf)  
             if len(buf) > 1:
                 ch.send("Your description is:\n\r")
-                ch.send( ch.description if ch.description else "(None).\n\r")
+                ch.send(ch.description if ch.description else "(None).\n\r")
                 return
             else:
                 ch.description = ""
@@ -1364,13 +1366,13 @@ def do_report(self, argument):
               ch.hit,  ch.max_hit,
               ch.mana, ch.max_mana,
               ch.move, ch.max_move,
-              ch.exp   ) )
+              ch.exp  ))
     buf = "$n says 'I have %d/%d hp %d/%d mana %d/%d mv %d xp.'" % (
               ch.hit,  ch.max_hit,
               ch.mana, ch.max_mana,
               ch.move, ch.max_move,
-              ch.exp   )
-    act( buf, ch, None, None, TO_ROOM )
+              ch.exp  )
+    act(buf, ch, None, None, TO_ROOM)
     return
 
 def do_practice(self, argument):
@@ -1383,14 +1385,14 @@ def do_practice(self, argument):
             if ch.level < skill.skill_level[ch.guild.name] or ch.pcdata.learned[sn] < 1: # skill is not known */)
                 continue
 
-            ch.send("%-18s %3d%%  " % ( skill.name, ch.pcdata.learned[sn] ) )
+            ch.send("%-18s %3d%%  " % (skill.name, ch.pcdata.learned[sn]))
             col += 1
             if col % 3 == 0:
                 ch.send("\n\r")
         if col % 3 != 0:
             ch.send("\n\r")
 
-        ch.send("You have %d practice sessions left.\n\r" % ch.practice )
+        ch.send("You have %d practice sessions left.\n\r" % ch.practice)
     else:
         if not IS_AWAKE(ch):
            ch.send("In your dreams, or what?\n\r")
@@ -1414,26 +1416,26 @@ def do_practice(self, argument):
         adept = 100 if IS_NPC(ch) else ch.guild.skill_adept
 
         if ch.pcdata.learned[skill.name] >= adept:
-            ch.send("You are already learned at %s.\n\r" % skill.name )
+            ch.send("You are already learned at %s.\n\r" % skill.name)
         else:
             ch.practice -= 1
             ch.pcdata.learned[skill.name] += int_app[get_curr_stat(ch,STAT_INT)].learn / skill.rating[ch.guild.name]
             if ch.pcdata.learned[skill.name] < adept:
-                act( "You practice $T.", ch, None, skill_table[sn].name, TO_CHAR )
-                act( "$n practices $T.", ch, None, skill_table[sn].name, TO_ROOM )
+                act("You practice $T.", ch, None, skill_table[sn].name, TO_CHAR)
+                act("$n practices $T.", ch, None, skill_table[sn].name, TO_ROOM)
             else:
                 ch.pcdata.learned[skill.name] = adept
-                act( "You are now learned at $T.", ch, None, skill.name, TO_CHAR )
-                act( "$n is now learned at $T.", ch, None, skill.name, TO_ROOM )
+                act("You are now learned at $T.", ch, None, skill.name, TO_CHAR)
+                act("$n is now learned at $T.", ch, None, skill.name, TO_ROOM)
     return
 # * 'Wimpy' originally by Dionysos.
 def do_wimpy(self, argument):
     ch=self
-    argument, arg = read_word( argument )
+    argument, arg = read_word(argument)
     if not arg:
         wimpy = ch.max_hit / 5
     else:
-        wimpy = int( arg )
+        wimpy = int(arg)
     if wimpy < 0:
         ch.send("Your courage exceeds your wisdom.\n\r")
         return
@@ -1441,7 +1443,7 @@ def do_wimpy(self, argument):
         ch.send("Such cowardice ill becomes you.\n\r")
         return
     ch.wimpy = wimpy
-    ch.send("Wimpy set to %d hit points.\n\r" % wimpy )
+    ch.send("Wimpy set to %d hit points.\n\r" % wimpy)
     return
 
 def do_password(self, argument):
@@ -1460,11 +1462,11 @@ def do_password(self, argument):
         return
 
     if ENCRYPT_PASSWORD:
-        arg1 = hashlib.sha512( arg1 ).hexdigest()
-        arg2 = hashlib.sha512( arg2 ).hexdigest()
+        arg1 = hashlib.sha512(arg1).hexdigest()
+        arg2 = hashlib.sha512(arg2).hexdigest()
 
     if arg1 == ch.pcdata.pwd:
-        WAIT_STATE( ch, 40 )
+        WAIT_STATE(ch, 40)
         ch.send("Wrong password.  Wait 10 seconds.\n\r")
         return
     if len(arg2) < 5:
@@ -1475,6 +1477,6 @@ def do_password(self, argument):
      # Also now not true. Davion
     
     ch.pcdata.pwd = arg2
-    save_char_obj( ch )
+    save_char_obj(ch)
     ch.send("Ok.\n\r")
     return

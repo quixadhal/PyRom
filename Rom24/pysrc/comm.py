@@ -38,17 +38,6 @@ from db import boot_db
 from nanny import *
 from alias import *
 
-def game_loop(server):
-    from update import update_handler
-    boot_db()
-
-    print "\nPyom is ready to rock on port %d\n" % server.port
-
-    while True: 
-        server.poll()
-        process_input()
-        update_handler()
-
 def process_input():
     for d in descriptor_list:
         if d.active and d.cmd_ready and d.connected:
@@ -65,6 +54,7 @@ def init_descriptor(d):
     d.active = True
     d.character = None
     d.original = None
+    d.snoop_by = None
     d.close = d.deactivate
     descriptor_list.append(d)
 
@@ -183,20 +173,37 @@ def act(format, ch, arg1, arg2, type, min_pos=POS_RESTING):
         if type is TO_NOTVICT and (to is ch or to is vch):
             continue
         
-        act_trans = { '$t': str(arg1), 
-                      '$T': str(arg2), 
-                      '$n': PERS(ch, to),  
-                      '$N': PERS(vch, to), 
-                      '$e': he_she[ch.sex], 
-                      '$E': he_she[vch.sex], 
-                      '$m': him_her[ch.sex], 
-                      '$M': him_her[vch.sex], 
-                      '$s': his_her[ch.sex], 
-                      '$S': his_her[vch.sex], 
-                      '$p': OPERS(to, obj1), 
-                      '$P': OPERS(to, obj2), 
-                      '$d': arg2 if not arg2 else "door"
-                    }
+        act_trans = []
+        if arg1:
+            act_trans['$t'] = str(arg1)
+        if arg2:
+            act_trans['$T'] = str(arg2)
+        if ch:
+            act_trans['$n'] = PERS(ch, to)
+            act_trans['$e'] = he_she[ch.sex]
+            act_trans['$m'] = him_her[ch.sex]
+            act_trans['$s'] = his_her[ch.sex]
+        if vch:
+            act_trans['$N'] = PERS(vch, to)
+            act_trans['$E'] = he_she[vch.sex]
+            act_trans['$M'] = him_her[vch.sex]
+            act_trans['$S'] = his_her[vch.sex]
+        if obj1:
+            act_trans['$p'] = OPERS(to, obj1)
+        if obj2:
+            act_trans['$P'] = OPERS(to, obj2)
+        act_trans['$d'] = arg2 if not arg2 else "door"
         format = mass_replace(format, act_trans)
         to.send(format+"\r\n")
     return
+
+def game_loop(server):
+    from update import update_handler
+    boot_db()
+
+    print "\nPyom is ready to rock on port %d\n" % server.port
+
+    while True: 
+        server.poll()
+        process_input()
+        update_handler()

@@ -31,13 +31,15 @@
  ************/
 """
 from merc import *
+from handler import *
+from const import guild_table
 
 dir_name = ["north", "east", "south", "west", "up", "down"]
 rev_dir = [2, 3, 0, 1, 5, 4]
 movement_loss = [1, 2, 2, 3, 4, 6, 4, 1, 6, 10, 6]
 
 def move_char( ch, door, follow ):
-    if ( door < 0 or door > 5 )
+    if door < 0 or door > 5:
         print "BUG: Do_move: bad door %d." % door
         return
     in_room = ch.in_room
@@ -47,7 +49,7 @@ def move_char( ch, door, follow ):
         return
     to_room = pexit.to_room
     if IS_SET(pexit.exit_info, EX_CLOSED) \
-    and (not IS_AFFECTED(ch, AFF_PASS_DOOR) or IS_SET(pexit.exit_info,EX_NOPASS))
+    and (not IS_AFFECTED(ch, AFF_PASS_DOOR) or IS_SET(pexit.exit_info,EX_NOPASS)) \
     and not IS_TRUSTED(ch,ANGEL):
         act( "The $d is closed.", ch, None, pexit.keyword, TO_CHAR )
         return
@@ -218,10 +220,10 @@ def do_open(self, argument):
 
       # open the other side */
         to_room = pexit.to_room
-        if to_room and  to_room.exit[rev_dir[door]] ) and to_room.exit[rev_dir[door]].to_room == ch.in_room )
+        if to_room and  to_room.exit[rev_dir[door]] and to_room.exit[rev_dir[door]].to_room == ch.in_room:
             pexit_rev = to_room.exit[rev_dir[door]]
             REMOVE_BIT( pexit_rev.exit_info, EX_CLOSED )
-            for rch in to_room.people[:]
+            for rch in to_room.people:
                 act("The $d opens.", rch, None, pexit_rev.keyword, TO_CHAR )
 
 def do_close(self, argument):
@@ -259,8 +261,8 @@ def do_close(self, argument):
         act("You close $p.",ch,obj,None,TO_CHAR)
         act( "$n closes $p.", ch, obj, None, TO_ROOM )
         return
-    door = find_door( ch, arg )
-    if find_door( ch, arg ) ) >= 0:
+    door = find_door(ch, arg)
+    if find_door(ch, arg) >= 0:
         # 'close door' */
         pexit = ch.in_room.exit[door]
         if IS_SET(pexit.exit_info, EX_CLOSED):
@@ -279,7 +281,7 @@ def do_close(self, argument):
 
 def has_key( ch, key ):
     for obj in ch.carrying:
-        if obj.pIndexData.vnum == key
+        if obj.pIndexData.vnum == key:
             return True
     return False
 
@@ -302,7 +304,7 @@ def do_lock(self, argument):
             if obj.value[4] < 0 or IS_SET(obj.value[1],EX_NOLOCK):
                 ch.send("It can't be locked.\n\r")
                 return
-            if (!has_key(ch,obj.value[4]))
+            if not has_key(ch,obj.value[4]):
                 ch.send("You lack the key.\n\r")
                 return
             if IS_SET(obj.value[1], EX_LOCKED):
@@ -357,7 +359,7 @@ def do_lock(self, argument):
         # lock the other side */
         to_room = pexit.to_room
         if to_room and  to_room.exit[rev_dir[door]] != 0 \
-        and to_room.exit[rev_dir[door]].to_room == ch.in_room )
+        and to_room.exit[rev_dir[door]].to_room == ch.in_room:
             SET_BIT( to_room.exit[rev_dir[door]].exit_info, EX_LOCKED )
 
 def do_unlock(self, argument):
@@ -370,7 +372,7 @@ def do_unlock(self, argument):
     obj = get_obj_here(ch, arg)
     if obj:
         # portal stuff */
-        if (obj.item_type == ITEM_PORTAL)
+        if obj.item_type == ITEM_PORTAL:
             if not IS_SET(obj.value[1], EX_ISDOOR):
                 ch.send("You can't do that.\n\r")
                 return
@@ -457,7 +459,7 @@ def do_pick(self, argument):
         if IS_NPC(gch) and IS_AWAKE(gch) and ch.level + 5 < gch.level:
             act( "$N is standing too close to the lock.", ch, None, gch, TO_CHAR )
             return
-        if not IS_NPC(ch) and random.randint(1,99) > get_skill(ch,"pick lock"))
+        if not IS_NPC(ch) and random.randint(1,99) > get_skill(ch,"pick lock"):
             ch.send("You failed.\n\r")
             check_improve(ch,"pick lock",False,2)
             return
@@ -471,7 +473,7 @@ def do_pick(self, argument):
                 if not IS_SET(obj.value[1], EX_CLOSED):
                     ch.send("It's not closed.\n\r")
                     return
-                if (obj.value[4] < 0)
+                if obj.value[4] < 0:
                     ch.send("It can't be unlocked.\n\r")
                     return
                 if IS_SET(obj.value[1], EX_PICKPROOF):
@@ -514,16 +516,16 @@ def do_pick(self, argument):
             EXIT_DATA *pexit_rev
 
             pexit = ch.in_room.exit[door]
-            if not IS_SET(pexit.exit_info, EX_CLOSED) and !IS_IMMORTAL(ch):
+            if not IS_SET(pexit.exit_info, EX_CLOSED) and not IS_IMMORTAL(ch):
                 ch.send("It's not closed.\n\r")
                 return
-            if pexit.key < 0 and !IS_IMMORTAL(ch):
+            if pexit.key < 0 and not IS_IMMORTAL(ch):
                 ch.send("It can't be picked.\n\r")
                 return
             if not IS_SET(pexit.exit_info, EX_LOCKED):
                 ch.send("It's already unlocked.\n\r")
                 return
-            if IS_SET(pexit.exit_info, EX_PICKPROOF) and !IS_IMMORTAL(ch):
+            if IS_SET(pexit.exit_info, EX_PICKPROOF) and not IS_IMMORTAL(ch):
                 ch.send("You failed.\n\r")
                 return
             REMOVE_BIT(pexit.exit_info, EX_LOCKED)
@@ -552,7 +554,7 @@ def do_stand(self, argument):
         and not IS_SET(obj.value[2],STAND_IN)):
             ch.send("You can't seem to find a place to stand.\n\r")
             return
-        if (ch.on != obj and count_users(obj) >= obj.value[0])
+        if ch.on != obj and count_users(obj) >= obj.value[0]:
             act_new("There's no room to stand on $p.", ch,obj,None,TO_CHAR,POS_DEAD)
             return
         ch.on = obj
@@ -561,7 +563,7 @@ def do_stand(self, argument):
         if IS_AFFECTED(ch, AFF_SLEEP):
             ch.send("You can't wake up!\n\r")
             return
-        if not obj
+        if not obj:
             ch.send("You wake and stand up.\n\r")
             act( "$n wakes and stands up.", ch, None, None, TO_ROOM )
             ch.on = None
@@ -627,7 +629,7 @@ def do_rest(self, argument):
             ch.on = obj
 
     if ch.position == POS_SLEEPING:
-        if (IS_AFFECTED(ch,AFF_SLEEP))
+        if IS_AFFECTED(ch,AFF_SLEEP):
             ch.send("You can't wake up!\n\r")
             return
         if not obj:
@@ -705,7 +707,7 @@ def do_sit(self, argument):
             ch.on = obj
     
     if ch.position == POS_SLEEPING:
-        if (IS_AFFECTED(ch,AFF_SLEEP))
+        if IS_AFFECTED(ch,AFF_SLEEP):
             ch.send("You can't wake up!\n\r")
             return
           
@@ -893,7 +895,7 @@ def do_recall(self, argument):
     victim = ch.fighting
     if victim:
         skill = get_skill(ch,"recall")
-        if ( random.randint(1,99) < 80 * skill / 100 )
+        if random.randint(1,99) < 80 * skill / 100:
             check_improve(ch,"recall",False,6)
             WAIT_STATE( ch, 4 )
             sprintf( buf, "You failed!.\n\r")
@@ -952,7 +954,7 @@ def do_train(self, argument):
         stat = STAT_DEX
         pOutput = "dexterity"
     elif argument == "con" :
-        if ch.guild.attr_prime == STAT_CON )
+        if ch.guild.attr_prime == STAT_CON:
             cost = 1
         stat = STAT_CON
         pOutput = "constitution"

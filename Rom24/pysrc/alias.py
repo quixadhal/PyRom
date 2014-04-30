@@ -31,6 +31,7 @@
  ************/
 """
 from merc import *
+import interp
 
 # does aliasing and other fun stuff */
 def substitute_alias(d, argument):
@@ -43,16 +44,17 @@ def substitute_alias(d, argument):
         else:
             prefix = "%s %s" % (ch.prefix,argument)
 
-    if IS_NPC(ch) or ch.pcdata.alias[0] == None \
+    if IS_NPC(ch) or not ch.pcdata.alias \
     or "alias".startswith(argument) or "unalias".startswith(argument)  \
     or "prefix".startswith(argument):
-        interpret(ch,argument)
+        interp.interpret(ch,argument)
         return
     remains, sub = read_word(argument)
     if sub not in ch.pcdata.alias:
-        interpret(ch, argument)
+        interp.interpret(ch, argument)
+        return
     buf = "%s %s" % ( ch.pcdata.alias[sub], remains )
-    interpret(ch,buf)
+    interp.interpret(ch,buf)
 
 def do_alia(self,argument):
     self.send("I'm sorry, alias must be entered in full.\n\r")

@@ -40,7 +40,7 @@ from db import read_word, create_object
 from skills import *
 from act_wiz import wiznet
 from handler import get_trust, reset_char, obj_to_char, char_to_room, room_is_dark
-
+from alias import substitute_alias
 import comm
 
 def licheck(c):
@@ -384,14 +384,18 @@ def con_read_motd(self):
     else:
         char_to_room( ch, room_index_hash[ ROOM_VNUM_TEMPLE ] )
 
-    comm.act( "$n has entered the game.", ch, None, None, TO_ROOM )
+    act( "$n has entered the game.", ch, None, None, TO_ROOM )
     ch.do_look("auto")
 
     wiznet("$N has left real life behind.",ch,None, WIZ_LOGINS,WIZ_SITES,get_trust(ch))
     if ch.pet:
         char_to_room(ch.pet,ch.in_room)
-        comm.act("$n has entered the game.",ch.pet,None,None,TO_ROOM)
+        act("$n has entered the game.",ch.pet,None,None,TO_ROOM)
 
 def con_playing(self):
-    self.send("\n")
-    comm.bust_a_prompt(self.character)
+    command = self.get_command()
+    if not command.strip():
+        return
+    substitute_alias(self, command)
+
+    

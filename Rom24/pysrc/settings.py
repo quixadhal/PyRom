@@ -6,6 +6,7 @@ PORT = 1337
 WIZLOCK = False
 NEWLOCK = False
 ENCRYPT_PASSWORD = True
+LOGALL = False
 
 #Files
 AREA_LIST = 'area.lst'

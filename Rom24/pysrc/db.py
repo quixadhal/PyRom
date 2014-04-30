@@ -335,7 +335,7 @@ def load_rooms(area, pArea):
                 area, exit.keyword = read_string(area)
                 area, locks = read_int(area)
                 area, exit.key = read_int(area)
-                area, exit.vnum = read_int(area)
+                area, exit.to_room = read_int(area)
                 room.exit[door] = exit
             elif letter == 'E':
                 ed = EXTRA_DESCR_DATA()
@@ -486,7 +486,7 @@ def fix_exits():
         for e in r.exit:
             if e and type(e.to_room) == int:
                 if e.to_room not in room_index_hash:
-                    print "Fix_exits: Failed to find to_room for %d: %d" % (room, e.to_room)
+                    print "Fix_exits: Failed to find to_room for %d: %d" % (r.vnum, e.to_room)
                 else:
                     e.to_room = room_index_hash[e.to_room]
 
@@ -1131,6 +1131,7 @@ def clear_char( ch ):
 #
 # * Get an extra description from a list.
 def get_extra_descr( name, edlist ):
+    if not edlist: return None
     for ed in edlist:
         if name.lower() in ed.keyword:
             return ed.description

@@ -160,7 +160,7 @@ class PC_DATA:
         self.group_known ={}
         self.points =0
         self.confirm_delete =False
-        self.alias ={}
+        self.alias = {}
 
 class GEN_DATA:
     def __init__(self):    
@@ -393,6 +393,13 @@ STAT_INT=1
 STAT_WIS=2
 STAT_DEX=3
 STAT_CON=4
+
+DIR_NORTH = 0
+DIR_EAST = 1
+DIR_SOUTH = 2
+DIR_WEST = 3
+DIR_UP = 4
+DIR_DOWN = 5
 
 
 #Item types
@@ -1121,6 +1128,7 @@ def mass_replace(str, dict):
     return str
 
 def PERS(ch, looker):
+    from handler import can_see
     if not can_see(looker, ch):
         return "someone"
     if IS_NPC(ch):
@@ -1129,6 +1137,7 @@ def PERS(ch, looker):
         return ch.name
 
 def OPERS(looker, obj):
+    from handler import can_see_obj
     if not can_see_obj(looker,obj):
         return "something"
     return obj.short_descr
@@ -1141,9 +1150,11 @@ def IS_IMMORTAL(ch):
     return get_trust(ch) >= LEVEL_IMMORTAL
 
 def IS_HERO(ch):
-     return get_trust(ch) >= LEVEL_HERO
+    from handler import get_trust
+    return get_trust(ch) >= LEVEL_HERO
 
 def IS_TRUSTED(ch,level):
+    from handler import get_trust
     return get_trust(ch) >= level
 def is_affected( ch, sn ):
     return True if [paf for paf in ch.affected if paf.type == sn ][:1] else False
@@ -1334,6 +1345,67 @@ def mult_argument(argument):
         return (1, argument)
     rest = argument[mult+1:]
     return (int(number), rest)
+
+
+def act(format, ch, arg1, arg2, send_to, min_pos=POS_RESTING):
+    if not format:
+        return
+    if not ch or not ch.in_room:
+        return
+
+    vch = arg2
+    obj1 = arg1
+    obj2 = arg2
+
+    he_she=["it",  "he",  "she"]
+    him_her=["it",  "him", "her"]
+    his_her=["its", "his", "her"]
+
+    to_players = ch.in_room.people
+
+    if send_to is TO_VICT:
+        if not vch:
+            print "Act: null vict with TO_VICT: " + format
+            return
+        if not vch.in_room:
+            return
+        to_players = vch.in_room.people
+
+    for to in to_players:
+        if not to.desc or to.position < min_pos:
+            continue
+        if send_to is TO_CHAR and to is not ch:
+            continue
+        if send_to is TO_VICT and ( to is not vch or to is ch ):
+            continue
+        if send_to is TO_ROOM and to is ch:
+            continue
+        if send_to is TO_NOTVICT and (to is ch or to is vch):
+            continue
+        
+        act_trans = []
+        if arg1:
+            act_trans['$t'] = str(arg1)
+        if arg2 and type(arg2) == str:
+            act_trans['$T'] = str(arg2)
+        if ch:
+            act_trans['$n'] = PERS(ch, to)
+            act_trans['$e'] = he_she[ch.sex]
+            act_trans['$m'] = him_her[ch.sex]
+            act_trans['$s'] = his_her[ch.sex]
+        if vch:
+            act_trans['$N'] = PERS(vch, to)
+            act_trans['$E'] = he_she[vch.sex]
+            act_trans['$M'] = him_her[vch.sex]
+            act_trans['$S'] = his_her[vch.sex]
+        if obj1:
+            act_trans['$p'] = OPERS(to, obj1)
+        if obj2:
+            act_trans['$P'] = OPERS(to, obj2)
+        act_trans['$d'] = arg2 if not arg2 else "door"
+        format = mass_replace(format, act_trans)
+        to.send(format+"\r\n")
+    return
 
 #ensureall do_functions become class methods
 import interp

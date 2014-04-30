@@ -2276,3 +2276,20 @@ def do_prefix(self, argument):
     else:
         ch.send("Prefix set to %s.\r\n" % argument)
     ch.prefix = argument
+
+def do_areas(ch, argument):
+    if argument:
+        ch.send("No argument is used with this command.\n\r")
+        return
+    col = 0
+    for iArea in area_list:
+        ch.send("%-39s\n" % iArea.credits)
+        col += 1
+        if col % 2 == 0:
+            ch.send("\n")
+        
+def do_memory(ch, argument):
+    pass
+
+def do_dump(ch,argument):
+    pass

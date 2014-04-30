@@ -42,7 +42,7 @@ def do_delete(self, argument):
     ch=self
     if IS_NPC(ch):
         return
-  
+
     if ch.pcdata.confirm_delete:
         if argument:
             ch.send("Delete status removed.\n\r")
@@ -58,7 +58,7 @@ def do_delete(self, argument):
     if argument:
         ch.send("Just type delete. No argument.\n\r")
         return
-    
+
     ch.send("Type delete again to confirm this command.\n\r")
     ch.send("WARNING: this command is irreversible.\n\r")
     ch.send("Typing delete with an argument will undo delete status.\n\r")
@@ -127,7 +127,7 @@ def do_channels(self, argument):
     if IS_SET(ch.comm, COMM_AFK):
         ch.send("You are AFK.\n\r")
     if IS_SET(ch.comm, COMM_SNOOP_PROOF):
-       ch.send("You are immune to snooping.\n\r")
+        ch.send("You are immune to snooping.\n\r")
     if ch.lines != PAGELEN:
         if ch.lines:
             ch.send("You display %d lines of scroll.\n\r" % ch.lines+2)
@@ -150,7 +150,7 @@ def do_deaf(self, argument):
     if IS_SET(ch.comm, COMM_DEAF):
         ch.send("You can now hear tells again.\n\r")
         REMOVE_BIT(ch.comm,COMM_DEAF)
-    else: 
+    else:
         ch.send("From now on, you won't hear tells.\n\r")
         SET_BIT(ch.comm,COMM_DEAF)
 
@@ -274,14 +274,14 @@ def do_quote(self, argument):
             ch.send("The gods have revoked your channel priviliges.\n\r")
             return
         REMOVE_BIT(ch.comm,COMM_NOQUOTE)
- 
+
         ch.send("You quote '%s'\n\r" % argument )
         for d in descriptor_list:
             victim = CH(d)
-     
+
             if d.connected == con_playing and d.character != ch and not IS_SET(victim.comm,COMM_NOQUOTE) and not IS_SET(victim.comm,COMM_QUIET):
                 act( "$n quotes '$t'", ch,argument, d.character, TO_VICT,POS_SLEEPING )
-        
+
 # RT question channel */
 def do_question(self, argument):
     ch=self
@@ -293,16 +293,16 @@ def do_question(self, argument):
             ch.send("Q/A channel is now OFF.\n\r")
             SET_BIT(ch.comm,COMM_NOQUESTION)
     else:  # question sent, turn Q/A on if it isn't already */
-       if IS_SET(ch.comm, COMM_QUIET):
+        if IS_SET(ch.comm, COMM_QUIET):
             ch.send("You must turn off quiet mode first.\n\r")
             return
-       if IS_SET(ch.comm, COMM_NOCHANNELS):
+        if IS_SET(ch.comm, COMM_NOCHANNELS):
             ch.send("The gods have revoked your channel priviliges.\n\r")
             return
-       REMOVE_BIT(ch.comm,COMM_NOQUESTION)
- 
-       ch.send( "You question '%s'\n\r" % argument )
-       for d in descriptor_list:
+        REMOVE_BIT(ch.comm,COMM_NOQUESTION)
+
+        ch.send( "You question '%s'\n\r" % argument )
+        for d in descriptor_list:
             victim = CH(d)
             if d.connected == con_playing and d.character != ch and not IS_SET(victim.comm,COMM_NOQUESTION) and not IS_SET(victim.comm,COMM_QUIET):
                 act_new("$n questions '$t'", ch,argument,d.character,TO_VICT,POS_SLEEPING)
@@ -349,7 +349,7 @@ def do_music(self, argument):
             ch.send("The gods have revoked your channel priviliges.\n\r")
             return
         REMOVE_BIT(ch.comm,COMM_NOMUSIC)
- 
+
         ch.send("You MUSIC: '%s'\n\r" % argument )
         for d in descriptor_list:
             victim = CH(d)
@@ -1050,6 +1050,32 @@ def do_gtell(self, argument):
     for gch in char_list[:]:
         if is_same_group( gch, ch ):
           act("$n tells the group '$t'", ch,argument,gch,TO_VICT,POS_SLEEPING)
+    return
+
+def do_commands(self, argument):
+    ch = self
+    col = 0;
+    for key, cmd in cmd_table.iteritems():
+        if cmd.level <  LEVEL_HERO and cmd.level <= get_trust( ch ) and cmd.show:
+            ch.send("%-12s" % key)
+            col += 1
+            if col % 6 == 0:
+                ch.send("\n")
+    if col % 6 != 0:
+        ch.send("\n\r")
+    return
+def do_wizhelp(self, argument):
+    ch = self
+    col = 0;
+    for key, cmd in cmd_table.iteritems():
+        if cmd.level >= LEVEL_HERO and cmd.level <= get_trust( ch )  and cmd.show:
+            ch.send("%-12s" % key)
+            col += 1
+            if col % 6 == 0:
+                ch.send("\n\r")
+
+    if col % 6 != 0:
+        ch.send("\n\r")
     return
 
 # * It is very important that this be an equivalence relation:
