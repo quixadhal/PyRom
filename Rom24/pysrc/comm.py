@@ -137,66 +137,6 @@ def is_reconnecting(d, name):
             return True
     return False
 
-def act(format, ch, arg1, arg2, type, min_pos=POS_RESTING):
-    if not format:
-        return
-    if not ch or not ch.in_room:
-        return
-
-    vch = arg2
-    obj1 = arg1
-    obj2 = arg2
-
-    he_she=["it",  "he",  "she"]
-    him_her=["it",  "him", "her"]
-    his_her=["its", "his", "her"]
-
-    to_players = ch.in_room.people
-
-    if type is TO_VICT:
-        if not vch:
-            print "Act: null vict with TO_VICT: " + format
-            return
-        if not vch.in_room:
-            return
-        to_players = vch.in_room.people
-
-    for to in to_players:
-        if not to.desc or to.position < min_pos:
-            continue
-        if type is TO_CHAR and to is not ch:
-            continue
-        if type is TO_VICT and ( to is not vch or to is ch ):
-            continue
-        if type is TO_ROOM and to is ch:
-            continue
-        if type is TO_NOTVICT and (to is ch or to is vch):
-            continue
-        
-        act_trans = []
-        if arg1:
-            act_trans['$t'] = str(arg1)
-        if arg2:
-            act_trans['$T'] = str(arg2)
-        if ch:
-            act_trans['$n'] = PERS(ch, to)
-            act_trans['$e'] = he_she[ch.sex]
-            act_trans['$m'] = him_her[ch.sex]
-            act_trans['$s'] = his_her[ch.sex]
-        if vch:
-            act_trans['$N'] = PERS(vch, to)
-            act_trans['$E'] = he_she[vch.sex]
-            act_trans['$M'] = him_her[vch.sex]
-            act_trans['$S'] = his_her[vch.sex]
-        if obj1:
-            act_trans['$p'] = OPERS(to, obj1)
-        if obj2:
-            act_trans['$P'] = OPERS(to, obj2)
-        act_trans['$d'] = arg2 if not arg2 else "door"
-        format = mass_replace(format, act_trans)
-        to.send(format+"\r\n")
-    return
-
 def game_loop(server):
     from update import update_handler
     boot_db()

@@ -1383,7 +1383,7 @@ def act(format, ch, arg1, arg2, send_to, min_pos=POS_RESTING):
         if send_to is TO_NOTVICT and (to is ch or to is vch):
             continue
         
-        act_trans = []
+        act_trans = {}
         if arg1:
             act_trans['$t'] = str(arg1)
         if arg2 and type(arg2) == str:
@@ -1393,17 +1393,19 @@ def act(format, ch, arg1, arg2, send_to, min_pos=POS_RESTING):
             act_trans['$e'] = he_she[ch.sex]
             act_trans['$m'] = him_her[ch.sex]
             act_trans['$s'] = his_her[ch.sex]
-        if vch:
+        if vch and type(vch) == CHAR_DATA:
             act_trans['$N'] = PERS(vch, to)
             act_trans['$E'] = he_she[vch.sex]
             act_trans['$M'] = him_her[vch.sex]
             act_trans['$S'] = his_her[vch.sex]
-        if obj1:
+        if obj1 and type(obj1) == OBJ_DATA:
             act_trans['$p'] = OPERS(to, obj1)
-        if obj2:
+        if obj2 and type(obj2) == OBJ_DATA: 
             act_trans['$P'] = OPERS(to, obj2)
         act_trans['$d'] = arg2 if not arg2 else "door"
+        print format
         format = mass_replace(format, act_trans)
+        print format
         to.send(format+"\r\n")
     return
 

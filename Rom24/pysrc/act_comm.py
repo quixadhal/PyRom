@@ -32,6 +32,8 @@
 """
 
 from merc import *
+from act_wiz import wiznet
+from handler import get_trust
 
 def do_delet(self, argument):
     ch=self

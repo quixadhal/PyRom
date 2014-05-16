@@ -1931,6 +1931,55 @@ void do_gtell( CHAR_DATA *ch, char *argument )
     return;
 }
 
+def do_commands( self, rgument )
+{
+    char buf[MAX_STRING_LENGTH];
+    int cmd;
+    int col;
+ 
+    col = 0;
+    for ( cmd = 0; cmd_table[cmd].name[0] != '\0'; cmd++ )
+    {
+        if ( cmd_table[cmd].level <  LEVEL_HERO
+        &&   cmd_table[cmd].level <= get_trust( ch ) 
+  &&   cmd_table[cmd].show)
+  {
+      sprintf( buf, "%-12s", cmd_table[cmd].name );
+      send_to_char( buf, ch );
+      if ( ++col % 6 == 0 )
+    send_to_char( "\n\r", ch );
+  }
+    }
+ 
+    if ( col % 6 != 0 )
+  send_to_char( "\n\r", ch );
+    return;
+}
+
+void do_wizhelp( CHAR_DATA *ch, char *argument )
+{
+    char buf[MAX_STRING_LENGTH];
+    int cmd;
+    int col;
+ 
+    col = 0;
+    for ( cmd = 0; cmd_table[cmd].name[0] != '\0'; cmd++ )
+    {
+        if ( cmd_table[cmd].level >= LEVEL_HERO
+        &&   cmd_table[cmd].level <= get_trust( ch ) 
+        &&   cmd_table[cmd].show)
+  {
+      sprintf( buf, "%-12s", cmd_table[cmd].name );
+      send_to_char( buf, ch );
+      if ( ++col % 6 == 0 )
+    send_to_char( "\n\r", ch );
+  }
+    }
+ 
+    if ( col % 6 != 0 )
+  send_to_char( "\n\r", ch );
+    return;
+}
 
 
 /*

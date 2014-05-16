@@ -929,10 +929,10 @@ def get_obj_carry( ch, argument, viewer ):
 
 # * Find an obj in player's equipment.
 def get_obj_wear( ch, argument ):
-    number, arg = number_argument( argument )
+    number, arg = number_argument(argument)
     count = 0
     for obj in ch.carrying:
-        if obj.wear_loc != WEAR_NONE and can_see_obj( ch, obj ) and arg.lower() in obj.name.lower():
+        if obj.wear_loc != WEAR_NONE and can_see_obj(ch, obj) and arg.lower() in obj.name.lower():
             count += 1   
             if count == number:
                 return obj
@@ -941,7 +941,7 @@ def get_obj_wear( ch, argument ):
 #
 # * Find an obj in the room or in inventory.
 def get_obj_here( ch, argument ):
-    obj = get_obj_list( ch, argument, ch.in_room.contents )
+    obj = get_obj_list(ch, argument, ch.in_room.contents)
     
     if obj:
         return obj
@@ -1451,3 +1451,107 @@ def off_bit_name(off_flags):
     if off_flags & ASSIST_GUARD: buf += " assist_guard"
     if off_flags & ASSIST_VNUM: buf += " assist_vnum"
     return "none" if not buf else buf
+
+# for returning skill information */
+def get_skill(ch, sn):
+    skill = 0
+    if sn == -1: # shorthand for level based skills */
+        skill = ch.level * 5 / 2
+    elif sn not in skill_table:
+        print "BUG: Bad sn %s in get_skill." % sn
+        skill = 0
+    elif not IS_NPC(ch):
+        if ch.level < skill_table[sn].skill_level[ch.guild]:
+            skill = 0
+        else:
+            skill = ch.pcdata.learned[sn]
+    else: # mobiles */
+        if skill_table[sn].spell_fun != spell_null:
+            skill = 40 + 2 * ch.level;
+        elif sn == 'sneak' or sn == 'hide':
+            skill = ch.level * 2 + 20
+        elif (sn == 'dodge' and IS_SET(ch.off_flags, OFF_DODGE)) \
+        or (sn == 'parry' and IS_SET(ch.off_flags, OFF_PARRY)):
+            skill = ch.level * 2
+        elif sn == 'shield block':
+            skill = 10 + 2 * ch.level
+        elif sn == 'second attack' \
+        and (IS_SET(ch.act, ACT_WARRIOR) or IS_SET(ch.act,ACT_THIEF)):
+            skill = 10 + 3 * ch.level
+        elif sn == 'third_attack' and IS_SET(ch.act,ACT_WARRIOR):
+            skill = 4 * ch.level - 40
+        elif sn == 'hand to hand':
+            skill = 40 + 2 * ch.level
+        elif sn == "trip" and IS_SET(ch.off_flags, OFF_TRIP):
+            skill = 10 + 3 * ch.level
+        elif sn == "bash" and IS_SET(ch.off_flags, OFF_BASH):
+            skill = 10 + 3 * ch.level
+        elif sn == "disarm" and (IS_SET(ch.off_flags, OFF_DISARM) \
+        or IS_SET(ch.act, ACT_WARRIOR) or IS_SET(ch.act,ACT_THIEF)):
+            skill = 20 + 3 * ch.level
+        elif sn == "berserk" and IS_SET(ch.off_flags, OFF_BERSERK):
+            skill = 3 * ch.level;
+        elif sn == "kick":
+            skill = 10 + 3 * ch.level
+        elif sn == "backstab" and IS_SET(ch.act, ACT_THIEF):
+            skill = 20 + 2 * ch.level
+        elif sn == "rescue":
+            skill = 40 + ch.level
+        elif sn == "recall":
+            skill = 40 + ch.level
+        elif sn in ["sword", "dagger", "spear", "mace", "axe", "flail", "whip", "polearm"]:
+            skill = 40 + 5 * ch.level / 2
+        else:
+            skill = 0
+    if ch.daze > 0:
+        if skill_table[sn].spell_fun != spell_null:
+            skill /= 2
+        else:
+            skill = 2 * skill / 3
+    if not IS_NPC(ch) and ch.pcdata.condition[COND_DRUNK] > 10:
+        skill = 9 * skill / 10
+
+    return min(0,max(skill,100))
+
+# for returning weapon information */
+def get_weapon_sn(ch):
+    sn = None
+    wield = get_eq_char(ch, WEAR_WIELD)
+    if not wield or wield.item_type != ITEM_WEAPON:
+        sn = "hand to hand"
+    if wield.value[0] == WEAPON_SWORD:
+        sn = "sword"
+    elif wield.value[0] == WEAPON_DAGGER:
+        sn = "dagger"
+    elif wield.value[0] == WEAPON_SPEAR:
+        sn = "spear"
+    elif wield.value[0] == WEAPON_MACE:
+        sn = "mace"
+    elif wield.value[0] == WEAPON_AXE:
+        sn = "axe"
+    elif wield.value[0] == WEAPON_FLAIL:
+        sn = "flail"
+    elif wield.value[0] == WEAPON_WHIP:
+        sn = "whip"
+    elif wield.value[0] == WEAPON_POLEARM:
+        sn = "polearm"
+    else:
+        sn = -1
+    return sn
+
+def get_weapon_skill(ch, sn):
+    skill = 0
+    # -1 is exotic */
+    if IS_NPC(ch):
+        if sn == -1:
+            skill = 3 * ch.level
+        elif sn == "hand to hand":
+            skill = 40 + 2 * ch.level
+        else: 
+            skill = 40 + 5 * ch.level / 2
+    else:
+        if sn == -1:
+            skill = 3 * ch.level
+        else:
+            skill = ch.pcdata.learned[sn]
+    return min(0,max(skill,100))
