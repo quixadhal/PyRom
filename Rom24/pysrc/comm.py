@@ -37,6 +37,7 @@ from merc import descriptor_list, greeting_list, POS_RESTING
 from db import boot_db
 from nanny import *
 from alias import *
+from handler import can_see_room
 
 def process_input():
     for d in descriptor_list:
@@ -46,8 +47,18 @@ def process_input():
 def set_connected(self, state):
     self.connected = MethodType(state,self)
 
+def is_connected(self, state):
+    return self.connected == MethodType(state,self)
+
+def process_output(self):
+    ch = CH(self)
+    if ch and self.is_connected(con_playing) and self.send_buffer:
+        bust_a_prompt(ch)
+    self.miniboa_send()        
+
 def init_descriptor(d):
     d.set_connected = MethodType(set_connected,d)
+    d.is_connected = MethodType(is_connected,d)
     d.set_connected(con_get_name)
     greeting = random.choice(greeting_list)
     d.send(greeting.text)
@@ -56,16 +67,54 @@ def init_descriptor(d):
     d.original = None
     d.snoop_by = None
     d.close = d.deactivate
+    #Gain control over process output without messing with miniboa.
+    d.miniboa_send = d.socket_send
+    d.socket_send = MethodType(process_output,d)
     descriptor_list.append(d)
+
+#Check if already playing.
+def check_playing( d, name ):
+    for dold in descriptor_list:
+        if dold != d and dold.character \
+        and dold.connected != con_get_name \
+        and dold.connected != con_get_old_password \
+        and name == (dold.original.name if dold.original else dold.character.name):
+            d.send("That character is already playing.\n")
+            d.send("Do you wish to connect anyway (Y/N)?")
+            d.set_connected(con_break_connect)
+            return True
+    return False
+
+#Look for link-dead player to reconnect.
+def check_reconnect( d, name, fConn ):
+    for ch in char_list:
+        if not IS_NPC(ch) and ( not fConn or not ch.desc) \
+        and d.character.name == ch.name:
+            if fConn == False:
+                d.character.pcdata.pwd = ch.pcdata.pwd
+            else:
+                d.character.pcdata.pwd = ""
+                del d.character
+                d.character = ch
+                ch.desc = d
+                ch.timer = 0
+                ch.send("Reconnecting. Type replay to see missed tells.\n")
+                act( "$n has reconnected.", ch, NULL, NULL, TO_ROOM )
+                print "%s@%s reconnected." % (ch.name, d.host)
+                wiznet("$N groks the fullness of $S link.",ch,None,WIZ_LINKS,0,0)
+                d.set_connected(con_playing)
+            return True
+    return False
 
 def close_socket(d):
     descriptor_list.remove(d)
     d.active = False
 
- #* Bust a prompt (player settable prompt)
- #* coded by Morgenes for Aldara Mud
+#* Bust a prompt (player settable prompt)
+#* coded by Morgenes for Aldara Mud
 def bust_a_prompt( ch ):
     dir_name = ["N","E","S","W","U","D"]
+    doors = ""
     str = ch.prompt
     if not str:
         ch.send("<%dhp %dm %dmv> %s" % (ch.hit,ch.mana,ch.move,ch.prefix))
@@ -75,7 +124,7 @@ def bust_a_prompt( ch ):
         return
     replace = OrderedDict()
     found = False
-    for pexit in ch.in_room.exit:
+    for door, pexit in enumerate(ch.in_room.exit):
         if pexit \
         and pexit.to_room \
         and (can_see_room(ch,pexit.to_room) or (IS_AFFECTED(ch,AFF_INFRARED) \
@@ -125,6 +174,7 @@ def bust_a_prompt( ch ):
     #replace['%%'] = '%'
     prompt = ch.prompt
     prompt = mass_replace(prompt, replace)
+    print prompt
     ch.send(prompt)
     if ch.prefix:
         ch.send(ch.prefix)

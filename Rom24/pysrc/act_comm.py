@@ -33,7 +33,8 @@
 
 from merc import *
 from act_wiz import wiznet
-from handler import get_trust
+from handler import get_trust, extract_char
+from save import save_char_obj
 
 def do_delet(self, argument):
     ch=self

@@ -820,7 +820,7 @@ def extract_char( ch, fPull ):
     #    print "Extract_char: None."
     #    return
  
-    nuke_pets(ch)
+#    nuke_pets(ch)
     ch.pet = None # just in case */
 
     if fPull:

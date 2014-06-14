@@ -452,11 +452,11 @@ def spec_executioner( ch ):
     crime = ""
     victim = None
     for vch in ch.in_room.people[:]:
-        if not IS_NPC(victim) and IS_SET(victim.act, PLR_KILLER) and can_see(ch,victim):
+        if not IS_NPC(vch) and IS_SET(vch.act, PLR_KILLER) and can_see(ch,vch):
             victim = vch
             crime = "KILLER"
 
-        if not IS_NPC(victim) and IS_SET(victim.act, PLR_THIEF) and can_see(ch,victim):
+        if not IS_NPC(vch) and IS_SET(vch.act, PLR_THIEF) and can_see(ch,vch):
             victim = vch
             crime = "THIEF"
 

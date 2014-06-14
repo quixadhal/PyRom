@@ -35,14 +35,14 @@ import time
 import random
 
 #Global MAXes       
-MAX_TRADE=5
-MAX_GUILDROOMS=2
-MAX_STATS=5
-MAX_SKILL=150
-MAX_GROUP=30
-MAX_LEVEL=60
-LEVEL_HERO=(MAX_LEVEL - 9)
-LEVEL_IMMORTAL=(MAX_LEVEL - 8)
+MAX_TRADE = 5
+MAX_GUILDROOMS = 2
+MAX_STATS = 5
+MAX_SKILL = 150
+MAX_GROUP = 30
+MAX_LEVEL = 60
+LEVEL_HERO = (MAX_LEVEL - 9)
+LEVEL_IMMORTAL = (MAX_LEVEL - 8)
 
 #Global Classes
 class CHAR_DATA(object):
@@ -77,89 +77,89 @@ class CHAR_DATA(object):
         self.prefix = ""
         self.group = 0
         self.clan = 0
-        self.sex =0
-        self.guild =0
-        self.race =0
-        self.level =0
-        self.trust =0
-        self.played =0
-        self.lines =22
-        self.logon =0
-        self.timer =0
-        self.wait =0
-        self.daze =0
-        self.hit =20
-        self.max_hit =20
-        self.mana =100
-        self.max_mana =100
-        self.move =100
-        self.max_move =100
-        self.gold =0
+        self.sex = 0
+        self.guild = 0
+        self.race = 0
+        self.level = 0
+        self.trust = 0
+        self.played = 0
+        self.lines = 22
+        self.logon = 0
+        self.timer = 0
+        self.wait = 0
+        self.daze = 0
+        self.hit = 20
+        self.max_hit = 20
+        self.mana = 100
+        self.max_mana = 100
+        self.move = 100
+        self.max_move = 100
+        self.gold = 0
         self.silver =0
-        self.exp =0
-        self.act =0
-        self.comm =0
-        self.wiznet =0
-        self.imm_flags =0
-        self.res_flags =0
-        self.vuln_flags =0
-        self.invis_level =0
-        self.incog_level =0
-        self.affected_by =0
-        self.position =0
-        self.practice =0
-        self.train =0
-        self.carry_weight =0
-        self.carry_number =0
-        self.saving_throw =0
-        self.alignment =0
-        self.hitroll =0
-        self.damroll =0
-        self.armor =[100, 100, 100, 100]
-        self.wimpy =0
+        self.exp = 0
+        self.act = 0
+        self.comm = 0
+        self.wiznet = 0
+        self.imm_flags = 0
+        self.res_flags = 0
+        self.vuln_flags = 0
+        self.invis_level = 0
+        self.incog_level = 0
+        self.affected_by = 0
+        self.position = 0
+        self.practice = 0
+        self.train = 0
+        self.carry_weight = 0
+        self.carry_number = 0
+        self.saving_throw = 0
+        self.alignment = 0
+        self.hitroll = 0
+        self.damroll = 0
+        self.armor = [100, 100, 100, 100]
+        self.wimpy = 0
     # stats */
-        self.perm_stat =[13 for x in range(MAX_STATS)]
-        self.mod_stat =[0 for x in range(MAX_STATS)]
+        self.perm_stat = [13 for x in range(MAX_STATS)]
+        self.mod_stat = [0 for x in range(MAX_STATS)]
     # parts stuff */
-        self.form =0
-        self.parts =0
-        self.size =0
-        self.material =""
+        self.form = 0
+        self.parts = 0
+        self.size = 0
+        self.material = ""
     # mobile stuff */
-        self.off_flags =0
-        self.damage =[0,0,0]
-        self.dam_type =17
-        self.start_pos =0
-        self.default_pos =0
+        self.off_flags = 0
+        self.damage = [0,0,0]
+        self.dam_type = 17
+        self.start_pos = 0
+        self.default_pos = 0
         self.race = race_table['human']
-        self.act=PLR_NOSUMMON
-        self.comm=COMM_COMBINE | COMM_PROMPT
+        self.act = PLR_NOSUMMON
+        self.comm = COMM_COMBINE | COMM_PROMPT
     def __repr__(self):
         return self.name
 
 class PC_DATA:
     def __init__(self):
-        self.buffer =None
-        self.valid =False
-        self.pwd =""
-        self.bamfin =""
-        self.bamfout =""
-        self.title =""
-        self.last_note =0;
-        self.last_idea =0
-        self.last_penalty =0
-        self.last_news =0
-        self.last_changes =0
-        self.perm_hit =0
-        self.perm_mana =0
-        self.perm_move =0
-        self.true_sex =0
-        self.last_level =0
-        self.condition =[48,48,48,0]
-        self.learned ={}
-        self.group_known ={}
-        self.points =0
-        self.confirm_delete =False
+        self.buffer = None
+        self.valid = False
+        self.pwd = ""
+        self.bamfin = ""
+        self.bamfout = ""
+        self.title = ""
+        self.last_note = 0
+        self.last_idea = 0
+        self.last_penalty = 0
+        self.last_news = 0
+        self.last_changes = 0
+        self.perm_hit = 0
+        self.perm_mana = 0
+        self.perm_move = 0
+        self.true_sex = 0
+        self.last_level = 0
+        self.condition = [48,48,48,0]
+        self.learned = {}
+        self.group_known = {}
+        self.points = 0
+        self.confirm_delete = False
         self.alias = {}
 
 class GEN_DATA:
@@ -185,7 +185,7 @@ class AREA_DATA:
         self.empty = False
 
     def __repr__(self):
-        return "<%s(%s): %d-%d>" % ( self.name, self.file_name, self.min_vnum, self.max_vnum )
+        return "<%s(%s): %d-%d>" % (self.name, self.file_name, self.min_vnum, self.max_vnum)
 
 class HELP_DATA:
     def __init__(self):    
@@ -194,7 +194,7 @@ class HELP_DATA:
         self.text = ""
 
     def __repr__(self):
-        return "<%s:%d>" % ( self.keyword, self.level)
+        return "<%s:%d>" % (self.keyword, self.level)
 
 class MOB_INDEX_DATA:
     def __init__(self):    
@@ -237,7 +237,7 @@ class MOB_INDEX_DATA:
 
 class OBJ_INDEX_DATA:
     def __init__(self):
-        self.extra_descr = None
+        self.extra_descr = []
         self.affected = []
         self.new_format = True
         self.name = ""
@@ -262,30 +262,30 @@ class OBJ_INDEX_DATA:
 
 class OBJ_DATA:
     def __init__(self):    
-        self.contains =[]
-        self.in_obj =None
-        self.on =None
-        self.carried_by =None
-        self.extra_descr =None
-        self.affected =[]
-        self.pIndexData =None
-        self.in_room =None
-        self.valid =False
-        self.enchanted =False
-        self.owner =""
-        self.name =""
+        self.contains = []
+        self.in_obj = None
+        self.on = None
+        self.carried_by = None
+        self.extra_descr = []
+        self.affected = []
+        self.pIndexData = None
+        self.in_room = None
+        self.valid = False
+        self.enchanted = False
+        self.owner = ""
+        self.name = ""
         self.short_descr =""
         self.description =""
-        self.item_type =0
-        self.extra_flags =0
-        self.wear_flags =0
-        self.wear_loc =0
-        self.weight =0
-        self.cost =0
-        self.level =0
-        self.condition =0
-        self.material =""
-        self.timer =0
+        self.item_type = 0
+        self.extra_flags = 0
+        self.wear_flags = 0
+        self.wear_loc = 0
+        self.weight = 0
+        self.cost = 0
+        self.level = 0
+        self.condition = 0
+        self.material = ""
+        self.timer = 0
         self.value = [0 for x in range(5)]
 
 class ROOM_INDEX_DATA:
@@ -317,18 +317,18 @@ class EXTRA_DESCR_DATA:
 class EXIT_DATA:
     def __init__(self):    
         self.to_room =None
-        self.exit_info =0
-        self.key =0
-        self.keyword =""
-        self.description =""
+        self.exit_info = 0
+        self.key = 0
+        self.keyword = ""
+        self.description = ""
 
 class RESET_DATA:
     def __init__(self):    
         self.command = ""
-        self.arg1 =0
-        self.arg2 =0
-        self.arg3 =0
-        self.arg4 =0
+        self.arg1 = 0
+        self.arg2 = 0
+        self.arg3 = 0
+        self.arg4 = 0
 
 class SHOP_DATA:
     def __init__(self):    
@@ -354,14 +354,14 @@ class SOCIAL_DATA:
 # An affect.
 class AFFECT_DATA:
     def __init__(self):    
-        self.valid =True
-        self.where =0
-        self.type =0
-        self.level =0
-        self.duration =0
-        self.location =0
-        self.modifier =0
-        self.bitvector =0
+        self.valid = True
+        self.where = 0
+        self.type = 0
+        self.level = 0
+        self.duration = 0
+        self.location = 0
+        self.modifier = 0
+        self.bitvector = 0
 
 #Global Lists
 descriptor_list = []
@@ -380,19 +380,19 @@ social_list = []
 
 
 #Global Constants
-PULSE_PER_SECOND=4
-PULSE_VIOLENCE=( 3 * PULSE_PER_SECOND)
-PULSE_MOBILE=( 4 * PULSE_PER_SECOND)
-PULSE_MUSIC=( 6 * PULSE_PER_SECOND)
-PULSE_TICK=(60 * PULSE_PER_SECOND)
-PULSE_AREA=(120 * PULSE_PER_SECOND)
+PULSE_PER_SECOND = 4
+PULSE_VIOLENCE = (3 * PULSE_PER_SECOND)
+PULSE_MOBILE = (4 * PULSE_PER_SECOND)
+PULSE_MUSIC = (6 * PULSE_PER_SECOND)
+PULSE_TICK = (60 * PULSE_PER_SECOND)
+PULSE_AREA = (120 * PULSE_PER_SECOND)
 
 #Stats
-STAT_STR=0
-STAT_INT=1
-STAT_WIS=2
-STAT_DEX=3
-STAT_CON=4
+STAT_STR = 0
+STAT_INT = 1
+STAT_WIS = 2
+STAT_DEX = 3
+STAT_CON = 4
 
 DIR_NORTH = 0
 DIR_EAST = 1
@@ -403,175 +403,175 @@ DIR_DOWN = 5
 
 
 #Item types
-ITEM_LIGHT='light'
-ITEM_SCROLL='scroll'
-ITEM_WAND='wand'
-ITEM_STAFF='staff'
-ITEM_WEAPON='weapon'
-ITEM_TREASURE='treasure'
-ITEM_ARMOR='armor'
-ITEM_POTION='potion'
-ITEM_CLOTHING='clothing'
-ITEM_FURNITURE='furniture'
-ITEM_TRASH='trash'
-ITEM_CONTAINER='container'
-ITEM_DRINK_CON='drink'
-ITEM_KEY='key'
-ITEM_FOOD='food'
-ITEM_MONEY='money'
-ITEM_BOAT='boat'
-ITEM_CORPSE_NPC='npc_corpse'
-ITEM_CORPSE_PC='pc_corpse'
-ITEM_FOUNTAIN='fountain'
-ITEM_PILL='pill'
-ITEM_PROTECT='protect'
-ITEM_MAP='map'
-ITEM_PORTAL='portal'
-ITEM_WARP_STONE='warp_stone'
-ITEM_ROOM_KEY='room_key'
-ITEM_GEM='gem'
-ITEM_JEWELRY='jewelry'
-ITEM_JUKEBOX='jukebox'
+ITEM_LIGHT = 'light'
+ITEM_SCROLL = 'scroll'
+ITEM_WAND ='wand'
+ITEM_STAFF = 'staff'
+ITEM_WEAPON = 'weapon'
+ITEM_TREASURE = 'treasure'
+ITEM_ARMOR = 'armor'
+ITEM_POTION = 'potion'
+ITEM_CLOTHING = 'clothing'
+ITEM_FURNITURE = 'furniture'
+ITEM_TRASH = 'trash'
+ITEM_CONTAINER = 'container'
+ITEM_DRINK_CON = 'drink'
+ITEM_KEY = 'key'
+ITEM_FOOD = 'food'
+ITEM_MONEY = 'money'
+ITEM_BOAT = 'boat'
+ITEM_CORPSE_NPC = 'npc_corpse'
+ITEM_CORPSE_PC = 'pc_corpse'
+ITEM_FOUNTAIN = 'fountain'
+ITEM_PILL = 'pill'
+ITEM_PROTECT = 'protect'
+ITEM_MAP = 'map'
+ITEM_PORTAL = 'portal'
+ITEM_WARP_STONE = 'warp_stone'
+ITEM_ROOM_KEY = 'room_key'
+ITEM_GEM = 'gem'
+ITEM_JEWELRY = 'jewelry'
+ITEM_JUKEBOX = 'jukebox'
 
 
 
 #Sexes
-SEX_NEUTRAL=0
-SEX_MALE=1
-SEX_FEMALE=2
+SEX_NEUTRAL = 0
+SEX_MALE = 1
+SEX_FEMALE = 2
 
 #Sizes
-SIZE_TINY=0
-SIZE_SMALL=1
-SIZE_MEDIUM=2
-SIZE_LARGE=3
-SIZE_HUGE=4
-SIZE_GIANT=5
+SIZE_TINY = 0
+SIZE_SMALL = 1
+SIZE_MEDIUM = 2
+SIZE_LARGE = 3
+SIZE_HUGE = 4
+SIZE_GIANT = 5
 size_table = ["tiny",  "small", "medium", "large", "huge", "giant" ]
 
-DICE_NUMBER=0
-DICE_TYPE=1
-DICE_BONUS=2
+DICE_NUMBER = 0
+DICE_TYPE = 1
+DICE_BONUS = 2
 
 #  Target types.
  
-TAR_IGNORE=0
-TAR_CHAR_OFFENSIVE=1
-TAR_CHAR_DEFENSIVE=2
-TAR_CHAR_SELF=3
-TAR_OBJ_INV=4
-TAR_OBJ_CHAR_DEF=5
-TAR_OBJ_CHAR_OFF=6
+TAR_IGNORE = 0
+TAR_CHAR_OFFENSIVE = 1
+TAR_CHAR_DEFENSIVE = 2
+TAR_CHAR_SELF = 3
+TAR_OBJ_INV = 4
+TAR_OBJ_CHAR_DEF = 5
+TAR_OBJ_CHAR_OFF = 6
 
-TARGET_CHAR=0
-TARGET_OBJ=1
-TARGET_ROOM=2
-TARGET_NONE=3
+TARGET_CHAR = 0
+TARGET_OBJ = 1
+TARGET_ROOM = 2
+TARGET_NONE = 3
 
 #Positions
-POS_DEAD=0
-POS_MORTAL=1
-POS_INCAP=2
-POS_STUNNED=3
-POS_SLEEPING=4
-POS_RESTING=5
-POS_SITTING=6
-POS_FIGHTING=7
-POS_STANDING=8
+POS_DEAD = 0
+POS_MORTAL = 1
+POS_INCAP = 2
+POS_STUNNED = 3
+POS_SLEEPING = 4
+POS_RESTING = 5
+POS_SITTING = 6
+POS_FIGHTING = 7
+POS_STANDING = 8
 
 
 # * Sector types.
 # * Used in #ROOMS.
 
-SECT_INSIDE=0
-SECT_CITY=1
-SECT_FIELD=2
-SECT_FOREST=3
-SECT_HILLS=4
-SECT_MOUNTAIN=5
-SECT_WATER_SWIM=6
-SECT_WATER_NOSWIM=7
-SECT_UNUSED=8
-SECT_AIR=9
-SECT_DESERT=10
-SECT_MAX=11
+SECT_INSIDE = 0
+SECT_CITY = 1
+SECT_FIELD = 2
+SECT_FOREST = 3
+SECT_HILLS = 4
+SECT_MOUNTAIN = 5
+SECT_WATER_SWIM = 6
+SECT_WATER_NOSWIM = 7
+SECT_UNUSED = 8
+SECT_AIR = 9
+SECT_DESERT = 10
+SECT_MAX = 11
 
 # TO types for act.
 
-TO_ROOM=0
-TO_NOTVICT=1
-TO_VICT=2
-TO_CHAR=3
-TO_ALL=4
+TO_ROOM = 0
+TO_NOTVICT = 1
+TO_VICT = 2
+TO_CHAR = 3
+TO_ALL = 4
 
-DAM_NONE=0
-DAM_BASH=1
-DAM_PIERCE=2
-DAM_SLASH=3
-DAM_FIRE=4
-DAM_COLD=5
-DAM_LIGHTNIN=6
-DAM_ACID=7
-DAM_POISON=8
-DAM_NEGATIVE=9
-DAM_HOLY=10
-DAM_ENERGY=11
-DAM_MENTAL=12
-DAM_DISEASE=13
-DAM_DROWNING=14
-DAM_LIGHT=15
-DAM_OTHER=16
-DAM_HARM=17
-DAM_CHARM=18
-DAM_SOUND=19
+DAM_NONE = 0
+DAM_BASH = 1
+DAM_PIERCE = 2
+DAM_SLASH = 3
+DAM_FIRE = 4
+DAM_COLD = 5
+DAM_LIGHTNIN = 6
+DAM_ACID = 7
+DAM_POISON = 8
+DAM_NEGATIVE = 9
+DAM_HOLY = 10
+DAM_ENERGY = 11
+DAM_MENTAL = 12
+DAM_DISEASE = 13
+DAM_DROWNING = 14
+DAM_LIGHT = 15
+DAM_OTHER = 16
+DAM_HARM = 17
+DAM_CHARM = 18
+DAM_SOUND = 19
 
-LOG_NORMAL=0
-LOG_ALWAYS=1
-LOG_NEVER=2
+LOG_NORMAL = 0
+LOG_ALWAYS = 1
+LOG_NEVER = 2
 
-WEAPON_EXOTIC=0
-WEAPON_SWORD=1
-WEAPON_DAGGER=2
-WEAPON_SPEAR=3
-WEAPON_MACE=4
-WEAPON_AXE=5
-WEAPON_FLAIL=6
-WEAPON_WHIP=7
-WEAPON_POLEARM=8
+WEAPON_EXOTIC = 0
+WEAPON_SWORD = 1
+WEAPON_DAGGER = 2
+WEAPON_SPEAR = 3
+WEAPON_MACE = 4
+WEAPON_AXE = 5
+WEAPON_FLAIL = 6
+WEAPON_WHIP = 7
+WEAPON_POLEARM = 8
 
 
 # * Equpiment wear locations.
 # * Used in #RESETS.
 
-WEAR_NONE=-1
-WEAR_LIGHT=0
-WEAR_FINGER_L=1
-WEAR_FINGER_R=2
-WEAR_NECK_1=3
-WEAR_NECK_2=4
-WEAR_BODY=5
-WEAR_HEAD=6
-WEAR_LEGS=7
-WEAR_FEET=8
-WEAR_HANDS=9
-WEAR_ARMS=10
-WEAR_SHIELD=11
-WEAR_ABOUT=12
-WEAR_WAIST=13
-WEAR_WRIST_L=14
-WEAR_WRIST_R=15
-WEAR_WIELD=16
-WEAR_HOLD=17
-WEAR_FLOAT=18
-MAX_WEAR=19
+WEAR_NONE = -1
+WEAR_LIGHT = 0
+WEAR_FINGER_L = 1
+WEAR_FINGER_R = 2
+WEAR_NECK_1 = 3
+WEAR_NECK_2 = 4
+WEAR_BODY = 5
+WEAR_HEAD = 6
+WEAR_LEGS = 7
+WEAR_FEET = 8
+WEAR_HANDS = 9
+WEAR_ARMS = 10
+WEAR_SHIELD = 11
+WEAR_ABOUT = 12
+WEAR_WAIST = 13
+WEAR_WRIST_L = 14
+WEAR_WRIST_R = 15
+WEAR_WIELD = 16
+WEAR_HOLD = 17
+WEAR_FLOAT = 18
+MAX_WEAR = 19
 
 
 # * Conditions.
 
-COND_DRUNK=0
-COND_FULL=1
-COND_THIRST=2
-COND_HUNGER=3
+COND_DRUNK = 0
+COND_FULL = 1
+COND_THIRST = 2
+COND_HUNGER = 3
 
 #Item constants
 
@@ -612,15 +612,15 @@ OBJ_VNUM_WHISTLE = 2116
 
 # * Well known room virtual numbers.
 # * Defined in #ROOMS.
-ROOM_VNUM_LIMBO=2
-ROOM_VNUM_CHAT=1200
-ROOM_VNUM_TEMPLE=3001
-ROOM_VNUM_ALTAR=3054
-ROOM_VNUM_SCHOOL=3700
-ROOM_VNUM_BALANCE=4500
-ROOM_VNUM_CIRCLE=4400
-ROOM_VNUM_DEMISE=4201
-ROOM_VNUM_HONOR=4300
+ROOM_VNUM_LIMBO = 2
+ROOM_VNUM_CHAT = 1200
+ROOM_VNUM_TEMPLE = 3001
+ROOM_VNUM_ALTAR = 3054
+ROOM_VNUM_SCHOOL = 3700
+ROOM_VNUM_BALANCE = 4500
+ROOM_VNUM_CIRCLE = 4400
+ROOM_VNUM_DEMISE = 4201
+ROOM_VNUM_HONOR = 4300
 
 
 def IS_SET(flag, bit):
@@ -689,425 +689,425 @@ zz = 1 << 52
 #  ACT bits for mobs.
 #  Used in #MOBILES.
 
-ACT_IS_NPC=A  # Auto set for mobs    */
-ACT_SENTINEL=B #  Stays in one room    */
-ACT_SCAVENGER=C  # Picks up objects */
-ACT_AGGRESSIVE=F   # Attacks PC's     */
-ACT_STAY_AREA=G    # Won't leave area */
-ACT_WIMPY=H
-ACT_PET=I     # Auto set for pets    */
-ACT_TRAIN=J     # Can train PC's   */
-ACT_PRACTICE=K     # Can practice PC's    */
-ACT_UNDEAD=O 
-ACT_CLERIC=Q
-ACT_MAGE=R
-ACT_THIEF=S
-ACT_WARRIOR=T
-ACT_NOALIGN=U
-ACT_NOPURGE=V
-ACT_OUTDOORS=W
-ACT_INDOORS=Y
-ACT_IS_HEALER=aa
-ACT_GAIN=bb
-ACT_UPDATE_ALWAYS=cc
-ACT_IS_CHANGER=dd
+ACT_IS_NPC = A  # Auto set for mobs    */
+ACT_SENTINEL = B #  Stays in one room    */
+ACT_SCAVENGER = C  # Picks up objects */
+ACT_AGGRESSIVE = F   # Attacks PC's     */
+ACT_STAY_AREA = G    # Won't leave area */
+ACT_WIMPY = H
+ACT_PET = I     # Auto set for pets    */
+ACT_TRAIN = J     # Can train PC's   */
+ACT_PRACTICE = K     # Can practice PC's    */
+ACT_UNDEAD = O 
+ACT_CLERIC = Q
+ACT_MAGE = R
+ACT_THIEF = S
+ACT_WARRIOR = T
+ACT_NOALIGN = U
+ACT_NOPURGE = V
+ACT_OUTDOORS = W
+ACT_INDOORS = Y
+ACT_IS_HEALER = aa
+ACT_GAIN = bb
+ACT_UPDATE_ALWAYS = cc
+ACT_IS_CHANGER = dd
 
-OFF_AREA_ATTACK=A
-OFF_BACKSTAB=B
-OFF_BASH=C
-OFF_BERSERK=D
-OFF_DISARM=E
-OFF_DODGE=F
-OFF_FADE=G
-OFF_FAST=H
-OFF_KICK=I
-OFF_KICK_DIRT=J
-OFF_PARRY=K
-OFF_RESCUE=L
-OFF_TAIL=M
-OFF_TRIP=N
-OFF_CRUSH=O
-ASSIST_ALL=P
-ASSIST_ALIGN=Q
-ASSIST_RACE=R
-ASSIST_PLAYERS=S
-ASSIST_GUARD=T
-ASSIST_VNUM=U
+OFF_AREA_ATTACK = A
+OFF_BACKSTAB = B
+OFF_BASH = C
+OFF_BERSERK = D
+OFF_DISARM = E
+OFF_DODGE = F
+OFF_FADE = G
+OFF_FAST = H
+OFF_KICK = I
+OFF_KICK_DIRT = J
+OFF_PARRY = K
+OFF_RESCUE = L
+OFF_TAIL = M
+OFF_TRIP = N
+OFF_CRUSH = O
+ASSIST_ALL = P
+ASSIST_ALIGN = Q
+ASSIST_RACE = R
+ASSIST_PLAYERS = S
+ASSIST_GUARD = T
+ASSIST_VNUM = U
 
-IMM_SUMMON=A
-IMM_CHARM=B
-IMM_MAGIC=C
-IMM_WEAPON=D
-IMM_BASH=E
-IMM_PIERCE=F
-IMM_SLASH=G
-IMM_FIRE=H
-IMM_COLD=I
-IMM_LIGHTNING=J
-IMM_ACID=K
-IMM_POISON=L
-IMM_NEGATIVE=M
-IMM_HOLY=N
-IMM_ENERGY=O
-IMM_MENTAL=P
-IMM_DISEASE=Q
-IMM_DROWNING=R
-IMM_LIGHT=S
-IMM_SOUND=T
-IMM_WOOD=X
-IMM_SILVER=Y
-IMM_IRON=Z
+IMM_SUMMON = A
+IMM_CHARM = B
+IMM_MAGIC = C
+IMM_WEAPON = D
+IMM_BASH = E
+IMM_PIERCE = F
+IMM_SLASH = G
+IMM_FIRE = H
+IMM_COLD = I
+IMM_LIGHTNING = J
+IMM_ACID = K
+IMM_POISON = L
+IMM_NEGATIVE = M
+IMM_HOLY = N
+IMM_ENERGY = O
+IMM_MENTAL = P
+IMM_DISEASE = Q
+IMM_DROWNING = R
+IMM_LIGHT = S
+IMM_SOUND = T
+IMM_WOOD = X
+IMM_SILVER = Y
+IMM_IRON = Z
  
 # RES bits for mobs */
-RES_SUMMON=A
-RES_CHARM=B
-RES_MAGIC=C
-RES_WEAPON=D
-RES_BASH=E
-RES_PIERCE=F
-RES_SLASH=G
-RES_FIRE=H
-RES_COLD=I
-RES_LIGHTNING=J
-RES_ACID=K
-RES_POISON=L
-RES_NEGATIVE=M
-RES_HOLY=N
-RES_ENERGY=O
-RES_MENTAL=P
-RES_DISEASE=Q
-RES_DROWNING=R
-RES_LIGHT=S
-RES_SOUND=T
-RES_WOOD=X
-RES_SILVER=Y
-RES_IRON=Z
+RES_SUMMON = A
+RES_CHARM = B
+RES_MAGIC = C
+RES_WEAPON = D
+RES_BASH = E
+RES_PIERCE = F
+RES_SLASH = G
+RES_FIRE = H
+RES_COLD = I
+RES_LIGHTNING = J
+RES_ACID = K
+RES_POISON = L
+RES_NEGATIVE = M
+RES_HOLY = N
+RES_ENERGY = O
+RES_MENTAL = P
+RES_DISEASE = Q
+RES_DROWNING = R
+RES_LIGHT = S
+RES_SOUND = T
+RES_WOOD = X
+RES_SILVER = Y
+RES_IRON = Z
  
 # VULN bits for mobs */
-VULN_SUMMON=A
-VULN_CHARM=B
-VULN_MAGIC=C
-VULN_WEAPON=D
-VULN_BASH=E
-VULN_PIERCE=F
-VULN_SLASH=G
-VULN_FIRE=H
-VULN_COLD=I
-VULN_LIGHTNING=J
-VULN_ACID=K
-VULN_POISON=L
-VULN_NEGATIVE=M
-VULN_HOLY=N
-VULN_ENERGY=O
-VULN_MENTAL=P
-VULN_DISEASE=Q
-VULN_DROWNING=R
-VULN_LIGHT=S
-VULN_SOUND=T
-VULN_WOOD=X
-VULN_SILVER=Y
-VULN_IRON=Z
+VULN_SUMMON = A
+VULN_CHARM = B
+VULN_MAGIC = C
+VULN_WEAPON = D
+VULN_BASH = E
+VULN_PIERCE = F
+VULN_SLASH = G
+VULN_FIRE = H
+VULN_COLD = I
+VULN_LIGHTNING = J
+VULN_ACID = K
+VULN_POISON = L
+VULN_NEGATIVE = M
+VULN_HOLY = N
+VULN_ENERGY = O
+VULN_MENTAL = P
+VULN_DISEASE = Q
+VULN_DROWNING = R
+VULN_LIGHT = S
+VULN_SOUND = T
+VULN_WOOD = X
+VULN_SILVER = Y
+VULN_IRON = Z
  
 # body form */
-FORM_EDIBLE=A
-FORM_POISON=B
-FORM_MAGICAL=C
-FORM_INSTANT_DECAY=D
-FORM_OTHER=E  # defined by material bit */
+FORM_EDIBLE = A
+FORM_POISON = B
+FORM_MAGICAL = C
+FORM_INSTANT_DECAY = D
+FORM_OTHER = E  # defined by material bit */
  
 # actual form */
-FORM_ANIMAL=G
-FORM_SENTIENT=H
-FORM_UNDEAD=I
-FORM_CONSTRUCT=J
-FORM_MIST=K
-FORM_INTANGIBLE=L
+FORM_ANIMAL = G
+FORM_SENTIENT = H
+FORM_UNDEAD = I
+FORM_CONSTRUCT = J
+FORM_MIST = K
+FORM_INTANGIBLE = L
  
-FORM_BIPED=M
-FORM_CENTAUR=N
-FORM_INSECT=O
-FORM_SPIDER=P
-FORM_CRUSTACEAN=Q
-FORM_WORM=R
-FORM_BLOB=S
+FORM_BIPED = M
+FORM_CENTAUR = N
+FORM_INSECT = O
+FORM_SPIDER = P
+FORM_CRUSTACEAN = Q
+FORM_WORM = R
+FORM_BLOB = S
  
-FORM_MAMMAL=V
-FORM_BIRD=W
-FORM_REPTILE=X
-FORM_SNAKE=Y
-FORM_DRAGON=Z
-FORM_AMPHIBIAN=aa
-FORM_FISH=bb
-FORM_COLD_BLOOD=cc    
+FORM_MAMMAL = V
+FORM_BIRD = W
+FORM_REPTILE = X
+FORM_SNAKE = Y
+FORM_DRAGON = Z
+FORM_AMPHIBIAN = aa
+FORM_FISH = bb
+FORM_COLD_BLOOD = cc    
  
 # body parts */
-PART_HEAD=A
-PART_ARMS=B
-PART_LEGS=C
-PART_HEART=D
-PART_BRAINS=E
-PART_GUTS=F
-PART_HANDS=G
-PART_FEET=H
-PART_FINGERS=I
-PART_EAR=J
-PART_EYE=K
-PART_LONG_TONGUE=L
-PART_EYESTALKS=M
-PART_TENTACLES=N
-PART_FINS=O
-PART_WINGS=P
-PART_TAIL=Q
+PART_HEAD = A
+PART_ARMS = B
+PART_LEGS = C
+PART_HEART = D
+PART_BRAINS = E
+PART_GUTS = F
+PART_HANDS = G
+PART_FEET = H
+PART_FINGERS = I
+PART_EAR = J
+PART_EYE = K
+PART_LONG_TONGUE = L
+PART_EYESTALKS = M
+PART_TENTACLES = N
+PART_FINS = O
+PART_WINGS = P
+PART_TAIL = Q
 # for combat */
-PART_CLAWS=U
-PART_FANGS=V
-PART_HORNS=W
-PART_SCALES=X
-PART_TUSKS=Y
+PART_CLAWS = U
+PART_FANGS = V
+PART_HORNS = W
+PART_SCALES = X
+PART_TUSKS = Y
 
 
 # Bits for 'affected_by'.
 # Used in #MOBILES.
 
-AFF_BLIND=A
-AFF_INVISIBLE=B
-AFF_DETECT_EVIL=C
-AFF_DETECT_INVIS=D
-AFF_DETECT_MAGIC=E
-AFF_DETECT_HIDDEN=F
-AFF_DETECT_GOOD=G
-AFF_SANCTUARY=H
-AFF_FAERIE_FIRE=I
-AFF_INFRARED=J
-AFF_CURSE=K
-AFF_UNUSED_FLAG=L # unused */
-AFF_POISON=M
-AFF_PROTECT_EVIL=N
-AFF_PROTECT_GOOD=O
-AFF_SNEAK=P
-AFF_HIDE=Q
-AFF_SLEEP=R
-AFF_CHARM=S
-AFF_FLYING=T
-AFF_PASS_DOOR=U
-AFF_HASTE=V
-AFF_CALM=W
-AFF_PLAGUE=X
-AFF_WEAKEN=Y
-AFF_DARK_VISION=Z
-AFF_BERSERK=aa
-AFF_SWIM=bb
-AFF_REGENERATION=cc
-AFF_SLOW=dd
+AFF_BLIND = A
+AFF_INVISIBLE = B
+AFF_DETECT_EVIL = C
+AFF_DETECT_INVIS = D
+AFF_DETECT_MAGIC = E
+AFF_DETECT_HIDDEN = F
+AFF_DETECT_GOOD = G
+AFF_SANCTUARY = H
+AFF_FAERIE_FIRE = I
+AFF_INFRARED = J
+AFF_CURSE = K
+AFF_UNUSED_FLAG = L # unused */
+AFF_POISON = M
+AFF_PROTECT_EVIL = N
+AFF_PROTECT_GOOD = O
+AFF_SNEAK = P
+AFF_HIDE = Q
+AFF_SLEEP = R
+AFF_CHARM = S
+AFF_FLYING = T
+AFF_PASS_DOOR = U
+AFF_HASTE = V
+AFF_CALM = W
+AFF_PLAGUE = X
+AFF_WEAKEN = Y
+AFF_DARK_VISION = Z
+AFF_BERSERK = aa
+AFF_SWIM = bb
+AFF_REGENERATION = cc
+AFF_SLOW = dd
 
 
 # Extra flags.
 # Used in #OBJECTS.
 
-ITEM_GLOW=A
-ITEM_HUM=B
-ITEM_DARK=C
-ITEM_LOCK=D
-ITEM_EVIL=E
-ITEM_INVIS=F
-ITEM_MAGIC=G
-ITEM_NODROP=H
-ITEM_BLESS=I
-ITEM_ANTI_GOOD=J
-ITEM_ANTI_EVIL=K
-ITEM_ANTI_NEUTRAL=L
-ITEM_NOREMOVE=M
-ITEM_INVENTORY=N
-ITEM_NOPURGE=O
-ITEM_ROT_DEATH=P
-ITEM_VIS_DEATH=Q
-ITEM_NONMETAL=S
-ITEM_NOLOCATE=T
-ITEM_MELT_DROP=U
-ITEM_HAD_TIMER=V
-ITEM_SELL_EXTRACT=W
-ITEM_BURN_PROOF=Y
-ITEM_NOUNCURSE=Z
+ITEM_GLOW = A
+ITEM_HUM = B
+ITEM_DARK = C
+ITEM_LOCK = D
+ITEM_EVIL = E
+ITEM_INVIS = F
+ITEM_MAGIC = G
+ITEM_NODROP = H
+ITEM_BLESS = I
+ITEM_ANTI_GOOD = J
+ITEM_ANTI_EVIL = K
+ITEM_ANTI_NEUTRAL = L
+ITEM_NOREMOVE = M
+ITEM_INVENTORY = N
+ITEM_NOPURGE = O
+ITEM_ROT_DEATH = P
+ITEM_VIS_DEATH = Q
+ITEM_NONMETAL = S
+ITEM_NOLOCATE = T
+ITEM_MELT_DROP = U
+ITEM_HAD_TIMER = V
+ITEM_SELL_EXTRACT = W
+ITEM_BURN_PROOF = Y
+ITEM_NOUNCURSE = Z
 
 
 
 # Wear flags.
 # Used in #OBJECTS.
 
-ITEM_TAKE=A
-ITEM_WEAR_FINGER=B
-ITEM_WEAR_NECK=C
-ITEM_WEAR_BODY=D
-ITEM_WEAR_HEAD=E
-ITEM_WEAR_LEGS=F
-ITEM_WEAR_FEET=G
-ITEM_WEAR_HANDS=H
-ITEM_WEAR_ARMS=I
-ITEM_WEAR_SHIELD=J
-ITEM_WEAR_ABOUT=K
-ITEM_WEAR_WAIST=L
-ITEM_WEAR_WRIST=M
-ITEM_WIELD=N
-ITEM_HOLD=O
-ITEM_NO_SAC=P
-ITEM_WEAR_FLOAT=Q
+ITEM_TAKE = A
+ITEM_WEAR_FINGER = B
+ITEM_WEAR_NECK = C
+ITEM_WEAR_BODY = D
+ITEM_WEAR_HEAD = E
+ITEM_WEAR_LEGS = F
+ITEM_WEAR_FEET = G
+ITEM_WEAR_HANDS = H
+ITEM_WEAR_ARMS = I
+ITEM_WEAR_SHIELD = J
+ITEM_WEAR_ABOUT = K
+ITEM_WEAR_WAIST = L
+ITEM_WEAR_WRIST = M
+ITEM_WIELD = N
+ITEM_HOLD = O
+ITEM_NO_SAC = P
+ITEM_WEAR_FLOAT = Q
 
 
 # weapon types */
-WEAPON_FLAMING=A
-WEAPON_FROST=B
-WEAPON_VAMPIRIC=C
-WEAPON_SHARP=D
-WEAPON_VORPAL=E
-WEAPON_TWO_HANDS=F
-WEAPON_SHOCKING=G
-WEAPON_POISON=H
+WEAPON_FLAMING = A
+WEAPON_FROST = B
+WEAPON_VAMPIRIC = C
+WEAPON_SHARP = D
+WEAPON_VORPAL = E
+WEAPON_TWO_HANDS = F
+WEAPON_SHOCKING = G
+WEAPON_POISON = H
 
 # gate flags */
-GATE_NORMAL_EXIT=A
-GATE_NOCURSE=B
-GATE_GOWITH=C
-GATE_BUGGY=D
-GATE_RANDOM=E
+GATE_NORMAL_EXIT = A
+GATE_NOCURSE = B
+GATE_GOWITH = C
+GATE_BUGGY = D
+GATE_RANDOM = E
 
 # furniture flags */
-STAND_AT=A
-STAND_ON=B
-STAND_IN=C
-SIT_AT=D
-SIT_ON=E
-SIT_IN=F
-REST_AT=G
-REST_ON=H
-REST_IN=I
-SLEEP_AT=J
-SLEEP_ON=K
-SLEEP_IN=L
-PUT_AT=M
-PUT_ON=N
-PUT_IN=O
-PUT_INSIDE=P
+STAND_AT = A
+STAND_ON = B
+STAND_IN = C
+SIT_AT = D
+SIT_ON = E
+SIT_IN = F
+REST_AT = G
+REST_ON = H
+REST_IN = I
+SLEEP_AT = J
+SLEEP_ON = K
+SLEEP_IN = L
+PUT_AT = M
+PUT_ON = N
+PUT_IN = O
+PUT_INSIDE = P
 
 
 # Room flags.
 # Used in #ROOMS.
 
-ROOM_DARK=A
-ROOM_NO_MOB=C
-ROOM_INDOORS=D
+ROOM_DARK = A
+ROOM_NO_MOB = C
+ROOM_INDOORS = D
 
-ROOM_PRIVATE=J
-ROOM_SAFE=K
-ROOM_SOLITARY=L
-ROOM_PET_SHOP=M
-ROOM_NO_RECALL=N
-ROOM_IMP_ONLY=O
-ROOM_GODS_ONLY=P
-ROOM_HEROES_ONLY=Q
-ROOM_NEWBIES_ONLY=R
-ROOM_LAW=S
-ROOM_NOWHERE=T
+ROOM_PRIVATE = J
+ROOM_SAFE = K
+ROOM_SOLITARY = L
+ROOM_PET_SHOP = M
+ROOM_NO_RECALL = N
+ROOM_IMP_ONLY = O
+ROOM_GODS_ONLY = P
+ROOM_HEROES_ONLY = Q
+ROOM_NEWBIES_ONLY = R
+ROOM_LAW = S
+ROOM_NOWHERE = T
 
 
 # Exit flags.
 # Used in #ROOMS.
 
-EX_ISDOOR=A
-EX_CLOSED=B
-EX_LOCKED=C
-EX_PICKPROOF=F
-EX_NOPASS=G
-EX_EASY=H
-EX_HARD=I
-EX_INFURIATING=J
-EX_NOCLOSE=K
-EX_NOLOCK=L
+EX_ISDOOR = A
+EX_CLOSED = B
+EX_LOCKED = C
+EX_PICKPROOF = F
+EX_NOPASS = G
+EX_EASY = H
+EX_HARD = I
+EX_INFURIATING = J
+EX_NOCLOSE = K
+EX_NOLOCK = L
 
 
 # ACT bits for players.
 
-PLR_IS_NPC=A     # Don't EVER set.  */
+PLR_IS_NPC = A     # Don't EVER set.  */
 
 # RT auto flags */
-PLR_AUTOASSIST=C
-PLR_AUTOEXIT=D
-PLR_AUTOLOOT=E
-PLR_AUTOSAC=F
-PLR_AUTOGOLD=G
-PLR_AUTOSPLIT=H
+PLR_AUTOASSIST = C
+PLR_AUTOEXIT = D
+PLR_AUTOLOOT = E
+PLR_AUTOSAC = F
+PLR_AUTOGOLD = G
+PLR_AUTOSPLIT = H
 
 # RT personal flags */
-PLR_HOLYLIGHT=N
-PLR_CANLOOT=P
-PLR_NOSUMMON=Q
-PLR_NOFOLLOW=R
+PLR_HOLYLIGHT = N
+PLR_CANLOOT = P
+PLR_NOSUMMON = Q
+PLR_NOFOLLOW = R
 # 2 bits reserved, S-T */
 
 # penalty flags */
-PLR_PERMIT=U
-PLR_LOG=W
-PLR_DENY=X
-PLR_FREEZE=Y
-PLR_THIEF=Z
-PLR_KILLER=aa
+PLR_PERMIT = U
+PLR_LOG = W
+PLR_DENY = X
+PLR_FREEZE = Y
+PLR_THIEF = Z
+PLR_KILLER = aa
 
 
 # RT comm flags -- may be used on both mobs and chars */
-COMM_QUIET=A
-COMM_DEAF=B
-COMM_NOWIZ=C
-COMM_NOAUCTION=D
-COMM_NOGOSSIP=E
-COMM_NOQUESTION=F
-COMM_NOMUSIC=G
-COMM_NOCLAN=H
-COMM_NOQUOTE=I
-COMM_SHOUTSOFF=J
+COMM_QUIET = A
+COMM_DEAF = B
+COMM_NOWIZ = C
+COMM_NOAUCTION = D
+COMM_NOGOSSIP = E
+COMM_NOQUESTION = F
+COMM_NOMUSIC = G
+COMM_NOCLAN = H
+COMM_NOQUOTE = I
+COMM_SHOUTSOFF = J
 
 # display flags */
-COMM_COMPACT=L
-COMM_BRIEF=M
-COMM_PROMPT=N
-COMM_COMBINE=O
-COMM_TELNET_GA=P
-COMM_SHOW_AFFECTS=Q
-COMM_NOGRATS=R
+COMM_COMPACT = L
+COMM_BRIEF = M
+COMM_PROMPT = N
+COMM_COMBINE = O
+COMM_TELNET_GA = P
+COMM_SHOW_AFFECTS = Q
+COMM_NOGRATS = R
 
 # penalties */
-COMM_NOEMOTE=T
-COMM_NOSHOUT=U
-COMM_NOTELL=V
-COMM_NOCHANNELS=W 
-COMM_SNOOP_PROOF=Y
-COMM_AFK=Z
+COMM_NOEMOTE = T
+COMM_NOSHOUT = U
+COMM_NOTELL = V
+COMM_NOCHANNELS = W 
+COMM_SNOOP_PROOF = Y
+COMM_AFK = Z
 
 # WIZnet flags */
-WIZ_ON=A
-WIZ_TICKS=B
-WIZ_LOGINS=C
-WIZ_SITES=D
-WIZ_LINKS=E
-WIZ_DEATHS=F
-WIZ_RESETS=G
-WIZ_MOBDEATHS=H
-WIZ_FLAGS=I
-WIZ_PENALTIES=J
-WIZ_SACCING=K
-WIZ_LEVELS=L
-WIZ_SECURE=M
-WIZ_SWITCHES=N
-WIZ_SNOOPS=O
-WIZ_RESTORE=P
-WIZ_LOAD=Q
-WIZ_NEWBIE=R
-WIZ_PREFIX=S
-WIZ_SPAM=T
+WIZ_ON = A
+WIZ_TICKS = B
+WIZ_LOGINS = C
+WIZ_SITES = D
+WIZ_LINKS = E
+WIZ_DEATHS = F
+WIZ_RESETS = G
+WIZ_MOBDEATHS = H
+WIZ_FLAGS = I
+WIZ_PENALTIES = J
+WIZ_SACCING = K
+WIZ_LEVELS = L
+WIZ_SECURE = M
+WIZ_SWITCHES = N
+WIZ_SNOOPS = O
+WIZ_RESTORE = P
+WIZ_LOAD = Q
+WIZ_NEWBIE = R
+WIZ_PREFIX = S
+WIZ_SPAM = T
 
 # memory settings */
-MEM_CUSTOMER=A   
-MEM_SELLER=B
-MEM_HOSTILE=C
-MEM_AFRAID=D
+MEM_CUSTOMER = A   
+MEM_SELLER = B
+MEM_HOSTILE = C
+MEM_AFRAID = D
 
 boot_time = time.time()
 current_time = 0
@@ -1121,10 +1121,18 @@ def prefix_lookup(dict, arg):
         return results[0]
     return None
 
+def value_lookup(dict, arg):
+    if not arg:
+        return None
+    for k,v in dict.iteritems():
+        if v == arg:
+            return k
+    return None
 
 def mass_replace(str, dict):
     for k,v in dict.iteritems():
-        str = str.replace(k,v)
+        if v:
+            str = str.replace(k,v)
     return str
 
 def PERS(ch, looker):
@@ -1227,13 +1235,13 @@ def set_title(ch, title):
     else:
         ch.pcdata.title = ' ' + title
 
-def read_forward(str, jump=1):
+def read_forward(str, jump = 1):
     return str[jump:]
 
 def read_letter(str):
     str = str.lstrip()
     return(str[1:], str[:1])
-def read_word(str, lower=True):
+def read_word(str, lower = True):
     if not str:
         return ("", "")
     
@@ -1347,7 +1355,7 @@ def mult_argument(argument):
     return (int(number), rest)
 
 
-def act(format, ch, arg1, arg2, send_to, min_pos=POS_RESTING):
+def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
     if not format:
         return
     if not ch or not ch.in_room:
@@ -1357,9 +1365,9 @@ def act(format, ch, arg1, arg2, send_to, min_pos=POS_RESTING):
     obj1 = arg1
     obj2 = arg2
 
-    he_she=["it",  "he",  "she"]
-    him_her=["it",  "him", "her"]
-    his_her=["its", "his", "her"]
+    he_she = ["it",  "he",  "she"]
+    him_her = ["it",  "him", "her"]
+    his_her = ["its", "his", "her"]
 
     to_players = ch.in_room.people
 
@@ -1390,6 +1398,7 @@ def act(format, ch, arg1, arg2, send_to, min_pos=POS_RESTING):
             act_trans['$T'] = str(arg2)
         if ch:
             act_trans['$n'] = PERS(ch, to)
+            print ch.sex
             act_trans['$e'] = he_she[ch.sex]
             act_trans['$m'] = him_her[ch.sex]
             act_trans['$s'] = his_her[ch.sex]
@@ -1405,8 +1414,7 @@ def act(format, ch, arg1, arg2, send_to, min_pos=POS_RESTING):
         act_trans['$d'] = arg2 if not arg2 else "door"
         print format
         format = mass_replace(format, act_trans)
-        print format
-        to.send(format+"\r\n")
+         to.send(format+"\r\n")
     return
 
 #ensureall do_functions become class methods

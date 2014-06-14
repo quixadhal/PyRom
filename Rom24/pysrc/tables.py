@@ -67,7 +67,7 @@ sex_table[SEX_FEMALE] = "female"
 sex_table[SEX_NEUTRAL] = "either"
 
 
-/* for sizes */
+# for sizes */
 size_table = OrderedDict()
 size_table[SIZE_TINY] = ("tiny")
 size_table[SIZE_SMALL] = ("small")

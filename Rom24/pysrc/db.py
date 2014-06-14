@@ -35,6 +35,7 @@ from settings import AREA_DIR, AREA_LIST
 from merc import *
 from handler import *
 from special import spec_table
+from tables import sex_table
 
 def boot_db():
     print "Loading Areas..."
@@ -167,7 +168,8 @@ def load_mobiles(area):
         area, mob.vuln_flags = read_flags(area)
         area, mob.start_pos = read_word(area,False)
         area, mob.default_pos = read_word(area,False)
-        area, mob.sex = read_word(area,False)
+        area, sex = read_word(area,False)
+        mob.sex = value_lookup(sex_table, sex)
         area, mob.wealth = read_int(area)
         area, mob.form = read_flags(area)
         area, mob.parts = read_flags(area)

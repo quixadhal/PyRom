@@ -83,7 +83,6 @@ def con_get_name( self ):
         self.deactivate()
         return
 
-
     if comm.is_reconnecting(self, name):
         found = True
     
@@ -340,6 +339,70 @@ def con_gen_groups(self):
         ch.send("Choices are: list,learned,premise,add,drop,info,help, and done.\n\r")
         ch.do_help("menu choice")
         return
+
+def con_get_old_password(self):
+    argument = self.get_command()
+    ch = self.character
+    ch.send("\n")
+    pwdcmp = ""
+    if ENCRYPT_PASSWORD:
+        pwdcmp = hashlib.sha512( argument ).hexdigest()
+    else:
+        pwdcmp = argument
+    if pwdcmp != ch.pcdata.pwd:
+        ch.send("Wrong password.\n")
+        close_socket( self )
+        return
+    #write_to_buffer( d, echo_on_str, 0 );
+
+    if comm.check_playing(self, ch.name):
+        return
+
+    if comm.check_reconnect(self, ch.name, True):
+        return
+
+    log_buf = "%s@%s has connected." % (ch.name, self.addrport())
+    print log_buf
+    wiznet(log_buf,None,None,WIZ_SITES,0,get_trust(ch))
+    if IS_IMMORTAL(ch):
+        ch.do_help("imotd")
+        self.set_connected(con_read_imotd)
+    else:
+        ch.do_help("motd")
+        self.set_connected(con_read_motd)
+    return
+
+# RT code for breaking link */
+def con_break_connect(self):
+    argument = self.get_command()[:1].lower()
+    ch = self.character
+
+    if argument == 'y':
+        for d_old in descriptor_list[:]:
+            if d_old == self or not d_old.character:
+                continue
+            chname = d_old.original if d_old.original else d_old.character
+            if ch.name != chname:
+                continue
+            close_socket(d_old)
+        if comm.check_reconnect(self, ch.name, True):
+            return
+        self.send("Reconnect attempt failed.\nName: ")
+        if self.character:
+            del self.character
+            self.character = None
+        self.set_connected(con_get_name)
+        return
+    if argument == 'n':
+        self.send("Name: ")
+        if self.character:
+            del self.character
+            self.character = None
+        self.set_connected(con_get_name)
+        return
+
+    self.send("Please type Y or N? ")
+    return
 
 def con_read_imotd(self):
     ch = self.character

@@ -36,6 +36,7 @@ from nanny import con_playing, con_gen_groups
 from handler import *
 from act_move import dir_name
 from db import get_extra_descr
+from const import skill_table
 
 where_name = ["<used as light>     ",
               "<worn on finger>    ",
