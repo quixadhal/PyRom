@@ -35,6 +35,7 @@ from merc import *
 from act_wiz import wiznet
 from handler import get_trust, extract_char
 from save import save_char_obj
+import comm
 
 def do_delet(self, argument):
     ch=self
@@ -784,14 +785,14 @@ def do_quit(self, argument):
     d = ch.desc
     extract_char( ch, True )
     if d != None:
-        close_socket( d )
+        comm.close_socket( d )
 
     # toast evil cheating bastards */
     for d in descriptor_list[:]:
         tch = CH(d)
         if tch and tch.id == id:
             extract_char(tch,True)
-            close_socket(d)
+            comm.close_socket(d)
     return
 
 def do_save(self, argument):

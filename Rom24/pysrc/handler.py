@@ -34,6 +34,7 @@
 import time
 from merc import *
 import const
+import fight
 
 def check_immune(ch,dam_type):
     immune = -1
@@ -826,7 +827,7 @@ def extract_char( ch, fPull ):
 
     #if fPull:
     #    die_follower( ch )
-    stop_fighting( ch, True )
+    fight.stop_fighting( ch, True )
 
     for obj in ch.carrying[:]:
         extract_obj( obj )
@@ -1462,7 +1463,7 @@ def get_skill(ch, sn):
         print "BUG: Bad sn %s in get_skill." % sn
         skill = 0
     elif not IS_NPC(ch):
-        if ch.level < const.skill_table[sn].skill_level[ch.guild]:
+        if ch.level < const.skill_table[sn].skill_level[ch.guild.name]:
             skill = 0
         else:
             skill = ch.pcdata.learned[sn]
@@ -1614,3 +1615,20 @@ def get_max_train(ch, stat):
         else:
             smax += 2
     return min(smax,25)
+
+# * Take an obj from its character.
+def obj_from_char(obj):
+    ch = obj.carried_by
+    if not ch:
+        print "BUG: Obj_from_char: null ch."
+        return
+    
+    if obj.wear_loc != WEAR_NONE:
+        unequip_char( ch, obj )
+
+    ch.carrying.remove(obj)
+
+    obj.carried_by = None
+    ch.carry_number -= get_obj_number(obj)
+    ch.carry_weight -= get_obj_weight(obj)
+    return

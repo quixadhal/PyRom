@@ -56,6 +56,7 @@ def is_connected(self, state):
 def process_output(self):
     ch = CH(self)
     if ch and self.is_connected(con_playing) and self.send_buffer:
+        self.send("\n")
         bust_a_prompt(ch)
     self.miniboa_send()        
 
@@ -110,7 +111,8 @@ def check_reconnect( d, name, fConn ):
     return False
 
 def close_socket(d):
-    descriptor_list.remove(d)
+    if d in descriptor_list:
+        descriptor_list.remove(d)
     d.active = False
 
 #* Bust a prompt (player settable prompt)

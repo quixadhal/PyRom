@@ -71,7 +71,7 @@ def advance_level( ch, hide ):
     ch.pcdata.perm_move   += add_move
 
     if not hide:
-        ch.send("You gain %d hit point%s, %d mana, %d move, and %d practice%s.\n\r" % ( 
+        ch.send("You gain %d hit point%s, %d mana, %d move, and %d practice%s.\n" % ( 
             add_hp, "" if add_hp == 1 else "s", add_mana, add_move, add_prac, "" if add_prac == 1 else "s") )
 
 def gain_exp( ch, gain ):
@@ -230,12 +230,12 @@ def gain_condition( ch, iCond, value ):
 
     if ch.pcdata.condition[iCond] == 0:
         if iCond == COND_HUNGER:
-            ch.send("You are hungry.\n\r")
+            ch.send("You are hungry.\n")
         elif iCond == COND_THIRST:
-            ch.send("You are thirsty.\n\r")
+            ch.send("You are thirsty.\n")
         elif iCond == COND_DRUNK:
             if condition != 0:
-                ch.send("You are sober.\n\r")
+                ch.send("You are sober.\n")
 
 
 # * Mob autonomous action.
@@ -352,14 +352,14 @@ def weather_update( ):
             weather_info.sky = SKY_CLOUDLESS
     elif weather_info.sky == SKY_RAINING:
         if weather_info.mmhg <  970 and number_bits( 2 ) == 0:
-            strcat( buf, "Lightning flashes in the sky.\n\r" )
+            strcat( buf, "Lightning flashes in the sky.\n" )
             weather_info.sky = SKY_LIGHTNING
         if weather_info.mmhg > 1030 or ( weather_info.mmhg > 1010 and random.randint(0, 2) == 0 ):
-            strcat( buf, "The rain stopped.\n\r" )
+            strcat( buf, "The rain stopped.\n" )
             weather_info.sky = SKY_CLOUDY
     elif weather_info.sky == SKY_LIGHTNING:
         if weather_info.mmhg > 1010 or ( weather_info.mmhg >  990 and random.randint(0, 2 ) == 0 ):
-            strcat( buf, "The lightning has stopped.\n\r" )
+            strcat( buf, "The lightning has stopped.\n" )
             weather_info.sky = SKY_RAINING
     else:
         print "Bug: Weather_update: bad sky %d." % weather_info.sky
@@ -434,7 +434,7 @@ def char_update( ):
                     if ch.fighting:
                         stop_fighting( ch, True )
                     act( "$n disappears into the void.", ch, None, None, TO_ROOM )
-                    ch.send("You disappear into the void.\n\r") 
+                    ch.send("You disappear into the void.\n") 
                     if ch.level > 1:
                         save_char_obj( ch )
                     char_from_room( ch )
@@ -473,7 +473,7 @@ def char_update( ):
                 continue
             
             act("$n writhes in agony as plague sores erupt from $s skin.", ch,None,None,TO_ROOM)
-            ch.send("You writhe in agony from the plague.\n\r")
+            ch.send("You writhe in agony from the plague.\n")
             af = [a for a in ch.affected if af.type == 'plague'][:1]
             if not af:
                 REMOVE_BIT(ch.affected_by,AFF_PLAGUE)
@@ -492,7 +492,7 @@ def char_update( ):
             for vch in ch.in_room.people:
                 if not saves_spell(plague.level - 2,vch,DAM_DISEASE) and not IS_IMMORTAL(vch) \
                 and not IS_AFFECTED(vch,AFF_PLAGUE) and random.randint(0,4) == 0:
-                    vch.send("You feel hot and feverish.\n\r")
+                    vch.send("You feel hot and feverish.\n")
                     act("$n shivers and looks very ill.",vch,None,None,TO_ROOM)
                     affect_join(vch,plague)
             dam = min(ch.level,af.level/5+1)
@@ -503,7 +503,7 @@ def char_update( ):
             poison = affect_find(ch.affected,'poison')
             if poison:
                 act( "$n shivers and suffers.", ch, None, None, TO_ROOM )
-                ch.send("You shiver and suffer.\n\r")
+                ch.send("You shiver and suffer.\n")
                 damage(ch,ch,poison.level/10 + 1,gsn_poison, DAM_POISON,False)
         elif ch.position == POS_INCAP and random.randint(0,1) == 0:
             damage( ch, ch, 1, TYPE_UNDEFINED, DAM_NONE,False)
