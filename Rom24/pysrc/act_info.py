@@ -675,7 +675,7 @@ def do_look(self, argument):
         if can_see_obj(ch, obj):
             #player can see object */
             pdesc = get_extra_descr(arg3, obj.extra_descr)
-
+            
             if pdesc:
                 count += 1
                 if count == number:

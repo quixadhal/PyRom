@@ -272,8 +272,10 @@ def load_objects(area):
                 area, number = read_int(area)
                 area, number = read_int(area)
             elif w == 'E':
-                area, string = read_string(area)
-                area, string = read_string(area)
+                ed = EXTRA_DESCR_DATA()
+                area, ed.keyword = read_string(area)
+                area, ed.description = read_string(area)
+                obj.extra_descr.append(ed)
 
             area, w = read_word(area,False)
 
@@ -1066,7 +1068,7 @@ def create_object( pObjIndex, level ):
     for paf in pObjIndex.affected:
         if paf.location == APPLY_SPELL_AFFECT:
             affect_to_obj(obj,paf)
-  
+    obj.extra_descr = pObjIndex.extra_descr
     object_list.append(obj)
     return obj
 

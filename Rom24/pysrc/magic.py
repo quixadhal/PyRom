@@ -112,16 +112,16 @@ def do_cast(ch, argument):
     holder, arg2 = read_word(target_name)
 
     if not arg1:
-        send_to_char( "Cast which what where?\n\r", ch )
+        send_to_char( "Cast which what where?\n", ch )
         return
     sn = find_spell(ch,arg1)
     if not sn or  sn.spell_fun == spell_null \
     or (not IS_NPC(ch) and (ch.level < sn.skill_level[ch.guild.name] \
     or ch.pcdata.learned[sn.name] == 0)):
-        ch.send("You don't know any spells of that name.\n\r")
+        ch.send("You don't know any spells of that name.\n")
         return
     if ch.position < sn.minimum_position:
-        ch.send("You can't concentrate enough.\n\r")
+        ch.send("You can't concentrate enough.\n")
         return
     if ch.level + 2 == sn.skill_level[ch.guild.name]:
         mana = 50
@@ -138,25 +138,25 @@ def do_cast(ch, argument):
         if not arg2:
             victim = ch.fighting
             if not victim:
-                ch.send("Cast the spell on whom?\n\r")
+                ch.send("Cast the spell on whom?\n")
                 return
         else:
             victim = get_char_room(ch, target_name)
             if not victim:
-                ch.send("They aren't here.\n\r")
+                ch.send("They aren't here.\n")
                 return
 #            if ch == victim:
-#                ch.send("You can't do that to yourself.\n\r")
+#                ch.send("You can't do that to yourself.\n")
 #                return
             if not IS_NPC(ch):
                 if is_safe(ch,victim) and victim != ch:
-                    ch.send("Not on that target.\n\r")
+                    ch.send("Not on that target.\n")
                     return
                     
                 check_killer(ch,victim)
                 
             if IS_AFFECTED(ch, AFF_CHARM) and ch.master == victim:
-                ch.send("You can't do that on your own follower.\n\r")
+                ch.send("You can't do that on your own follower.\n")
                 return
             vo = victim
             target = TARGET_CHAR
@@ -166,24 +166,24 @@ def do_cast(ch, argument):
         else:
             victim = get_char_room(ch, target_name)
         if not victim:
-            ch.send("They aren't here.\n\r")
+            ch.send("They aren't here.\n")
             return
         vo = victim
         target = TARGET_CHAR
     elif sn.target == TAR_CHAR_SELF:
         if arg2 and target_name not in ch.name.lower():
-            ch.send("You cannot cast this spell on another.\n\r")
+            ch.send("You can! cast this spell on a!her.\n")
             return
     
         vo = ch
         target = TARGET_CHAR
     elif sn.target == TAR_OBJ_INV:
         if not arg2:
-            ch.send("What should the spell be cast upon?\n\r")
+            ch.send("What should the spell be cast upon?\n")
             return
         obj = get_obj_carry( ch, target_name, ch )
         if not obj:
-            ch.send("You are not carrying that.\n\r")
+            ch.send("You are not carrying that.\n")
             return
         vo = obj
         target = TARGET_OBJ
@@ -191,7 +191,7 @@ def do_cast(ch, argument):
         if not arg2:
             victim = ch.fighting
             if not victim:
-                ch.send("Cast the spell on whom or what?\n\r")
+                ch.send("Cast the spell on whom or what?\n")
                 return
             target = TARGET_CHAR
         else:
@@ -201,10 +201,10 @@ def do_cast(ch, argument):
                 target = TARGET_CHAR
                  # check the sanity of the attack */
                 if is_safe_spell(ch,victim,FALSE) and victim != ch:
-                    ch.send("Not on that target.\n\r")
+                    ch.send("Not on that target.\n")
                     return
                 if IS_AFFECTED(ch, AFF_CHARM) and ch.master == victim:
-                    ch.send("You can't do that on your own follower.\n\r")
+                    ch.send("You can't do that on your own follower.\n")
                     return
                 if not IS_NPC(ch):
                     check_killer(ch,victim)
@@ -213,7 +213,7 @@ def do_cast(ch, argument):
                 vo = obj
                 target = TARGET_OBJ
             else:
-                ch.send("You don't see that here.\n\r")
+                ch.send("You don't see that here.\n")
                 return
     elif sn.target == TAR_OBJ_CHAR_DEF:
         if not arg2:
@@ -229,14 +229,14 @@ def do_cast(ch, argument):
                 vo = obj
                 target = TARGET_OBJ
             else:
-                ch.send("You don't see that here.\n\r")
+                ch.send("You don't see that here.\n")
                 return
     else:
         print "BUG: Do_cast: bad target for sn %s." % sn
         return
         
     if not IS_NPC(ch) and ch.mana < mana:
-        ch.send("You don't have enough mana.\n\r")
+        ch.send("You don't have enough mana.\n")
         return
     
     if sn.name != "ventriloquate":
@@ -244,7 +244,7 @@ def do_cast(ch, argument):
     WAIT_STATE( ch, sn.beats )
      
     if random.randint(1,99) > get_skill(ch,sn):
-        ch.send("You lost your concentration.\n\r")
+        ch.send("You lost your concentration.\n")
         check_improve(ch,sn,FALSE,1)
         ch.mana -= mana / 2
     else:
@@ -368,7 +368,7 @@ def spell_blindness( sn, level, ch, victim, target ):
     af.duration  = 1+level
     af.bitvector = AFF_BLIND
     affect_to_char( victim, af )
-    victim.send( "You are blindednot \r\n")
+    victim.send( "You are blinded! \r\n")
     act("$n appears to be blinded.",victim,target=TO_ROOM)
 
 def spell_burning_hands( sn, level, ch, victim, target ):
@@ -399,8 +399,8 @@ def spell_call_lightning( sn, level, ch, victim, target ):
 
     dam = dice(level/2, 8)
 
-    ch.send("Mota's lightning strikes your foesnot \r\n")
-    act( "$n calls Mota's lightning to strike $s foesnot ", ch, None, None, TO_ROOM )
+    ch.send("Mota's lightning strikes your foes! \r\n")
+    act( "$n calls Mota's lightning to strike $s foes! ", ch, None, None, TO_ROOM )
 
     for vch in char_list[:]:
         if vch.in_room == None:
@@ -489,7 +489,7 @@ def spell_cancellation( sn, level, ch, victim, target ):
                'detect invis':None,
                'detect magic':None,
                'faerie fire':"$n's outline fades",
-               'fly':'$n falls to the groundnot ',
+               'fly':'$n falls to the ground! ',
                'frenzy': "$n no longer looks so wild.",
                'giant strength': "$n no longer looks so mighty.",
                'haste': '$n is no longer moving so quickly',
@@ -533,7 +533,7 @@ def spell_chain_lightning( sn, level, ch, victim, target ):
     #H first strike */
     act("A lightning bolt leaps from $n's hand and arcs to $N.",ch,None,victim,TO_ROOM)
     act("A lightning bolt leaps from your hand and arcs to $N.",ch,None,victim,TO_CHAR)
-    act("A lightning bolt leaps from $n's hand and hits younot ",ch,None,victim,TO_VICT)  
+    act("A lightning bolt leaps from $n's hand and hits you! ",ch,None,victim,TO_VICT)  
 
     dam = dice(level,6)
     if saves_spell(level,victim,DAM_LIGHTNING):
@@ -549,8 +549,8 @@ def spell_chain_lightning( sn, level, ch, victim, target ):
             if  not is_safe_spell(ch,tmp_vict,True) and tmp_vict is not last_vict:
                 found = True
                 last_vict = tmp_vict
-                act("The bolt arcs to $nnot ",tmp_vict,None,None,TO_ROOM)
-                act("The bolt hits younot ",tmp_vict,None,None,TO_CHAR)
+                act("The bolt arcs to $n! ",tmp_vict,None,None,TO_ROOM)
+                act("The bolt hits you! ",tmp_vict,None,None,TO_CHAR)
                 dam = dice(level,6)
                 if saves_spell(level,tmp_vict,DAM_LIGHTNING):
                     dam = dam/3
@@ -568,8 +568,8 @@ def spell_chain_lightning( sn, level, ch, victim, target ):
     
 
             last_vict = ch
-            act("The bolt arcs to $n...whoopsnot ",ch,None,None,TO_ROOM)
-            ch.send("You are struck by your own lightningnot \r\n")
+            act("The bolt arcs to $n...whoops! ",ch,None,None,TO_ROOM)
+            ch.send("You are struck by your own lightning! \r\n")
             dam = dice(level,6)
             if saves_spell(level,ch,DAM_LIGHTNING):
                 dam = dam / 3
@@ -608,7 +608,7 @@ def spell_charm_person( sn, level, ch, victim, target ):
         return
 
     if victim == ch:
-        ch.send("You like yourself even betternot \r\n")
+        ch.send("You like yourself even better! \r\n")
         return
 
     if ( IS_AFFECTED(victim, AFF_CHARM) \
@@ -767,7 +767,7 @@ def spell_cure_blindness( sn, level, ch, victim, target ):
         return
  
     if check_dispel(level,victim,const.skill_table['blindness']):
-        victim.send("Your vision returnsnot \r\n")
+        victim.send("Your vision returns! \r\n")
         act("$n is no longer blinded.",victim,None,None,TO_ROOM)
     else:
         ch.send("Spell failed.\r\n")
@@ -776,7 +776,7 @@ def spell_cure_critical( sn, level, ch, victim, target ):
     heal = dice(3, 8) + level - 6
     victim.hit = min( victim.hit + heal, victim.max_hit )
     update_pos( victim )
-    victim.send("You feel betternot \r\n")
+    victim.send("You feel better! \r\n")
     if ch != victim:
         ch.send("Ok.\r\n")
 
@@ -800,7 +800,7 @@ def spell_cure_light( sn, level, ch, victim, target ):
     heal = dice(1, 8) + level / 3
     victim.hit = min( victim.hit + heal, victim.max_hit )
     update_pos( victim )
-    victim.send("You feel betternot \r\n")
+    victim.send("You feel better! \r\n")
     if ch != victim:
         ch.send("Ok.\r\n")
     return
@@ -825,7 +825,7 @@ def spell_cure_serious( sn, level, ch, victim, target ):
     heal = dice(2, 8) + level /2 
     victim.hit = min( victim.hit + heal, victim.max_hit )
     update_pos( victim )
-    victim.send("You feel betternot \r\n")
+    victim.send("You feel better! \r\n")
     if ch != victim:
         ch.send("Ok.\r\n")
     
@@ -890,14 +890,14 @@ def spell_curse( sn, level, ch, victim, target ):
 def spell_demonfire( sn, level, ch, victim, target ):
     if not IS_NPC(ch) and not IS_EVIL(ch):
         victim = ch
-        ch.send("The demons turn upon younot \r\n")
+        ch.send("The demons turn upon you! \r\n")
 
     ch.alignment = max(-1000, ch.alignment - 50)
 
     if victim != ch:
-        act("$n calls forth the demons of Hell upon $Nnot ", ch,None,victim,TO_ROOM)
-        act("$n has assailed you with the demons of Hellnot ", ch,None,victim,TO_VICT)
-        ch.send("You conjure forth the demons of hellnot \r\n")
+        act("$n calls forth the demons of Hell upon $N! ", ch,None,victim,TO_ROOM)
+        act("$n has assailed you with the demons of Hell! ", ch,None,victim,TO_VICT)
+        ch.send("You conjure forth the demons of hell! \r\n")
     dam = dice( level, 10 )
     if saves_spell( level, victim,DAM_NEGATIVE):
         dam = dam / 2
@@ -1075,7 +1075,7 @@ def spell_dispel_magic( sn, level, ch, victim, target ):
                'detect invis':None,
                'detect magic':None,
                'faerie fire':"$n's outline fades",
-               'fly':'$n falls to the groundnot ',
+               'fly':'$n falls to the ground! ',
                'frenzy': "$n no longer looks so wild.",
                'giant strength': "$n no longer looks so mighty.",
                'haste': '$n is no longer moving so quickly',
@@ -1111,7 +1111,7 @@ def spell_dispel_magic( sn, level, ch, victim, target ):
         ch.send("Spell failed.\r\n")
 
 def spell_earthquake( sn, level, ch, victim, target ):
-    ch.send("The earth trembles beneath your feetnot \r\n")
+    ch.send("The earth trembles beneath your feet! \r\n")
     act( "$n makes the earth tremble and shiver.", ch, None, None, TO_ROOM )
 
     for vch in char_list[:]:
@@ -1170,8 +1170,8 @@ def spell_enchant_armor( sn, level, ch, victim, target ):
 
     # the moment of truth */
     if result < (fail / 5):  # item destroyed */
-        act("$p flares blindingly... and evaporatesnot ",ch,obj,None,TO_CHAR)
-        act("$p flares blindingly... and evaporatesnot ",ch,obj,None,TO_ROOM)
+        act("$p flares blindingly... and evaporates! ",ch,obj,None,TO_CHAR)
+        act("$p flares blindingly... and evaporates! ",ch,obj,None,TO_ROOM)
         extract_obj(obj)
 
     if result < (fail / 3): # item disenchanted */
@@ -1205,14 +1205,14 @@ def spell_enchant_armor( sn, level, ch, victim, target ):
             af_new.bitvector   = paf.bitvector
             obj.affected.append(af_new)
 
-    if result <= (90 - level/5):  # successnot  */
+    if result <= (90 - level/5):  # success!  */
         act("$p shimmers with a gold aura.",ch,obj,None,TO_CHAR)
         act("$p shimmers with a gold aura.",ch,obj,None,TO_ROOM)
         SET_BIT(obj.extra_flags, ITEM_MAGIC)
         added = -1
     else:  # exceptional enchant */
-        act("$p glows a brillant goldnot ",ch,obj,None,TO_CHAR)
-        act("$p glows a brillant goldnot ",ch,obj,None,TO_ROOM)
+        act("$p glows a brillant gold! ",ch,obj,None,TO_CHAR)
+        act("$p glows a brillant gold! ",ch,obj,None,TO_ROOM)
         SET_BIT(obj.extra_flags,ITEM_MAGIC)
         SET_BIT(obj.extra_flags,ITEM_GLOW)
         added = -2
@@ -1287,8 +1287,8 @@ def spell_enchant_weapon( sn, level, ch, victim, target ):
 
     # the moment of truth */
     if result < (fail / 5):  # item destroyed */
-        act("$p shivers violently and explodesnot ",ch,obj,None,TO_CHAR)
-        act("$p shivers violently and explodedsnot ",ch,obj,None,TO_ROOM)
+        act("$p shivers violently and explodes! ",ch,obj,None,TO_CHAR)
+        act("$p shivers violently and explodeds! ",ch,obj,None,TO_ROOM)
         extract_obj(obj)
         return
 
@@ -1321,14 +1321,14 @@ def spell_enchant_weapon( sn, level, ch, victim, target ):
             af_new.modifier    = paf.modifier
             af_new.bitvector   = paf.bitvector
             obj.affected.append(af_new)
-    if result <= (100 - level/5):  # successnot  */
+    if result <= (100 - level/5):  # success!  */
         act("$p glows blue.",ch,obj,None,TO_CHAR)
         act("$p glows blue.",ch,obj,None,TO_ROOM)
         SET_BIT(obj.extra_flags, ITEM_MAGIC)
         added = 1
     else:  # exceptional enchant */
-        act("$p glows a brillant bluenot ",ch,obj,None,TO_CHAR)
-        act("$p glows a brillant bluenot ",ch,obj,None,TO_ROOM)
+        act("$p glows a brillant blue! ",ch,obj,None,TO_CHAR)
+        act("$p glows a brillant blue! ",ch,obj,None,TO_ROOM)
         SET_BIT(obj.extra_flags,ITEM_MAGIC)
         SET_BIT(obj.extra_flags,ITEM_GLOW)
         added = 2
@@ -1395,8 +1395,8 @@ def spell_energy_drain( sn, level, ch, victim, target ):
         dam      = dice(1, level)
         ch.hit     += dam
 
-    victim.send("You feel your life slipping awaynot \r\n")
-    ch.send("Wow....what a rushnot \r\n")
+    victim.send("You feel your life slipping away! \r\n")
+    ch.send("Wow....what a rush! \r\n")
     damage( ch, victim, dam, sn, DAM_NEGATIVE ,True)
 
 def spell_fireball( sn, level, ch, victim, target ):
@@ -1470,8 +1470,8 @@ def spell_faerie_fog( sn, level, ch, victim, target ):
         REMOVE_BIT   ( ich.affected_by, AFF_HIDE   )
         REMOVE_BIT   ( ich.affected_by, AFF_INVISIBLE  )
         REMOVE_BIT   ( ich.affected_by, AFF_SNEAK  )
-        act( "$n is revealednot ", ich, None, None, TO_ROOM )
-        ich.send("You are revealednot \r\n")
+        act( "$n is revealed! ", ich, None, None, TO_ROOM )
+        ich.send("You are revealed! \r\n")
 
 def spell_floating_disc( sn, level, ch, victim, target ):
     floating = get_eq_char(ch,WEAR_FLOAT)
@@ -1548,8 +1548,8 @@ def spell_frenzy( sn, level, ch, victim, target ):
     af.location  = APPLY_AC
     affect_to_char(victim,af)
 
-    victim.send("You are filled with holy wrathnot \r\n")
-    act("$n gets a wild look in $s eyesnot ",victim,None,None,TO_ROOM)
+    victim.send("You are filled with holy wrath! \r\n")
+    act("$n gets a wild look in $s eyes! ",victim,None,None,TO_ROOM)
 
 # RT ROM-style gate */
 def spell_gate( sn, level, ch, victim, target ):
@@ -1595,7 +1595,7 @@ def spell_gate( sn, level, ch, victim, target ):
 def spell_giant_strength( sn, level, ch, victim, target ):
     if is_affected( victim, sn ):
         if victim == ch:
-            ch.send("You are already as strong as you can getnot \r\n")
+            ch.send("You are already as strong as you can get! \r\n")
         else:
             act("$N can't get any stronger.",ch,None,victim,TO_CHAR)
         return
@@ -1608,7 +1608,7 @@ def spell_giant_strength( sn, level, ch, victim, target ):
     af.modifier  = 1 + (level >= 18) + (level >= 25) + (level >= 32)
     af.bitvector = 0
     affect_to_char( victim, af )
-    victim.send("Your muscles surge with heightened powernot \r\n")
+    victim.send("Your muscles surge with heightened power! \r\n")
     act("$n's muscles surge with heightened power.",victim,None,None,TO_ROOM)
 
 def spell_harm( sn, level, ch, victim, target ):
@@ -1622,7 +1622,7 @@ def spell_harm( sn, level, ch, victim, target ):
 def spell_haste( sn, level, ch, victim, target ):
     if is_affected( victim, sn ) or IS_AFFECTED(victim,AFF_HASTE) or IS_SET(victim.off_flags,OFF_FAST):
         if victim == ch:
-            ch.send("You can't move any fasternot \r\n")
+            ch.send("You can't move any faster! \r\n")
         else:
             act("$N is already moving as fast as $E can.", ch,None,victim,TO_CHAR)
         return
@@ -1674,27 +1674,27 @@ def spell_heat_metal( sn, level, ch, victim, target ):
                         if can_drop_obj(victim,obj_lose) \
                         and  (obj_lose.weight / 10) < random.randint(1,2 * get_curr_stat(victim,STAT_DEX)) \
                         and  remove_obj( victim, obj_lose.wear_loc, True ):
-                            act("$n yelps and throws $p to the groundnot ", victim,obj_lose,None,TO_ROOM)
+                            act("$n yelps and throws $p to the ground! ", victim,obj_lose,None,TO_ROOM)
                             act("You remove and drop $p before it burns you.", victim,obj_lose,None,TO_CHAR)
                             dam += (random.randint(1,obj_lose.level) / 3)
                             obj_from_char(obj_lose)
                             obj_to_room(obj_lose, victim.in_room)
                             fail = False
-                        else: # stuck on the bodynot  ouchnot  */
-                           act("Your skin is seared by $pnot ",
+                        else: # stuck on the body!  ouch!  */
+                           act("Your skin is seared by $p! ",
                            victim,obj_lose,None,TO_CHAR)
                            dam += (random.randint(1,obj_lose.level))
                            fail = False
                     else: # drop it if we can */
                         if can_drop_obj(victim,obj_lose):
-                            act("$n yelps and throws $p to the groundnot ", victim,obj_lose,None,TO_ROOM)
+                            act("$n yelps and throws $p to the ground! ", victim,obj_lose,None,TO_ROOM)
                             act("You and drop $p before it burns you.", victim,obj_lose,None,TO_CHAR)
                             dam += (random.randint(1,obj_lose.level) / 6)
                             obj_from_char(obj_lose)
                             obj_to_room(obj_lose, victim.in_room)
                             fail = False
-                        else: # cannot drop */
-                            act("Your skin is seared by $pnot ", victim,obj_lose,None,TO_CHAR)
+                        else: # can! drop */
+                            act("Your skin is seared by $p! ", victim,obj_lose,None,TO_CHAR)
                             dam += (random.randint(1,obj_lose.level) / 2)
                             fail = False
                 if obj_lose.item_type == ITEM_WEAPON:
@@ -1703,31 +1703,31 @@ def spell_heat_metal( sn, level, ch, victim, target ):
                             continue
                         if can_drop_obj(victim,obj_lose) and  remove_obj(victim,obj_lose.wear_loc,True):
                             act("$n is burned by $p, and throws it to the ground.", victim,obj_lose,None,TO_ROOM)
-                            victim.send("You throw your red-hot weapon to the groundnot \r\n")
+                            victim.send("You throw your red-hot weapon to the ground! \r\n")
                             dam += 1
                             obj_from_char(obj_lose)
                             obj_to_room(obj_lose,victim.in_room)
                             fail = False
-                        else: # YOWCHnot  */
-                            victim.send("Your weapon sears your fleshnot \r\n")
+                        else: # YOWCH!  */
+                            victim.send("Your weapon sears your flesh! \r\n")
                             dam += random.randint(1,obj_lose.level)
                             fail = False
                     else: # drop it if we can */
                         if can_drop_obj(victim,obj_lose):
-                            act("$n throws a burning hot $p to the groundnot ", victim,obj_lose,None,TO_ROOM)
+                            act("$n throws a burning hot $p to the ground! ", victim,obj_lose,None,TO_ROOM)
                             act("You and drop $p before it burns you.", victim,obj_lose,None,TO_CHAR)
                             dam += (random.randint(1,obj_lose.level) / 6)
                             obj_from_char(obj_lose)
                             obj_to_room(obj_lose, victim.in_room)
                             fail = False
-                        else: # cannot drop */
-                            act("Your skin is seared by $pnot ", victim,obj_lose,None,TO_CHAR)
+                        else: # can! drop */
+                            act("Your skin is seared by $p! ", victim,obj_lose,None,TO_CHAR)
                             dam += (random.randint(1,obj_lose.level) / 2)
                             fail = False
     if fail:
         ch.send("Your spell had no effect.\r\n")
         victim.send("You feel momentarily warmer.\r\n")
-    else: # damagenot  */
+    else: # damage!  */
         if saves_spell(level,victim,DAM_FIRE):
             dam = 2 * dam / 3
         damage(ch,victim,dam,sn,DAM_FIRE,True)
@@ -1738,7 +1738,7 @@ def spell_holy_word( sn, level, ch, victim, target ):
     curse_num = const.skill_table['curse'] 
     frenzy_num = const.skill_table['frenzy']
 
-    act("$n utters a word of divine powernot ",ch,None,None,TO_ROOM)
+    act("$n utters a word of divine power! ",ch,None,None,TO_ROOM)
     ch.send("You utter a word of divine power.\r\n")
  
     for vch in ch.in_room.people[:]:
@@ -1749,13 +1749,13 @@ def spell_holy_word( sn, level, ch, victim, target ):
         elif (IS_GOOD(ch) and IS_EVIL(vch)) or (IS_EVIL(ch) and IS_GOOD(vch)):
             if not is_safe_spell(ch,vch,True):
                 spell_curse(curse_num,level,ch,vch,TARGET_CHAR)
-                vch.send("You are struck downnot \r\n")
+                vch.send("You are struck down! \r\n")
                 dam = dice(level,6)
                 damage(ch,vch,dam,sn,DAM_ENERGY,True)
         elif IS_NEUTRAL(ch):
             if not is_safe_spell(ch,vch,True):
                 spell_curse(curse_num,level/2,ch,vch,TARGET_CHAR)
-                vch.send("You are struck downnot \r\n")
+                vch.send("You are struck down! \r\n")
                 dam = dice(level,4)
                 damage(ch,vch,dam,sn,DAM_ENERGY,True)
     ch.send("You feel drained.\r\n")
@@ -1904,7 +1904,7 @@ def spell_know_alignment( sn, level, ch, victim, target ):
     elif ap > -100: msg = "$N doesn't have a firm moral commitment."
     elif ap > -350: msg = "$N lies to $S friends."
     elif ap > -700: msg = "$N is a black-hearted murderer."
-    else: msg = "$N is the embodiment of pure evilnot ."
+    else: msg = "$N is the embodiment of pure evil! ."
 
     act( msg, ch, None, victim, TO_CHAR )
     return
@@ -1997,7 +1997,7 @@ def spell_mass_invis( sn, level, ch, victim, target ):
     ch.send("Ok.\r\n")
 
 def spell_null( sn, level, ch, victim, target ):
-    ch.send("That's not a spellnot \r\n")
+    ch.send("That's not a spell! \r\n")
     return
 
 def spell_pass_door( sn, level, ch, victim, target ):
@@ -2141,10 +2141,10 @@ def spell_protection_good( sn, level, ch, victim, target ):
 def spell_ray_of_truth(sn, level, ch, victim, target):
     if IS_EVIL(ch):
         victim = ch
-        ch.send("The energy explodes inside younot \r\n")
+        ch.send("The energy explodes inside you! \r\n")
     if victim != ch:
-        act("$n raises $s hand, and a blinding ray of light shoots forthnot ", ch,None,None,TO_ROOM)
-        ch.send("You raise your hand and a blinding ray of light shoots forthnot \r\n")
+        act("$n raises $s hand, and a blinding ray of light shoots forth! ", ch,None,None,TO_ROOM)
+        ch.send("You raise your hand and a blinding ray of light shoots forth! \r\n")
 
     if IS_GOOD(victim):
         act("$n seems unharmed by the light.",victim,None,victim,TO_ROOM)
@@ -2213,15 +2213,15 @@ def spell_recharge( sn, level, ch, victim, target ):
         if obj.value[1] > 1:
             obj.value[1] -= 1
         return
-    else: # whoopsnot  */
-        act("$p glows brightly and explodesnot ",ch,obj,None,TO_CHAR)
-        act("$p glows brightly and explodesnot ",ch,obj,None,TO_ROOM)
+    else: # whoops!  */
+        act("$p glows brightly and explodes! ",ch,obj,None,TO_CHAR)
+        act("$p glows brightly and explodes! ",ch,obj,None,TO_ROOM)
         extract_obj(obj)
 
 def spell_refresh( sn, level, ch, victim, target ):
     victim.move = min( victim.move + level, victim.max_move )
     if victim.max_move == victim.move:
-        victim.send("You feel fully refreshednot \r\n")
+        victim.send("You feel fully refreshed! \r\n")
     else:
         victim.send("You feel less tired.\r\n")
     if ch != victim:
@@ -2340,7 +2340,7 @@ def spell_sleep( sn, level, ch, victim, target ):
 def spell_slow( sn, level, ch, victim, target ):
     if is_affected( victim, sn ) or IS_AFFECTED(victim,AFF_SLOW):
         if victim == ch:
-            ch.send("You can't move any slowernot \r\n")
+            ch.send("You can't move any slower! \r\n")
         else:
             act("$N can't get any slower than that.", ch,None,victim,TO_CHAR)
         return
@@ -2418,7 +2418,7 @@ def spell_summon( sn, level, ch, victim, target ):
     char_from_room( victim )
     char_to_room( victim, ch.in_room )
     act( "$n arrives suddenly.", victim, None, None, TO_ROOM )
-    act( "$n has summoned younot ", ch, None, victim,   TO_VICT )
+    act( "$n has summoned you! ", ch, None, victim,   TO_VICT )
     victim.do_look("auto")
 
 def spell_teleport( sn, level, ch, victim, target ):
@@ -2434,9 +2434,9 @@ def spell_teleport( sn, level, ch, victim, target ):
     pRoomIndex = get_random_room(victim)
 
     if victim != ch:
-        victim.send("You have been teleportednot \r\n")
+        victim.send("You have been teleported! \r\n")
 
-    act( "$n vanishesnot ", victim, None, None, TO_ROOM )
+    act( "$n vanishes! ", victim, None, None, TO_ROOM )
     char_from_room( victim )
     char_to_room( victim, pRoomIndex )
     act( "$n slowly fades into existence.", victim, None, None, TO_ROOM )
@@ -2513,7 +2513,7 @@ def spell_acid_breath( sn, level, ch, victim, target ):
 
 def spell_fire_breath( sn, level, ch, victim, target ):
     act("$n breathes forth a cone of fire.",ch,None,victim,TO_NOTVICT)
-    act("$n breathes a cone of hot fire over younot ",ch,None,victim,TO_VICT)
+    act("$n breathes a cone of hot fire over you! ",ch,None,victim,TO_VICT)
     act("You breath forth a cone of fire.",ch,None,None,TO_CHAR)
 
     hpch = max( 10, ch.hit )
@@ -2543,8 +2543,8 @@ def spell_fire_breath( sn, level, ch, victim, target ):
                 damage(ch,vch,dam/2,sn,DAM_FIRE,True)
 
 def spell_frost_breath( sn, level, ch, victim, target ):
-    act("$n breathes out a freezing cone of frostnot ",ch,None,victim,TO_NOTVICT)
-    act("$n breathes a freezing cone of frost over younot ", ch,None,victim,TO_VICT)
+    act("$n breathes out a freezing cone of frost! ",ch,None,victim,TO_NOTVICT)
+    act("$n breathes a freezing cone of frost over you! ", ch,None,victim,TO_VICT)
     act("You breath out a cone of frost.",ch,None,None,TO_CHAR)
 
     hpch = max(12,ch.hit)
@@ -2574,7 +2574,7 @@ def spell_frost_breath( sn, level, ch, victim, target ):
                 damage(ch,vch,dam/2,sn,DAM_COLD,True)
     
 def spell_gas_breath( sn, level, ch, victim, target ):
-    act("$n breathes out a cloud of poisonous gasnot ",ch,None,None,TO_ROOM)
+    act("$n breathes out a cloud of poisonous gas! ",ch,None,None,TO_ROOM)
     act("You breath out a cloud of poisonous gas.",ch,None,None,TO_CHAR)
 
     hpch = max(16,ch.hit)
@@ -2597,7 +2597,7 @@ def spell_gas_breath( sn, level, ch, victim, target ):
 
 def spell_lightning_breath( sn, level, ch, victim, target ):
     act("$n breathes a bolt of lightning at $N.",ch,None,victim,TO_NOTVICT)
-    act("$n breathes a bolt of lightning at younot ",ch,None,victim,TO_VICT)
+    act("$n breathes a bolt of lightning at you! ",ch,None,victim,TO_VICT)
     act("You breathe a bolt of lightning at $N.",ch,None,victim,TO_CHAR)
 
     hpch = max(10,ch.hit)
@@ -2634,7 +2634,7 @@ def spell_high_explosive( sn, level, ch, victim, target ):
 
 def spell_farsight(sn, level, ch, victim, target):
     if IS_AFFECTED(ch,AFF_BLIND):
-        ch.send("Maybe it would help if you could see?\n\r")
+        ch.send("Maybe it would help if you could see?\n")
         return
    
     ch.do_scan(target_name)
@@ -2657,19 +2657,19 @@ def spell_portal( sn, level, ch, victim, target):
     or   (IS_NPC(victim) and IS_SET(victim.imm_flags,IMM_SUMMON)) \
     or   (IS_NPC(victim) and saves_spell( level, victim,DAM_NONE) ) \
     or  (is_clan(victim) and not is_same_clan(ch,victim)):
-        ch.send( "You failed.\n\r")
+        ch.send( "You failed.\n")
         return
     
 
     stone = get_eq_char(ch,WEAR_HOLD)
     if not IS_IMMORTAL(ch) and  (stone == None or stone.item_type != ITEM_WARP_STONE):
-        ch.send("You lack the proper component for this spell.\n\r")
+        ch.send("You lack the proper component for this spell.\n")
         return
     
 
     if stone and stone.item_type == ITEM_WARP_STONE:
         act("You draw upon the power of $p.",ch,stone,None,TO_CHAR)
-        act("It flares brightly and vanishesnot ",ch,stone,None,TO_CHAR)
+        act("It flares brightly and vanishes! ",ch,stone,None,TO_CHAR)
         extract_obj(stone)
 
 
@@ -2702,17 +2702,17 @@ def spell_nexus( sn, level, ch, victim, target):
     or (IS_NPC(victim) and IS_SET(victim.imm_flags,IMM_SUMMON)) \
     or (IS_NPC(victim) and saves_spell( level, victim,DAM_NONE) ) \
     or (is_clan(victim) and not is_same_clan(ch,victim)):
-        ch.send("You failed.\n\r")
+        ch.send("You failed.\n")
         return
  
     stone = get_eq_char(ch,WEAR_HOLD)
     if not IS_IMMORTAL(ch) and  (stone == None or stone.item_type != ITEM_WARP_STONE):
-        ch.send("You lack the proper component for this spell.\n\r")
+        ch.send("You lack the proper component for this spell.\n")
         return
  
     if stone and stone.item_type == ITEM_WARP_STONE:
         act("You draw upon the power of $p.",ch,stone,None,TO_CHAR)
-        act("It flares brightly and vanishesnot ",ch,stone,None,TO_CHAR)
+        act("It flares brightly and vanishes! ",ch,stone,None,TO_CHAR)
         extract_obj(stone)
 
     # portal one */ 

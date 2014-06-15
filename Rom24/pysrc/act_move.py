@@ -107,8 +107,9 @@ def move_char( ch, door, follow ):
                 act("You can't bring $N into the city.",ch,None,fch,TO_CHAR)
                 act("You aren't allowed in the city.",fch,None,None,TO_CHAR)
                 continue
-        act( "You follow $N.", fch, None, ch, TO_CHAR )
-        move_char( fch, door, True )
+    
+            act( "You follow $N.", fch, None, ch, TO_CHAR )
+            move_char( fch, door, True )
 
 def do_north(self, argument):
     ch=self

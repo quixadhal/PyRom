@@ -638,6 +638,7 @@ def char_to_room( ch, pRoomIndex ):
 
     if obj and obj.item_type == ITEM_LIGHT and obj.value[2] != 0:
         ch.in_room.light += 1
+
     
     if IS_AFFECTED(ch,AFF_PLAGUE):
         af = [af for af in ch.affected if af.type == 'plague']
@@ -667,6 +668,7 @@ def char_to_room( ch, pRoomIndex ):
 
 # True if room is dark.
 def room_is_dark( pRoomIndex ):
+    
     if pRoomIndex.light > 0:
         return False
 

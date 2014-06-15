@@ -351,7 +351,7 @@ def con_get_old_password(self):
         pwdcmp = argument
     if pwdcmp != ch.pcdata.pwd:
         ch.send("Wrong password.\n")
-        close_socket( self )
+        comm.close_socket( self )
         return
     #write_to_buffer( d, echo_on_str, 0 );
 

@@ -45,7 +45,8 @@ def process_input():
             d.connected()
             if d.is_connected(con_playing):
                 ch = CH(d)
-                ch.timer = 0
+                if ch:
+                    ch.timer = 0
 
 def set_connected(self, state):
     self.connected = MethodType(state,self)

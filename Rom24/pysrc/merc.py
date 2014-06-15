@@ -383,7 +383,7 @@ social_list = []
 
 
 #Global Constants
-PULSE_PER_SECOND = 4
+PULSE_PER_SECOND = 12
 PULSE_VIOLENCE = (3 * PULSE_PER_SECOND)
 PULSE_MOBILE = (4 * PULSE_PER_SECOND)
 PULSE_MUSIC = (6 * PULSE_PER_SECOND)
@@ -1498,9 +1498,9 @@ def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
             act_trans['$E'] = he_she[vch.sex]
             act_trans['$M'] = him_her[vch.sex]
             act_trans['$S'] = his_her[vch.sex]
-        if obj1 and type(obj1) == OBJ_DATA:
+        if obj1 and obj1.__class__ == OBJ_DATA:
             act_trans['$p'] = OPERS(to, obj1)
-        if obj2 and type(obj2) == OBJ_DATA: 
+        if obj2 and obj2.__class__ == OBJ_DATA: 
             act_trans['$P'] = OPERS(to, obj2)
         act_trans['$d'] = arg2 if not arg2 else "door"
         

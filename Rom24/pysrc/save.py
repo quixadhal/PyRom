@@ -38,8 +38,9 @@ from const import race_table, guild_table
 from settings import PLAYER_DIR
 from handler import obj_to_char, obj_to_obj
 from tables import clan_table
+from db import create_object
 
-def save_char_obj( ch ):
+def save_char_obj(ch):
     if IS_NPC(ch):
         return
 
@@ -74,7 +75,7 @@ def load_char_obj(d, name):
     found = False
     pfile = os.path.join(PLAYER_DIR, name+'.js')
     if os.path.isfile(pfile):
-        chdict = json.load( open(pfile,'r') )
+        chdict = json.load(open(pfile,'r'))
         ch = fread_char(chdict, ch)
         found = True
 
@@ -171,7 +172,7 @@ def fwrite_obj(ch, obj, contained_by=None):
     odict['Val'] = get_if_diff(obj.value, obj.pIndexData.value)
 
     odict['affected'] = [a for a in obj.affected if a.type >= 0]
-    odict['ExDe'] = obj.extra_descr
+    odict['ExDe'] = {ed.keyword: ed.description for ed in obj.extra_descr}
     if contained_by:
         odict['In'] = contained_by.pIndexData.vnum 
     if obj.contains:
@@ -248,9 +249,7 @@ def fread_objs(carrying, objects, contained_by=None):
             fread_objs(carrying, odict['contains'], obj)
 
 def fread_obj(carrying, odict):
-    obj = OBJ_DATA()
-
-    obj.pIndexData = obj_index_hash[odict['Vnum']]
+    obj = create_object(obj_index_hash[odict['Vnum']], odict['Lev'])
     obj.enchanted = odict['Enchanted']
     obj.name = odict['Name']
     obj.short_descr = odict['ShD']
@@ -268,5 +267,11 @@ def fread_obj(carrying, odict):
     obj.value = odict['Val']
 
     obj.affected = odict['affected']
-    obj.extra_descr = odict['ExDe']
+    extra_descr = []
+    for k,v in odict['ExDe'].iteritems():
+        newed = EXTRA_DESCR_DATA()
+        newed.keyword = k
+        newed.description = v
+        extra_descr.append(newed)
+    obj.extra_descr = extra_descr
     return obj

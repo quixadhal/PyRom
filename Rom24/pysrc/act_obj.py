@@ -32,6 +32,7 @@
 """
 
 from merc import *
+from handler import *
 
 def can_loot(ch, obj):
     if IS_IMMORTAL(ch):
@@ -265,7 +266,7 @@ def do_drop(self, argument):
     if not arg:
         ch.send("Drop what?\n\r")
         return
-    if arg.is_digit():
+    if arg.isdigit():
         # 'drop NNNN coins' */
         gold = 0
         silver = 0
@@ -316,14 +317,14 @@ def do_drop(self, argument):
         if not can_drop_obj( ch, obj ):
             ch.send("You can't let go of it.\n\r")
             return
-    obj_from_char( obj )
-    obj_to_room( obj, ch.in_room )
-    act( "$n drops $p.", ch, obj, None, TO_ROOM )
-    act( "You drop $p.", ch, obj, None, TO_CHAR )
-    if IS_OBJ_STAT(obj,ITEM_MELT_DROP):
-        act("$p dissolves into smoke.",ch,obj,None,TO_ROOM)
-        act("$p dissolves into smoke.",ch,obj,None,TO_CHAR)
-        extract_obj(obj)
+        obj_from_char( obj )
+        obj_to_room( obj, ch.in_room )
+        act( "$n drops $p.", ch, obj, None, TO_ROOM )
+        act( "You drop $p.", ch, obj, None, TO_CHAR )
+        if IS_OBJ_STAT(obj,ITEM_MELT_DROP):
+            act("$p dissolves into smoke.",ch,obj,None,TO_ROOM)
+            act("$p dissolves into smoke.",ch,obj,None,TO_CHAR)
+            extract_obj(obj)
     else:
         # 'drop all' or 'drop all.obj' */
         found = False
