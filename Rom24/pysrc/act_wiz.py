@@ -35,6 +35,7 @@ import nanny
 from handler import get_trust, get_eq_char, obj_to_char, equip_char
 from db import create_object
 from const import weapon_table
+from settings import NEWLOCK
 
 def do_wiznet(self, argument):
     ch=self

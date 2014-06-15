@@ -273,6 +273,7 @@ def show_char_to_char(list, ch):
 
         if can_see(ch, rch):
             show_char_to_char_0(rch, ch)
+            ch.send("\n")
         elif room_is_dark(ch.in_room) and IS_AFFECTED(rch, AFF_INFRARED):
             ch.send("You see glowing red eyes watching YOU!\n")
 

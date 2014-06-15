@@ -353,9 +353,10 @@ def interpret(ch, argument):
     #* Look for command in command table.
     trust = get_trust( ch )
     cmd = prefix_lookup(cmd_table, command)
+    if cmd.level > trust:
+        cmd = None
  
     #* Log and snoop.
-
     if (not IS_NPC(ch) and IS_SET(ch.act, PLR_LOG)) or LOGALL or (cmd and cmd.log == LOG_ALWAYS):
         if cmd and cmd.log != LOG_NEVER:
             log_buf = "Log %s: %s" % (ch.name, logline)

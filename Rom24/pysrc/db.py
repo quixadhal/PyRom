@@ -201,7 +201,8 @@ def load_objects(area):
         area, item_type = read_word(area,False)
         area, obj.extra_flags = read_flags(area)
         area, obj.wear_flags = read_flags(area)
-
+        obj.item_type = item_type
+        
         if obj.item_type == ITEM_WEAPON:
             area, obj.value[0] = read_word(area,False)
             area, obj.value[1] = read_int(area)
@@ -218,7 +219,7 @@ def load_objects(area):
             area, obj.value[0] = read_int(area)
             area, obj.value[1] = read_int(area)
             area, obj.value[2] = read_word(area,False)
-            area, obj.value[3] = read_word(area,False)
+            area, obj.value[3] = read_int(area)
             area, obj.value[4] = read_int(area)
         elif obj.item_type == ITEM_WAND or obj.item_type == ITEM_STAFF:
             area, obj.value[0] = read_int(area)
@@ -238,7 +239,7 @@ def load_objects(area):
             area, obj.value[2] = read_flags(area)
             area, obj.value[3] = read_flags(area)
             area, obj.value[4] = read_flags(area)
-        obj.item_type = item_type
+        
         area, obj.level = read_int(area)
         area, obj.weight = read_int(area)
         area, obj.cost = read_int(area)
@@ -488,10 +489,12 @@ def load_specials(area):
 
 def fix_exits():
     for k, r in room_index_hash.iteritems():
-        for e in r.exit:
+        for e in r.exit[:]:
             if e and type(e.to_room) == int:
                 if e.to_room not in room_index_hash:
                     print "Fix_exits: Failed to find to_room for %d: %d" % (r.vnum, e.to_room)
+                    e.to_room = None
+                    r.exit.remove(e)
                 else:
                     e.to_room = room_index_hash[e.to_room]
 

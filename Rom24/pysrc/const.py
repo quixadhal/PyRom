@@ -758,3 +758,52 @@ con_app[23] = con_app_type(6, 99)
 con_app[24] = con_app_type(7, 99)
 con_app[25] = con_app_type(8, 99)    #/* 25 */
 
+
+#/* attack table  -- not very organized :( */
+class attack_type:
+    def __init__(self, name, noun, damage):
+        self.name = name
+        self.noun = noun
+        self.damage = damage
+
+attack_table = OrderedDict()
+attack_table[0] = attack_type("none", "hit", -1)  #  0 */
+attack_table[1] = attack_type("slice", "slice", DAM_SLASH)  
+attack_table[2] = attack_type("stab", "stab", DAM_PIERCE)
+attack_table[3] = attack_type("slash", "slash", DAM_SLASH)
+attack_table[4] = attack_type("whip", "whip", DAM_SLASH)
+attack_table[5] = attack_type("claw", "claw", DAM_SLASH)  #/*  5 */
+attack_table[6] = attack_type("blast", "blast", DAM_BASH)
+attack_table[7] = attack_type("pound", "pound", DAM_BASH)
+attack_table[8] = attack_type("crush", "crush", DAM_BASH)
+attack_table[9] = attack_type("grep", "grep", DAM_SLASH)
+attack_table[10] = attack_type("bite", "bite", DAM_PIERCE)  #/* 10 */
+attack_table[11] = attack_type("pierce", "pierce", DAM_PIERCE)
+attack_table[12] = attack_type("suction", "suction", DAM_BASH)
+attack_table[13] = attack_type("beating", "beating", DAM_BASH)
+attack_table[14] = attack_type("digestion", "digestion", DAM_ACID)
+attack_table[15] = attack_type("charge", "charge", DAM_BASH)  #/* 15 */
+attack_table[16] = attack_type("slap", "slap", DAM_BASH)
+attack_table[17] = attack_type("punch", "punch", DAM_BASH)
+attack_table[18] = attack_type("wrath", "wrath", DAM_ENERGY)
+attack_table[19] = attack_type("magic", "magic", DAM_ENERGY)
+attack_table[20] = attack_type("divine", "divine power", DAM_HOLY)  #/* 20 */
+attack_table[21] = attack_type("cleave", "cleave", DAM_SLASH)
+attack_table[22] = attack_type("scratch", "scratch", DAM_PIERCE)
+attack_table[23] = attack_type("peck", "peck", DAM_PIERCE)
+attack_table[24] = attack_type("peckb", "peck", DAM_BASH)
+attack_table[25] = attack_type("chop", "chop", DAM_SLASH)  #/* 25 */
+attack_table[26] = attack_type("sting", "sting", DAM_PIERCE)
+attack_table[27] = attack_type("smash", "smash", DAM_BASH)
+attack_table[28] = attack_type("shbite", "shocking bite", DAM_LIGHTNING)
+attack_table[29] = attack_type("flbite", "flaming bite", DAM_FIRE)
+attack_table[30] = attack_type("frbite", "freezing bite", DAM_COLD)  #/* 30 */
+attack_table[31] = attack_type("acbite", "acidic bite", DAM_ACID)
+attack_table[32] = attack_type("chomp", "chomp", DAM_PIERCE)
+attack_table[33] = attack_type("drain", "life drain", DAM_NEGATIVE)
+attack_table[34] = attack_type("thrust", "thrust", DAM_PIERCE)
+attack_table[35] = attack_type("slime", "slime", DAM_ACID)
+attack_table[36] = attack_type("shock", "shock", DAM_LIGHTNING)
+attack_table[37] = attack_type("thwack", "thwack", DAM_BASH)
+attack_table[38] = attack_type("flame", "flame", DAM_FIRE)
+attack_table[39] = attack_type("chill", "chill", DAM_COLD)

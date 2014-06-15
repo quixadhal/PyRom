@@ -543,13 +543,14 @@ TO_VICT = 2
 TO_CHAR = 3
 TO_ALL = 4
 
+# damage classes
 DAM_NONE = 0
 DAM_BASH = 1
 DAM_PIERCE = 2
 DAM_SLASH = 3
 DAM_FIRE = 4
 DAM_COLD = 5
-DAM_LIGHTNIN = 6
+DAM_LIGHTNING = 6
 DAM_ACID = 7
 DAM_POISON = 8
 DAM_NEGATIVE = 9
@@ -670,6 +671,9 @@ ROOM_VNUM_CIRCLE = 4400
 ROOM_VNUM_DEMISE = 4201
 ROOM_VNUM_HONOR = 4300
 
+#* but may be arbitrary beyond that.
+TYPE_UNDEFINED = -1
+TYPE_HIT = 1000
 
 def IS_SET(flag, bit):
     return flag & bit
@@ -1334,9 +1338,10 @@ def read_letter(str):
     str = str.lstrip()
     return(str[1:], str[:1])
 def read_word(str, lower = True):
+    
     if not str:
         return ("", "")
-    
+    str = str.lstrip()
     word = str.split()[0]
     if word[0] == "'":
         word = str[:str.find("'", 1)+1]
