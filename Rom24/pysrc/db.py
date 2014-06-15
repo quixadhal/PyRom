@@ -39,6 +39,7 @@ from tables import sex_table
 
 def boot_db():
     print "Loading Areas..."
+    init_time()
     load_areas()
     fix_exits()
     area_update()
@@ -785,7 +786,7 @@ def create_mobile( pMobIndex ):
         mob.start_pos      = pMobIndex.start_pos
         mob.default_pos    = pMobIndex.default_pos
         mob.sex        = pMobIndex.sex
-        if mob.sex == 3: # random sex */
+        if type(pMobIndex.sex) != int or mob.sex == 3: # random sex */
             mob.sex = random.randint(1,2)
         mob.race = pMobIndex.race
         mob.form = pMobIndex.form
@@ -1138,3 +1139,38 @@ def get_extra_descr( name, edlist ):
         if name.lower() in ed.keyword:
             return ed.description
     return None
+
+def init_time():
+    lhour = (time.time() - 650336715) / (PULSE_TICK / PULSE_PER_SECOND)
+    time_info.hour = lhour % 24
+    lday = lhour / 24
+    time_info.day = lday % 35
+    lmonth = lday / 35
+    time_info.month = lmonth % 17
+    time_info.year = lmonth / 17
+
+    if time_info.hour <  5:
+        weather_info.sunlight = SUN_DARK
+    elif time_info.hour <  6:
+        weather_info.sunlight = SUN_RISE
+    elif time_info.hour < 19:
+        weather_info.sunlight = SUN_LIGHT
+    elif time_info.hour < 20:
+        weather_info.sunlight = SUN_SET
+    else:
+        weather_info.sunlight = SUN_DARK
+    weather_info.change = 0
+    weather_info.mmhg   = 960
+    if time_info.month >= 7 and time_info.month <= 12:
+        weather_info.mmhg += random.randint(1, 50)
+    else:
+        weather_info.mmhg += random.randint(1, 80)
+
+    if weather_info.mmhg <= 980:
+        weather_info.sky = SKY_LIGHTNING
+    elif weather_info.mmhg <= 1000:
+        weather_info.sky = SKY_RAINING
+    elif weather_info.mmhg <= 1020:
+        weather_info.sky = SKY_CLOUDY
+    else:
+        weather_info.sky = SKY_CLOUDLESS

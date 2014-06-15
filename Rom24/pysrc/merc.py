@@ -48,6 +48,7 @@ LEVEL_IMMORTAL = (MAX_LEVEL - 8)
 class CHAR_DATA(object):
     def __init__(self):
         from const import race_table
+        from tables import clan_table
         self.master = None
         self.leader = None
         self.fighting = None
@@ -76,7 +77,7 @@ class CHAR_DATA(object):
         self.prompt = "<%hhp %mm %vmv>"
         self.prefix = ""
         self.group = 0
-        self.clan = 0
+        self.clan = clan_table[""]
         self.sex = 0
         self.guild = 0
         self.race = 0
@@ -136,7 +137,9 @@ class CHAR_DATA(object):
         self.comm = COMM_COMBINE | COMM_PROMPT
     def __repr__(self):
         return self.name
-
+    def send(self, str):
+        pass
+        
 class PC_DATA:
     def __init__(self):
         self.buffer = None
@@ -387,6 +390,36 @@ PULSE_MUSIC = (6 * PULSE_PER_SECOND)
 PULSE_TICK = (60 * PULSE_PER_SECOND)
 PULSE_AREA = (120 * PULSE_PER_SECOND)
 
+
+# * Time and weather stuff.
+SUN_DARK = 0
+SUN_RISE = 1
+SUN_LIGHT = 2
+SUN_SET = 3
+
+SKY_CLOUDLESS = 0
+SKY_CLOUDY = 1
+SKY_RAINING = 2
+SKY_LIGHTNING = 3
+
+class time_info_data:
+    def __init__(self):
+        self.hour = 0
+        self.day = 0
+        self.month = 0
+        self.year = 0
+
+
+class weather_data:
+    def __init__(self):
+        self.mmhg = 0
+        self.change = 0
+        self.sky = 0
+        self.sunlight = 0
+
+time_info = time_info_data()
+weather_info = weather_data()
+
 #Stats
 STAT_STR = 0
 STAT_INT = 1
@@ -448,6 +481,12 @@ SIZE_LARGE = 3
 SIZE_HUGE = 4
 SIZE_GIANT = 5
 size_table = ["tiny",  "small", "medium", "large", "huge", "giant" ]
+
+# AC types */
+AC_PIERCE = 0
+AC_BASH = 1
+AC_SLASH = 2
+AC_EXOTIC = 3
 
 DICE_NUMBER = 0
 DICE_TYPE = 1
@@ -572,6 +611,15 @@ COND_DRUNK = 0
 COND_FULL = 1
 COND_THIRST = 2
 COND_HUNGER = 3
+
+#/* where definitions */
+TO_AFFECTS = 0
+TO_OBJECT = 1
+TO_IMMUNE = 2
+TO_RESIST = 3
+TO_VULN = 4
+TO_WEAPON = 5
+
 
 #Item constants
 
@@ -989,9 +1037,47 @@ PUT_IN = O
 PUT_INSIDE = P
 
 
+# * Apply types (for affects).
+# * Used in #OBJECTS.
+APPLY_NONE = 0
+APPLY_STR = 1
+APPLY_DEX = 2
+APPLY_INT = 3
+APPLY_WIS = 4
+APPLY_CON = 5
+APPLY_SEX = 6
+APPLY_CLASS = 7
+APPLY_LEVEL = 8
+APPLY_AGE = 9
+APPLY_HEIGHT = 10
+APPLY_WEIGHT = 11
+APPLY_MANA = 12
+APPLY_HIT = 13
+APPLY_MOVE = 14
+APPLY_GOLD = 15
+APPLY_EXP = 16
+APPLY_AC = 17
+APPLY_HITROLL = 18
+APPLY_DAMROLL = 19
+APPLY_SAVES = 20
+APPLY_SAVING_PARA = 20
+APPLY_SAVING_ROD = 21
+APPLY_SAVING_PETRI = 22
+APPLY_SAVING_BREATH = 23
+APPLY_SAVING_SPELL = 24
+APPLY_SPELL_AFFECT = 25
+
+
+# * Values for containers (value[1]).
+# * Used in #OBJECTS.
+CONT_CLOSEABLE = 1
+CONT_PICKPROOF = 2
+CONT_CLOSED = 4
+CONT_LOCKED = 8
+CONT_PUT_ON = 16
+
 # Room flags.
 # Used in #ROOMS.
-
 ROOM_DARK = A
 ROOM_NO_MOB = C
 ROOM_INDOORS = D
@@ -1186,12 +1272,18 @@ def IS_AWAKE(ch):
     return ch.position > POS_SLEEPING
 
 def GET_AC(ch,type):
+    from const import dex_app
+    from handler import get_curr_stat
     return (ch.armor[type] + ( dex_app[get_curr_stat(ch,STAT_DEX)].defensive if IS_AWAKE(ch) else 0 ) )
 
 def GET_HITROLL(ch):
+    from const import str_app
+    from handler import get_curr_stat
     return ( ( ch.hitroll+str_app[ get_curr_stat(ch,STAT_STR)].tohit) )
 
 def GET_DAMROLL(ch):
+    from const import str_app
+    from handler import get_curr_stat
     return ( (ch.damroll+str_app[get_curr_stat(ch,STAT_STR)].todam) )
 
 def IS_OUTSIDE(ch):
@@ -1398,7 +1490,6 @@ def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
             act_trans['$T'] = str(arg2)
         if ch:
             act_trans['$n'] = PERS(ch, to)
-            print ch.sex
             act_trans['$e'] = he_she[ch.sex]
             act_trans['$m'] = him_her[ch.sex]
             act_trans['$s'] = his_her[ch.sex]
@@ -1412,9 +1503,9 @@ def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
         if obj2 and type(obj2) == OBJ_DATA: 
             act_trans['$P'] = OPERS(to, obj2)
         act_trans['$d'] = arg2 if not arg2 else "door"
-        print format
+        
         format = mass_replace(format, act_trans)
-         to.send(format+"\r\n")
+        to.send(format+"\r\n")
     return
 
 #ensureall do_functions become class methods

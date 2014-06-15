@@ -43,6 +43,9 @@ def process_input():
     for d in descriptor_list:
         if d.active and d.cmd_ready and d.connected:
             d.connected()
+            if d.is_connected(con_playing):
+                ch = CH(d)
+                ch.timer = 0
 
 def set_connected(self, state):
     self.connected = MethodType(state,self)
@@ -174,7 +177,7 @@ def bust_a_prompt( ch ):
     #replace['%%'] = '%'
     prompt = ch.prompt
     prompt = mass_replace(prompt, replace)
-    print prompt
+    
     ch.send(prompt)
     if ch.prefix:
         ch.send(ch.prefix)

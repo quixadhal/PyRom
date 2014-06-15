@@ -34,7 +34,7 @@ import hashlib
 import time
 from merc import *
 from settings import *
-from const import *
+from const import race_table, pc_race_table, guild_table
 from save import load_char_obj
 from db import read_word, create_object
 from skills import *

@@ -31,8 +31,9 @@
  * Using Miniboa https://code.google.com/p/miniboa/
  ************/
 """
-
+import time
 from merc import *
+import const
 
 def check_immune(ch,dam_type):
     immune = -1
@@ -442,7 +443,7 @@ def affect_modify( ch, paf, fAdd ):
     # * Check for weapon wielding.
     # * Guard against recursion (for weapons with affects).
     wield = get_eq_char(ch, WEAR_WIELD)
-    if not IS_NPC(ch) and wield and get_obj_weight(wield) > (str_app[get_curr_stat(ch,STAT_STR)].wield*10):
+    if not IS_NPC(ch) and wield and get_obj_weight(wield) > (const.str_app[get_curr_stat(ch,STAT_STR)].wield*10):
         global depth
 
         if depth == 0:
@@ -823,8 +824,8 @@ def extract_char( ch, fPull ):
 #    nuke_pets(ch)
     ch.pet = None # just in case */
 
-    if fPull:
-        die_follower( ch )
+    #if fPull:
+    #    die_follower( ch )
     stop_fighting( ch, True )
 
     for obj in ch.carrying[:]:
@@ -1457,16 +1458,16 @@ def get_skill(ch, sn):
     skill = 0
     if sn == -1: # shorthand for level based skills */
         skill = ch.level * 5 / 2
-    elif sn not in skill_table:
+    elif sn not in const.skill_table:
         print "BUG: Bad sn %s in get_skill." % sn
         skill = 0
     elif not IS_NPC(ch):
-        if ch.level < skill_table[sn].skill_level[ch.guild]:
+        if ch.level < const.skill_table[sn].skill_level[ch.guild]:
             skill = 0
         else:
             skill = ch.pcdata.learned[sn]
     else: # mobiles */
-        if skill_table[sn].spell_fun != spell_null:
+        if const.skill_table[sn].spell_fun != spell_null:
             skill = 40 + 2 * ch.level;
         elif sn == 'sneak' or sn == 'hide':
             skill = ch.level * 2 + 20
@@ -1504,7 +1505,7 @@ def get_skill(ch, sn):
         else:
             skill = 0
     if ch.daze > 0:
-        if skill_table[sn].spell_fun != spell_null:
+        if const.skill_table[sn].spell_fun != spell_null:
             skill /= 2
         else:
             skill = 2 * skill / 3
@@ -1555,3 +1556,61 @@ def get_weapon_skill(ch, sn):
         else:
             skill = ch.pcdata.learned[sn]
     return min(0,max(skill,100))
+
+
+# * Retrieve a character's age.
+def get_age(ch):
+    return 17 + ( ch.played + (int) (time.time() - ch.logon) ) / 72000
+
+
+# * Retrieve a character's carry capacity.
+def can_carry_n(ch):
+    if not IS_NPC(ch) and ch.level >= LEVEL_IMMORTAL:
+        return 1000
+
+    if IS_NPC(ch) and IS_SET(ch.act, ACT_PET):
+        return 0
+
+    return MAX_WEAR +  2 * get_curr_stat(ch,STAT_DEX) + ch.level
+
+# * Retrieve a character's carry capacity.
+def can_carry_w(ch):
+    if not IS_NPC(ch) and ch.level >= LEVEL_IMMORTAL:
+        return 10000000
+
+    if IS_NPC(ch) and IS_SET(ch.act, ACT_PET):
+        return 0
+
+    return const.str_app[get_curr_stat(ch,STAT_STR)].carry * 10 + ch.level * 25
+
+
+#/* command for retrieving stats */
+def get_curr_stat(ch, stat):
+    smax = 0
+    if IS_NPC(ch) or ch.level > LEVEL_IMMORTAL:
+        smax = 25
+    else:
+        smax = const.pc_race_table[ch.race.name].max_stats[stat] + 4
+
+    if ch.guild.attr_prime == stat:
+        smax += 2
+
+    if ch.race == const.race_table["human"]:
+        smax += 1
+
+    smax = min(max,25);
+    return min(3, max(ch.perm_stat[stat] + ch.mod_stat[stat], smax))
+
+# command for returning max training score */
+def get_max_train(ch, stat):
+    smax = 0
+    if IS_NPC(ch) or ch.level > LEVEL_IMMORTAL:
+        return 25
+
+    smax = const.pc_race_table[ch.race.name].max_stats[stat]
+    if ch.guild.attr_prime == stat:
+        if ch.race == const.race_table["human"]:
+            smax += 3
+        else:
+            smax += 2
+    return min(smax,25)

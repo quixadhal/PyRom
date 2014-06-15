@@ -31,6 +31,10 @@
  ************/
 """
 
+from merc import *
+from fight import update_pos
+from handler import affect_to_char
+import const
 
 def say_spell(ch, spell):
     syl_dict = {"ar":"abra", "au":"kada", "bless":"fido", "blind":"nose", "bur":"mosa", "cu":"judi", "de":"oculo", "en":"unso", "light":"dies", 
@@ -83,7 +87,7 @@ def check_dispel( dis_level, victim, skill):
                 if not saves_dispel(dis_level,af.level,af.duration):
                     victim.affect_strip(sn)
                     if skill.msg_off:
-                        victim.send( skill_table[sn].msg_off + "\r\n" )
+                        victim.send(  const._table[sn].msg_off + "\r\n" )
                     return True
                 else:
                     af.level -= 1
@@ -435,7 +439,7 @@ def spell_calm( sn, level, ch, victim, target ):
             if IS_NPC(vch) and (IS_SET(vch.imm_flags,IMM_MAGIC) or IS_SET(vch.act,ACT_UNDEAD)):
                 return
 
-            if IS_AFFECTED(vch,AFF_CALM) or IS_AFFECTED(vch,AFF_BERSERK) or  is_affected(vch,skill_table['frenzy']):
+            if IS_AFFECTED(vch,AFF_CALM) or IS_AFFECTED(vch,AFF_BERSERK) or  is_affected(vch,const.skill_table['frenzy']):
                 return
             
             vch.send("A wave of calm passes over you.\r\n")
@@ -503,7 +507,7 @@ def spell_cancellation( sn, level, ch, victim, target ):
                'weaken': "$n looks stronger." }
 
     for k,v in spells.iteritems():
-        if check_dispel(level,victim,skill_table[k]):
+        if check_dispel(level,victim,const.skill_table[k]):
             if v:
                 act(v,victim,None,None,TO_ROOM)
             found = True
@@ -675,7 +679,7 @@ def spell_colour_spray( sn, level, ch, victim, target ):
     if saves_spell( level, victim,DAM_LIGHT):
         dam = dam/2
     else:
-        spell_blindness(skill_table["blindness"], level/2,ch,victim,TARGET_CHAR)
+        spell_blindness(const.skill_table["blindness"], level/2,ch,victim,TARGET_CHAR)
 
     damage( ch, victim, dam, sn, DAM_LIGHT,True )
 
@@ -755,14 +759,14 @@ def spell_create_water( sn, level, ch, victim, target ):
         act( "$p is filled.", ch, obj, None, TO_CHAR )
     
 def spell_cure_blindness( sn, level, ch, victim, target ):
-    if not is_affected( victim, skill_table['blindness'] ):
+    if not is_affected( victim, const.skill_table['blindness'] ):
         if victim == ch:
             ch.send("You aren't blind.\r\n")
         else:
             act("$N doesn't appear to be blinded.",ch,None,victim,TO_CHAR)
         return
  
-    if check_dispel(level,victim,skill_table['blindness']):
+    if check_dispel(level,victim,const.skill_table['blindness']):
         victim.send("Your vision returnsnot \r\n")
         act("$n is no longer blinded.",victim,None,None,TO_ROOM)
     else:
@@ -778,14 +782,14 @@ def spell_cure_critical( sn, level, ch, victim, target ):
 
 # RT added to cure plague */
 def spell_cure_disease( sn, level, ch, victim, target ):
-    if not is_affected( victim, skill_table['plague'] ):
+    if not is_affected( victim, const.skill_table['plague'] ):
         if victim == ch:
             ch.send("You aren't ill.\r\n")
         else:
             act("$N doesn't appear to be diseased.",ch,None,victim,TO_CHAR)
         return
     
-    if check_dispel(level,victim,skill_table['plague']):
+    if check_dispel(level,victim,const.skill_table['plague']):
         victim.send("Your sores vanish.\r\n")
         act("$n looks relieved as $s sores vanish.",victim,None,None,TO_ROOM)
         return
@@ -802,14 +806,14 @@ def spell_cure_light( sn, level, ch, victim, target ):
     return
 
 def spell_cure_poison( sn, level, ch, victim, target ):
-    if not is_affected( victim, skill_table['poison'] ):
+    if not is_affected( victim, const.skill_table['poison'] ):
         if victim == ch:
             ch.send("You aren't poisoned.\r\n")
         else:
           act("$N doesn't appear to be poisoned.",ch,None,victim,TO_CHAR)
         return
  
-    if check_dispel(level,victim,skill_table['poison']):
+    if check_dispel(level,victim,const.skill_table['poison']):
         victim.send("A warm feeling runs through your body.\r\n")
         act("$n looks much better.",victim,None,None,TO_ROOM)
         return
@@ -834,7 +838,7 @@ def spell_curse( sn, level, ch, victim, target ):
             return
 
         if IS_OBJ_STAT(obj,ITEM_BLESS):
-            paf = affect_find(obj.affected,skill_table["bless"])
+            paf = affect_find(obj.affected,const.skill_table["bless"])
             if not saves_dispel(level, paf.level if paf != None else obj.level,0):
                 if paf:
                     affect_remove_obj(obj,paf)
@@ -898,7 +902,7 @@ def spell_demonfire( sn, level, ch, victim, target ):
     if saves_spell( level, victim,DAM_NEGATIVE):
         dam = dam / 2
     damage( ch, victim, dam, sn, DAM_NEGATIVE ,True)
-    spell_curse(skill_table['curse'], 3 * level / 4, ch, victim,TARGET_CHAR)
+    spell_curse(const.skill_table['curse'], 3 * level / 4, ch, victim,TARGET_CHAR)
 
 def spell_detect_evil( sn, level, ch, victim, target ):
     if IS_AFFECTED(victim, AFF_DETECT_EVIL):
@@ -1090,12 +1094,12 @@ def spell_dispel_magic( sn, level, ch, victim, target ):
 
 
     for k,v in spells.iteritems():
-        if check_dispel(level,victim,skill_table[k]):
+        if check_dispel(level,victim,const.skill_table[k]):
             if v:
                 act(v,victim,None,None,TO_ROOM)
             found = True
 
-    if IS_AFFECTED(victim,AFF_SANCTUARY) and not saves_dispel(level, victim.level,-1) and not is_affected(victim,skill_table["sanctuary"]):
+    if IS_AFFECTED(victim,AFF_SANCTUARY) and not saves_dispel(level, victim.level,-1) and not is_affected(victim,const.skill_table["sanctuary"]):
         REMOVE_BIT(victim.affected_by,AFF_SANCTUARY)
         act("The white aura around $n's body vanishes.", victim,None,None,TO_ROOM)
         found = True
@@ -1460,9 +1464,9 @@ def spell_faerie_fog( sn, level, ch, victim, target ):
         if ich == ch or saves_spell( level, ich,DAM_OTHER):
             continue
 
-        affect_strip ( ich, skill_table['invis']           )
-        affect_strip ( ich, skill_table['mass_invis']      )
-        affect_strip ( ich, skill_table['sneak']           )
+        affect_strip ( ich, const.skill_table['invis']           )
+        affect_strip ( ich, const.skill_table['mass_invis']      )
+        affect_strip ( ich, const.skill_table['sneak']           )
         REMOVE_BIT   ( ich.affected_by, AFF_HIDE   )
         REMOVE_BIT   ( ich.affected_by, AFF_INVISIBLE  )
         REMOVE_BIT   ( ich.affected_by, AFF_SNEAK  )
@@ -1514,7 +1518,7 @@ def spell_frenzy( sn, level, ch, victim, target ):
             act("$N is already in a frenzy.",ch,None,victim,TO_CHAR)
         return
 
-    if is_affected(victim,skill_table['calm']):
+    if is_affected(victim,const.skill_table['calm']):
         if victim == ch:
             ch.send("Why don't you just relax for a while?\r\n")
         else:
@@ -1623,7 +1627,7 @@ def spell_haste( sn, level, ch, victim, target ):
             act("$N is already moving as fast as $E can.", ch,None,victim,TO_CHAR)
         return
     if IS_AFFECTED(victim,AFF_SLOW):
-        if not check_dispel(level,victim,skill_table["slow"]):
+        if not check_dispel(level,victim,const.skill_table["slow"]):
             if victim != ch:
                 ch.send("Spell failed.\r\n")
             victim.send("You feel momentarily faster.\r\n")
@@ -1730,9 +1734,9 @@ def spell_heat_metal( sn, level, ch, victim, target ):
 
 # RT really nasty high-level attack spell */
 def spell_holy_word( sn, level, ch, victim, target ):
-    bless_num = skill_table['bless']
-    curse_num = skill_table['curse'] 
-    frenzy_num = skill_table['frenzy']
+    bless_num = const.skill_table['bless']
+    curse_num = const.skill_table['curse'] 
+    frenzy_num = const.skill_table['frenzy']
 
     act("$n utters a word of divine powernot ",ch,None,None,TO_ROOM)
     ch.send("You utter a word of divine power.\r\n")
@@ -1770,12 +1774,12 @@ def spell_identify( sn, level, ch, victim, target ):
         ch.send("Level %d spells of:" % obj.value[0] )
         for i in obj.value:
             if i >= 0 and i < MAX_SKILL:
-                ch.send(" '%s'" %  skill_table[i].name)
+                ch.send(" '%s'" %  const.skill_table[i].name)
         ch.send(".\r\n")
     elif obj.item_type == ITEM_WAND or obj.item_type == ITEM_STAFF: 
         ch.send("Has %d charges of level %d" % ( obj.value[2], obj.value[0] ) )
         if obj.value[3] >= 0 and obj.value[3] < MAX_SKILL:
-            ch.send( "' %s'" % skill_table[obj.value[3]].name)
+            ch.send( "' %s'" % const.skill_table[obj.value[3]].name)
         ch.send(".\r\n")
     elif obj.item_type ==  ITEM_DRINK_CON:
         ch.send("It holds %s-colored %s.\r\n" % ( liq_table[obj.value[2]].liq_color, liq_table[obj.value[2]].liq_name) )
@@ -1967,8 +1971,8 @@ def spell_magic_missile( sn, level, ch, victim, target ):
     damage( ch, victim, dam, sn, DAM_ENERGY ,True)
 
 def spell_mass_healing( sn, level, ch, victim, target ):
-    heal_num = skill_table['heal']
-    refresh_num = skill_table['refresh'] 
+    heal_num = const.skill_table['heal']
+    refresh_num = const.skill_table['refresh'] 
 
     for gch in ch.in_room.people:
         if (IS_NPC(ch) and IS_NPC(gch) ) or ( not IS_NPC(ch) and not IS_NPC(gch)):
@@ -2160,7 +2164,7 @@ def spell_ray_of_truth(sn, level, ch, victim, target):
     dam = (dam * align * align) / 1000000
 
     damage( ch, victim, dam, sn, DAM_HOLY ,True)
-    spell_blindness(skill_table['blindness'], 3 * level / 4, ch, victim,TARGET_CHAR)
+    spell_blindness(const.skill_table['blindness'], 3 * level / 4, ch, victim,TARGET_CHAR)
 
 def spell_recharge( sn, level, ch, victim, target ):
     obj = victim
@@ -2243,7 +2247,7 @@ def spell_remove_curse( sn, level, ch, victim, target ):
         return
 
     # characters */
-    if check_dispel(level,victim,skill_table['curse']):
+    if check_dispel(level,victim,const.skill_table['curse']):
         victim.send("You feel better.\r\n")
         act("$n looks more relaxed.",victim,None,None,TO_ROOM)
     
@@ -2348,7 +2352,7 @@ def spell_slow( sn, level, ch, victim, target ):
         return
 
     if IS_AFFECTED(victim,AFF_HASTE):
-        if not check_dispel(level,victim,skill_table['haste']):
+        if not check_dispel(level,victim,const.skill_table['haste']):
             if victim != ch:
                 ch.send("Spell failed.\r\n")
             victim.send("You feel momentarily slower.\r\n")

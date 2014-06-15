@@ -32,6 +32,10 @@
 """
 from merc import *
 from handler import can_see
+from magic import (spell_armor, spell_bless, spell_refresh, spell_poison,
+                   spell_cure_blindness, spell_cure_light, spell_cure_poison,
+                   spell_cure_disease)
+from const import skill_table
 
 def spec_troll_member( ch ):
     if not IS_AWAKE(ch) or IS_AFFECTED(ch,AFF_CALM) or ch.in_room == None  \
@@ -263,7 +267,7 @@ def spec_cast_adept( ch ):
         return True
     elif num == 6:
         act("$n utters the words 'judicandus eugzagz'.",ch,None,None,TO_ROOM)
-        spell_cure_disease(skill_lookup("cure disease"), ch.level,ch,victim,TARGET_CHAR)
+        spell_cure_disease( skill_table["cure disease"], ch.level,ch,victim,TARGET_CHAR)
         return False
 
 def spec_cast_cleric( ch ):
@@ -489,9 +493,9 @@ def spec_guard( ch ):
         return False
 
     max_evil = 300
-    ech      = None
-    crime    = ""
-
+    ech = None
+    crime = ""
+    victim = None
     for vch in ch.in_room.people:
         if not IS_NPC(vch) and IS_SET(vch.act, PLR_KILLER) and can_see(ch,vch):
             victim = vch
@@ -505,7 +509,7 @@ def spec_guard( ch ):
 
         if vch.fighting and vch.fighting != ch and vch.alignment < max_evil:
             max_evil = vch.alignment
-            ech      = vch
+            ech = vch
 
     if victim:
         buf = "%s is a %s!  PROTECT THE INNOCENT!!  BANZAI!!" % ( victim.name, crime )

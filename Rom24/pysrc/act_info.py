@@ -36,7 +36,9 @@ from nanny import con_playing, con_gen_groups
 from handler import *
 from act_move import dir_name
 from db import get_extra_descr
-from const import skill_table
+from const import skill_table, guild_table, pc_race_table
+from tables import clan_table
+from skills import exp_per_level
 
 where_name = ["<used as light>     ",
               "<worn on finger>    ",
@@ -1126,7 +1128,7 @@ def do_who(self, argument):
     for d in descriptor_list:
         #* Check for match against restrictions.
         #* Don't use trust as that exposes trusted mortals.
-        if d.connected != con_playing or not can_see(ch, d.character):
+        if not d.is_connected(con_playing) or not can_see(ch, d.character):
             continue
 
         wch = CH(d)

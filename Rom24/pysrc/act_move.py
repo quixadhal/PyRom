@@ -883,7 +883,7 @@ def do_recall(self, argument):
         ch.send("Only players can recall.\n\r")
         return
     act( "$n prays for transportation!", ch, 0, 0, TO_ROOM )
-    location = get_room_index( ROOM_VNUM_TEMPLE )
+    location = room_index_hash[ROOM_VNUM_TEMPLE]
     if not location:
         ch.send("You are completely lost.\n\r")
         return

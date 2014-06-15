@@ -31,6 +31,7 @@
  ************/
 """
 from merc import *
+from handler import *
 
 # * Control the fights going on.
 # * Called periodically by update_handler.

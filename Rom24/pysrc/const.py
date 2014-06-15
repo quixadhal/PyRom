@@ -593,3 +593,168 @@ title_table  = {  "mage": [ [ "Man", "Woman" ],
                             [ "Creator", "Creator" ],
                             [ "Implementor", "Implementress" ] ] }
         
+# * Attribute bonus structures.
+class str_app_type:
+    def __init__(self, toh, tod, c, w):
+        self.tohit = toh
+        self.todam = tod
+        self.carry = c
+        self.wield = w
+
+str_app = OrderedDict()
+str_app[0] = str_app_type(-5, -4,   0,  0)
+str_app[1] = str_app_type(-5, -4,   3,  1)
+str_app[2] = str_app_type(-3, -2,   3,  2)
+str_app[3] = str_app_type(-3, -1,  10,  3)
+str_app[4] = str_app_type(-2, -1,  25,  4)
+str_app[5] = str_app_type(-2, -1,  55,  5)
+str_app[6] = str_app_type(-1,  0,  80,  6)
+str_app[7] = str_app_type(-1,  0,  90,  7)
+str_app[8] = str_app_type(0,  0, 100,  8)
+str_app[9] = str_app_type(0,  0, 100,  9)
+str_app[10] = str_app_type(0,  0, 115, 10)
+str_app[11] = str_app_type(0,  0, 115, 11)
+str_app[12] = str_app_type(0,  0, 130, 12)
+str_app[13] = str_app_type(0,  0, 130, 13)
+str_app[14] = str_app_type(0,  1, 140, 14)
+str_app[15] = str_app_type(1,  1, 150, 15)
+str_app[16] = str_app_type(1,  2, 165, 16)
+str_app[17] = str_app_type(2,  3, 180, 22)
+str_app[18] = str_app_type(2,  3, 200, 25)
+str_app[19] = str_app_type(3,  4, 225, 30)
+str_app[20] = str_app_type(3,  5, 250, 35)
+str_app[21] = str_app_type(4,  6, 300, 40)
+str_app[22] = str_app_type(4,  6, 350, 45)
+str_app[23] = str_app_type(5,  7, 400, 50)
+str_app[24] = str_app_type(5,  8, 450, 55)
+str_app[25] = str_app_type(6,  9, 500, 60)
+
+class int_app_type:
+    def __init__(self, l):
+        self.learn = l
+
+int_app = OrderedDict()
+int_app[0] = int_app_type(3)
+int_app[1] = int_app_type(5)
+int_app[2] = int_app_type(7)
+int_app[3] = int_app_type(8)
+int_app[4] = int_app_type(9)
+int_app[5] = int_app_type(10)
+int_app[6] = int_app_type(11)
+int_app[7] = int_app_type(12)
+int_app[8] = int_app_type(13)
+int_app[9] = int_app_type(15)
+int_app[10] = int_app_type(17)
+int_app[11] = int_app_type(19)
+int_app[12] = int_app_type(22)
+int_app[13] = int_app_type(25)
+int_app[14] = int_app_type(28)
+int_app[15] = int_app_type(31)
+int_app[16] = int_app_type(34)
+int_app[17] = int_app_type(37)
+int_app[18] = int_app_type(40)
+int_app[19] = int_app_type(44)
+int_app[20] = int_app_type(49)
+int_app[21] = int_app_type(55)
+int_app[22] = int_app_type(60)
+int_app[23] = int_app_type(70)
+int_app[24] = int_app_type(80)
+int_app[25] = int_app_type(85)
+
+class wis_app_type:
+    def __init__(self, p):
+        self.practice = p
+
+wis_app = OrderedDict()
+wis_app[0] = wis_app_type(0) #/*  0 */
+wis_app[1] = wis_app_type(0) #/*  1 */
+wis_app[2] = wis_app_type(0)
+wis_app[3] = wis_app_type(0) #/*  3 */
+wis_app[4] = wis_app_type(0)
+wis_app[5] = wis_app_type(1) #/*  5 */
+wis_app[6] = wis_app_type(1)
+wis_app[7] = wis_app_type(1)
+wis_app[8] = wis_app_type(1)
+wis_app[9] = wis_app_type(1)
+wis_app[10] = wis_app_type(1) #/* 10 */
+wis_app[11] = wis_app_type(1)
+wis_app[12] = wis_app_type(1)
+wis_app[13] = wis_app_type(1)
+wis_app[14] = wis_app_type(1)
+wis_app[15] = wis_app_type(2)  #/* 15 */
+wis_app[16] = wis_app_type(2)
+wis_app[17] = wis_app_type(2)
+wis_app[18] = wis_app_type(3)  #/* 18 */
+wis_app[19] = wis_app_type(3)
+wis_app[20] = wis_app_type(3)  #/* 20 */
+wis_app[21] = wis_app_type(3)
+wis_app[22] = wis_app_type(4)
+wis_app[23] = wis_app_type(4)
+wis_app[24] = wis_app_type(4)
+wis_app[25] = wis_app_type(5)   #/* 25 */
+
+class dex_app_type:
+    def __init__(self, d):
+        self.defensive = d
+
+dex_app = OrderedDict()
+dex_app[0] = dex_app_type(60)   #/* 0 */
+dex_app[1] = dex_app_type(50)   #/* 1 */
+dex_app[2] = dex_app_type(50)
+dex_app[3] = dex_app_type(40)
+dex_app[4] = dex_app_type(30)
+dex_app[5] = dex_app_type(20)   #/* 5 */
+dex_app[6] = dex_app_type(10)
+dex_app[7] = dex_app_type(0)
+dex_app[8] = dex_app_type(0)
+dex_app[9] = dex_app_type(0)
+dex_app[10] = dex_app_type(0)   #/* 10 */
+dex_app[11] = dex_app_type(0)
+dex_app[12] = dex_app_type(0)
+dex_app[13] = dex_app_type(0)
+dex_app[14] = dex_app_type(0)
+dex_app[15] = dex_app_type(-10)   #/* 15 */
+dex_app[16] = dex_app_type(-15)
+dex_app[17] = dex_app_type(-20)
+dex_app[18] = dex_app_type(-30)
+dex_app[19] = dex_app_type(-40)
+dex_app[20] = dex_app_type(-50)   #/* 20 */
+dex_app[21] = dex_app_type(-60)
+dex_app[22] = dex_app_type(-75)
+dex_app[23] = dex_app_type(-90)
+dex_app[24] = dex_app_type(-105)
+dex_app[25] = dex_app_type(-120)    #/* 25 */
+
+class con_app_type:
+    def __init__(self, h, s):
+        self.hitp = h
+        self.shock = s
+
+con_app = OrderedDict()
+con_app[0] = con_app_type(-4, 20)   #/*  0 */
+con_app[1] = con_app_type(-3, 25)   #/*  1 */
+con_app[2] = con_app_type(-2, 30)
+con_app[3] = con_app_type(-2, 35)   #/*  3 */
+con_app[4] = con_app_type(-1, 40)
+con_app[5] = con_app_type(-1, 45)   #/*  5 */
+con_app[6] = con_app_type(-1, 50)
+con_app[7] = con_app_type(0, 55)
+con_app[8] = con_app_type(0, 60)
+con_app[9] = con_app_type(0, 65)
+con_app[10] = con_app_type(0, 70)   #/* 10 */
+con_app[11] = con_app_type(0, 75)
+con_app[12] = con_app_type(0, 80)
+con_app[13] = con_app_type(0, 85)
+con_app[14] = con_app_type(0, 88)
+con_app[15] = con_app_type(1, 90)   #/* 15 */
+con_app[16] = con_app_type(2, 95)
+con_app[17] = con_app_type(2, 97)
+con_app[18] = con_app_type(3, 99)   #/* 18 */
+con_app[19] = con_app_type(3, 99)
+con_app[20] = con_app_type(4, 99)   #/* 20 */
+con_app[21] = con_app_type(4, 99)
+con_app[22] = con_app_type(5, 99)
+con_app[23] = con_app_type(6, 99)
+con_app[24] = con_app_type(7, 99)
+con_app[25] = con_app_type(8, 99)    #/* 25 */
+

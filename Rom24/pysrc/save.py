@@ -37,6 +37,7 @@ from merc import *
 from const import race_table, guild_table
 from settings import PLAYER_DIR
 from handler import obj_to_char, obj_to_obj
+from tables import clan_table
 
 def save_char_obj( ch ):
     if IS_NPC(ch):
@@ -95,7 +96,7 @@ def fwrite_char( ch ):
     chdict["Desc"] = ch.description
     chdict["Prom"] = ch.prompt
     chdict["Race"] = ch.race.name
-    chdict["Clan"] = ch.clan
+    chdict["Clan"] = ch.clan.name
     chdict["Sex"] = ch.sex
     chdict["Cla"] = ch.guild.name
     chdict["Levl"] = ch.level
@@ -187,7 +188,7 @@ def fread_char(chdict, ch):
     ch.description = chdict["Desc"]
     ch.prompt = chdict["Prom"]
     ch.race = race_table[chdict["Race"]]
-    ch.clan = chdict["Clan"]
+    ch.clan = clan_table[chdict["Clan"]]
     ch.sex = int(chdict["Sex"])
     ch.guild = guild_table[chdict["Cla"]]
     ch.level = chdict["Levl"]
