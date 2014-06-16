@@ -33,6 +33,7 @@
 """
 import os
 import json
+import errno
 from collections import OrderedDict
 from merc import *
 from const import race_table, guild_table
@@ -49,6 +50,9 @@ def save_char_obj(ch):
         ch = ch.desc.original
 
     pfile = os.path.join(PLAYER_DIR, ch.name+'.js')
+    #A Quick Quix fix!
+    os.makedirs(PLAYER_DIR, 0o755, True)
+
     fwrite = fwrite_char(ch)
     if ch.carrying:
         fwrite['carrying'] = [fwrite_obj(ch, o) for o in ch.carrying]
