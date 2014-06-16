@@ -272,13 +272,13 @@ def mobile_update( ):
             obj_best = 0
             for obj in ch.in_room.contents:
                 if CAN_WEAR(obj, ITEM_TAKE) and can_loot(ch, obj) and obj.cost > top and obj.cost > 0:
-                    obj_best    = obj
+                    obj_best = obj
                     top = obj.cost
 
             if obj_best:
-                obj_from_room( obj_best )
-                obj_to_char( obj_best, ch )
-                act( "$n gets $p.", ch, obj_best, None, TO_ROOM )
+                obj_from_room(obj_best)
+                obj_to_char(obj_best, ch)
+                act("$n gets $p.", ch, obj_best, None, TO_ROOM)
 
         # Wander */
         door = random.randint(0,5)
@@ -290,11 +290,11 @@ def mobile_update( ):
         and pexit.to_room \
         and  not IS_SET(pexit.exit_info, EX_CLOSED) \
         and  not IS_SET(pexit.to_room.room_flags, ROOM_NO_MOB) \
-        and ( not IS_SET(ch.act, ACT_STAY_AREA) or pexit.to_room.area == ch.in_room.area ) \
-        and ( not IS_SET(ch.act, ACT_OUTDOORS) or not IS_SET(pexit.to_room.room_flags,ROOM_INDOORS)) \
-        and ( not IS_SET(ch.act, ACT_INDOORS) \
+        and (not IS_SET(ch.act, ACT_STAY_AREA) or pexit.to_room.area == ch.in_room.area) \
+        and (not IS_SET(ch.act, ACT_OUTDOORS) or not IS_SET(pexit.to_room.room_flags,ROOM_INDOORS)) \
+        and (not IS_SET(ch.act, ACT_INDOORS) \
         or IS_SET(pexit.to_room.room_flags,ROOM_INDOORS)):
-            act_move.move_char( ch, door, False )
+            act_move.move_char(ch, door, False)
       
 #
 # * Update the weather.

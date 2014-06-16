@@ -348,10 +348,9 @@ def one_hit( ch, victim, dt ):
                 if percent <= (skill // 8):
                     dam = 2 * dam + (dam * 2 * percent // 100)
         else:
-            low = int(1 + 4 * skill // 100)
-            high = int(2 * ch.level // 3 * skill // 100)
-            print(locals())
-            if low != high:
+            low = 1 + 4 * skill // 100
+            high = 2 * ch.level // 3 * skill // 100
+            if low <= high:
                 dam = random.randint(low, high)
             else:
                 dam = low
