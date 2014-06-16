@@ -595,8 +595,8 @@ def do_stand(self, argument):
         else:
             act("You stand in $p.",ch,obj,None,TO_CHAR)
             act("$n stands on $p.",ch,obj,None,TO_ROOM)
-            ch.position = POS_STANDING
-            return
+        ch.position = POS_STANDING
+        return
     elif ch.position == POS_STANDING:
         ch.send("You are already standing.\n")
         return
@@ -825,7 +825,7 @@ def do_wake(self, argument):
         act( "You can't wake $M!",   ch, None, victim, TO_CHAR )
         return
     act("$n wakes you.", ch, None, victim, TO_VICT,POS_SLEEPING )
-    ch.do_stand("")
+    victim.do_stand("")
     return
 
 def do_sneak(self, argument):

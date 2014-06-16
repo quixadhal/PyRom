@@ -136,7 +136,7 @@ def hit_gain( ch ):
     if IS_AFFECTED(ch,AFF_HASTE) or IS_AFFECTED(ch,AFF_SLOW):
         gain /=2 
 
-    return min(gain, ch.max_hit - ch.hit)
+    return int(min(gain, ch.max_hit - ch.hit))
 
 def mana_gain( ch ):
     if ch.in_room == None:
@@ -183,7 +183,7 @@ def mana_gain( ch ):
     if IS_AFFECTED(ch,AFF_HASTE) or IS_AFFECTED(ch,AFF_SLOW):
         gain /=2 
 
-    return min(gain, ch.max_mana - ch.mana)
+    return int(min(gain, ch.max_mana - ch.mana))
 
 def move_gain( ch ):
     if not ch.in_room:
@@ -218,7 +218,7 @@ def move_gain( ch ):
     if IS_AFFECTED(ch,AFF_HASTE) or IS_AFFECTED(ch,AFF_SLOW):
         gain /=2 
 
-    return min(gain, ch.max_move - ch.move)
+    return int(min(gain, ch.max_move - ch.move))
 
 def gain_condition( ch, iCond, value ):
     if value == 0 or IS_NPC(ch) or ch.level >= LEVEL_IMMORTAL:

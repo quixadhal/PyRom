@@ -38,7 +38,7 @@ from merc import descriptor_list, greeting_list, POS_RESTING
 from db import boot_db
 from nanny import *
 from alias import *
-from handler import can_see_room
+from handler import can_see_room, can_see
 
 def process_input():
     for d in descriptor_list:
@@ -58,8 +58,39 @@ def is_connected(self, state):
 def process_output(self):
     ch = CH(self)
     if ch and self.is_connected(con_playing) and self.send_buffer:
+        #/* battle prompt */
+        victim = ch.fighting
+        if victim and can_see(ch,victim):
+            percent = 0
+            wound = ""
+            if victim.max_hit > 0:
+                percent = victim.hit * 100 / victim.max_hit
+            else:
+                percent = -1
+ 
+            if percent >= 100:
+                wound = "is in excellent condition."
+            elif percent >= 90:
+                wound = "has a few scratches."
+            elif percent >= 75:
+                wound = "has some small wounds and bruises."
+            elif percent >= 50:
+                wound = "has quite a few wounds."
+            elif percent >= 30:
+                wound = "has some big nasty wounds and scratches."
+            elif percent >= 15:
+                wound = "looks pretty hurt."
+            elif percent >= 0:
+                wound = "is in awful condition."
+            else:
+                wound = "is bleeding to death."
+            wound = "%s %s \n" % (PERS(victim, ch), wound)
+            wound = wound.capitalize()
+            ch.send(wound)
+
         self.send("\n")
         bust_a_prompt(ch)
+
     self.miniboa_send()        
 
 def init_descriptor(d):

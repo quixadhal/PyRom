@@ -348,7 +348,9 @@ def one_hit( ch, victim, dt ):
                 if percent <= (skill / 8):
                     dam = 2 * dam + (dam * 2 * percent / 100)
         else:
-            dam = random.randint( 1 + 4 * skill/100, 2 * ch.level/3 * skill/100)
+            low = int(1 + 4 * skill/100)
+            high = min(low+1, int(2 * ch.level/3 * skill/100))
+            dam = random.randint(low, high)
     #
     # * Bonuses.
     if get_skill(ch,'enhanced damage') > 0:
@@ -1162,7 +1164,7 @@ def xp_compute( gch, victim, total_levels ):
         time_per_level = max(time_per_level,(15 - gch.level))
     xp = xp * time_per_level / 12
     # randomize the rewards */
-    xp = random.randint (xp * 3/4, xp * 5/4)
+    xp = random.randint (int(xp * 3/4), int(xp * 5/4))
     # adjust for grouping */
     xp = xp * gch.level/( max(1,total_levels -1) )
     return xp

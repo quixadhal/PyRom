@@ -1525,7 +1525,7 @@ def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
         act_trans['$d'] = arg2 if not arg2 else "door"
         
         format = mass_replace(format, act_trans)
-        to.send(format+"\r\n")
+        to.send(format+"\n")
     return
 
 #ensureall do_functions become class methods

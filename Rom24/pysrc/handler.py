@@ -856,8 +856,10 @@ def extract_char( ch, fPull ):
     if ch not in char_list:
         print ("Extract_char: char not found.")
         return
+    
     char_list.remove(ch)
-    player_list.remove(ch)
+    if ch in player_list:
+        player_list.remove(ch)
 
     if ch.desc:
         ch.desc.character = None
