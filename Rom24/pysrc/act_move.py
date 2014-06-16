@@ -28,6 +28,7 @@
 /************
  * Ported to Python by Davion of MudBytes.net
  * Using Miniboa https://code.google.com/p/miniboa/
+ * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
 from merc import *

@@ -28,6 +28,7 @@
 #***********
  * Ported to Python by Davion of MudBytes.net
  * Using Miniboa https://code.google.com/p/miniboa/
+ * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
 from merc import *
@@ -130,7 +131,7 @@ def spec_patrolman(ch):
             if vch.in_room == None:
                 continue
             if vch.in_room != ch.in_room and vch.in_room.area == ch.in_room.area:
-                vch.send("You hear a shrill whistling sound.\n\r")
+                vch.send("You hear a shrill whistling sound.\n")
 
     messages = ["$n yells 'All roit! All roit! break it up!'",
                 "$n says 'Society's to blame, but what's a bloke to do?'",

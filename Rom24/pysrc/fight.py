@@ -1,9 +1,9 @@
 """
 #**************************************************************************
- *  Original Diku Mud copyright=C) 1990, 1991 by Sebastian Hammer,        *
+ *  Original Diku Mud copyright=C) 1990, 1991 by Sebastian Hammer,         *
  *  Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
  *                                                                         *
- *  Merc Diku Mud improvments copyright=C) 1992, 1993 by Michael          *
+ *  Merc Diku Mud improvments copyright=C) 1992, 1993 by Michael           *
  *  Chastain, Michael Quan, and Mitchell Tse.                              *
  *                                                                         *
  *  In order to use any part of this Merc Diku Mud, you must comply with   *
@@ -28,6 +28,7 @@
 #***********
  * Ported to Python by Davion of MudBytes.net
  * Using Miniboa https://code.google.com/p/miniboa/
+ * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
 from merc import *
