@@ -30,6 +30,7 @@ Manage one Telnet client connected via a TCP/IP socket.
 import sys
 import socket
 import time
+import logging
 
 from miniboa.terminal import colorize
 from miniboa.terminal import word_wrap
@@ -183,27 +184,34 @@ class TelnetClient(object):
             self.cmd_ready = False
         return cmd
 
-    def send(self, text):
+    def send(self, text, wrap=80, terminal='ansi'):
         """
         Send raw text to the distant end.
         """
         if text:
+            text = text.replace('\n\r', '\n') # DikuMUD got their line endings backwards
+            text = text.replace('\r\n', '\n') # This is correct for TELNET, but we need to ensure
+                                              # that "\r\n" doesn't become "\r\n\n" later.
+            if wrap:
+                text = '\n'.join(word_wrap(text, wrap)) # Note self.columns is negotiated
+            if terminal:
+                text = colorize(text, terminal) # Note self.terminal_type is negotiated
             self.send_buffer += text.replace('\n', '\r\n')
             self.send_pending = True
+            
+    #def send_cc(self, text):
+    #    """
+    #    Send text with caret codes converted to ansi.
+    #    """
+    #    self.send(colorize(text, self.use_ansi))
 
-#    def send_cc(self, text):
-#        """
-#        Send text with caret codes converted to ansi.
-#        """
-#        self.send(colorize(text, self.use_ansi))
-
-    def send_wrapped(self, text):
-        """
-        Send text padded and wrapped to the user's screen width.
-        """
-        lines = word_wrap(text, self.columns)
-        for line in lines:
-            self.send_cc(line + '\n')
+    #def send_wrapped(self, text):
+    #    """
+    #    Send text padded and wrapped to the user's screen width.
+    #    """
+    #    lines = word_wrap(text, self.columns)
+    #    for line in lines:
+    #        self.send_cc(line + '\n')
 
     def deactivate(self):
         """
