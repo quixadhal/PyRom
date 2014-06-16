@@ -298,7 +298,7 @@ def get_true_weight(obj):
 # * Equip a char with an obj.
 def equip_char( ch, obj, iWear ):
     if get_eq_char( ch, iWear ):
-        print "Equip_char: already equipped (%d)." % iWear
+        print ("Equip_char: already equipped (%d)." % iWear)
         return
     
     if ( IS_OBJ_STAT(obj, ITEM_ANTI_EVIL) and IS_EVIL(ch) ) \
@@ -333,7 +333,7 @@ def equip_char( ch, obj, iWear ):
 # * Unequip a char with an obj.
 def unequip_char( ch, obj ):
     if obj.wear_loc == WEAR_NONE:
-        print "Unequip_char: already unequipped."
+        print ("Unequip_char: already unequipped.")
         return
 
     for i in range(4):
@@ -353,7 +353,7 @@ def unequip_char( ch, obj ):
 
     for paf in obj.affected:
         if paf.location == APPLY_SPELL_AFFECT:
-            print "Norm-Apply: %d" % paf.location
+            print ("Norm-Apply: %d" % paf.location)
             for lpaf in ch.affected:
                 if (lpaf.type == paf.type) and (lpaf.level == paf.level) and (lpaf.location == APPLY_SPELL_AFFECT):
                     print ( "location = %d" % lpaf.location )
@@ -440,7 +440,7 @@ def affect_modify( ch, paf, fAdd ):
     elif paf.location == APPLY_SAVING_SPELL: ch.saving_throw += mod
     elif paf.location == APPLY_SPELL_AFFECT: pass
     else:
-        print "Affect_modify: unknown location %d." % paf.location
+        print ("Affect_modify: unknown location %d." % paf.location)
         return
     #
     # * Check for weapon wielding.
@@ -535,7 +535,7 @@ def affect_to_obj( obj, paf):
 # * Remove an affect from a char.
 def affect_remove( ch, paf ):
     if not ch.affected:
-        print "BUG: Affect_remove: no affect."
+        print ("BUG: Affect_remove: no affect.")
         return
 
     affect_modify( ch, paf, False )
@@ -543,7 +543,7 @@ def affect_remove( ch, paf ):
     vector = paf.bitvector
     
     if paf not in ch.affected:
-        print "Affect_remove: cannot find paf."
+        print ("Affect_remove: cannot find paf.")
         return
     ch.affected.remove(paf)
     del paf
@@ -552,7 +552,7 @@ def affect_remove( ch, paf ):
 
 def affect_remove_obj(obj, paf):
     if not obj.affected:
-        print "BUG: Affect_remove_object: no affect."
+        print ("BUG: Affect_remove_object: no affect.")
         return
 
     if obj.carried_by != None and obj.wear_loc != -1:
@@ -570,7 +570,7 @@ def affect_remove_obj(obj, paf):
                 REMOVE_BIT(obj.value[4],paf.bitvector)
 
     if paf not in obj.affected:
-        print "BUG: Affect_remove_object: cannot find paf."
+        print ("BUG: Affect_remove_object: cannot find paf.")
         return
     obj.affected.remove(paf)
     del paf
@@ -600,7 +600,7 @@ def affect_join( ch, paf ):
 # * Move a char out of a room.
 def char_from_room( ch ):
     if not ch.in_room:
-        print "BUG: Char_from_room: None."
+        print ("BUG: Char_from_room: None.")
         return
 
     if not IS_NPC(ch):
@@ -611,7 +611,7 @@ def char_from_room( ch ):
 
 
     if ch not in ch.in_room.people:
-        print "BUG: Char_from_room: ch not found."
+        print ("BUG: Char_from_room: ch not found.")
         return
     ch.in_room.people.remove(ch)
     ch.in_room      = None
@@ -621,7 +621,7 @@ def char_from_room( ch ):
 # * Move a char into a room.
 def char_to_room( ch, pRoomIndex ):
     if not pRoomIndex:
-        print "Char_to_room: None."
+        print ("Char_to_room: None.")
         room = room_index_hash[ROOM_VNUM_TEMPLE]
         char_to_room(ch,room)
         return
@@ -690,7 +690,7 @@ def room_is_dark( pRoomIndex ):
 # * Unequip a char with an obj.
 def unequip_char( ch, obj ):
     if obj.wear_loc == WEAR_NONE:
-        print "Unequip_char: already unequipped."
+        print ("Unequip_char: already unequipped.")
         return
 
     for i in range(4):
@@ -710,11 +710,11 @@ def unequip_char( ch, obj ):
 
     for paf in obj.affected:
         if paf.location == APPLY_SPELL_AFFECT:
-            print "Bug: Norm-Apply"
+            print ("Bug: Norm-Apply")
             for lpaf in ch.affected:
                 if lpaf.type == paf.type and lpaf.level == paf.level and lpaf.location == APPLY_SPELL_AFFECT:
-                    print "bug: location = %d" % lpaf.location
-                    print "bug: type = %d" % lpaf.type
+                    print ("bug: location = %d" % lpaf.location)
+                    print ("bug: type = %d" % lpaf.type)
                     affect_remove( ch, lpaf )
                     break
         else:
@@ -736,7 +736,7 @@ def count_obj_list( pObjIndex, list ):
 # */
 def obj_from_room( obj ):
     if not obj.in_room:
-        print "Bug: obj_from_room: None."
+        print ("Bug: obj_from_room: None.")
         return
     in_room = obj.in_room
     for ch in in_room.people:
@@ -744,7 +744,7 @@ def obj_from_room( obj ):
             ch.on = None
 
     if obj not in in_room.contents:
-        print "Bug: Obj_from_room: obj not found."
+        print ("Bug: Obj_from_room: obj not found.")
         return
 
     obj.in_room      = None
@@ -783,12 +783,12 @@ def obj_to_obj( obj, obj_to ):
 # * Move an object out of an object.
 def obj_from_obj( obj ):
     if not obj.in_obj:
-        print "Bug: Obj_from_obj: null obj_from."
+        print ("Bug: Obj_from_obj: null obj_from.")
         return
     obj_from = obj.in_obj
 
     if obj not in obj_from.contents:
-        print "BUG: Obj_from_obj: obj not found."
+        print ("BUG: Obj_from_obj: obj not found.")
         return
     obj_from.contents.remove(obj)
     obj.in_obj       = None
@@ -813,7 +813,7 @@ def extract_obj( obj ):
         extract_obj( obj_content )
 
     if obj not in object_list:
-        print "Extract_obj: obj %d not found." % obj.pIndexData.vnum
+        print ("Extract_obj: obj %d not found." % obj.pIndexData.vnum)
         return
     object_list.remove(obj)
     del obj
@@ -853,7 +853,7 @@ def extract_char( ch, fPull ):
             wch.reply = None
 
     if ch not in char_list:
-        print "Extract_char: char not found."
+        print ("Extract_char: char not found.")
         return
     char_list.remove(ch)
     player_list.remove(ch)
@@ -986,16 +986,16 @@ def deduct_cost(ch, cost):
     ch.silver -= silver
 
     if ch.gold < 0:
-        print "Bug: deduct costs: gold %d < 0" % ch.gold
+        print ("Bug: deduct costs: gold %d < 0" % ch.gold)
         ch.gold = 0
     if ch.silver < 0:
-        print "BUG: deduct costs: silver %d < 0" % ch.silver
+        print ("BUG: deduct costs: silver %d < 0" % ch.silver)
         ch.silver = 0
 #
 # * Create a 'money' obj.
 def create_money( gold, silver ):
     if gold < 0 or silver < 0 or (gold == 0 and silver == 0):
-        print "BUG: Create_money: zero or negative money. %d " % min(gold,silver)
+        print ("BUG: Create_money: zero or negative money. %d " % min(gold,silver))
         gold = max(1,gold)
         silver = max(1,silver)
 
@@ -1039,7 +1039,7 @@ def get_obj_number( obj ):
     for o in list:
         number += 1
         if o in counted:
-            print "BUG: Objects contain eachother. %s(%d) - %s(%d)" % (obj.short_descr, obj.pIndexData.vnum, o.short_descr, o.pIndexData.vnum)
+            print ("BUG: Objects contain eachother. %s(%d) - %s(%d)" % (obj.short_descr, obj.pIndexData.vnum, o.short_descr, o.pIndexData.vnum))
             break
         counted.append(o)
         list.extend(o.contains)
@@ -1053,7 +1053,7 @@ def get_obj_weight( obj ):
     counted = [obj]
     for tobj in list:
         if tobj in counted:
-            print "BUG: Objects contain eachother. %s(%d) - %s(%d)" % (obj.short_descr, obj.pIndexData.vnum, tobj.short_descr, tobj.pIndexData.vnum)
+            print ("BUG: Objects contain eachother. %s(%d) - %s(%d)" % (obj.short_descr, obj.pIndexData.vnum, tobj.short_descr, tobj.pIndexData.vnum))
             break
         counted.append(tobj)
 
@@ -1090,7 +1090,7 @@ def room_is_private( pRoomIndex ):
 
 # visibility on a room -- for entering and exits */
 def can_see_room( ch, pRoomIndex ):
-    if IS_SET(pRoomIndex.room_flags, ROOM_IMP_ONLY) and get_trust(ch) < MAX_LEVEL:
+    if IS_SET(pRoomIndex.room_flags, ROOM_IMP_ONLY) and  get_trust(ch) < MAX_LEVEL:
         return False
     if IS_SET(pRoomIndex.room_flags, ROOM_GODS_ONLY) and not IS_IMMORTAL(ch):
         return False
@@ -1186,7 +1186,7 @@ def affect_loc_name( location ):
     if location == APPLY_SAVING_BREATH: return "save vs breath"
     if location == APPLY_SAVING_SPELL: return "save vs spell"
     if location == APPLY_SPELL_AFFECT: return "none"
-    print "Affect_location_name: unknown location %d." % location
+    print ("Affect_location_name: unknown location %d." % location)
     return "(unknown)"
 
 # * Return ascii name of an affect bit vector.
@@ -1464,7 +1464,7 @@ def get_skill(ch, sn):
     if sn == -1: # shorthand for level based skills */
         skill = ch.level * 5 / 2
     elif sn not in const.skill_table:
-        print "BUG: Bad sn %s in get_skill." % sn
+        print ("BUG: Bad sn %s in get_skill." % sn)
         skill = 0
     elif not IS_NPC(ch):
         if ch.level < const.skill_table[sn].skill_level[ch.guild.name] or sn not in ch.pcdata.learned:
@@ -1555,10 +1555,10 @@ def get_weapon_skill(ch, sn):
             skill = 40 + 2 * ch.level
         else: 
             skill = 40 + 5 * ch.level / 2
-    else:
+    elif sn in ch.pcdata.learned:
         if sn == -1:
             skill = 3 * ch.level
-        elif sn in ch.pcdata.learned:
+        else:
             skill = ch.pcdata.learned[sn]
     return min(0,max(skill,100))
 
@@ -1603,7 +1603,7 @@ def get_curr_stat(ch, stat):
         if ch.race == const.race_table["human"]:
             smax += 1
 
-        smax = min(max,25);
+        smax = min(smax,25);
     return min(3, max(ch.perm_stat[stat] + ch.mod_stat[stat], smax))
 
 # command for returning max training score */
@@ -1624,7 +1624,7 @@ def get_max_train(ch, stat):
 def obj_from_char(obj):
     ch = obj.carried_by
     if not ch:
-        print "BUG: Obj_from_char: null ch."
+        print ("BUG: Obj_from_char: null ch.")
         return
     
     if obj.wear_loc != WEAR_NONE:

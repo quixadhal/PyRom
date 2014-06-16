@@ -36,6 +36,7 @@ from handler import *
 from comm import act
 from save import save_char_obj
 from fight import violence_update
+import act_move
 # * Advancement stuff.
 
 def advance_level( ch, hide ):
@@ -81,7 +82,7 @@ def gain_exp( ch, gain ):
     while ch.level < LEVEL_HERO and ch.exp >= exp_per_level(ch,ch.pcdata.points) * (ch.level+1):
         ch.send("You raise a level!!  ")
         ch.level += 1
-        print "%s gained level %d\r\n" % (ch.name,ch.level)
+        print ("%s gained level %d\r\n" % (ch.name,ch.level))
         wiznet("$N has attained level %d!" % ch.level,ch,None,WIZ_LEVELS,0,0)
         advance_level(ch,False)
         save_char_obj(ch)
@@ -285,14 +286,14 @@ def mobile_update( ):
         if not IS_SET(ch.act, ACT_SENTINEL)  \
         and random.randint(0,3) == 0  \
         and pexit \
-        and   pexit.u1.to_room \
+        and pexit.to_room \
         and  not IS_SET(pexit.exit_info, EX_CLOSED) \
-        and  not IS_SET(pexit.u1.to_room.room_flags, ROOM_NO_MOB) \
-        and ( not IS_SET(ch.act, ACT_STAY_AREA) or pexit.u1.to_room.area == ch.in_room.area ) \
-        and ( not IS_SET(ch.act, ACT_OUTDOORS) or not IS_SET(pexit.u1.to_room.room_flags,ROOM_INDOORS)) \
+        and  not IS_SET(pexit.to_room.room_flags, ROOM_NO_MOB) \
+        and ( not IS_SET(ch.act, ACT_STAY_AREA) or pexit.to_room.area == ch.in_room.area ) \
+        and ( not IS_SET(ch.act, ACT_OUTDOORS) or not IS_SET(pexit.to_room.room_flags,ROOM_INDOORS)) \
         and ( not IS_SET(ch.act, ACT_INDOORS) \
-        or IS_SET(pexit.u1.to_room.room_flags,ROOM_INDOORS)):
-            move_char( ch, door, False )
+        or IS_SET(pexit.to_room.room_flags,ROOM_INDOORS)):
+            act_move.move_char( ch, door, False )
       
 #
 # * Update the weather.
@@ -361,7 +362,7 @@ def weather_update( ):
             strcat( buf, "The lightning has stopped.\n" )
             weather_info.sky = SKY_RAINING
     else:
-        print "Bug: Weather_update: bad sky %d." % weather_info.sky
+        print ("Bug: Weather_update: bad sky %d." % weather_info.sky)
         weather_info.sky = SKY_CLOUDLESS
 
     if buf:

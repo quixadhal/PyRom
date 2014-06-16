@@ -35,22 +35,23 @@ from settings import AREA_DIR, AREA_LIST
 from merc import *
 from handler import *
 from special import spec_table
-from tables import sex_table
+from tables import sex_table, position_table
 from const import attack_table
+
 def boot_db():
-    print "Loading Areas..."
+    print ("Loading Areas...")
     init_time()
     load_areas()
     fix_exits()
     area_update()
-    print "\t...Loaded %d Helpfiles" % len(help_list)
-    print "\t...Loaded %d Areas" % len(area_list)
-    print "\t...Loaded %d Mobile Indexes" % len(mob_index_hash)
-    print "\t...Loaded %d Object Indexes" % len(obj_index_hash)
-    print "\t...Loaded %d Room Indexes" % len(room_index_hash)
-    print "\t...Loaded %d Resets" % len(reset_list)
-    print "\t...Loaded %d Shops" % len(shop_list)
-    print "\t...Loaded %d Socials" % len(social_list)
+    print ("\t...Loaded %d Helpfiles" % len(help_list))
+    print ("\t...Loaded %d Areas" % len(area_list))
+    print ("\t...Loaded %d Mobile Indexes" % len(mob_index_hash))
+    print ("\t...Loaded %d Object Indexes" % len(obj_index_hash))
+    print ("\t...Loaded %d Room Indexes" % len(room_index_hash))
+    print ("\t...Loaded %d Resets" % len(reset_list))
+    print ("\t...Loaded %d Shops" % len(shop_list))
+    print ("\t...Loaded %d Socials" % len(social_list))
 
 def load_areas():
     area_list = os.path.join(AREA_DIR, AREA_LIST)
@@ -78,7 +79,7 @@ def load_area(area):
             area, pArea.min_vnum = read_int(area)
             area, pArea.max_vnum = read_int(area)
             area_list.append(pArea)
-            print "\t...%s" % pArea
+            print ("\t...%s" % pArea)
 
         elif w == "#HELPS":
             area = load_helps(area)
@@ -99,7 +100,7 @@ def load_area(area):
         elif w == '#$':
             break
         else:
-            print "Bad section name: " + w
+            print ("Bad section name: " + w)
 
         area, w = read_word(area,False)
     
@@ -170,6 +171,8 @@ def load_mobiles(area):
         area, mob.vuln_flags = read_flags(area)
         area, mob.start_pos = read_word(area,False)
         area, mob.default_pos = read_word(area,False)
+        mob.start_pos = name_lookup(position_table, mob.start_pos, 'short_name')
+        mob.default_pos = name_lookup(position_table, mob.default_pos, 'short_name')
         area, sex = read_word(area,False)
         mob.sex = value_lookup(sex_table, sex)
         area, mob.wealth = read_int(area)
@@ -315,7 +318,7 @@ def load_rooms(area, pArea):
         room = ROOM_INDEX_DATA()
         room.vnum = int(w)
         if room.vnum in room_index_hash:
-            print "Dupicate room Vnum: %d" % room.vnum
+            print ("Dupicate room Vnum: %d" % room.vnum)
             sys.exit(1)
 
         room_index_hash[room.vnum] = room
@@ -353,7 +356,7 @@ def load_rooms(area, pArea):
             elif letter == 'O':
                 area, room.owner = read_string(area)
             else:
-                print "RoomIndexData(%d) has flag other than SHMCDEO: %s" % ( room.vnum, letter )
+                print ("RoomIndexData(%d) has flag other than SHMCDEO: %s" % ( room.vnum, letter ))
                 sys.exit(1)
         area, w = read_word(area,False)
         w = w[1:] # strip the pound         
@@ -485,16 +488,16 @@ def load_specials(area):
             area, vnum = read_int(area)
             area, mob_index_hash[vnum].spec_fun = read_word(area,False)
         else:
-            print "Load_specials: letter noth *SM: " + letter
+            print ("Load_specials: letter noth *SM: " + letter)
     
     return area
 
 def fix_exits():
-    for k, r in room_index_hash.iteritems():
+    for k, r in room_index_hash.items():
         for e in r.exit[:]:
             if e and type(e.to_room) == int:
                 if e.to_room not in room_index_hash:
-                    print "Fix_exits: Failed to find to_room for %d: %d" % (r.vnum, e.to_room)
+                    print ("Fix_exits: Failed to find to_room for %d: %d" % (r.vnum, e.to_room))
                     e.to_room = None
                     r.exit.remove(e)
                 else:
@@ -506,7 +509,6 @@ def area_update( ):
         pArea.age += 1
         if pArea.age < 3:
             continue
-
         #
         #* Check age and reset.
         #* Note: Mud School resets every 3 minutes (not 15).
@@ -531,12 +533,12 @@ def reset_area( pArea ):
     for pReset in pArea.reset_list:
         if pReset.command == 'M':
             if pReset.arg1 not in mob_index_hash:
-                print "Reset_area: 'M': bad vnum %d." % pReset.arg1
+                print ("Reset_area: 'M': bad vnum %d." % pReset.arg1)
                 continue
             pMobIndex = mob_index_hash[pReset.arg1]
 
             if pReset.arg3 not in room_index_hash:
-                print "Reset_area: 'R': bad vnum %d." % pReset.arg3
+                print ("Reset_area: 'R': bad vnum %d." % pReset.arg3)
                 continue
             pRoomIndex = room_index_hash[pReset.arg3]
 
@@ -575,12 +577,12 @@ def reset_area( pArea ):
 
         elif pReset.command ==  'O':
             if pReset.arg1 not in obj_index_hash:
-                print "Reset_area: 'O': bad vnum %d." % pReset.arg1
+                print ("Reset_area: 'O': bad vnum %d." % pReset.arg1)
                 continue
             pObjIndex = obj_index_hash[pReset.arg1]
 
             if pReset.arg3 not in room_index_hash:
-                print "Reset_area: 'R': bad vnum %d." % pReset.arg3
+                print ("Reset_area: 'R': bad vnum %d." % pReset.arg3)
                 continue
             pRoomIndex = room_index_hash[pReset.arg3]
 
@@ -596,12 +598,12 @@ def reset_area( pArea ):
 
         elif pReset.command == 'P':
             if pReset.arg1 not in obj_index_hash:
-                print "Reset_area: 'P': bad vnum %d." % pReset.arg1
+                print ("Reset_area: 'P': bad vnum %d." % pReset.arg1)
                 continue
             pObjIndex = obj_index_hash[pReset.arg1]
 
             if pReset.arg3 not in obj_index_hash:
-                print "Reset_area: 'P': bad vnum %d." % pReset.arg3
+                print ("Reset_area: 'P': bad vnum %d." % pReset.arg3)
                 continue
             pObjToIndex = obj_index_hash[pReset.arg3]
             if pReset.arg2 > 50: # old format */
@@ -633,14 +635,14 @@ def reset_area( pArea ):
             last = True
         elif pReset.command == 'G' or pReset.command == 'E':
             if pReset.arg1 not in obj_index_hash:
-                print "Reset_area: 'E' or 'G': bad vnum %d." % pReset.arg1
+                print ("Reset_area: 'E' or 'G': bad vnum %d." % pReset.arg1)
                 continue
             pObjIndex = obj_index_hash[pReset.arg1]
             if not last:
                 continue
 
             if not mob:
-                print "Reset_area: 'E' or 'G': None mob for vnum %d." % pReset.arg1
+                print ("Reset_area: 'E' or 'G': None mob for vnum %d." % pReset.arg1)
                 last = False
                 continue
             olevel = 0
@@ -681,9 +683,9 @@ def reset_area( pArea ):
                 or  (obj.item_type == ITEM_WEAPON  \
                 and   pReset.command == 'E' \
                 and   obj.level < mob.level -5 and obj.level < 45):
-                    print "Err: obj %s (%d) -- %d, mob %s (%d) -- %d\n" % (
+                    print ("Err: obj %s (%d) -- %d, mob %s (%d) -- %d\n" % (
                     obj.short_descr,obj.pIndexData.vnum,obj.level,
-                    mob.short_descr,mob.pIndexData.vnum,mob.level)
+                    mob.short_descr,mob.pIndexData.vnum,mob.level))
                 else:
                     continue
             obj_to_char( obj, mob )
@@ -694,7 +696,7 @@ def reset_area( pArea ):
 
         elif pReset.command == 'D':
             if pReset.arg1 not in room_index_hash:
-                print "Reset_area: 'D': bad vnum %d." % pReset.arg1
+                print ("Reset_area: 'D': bad vnum %d." % pReset.arg1)
                 continue
             pRoomIndex = room_index_hash[pReset.arg1]
             pexit = pRoomIndex.exit[pReset.arg2]
@@ -718,7 +720,7 @@ def reset_area( pArea ):
 
         elif pReset.command == 'R':
             if pReset.arg1 not in room_index_hash:
-                print "Reset_area: 'R': bad vnum %d." % pReset.arg1
+                print ("Reset_area: 'R': bad vnum %d." % pReset.arg1)
                 continue
             pRoomIndex = room_index_hash[pReset.arg1]
             for d0 in range(pReset.arg2 - 1):
@@ -728,7 +730,7 @@ def reset_area( pArea ):
                 pRoomIndex.exit[d1] = pexit
                 break
         else:
-            print "Reset_area: bad command %c." % pReset.command
+            print ("Reset_area: bad command %c." % pReset.command)
 
 
 #
@@ -736,7 +738,7 @@ def reset_area( pArea ):
 
 def create_mobile( pMobIndex ):
     if pMobIndex == None:
-        print "Create_mobile: None pMobIndex."
+        print ("Create_mobile: None pMobIndex.")
         sys.exit( 1 )
     
     mob = CHAR_DATA()
@@ -756,8 +758,8 @@ def create_mobile( pMobIndex ):
         mob.silver = 0
         mob.gold   = 0
     else:
-        wealth = random.randint(pMobIndex.wealth/2, 3 * pMobIndex.wealth/2)
-        mob.gold = random.randint(wealth/200,wealth/100)
+        wealth = random.randint(pMobIndex.wealth//2, 3 * pMobIndex.wealth//2)
+        mob.gold = random.randint(wealth//200,wealth//100)
         mob.silver = wealth - (mob.gold * 100)
 
 
@@ -982,7 +984,7 @@ def clone_mobile(parent, clone):
 # * Create an instance of an object.
 def create_object( pObjIndex, level ):
     if not pObjIndex:
-        print "Create_object: None pObjIndex."
+        print ("Create_object: None pObjIndex.")
         sys.exit( 1 )
 
     obj = OBJ_DATA()
@@ -1068,7 +1070,7 @@ def create_object( pObjIndex, level ):
         if not pObjIndex.new_format:
             obj.value[0]   = obj.cost
     else:
-        print "Bad item_type pObjIndex vnum: %s(%s)" % (pObjIndex.vnum, obj.item_type )
+        print ("Bad item_type pObjIndex vnum: %s(%s)" % (pObjIndex.vnum, obj.item_type ))
   
     for paf in pObjIndex.affected:
         if paf.location == APPLY_SPELL_AFFECT:

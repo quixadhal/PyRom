@@ -55,7 +55,7 @@ def do_gain(self, argument):
     if "list".startswith(arg):
         col = 0
         ch.send("%-18s %-5s %-18s %-5s %-18s %-5s\n" % ("group","cost","group","cost","group","cost") )
-        for gn,group in const.const.group_table.iteritems():
+        for gn,group in const.group_table.items():
             if gn not in ch.pcdata.group_known and  group.rating[ch.guild.name] > 0:
                 ch.send("%-18s %-5d " % group.name,group.rating[ch.guild.name])
                 col+=1
@@ -70,7 +70,7 @@ def do_gain(self, argument):
 
         ch.send("%-18s %-5s %-18s %-5s %-18s %-5s\n" % ("skill","cost","skill","cost","skill","cost"))
  
-        for sn,skill in const.skill_table.iteritems():
+        for sn,skill in const.skill_table.items():
             if sn not in ch.pcdata.learned \
             and  skill.rating[ch.guild.name] > 0 \
             and  skill.spell_fun == spell_null:
@@ -194,7 +194,7 @@ def do_spells(self, argument):
 
     spell_list = {} 
     spell_column = {}
-    for sn, skill in const.skill_table.iteritems():
+    for sn, skill in const.skill_table.items():
         level = skill.skill_level[ch.guild.name]
         if level < LEVEL_HERO + 1 \
         and  (fAll or level <= ch.level) \
@@ -223,7 +223,7 @@ def do_spells(self, argument):
         ch.send("No spells found.\n")
         return
 
-    for level, buf in spell_list.iteritems():
+    for level, buf in spell_list.items():
         ch.send(buf)
     ch.send("\n")
 
@@ -328,7 +328,7 @@ def do_skills(self, argument):
     skill_columns = {}
     skill_list = {}
  
-    for sn, skill in const.skills_table.iteritems():
+    for sn, skill in const.skills_table.items():
         level = skill.skill_level[ch.guild.name]
         if level < LEVEL_HERO + 1 \
         and  (fAll or level <= ch.level) \
@@ -356,7 +356,7 @@ def do_skills(self, argument):
         ch.send("No skills found.\n")
         return
 
-    for level, buf in skill_list.iteritems():
+    for level, buf in skill_list.items():
         ch.send(buf)
     ch.send("\n")
 
@@ -368,7 +368,7 @@ def list_group_costs(ch):
     col = 0
     ch.send("%-18s %-5s %-18s %-5s %-18s %-5s\n" % ("group","cp","group","cp","group","cp"))
 
-    for gn, group in const.group_table.iteritems():
+    for gn, group in const.group_table.items():
         if gn not in ch.gen_data.group_chosen and gn not in ch.pcdata.group_known and group.rating[ch.guild.name] > 0:
             ch.send("%-18s %-5d " % (const.group_table[gn].name, group.rating[ch.guild.name]))
             col += 1
@@ -381,7 +381,7 @@ def list_group_costs(ch):
  
     ch.send("%-18s %-5s %-18s %-5s %-18s %-5s\n" % ("skill","cp","skill","cp","skill","cp"))
  
-    for sn, skill in const.skill_table.iteritems():
+    for sn, skill in const.skill_table.items():
         if sn not in ch.gen_data.skill_chosen \
         and sn not in ch.pcdata.learned \
         and  skill.spell_fun == spell_null \
@@ -404,7 +404,7 @@ def list_group_chosen(ch):
     col = 0
     ch.send("%-18s %-5s %-18s %-5s %-18s %-5s" % ("group","cp","group","cp","group","cp\n"))
  
-    for gn, group in const.group_table.iteritems():
+    for gn, group in const.group_table.items():
         if gn in ch.gen_data.group_chosen and group.rating[ch.guild.name] > 0:
             ch.send("%-18s %-5d " % (group.name, group.rating[ch.guild.name]) )
             col += 1
@@ -418,7 +418,7 @@ def list_group_chosen(ch):
  
     ch.send("%-18s %-5s %-18s %-5s %-18s %-5s" % ("skill","cp","skill","cp","skill","cp\n"))
 
-    for sn, skill in const.skill_table.iteritems():
+    for sn, skill in const.skill_table.items():
         if sn in ch.gen_data.skill_chosen and skill.rating[ch.guild.name] > 0:
             ch.send("%-18s %-5d " % ( skill.name, skill.rating[ch.guild.name]) )
             col += 1
@@ -578,7 +578,7 @@ def do_groups(self, argument):
 
     if not argument:
         # show all groups */
-        for gn, group in const.group_table.iteritems():
+        for gn, group in const.group_table.items():
             if gn in ch.pcdata.group_known[gn]:
                 ch.send("%-20s " % group.name)
                 col += 1
@@ -590,7 +590,7 @@ def do_groups(self, argument):
         return
 
     if "all" == argument.lower():
-        for gn,group in const.group_table.iteritems():
+        for gn,group in const.group_table.items():
             ch.send("%-20s " % group.name)
             col += 1
             if col % 3 == 0:
@@ -621,18 +621,16 @@ def do_groups(self, argument):
 def check_improve( ch, sn, success, multiplier ):
     if IS_NPC(ch):
         return
-    print locals()
-    print ch.__dict__
 
     if ch.level <const.skill_table[sn].skill_level[ch.guild.name] \
     or const.skill_table[sn].rating[ch.guild.name] == 0 \
-    or  sn not in ch.pcdata.learned[sn] \
+    or  sn not in ch.pcdata.learned \
     or  ch.pcdata.learned[sn] == 100:
         return  # skill is not known */ 
 
     # check to see if the character has a chance to learn */
     chance = 10 * int_app[get_curr_stat(ch,STAT_INT)].learn
-    chance /= ( multiplier *const.skill_table[sn].rating[ch.guild.name] * 4)
+    chance /= (multiplier * const.skill_table[sn].rating[ch.guild.name] * 4)
     chance += ch.level
 
     if random.randint(1,1000) > chance:
@@ -643,13 +641,13 @@ def check_improve( ch, sn, success, multiplier ):
     if success:
         chance = min(5, max(100 - ch.pcdata.learned[sn], 95))
         if random.randint(1,99) < chance:
-            ch.send("You have become better at %s!\n" %const.skill_table[sn].name)
+            ch.send("You have become better at %s!\n" % const.skill_table[sn].name)
             ch.pcdata.learned[sn] += 1
-            gain_exp(ch,2 *const.skill_table[sn].rating[ch.guild.name])
+            gain_exp(ch,2 * sn.rating[ch.guild.name])
     else:
         chance = min(5, max(ch.pcdata.learned[sn]/2,30))
         if random.randint(1,99) < chance:
-            ch.send("You learn from your mistakes, and your %s skill improves.\n" %const.skill_table[sn].name)
+            ch.send("You learn from your mistakes, and your %s skill improves.\n" % const.skill_table[sn].name)
             ch.pcdata.learned[sn] += random.randint(1,3)
             ch.pcdata.learned[sn] = min(ch.pcdata.learned[sn],100)
             gain_exp(ch,2 * sn.rating[ch.guild.name])

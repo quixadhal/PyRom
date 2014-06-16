@@ -107,7 +107,7 @@ def show_list_to_char(clist, ch, fShort, fShowNothing):
         ch.send("Nothing.\n")
 
      #* Output the formatted list.
-    for desc, count in objects.iteritems():
+    for desc, count in objects.items():
         if IS_NPC(ch) or IS_SET(ch.comm, COMM_COMBINE) and count > 1:
             ch.send("(%2d) %s\n" % (count, desc))
         else:
@@ -1082,9 +1082,9 @@ def do_who(self, argument):
      #* Set default arguments.
     iLevelLower = 0
     iLevelUpper = MAX_LEVEL
-    rgfClass = {k:False for k, g in guild_table.iteritems()}
-    rgfRace = {k:False for k, r in pc_race_table.iteritems()}
-    rgfClan = {k:False for k, r in clan_table.iteritems()}
+    rgfClass = {k:False for k, g in guild_table.items()}
+    rgfRace = {k:False for k, r in pc_race_table.items()}
+    rgfClan = {k:False for k, r in clan_table.items()}
 
      #* Parse arguments.
     nNumber = 0
@@ -1344,7 +1344,7 @@ def do_consider(self, argument):
 
 def set_title(ch, title):
     if IS_NPC(ch):
-        print "BUG: Set_title: NPC."
+        print ("BUG: Set_title: NPC.")
         return
     buf = ''
     if title[0] != '.' and title[0] != ',' and title[0] != '!' and title[0] != '?':
@@ -1420,7 +1420,7 @@ def do_practice(self, argument):
         return
     if not argument:
         col = 0
-        for sn, skill in skill_table.iteritems():
+        for sn, skill in skill_table.items():
             if ch.level < skill.skill_level[ch.guild.name] or ch.pcdata.learned[sn] < 1: # skill is not known */)
                 continue
 

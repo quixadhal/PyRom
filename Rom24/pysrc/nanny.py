@@ -34,7 +34,7 @@ import hashlib
 import time
 from merc import *
 from settings import *
-from const import race_table, pc_race_table, guild_table
+from const import race_table, pc_race_table, guild_table, weapon_table, title_table
 from save import load_char_obj
 from db import read_word, create_object
 from skills import *
@@ -77,7 +77,7 @@ def con_get_name( self ):
     found,ch = load_char_obj(self,name)
 
     if IS_SET( ch.act, PLR_DENY ):
-        print "Denying access to %s@%s" % (ch.name, self.addrport())
+        print ("Denying access to %s@%s" % (ch.name, self.addrport()))
         self.send("You have been denied access.")
         self.deactivate()
         return
@@ -123,6 +123,7 @@ def con_get_new_password(self):
         ch.send("Password must be at least five characters long.\n\rPassword: ")
         return
     if ENCRYPT_PASSWORD:
+        argument = argument.encode('utf8')
         pwdnew = hashlib.sha512( argument ).hexdigest()
     else:
         pwdnew = argument
@@ -137,6 +138,7 @@ def con_confirm_new_password(self):
     ch = self.character
 
     if ENCRYPT_PASSWORD:
+        argument = argument.encode('utf8')
         argument = hashlib.sha512( argument ).hexdigest()
 
     if argument != ch.pcdata.pwd:
@@ -212,7 +214,7 @@ def con_get_new_sex(self):
         return
 
     ch.send("Select a class [" )
-    for name, guild in guild_table.iteritems():
+    for name, guild in guild_table.items():
         ch.send("%s " % guild.name )
     ch.send("]: ")
     self.set_connected(con_get_new_class)
@@ -231,7 +233,7 @@ def con_get_new_class(self):
     ch.guild = guild
 
     log_buf = "%s@%s new player." % ( ch.name, self.addrport() )
-    print log_buf
+    print (log_buf)
     wiznet("Newbie alert!  $N sighted.",ch,None,WIZ_NEWBIE,0,0)
     wiznet(log_buf,None,None,WIZ_SITES,0,get_trust(ch))
 
@@ -279,7 +281,7 @@ def con_default_choice(self):
         group_add(ch,ch.guild.default_group,True)
         ch.send("Please pick a weapon from the following choices:\n\r")
         
-        for k,weapon in weapon_table.iteritems():
+        for k,weapon in weapon_table.items():
             if weapon.gsn in ch.pcdata.learned:
                 ch.send("%s " % weapon.name)
 
@@ -295,7 +297,7 @@ def con_pick_weapon(self):
     weapon = prefix_lookup(weapon_table, argument )
     if not weapon or ch.pcdata.learned[weapon.gsn] <= 0:
         ch.send("That's not a valid selection. Choices are:\n\r")
-        for k,weapon in weapon_table.iteritems():
+        for k,weapon in weapon_table.items():
             if weapon.gsn in ch.pcdata.learned:
                 ch.send("%s " % weapon.name)
 
@@ -326,7 +328,7 @@ def con_gen_groups(self):
         ch.gen_data = None
         ch.send("Please pick a weapon from the following choices:\n\r")
         
-        for w, weapon in weapon_table.iteritems():
+        for w, weapon in weapon_table.items():
             if ch.pcdata.learned[weapon.gsn] > 0:
                 ch.send("%s " % weapon.name)
 
@@ -345,6 +347,7 @@ def con_get_old_password(self):
     ch.send("\n")
     pwdcmp = ""
     if ENCRYPT_PASSWORD:
+        argument = argument.encode('utf8')
         pwdcmp = hashlib.sha512( argument ).hexdigest()
     else:
         pwdcmp = argument
@@ -361,7 +364,7 @@ def con_get_old_password(self):
         return
 
     log_buf = "%s@%s has connected." % (ch.name, self.addrport())
-    print log_buf
+    print (log_buf)
     wiznet(log_buf,None,None,WIZ_SITES,0,get_trust(ch))
     if IS_IMMORTAL(ch):
         ch.do_help("imotd")

@@ -42,7 +42,7 @@ from const import *
 boot_db()
 
 def send(txt):
-    print txt
+    print (txt)
 
 CHAR_DATA.send = send
 

@@ -628,6 +628,7 @@ IS_RESISTANT = 2
 IS_VULNERABLE = 3
 
 #Item constants
+
 OBJ_VNUM_SILVER_ONE = 1
 OBJ_VNUM_GOLD_ONE = 2
 OBJ_VNUM_GOLD_SOME = 3
@@ -1208,14 +1209,14 @@ current_time = 0
 #utility functions
 
 def name_lookup(dict, arg, key='name'):
-    for i, n in dict.iteritems():
+    for i, n in dict.items():
         if n.__dict__[key] == arg:
             return i
 
 def prefix_lookup(dict, arg):
     if not arg:
         return None
-    results = [v for k,v in dict.iteritems() if k.startswith(arg)]
+    results = [v for k,v in dict.items() if k.startswith(arg)]
     if results:
         return results[0]
     return None
@@ -1223,13 +1224,13 @@ def prefix_lookup(dict, arg):
 def value_lookup(dict, arg):
     if not arg:
         return None
-    for k,v in dict.iteritems():
+    for k,v in dict.items():
         if v == arg:
             return k
     return None
 
 def mass_replace(str, dict):
-    for k,v in dict.iteritems():
+    for k,v in dict.items():
         if v:
             str = str.replace(k,v)
     return str
@@ -1449,6 +1450,10 @@ def number_door( ):
 
 def CH(d): return d.original if d.original else d.character
 
+# * Simple linear interpolation.
+def interpolate(level, value_00, value_32):
+    return value_00 + level * (value_32 - value_00) / 32
+
 #Given a string like 14*foo, return 14 and 'foo'
 def mult_argument(argument):
     if '*' not in argument:
@@ -1460,10 +1465,6 @@ def mult_argument(argument):
     rest = argument[mult+1:]
     return (int(number), rest)
 
-
-# * Simple linear interpolation.
-def interpolate(level, value_00, value_32):
-    return value_00 + level * (value_32 - value_00) / 32
 
 def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
     if not format:
@@ -1483,7 +1484,7 @@ def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
 
     if send_to is TO_VICT:
         if not vch:
-            print "Act: null vict with TO_VICT: " + format
+            print ("Act: null vict with TO_VICT: " + format)
             return
         if not vch.in_room:
             return
@@ -1523,7 +1524,7 @@ def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
         act_trans['$d'] = arg2 if not arg2 else "door"
         
         format = mass_replace(format, act_trans)
-        to.send(format+"\n")
+        to.send(format+"\r\n")
     return
 
 #ensureall do_functions become class methods
