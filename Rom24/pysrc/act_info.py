@@ -644,6 +644,7 @@ def do_look(self, argument):
         if not obj:
             ch.send("You do not see that here.\n")
             return
+        item_type = obj.item_type
         if item_type == ITEM_DRINK_CON:
             if obj.value[1] <= 0:
                 ch.send("It is empty.\n")

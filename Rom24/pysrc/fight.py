@@ -23,12 +23,12 @@
 *        Gabrielle Taylor=gtaylor@hypercube.org)                          *
 *        Brian Moore=zump@rom.org)                                        *
 *    By using this code, you have agreed to follow the terms of the       *
-*    ROM license, in the file Rom24/doc/rom.license                       *
+*    ROM license, in the file Rom24//doc//rom.license                       *
 ***************************************************************************/
 #***********
  * Ported to Python by Davion of MudBytes.net
- * Using Miniboa https://code.google.com/p/miniboa/
- * Now using Python 3 version https://code.google.com/p/miniboa-py3/
+ * Using Miniboa https:///code.google.com//p//miniboa//
+ * Now using Python 3 version https:///code.google.com//p//miniboa-py3//
  ************/
 """
 from merc import *
@@ -126,10 +126,10 @@ def multi_hit( ch, victim, dt ):
     if ch.fighting != victim or dt == 'backstab':
         return
 
-    chance = get_skill(ch,'second attack')/2
+    chance = get_skill(ch,'second attack')//2
 
     if IS_AFFECTED(ch,AFF_SLOW):
-        chance /= 2
+        chance //= 2
 
     if random.randint(1,99) < chance:
         one_hit( ch, victim, dt )
@@ -137,7 +137,7 @@ def multi_hit( ch, victim, dt ):
         if ch.fighting != victim:
             return
     
-    chance = get_skill(ch,'third attack')/4
+    chance = get_skill(ch,'third attack')//4
 
     if IS_AFFECTED(ch,AFF_SLOW):
         chance = 0
@@ -165,16 +165,16 @@ def mob_hit (ch, victim, dt):
     if ch.fighting != victim or dt == 'backstab':
         return
 
-    chance = get_skill(ch,"second attack")/2
+    chance = get_skill(ch,"second attack")//2
 
     if IS_AFFECTED(ch,AFF_SLOW) and not IS_SET(ch.off_flags,OFF_FAST):
-        chance /= 2
+        chance //= 2
 
     if random.randint(1,99) < chance:
         one_hit(ch,victim,dt)
         if ch.fighting != victim:
             return
-    chance = get_skill(ch,'third attack')/4
+    chance = get_skill(ch,'third attack')//4
 
     if IS_AFFECTED(ch,AFF_SLOW) and not IS_SET(ch.off_flags,OFF_FAST):
         chance = 0
@@ -288,24 +288,24 @@ def one_hit( ch, victim, dt ):
     thac0  = interpolate( ch.level, thac0_00, thac0_32 )
 
     if thac0 < 0:
-        thac0 = thac0/2
+        thac0 = thac0//2
 
     if thac0 < -5:
-        thac0 = -5 + (thac0 + 5) / 2
+        thac0 = -5 + (thac0 + 5) // 2
 
-    thac0 -= GET_HITROLL(ch) * skill/100
-    thac0 += 5 * (100 - skill) / 100
+    thac0 -= GET_HITROLL(ch) * skill//100
+    thac0 += 5 * (100 - skill) // 100
 
     if dt == 'backstab':
         thac0 -= 10 * (100 - get_skill(ch,'backstab'))
 
-    if dam_type == DAM_PIERCE: victim_ac = GET_AC(victim,AC_PIERCE)/10
-    elif dam_type == DAM_BASH: victim_ac = GET_AC(victim,AC_BASH)/10
-    elif dam_type == DAM_SLASH: victim_ac = GET_AC(victim,AC_SLASH)/10
-    else: victim_ac = GET_AC(victim,AC_EXOTIC)/10
+    if dam_type == DAM_PIERCE: victim_ac = GET_AC(victim,AC_PIERCE)//10
+    elif dam_type == DAM_BASH: victim_ac = GET_AC(victim,AC_BASH)//10
+    elif dam_type == DAM_SLASH: victim_ac = GET_AC(victim,AC_SLASH)//10
+    else: victim_ac = GET_AC(victim,AC_EXOTIC)//10
     
     if victim_ac < -15:
-        victim_ac = (victim_ac + 15) / 5 - 15
+        victim_ac = (victim_ac + 15) // 5 - 15
      
     if not can_see( ch, victim ):
         victim_ac -= 4
@@ -326,9 +326,9 @@ def one_hit( ch, victim, dt ):
      # Calc damage.
     if IS_NPC(ch) and (not ch.pIndexData.new_format or wield == None):
         if not ch.pIndexData.new_format:
-            dam = random.randint( ch.level / 2, ch.level * 3 / 2 )
+            dam = random.randint( ch.level // 2, ch.level * 3 // 2 )
             if wield != None:
-                dam += dam / 2
+                dam += dam // 2
         else:
             dam = dice(ch.damage[DICE_NUMBER],ch.damage[DICE_TYPE])
     else:
@@ -336,39 +336,43 @@ def one_hit( ch, victim, dt ):
             check_improve(ch,sn,True,5)
         if wield:
             if wield.pIndexData.new_format:
-                dam = dice(wield.value[1],wield.value[2]) * skill/100
+                dam = dice(wield.value[1],wield.value[2]) * skill//100
             else:
-                dam = random.randint( wield.value[1] * skill/100, wield.value[2] * skill/100)
+                dam = random.randint( wield.value[1] * skill//100, wield.value[2] * skill//100)
 
             if get_eq_char(ch,WEAR_SHIELD) == None:  # no shield = more */
-                dam = dam * 11/10
+                dam = dam * 11//10
             # sharpness! */
             if IS_WEAPON_STAT(wield,WEAPON_SHARP):
                 percent = random.randint(1,99)
-                if percent <= (skill / 8):
-                    dam = 2 * dam + (dam * 2 * percent / 100)
+                if percent <= (skill // 8):
+                    dam = 2 * dam + (dam * 2 * percent // 100)
         else:
-            low = int(1 + 4 * skill/100)
-            high = min(low+1, int(2 * ch.level/3 * skill/100))
-            dam = random.randint(low, high)
+            low = int(1 + 4 * skill // 100)
+            high = int(2 * ch.level // 3 * skill // 100)
+            print(locals())
+            if low != high:
+                dam = random.randint(low, high)
+            else:
+                dam = low
     #
     # * Bonuses.
     if get_skill(ch,'enhanced damage') > 0:
         diceroll = random.randint(1,99)
         if diceroll <= get_skill(ch,'enhanced_damage'):
             check_improve(ch,'enhanced damage',True,6)
-            dam += 2 * ( dam * diceroll/300)
+            dam += 2 * ( dam * diceroll//300)
     if not IS_AWAKE(victim):
         dam *= 2
     elif victim.position < POS_FIGHTING:
-        dam = dam * 3 / 2
+        dam = dam * 3 // 2
 
     if dt == 'backstab' and wield:
         if wield.value[0] != 2:
-            dam *= 2 + (ch.level / 10) 
+            dam *= 2 + (ch.level // 10) 
         else:
-            dam *= 2 + (ch.level / 8)
-    dam += GET_DAMROLL(ch) * min(100,skill) /100
+            dam *= 2 + (ch.level // 8)
+    dam += GET_DAMROLL(ch) * min(100,skill) //100
 
     if dam <= 0:
         dam = 1
@@ -384,14 +388,14 @@ def one_hit( ch, victim, dt ):
                 level = wield.level
             else:
                 level = poison.level
-            if not saves_spell(level / 2,victim,DAM_POISON):
+            if not saves_spell(level // 2,victim,DAM_POISON):
                 victim.send("You feel poison coursing through your veins.")
                 act("$n is poisoned by the venom on $p.", victim,wield,None,TO_ROOM)
                 af = AFFECT_DATA()
                 af.where     = TO_AFFECTS
                 af.type      = 'poison'
-                af.level     = level * 3/4
-                af.duration  = level / 2
+                af.level     = level * 3//4
+                af.duration  = level // 2
                 af.location  = APPLY_STR
                 af.modifier  = -1
                 af.bitvector = AFF_POISON
@@ -405,30 +409,30 @@ def one_hit( ch, victim, dt ):
                     act("The poison on $p has worn off.",ch,wield,None,TO_CHAR)
 
             if ch.fighting == victim and IS_WEAPON_STAT(wield,WEAPON_VAMPIRIC):
-                dam = random.randint(1, wield.level / 5 + 1)
+                dam = random.randint(1, wield.level // 5 + 1)
                 act("$p draws life from $n.",victim,wield,None,TO_ROOM)
                 act("You feel $p drawing your life away.", victim,wield,None,TO_CHAR)
                 damage(ch,victim,dam,0,DAM_NEGATIVE,False)
                 ch.alignment = max(-1000,ch.alignment - 1)
-                ch.hit += dam/2
+                ch.hit += dam//2
             if ch.fighting == victim and IS_WEAPON_STAT(wield,WEAPON_FLAMING):
-                dam = random.randint(1,wield.level / 4 + 1)
+                dam = random.randint(1,wield.level // 4 + 1)
                 act("$n is burned by $p.",victim,wield,None,TO_ROOM)
                 act("$p sears your flesh.",victim,wield,None,TO_CHAR)
-                fire_effect(victim,wield.level/2,dam,TARGET_CHAR)
+                fire_effect(victim,wield.level//2,dam,TARGET_CHAR)
                 damage(ch,victim,dam,0,DAM_FIRE,False)
             if ch.fighting == victim and IS_WEAPON_STAT(wield,WEAPON_FROST):
-                dam = random.randint(1,wield.level / 6 + 2)
+                dam = random.randint(1,wield.level // 6 + 2)
                 act("$p freezes $n.",victim,wield,None,TO_ROOM)
                 act("The cold touch of $p surrounds you with ice.",
                 victim,wield,None,TO_CHAR)
-                cold_effect(victim,wield.level/2,dam,TARGET_CHAR)
+                cold_effect(victim,wield.level//2,dam,TARGET_CHAR)
                 damage(ch,victim,dam,0,DAM_COLD,False)
             if ch.fighting == victim and IS_WEAPON_STAT(wield,WEAPON_SHOCKING):
-                dam = random.randint(1,wield.level/5 + 2)
+                dam = random.randint(1,wield.level//5 + 2)
                 act("$n is struck by lightning from $p.",victim,wield,None,TO_ROOM)
                 act("You are shocked by $p.",victim,wield,None,TO_CHAR)
-                shock_effect(victim,wield.level/2,dam,TARGET_CHAR)
+                shock_effect(victim,wield.level//2,dam,TARGET_CHAR)
                 damage(ch,victim,dam,0,DAM_LIGHTNING,False)
     return
 
@@ -449,9 +453,9 @@ def damage(ch,victim,dam,dt,dam_type,show):
     
     # damage reduction */
     if dam > 35:
-        dam = (dam - 35)/2 + 35
+        dam = (dam - 35)//2 + 35
     if dam > 80:
-        dam = (dam - 80)/2 + 80 
+        dam = (dam - 80)//2 + 80 
   
     if victim != ch:
         # Certain attacks are forbidden.
@@ -481,13 +485,13 @@ def damage(ch,victim,dam,dt,dam_type,show):
 
      # Damage modifiers.
     if dam > 1 and not IS_NPC(victim) and victim.pcdata.condition[COND_DRUNK] > 10:
-        dam = 9 * dam / 10
+        dam = 9 * dam // 10
     if dam > 1 and IS_AFFECTED(victim, AFF_SANCTUARY):
-        dam /= 2
+        dam //= 2
 
     if dam > 1 and ((IS_AFFECTED(victim, AFF_PROTECT_EVIL) and IS_EVIL(ch)) \
     or (IS_AFFECTED(victim, AFF_PROTECT_GOOD) and IS_GOOD(ch) )):
-        dam -= dam / 4
+        dam -= dam // 4
 
     immune = False
      # Check for parry, and dodge.
@@ -504,9 +508,9 @@ def damage(ch,victim,dam,dt,dam_type,show):
         immune = True
         dam = 0
     elif imm == IS_RESISTANT:
-        dam -= dam/3
+        dam -= dam//3
     elif imm == IS_VULNERABLE:
-        dam += dam/2
+        dam += dam//2
     dam = int(dam)
     if show:
         dam_message( ch, victim, dam, dt, immune )
@@ -533,9 +537,9 @@ def damage(ch,victim,dam,dt,dam_type,show):
         act( "$n is DEAD!!", victim, 0, 0, TO_ROOM )
         victim.send("You have been KILLED!!\n\r\n\r")
     else:
-        if dam > victim.max_hit / 4:
+        if dam > victim.max_hit // 4:
             victim.send("That really did HURT!\n\r")
-        if victim.hit < victim.max_hit / 4:
+        if victim.hit < victim.max_hit // 4:
             victim.send("You sure are BLEEDING!\n\r")
     # Sleep spells and extremely wounded folks.
     if not IS_AWAKE(victim):
@@ -548,9 +552,9 @@ def damage(ch,victim,dam,dt,dam_type,show):
         if not IS_NPC(victim):
             print ("%s killed by %s at %d" % ( victim.name, ch.short_descr if IS_NPC(ch) else ch.name, ch.in_room.vnum ))
             # Dying penalty:
-            # 2/3 way back to previous level.
+            # 2//3 way back to previous level.
             if victim.exp > exp_per_level(victim,victim.pcdata.points) * victim.level:
-                gain_exp( victim, (2 * (exp_per_level(victim,victim.pcdata.points) * victim.level - victim.exp)/3) + 50 )
+                gain_exp( victim, (2 * (exp_per_level(victim,victim.pcdata.points) * victim.level - victim.exp)//3) + 50 )
 
         log_buf = "%s got toasted by %s at %s [room %d]" % ( victim.short_descr if IS_NPC(victim) else victim.name,
             ch.short_descr if IS_NPC(ch) else ch.name, ch.in_room.name, ch.in_room.vnum)
@@ -594,14 +598,14 @@ def damage(ch,victim,dam,dt,dam_type,show):
             return True
 
     # * Wimp out?
-    if IS_NPC(victim) and dam > 0 and victim.wait < PULSE_VIOLENCE / 2:
+    if IS_NPC(victim) and dam > 0 and victim.wait < PULSE_VIOLENCE // 2:
         if (IS_SET(victim.act, ACT_WIMPY) and random.randint(0,4) == 0 \
-        and victim.hit < victim.max_hit / 5) \
+        and victim.hit < victim.max_hit // 5) \
         or ( IS_AFFECTED(victim, AFF_CHARM) and victim.master \
         and victim.master.in_room != victim.in_room ):
             victim.do_flee("")
 
-    if not IS_NPC(victim) and victim.hit > 0 and victim.hit <= victim.wimpy and victim.wait < PULSE_VIOLENCE / 2:
+    if not IS_NPC(victim) and victim.hit > 0 and victim.hit <= victim.wimpy and victim.wait < PULSE_VIOLENCE // 2:
         victim.do_flee("")
     return True
 
@@ -775,15 +779,15 @@ def check_killer( ch, victim ):
 def check_parry( ch, victim ):
     if IS_AWAKE(victim):
         return False
-    chance = get_skill(victim,'parry') / 2
+    chance = get_skill(victim,'parry') // 2
 
     if get_eq_char( victim, WEAR_WIELD ) == None:
         if IS_NPC(victim):
-            chance /= 2
+            chance //= 2
         else:
             return False
     if not can_see(ch,victim):
-        chance /= 2
+        chance //= 2
 
     if random.randint(1,99) >= chance + victim.level - ch.level:
         return False
@@ -797,7 +801,7 @@ def check_parry( ch, victim ):
 def check_shield_block( ch, victim ):
     if not IS_AWAKE(victim):
         return False
-    chance = get_skill(victim,'shield block') / 5 + 3
+    chance = get_skill(victim,'shield block') // 5 + 3
     if get_eq_char( victim, WEAR_SHIELD ) == None:
         return False
     if random.randint(1,99) >= chance + victim.level - ch.level:
@@ -811,9 +815,9 @@ def check_shield_block( ch, victim ):
 def check_dodge( ch, victim ):
     if not IS_AWAKE(victim):
         return False
-    chance = get_skill(victim,'dodge') / 2
+    chance = get_skill(victim,'dodge') // 2
     if not can_see(victim,ch):
-        chance /= 2
+        chance //= 2
     if random.randint(1,99) >= chance + victim.level - ch.level:
         return False
     act( "You dodge $n's attack.", ch, None, victim, TO_VICT    )
@@ -881,9 +885,9 @@ def make_corpse( ch ):
         else:
             corpse.owner = ""
             if ch.gold > 1 or ch.silver > 1:
-                obj_to_obj(create_money(ch.gold / 2, ch.silver/2), corpse)
-                ch.gold -= ch.gold/2
-                ch.silver -= ch.silver/2
+                obj_to_obj(create_money(ch.gold // 2, ch.silver//2), corpse)
+                ch.gold -= ch.gold//2
+                ch.silver -= ch.silver//2
         corpse.cost = 0
     corpse.level = ch.level
     corpse.short_descr = corpse.short_descr % name
@@ -1020,7 +1024,7 @@ def group_gain( ch, victim ):
     for gch in ch.in_room.people:
         if is_same_group( gch, ch ):
             members += 1
-            group_levels += gch.level / 2 if IS_NPC(gch) else gch.level
+            group_levels += gch.level // 2 if IS_NPC(gch) else gch.level
 
     if members == 0:
         print ("BUG: Group_gain: members. %s" % members)
@@ -1085,88 +1089,88 @@ def xp_compute( gch, victim, total_levels ):
     if IS_SET(victim.act,ACT_NOALIGN):
         pass    # no change */
     elif align > 500: # monster is more good than slayer */
-        change = (align - 500) * base_exp / 500 * gch.level/total_levels 
+        change = (align - 500) * base_exp // 500 * gch.level//total_levels 
         change = max(1,change)
         gch.alignment = max(-1000,gch.alignment - change)
     elif align < -500: # monster is more evil than slayer */
-        change =  ( -1 * align - 500) * base_exp/500 * gch.level/total_levels
+        change =  ( -1 * align - 500) * base_exp//500 * gch.level//total_levels
         change = max(1,change)
         gch.alignment = min(1000,gch.alignment + change)
     else: # improve this someday */
-        change =  gch.alignment * base_exp/500 * gch.level/total_levels  
+        change =  gch.alignment * base_exp//500 * gch.level//total_levels  
         gch.alignment -= change
     # calculate exp multiplier */
     if IS_SET(victim.act,ACT_NOALIGN):
         xp = base_exp
     elif gch.alignment > 500:  # for goodie two shoes */
         if victim.alignment < -750:
-            xp = (base_exp *4)/3
+            xp = (base_exp *4)//3
         elif victim.alignment < -500:
-            xp = (base_exp * 5)/4
+            xp = (base_exp * 5)//4
         elif victim.alignment > 750:
-            xp = base_exp / 4
+            xp = base_exp // 4
         elif victim.alignment > 500:
-            xp = base_exp / 2
+            xp = base_exp // 2
         elif victim.alignment > 250:
-            xp = (base_exp * 3)/4 
+            xp = (base_exp * 3)//4 
         else:
             xp = base_exp
     elif gch.alignment < -500:# for baddies */
         if victim.alignment > 750:
-            xp = (base_exp * 5)/4
+            xp = (base_exp * 5)//4
         elif victim.alignment > 500:
-            xp = (base_exp * 11)/10 
+            xp = (base_exp * 11)//10 
         elif victim.alignment < -750:
-            xp = base_exp/2
+            xp = base_exp//2
         elif victim.alignment < -500:
-            xp = (base_exp * 3)/4
+            xp = (base_exp * 3)//4
         elif victim.alignment < -250:
-            xp = (base_exp * 9)/10
+            xp = (base_exp * 9)//10
         else:
             xp = base_exp
     elif gch.alignment > 200:  # a little good */
         if victim.alignment < -500:
-            xp = (base_exp * 6)/5
+            xp = (base_exp * 6)//5
         elif victim.alignment > 750:
-            xp = base_exp/2
+            xp = base_exp//2
         elif victim.alignment > 0:
-            xp = (base_exp * 3)/4 
+            xp = (base_exp * 3)//4 
         else:
             xp = base_exp
     elif gch.alignment < -200: # a little bad */
         if victim.alignment > 500:
-            xp = (base_exp * 6)/5
+            xp = (base_exp * 6)//5
         elif victim.alignment < -750:
-            xp = base_exp/2
+            xp = base_exp//2
         elif victim.alignment < 0:
-            xp = (base_exp * 3)/4
+            xp = (base_exp * 3)//4
         else:
             xp = base_exp
     else: # neutral */
         if victim.alignment > 500 or victim.alignment < -500:
-            xp = (base_exp * 4)/3
+            xp = (base_exp * 4)//3
         elif victim.alignment < 200 and victim.alignment > -200:
-            xp = base_exp/2
+            xp = base_exp//2
         else:
             xp = base_exp
     # more exp at the low levels */
     if gch.level < 6:
-        xp = 10 * xp / (gch.level + 4)
+        xp = 10 * xp // (gch.level + 4)
 
     # less at high */
     if gch.level > 35:
-        xp =  15 * xp / (gch.level - 25 )
+        xp =  15 * xp // (gch.level - 25 )
     # reduce for playing time */
     # compute quarter-hours per level */
-    time_per_level = 4 * (gch.played + (int) (current_time - gch.logon))/3600 / gch.level
+    time_per_level = 4 * (gch.played + (int) (current_time - gch.logon))//3600 // gch.level
     time_per_level = min(2,max(time_per_level,12))
     if gch.level < 15:  # make it a curve */
         time_per_level = max(time_per_level,(15 - gch.level))
-    xp = xp * time_per_level / 12
+    xp = xp * time_per_level // 12
     # randomize the rewards */
-    xp = random.randint (int(xp * 3/4), int(xp * 5/4))
+    xp = random.randint (int(xp * 3//4), int(xp * 5//4))
     # adjust for grouping */
-    xp = xp * gch.level/( max(1,total_levels -1) )
+    xp = xp * gch.level//( max(1,total_levels -1) )
     return xp
 
 def dam_message( ch, victim, dam, dt, immune ):
@@ -1288,13 +1292,13 @@ def do_berserk( self, argument):
         chance += 10
 
     # damage -- below 50% of hp helps, above hurts */
-    hp_percent = 100 * ch.hit/ch.max_hit
-    chance += 25 - hp_percent/2
+    hp_percent = 100 * ch.hit//ch.max_hit
+    chance += 25 - hp_percent//2
 
     if random.randint(1,99) < chance:
         WAIT_STATE(ch,PULSE_VIOLENCE)
         ch.mana -= 50
-        ch.move /= 2
+        ch.move //= 2
         # heal a little damage */
         ch.hit += ch.level * 2
         ch.hit = min(ch.hit,ch.max_hit)
@@ -1305,8 +1309,8 @@ def do_berserk( self, argument):
         af.where    = TO_AFFECTS
         af.type     = 'berserk'
         af.level    = ch.level
-        af.duration = number_fuzzy(ch.level / 8)
-        af.modifier = max(1,ch.level/5)
+        af.duration = number_fuzzy(ch.level // 8)
+        af.modifier = max(1,ch.level//5)
         af.bitvector    = AFF_BERSERK
 
         af.location = APPLY_HITROLL
@@ -1315,13 +1319,13 @@ def do_berserk( self, argument):
         af.location = APPLY_DAMROLL
         affect_to_char(ch,af)
 
-        af.modifier = max(10,10 * (ch.level/5))
+        af.modifier = max(10,10 * (ch.level//5))
         af.location = APPLY_AC
         affect_to_char(ch,af)
     else:
         WAIT_STATE(ch,3 * PULSE_VIOLENCE)
         ch.mana -= 25
-        ch.move /= 2
+        ch.move //= 2
 
         ch.send("Your pulse speeds up, but nothing happens.\n\r")
         check_improve(ch,'berserk',False,2)
@@ -1361,8 +1365,8 @@ def do_bash( ch, argument ):
 
     # modifiers */
     # size  and weight */
-    chance += ch.carry_weight / 250
-    chance -= victim.carry_weight / 200
+    chance += ch.carry_weight // 250
+    chance -= victim.carry_weight // 200
     if ch.size < victim.size:
         chance += (ch.size - victim.size) * 15
     else:
@@ -1371,8 +1375,8 @@ def do_bash( ch, argument ):
 
     # stats */
     chance += get_curr_stat(ch,STAT_STR)
-    chance -= (get_curr_stat(victim,STAT_DEX) * 4)/3
-    chance -= GET_AC(victim,AC_BASH) /25
+    chance -= (get_curr_stat(victim,STAT_DEX) * 4)//3
+    chance -= GET_AC(victim,AC_BASH) //25
     # speed */
     if IS_SET(ch.off_flags,OFF_FAST) or IS_AFFECTED(ch,AFF_HASTE):
         chance += 10
@@ -1396,7 +1400,7 @@ def do_bash( ch, argument ):
         DAZE_STATE(victim, 3 * PULSE_VIOLENCE)
         WAIT_STATE(ch,skill_table['bash'].beats)
         victim.position = POS_RESTING
-        damage(ch,victim,random.randint(2,2 + 2 * ch.size + chance/20),'bash', DAM_BASH,False)
+        damage(ch,victim,random.randint(2,2 + 2 * ch.size + chance//20),'bash', DAM_BASH,False)
     else:
         damage(ch,victim,0,'bash',DAM_BASH,False)
         act("You fall flat on your face!", ch,None,victim,TO_CHAR)
@@ -1404,7 +1408,7 @@ def do_bash( ch, argument ):
         act("You evade $n's bash, causing $m to fall flat on $s face.", ch,None,victim,TO_VICT)
         check_improve(ch,'bash',False,1)
         ch.position = POS_RESTING
-        WAIT_STATE(ch,skill_table['bash'].beats * 3/2) 
+        WAIT_STATE(ch,skill_table['bash'].beats * 3//2) 
     check_killer(ch,victim)
 
 def do_dirt( self, argument ):
@@ -1540,7 +1544,7 @@ def do_trip( self, argument ):
 
     # dex */
     chance += get_curr_stat(ch,STAT_DEX)
-    chance -= get_curr_stat(victim,STAT_DEX) * 3 / 2
+    chance -= get_curr_stat(victim,STAT_DEX) * 3 // 2
 
     # speed */
     if IS_SET(ch.off_flags,OFF_FAST) or IS_AFFECTED(ch,AFF_HASTE):
@@ -1562,7 +1566,7 @@ def do_trip( self, argument ):
         damage(ch,victim,random.randint(2, 2 +  2 * victim.size),'trip', DAM_BASH,True)
     else:
         damage(ch,victim,0,'trip',DAM_BASH,True)
-        WAIT_STATE(ch,skill_table['trip'].beats*2/3)
+        WAIT_STATE(ch,skill_table['trip'].beats*2//3)
         check_improve(ch,'trip',False,1)
     check_killer(ch,victim)
 
@@ -1677,7 +1681,7 @@ def do_backstab( self, argument ):
         if obj:
             ch.send("You need to wield a weapon to backstab.\n\r")
             return
-        if victim.hit < victim.max_hit / 3:
+        if victim.hit < victim.max_hit // 3:
             act( "$N is hurt and suspicious ... you can't sneak up.", ch, None, victim, TO_CHAR )
             return
         check_killer( ch, victim )
@@ -1718,7 +1722,7 @@ def do_flee( ch, argument ):
 
         if not IS_NPC(ch):
             ch.send("You flee from combat!\n\r")
-            if ch.guild == 2 and (random.randint(1,99) < 3*(ch.level/2) ):
+            if ch.guild == 2 and (random.randint(1,99) < 3*(ch.level//2) ):
                 ch.send("You snuck away safely.\n\r")
             else:
                 ch.send("You lost 10 exp.\n\r") 
@@ -1825,11 +1829,11 @@ def do_disarm( ch, argument ):
 
     # skill */
     if get_eq_char(ch,WEAR_WIELD) == None:
-        chance = chance * hth/150
+        chance = chance * hth//150
     else:
-        chance = chance * ch_weapon/100
+        chance = chance * ch_weapon//100
 
-    chance += (ch_vict_weapon/2 - vict_weapon) / 2 
+    chance += (ch_vict_weapon//2 - vict_weapon) // 2 
 
     # dex vs. strength */
     chance += get_curr_stat(ch,STAT_DEX)
