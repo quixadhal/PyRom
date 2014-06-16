@@ -28,6 +28,7 @@
 /************
  * Ported to Python by Davion of MudBytes.net
  * Using Miniboa https://code.google.com/p/miniboa/
+ * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
 
@@ -56,7 +57,7 @@ def can_loot(ch, obj):
 def get_obj(ch, obj, container):
     # variables for AUTOSPLIT */
     if not CAN_WEAR(obj, ITEM_TAKE):
-        ch.send("You can't take that.\n\r")
+        ch.send("You can't take that.\n")
         return
     if ch.carry_number + get_obj_number( obj ) > can_carry_n( ch ):
         act( "$d: you can't carry that many items.", ch, None, obj.name, TO_CHAR )
@@ -75,7 +76,7 @@ def get_obj(ch, obj, container):
                 return
     if container:
         if container.pIndexData.vnum == OBJ_VNUM_PIT and get_trust(ch) < obj.level:
-            ch.send("You are not powerful enough to use it.\n\r")
+            ch.send("You are not powerful enough to use it.\n")
             return
     if container.pIndexData.vnum == OBJ_VNUM_PIT \
     and not CAN_WEAR(container, ITEM_TAKE) \
@@ -111,7 +112,7 @@ def do_get(self, argument):
     found = False
     # Get type. */
     if not arg1:
-        ch.send("Get what?\n\r")
+        ch.send("Get what?\n")
         return
     if not arg2:
         if not arg1.startswith('all'):
@@ -129,13 +130,13 @@ def do_get(self, argument):
                     get_obj( ch, obj, None )
             if not found:
               if len(arg1) == 3:
-                  ch.send("I see nothing here.\n\r")
+                  ch.send("I see nothing here.\n")
               else:
                   act( "I see no $T here.", ch, None, arg1[4:], TO_CHAR )
     else:
         # 'get ... container' */
         if arg2.startswith("all"):
-            ch.send("You can't do that.\n\r")
+            ch.send("You can't do that.\n")
             return
         container = get_obj_here( ch, arg2 )
         if not container:
@@ -146,10 +147,10 @@ def do_get(self, argument):
             pass
         elif container.item_type == ITEM_CORPSE_PC:
           if not can_loot(ch,container):
-              ch.send("You can't do that.\n\r")
+              ch.send("You can't do that.\n")
               return
         else:
-            ch.send("That's not a container.\n\r")
+            ch.send("That's not a container.\n")
             return
         if IS_SET(container.value[1], CONT_CLOSED):
             act( "The $d is closed.", ch, None, container.name, TO_CHAR )
@@ -168,7 +169,7 @@ def do_get(self, argument):
                 if (len(arg1) == 3 or arg1[4:] in obj.name) and can_see_obj(ch, obj):
                     found = True
                     if container.pIndexData.vnum == OBJ_VNUM_PIT and not IS_IMMORTAL(ch):
-                        ch.send("Don't be so greedy!\n\r")
+                        ch.send("Don't be so greedy!\n")
                         return
                     get_obj( ch, obj, container )
             if not found:
@@ -185,17 +186,17 @@ def do_put(self, argument):
     if arg2 == "in" or arg2 == "on":
         argument, arg2 = read_word(argument)
     if not arg1 or not arg2:
-        ch.send("Put what in what?\n\r")
+        ch.send("Put what in what?\n")
         return
     if arg2.startswith("all") or "all" == arg2:
-        ch.send("You can't do that.\n\r")
+        ch.send("You can't do that.\n")
         return
     container = get_obj_here( ch, arg2 )
     if not container:
         act( "I see no $T here.", ch, None, arg2, TO_CHAR )
         return
     if container.item_type != ITEM_CONTAINER:
-        ch.send("That's not a container.\n\r")
+        ch.send("That's not a container.\n")
         return
     if IS_SET(container.value[1], CONT_CLOSED):
         act( "The $d is closed.", ch, None, container.name, TO_CHAR )
@@ -204,20 +205,20 @@ def do_put(self, argument):
         # 'put obj container' */
         obj = get_obj_carry( ch, arg1, ch )
         if not obj:
-            ch.send("You do not have that item.\n\r")
+            ch.send("You do not have that item.\n")
             return
         if obj == container:
-            ch.send("You can't fold it into itself.\n\r")
+            ch.send("You can't fold it into itself.\n")
             return
         if not can_drop_obj( ch, obj ):
-            ch.send("You can't let go of it.\n\r")
+            ch.send("You can't let go of it.\n")
             return
         if WEIGHT_MULT(obj) != 100:
-            ch.send("You have a feeling that would be a bad idea.\n\r")
+            ch.send("You have a feeling that would be a bad idea.\n")
             return
         if get_obj_weight( obj ) + get_true_weight( container ) > (container.value[0] * 10) \
         or get_obj_weight(obj) > (container.value[3] * 10):
-            ch.send("It won't fit.\n\r")
+            ch.send("It won't fit.\n")
             return
         if container.pIndexData.vnum == OBJ_VNUM_PIT \
         and not CAN_WEAR(container,ITEM_TAKE):
@@ -264,7 +265,7 @@ def do_drop(self, argument):
     argument, arg  = read_word(argument)
 
     if not arg:
-        ch.send("Drop what?\n\r")
+        ch.send("Drop what?\n")
         return
     if arg.isdigit():
         # 'drop NNNN coins' */
@@ -273,17 +274,17 @@ def do_drop(self, argument):
         amount   = int(arg)
         argument, arg  = read_word(argument)
         if amount <= 0 or ( arg != "coins" and arg != "coin" and arg != "gold" and arg != "silver"):
-            ch.send("Sorry, you can't do that.\n\r")
+            ch.send("Sorry, you can't do that.\n")
             return
         if arg == "coins" or arg == "coin" or arg == "silver":
             if ch.silver < amount:
-                ch.send("You don't have that much silver.\n\r")
+                ch.send("You don't have that much silver.\n")
                 return
             ch.silver -= amount
             silver = amount
         else:
             if ch.gold < amount:
-                ch.send("You don't have that much gold.\n\r")
+                ch.send("You don't have that much gold.\n")
                 return
             ch.gold -= amount
             gold = amount
@@ -306,16 +307,16 @@ def do_drop(self, argument):
                 extract_obj(obj)
         obj_to_room( create_money( gold, silver ), ch.in_room )
         act( "$n drops some coins.", ch, None, None, TO_ROOM )
-        ch.send("OK.\n\r")
+        ch.send("OK.\n")
         return
     if not arg.startswith("all"):
         # 'drop obj' */
         obj = get_obj_carry( ch, arg, ch )
         if not obj:
-            ch.send("You do not have that item.\n\r")
+            ch.send("You do not have that item.\n")
             return
         if not can_drop_obj( ch, obj ):
-            ch.send("You can't let go of it.\n\r")
+            ch.send("You can't let go of it.\n")
             return
         obj_from_char( obj )
         obj_to_room( obj, ch.in_room )
@@ -354,25 +355,25 @@ def do_give(self, argument):
     argument, arg2  = read_word(argument)
 
     if not arg1 or not arg2:
-        ch.send("Give what to whom?\n\r")
+        ch.send("Give what to whom?\n")
         return
     if arg1.is_digit():
         # 'give NNNN coins victim' */
         amount   = int(arg1)
         if amount <= 0 or (arg2 != "coins" and arg2 != "coin" and arg2 != "gold" and arg2 != "silver"):
-            ch.send("Sorry, you can't do that.\n\r")
+            ch.send("Sorry, you can't do that.\n")
             return
         silver = arg2 != "gold"
         argument, arg2  = read_word(argument)
         if not arg2:
-            ch.send("Give what to whom?\n\r")
+            ch.send("Give what to whom?\n")
             return
         victim = get_char_room( ch, arg2 )
         if not victim:
-            ch.send("They aren't here.\n\r")
+            ch.send("They aren't here.\n")
             return
         if ( not silver and ch.gold < amount) or (silver and ch.silver < amount):
-            ch.send("You haven't got that much.\n\r")
+            ch.send("You haven't got that much.\n")
             return
         if silver:
             ch.silver    -= amount
@@ -404,21 +405,21 @@ def do_give(self, argument):
         return
     obj = get_obj_carry( ch, arg1, ch )
     if not obj:
-        ch.send("You do not have that item.\n\r")
+        ch.send("You do not have that item.\n")
         return
     if obj.wear_loc != WEAR_NONE:
-        ch.send("You must remove it first.\n\r")
+        ch.send("You must remove it first.\n")
         return
     victim = get_char_room(ch, arg2)
     if not victim:
-        ch.send("They aren't here.\n\r")
+        ch.send("They aren't here.\n")
         return
     if IS_NPC(victim) and victim.pIndexData.pShop != None:
         act("$N tells you 'Sorry, you'll have to sell that.'",ch,None,victim,TO_CHAR)
         ch.reply = victim
         return
     if not can_drop_obj( ch, obj ):
-        ch.send("You can't let go of it.\n\r")
+        ch.send("You can't let go of it.\n")
         return
     if victim.carry_number + get_obj_number( obj ) > can_carry_n( victim ):
         act( "$N has $S hands full.", ch, None, victim, TO_CHAR )
@@ -441,15 +442,15 @@ def do_envenom(self, argument):
     ch=self
     # find out what */
     if not argument:
-        ch.send("Envenom what item?\n\r")
+        ch.send("Envenom what item?\n")
         return
     obj = get_obj_list(ch,argument,ch.carrying)
     if not obj:
-        ch.send("You don't have that item.\n\r")
+        ch.send("You don't have that item.\n")
         return
     skill = get_skill(ch, 'envenom')
     if skill < 1:
-        ch.send("Are you crazy? You'd poison yourself!\n\r")
+        ch.send("Are you crazy? You'd poison yourself!\n")
         return
     if obj.item_type == ITEM_FOOD or obj.item_type == ITEM_DRINK_CON:
         if IS_OBJ_STAT(obj,ITEM_BLESS) or IS_OBJ_STAT(obj,ITEM_BURN_PROOF):
@@ -479,7 +480,7 @@ def do_envenom(self, argument):
             act("You can't seem to envenom $p.",ch,obj,None,TO_CHAR)
             return
         if obj.value[3] < 0 or attack_table[obj.value[3]].damage == DAM_BASH:
-            ch.send("You can only envenom edged weapons.\n\r")
+            ch.send("You can only envenom edged weapons.\n")
             return
         if IS_WEAPON_STAT(obj,WEAPON_POISON):
             act("$p is already envenomed.",ch,obj,None,TO_CHAR)
@@ -513,25 +514,25 @@ def do_fill(self, argument):
     ch=self
     argument, arg = read_word(argument)
     if not arg:
-        ch.send("Fill what?\n\r")
+        ch.send("Fill what?\n")
         return
     obj = get_obj_carry(ch, arg, ch)
     if not obj:
-        ch.send("You do not have that item.\n\r")
+        ch.send("You do not have that item.\n")
         return
     fountain = [f for f in ch.in_room.contents if f.item_type == ITEM_FOUNTAIN][:1]
     if not fountain:
-        ch.send("There is no fountain here!\n\r")
+        ch.send("There is no fountain here!\n")
         return
     fountain = fountain[0]
     if obj.item_type != ITEM_DRINK_CON:
-        ch.send("You can't fill that.\n\r")
+        ch.send("You can't fill that.\n")
         return
     if obj.value[1] != 0 and obj.value[2] != fountain.value[2]:
-        ch.send("There is already another liquid in it.\n\r")
+        ch.send("There is already another liquid in it.\n")
         return
     if obj.value[1] >= obj.value[0]:
-        ch.send("Your container is full.\n\r")
+        ch.send("Your container is full.\n")
         return
     act("You fill $p with %s from $P." % (liq_table[fountain.value[2]].liq_name), ch, obj,fountain, TO_CHAR )
     act("$n fills $p with %s from $P." % (liq_table[fountain.value[2]].liq_name),ch,obj,fountain,TO_ROOM)
@@ -544,18 +545,18 @@ def do_pour(self, argument):
     argument, arg = read_word(argument)
     
     if not arg or not argument:
-        ch.send("Pour what into what?\n\r")
+        ch.send("Pour what into what?\n")
         return
     out = get_obj_carry(ch,arg, ch)
     if not out:
-        ch.send("You don't have that item.\n\r")
+        ch.send("You don't have that item.\n")
         return
     if out.item_type != ITEM_DRINK_CON:
-        ch.send("That's not a drink container.\n\r")
+        ch.send("That's not a drink container.\n")
         return
     if argument == "out":
         if out.value[1] == 0:
-            ch.send("It's already empty.\n\r")
+            ch.send("It's already empty.\n")
             return
         out.value[1] = 0
         out.value[3] = 0
@@ -568,20 +569,20 @@ def do_pour(self, argument):
         vch = get_char_room(ch,argument)
 
         if vch == None:
-            ch.send("Pour into what?\n\r")
+            ch.send("Pour into what?\n")
             return
         into = get_eq_char(vch,WEAR_HOLD)
         if not into:
             ch.send("They aren't holding anything.")
 
     if into.item_type != ITEM_DRINK_CON:
-        ch.send("You can only pour into other drink containers.\n\r")
+        ch.send("You can only pour into other drink containers.\n")
         return
     if into == out:
-        ch.send("You cannot change the laws of physics!\n\r")
+        ch.send("You cannot change the laws of physics!\n")
         return
     if into.value[1] != 0 and into.value[2] != out.value[2]:
-        ch.send("They don't hold the same liquid.\n\r")
+        ch.send("They don't hold the same liquid.\n")
         return
     if out.value[1] == 0:
         act("There's nothing in $p to pour.",ch,out,None,TO_CHAR)
@@ -612,16 +613,16 @@ def do_drink(self, argument):
         if obj:
             obj = obj[0]
         if not obj:
-            ch.send("Drink what?\n\r")
+            ch.send("Drink what?\n")
             return
     else:
         obj = get_obj_here(ch,arg)
         if not obj:
-            ch.send("You can't find it.\n\r")
+            ch.send("You can't find it.\n")
             return
 
     if not IS_NPC(ch) and ch.pcdata.condition[COND_DRUNK] > 10:
-        ch.send("You fail to reach your mouth.  *Hic*\n\r")
+        ch.send("You fail to reach your mouth.  *Hic*\n")
         return
     amount = 0
     liquid = -1
@@ -633,7 +634,7 @@ def do_drink(self, argument):
         amount = liq_table[liquid].liq_affect[4] * 3
     elif obj.item_type == ITEM_DRINK_CON:
         if obj.value[1] <= 0:
-            ch.send("It is already empty.\n\r")
+            ch.send("It is already empty.\n")
             return
         liquid = obj.value[2]
         if liquid < 0:
@@ -642,10 +643,10 @@ def do_drink(self, argument):
         amount = liq_table[liquid].liq_affect[4]
         amount = min(amount, obj.value[1])
     else:
-        ch.send("You can't drink from that.\n\r")
+        ch.send("You can't drink from that.\n")
         return
     if not IS_NPC(ch) and not IS_IMMORTAL(ch) and ch.pcdata.condition[COND_FULL] > 45:
-        ch.send("You're too full to drink more.\n\r")
+        ch.send("You're too full to drink more.\n")
         return
     act( "$n drinks $T from $p.", ch, obj, liq_table[liquid].liq_name, TO_ROOM )
     act( "You drink $T from $p.", ch, obj, liq_table[liquid].liq_name, TO_CHAR )
@@ -654,16 +655,16 @@ def do_drink(self, argument):
     gain_condition( ch, COND_THIRST,amount * liq_table[liquid].liq_affect[COND_THIRST] / 10 )
     gain_condition(ch, COND_HUNGER, amount * liq_table[liquid].liq_affect[COND_HUNGER] / 2 )
     if not IS_NPC(ch) and ch.pcdata.condition[COND_DRUNK] > 10:
-        ch.send("You feel drunk.\n\r")
+        ch.send("You feel drunk.\n")
     if not IS_NPC(ch) and ch.pcdata.condition[COND_FULL] > 40:
-        ch.send("You are full.\n\r")
+        ch.send("You are full.\n")
     if not IS_NPC(ch) and ch.pcdata.condition[COND_THIRST] > 40:
-        ch.send("Your thirst is quenched.\n\r")
+        ch.send("Your thirst is quenched.\n")
     if obj.value[3] != 0:
         # The drink was poisoned ! */
         af = AFFECT_DATA()
         act("$n chokes and gags.", ch, None, None, TO_ROOM)
-        ch.send("You choke and gag.\n\r")
+        ch.send("You choke and gag.\n")
         af.where = TO_AFFECTS
         af.type = "poison"
         af.level = number_fuzzy(amount) 
@@ -680,18 +681,18 @@ def do_eat(self, argument):
     ch=self
     argument, arg = read_word(argument)
     if not arg:
-        ch.send("Eat what?\n\r")
+        ch.send("Eat what?\n")
         return
     obj = get_obj_carry(ch, arg, ch)
     if not obj:
-        ch.send("You do not have that item.\n\r")
+        ch.send("You do not have that item.\n")
         return
     if not IS_IMMORTAL(ch):
         if obj.item_type != ITEM_FOOD and obj.item_type != ITEM_PILL:
-            ch.send("That's not edible.\n\r")
+            ch.send("That's not edible.\n")
             return
         if not IS_NPC(ch) and ch.pcdata.condition[COND_FULL] > 40:
-            ch.send("You are too full to eat more.\n\r")
+            ch.send("You are too full to eat more.\n")
             return
     act( "$n eats $p.",  ch, obj, None, TO_ROOM )
     act( "You eat $p.", ch, obj, None, TO_CHAR )
@@ -701,14 +702,14 @@ def do_eat(self, argument):
             gain_condition( ch, COND_FULL, obj.value[0] )
             gain_condition( ch, COND_HUNGER, obj.value[1])
             if condition == 0 and ch.pcdata.condition[COND_HUNGER] > 0:
-                ch.send("You are no longer hungry.\n\r")
+                ch.send("You are no longer hungry.\n")
             elif ch.pcdata.condition[COND_FULL] > 40:
-                ch.send("You are full.\n\r")
+                ch.send("You are full.\n")
         if obj.value[3] != 0:
             # The food was poisoned! */
             af = AFFECT_DATA()
             act( "$n chokes and gags.", ch, 0, 0, TO_ROOM )
-            ch.send("You choke and gag.\n\r")
+            ch.send("You choke and gag.\n")
             af.where = TO_AFFECTS
             af.type = "poison"
             af.level = number_fuzzy(obj.value[0])
@@ -745,7 +746,7 @@ def remove_obj( ch, iWear, fReplace ):
 # * Big repetitive code, ick.
 def wear_obj( ch, obj, fReplace ):
     if ch.level < obj.level:
-        ch.send("You must be level %d to use this object.\n\r" % obj.level)
+        ch.send("You must be level %d to use this object.\n" % obj.level)
         act( "$n tries to use $p, but is too inexperienced.", ch, obj, None, TO_ROOM )
         return
     if obj.item_type == ITEM_LIGHT:
@@ -770,7 +771,7 @@ def wear_obj( ch, obj, fReplace ):
             equip_char( ch, obj, WEAR_FINGER_R )
             return
         print ("BUG: Wear_obj: no free finger.")
-        ch.send("You already wear two rings.\n\r")
+        ch.send("You already wear two rings.\n")
         return
     if CAN_WEAR(obj, ITEM_WEAR_NECK):
         if get_eq_char(ch, WEAR_NECK_1) and get_eq_char(ch, WEAR_NECK_2) \
@@ -787,7 +788,7 @@ def wear_obj( ch, obj, fReplace ):
             equip_char( ch, obj, WEAR_NECK_2 )
             return
         print ("BUG: Wear_obj: no free neck.")
-        ch.send("You already wear two neck items.\n\r")
+        ch.send("You already wear two neck items.\n")
         return
     if CAN_WEAR(obj, ITEM_WEAR_BODY):
         if not remove_obj( ch, WEAR_BODY, fReplace ):
@@ -861,14 +862,14 @@ def wear_obj( ch, obj, fReplace ):
             return
     
         print ("BUG: Wear_obj: no free wrist.")
-        ch.send("You already wear two wrist items.\n\r")
+        ch.send("You already wear two wrist items.\n")
         return
     if CAN_WEAR(obj, ITEM_WEAR_SHIELD):
         if not remove_obj(ch, WEAR_SHIELD, fReplace):
             return
         weapon = get_eq_char(ch,WEAR_WIELD)
         if weapon and ch.size < SIZE_LARGE and IS_WEAPON_STAT(weapon,WEAPON_TWO_HANDS):
-            ch.send("Your hands are tied up with your weapon!\n\r")
+            ch.send("Your hands are tied up with your weapon!\n")
             return
         act( "$n wears $p as a shield.", ch, obj, None, TO_ROOM )
         act( "You wear $p as a shield.", ch, obj, None, TO_CHAR )
@@ -878,12 +879,12 @@ def wear_obj( ch, obj, fReplace ):
         if not remove_obj( ch, WEAR_WIELD, fReplace ):
             return
         if not IS_NPC(ch) and get_obj_weight(obj) > (str_app[get_curr_stat(ch,STAT_STR)].wield * 10):
-            ch.send("It is too heavy for you to wield.\n\r")
+            ch.send("It is too heavy for you to wield.\n")
             return
         if not IS_NPC(ch) and ch.size < SIZE_LARGE \
         and IS_WEAPON_STAT(obj,WEAPON_TWO_HANDS) \
         and get_eq_char(ch,WEAR_SHIELD) != None:
-            ch.send("You need two hands free for that weapon.\n\r")
+            ch.send("You need two hands free for that weapon.\n")
             return
         act( "$n wields $p.", ch, obj, None, TO_ROOM )
         act( "You wield $p.", ch, obj, None, TO_CHAR )
@@ -919,7 +920,7 @@ def wear_obj( ch, obj, fReplace ):
         equip_char(ch,obj,WEAR_FLOAT)
         return
     if fReplace:
-        ch.send("You can't wear, wield, or hold that.\n\r")
+        ch.send("You can't wear, wield, or hold that.\n")
     return
 
 
@@ -928,7 +929,7 @@ def do_wear(self, argument):
     ch=self
     argument, arg = read_word(argument)
     if not arg:
-        ch.send("Wear, wield, or hold what?\n\r")
+        ch.send("Wear, wield, or hold what?\n")
         return
     if arg == "all" :
         for obj in ch.carrying[:]:
@@ -938,7 +939,7 @@ def do_wear(self, argument):
     else:
         obj = get_obj_carry( ch, arg, ch )
         if not obj:
-            ch.send("You do not have that item.\n\r")
+            ch.send("You do not have that item.\n")
             return
         wear_obj( ch, obj, True )
     return
@@ -948,11 +949,11 @@ def do_remove(self, argument):
     argument, arg = read_word(argument)
 
     if not arg:
-        ch.send("Remove what?\n\r")
+        ch.send("Remove what?\n")
         return
     obj = get_obj_wear( ch, arg )
     if not obj:
-        ch.send("You do not have that item.\n\r")
+        ch.send("You do not have that item.\n")
         return
     remove_obj( ch, obj.wear_loc, True )
     return
@@ -963,15 +964,15 @@ def do_sacrifice(self, argument):
 
     if not arg or arg == ch.name.lower():
         act("$n offers $mself to Mota, who graciously declines.",ch, None, None, TO_ROOM )
-        ch.send("Mota appreciates your offer and may accept it later.\n\r")
+        ch.send("Mota appreciates your offer and may accept it later.\n")
         return
     obj = get_obj_list( ch, arg, ch.in_room.contents )
     if obj == None:
-        ch.send("You can't find it.\n\r")
+        ch.send("You can't find it.\n")
         return
     if obj.item_type == ITEM_CORPSE_PC:
         if obj.contains:
-            ch.send( "Mota wouldn't like that.\n\r")
+            ch.send( "Mota wouldn't like that.\n")
             return
     if not CAN_WEAR(obj, ITEM_TAKE) or CAN_WEAR(obj, ITEM_NO_SAC):
         act( "$p is not an acceptable sacrifice.", ch, obj, 0, TO_CHAR )
@@ -987,9 +988,9 @@ def do_sacrifice(self, argument):
         silver = min(silver,obj.cost)
 
     if silver == 1:
-        ch.send("Mota gives you one silver coin for your sacrifice.\n\r")
+        ch.send("Mota gives you one silver coin for your sacrifice.\n")
     else:
-        ch.send("Mota gives you %d silver coins for your sacrifice.\n\r" % silver)
+        ch.send("Mota gives you %d silver coins for your sacrifice.\n" % silver)
     ch.silver += silver
     if IS_SET(ch.act, PLR_AUTOSPLIT):
         # AUTOSPLIT code */
@@ -1005,17 +1006,17 @@ def do_quaff(self, argument):
     ch=self
     argument, arg = read_word(argument)
     if not arg:
-        ch.send("Quaff what?\n\r")
+        ch.send("Quaff what?\n")
         return
     obj = get_obj_carry( ch, arg, ch )
     if not obj:
-        ch.send("You do not have that potion.\n\r")
+        ch.send("You do not have that potion.\n")
         return
     if obj.item_type != ITEM_POTION:
-        ch.send("You can quaff only potions.\n\r")
+        ch.send("You can quaff only potions.\n")
         return
     if ch.level < obj.level:
-        ch.send("This liquid is too powerful for you to drink.\n\r")
+        ch.send("This liquid is too powerful for you to drink.\n")
         return
     act( "$n quaffs $p.", ch, obj, None, TO_ROOM )
     act( "You quaff $p.", ch, obj, None ,TO_CHAR )
@@ -1033,13 +1034,13 @@ def do_recite(self, argument):
     argument, arg2  = read_word(argument)
     scroll = get_obj_carry( ch, arg1, ch )
     if not scroll:
-        ch.send("You do not have that scroll.\n\r")
+        ch.send("You do not have that scroll.\n")
         return
     if scroll.item_type != ITEM_SCROLL:
-        ch.send("You can recite only scrolls.\n\r")
+        ch.send("You can recite only scrolls.\n")
         return
     if ch.level < scroll.level:
-        ch.send("This scroll is too complex for you to comprehend.\n\r")
+        ch.send("This scroll is too complex for you to comprehend.\n")
         return
     obj = None
     victim = None
@@ -1049,13 +1050,13 @@ def do_recite(self, argument):
         victim = get_char_room(ch, arg2)
         obj = get_obj_here(ch, arg2)
         if not victim and not obj:
-            ch.send("You can't find it.\n\r")
+            ch.send("You can't find it.\n")
             return
         act( "$n recites $p.", ch, scroll, None, TO_ROOM )
         act( "You recite $p.", ch, scroll, None, TO_CHAR )
 
     if random.randint(1,99) >= 20 + get_skill(ch,"scrolls") * 4/5:
-        ch.send("You mispronounce a syllable.\n\r")
+        ch.send("You mispronounce a syllable.\n")
         check_improve(ch,"scrolls",False,2)
     else:
         obj_cast_spell(scroll.value[1], scroll.value[0], ch, victim, obj)
@@ -1069,10 +1070,10 @@ def do_brandish(self, argument):
     ch=self
     staff = get_eq_char(ch, WEAR_HOLD)
     if not staff:
-        ch.send("You hold nothing in your hand.\n\r")
+        ch.send("You hold nothing in your hand.\n")
         return
     if staff.item_type != ITEM_STAFF:
-        ch.send("You can brandish only with a staff.\n\r")
+        ch.send("You can brandish only with a staff.\n")
         return
     sn = staff.value[3]
     if sn < 0 or not skill_table[sn].spell_fun:
@@ -1118,14 +1119,14 @@ def do_zap(self, argument):
     ch=self
     argument, arg = read_word(argument)
     if not arg and not ch.fighting:
-        ch.send("Zap whom or what?\n\r")
+        ch.send("Zap whom or what?\n")
         return
     wand = get_eq_char(ch, WEAR_HOLD)
     if not wand:
-        ch.send("You hold nothing in your hand.\n\r")
+        ch.send("You hold nothing in your hand.\n")
         return
     if wand.item_type != ITEM_WAND:
-        ch.send("You can zap only with a wand.\n\r")
+        ch.send("You can zap only with a wand.\n")
         return
     obj = None
     victim = None
@@ -1133,13 +1134,13 @@ def do_zap(self, argument):
         if ch.fighting:
             victim = ch.fighting
         else:
-            ch.send("Zap whom or what?\n\r")
+            ch.send("Zap whom or what?\n")
             return
     else:
         victim = get_char_room ( ch, arg )
         obj = get_obj_here  ( ch, arg )
         if not victim or not obj:   
-            ch.send("You can't find it.\n\r")
+            ch.send("You can't find it.\n")
             return
         WAIT_STATE( ch, 2 * PULSE_VIOLENCE )
 
@@ -1171,20 +1172,20 @@ def do_steal(self, argument):
     argument, arg2  = read_word(argument)
 
     if not arg1 or not arg2:
-        ch.send("Steal what from whom?\n\r")
+        ch.send("Steal what from whom?\n")
         return
     victim = get_char_room( ch, arg2 )        
     if not victim:
-        ch.send("They aren't here.\n\r")
+        ch.send("They aren't here.\n")
         return
     if victim == ch:
-        ch.send("That's pointless.\n\r")
+        ch.send("That's pointless.\n")
         return
     if is_safe(ch,victim):
         return
 
     if IS_NPC(victim) and victim.position == POS_FIGHTING:
-        ch.send("Kill stealing is not permitted.\n\rYou'd better not -- you might get hit.\n\r")
+        ch.send("Kill stealing is not permitted.\nYou'd better not -- you might get hit.\n")
         return
     WAIT_STATE( ch, skill_table["steal"].beats )
     percent  = random.randint(1,99)
@@ -1201,11 +1202,11 @@ def do_steal(self, argument):
     or (not IS_NPC(ch) and percent > get_skill(ch,"steal")) \
     or (not IS_NPC(ch) and not is_clan(ch)):
         # Failure.
-        ch.send("Oops.\n\r")
+        ch.send("Oops.\n")
         affect_strip(ch,"sneak")
         REMOVE_BIT(ch.affected_by,AFF_SNEAK)
-        act( "$n tried to steal from you.\n\r", ch, None, victim, TO_VICT    )
-        act( "$n tried to steal from $N.\n\r",  ch, None, victim, TO_NOTVICT )
+        act( "$n tried to steal from you.\n", ch, None, victim, TO_VICT    )
+        act( "$n tried to steal from $N.\n",  ch, None, victim, TO_NOTVICT )
         outcome = random.randint(0,3)
         buf = ''
         if outcome == 0:
@@ -1228,7 +1229,7 @@ def do_steal(self, argument):
                 wiznet("$N tried to steal from %s." % victim.name,ch,None,WIZ_FLAGS,0,0)
                 if not IS_SET(ch.act, PLR_THIEF):
                     SET_BIT(ch.act, PLR_THIEF)
-                    ch.send("*** You are now a THIEF!! ***\n\r")
+                    ch.send("*** You are now a THIEF!! ***\n")
                     save_char_obj( ch )
         return
     currency = ['coins', 'coin', 'gold', 'silver']
@@ -1236,40 +1237,40 @@ def do_steal(self, argument):
         gold = victim.gold * random.randint(1, ch.level) / MAX_LEVEL
         silver = victim.silver * random.randint(1,ch.level) / MAX_LEVEL
         if gold <= 0 and silver <= 0:
-            ch.send("You couldn't get any coins.\n\r")
+            ch.send("You couldn't get any coins.\n")
             return
         ch.gold += gold
         ch.silver += silver
         victim.silver -= silver
         victim.gold -= gold
         if silver <= 0:
-            ch.send("Bingo!  You got %d gold coins.\n\r" % gold)
+            ch.send("Bingo!  You got %d gold coins.\n" % gold)
         elif gold <= 0:
-            ch.send("Bingo!  You got %d silver coins.\n\r" % silver)
+            ch.send("Bingo!  You got %d silver coins.\n" % silver)
         else:
-            ch.send("Bingo!  You got %d silver and %d gold coins.\n\r" % (silver,gold))
+            ch.send("Bingo!  You got %d silver and %d gold coins.\n" % (silver,gold))
         ch.send(buf)
         check_improve(ch,"steal",True,2)
         return
 
     obj = get_obj_carry( victim, arg1, ch )
     if not obj:
-        ch.send("You can't find it.\n\r")
+        ch.send("You can't find it.\n")
         return
     if not can_drop_obj( ch, obj ) or IS_SET(obj.extra_flags, ITEM_INVENTORY) or obj.level > ch.level:
-        ch.send("You can't pry it away.\n\r")
+        ch.send("You can't pry it away.\n")
         return
     if ch.carry_number + get_obj_number( obj ) > can_carry_n( ch ):
-        ch.send("You have your hands full.\n\r")
+        ch.send("You have your hands full.\n")
         return
     if ch.carry_weight + get_obj_weight( obj ) > can_carry_w( ch ):
-        ch.send("You can't carry that much weight.\n\r")
+        ch.send("You can't carry that much weight.\n")
         return
     obj_from_char( obj )
     obj_to_char( obj, ch )
     act("You pocket $p.",ch,obj,None,TO_CHAR)
     check_improve(ch,"steal",True,2)
-    ch.send("Got it!\n\r")
+    ch.send("Got it!\n")
     return
 
 #
@@ -1282,16 +1283,16 @@ def find_keeper( ch ):
             pShop = keeper.pIndexData.pShop
             break
     if not pShop:
-        ch.send("You can't do that here.\n\r")
+        ch.send("You can't do that here.\n")
         return None
     #* Undesirables.
     #if not IS_NPC(ch) and IS_SET(ch.act, PLR_KILLER):
     #    keeper.do_say("Killers are not welcome!")
-    #    keeper.do_yell("%s the KILLER is over here!\n\r" % ch.name)
+    #    keeper.do_yell("%s the KILLER is over here!\n" % ch.name)
     #    return None
     #if not IS_NPC(ch) and IS_SET(ch.act, PLR_THIEF):
     #    keeper.do_say("Thieves are not welcome!")
-    #    keeper.do_yell("%s the THIEF is over here!\n\r" % ch.name)
+    #    keeper.do_yell("%s the THIEF is over here!\n" % ch.name)
     #    return None
     #* Shop hours.
     if time_info.hour < pShop.open_hour:
@@ -1375,7 +1376,7 @@ def get_cost(keeper, obj, fBuy):
 def do_buy(self, argument):
     ch=self
     if not argument:
-        ch.send("Buy what?\n\r")
+        ch.send("Buy what?\n")
         return
     if IS_SET(ch.in_room.room_flags, ROOM_PET_SHOP):
         if IS_NPC(ch):
@@ -1391,7 +1392,7 @@ def do_buy(self, argument):
                 pRoomIndexNext = room_index_hash(ch.in_room.vnum+1)
         if not pRoomIndexNext:
             print ("BUG: Do_buy: bad pet shop at vnum %d." % ch.in_room.vnum)
-            ch.send("Sorry, you can't buy that here.\n\r")
+            ch.send("Sorry, you can't buy that here.\n")
             return
         in_room     = ch.in_room
         ch.in_room = pRoomIndexNext
@@ -1399,24 +1400,24 @@ def do_buy(self, argument):
         ch.in_room = in_room
 
         if not pet or not IS_SET(pet.act, ACT_PET):
-            ch.send("Sorry, you can't buy that here.\n\r")
+            ch.send("Sorry, you can't buy that here.\n")
             return
         if ch.pet:
-            ch.send("You already own a pet.\n\r")
+            ch.send("You already own a pet.\n")
             return
         cost = 10 * pet.level * pet.level
 
         if (ch.silver+100*ch.gold) < cost:
-            ch.send("You can't afford it.\n\r")
+            ch.send("You can't afford it.\n")
             return
         if ch.level < pet.level:
-            ch.send(    "You're not powerful enough to master this pet.\n\r")
+            ch.send(    "You're not powerful enough to master this pet.\n")
             return
         # haggle */
         roll = random.randint(1,99)
         if roll < get_skill(ch,"haggle"):
             cost -= cost / 2 * roll / 100
-            ch.send("You haggle the price down to %d coins.\n\r" % cost)
+            ch.send("You haggle the price down to %d coins.\n" % cost)
             check_improve(ch,"haggle",True,4)
         deduct_cost(ch,cost)
         pet = create_mobile( pet.pIndexData )
@@ -1427,12 +1428,12 @@ def do_buy(self, argument):
         argument, arg  = read_word(argument)
         if arg:
             pet.name = "%s %s" % (pet.name, arg)
-        pet.description = "%sA neck tag says 'I belong to %s'.\n\r" % (pet.description, ch.name)
+        pet.description = "%sA neck tag says 'I belong to %s'.\n" % (pet.description, ch.name)
         char_to_room( pet, ch.in_room )
         add_follower( pet, ch )
         pet.leader = ch
         ch.pet = pet
-        ch.send("Enjoy your pet.\n\r")
+        ch.send("Enjoy your pet.\n")
         act( "$n bought $N as a pet.", ch, None, pet, TO_ROOM )
         return
     else:
@@ -1469,10 +1470,10 @@ def do_buy(self, argument):
             ch.reply = keeper
             return
         if ch.carry_number +  number * get_obj_number(obj) > can_carry_n(ch):
-            ch.send("You can't carry that many items.\n\r")
+            ch.send("You can't carry that many items.\n")
             return
         if ch.carry_weight + number * get_obj_weight(obj) > can_carry_w(ch):
-            ch.send("You can't carry that much weight.\n\r")
+            ch.send("You can't carry that much weight.\n")
             return
         # haggle */
         roll = random.randint(1,99)
@@ -1521,17 +1522,17 @@ def do_list(self, argument):
                 pRoomIndexNext = room_index_hash[ch.in_room.vnum+1]
         if not pRoomIndexNext:
             print ("BUG: Do_list: bad pet shop at vnum %d." % ch.in_room.vnum)
-            ch.send("You can't do that here.\n\r")
+            ch.send("You can't do that here.\n")
             return
         found = False
         for pet in pRoomIndexNext.people:
             if IS_SET(pet.act, ACT_PET):
                 if not found:
                     found = True
-                    ch.send("Pets for sale:\n\r")
-                ch.send("[%2d] %8d - %s\n\r" % (pet.level, 10 * pet.level * pet.level, pet.short_descr))
+                    ch.send("Pets for sale:\n")
+                ch.send("[%2d] %8d - %s\n" % (pet.level, 10 * pet.level * pet.level, pet.short_descr))
         if not found:
-            ch.send("Sorry, we're out of pets right now.\n\r")
+            ch.send("Sorry, we're out of pets right now.\n")
         return
     else:
         keeper = find_keeper( ch )
@@ -1556,19 +1557,19 @@ def do_list(self, argument):
 
 
         if not items:
-            ch.send("You can't buy anything here.\n\r")
+            ch.send("You can't buy anything here.\n")
             return
-        ch.send("[Lv Price Qty] Item\n\r")      
+        ch.send("[Lv Price Qty] Item\n")      
         for k, p in items.items():
             obj, count = p
             cost = get_cost( keeper, obj, True )
-            ch.send("[%2d %5d %2s ] %s\n\r" % (obj.level,cost, ("--" if count == -1 else count),obj.short_descr))
+            ch.send("[%2d %5d %2s ] %s\n" % (obj.level,cost, ("--" if count == -1 else count),obj.short_descr))
 
 def do_sell(self, argument):
     ch=self
     argument, arg = read_word(argument)
     if not arg:
-        ch.send("Sell what?\n\r")
+        ch.send("Sell what?\n")
         return
     keeper = find_keeper(ch)
     if not keeper:
@@ -1579,7 +1580,7 @@ def do_sell(self, argument):
         ch.reply = keeper
         return
     if not can_drop_obj( ch, obj ):
-        ch.send("You can't let go of it.\n\r")
+        ch.send("You can't let go of it.\n")
         return
     if not can_see_obj(keeper,obj):
         act("$n doesn't see what you are offering.",keeper,None,ch,TO_VICT)
@@ -1595,7 +1596,7 @@ def do_sell(self, argument):
     # haggle */
     roll = random.randint(1,99)
     if not IS_OBJ_STAT(obj,ITEM_SELL_EXTRACT) and roll < get_skill(ch,"haggle"):
-        ch.send("You haggle with the shopkeeper.\n\r")
+        ch.send("You haggle with the shopkeeper.\n")
         cost += obj.cost / 2 * roll / 100
         cost = min(cost,95 * get_cost(keeper,obj,True) / 100)
         cost = min(cost,(keeper.silver + 100 * keeper.gold))
@@ -1627,7 +1628,7 @@ def do_value(self, argument):
     argument, arg = read_word(argument)
 
     if not arg:
-        ch.send("Value what?\n\r")
+        ch.send("Value what?\n")
         return
     keeper = find_keeper( ch )
     if not keeper:
@@ -1641,7 +1642,7 @@ def do_value(self, argument):
         act("$n doesn't see what you are offering.",keeper,None,ch,TO_VICT)
         return
     if not can_drop_obj( ch, obj ):
-        ch.send("You can't let go of it.\n\r")
+        ch.send("You can't let go of it.\n")
         return
     cost = get_cost( keeper, obj, False )
     if cost <= 0:

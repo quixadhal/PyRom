@@ -28,6 +28,7 @@
 /************
  * Ported to Python by Davion of MudBytes.net
  * Using Miniboa https://code.google.com/p/miniboa/
+ * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
 import random
@@ -58,15 +59,15 @@ def do_enter(self, argument):
         old_room = ch.in_room
         portal = get_obj_list( ch, argument,  ch.in_room.contents )
         if not portal:
-            ch.send("You don't see that here.\n\r")
+            ch.send("You don't see that here.\n")
             return
         if portal.item_type != ITEM_PORTAL \
         or  (IS_SET(portal.value[1],EX_CLOSED) and not IS_TRUSTED(ch,ANGEL)):
-            ch.send("You can't seem to find a way in.\n\r")
+            ch.send("You can't seem to find a way in.\n")
             return
         if not IS_TRUSTED(ch,ANGEL) and not IS_SET(portal.value[2],GATE_NOCURSE) \
         and  (IS_AFFECTED(ch,AFF_CURSE) or IS_SET(old_room.room_flags,ROOM_NO_RECALL)):
-            ch.send("Something prevents you from leaving...\n\r")
+            ch.send("Something prevents you from leaving...\n")
             return
         location = None
         if IS_SET(portal.value[2],GATE_RANDOM) or portal.value[3] == -1:
@@ -83,7 +84,7 @@ def do_enter(self, argument):
             return
         if IS_NPC(ch) and IS_SET(ch.act,ACT_AGGRESSIVE) \
         and  IS_SET(location.room_flags,ROOM_LAW):
-            ch.send("Something prevents you from leaving...\n\r")
+            ch.send("Something prevents you from leaving...\n")
             return
         act("$n steps into $p.",ch,portal,None,TO_ROOM)
   
@@ -132,5 +133,5 @@ def do_enter(self, argument):
                 act("$p fades out of existence.", old_room.people,portal,None,TO_ROOM)
             extract_obj(portal)
         return
-    ch.send("Nope, can't do it.\n\r")
+    ch.send("Nope, can't do it.\n")
     return

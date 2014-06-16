@@ -28,6 +28,7 @@
 /************
  * Ported to Python by Davion of MudBytes.net
  * Using Miniboa https://code.google.com/p/miniboa/
+ * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
 import hashlib
@@ -107,7 +108,7 @@ def con_confirm_new_name(self):
     argument = self.get_command()[:1].lower()
     ch = self.character
     if argument == 'y':
-        ch.send("New character.\n\rGive me a password for %s: " % ch.name)
+        ch.send("New character.\nGive me a password for %s: " % ch.name)
         self.set_connected(con_get_new_password)
     elif argument == 'n':
         ch.send("Ok, what IS it, then? ")
@@ -120,7 +121,7 @@ def con_get_new_password(self):
     argument = self.get_command()
     ch = self.character
     if len(argument) < 5:
-        ch.send("Password must be at least five characters long.\n\rPassword: ")
+        ch.send("Password must be at least five characters long.\nPassword: ")
         return
     if ENCRYPT_PASSWORD:
         argument = argument.encode('utf8')
@@ -146,11 +147,11 @@ def con_confirm_new_password(self):
         self.set_connected(con_get_new_password)
         return
 
-    ch.send("The following races are available:\n\r  ")
+    ch.send("The following races are available:\n  ")
     for race in pc_race_table:
         ch.send("%s " % race_table[race].name )
         
-    ch.send("\n\rWhat is your race (help for more information)? ")
+    ch.send("\nWhat is your race (help for more information)? ")
     self.set_connected(con_get_new_race)
 
 def con_get_new_race(self):
@@ -168,8 +169,8 @@ def con_get_new_race(self):
     race = prefix_lookup(pc_race_table, argument)
 
     if not race:
-        ch.send("That is not a valid race.\n\r")
-        ch.send("The following races are available:\n\r  ")
+        ch.send("That is not a valid race.\n")
+        ch.send("The following races are available:\n  ")
         for race in pc_race_table:
             ch.send("%s " % race_table[race].name )
         ch.send("\r\nWhat is your race? (help for more information) ")
@@ -210,7 +211,7 @@ def con_get_new_sex(self):
         ch.sex = SEX_FEMALE
         ch.pcdata.true_sex = SEX_FEMALE
     else:
-        ch.send("That's not a sex.\n\rWhat IS your sex? ")
+        ch.send("That's not a sex.\nWhat IS your sex? ")
         return
 
     ch.send("Select a class [" )
@@ -227,7 +228,7 @@ def con_get_new_class(self):
     guild = prefix_lookup(guild_table, argument)
 
     if not guild:
-        ch.send("That's not a class.\n\rWhat IS your class? ")
+        ch.send("That's not a class.\nWhat IS your class? ")
         return
 
     ch.guild = guild
@@ -237,7 +238,7 @@ def con_get_new_class(self):
     wiznet("Newbie alert!  $N sighted.",ch,None,WIZ_NEWBIE,0,0)
     wiznet(log_buf,None,None,WIZ_SITES,0,get_trust(ch))
 
-    ch.send("\r\nYou may be good, neutral, or evil.\n\r")
+    ch.send("\r\nYou may be good, neutral, or evil.\n")
     ch.send("Which alignment (G/N/E)? ")
     self.set_connected(con_get_alignment)
     return
@@ -250,16 +251,16 @@ def con_get_alignment(self):
     elif argument == 'n': ch.alignment = 0
     elif argument == 'e': ch.alignment = -750
     else:
-        ch.send("That's not a valid alignment.\n\r")
+        ch.send("That's not a valid alignment.\n")
         ch.send("Which alignment (G/N/E)? ")
         return
 
-    ch.send("\n\r")
+    ch.send("\n")
     group_add(ch,"rom basics",False)
     group_add(ch,ch.guild.base_group,False)
     ch.pcdata.learned['recall'] = 50
-    ch.send("Do you wish to customize this character?\n\r")
-    ch.send("Customization takes time, but allows a wider range of skills and abilities.\n\r")
+    ch.send("Do you wish to customize this character?\n")
+    ch.send("Customization takes time, but allows a wider range of skills and abilities.\n")
     ch.send("Customize (Y/N)? ")
     self.set_connected(con_default_choice)
 
@@ -273,19 +274,19 @@ def con_default_choice(self):
         ch.gen_data.points_chosen = ch.pcdata.points
         ch.do_help("group header")
         list_group_costs(ch)
-        ch.send("You already have the following skills:\n\r")
+        ch.send("You already have the following skills:\n")
         ch.do_skills("")
         ch.do_help("menu choice")
         self.set_connected(con_gen_groups)
     elif argument == 'n':
         group_add(ch,ch.guild.default_group,True)
-        ch.send("Please pick a weapon from the following choices:\n\r")
+        ch.send("Please pick a weapon from the following choices:\n")
         
         for k,weapon in weapon_table.items():
             if weapon.gsn in ch.pcdata.learned:
                 ch.send("%s " % weapon.name)
 
-        ch.send("\n\rYour choice? ")
+        ch.send("\nYour choice? ")
         self.set_connected(con_pick_weapon)
 
     else:
@@ -296,12 +297,12 @@ def con_pick_weapon(self):
     ch = self.character
     weapon = prefix_lookup(weapon_table, argument )
     if not weapon or ch.pcdata.learned[weapon.gsn] <= 0:
-        ch.send("That's not a valid selection. Choices are:\n\r")
+        ch.send("That's not a valid selection. Choices are:\n")
         for k,weapon in weapon_table.items():
             if weapon.gsn in ch.pcdata.learned:
                 ch.send("%s " % weapon.name)
 
-            ch.send("\n\rYour choice? ")
+            ch.send("\nYour choice? ")
         return
 
     ch.pcdata.learned[weapon.gsn] = 40
@@ -314,30 +315,30 @@ def con_gen_groups(self):
 
     if argument == "done":
         if ch.pcdata.points == pc_race_table[ch.race.name].points:
-            ch.send("You didn't pick anything.\n\r")
+            ch.send("You didn't pick anything.\n")
             return
         if ch.pcdata.points < 40 + pc_race_table[ch.race.name].points:
             ch.send("You must take at least %d points of skills and groups" % (40 + pc_race_table[ch.race.name].points))
             return
 
-        ch.send("Creation points: %d\n\r" % ch.pcdata.points )
-        ch.send("Experience per level: %d\n\r" % exp_per_level(ch,ch.gen_data.points_chosen))
+        ch.send("Creation points: %d\n" % ch.pcdata.points )
+        ch.send("Experience per level: %d\n" % exp_per_level(ch,ch.gen_data.points_chosen))
         if ch.pcdata.points < 40:
             ch.train = (40 - ch.pcdata.points + 1) / 2
         del ch.gen_data
         ch.gen_data = None
-        ch.send("Please pick a weapon from the following choices:\n\r")
+        ch.send("Please pick a weapon from the following choices:\n")
         
         for w, weapon in weapon_table.items():
             if ch.pcdata.learned[weapon.gsn] > 0:
                 ch.send("%s " % weapon.name)
 
-        ch.send("\n\rYour choice? ")
+        ch.send("\nYour choice? ")
         self.set_connected(con_pick_weapon)
         return
 
     if not parse_gen_groups(ch,argument):
-        ch.send("Choices are: list,learned,premise,add,drop,info,help, and done.\n\r")
+        ch.send("Choices are: list,learned,premise,add,drop,info,help, and done.\n")
         ch.do_help("menu choice")
         return
 
@@ -415,11 +416,11 @@ def con_read_imotd(self):
 def con_read_motd(self):
     ch = self.character
     if not ch.pcdata or not ch.pcdata.pwd:
-        ch.send("Warning! Null password!\n\r")
-        ch.send("Please report old password with bug.\n\r")
-        ch.send("Type 'password null <new password>' to fix.\n\r")
+        ch.send("Warning! Null password!\n")
+        ch.send("Please report old password with bug.\n")
+        ch.send("Type 'password null <new password>' to fix.\n")
 
-    ch.send("\n\rWelcome to ROM 2.4.  Please do not feed the mobiles.\n\r")
+    ch.send("\nWelcome to ROM 2.4.  Please do not feed the mobiles.\n")
     char_list.append(ch)
     self.set_connected(con_playing)
     reset_char(ch)
