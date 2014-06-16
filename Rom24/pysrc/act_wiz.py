@@ -61,7 +61,7 @@ def do_wiznet(self, argument):
     if "status".startswith(argument): 
         if not IS_SET(ch.wiznet, WIZ_ON):
           buf += "off "
-        for name, flag in wiznet_table.iteritems():
+        for name, flag in wiznet_table.items():
             if IS_SET(ch.wiznet, flag.flag):
                 buf += name + " "
             ch.send("Wiznet status:\n%s\n" % buf)
@@ -69,7 +69,7 @@ def do_wiznet(self, argument):
     if "show".startswith(argument):
     # list of all wiznet options */
         buf = ''
-        for name, flag in wiznet_table.iteritems():
+        for name, flag in wiznet_table.items():
             if flag.level <= get_trust(ch):
                 buf += name + " "
         ch.send("Wiznet options available to you are:\n%s\n" % buf )
@@ -86,6 +86,19 @@ def do_wiznet(self, argument):
         ch.send("You will now see %s on wiznet.\n\r" % flag.name)
         SET_BIT(ch.wiznet,flag.flag)
         return
+
+def wiznet( string, ch, obj, flag, flag_skip, min_level):
+    for d in descriptor_list:
+        if   d.connected == nanny.con_playing \
+        and  IS_IMMORTAL(d.character) \
+        and  IS_SET(d.character.wiznet, WIZ_ON) \
+        and  (not flag or IS_SET(d.character.wiznet,flag)) \
+        and  (not flag_skip or not IS_SET(d.character.wiznet,flag_skip)) \
+        and  get_trust(d.character) >= min_level \
+        and  d.character != ch:
+            if IS_SET(d.character.wiznet,WIZ_PREFIX):
+                d.send("-. ",d.character)
+            act(string,d.character,obj,ch,TO_CHAR,POS_DEAD)
 
 def do_guild(self, argument):
     ch=self
@@ -144,7 +157,7 @@ def do_outfit ( self, argument ):
     if not obj:
         sn = 'dagger'
         vnum = OBJ_VNUM_SCHOOL_SWORD # just in case! */
-        for k,weapon in weapon_table.iteritems():
+        for k,weapon in weapon_table.items():
             if sn not in ch.pcdata.learned or (weapon.gsn in ch.pcdata.learned and ch.pcdata.learned[sn] < ch.pcdata.learned[weapon.gsn]):
                 sn = weapon.gsn
                 vnum = weapon.vnum
@@ -295,7 +308,7 @@ def do_disconnect(self, argument):
             close_socket( d )
             ch.send("Ok.\n\r")
             return
-    print "BUG: Do_disconnect: desc not found."
+    print ("BUG: Do_disconnect: desc not found.")
     ch.send("Descriptor not found!\n\r")
     return
 
@@ -1648,7 +1661,7 @@ def do_slookup(self, argument):
         ch.send("Lookup which skill or spell?\n\r")
         return
     if arg == "all" :
-        for sn, skill in skill_table.iteritems():
+        for sn, skill in skill_table.items():
             ch.send("Sn: %15s  Slot: %3d  Skill/spell: '%s'\n\r", sn, skill.slot, skill.name )
     else:
         skill = prefix_lookup(skill_table, arg)

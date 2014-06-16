@@ -326,7 +326,7 @@ cmd_table['prefi'] = cmd_type('prefi', do_prefi,   POS_DEAD,   IM,  LOG_NORMAL, 
 cmd_table['prefix'] = cmd_type('prefix', do_prefix,  POS_DEAD,   IM,  LOG_NORMAL, 1)
 
 #A little python vooodoo to make do_functions methods of char_data
-for k,cmd in cmd_table.iteritems():
+for k,cmd in cmd_table.items():
     setattr(CHAR_DATA, cmd.do_fun.__name__, cmd.do_fun )
 
 
@@ -362,7 +362,7 @@ def interpret(ch, argument):
         if cmd and cmd.log != LOG_NEVER:
             log_buf = "Log %s: %s" % (ch.name, logline)
             wiznet(log_buf,ch,None,WIZ_SECURE,0,get_trust(ch))
-            print log_buf + "\n"
+            print (log_buf + "\n")
     if ch.desc and ch.desc.snoop_by:
         ch.desc.snoop_by.send("% ")
         ch.desc.snoop_by.send(logline)
@@ -371,6 +371,8 @@ def interpret(ch, argument):
         #* Look for command in socials table.
         if not check_social(ch, command, argument):
             ch.send("Huh?\n")
+            return
+        ch.send("Huh?\n")
         return
     #* Character not in position for command?
     if ch.position < cmd.position:

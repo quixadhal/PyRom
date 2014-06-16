@@ -32,6 +32,7 @@
 """
 from merc import *
 from db import area_update
+from act_wiz import wiznet
 from handler import *
 from comm import act
 from save import save_char_obj
@@ -81,7 +82,7 @@ def gain_exp( ch, gain ):
     while ch.level < LEVEL_HERO and ch.exp >= exp_per_level(ch,ch.pcdata.points) * (ch.level+1):
         ch.send("You raise a level!!  ")
         ch.level += 1
-        print "%s gained level %d\r\n" % (ch.name,ch.level)
+        print ("%s gained level %d\r\n" % (ch.name,ch.level))
         wiznet("$N has attained level %d!" % ch.level,ch,None,WIZ_LEVELS,0,0)
         advance_level(ch,False)
         save_char_obj(ch)
@@ -361,7 +362,7 @@ def weather_update( ):
             strcat( buf, "The lightning has stopped.\n" )
             weather_info.sky = SKY_RAINING
     else:
-        print "Bug: Weather_update: bad sky %d." % weather_info.sky
+        print ("Bug: Weather_update: bad sky %d." % weather_info.sky)
         weather_info.sky = SKY_CLOUDLESS
 
     if buf:

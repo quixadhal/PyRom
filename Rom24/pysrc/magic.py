@@ -232,7 +232,7 @@ def do_cast(ch, argument):
                 ch.send("You don't see that here.\n")
                 return
     else:
-        print "BUG: Do_cast: bad target for sn %s." % sn
+        print ("BUG: Do_cast: bad target for sn %s." % sn)
         return
         
     if not IS_NPC(ch) and ch.mana < mana:
@@ -506,7 +506,7 @@ def spell_cancellation( sn, level, ch, victim, target ):
                'stone skin': "$n's skin regains its normal texture.",
                'weaken': "$n looks stronger." }
 
-    for k,v in spells.iteritems():
+    for k,v in spells.items():
         if check_dispel(level,victim,const.skill_table[k]):
             if v:
                 act(v,victim,None,None,TO_ROOM)
@@ -1093,7 +1093,7 @@ def spell_dispel_magic( sn, level, ch, victim, target ):
                'weaken': "$n looks stronger." }
 
 
-    for k,v in spells.iteritems():
+    for k,v in spells.items():
         if check_dispel(level,victim,const.skill_table[k]):
             if v:
                 act(v,victim,None,None,TO_ROOM)

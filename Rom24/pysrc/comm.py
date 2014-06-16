@@ -105,7 +105,7 @@ def check_reconnect( d, name, fConn ):
                 ch.timer = 0
                 ch.send("Reconnecting. Type replay to see missed tells.\n")
                 act( "$n has reconnected.", ch, NULL, NULL, TO_ROOM )
-                print "%s@%s reconnected." % (ch.name, d.host)
+                print ("%s@%s reconnected." % (ch.name, d.host))
                 wiznet("$N groks the fullness of $S link.",ch,None,WIZ_LINKS,0,0)
                 d.set_connected(con_playing)
             return True
@@ -197,7 +197,7 @@ def game_loop(server):
     from update import update_handler
     boot_db()
 
-    print "\nPyom is ready to rock on port %d\n" % server.port
+    print ("\nPyom is ready to rock on port %d\n" % server.port)
 
     while True: 
         server.poll()

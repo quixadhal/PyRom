@@ -268,7 +268,7 @@ def fread_obj(carrying, odict):
 
     obj.affected = odict['affected']
     extra_descr = []
-    for k,v in odict['ExDe'].iteritems():
+    for k,v in odict['ExDe'].items():
         newed = EXTRA_DESCR_DATA()
         newed.keyword = k
         newed.description = v
