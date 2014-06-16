@@ -1,0 +1,10 @@
+#!/bin/bash
+
+git remote add upstream git@bitbucket.org:mudbytes/pyom.git
+cd Rom24/pysrc/
+git clone git@bitbucket.org:quixadhal/miniboa.git miniboa_git
+ln -sv miniboa_git/miniboa .
+
+# If you're on Windows, you probably have to hand-move the
+# miniboa subdirectory out of the miniboa_git directory,
+# since symbolic links aren't directly supported.
