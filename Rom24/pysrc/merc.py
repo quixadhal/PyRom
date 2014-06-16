@@ -1400,18 +1400,24 @@ def read_flags(str):
     str, w = read_word(str, False)
     if w == '0' or w == 0:
         return (str, 0)
+    if w.isdigit():
+        return (str, int(w))
     flags = 0
 
     for c in w:
+        flag = 0
         if 'A' <= c and c <= 'Z':
-            flags = 1
+            flag = 1
             while c != 'A':
-                flags *= 2
+                flag *= 2
                 c = chr( ord(c)-1 )
+
         elif 'a' <= c and c <= 'z':
-            flags = 2 ** 26
+            flag = 2 ** 26
             while c != 'a':
+                flag *= 2
                 c = chr( ord(c)-1 )
+        flags += flag
     return (str, flags)
 
 def read_to_eol(str):

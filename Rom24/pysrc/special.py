@@ -37,6 +37,7 @@ from magic import (spell_armor, spell_bless, spell_refresh, spell_poison,
                    spell_cure_blindness, spell_cure_light, spell_cure_poison,
                    spell_cure_disease)
 from const import skill_table
+from fight import multi_hit
 
 def spec_troll_member( ch ):
     if not IS_AWAKE(ch) or IS_AFFECTED(ch,AFF_CALM) or ch.in_room == None  \
