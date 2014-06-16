@@ -36,7 +36,7 @@ from db import area_update
 from handler import *
 from comm import act
 from save import save_char_obj
-from fight import violence_update
+from fight import violence_update, damage
 import act_move
 # * Advancement stuff.
 
@@ -482,13 +482,13 @@ def char_update( ):
             if af.level == 1:
                 continue
             plague = AFFECT_DATA()    
-            plague.where        = TO_AFFECTS
-            plague.type         = gsn_plague
-            plague.level        = af.level - 1 
-            plague.duration     = random.randint(1,2 * plague.level)
-            plague.location     = APPLY_STR
-            plague.modifier     = -5
-            plague.bitvector    = AFF_PLAGUE
+            plague.where = TO_AFFECTS
+            plague.type  = gsn_plague
+            plague.level = af.level - 1 
+            plague.duration = random.randint(1, 2 * plague.level)
+            plague.location = APPLY_STR
+            plague.modifier =-5
+            plague.bitvector = AFF_PLAGUE
         
             for vch in ch.in_room.people:
                 if not saves_spell(plague.level - 2,vch,DAM_DISEASE) and not IS_IMMORTAL(vch) \
@@ -499,17 +499,17 @@ def char_update( ):
             dam = min(ch.level,af.level/5+1)
             ch.mana -= dam
             ch.move -= dam
-            damage( ch, ch, dam, gsn_plague,DAM_DISEASE,False)
-        elif IS_AFFECTED(ch, AFF_POISON) and ch and not IS_AFFECTED(ch,AFF_SLOW):
+            damage(ch, ch, dam, gsn_plague, DAM_DISEASE, False)
+        elif IS_AFFECTED(ch, AFF_POISON) and ch and not IS_AFFECTED(ch, AFF_SLOW):
             poison = affect_find(ch.affected,'poison')
             if poison:
-                act( "$n shivers and suffers.", ch, None, None, TO_ROOM )
+                act("$n shivers and suffers.", ch, None, None, TO_ROOM)
                 ch.send("You shiver and suffer.\n")
                 damage(ch,ch,poison.level/10 + 1,gsn_poison, DAM_POISON,False)
         elif ch.position == POS_INCAP and random.randint(0,1) == 0:
-            damage( ch, ch, 1, TYPE_UNDEFINED, DAM_NONE,False)
+            damage(ch, ch, 1, TYPE_UNDEFINED, DAM_NONE, False)
         elif ch.position == POS_MORTAL:
-            damage( ch, ch, 1, TYPE_UNDEFINED, DAM_NONE,False)
+            damage(ch, ch, 1, TYPE_UNDEFINED, DAM_NONE, False)
 
     #
     # * Autosave and autoquit.
