@@ -759,8 +759,8 @@ def create_mobile( pMobIndex ):
         mob.silver = 0
         mob.gold   = 0
     else:
-        wealth = random.randint(pMobIndex.wealth//2, 3 * pMobIndex.wealth//2)
-        mob.gold = random.randint(wealth//200,wealth//100)
+        wealth = random.randint(pMobIndex.wealth // 2, 3 * pMobIndex.wealth // 2)
+        mob.gold = random.randint(wealth // 200, wealth // 100)
         mob.silver = wealth - (mob.gold * 100)
 
 
