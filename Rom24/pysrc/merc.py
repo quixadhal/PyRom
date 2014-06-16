@@ -385,7 +385,7 @@ social_list = []
 
 #Global Constants
 PULSE_PER_SECOND = 12
-PULSE_VIOLENCE = (3 * PULSE_PER_SECOND)
+PULSE_VIOLENCE = (1 * PULSE_PER_SECOND)
 PULSE_MOBILE = (4 * PULSE_PER_SECOND)
 PULSE_MUSIC = (6 * PULSE_PER_SECOND)
 PULSE_TICK = (60 * PULSE_PER_SECOND)
@@ -1348,8 +1348,8 @@ def read_forward(str, jump = 1):
 def read_letter(str):
     str = str.lstrip()
     return(str[1:], str[:1])
+
 def read_word(str, lower = True):
-    
     if not str:
         return ("", "")
     str = str.lstrip()
@@ -1397,11 +1397,11 @@ def read_string(str):
 def read_flags(str):
     if not str:
         return (None, None)
-    str, w = read_word(str)
-    
-    if w is '0':
+    str, w = read_word(str, False)
+    if w == '0' or w == 0:
         return (str, 0)
     flags = 0
+
     for c in w:
         if 'A' <= c and c <= 'Z':
             flags = 1
@@ -1412,7 +1412,6 @@ def read_flags(str):
             flags = 2 ** 26
             while c != 'a':
                 c = chr( ord(c)-1 )
-
     return (str, flags)
 
 def read_to_eol(str):
