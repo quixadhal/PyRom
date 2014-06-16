@@ -87,19 +87,6 @@ def do_wiznet(self, argument):
         SET_BIT(ch.wiznet,flag.flag)
         return
 
-def wiznet( string, ch, obj, flag, flag_skip, min_level):
-    for d in descriptor_list:
-        if   d.connected == nanny.con_playing \
-        and  IS_IMMORTAL(d.character) \
-        and  IS_SET(d.character.wiznet, WIZ_ON) \
-        and  (not flag or IS_SET(d.character.wiznet,flag)) \
-        and  (not flag_skip or not IS_SET(d.character.wiznet,flag_skip)) \
-        and  get_trust(d.character) >= min_level \
-        and  d.character != ch:
-            if IS_SET(d.character.wiznet,WIZ_PREFIX):
-                d.send("-. ",d.character)
-            act(string,d.character,obj,ch,TO_CHAR,POS_DEAD)
-
 def do_guild(self, argument):
     ch=self
     argument, arg1  = read_word(argument)

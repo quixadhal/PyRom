@@ -35,7 +35,8 @@ from settings import AREA_DIR, AREA_LIST
 from merc import *
 from handler import *
 from special import spec_table
-from tables import sex_table
+from tables import sex_table, position_table
+from const import attack_table
 
 def boot_db():
     print ("Loading Areas...")
@@ -159,6 +160,7 @@ def load_mobiles(area):
         area = read_forward(area)
         area, mob.damage[2] = read_int(area)
         area, mob.dam_type = read_word(area,False)
+        mob.dam_type = name_lookup(attack_table, mob.dam_type)
         area, mob.ac[0] = read_int(area)
         area, mob.ac[1] = read_int(area)
         area, mob.ac[2] = read_int(area)
@@ -169,6 +171,8 @@ def load_mobiles(area):
         area, mob.vuln_flags = read_flags(area)
         area, mob.start_pos = read_word(area,False)
         area, mob.default_pos = read_word(area,False)
+        mob.start_pos = name_lookup(position_table, mob.start_pos, 'short_name')
+        mob.default_pos = name_lookup(position_table, mob.default_pos, 'short_name')
         area, sex = read_word(area,False)
         mob.sex = value_lookup(sex_table, sex)
         area, mob.wealth = read_int(area)
@@ -208,6 +212,7 @@ def load_objects(area):
             area, obj.value[1] = read_int(area)
             area, obj.value[2] = read_int(area)
             area, obj.value[3] = read_word(area,False)
+            obj.value[3] = name_lookup(attack_table, obj.value[3])
             area, obj.value[4] = read_flags(area)
         elif obj.item_type == ITEM_CONTAINER:
             area, obj.value[0] = read_int(area)
@@ -504,7 +509,6 @@ def area_update( ):
         pArea.age += 1
         if pArea.age < 3:
             continue
-        from act_wiz import wiznet
         #
         #* Check age and reset.
         #* Note: Mud School resets every 3 minutes (not 15).

@@ -508,15 +508,15 @@ TARGET_ROOM = 2
 TARGET_NONE = 3
 
 #Positions
-POS_DEAD = "dead"
-POS_MORTAL = "mortally wounded"
-POS_INCAP = "incapacitated"
-POS_STUNNED = "stunned"
-POS_SLEEPING = "sleeping"
-POS_RESTING = "resting"
-POS_SITTING = "sitting"
-POS_FIGHTING = "fighting"
-POS_STANDING = "standing"
+POS_DEAD = 0
+POS_MORTAL = 1
+POS_INCAP = 2
+POS_STUNNED = 3
+POS_SLEEPING = 4
+POS_RESTING = 5
+POS_SITTING = 6
+POS_FIGHTING = 7
+POS_STANDING = 8
 
 
 # * Sector types.
@@ -621,6 +621,11 @@ TO_RESIST = 3
 TO_VULN = 4
 TO_WEAPON = 5
 
+# return values for check_imm */
+IS_NORMAL = 0
+IS_IMMUNE = 1
+IS_RESISTANT = 2
+IS_VULNERABLE = 3
 
 #Item constants
 
@@ -1203,6 +1208,11 @@ boot_time = time.time()
 current_time = 0
 #utility functions
 
+def name_lookup(dict, arg, key='name'):
+    for i, n in dict.items():
+        if n.__dict__[key] == arg:
+            return i
+
 def prefix_lookup(dict, arg):
     if not arg:
         return None
@@ -1439,6 +1449,10 @@ def number_door( ):
     return random.randint(0,5)
 
 def CH(d): return d.original if d.original else d.character
+
+# * Simple linear interpolation.
+def interpolate(level, value_00, value_32):
+    return value_00 + level * (value_32 - value_00) / 32
 
 #Given a string like 14*foo, return 14 and 'foo'
 def mult_argument(argument):

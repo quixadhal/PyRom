@@ -32,6 +32,8 @@
 """
 from merc import *
 from handler import *
+from skills import check_improve, exp_per_level
+import const
 
 # * Control the fights going on.
 # * Called periodically by update_handler.
@@ -253,11 +255,11 @@ def one_hit( ch, victim, dt ):
 
     if dt < TYPE_HIT:
         if wield:
-            dam_type = attack_table[wield.value[3]].damage
+            dam_type = const.attack_table[wield.value[3]].damage
         else:
-            dam_type = attack_table[ch.dam_type].damage
+            dam_type = const.attack_table[ch.dam_type].damage
     else:
-        dam_type = attack_table[dt - TYPE_HIT].damage
+        dam_type = const.attack_table[dt - TYPE_HIT].damage
 
     if dam_type == -1:
         dam_type = DAM_BASH
@@ -456,13 +458,13 @@ def damage(ch,victim,dam,dt,dam_type,show):
         check_killer( ch, victim )
 
         if victim.position > POS_STUNNED:
-            if victim.fighting:
+            if not victim.fighting:
                 set_fighting( victim, ch )
             if victim.timer <= 4:
                 victim.position = POS_FIGHTING
 
         if victim.position > POS_STUNNED:
-            if ch.fighting:
+            if not ch.fighting:
                 set_fighting( ch, victim )
         # More charm stuff.
         if victim.master == ch:
@@ -502,7 +504,7 @@ def damage(ch,victim,dam,dt,dam_type,show):
         dam -= dam/3
     elif imm == IS_VULNERABLE:
         dam += dam/2
-    
+    dam = int(dam)
     if show:
         dam_message( ch, victim, dam, dt, immune )
 
@@ -856,6 +858,7 @@ def stop_fighting( ch, fBoth ):
 #
 # * Make a corpse out of a character.
 def make_corpse( ch ):
+    from db import create_object
     if IS_NPC(ch):
         name = ch.short_descr
         corpse      = create_object(get_obj_index(OBJ_VNUM_CORPSE_NPC), 0)
@@ -920,6 +923,7 @@ def make_corpse( ch ):
 #
 # Improved Death_cry contributed by Diavolo.
 def death_cry( ch ):
+    from db import create_object
     vnum = 0
     msg = "You hear $n's death cry."
     num = random.randint(0,7)
@@ -957,14 +961,14 @@ def death_cry( ch ):
         obj = create_object( obj_index_hash[vnum], 0 )
         obj.timer = random.randint( 4, 7 )
 
-    obj.short_descr = obj.short_descr % name
-    obj.description = obj.description % name
-    if obj.item_type == ITEM_FOOD:
-        if IS_SET(ch.form,FORM_POISON):
-            obj.value[3] = 1
-        elif not IS_SET(ch.form,FORM_EDIBLE):
-            obj.item_type = ITEM_TRASH
-        obj_to_room( obj, ch.in_room )
+        obj.short_descr = obj.short_descr % name
+        obj.description = obj.description % name
+        if obj.item_type == ITEM_FOOD:
+            if IS_SET(ch.form,FORM_POISON):
+                obj.value[3] = 1
+            elif not IS_SET(ch.form,FORM_EDIBLE):
+                obj.item_type = ITEM_TRASH
+            obj_to_room( obj, ch.in_room )
 
     if IS_NPC(ch):
         msg = "You hear something's death cry."
@@ -993,8 +997,8 @@ def raw_kill( victim ):
     extract_char( victim, False )
     for af in victim.affected[:]:
         affect_remove( victim, af )
-    victim.affected_by = race_table[victim.race].aff
-    victim.armor[i]= [100 for i in range(4)]
+    victim.affected_by = victim.race.aff
+    victim.armor = [100 for i in range(4)]
     victim.position = POS_RESTING
     victim.hit = max( 1, victim.hit  )
     victim.mana = max( 1, victim.mana )
@@ -1187,12 +1191,13 @@ def dam_message( ch, victim, dam, dt, immune ):
     elif dam <= 125: msg = {'vs':">>> ANNIHILATE <<<", 'vp':">>> ANNIHILATES <<<"}
     elif dam <= 150: msg = {'vs':"<<< ERADICATE >>>", 'vp':"<<< ERADICATES >>>"}
     else: msg = {'vs':"do UNSPEAKABLE things to", 'vp':"does UNSPEAKABLE things to"}
-
-    punct   = '.' if dam <= 24 else '!'
+    vs = msg['vs']
+    vp = msg['vp']
+    punct = '.' if dam <= 24 else '!'
     if dt == TYPE_HIT:
         if ch == victim:
-            buf1 = "$n %s $melf%c" % (msg['vp'],punct)
-            buf2 = "You %s yourself%c" % (msg['vs'],punct)
+            buf1 = "$n %s $melf%c" % (vp,punct)
+            buf2 = "You %s yourself%c" % (vs, punct)
         else:
             buf1 = "$n %s $N%c" % ( vp, punct )
             buf2 = "You %s $N%c" % ( vs, punct )
@@ -1200,12 +1205,12 @@ def dam_message( ch, victim, dam, dt, immune ):
     else:
         if dt >= 0 and dt < MAX_SKILL:
             attack  = skill_table[dt].noun_damage
-        elif dt >= TYPE_HIT and dt < TYPE_HIT + MAX_DAMAGE_MESSAGE:
-            attack = attack_table[dt - TYPE_HIT].noun
+        elif dt >= TYPE_HIT and dt < TYPE_HIT + len(const.attack_table):
+            attack = const.attack_table[dt - TYPE_HIT].noun
         else:
             print ("BUG: Dam_message: bad dt %d.")
             dt = TYPE_HIT
-            attack  = attack_table[0].name
+            attack  = const.attack_table[0].name
         if immune:
             if ch == victim:
                 buf1 = "$n is unaffected by $s own %s." % attack
@@ -1559,6 +1564,7 @@ def do_trip( self, argument ):
     check_killer(ch,victim)
 
 def do_kill( self, argument ):
+    ch = self
     argument, arg = read_word(argument)
 
     if not arg:

@@ -35,6 +35,8 @@ import time
 from merc import *
 import const
 import fight
+import magic
+import nanny
 
 def check_immune(ch,dam_type):
     immune = -1
@@ -1465,12 +1467,12 @@ def get_skill(ch, sn):
         print ("BUG: Bad sn %s in get_skill." % sn)
         skill = 0
     elif not IS_NPC(ch):
-        if ch.level < const.skill_table[sn].skill_level[ch.guild.name]:
+        if ch.level < const.skill_table[sn].skill_level[ch.guild.name] or sn not in ch.pcdata.learned:
             skill = 0
         else:
             skill = ch.pcdata.learned[sn]
     else: # mobiles */
-        if const.skill_table[sn].spell_fun != spell_null:
+        if const.skill_table[sn].spell_fun != magic.spell_null:
             skill = 40 + 2 * ch.level;
         elif sn == 'sneak' or sn == 'hide':
             skill = ch.level * 2 + 20
@@ -1508,7 +1510,7 @@ def get_skill(ch, sn):
         else:
             skill = 0
     if ch.daze > 0:
-        if const.skill_table[sn].spell_fun != spell_null:
+        if const.skill_table[sn].spell_fun != magic.spell_null:
             skill /= 2
         else:
             skill = 2 * skill / 3
@@ -1523,7 +1525,7 @@ def get_weapon_sn(ch):
     wield = get_eq_char(ch, WEAR_WIELD)
     if not wield or wield.item_type != ITEM_WEAPON:
         sn = "hand to hand"
-    if wield.value[0] == WEAPON_SWORD:
+    elif wield.value[0] == WEAPON_SWORD:
         sn = "sword"
     elif wield.value[0] == WEAPON_DAGGER:
         sn = "dagger"
@@ -1553,7 +1555,7 @@ def get_weapon_skill(ch, sn):
             skill = 40 + 2 * ch.level
         else: 
             skill = 40 + 5 * ch.level / 2
-    else:
+    elif sn in ch.pcdata.learned:
         if sn == -1:
             skill = 3 * ch.level
         else:
@@ -1595,13 +1597,13 @@ def get_curr_stat(ch, stat):
     else:
         smax = const.pc_race_table[ch.race.name].max_stats[stat] + 4
 
-    if ch.guild.attr_prime == stat:
-        smax += 2
+        if ch.guild.attr_prime == stat:
+            smax += 2
 
-    if ch.race == const.race_table["human"]:
-        smax += 1
+        if ch.race == const.race_table["human"]:
+            smax += 1
 
-    smax = min(max,25);
+        smax = min(smax,25);
     return min(3, max(ch.perm_stat[stat] + ch.mod_stat[stat], smax))
 
 # command for returning max training score */
@@ -1634,3 +1636,31 @@ def obj_from_char(obj):
     ch.carry_number -= get_obj_number(obj)
     ch.carry_weight -= get_obj_weight(obj)
     return
+
+# * It is very important that this be an equivalence relation:
+# * (1) A ~ A
+# * (2) if A ~ B then B ~ A
+# * (3) if A ~ B  and B ~ C, then A ~ C
+def is_same_group( ach, bch ):
+    if ach == None or bch == None:
+        return False
+
+    if ach.leader != None: ach = ach.leader
+    if bch.leader != None: bch = bch.leader
+    return ach == bch
+
+def wiznet( string, ch, obj, flag, flag_skip, min_level):
+    for d in descriptor_list:
+        if   d.is_connected(nanny.con_playing) \
+        and  IS_IMMORTAL(d.character) \
+        and  IS_SET(d.character.wiznet, WIZ_ON) \
+        and  (not flag or IS_SET(d.character.wiznet,flag)) \
+        and  (not flag_skip or not IS_SET(d.character.wiznet,flag_skip)) \
+        and  get_trust(d.character) >= min_level \
+        and  d.character != ch:
+            if IS_SET(d.character.wiznet,WIZ_PREFIX):
+                d.send("-. ",d.character)
+            act(string,d.character,obj,ch,TO_CHAR,POS_DEAD)
+
+def is_clan(ch):
+    return ch.clan.name != ""

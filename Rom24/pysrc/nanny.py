@@ -34,12 +34,11 @@ import hashlib
 import time
 from merc import *
 from settings import *
-from const import race_table, pc_race_table, guild_table
+from const import race_table, pc_race_table, guild_table, weapon_table, title_table
 from save import load_char_obj
 from db import read_word, create_object
 from skills import *
-from act_wiz import wiznet
-from handler import get_trust, reset_char, obj_to_char, char_to_room, room_is_dark
+from handler import get_trust, reset_char, obj_to_char, char_to_room, room_is_dark, wiznet
 from alias import substitute_alias
 import comm
 

@@ -32,11 +32,11 @@
 """
 from merc import *
 from db import area_update
-from act_wiz import wiznet
 from handler import *
 from comm import act
 from save import save_char_obj
 from fight import violence_update
+import act_move
 # * Advancement stuff.
 
 def advance_level( ch, hide ):
@@ -286,14 +286,14 @@ def mobile_update( ):
         if not IS_SET(ch.act, ACT_SENTINEL)  \
         and random.randint(0,3) == 0  \
         and pexit \
-        and   pexit.u1.to_room \
+        and pexit.to_room \
         and  not IS_SET(pexit.exit_info, EX_CLOSED) \
-        and  not IS_SET(pexit.u1.to_room.room_flags, ROOM_NO_MOB) \
-        and ( not IS_SET(ch.act, ACT_STAY_AREA) or pexit.u1.to_room.area == ch.in_room.area ) \
-        and ( not IS_SET(ch.act, ACT_OUTDOORS) or not IS_SET(pexit.u1.to_room.room_flags,ROOM_INDOORS)) \
+        and  not IS_SET(pexit.to_room.room_flags, ROOM_NO_MOB) \
+        and ( not IS_SET(ch.act, ACT_STAY_AREA) or pexit.to_room.area == ch.in_room.area ) \
+        and ( not IS_SET(ch.act, ACT_OUTDOORS) or not IS_SET(pexit.to_room.room_flags,ROOM_INDOORS)) \
         and ( not IS_SET(ch.act, ACT_INDOORS) \
-        or IS_SET(pexit.u1.to_room.room_flags,ROOM_INDOORS)):
-            move_char( ch, door, False )
+        or IS_SET(pexit.to_room.room_flags,ROOM_INDOORS)):
+            act_move.move_char( ch, door, False )
       
 #
 # * Update the weather.
