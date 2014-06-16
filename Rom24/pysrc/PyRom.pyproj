@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{49134c9f-36b6-469a-a90e-754fb6280b23}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>act_comm.py</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterId />
+    <InterpreterVersion />
+    <PtvsTargetsFile>$(VSToolsPath)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+    <VSToolsPath Condition=" '$(VSToolsPath)' == '' ">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="act_comm.py" />
+    <Compile Include="act_enter.py" />
+    <Compile Include="act_info.py" />
+    <Compile Include="act_move.py" />
+    <Compile Include="act_obj.py" />
+    <Compile Include="act_wiz.py" />
+    <Compile Include="alias.py" />
+    <Compile Include="comm.py" />
+    <Compile Include="const.py" />
+    <Compile Include="db.py" />
+    <Compile Include="effects.py" />
+    <Compile Include="fight.py" />
+    <Compile Include="handler.py" />
+    <Compile Include="healing.py" />
+    <Compile Include="interp.py" />
+    <Compile Include="magic.py" />
+    <Compile Include="merc.py" />
+    <Compile Include="miniboa\async.py" />
+    <Compile Include="miniboa\colors.py" />
+    <Compile Include="miniboa\telnet.py" />
+    <Compile Include="miniboa\terminal.py" />
+    <Compile Include="miniboa\__init__.py" />
+    <Compile Include="nanny.py" />
+    <Compile Include="pyom.py" />
+    <Compile Include="save.py" />
+    <Compile Include="settings.py" />
+    <Compile Include="shell.py" />
+    <Compile Include="skills.py" />
+    <Compile Include="special.py" />
+    <Compile Include="tables.py" />
+    <Compile Include="update.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="miniboa" />
+  </ItemGroup>
+  <Import Project="$(PtvsTargetsFile)" Condition="Exists($(PtvsTargetsFile))" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="!Exists($(PtvsTargetsFile))" />
+</Project>
