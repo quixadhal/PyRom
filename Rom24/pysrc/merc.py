@@ -621,9 +621,13 @@ TO_RESIST = 3
 TO_VULN = 4
 TO_WEAPON = 5
 
+# return values for check_imm */
+IS_NORMAL = 0
+IS_IMMUNE = 1
+IS_RESISTANT = 2
+IS_VULNERABLE = 3
 
 #Item constants
-
 OBJ_VNUM_SILVER_ONE = 1
 OBJ_VNUM_GOLD_ONE = 2
 OBJ_VNUM_GOLD_SOME = 3
@@ -1203,6 +1207,11 @@ boot_time = time.time()
 current_time = 0
 #utility functions
 
+def name_lookup(dict, arg, key='name'):
+    for i, n in dict.iteritems():
+        if n.__dict__[key] == arg:
+            return i
+
 def prefix_lookup(dict, arg):
     if not arg:
         return None
@@ -1452,6 +1461,10 @@ def mult_argument(argument):
     return (int(number), rest)
 
 
+# * Simple linear interpolation.
+def interpolate(level, value_00, value_32):
+    return value_00 + level * (value_32 - value_00) / 32
+
 def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
     if not format:
         return
@@ -1510,7 +1523,7 @@ def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
         act_trans['$d'] = arg2 if not arg2 else "door"
         
         format = mass_replace(format, act_trans)
-        to.send(format+"\r\n")
+        to.send(format+"\n")
     return
 
 #ensureall do_functions become class methods

@@ -32,7 +32,6 @@
 """
 from merc import *
 from db import area_update
-from act_wiz import wiznet
 from handler import *
 from comm import act
 from save import save_char_obj

@@ -353,7 +353,7 @@ def interpret(ch, argument):
     #* Look for command in command table.
     trust = get_trust( ch )
     cmd = prefix_lookup(cmd_table, command)
-    if cmd.level > trust:
+    if cmd and cmd.level > trust:
         cmd = None
  
     #* Log and snoop.

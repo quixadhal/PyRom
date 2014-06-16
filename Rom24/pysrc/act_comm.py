@@ -32,8 +32,7 @@
 """
 
 from merc import *
-from act_wiz import wiznet
-from handler import get_trust, extract_char
+from handler import get_trust, extract_char, wiznet
 from save import save_char_obj
 import comm
 
@@ -1081,15 +1080,3 @@ def do_wizhelp(self, argument):
     if col % 6 != 0:
         ch.send("\n\r")
     return
-
-# * It is very important that this be an equivalence relation:
-# * (1) A ~ A
-# * (2) if A ~ B then B ~ A
-# * (3) if A ~ B  and B ~ C, then A ~ C
-def is_same_group( ach, bch ):
-    if ach == None or bch == None:
-        return False
-
-    if ach.leader != None: ach = ach.leader
-    if bch.leader != None: bch = bch.leader
-    return ach == bch
