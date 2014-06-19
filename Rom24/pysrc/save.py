@@ -49,7 +49,7 @@ def save_char_obj(ch):
     if ch.desc and ch.desc.original:
         ch = ch.desc.original
 
-    pfile = os.path.join(PLAYER_DIR, ch.name + '.js')
+    pfile = os.path.join(PLAYER_DIR, ch.name+'.js')
     #A Quick Quix fix!
     os.makedirs(PLAYER_DIR, 0o755, True)
 
@@ -71,13 +71,14 @@ def save_char_obj(ch):
   #  fclose( fp );
   #  rename(TEMP_FILE,strsave);
   #  fpReserve = fopen( NULL_FILE, "r" );
+
 def load_char_obj(d, name):
     ch = CHAR_DATA()
     ch.pcdata = PC_DATA()
     ch.name = name
     ch.act = 0
     found = False
-    pfile = os.path.join(PLAYER_DIR, name + '.js')
+    pfile = os.path.join(PLAYER_DIR, name+'.js')
     if os.path.isfile(pfile):
         chdict = json.load(open(pfile,'r'))
         ch = fread_char(chdict, ch)
@@ -90,7 +91,7 @@ def load_char_obj(d, name):
     return (found,ch)
     
 
-def fwrite_char(ch):
+def fwrite_char( ch ):
     chdict = OrderedDict()
     chdict['name'] = ch.name
     chdict['id'] = ch.id
@@ -106,7 +107,7 @@ def fwrite_char(ch):
     chdict["Cla"] = ch.guild.name
     chdict["Levl"] = ch.level
     chdict["Tru"] = ch.trust
-    chdict["Plyd"] = ch.played + (int)(current_time - ch.logon)
+    chdict["Plyd"] = ch.played + (int) (current_time - ch.logon)
     chdict["Scro"] = ch.lines
     if ch.in_room.vnum == ROOM_VNUM_LIMBO and ch.was_in_room:
         in_room = ch.was_in_room.vnum
@@ -128,7 +129,7 @@ def fwrite_char(ch):
     chdict["Pos"] = POS_STANDING if ch.position == POS_FIGHTING else ch.position
     chdict["Prac"] = ch.practice
     chdict["Trai"] = ch.train
-    chdict["Save"] = ch.saving_throw
+    chdict["Save"]  = ch.saving_throw
     chdict["Alig"] = ch.alignment
     chdict["Hit"] = ch.hitroll
     chdict["Dam"] = ch.damroll
@@ -156,7 +157,7 @@ def fwrite_char(ch):
 
 def get_if_diff(s1,s2):
     return s1 if s1 != s2 else s2
-def fwrite_obj(ch, obj, contained_by = None):
+def fwrite_obj(ch, obj, contained_by=None):
     odict = OrderedDict()
     odict['Vnum'] = obj.pIndexData.vnum
     odict['Enchanted'] = obj.enchanted
@@ -242,7 +243,7 @@ def fread_char(chdict, ch):
         fread_objs(ch, chdict['carrying'])
     return ch
 
-def fread_objs(carrying, objects, contained_by = None):
+def fread_objs(carrying, objects, contained_by=None):
     for odict in objects:
         obj = fread_obj(carrying, odict)
         if not contained_by:

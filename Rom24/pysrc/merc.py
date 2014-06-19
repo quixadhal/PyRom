@@ -35,7 +35,7 @@
 import time
 import random
 
-#Global MAXes
+#Global MAXes       
 MAX_TRADE = 5
 MAX_GUILDROOMS = 2
 MAX_STATS = 5
@@ -97,7 +97,7 @@ class CHAR_DATA(object):
         self.move = 100
         self.max_move = 100
         self.gold = 0
-        self.silver = 0
+        self.silver =0
         self.exp = 0
         self.act = 0
         self.comm = 0
@@ -237,7 +237,7 @@ class MOB_INDEX_DATA:
         self.size = 0
         self.material = ""
     def __repr__(self):
-        return "<MobIndex: %s:%s>" % (self.short_descr, self.vnum)
+        return "<MobIndex: %s:%s>" % ( self.short_descr, self.vnum )
 
 class OBJ_INDEX_DATA:
     def __init__(self):
@@ -263,6 +263,7 @@ class OBJ_INDEX_DATA:
         return "<ObjIndex: %s:%d>" % (self.short_descr, self.vnum)    
 
 # * One object.
+
 class OBJ_DATA:
     def __init__(self):    
         self.contains = []
@@ -277,8 +278,8 @@ class OBJ_DATA:
         self.enchanted = False
         self.owner = ""
         self.name = ""
-        self.short_descr = ""
-        self.description = ""
+        self.short_descr =""
+        self.description =""
         self.item_type = 0
         self.extra_flags = 0
         self.wear_flags = 0
@@ -319,7 +320,7 @@ class EXTRA_DESCR_DATA:
 
 class EXIT_DATA:
     def __init__(self):    
-        self.to_room = None
+        self.to_room =None
         self.exit_info = 0
         self.key = 0
         self.keyword = ""
@@ -438,7 +439,7 @@ DIR_DOWN = 5
 #Item types
 ITEM_LIGHT = 'light'
 ITEM_SCROLL = 'scroll'
-ITEM_WAND = 'wand'
+ITEM_WAND ='wand'
 ITEM_STAFF = 'staff'
 ITEM_WEAPON = 'weapon'
 ITEM_TREASURE = 'treasure'
@@ -480,7 +481,7 @@ SIZE_MEDIUM = 2
 SIZE_LARGE = 3
 SIZE_HUGE = 4
 SIZE_GIANT = 5
-size_table = ["tiny",  "small", "medium", "large", "huge", "giant"]
+size_table = ["tiny",  "small", "medium", "large", "huge", "giant" ]
 
 # AC types */
 AC_PIERCE = 0
@@ -493,6 +494,7 @@ DICE_TYPE = 1
 DICE_BONUS = 2
 
 #  Target types.
+ 
 TAR_IGNORE = 0
 TAR_CHAR_OFFENSIVE = 1
 TAR_CHAR_DEFENSIVE = 2
@@ -520,6 +522,7 @@ POS_STANDING = 8
 
 # * Sector types.
 # * Used in #ROOMS.
+
 SECT_INSIDE = 0
 SECT_CITY = 1
 SECT_FIELD = 2
@@ -534,6 +537,7 @@ SECT_DESERT = 10
 SECT_MAX = 11
 
 # TO types for act.
+
 TO_ROOM = 0
 TO_NOTVICT = 1
 TO_VICT = 2
@@ -579,6 +583,7 @@ WEAPON_POLEARM = 8
 
 # * Equpiment wear locations.
 # * Used in #RESETS.
+
 WEAR_NONE = -1
 WEAR_LIGHT = 0
 WEAR_FINGER_L = 1
@@ -603,6 +608,7 @@ MAX_WEAR = 19
 
 
 # * Conditions.
+
 COND_DRUNK = 0
 COND_FULL = 1
 COND_THIRST = 2
@@ -623,6 +629,7 @@ IS_RESISTANT = 2
 IS_VULNERABLE = 3
 
 #Item constants
+
 OBJ_VNUM_SILVER_ONE = 1
 OBJ_VNUM_GOLD_ONE = 2
 OBJ_VNUM_GOLD_SOME = 3
@@ -739,15 +746,16 @@ zz = 1 << 52
 
 #  ACT bits for mobs.
 #  Used in #MOBILES.
-ACT_IS_NPC = A  # Auto set for mobs */
-ACT_SENTINEL = B #  Stays in one room */
+
+ACT_IS_NPC = A  # Auto set for mobs    */
+ACT_SENTINEL = B #  Stays in one room    */
 ACT_SCAVENGER = C  # Picks up objects */
-ACT_AGGRESSIVE = F   # Attacks PC's */
+ACT_AGGRESSIVE = F   # Attacks PC's     */
 ACT_STAY_AREA = G    # Won't leave area */
 ACT_WIMPY = H
-ACT_PET = I     # Auto set for pets */
-ACT_TRAIN = J     # Can train PC's */
-ACT_PRACTICE = K     # Can practice PC's */
+ACT_PET = I     # Auto set for pets    */
+ACT_TRAIN = J     # Can train PC's   */
+ACT_PRACTICE = K     # Can practice PC's    */
 ACT_UNDEAD = O 
 ACT_CLERIC = Q
 ACT_MAGE = R
@@ -918,6 +926,7 @@ PART_TUSKS = Y
 
 # Bits for 'affected_by'.
 # Used in #MOBILES.
+
 AFF_BLIND = A
 AFF_INVISIBLE = B
 AFF_DETECT_EVIL = C
@@ -952,6 +961,7 @@ AFF_SLOW = dd
 
 # Extra flags.
 # Used in #OBJECTS.
+
 ITEM_GLOW = A
 ITEM_HUM = B
 ITEM_DARK = C
@@ -981,6 +991,7 @@ ITEM_NOUNCURSE = Z
 
 # Wear flags.
 # Used in #OBJECTS.
+
 ITEM_TAKE = A
 ITEM_WEAR_FINGER = B
 ITEM_WEAR_NECK = C
@@ -1096,6 +1107,7 @@ ROOM_NOWHERE = T
 
 # Exit flags.
 # Used in #ROOMS.
+
 EX_ISDOOR = A
 EX_CLOSED = B
 EX_LOCKED = C
@@ -1109,6 +1121,7 @@ EX_NOLOCK = L
 
 
 # ACT bits for players.
+
 PLR_IS_NPC = A     # Don't EVER set.  */
 
 # RT auto flags */
@@ -1195,7 +1208,8 @@ MEM_AFRAID = D
 boot_time = time.time()
 current_time = 0
 #utility functions
-def name_lookup(dict, arg, key = 'name'):
+
+def name_lookup(dict, arg, key='name'):
     for i, n in dict.items():
         if n.__dict__[key] == arg:
             return i
@@ -1251,14 +1265,14 @@ def IS_HERO(ch):
 def IS_TRUSTED(ch,level):
     from handler import get_trust
     return get_trust(ch) >= level
-def is_affected(ch, sn):
+def is_affected( ch, sn ):
     return True if [paf for paf in ch.affected if paf.type == sn ][:1] else False
 
 def IS_AFFECTED(ch, bit):
     return IS_SET(ch.affected_by, bit)
 
 def GET_AGE(ch):
-    return int((17 + (ch.played + time.time() - ch.logon) / 72000))
+    return int((17 + (ch.played + time.time() - ch.logon)/72000))
 
 def IS_GOOD(ch):
     return ch.alignment >= 350
@@ -1275,20 +1289,20 @@ def IS_AWAKE(ch):
 def GET_AC(ch,type):
     from const import dex_app
     from handler import get_curr_stat
-    return (ch.armor[type] + (dex_app[get_curr_stat(ch,STAT_DEX)].defensive if IS_AWAKE(ch) else 0))
+    return (ch.armor[type] + ( dex_app[get_curr_stat(ch,STAT_DEX)].defensive if IS_AWAKE(ch) else 0 ) )
 
 def GET_HITROLL(ch):
     from const import str_app
     from handler import get_curr_stat
-    return ((ch.hitroll + str_app[get_curr_stat(ch,STAT_STR)].tohit))
+    return ( ( ch.hitroll+str_app[ get_curr_stat(ch,STAT_STR)].tohit) )
 
 def GET_DAMROLL(ch):
     from const import str_app
     from handler import get_curr_stat
-    return ((ch.damroll + str_app[get_curr_stat(ch,STAT_STR)].todam))
+    return ( (ch.damroll+str_app[get_curr_stat(ch,STAT_STR)].todam) )
 
 def IS_OUTSIDE(ch):
-    return not IS_SET(ch.in_room.room_flags, ROOM_INDOORS)
+    return not IS_SET( ch.in_room.room_flags, ROOM_INDOORS )
 
 def WAIT_STATE(ch, npulse):
     ch.wait = max(ch.wait, npulse)
@@ -1297,12 +1311,13 @@ def DAZE_STATE(ch, npulse):
     ch.daze = max(ch.daze, npulse)
 
 def get_carry_weight(ch):
-    return ch.carry_weight + (ch.silver / 10 + (ch.gold * 2 / 5))
+    return ch.carry_weight + (ch.silver/10 + (ch.gold * 2 / 5) )
 
 
  # Object macros.
+
 def CAN_WEAR(obj, part):
-    return IS_SET(obj.wear_flags,  part)
+    return IS_SET( obj.wear_flags,  part)
 
 def IS_OBJ_STAT(obj, stat):
     return IS_SET(obj.extra_flags, stat)
@@ -1312,10 +1327,10 @@ def WEIGHT_MULT(obj):
     return obj.value[4] if obj.item_type is ITEM_CONTAINER else 100
 
 def dice(number, size):
-    return sum([ random.randint(1, size) for x in range(number) ])
+    return sum( [ random.randint(1, size ) for x in range(number) ])
 
 def number_fuzzy(number):
-    return random.randint(number - 1, number + 1)
+    return random.randint(number-1, number+1)
 
 def set_title(ch, title):
     if IS_NPC(ch):
@@ -1340,11 +1355,11 @@ def read_word(str, lower = True):
     str = str.lstrip()
     word = str.split()[0]
     if word[0] == "'":
-        word = str[:str.find("'", 1) + 1]
+        word = str[:str.find("'", 1)+1]
     if lower:
         word = word.lower()
     str = str.lstrip()
-    str = str[len(word) + 1:]
+    str = str[len(word)+1:]
     return (str, word.strip())
 
 def read_int(str):
@@ -1359,15 +1374,15 @@ def read_int(str):
         elif c.isdigit():
             number += c
         else:
-            break
+            break;
 
     str = str.lstrip()
     if not negative:
         str = str[len(number):]
-        return (str, int(number))
+        return (str, int(number) )
     else:
-        str = str[len(number) + 1:]
-        return (str, int(number) * -1)
+        str = str[len(number)+1:]
+        return (str, int(number)*-1 )
 
 def read_string(str):
     if not str:
@@ -1375,7 +1390,7 @@ def read_string(str):
     end = str.find('~')
     word = str[0:end]
     
-    str = str[end + 1:]
+    str = str[end+1:]
 
     return (str, word.strip())
 
@@ -1395,13 +1410,13 @@ def read_flags(str):
             flag = 1
             while c != 'A':
                 flag *= 2
-                c = chr(ord(c) - 1)
+                c = chr( ord(c)-1 )
 
         elif 'a' <= c and c <= 'z':
             flag = 2 ** 26
             while c != 'a':
                 flag *= 2
-                c = chr(ord(c) - 1)
+                c = chr( ord(c)-1 )
         flags += flag
     return (str, flags)
 
@@ -1409,34 +1424,34 @@ def read_to_eol(str):
     str = str.split('\n')
     line = str.pop(0)
     str = "\n".join(str)
-    return (str, line)
+    return (str, line);
 
 
 
 # * Given a string like 14.foo, return 14 and 'foo'
-def number_argument(argument):
+def number_argument( argument ):
     if '.' not in argument:
         return (1, argument)
 
     dot = argument.find('.')
     number = argument[:dot]
     if number.isdigit():
-        return (int(number), argument[dot + 1:])
+        return (int(number), argument[dot+1:])
     return (1, argument)
 
-def check_blind(ch):
+def check_blind( ch ):
     if not IS_NPC(ch) and IS_SET(ch.act,PLR_HOLYLIGHT):
         return True
 
     if IS_AFFECTED(ch, AFF_BLIND):
-        ch.send("You can't see a thing!\n\r") 
+        ch.send( "You can't see a thing!\n\r") 
         return False 
     return True
 
 def get_mob_id():
     return time.time()
 
-def number_door():
+def number_door( ):
     return random.randint(0,5)
 
 def CH(d): return d.original if d.original else d.character
@@ -1453,7 +1468,7 @@ def mult_argument(argument):
     number = argument[:mult]
     if not number.isdigit():
         return (1, argument)
-    rest = argument[mult + 1:]
+    rest = argument[mult+1:]
     return (int(number), rest)
 
 
@@ -1475,7 +1490,7 @@ def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
 
     if send_to is TO_VICT:
         if not vch:
-            print("Act: null vict with TO_VICT: " + format)
+            print ("Act: null vict with TO_VICT: " + format)
             return
         if not vch.in_room:
             return
@@ -1486,7 +1501,7 @@ def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
             continue
         if send_to is TO_CHAR and to is not ch:
             continue
-        if send_to is TO_VICT and (to is not vch or to is ch):
+        if send_to is TO_VICT and ( to is not vch or to is ch ):
             continue
         if send_to is TO_ROOM and to is ch:
             continue
@@ -1515,7 +1530,7 @@ def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
         act_trans['$d'] = arg2 if not arg2 else "door"
         
         format = mass_replace(format, act_trans)
-        to.send(format + "\n")
+        to.send(format+"\n")
     return
 
 #ensureall do_functions become class methods

@@ -110,7 +110,7 @@ def init_descriptor(d):
     descriptor_list.append(d)
 
 #Check if already playing.
-def check_playing(d, name):
+def check_playing( d, name ):
     for dold in descriptor_list:
         if dold != d and dold.character \
         and dold.connected != con_get_name \
@@ -123,9 +123,9 @@ def check_playing(d, name):
     return False
 
 #Look for link-dead player to reconnect.
-def check_reconnect(d, name, fConn):
+def check_reconnect( d, name, fConn ):
     for ch in char_list:
-        if not IS_NPC(ch) and (not fConn or not ch.desc) \
+        if not IS_NPC(ch) and ( not fConn or not ch.desc) \
         and d.character.name == ch.name:
             if fConn == False:
                 d.character.pcdata.pwd = ch.pcdata.pwd
@@ -136,8 +136,8 @@ def check_reconnect(d, name, fConn):
                 ch.desc = d
                 ch.timer = 0
                 ch.send("Reconnecting. Type replay to see missed tells.\n")
-                act("$n has reconnected.", ch, NULL, NULL, TO_ROOM)
-                print("%s@%s reconnected." % (ch.name, d.host))
+                act( "$n has reconnected.", ch, NULL, NULL, TO_ROOM )
+                print ("%s@%s reconnected." % (ch.name, d.host))
                 wiznet("$N groks the fullness of $S link.",ch,None,WIZ_LINKS,0,0)
                 d.set_connected(con_playing)
             return True
@@ -150,7 +150,7 @@ def close_socket(d):
 
 #* Bust a prompt (player settable prompt)
 #* coded by Morgenes for Aldara Mud
-def bust_a_prompt(ch):
+def bust_a_prompt( ch ):
     dir_name = ["N","E","S","W","U","D"]
     doors = ""
     str = ch.prompt
@@ -191,20 +191,20 @@ def bust_a_prompt(ch):
         replace['%a'] = "%s" % "good" if IS_GOOD(ch) else "evil" if IS_EVIL(ch) else "neutral"
     
     if ch.in_room:
-        if (not IS_NPC(ch) and IS_SET(ch.act,PLR_HOLYLIGHT)) or \
-        (not IS_AFFECTED(ch,AFF_BLIND) and not room_is_dark(ch.in_room)):
+        if ( not IS_NPC(ch) and IS_SET(ch.act,PLR_HOLYLIGHT)) or \
+        (not IS_AFFECTED(ch,AFF_BLIND) and not room_is_dark( ch.in_room )):
             replace['%r'] = ch.in_room.name 
         else: 
             replace['%r'] = "darkness"
     else:
         replace['%r'] = " "
      
-    if IS_IMMORTAL(ch) and ch.in_room:
+    if IS_IMMORTAL( ch ) and ch.in_room:
         replace['%R'] = "%d" % ch.in_room.vnum 
     else:
         replace['%R'] = " "
     
-    if IS_IMMORTAL(ch) and ch.in_room:
+    if IS_IMMORTAL( ch ) and ch.in_room:
         replace['%z'] = "%s" % ch.in_room.area.name
     else:
         replace['%z'] = " "
@@ -229,7 +229,7 @@ def game_loop(server):
     from update import update_handler
     boot_db()
 
-    print("\nPyom is ready to rock on port %d\n" % server.port)
+    print ("\nPyom is ready to rock on port %d\n" % server.port)
 
     while True: 
         server.poll()

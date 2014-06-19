@@ -43,12 +43,12 @@ from miniboa.terminal import word_wrap
 #
 # Side A begins with:
 #
-#    "IAC WILL/WONT XX" Meaning "I would like to [use|not use] option XX."
+#    "IAC WILL/WONT XX"   Meaning "I would like to [use|not use] option XX."
 #
 # Side B replies with either:
 #
-#    "IAC DO XX" Meaning "OK, you may use option XX."
-#    "IAC DONT XX" Meaning "No, you cannot use option XX."
+#    "IAC DO XX"     Meaning "OK, you may use option XX."
+#    "IAC DONT XX"   Meaning "No, you cannot use option XX."
 #
 #
 # Negotiating a Remote Option
@@ -56,12 +56,12 @@ from miniboa.terminal import word_wrap
 #
 # Side A begins with:
 #
-#    "IAC DO/DONT XX" Meaning "I would like YOU to [use|not use] option XX."
+#    "IAC DO/DONT XX"  Meaning "I would like YOU to [use|not use] option XX."
 #
 # Side B replies with either:
 #
-#    "IAC WILL XX" Meaning "I will begin using option XX"
-#    "IAC WONT XX" Meaning "I will not begin using option XX"
+#    "IAC WILL XX"   Meaning "I will begin using option XX"
+#    "IAC WONT XX"   Meaning "I will not begin using option XX"
 #
 #
 # The syntax is designed so that if both parties receive simultaneous requests
@@ -73,47 +73,52 @@ from miniboa.terminal import word_wrap
 
 
 #--[ Global Constants ]--------------------------------------------------------
+
 UNKNOWN = -1
 ## Cap sockets to 500 on Windows because winsock can only process 512 at time
 ## Cap sockets to 1000 on Linux because you can only have 1024 file descriptors
 MAX_CONNECTIONS = 500 if sys.platform == 'win32' else 1000
 
 #--[ Telnet Commands ]---------------------------------------------------------
-SE = chr(240)      # End of subnegotiation parameters
-NOP = chr(241)      # No operation
-DATMK = chr(242)      # Data stream portion of a sync.
-BREAK = chr(243)      # NVT Character BRK
-IP = chr(244)      # Interrupt Process
-AO = chr(245)      # Abort Output
-AYT = chr(246)      # Are you there
-EC = chr(247)      # Erase Character
-EL = chr(248)      # Erase Line
-GA = chr(249)      # The Go Ahead Signal
-SB = chr(250)      # Sub-option to follow
-WILL = chr(251)      # Will; request or confirm option begin
-WONT = chr(252)      # Wont; deny option request
-DO = chr(253)      # Do = Request or confirm remote option
-DONT = chr(254)      # Don't = Demand or confirm option halt
-IAC = chr(255)      # Interpret as Command
-SEND = chr(1)      # Sub-process negotiation SEND command
-IS = chr(0)      # Sub-process negotiation IS command
+
+SE      = chr(240)      # End of subnegotiation parameters
+NOP     = chr(241)      # No operation
+DATMK   = chr(242)      # Data stream portion of a sync.
+BREAK   = chr(243)      # NVT Character BRK
+IP      = chr(244)      # Interrupt Process
+AO      = chr(245)      # Abort Output
+AYT     = chr(246)      # Are you there
+EC      = chr(247)      # Erase Character
+EL      = chr(248)      # Erase Line
+GA      = chr(249)      # The Go Ahead Signal
+SB      = chr(250)      # Sub-option to follow
+WILL    = chr(251)      # Will; request or confirm option begin
+WONT    = chr(252)      # Wont; deny option request
+DO      = chr(253)      # Do = Request or confirm remote option
+DONT    = chr(254)      # Don't = Demand or confirm option halt
+IAC     = chr(255)      # Interpret as Command
+SEND    = chr(  1)      # Sub-process negotiation SEND command
+IS      = chr(  0)      # Sub-process negotiation IS command
 
 #--[ Telnet Options ]----------------------------------------------------------
-BINARY = chr(0)      # Transmit Binary
-ECHO = chr(1)      # Echo characters back to sender
-RECON = chr(2)      # Reconnection
-SGA = chr(3)      # Suppress Go-Ahead
-TTYPE = chr(24)      # Terminal Type
-NAWS = chr(31)      # Negotiate About Window Size
-LINEMO = chr(34)      # Line Mode
+
+BINARY  = chr(  0)      # Transmit Binary
+ECHO    = chr(  1)      # Echo characters back to sender
+RECON   = chr(  2)      # Reconnection
+SGA     = chr(  3)      # Suppress Go-Ahead
+TTYPE   = chr( 24)      # Terminal Type
+NAWS    = chr( 31)      # Negotiate About Window Size
+LINEMO  = chr( 34)      # Line Mode
 
 #--[ Connection Lost ]---------------------------------------------------------
+
 class ConnectionLost(Exception):
     """
     Custom exception to signal a lost connection to the Telnet Server.
     """
 
 #--[ Telnet Option ]-----------------------------------------------------------
+
 class TelnetOption(object):
     """
     Simple class used to track the status of an extended Telnet option.
@@ -125,6 +130,7 @@ class TelnetOption(object):
 
 
 #--[ Telnet Client ]-----------------------------------------------------------
+
 class TelnetClient(object):
     """
     Represents a client connection via Telnet.
@@ -178,15 +184,14 @@ class TelnetClient(object):
             self.cmd_ready = False
         return cmd
 
-    def send(self, text, wrap = None, terminal = 'ansi'):
+    def send(self, text, wrap=None, terminal='ansi'):
         """
         Send raw text to the distant end.
         """
         if text:
             text = text.replace('\n\r', '\n') # DikuMUD got their line endings backwards
             text = text.replace('\r\n', '\n') # This is correct for TELNET, but we need to ensure
-                                              # that "\r\n" doesn't become
-                                                                                           # "\r\n\n" later.
+                                              # that "\r\n" doesn't become "\r\n\n" later.
             if wrap:
                 text = '\n'.join(word_wrap(text, wrap)) # Note self.columns is negotiated
             if terminal:
@@ -317,7 +322,7 @@ class TelnetClient(object):
         ## Did they close the connection?
         size = len(data)
         if size == 0:
-            logging.debug("No data recieved, client closed connection")
+            logging.debug ("No data recieved, client closed connection")
             raise ConnectionLost()
 
         ## Update some trackers
@@ -336,7 +341,7 @@ class TelnetClient(object):
             cmd = self.recv_buffer[:mark].strip()
             self.command_list.append(cmd)
             self.cmd_ready = True
-            self.recv_buffer = self.recv_buffer[mark + 1:]
+            self.recv_buffer = self.recv_buffer[mark+1:]
 
     def _recv_byte(self, byte):
         """
@@ -491,7 +496,8 @@ class TelnetClient(object):
                     self._note_reply_pending(option, False)
                     self._note_local_option(option, True)
 
-                elif (self._check_local_option(option) is False or self._check_local_option(option) is UNKNOWN):
+                elif (self._check_local_option(option) is False or
+                        self._check_local_option(option) is UNKNOWN):
                     self._note_local_option(option, True)
                     self._iac_will(option)
                     ## Just nod unless setting echo
@@ -511,7 +517,8 @@ class TelnetClient(object):
                     self._note_reply_pending(option, False)
                     self._note_local_option(option, False)
 
-                elif (self._check_local_option(option) is True or self._check_local_option(option) is UNKNOWN):
+                elif (self._check_local_option(option) is True or
+                        self._check_local_option(option) is UNKNOWN):
                     self._note_local_option(option, False)
                     self._iac_wont(option)
                     ## Just nod unless setting echo
@@ -537,7 +544,8 @@ class TelnetClient(object):
                     self._note_reply_pending(option, False)
                     self._note_remote_option(option, True)
 
-                elif (self._check_remote_option(option) is False or self._check_remote_option(option) is UNKNOWN):
+                elif (self._check_remote_option(option) is False or
+                        self._check_remote_option(option) is UNKNOWN):
                     self._note_remote_option(option, True)
                     self._iac_do(option)
                     ## Client should respond with SB (for NAWS)
@@ -549,15 +557,15 @@ class TelnetClient(object):
                     ## Tell them to send their terminal type
                     self.send("{}{}{}{}{}{}".format(IAC, SB, TTYPE, SEND, IAC, SE))
 
-                elif (self._check_remote_option(TTYPE) is False or self._check_remote_option(TTYPE) is UNKNOWN):
+                elif (self._check_remote_option(TTYPE) is False or
+                        self._check_remote_option(TTYPE) is UNKNOWN):
                     self._note_remote_option(TTYPE, True)
                     self._iac_do(TTYPE)
 
         elif cmd == WONT:
             if option == ECHO:
 
-                ## Client states it wont echo us -- good, they're not supposes
-                ## to.
+                ## Client states it wont echo us -- good, they're not supposes to.
                 if self._check_remote_option(ECHO) is UNKNOWN:
                     self._note_remote_option(ECHO, False)
                     self._iac_dont(ECHO)
@@ -568,7 +576,8 @@ class TelnetClient(object):
                     self._note_reply_pending(option, False)
                     self._note_remote_option(option, False)
 
-                elif (self._check_remote_option(option) is True or self._check_remote_option(option) is UNKNOWN):
+                elif (self._check_remote_option(option) is True or
+                        self._check_remote_option(option) is UNKNOWN):
                     self._note_remote_option(option, False)
                     self._iac_dont(option)
 

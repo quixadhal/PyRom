@@ -39,26 +39,27 @@ from save import save_char_obj
 from fight import violence_update, damage
 import act_move
 # * Advancement stuff.
-def advance_level(ch, hide):
-    ch.pcdata.last_level = (ch.played + (int)(current_time - ch.logon)) / 3600
 
-    buf = "the %s" % (title_table[ch.guild][ch.level][1 if ch.sex == SEX_FEMALE else 0])
-    set_title(ch, buf)
+def advance_level( ch, hide ):
+    ch.pcdata.last_level = ( ch.played + (int) (current_time - ch.logon) ) / 3600
 
-    add_hp = con_app[get_curr_stat(ch,STAT_CON)].hitp + random.randint(ch.guild.hp_min, ch.guild.hp_max)
-    add_mana = random.randint(2, (2 * get_curr_stat(ch,STAT_INT) + get_curr_stat(ch,STAT_WIS)) / 5)
+    buf = "the %s" % ( title_table [ch.guild ] [ch.level] [1 if ch.sex == SEX_FEMALE else 0] )
+    set_title( ch, buf )
+
+    add_hp = con_app[get_curr_stat(ch,STAT_CON)].hitp + random.randint( ch.guild.hp_min, ch.guild.hp_max )
+    add_mana = random.randint( 2, (2*get_curr_stat(ch,STAT_INT) + get_curr_stat(ch,STAT_WIS))/5)
     if not ch.guild.fMana:
         add_mana /= 2
-    add_move = random.randint(1, (get_curr_stat(ch,STAT_CON) + get_curr_stat(ch,STAT_DEX)) / 6)
-    add_prac = wis_app[get_curr_stat(ch,STAT_WIS)].practice
+    add_move    = random.randint( 1, (get_curr_stat(ch,STAT_CON) + get_curr_stat(ch,STAT_DEX))/6 )
+    add_prac    = wis_app[get_curr_stat(ch,STAT_WIS)].practice
 
-    add_hp = add_hp * 9 / 10
-    add_mana = add_mana * 9 / 10
-    add_move = add_move * 9 / 10
+    add_hp = add_hp * 9/10
+    add_mana = add_mana * 9/10
+    add_move = add_move * 9/10
 
-    add_hp = max(2, add_hp)
-    add_mana = max(2, add_mana)
-    add_move = max(6, add_move)
+    add_hp = max(  2, add_hp   )
+    add_mana = max(  2, add_mana )
+    add_move = max(  6, add_move )
 
     ch.max_hit     += add_hp
     ch.max_mana    += add_mana
@@ -71,23 +72,24 @@ def advance_level(ch, hide):
     ch.pcdata.perm_move   += add_move
 
     if not hide:
-        ch.send("You gain %d hit point%s, %d mana, %d move, and %d practice%s.\n" % (add_hp, "" if add_hp == 1 else "s", add_mana, add_move, add_prac, "" if add_prac == 1 else "s"))
+        ch.send("You gain %d hit point%s, %d mana, %d move, and %d practice%s.\n" % ( 
+            add_hp, "" if add_hp == 1 else "s", add_mana, add_move, add_prac, "" if add_prac == 1 else "s") )
 
-def gain_exp(ch, gain):
+def gain_exp( ch, gain ):
     if IS_NPC(ch) or ch.level >= LEVEL_HERO:
         return
 
-    ch.exp = max(exp_per_level(ch,ch.pcdata.points), ch.exp + gain)
-    while ch.level < LEVEL_HERO and ch.exp >= exp_per_level(ch,ch.pcdata.points) * (ch.level + 1):
+    ch.exp = max( exp_per_level(ch,ch.pcdata.points), ch.exp + gain )
+    while ch.level < LEVEL_HERO and ch.exp >= exp_per_level(ch,ch.pcdata.points) * (ch.level+1):
         ch.send("You raise a level!!  ")
         ch.level += 1
-        print("%s gained level %d\r\n" % (ch.name,ch.level))
+        print ("%s gained level %d\r\n" % (ch.name,ch.level))
         wiznet("$N has attained level %d!" % ch.level,ch,None,WIZ_LEVELS,0,0)
         advance_level(ch,False)
         save_char_obj(ch)
 
 # * Regeneration stuff.
-def hit_gain(ch):
+def hit_gain( ch ):
     if not ch.in_room:
         return 0
 
@@ -96,12 +98,12 @@ def hit_gain(ch):
         if IS_AFFECTED(ch,AFF_REGENERATION):
             gain *= 2
 
-        if ch.position == POS_SLEEPING:  gain = 3 * gain / 2
+        if ch.position == POS_SLEEPING:  gain = 3 * gain/2
         elif ch.position == POS_RESTING: pass
         elif ch.position == POS_FIGHTING:  gain /= 3
         else: gain /= 2
     else:
-        gain = max(3,get_curr_stat(ch,STAT_CON) - 3 + ch.level / 2) 
+        gain = max(3,get_curr_stat(ch,STAT_CON) - 3 + ch.level/2) 
         gain += ch.guild.hp_max - 10
         number = random.randint(1,99)
         if number < get_skill(ch,'fast healing'):
@@ -136,13 +138,13 @@ def hit_gain(ch):
 
     return int(min(gain, ch.max_hit - ch.hit))
 
-def mana_gain(ch):
+def mana_gain( ch ):
     if ch.in_room == None:
         return 0
 
     if IS_NPC(ch):
         gain = 5 + ch.level
-        if ch.position == POS_SLEEPING: 3 * gain / 2
+        if ch.position == POS_SLEEPING: 3 * gain/2
         elif ch.position == POS_RESTING: pass
         elif ch.position == POS_FIGHTING:  gain /= 3
         else: gain /= 2
@@ -172,7 +174,7 @@ def mana_gain(ch):
     if ch.on and ch.on.item_type == ITEM_FURNITURE:
         gain = gain * ch.on.value[4] / 100
 
-    if IS_AFFECTED(ch, AFF_POISON):
+    if IS_AFFECTED( ch, AFF_POISON ):
         gain /= 4
 
     if IS_AFFECTED(ch, AFF_PLAGUE):
@@ -183,14 +185,14 @@ def mana_gain(ch):
 
     return int(min(gain, ch.max_mana - ch.mana))
 
-def move_gain(ch):
+def move_gain( ch ):
     if not ch.in_room:
         return 0
 
     if IS_NPC(ch):
         gain = ch.level
     else:
-        gain = max(15, ch.level)
+        gain = max( 15, ch.level )
     
         if ch.position == POS_SLEEPING: gain += get_curr_stat(ch,STAT_DEX)
         elif ch.position == POS_RESTING: gain += get_curr_stat(ch,STAT_DEX) / 2
@@ -202,7 +204,7 @@ def move_gain(ch):
             gain /= 2
     
 
-    gain = gain * ch.in_room.heal_rate / 100
+    gain = gain * ch.in_room.heal_rate/100
 
     if ch.on and ch.on.item_type == ITEM_FURNITURE:
         gain = gain * ch.on.value[3] / 100
@@ -218,14 +220,14 @@ def move_gain(ch):
 
     return int(min(gain, ch.max_move - ch.move))
 
-def gain_condition(ch, iCond, value):
+def gain_condition( ch, iCond, value ):
     if value == 0 or IS_NPC(ch) or ch.level >= LEVEL_IMMORTAL:
         return
     
     condition = ch.pcdata.condition[iCond]
     if condition == -1:
         return
-    ch.pcdata.condition[iCond] = min(0, max(condition + value, 48))
+    ch.pcdata.condition[iCond]    = min( 0, max(condition + value, 48 ))
 
     if ch.pcdata.condition[iCond] == 0:
         if iCond == COND_HUNGER:
@@ -240,8 +242,8 @@ def gain_condition(ch, iCond, value):
 # * Mob autonomous action.
 # * This function takes 25% to 35% of ALL Merc cpu time.
 # * -- Furey
-def mobile_update():
-    # Examine all mobs.  */
+def mobile_update( ):
+    # Examine all mobs. */
     for ch in char_list[:]:
         if not IS_NPC(ch) or ch.in_room == None or IS_AFFECTED(ch,AFF_CHARM):
             continue
@@ -251,13 +253,13 @@ def mobile_update():
 
         # Examine call for special procedure */
         if ch.spec_fun:
-            if ch.spec_fun(ch):
+            if ch.spec_fun( ch ):
                 continue
 
         if ch.pIndexData.pShop: # give him some gold */
             if (ch.gold * 100 + ch.silver) < ch.pIndexData.wealth:
-                ch.gold += ch.pIndexData.wealth * random.randint(1,20) / 5000000
-                ch.silver += ch.pIndexData.wealth * random.randint(1,20) / 50000
+                ch.gold += ch.pIndexData.wealth * random.randint(1,20)/5000000
+                ch.silver += ch.pIndexData.wealth * random.randint(1,20)/50000
      
 
         # That's all for sleeping / busy monster, and empty zones */
@@ -286,8 +288,8 @@ def mobile_update():
         and random.randint(0,3) == 0  \
         and pexit \
         and pexit.to_room \
-        and not IS_SET(pexit.exit_info, EX_CLOSED) \
-        and not IS_SET(pexit.to_room.room_flags, ROOM_NO_MOB) \
+        and  not IS_SET(pexit.exit_info, EX_CLOSED) \
+        and  not IS_SET(pexit.to_room.room_flags, ROOM_NO_MOB) \
         and (not IS_SET(ch.act, ACT_STAY_AREA) or pexit.to_room.area == ch.in_room.area) \
         and (not IS_SET(ch.act, ACT_OUTDOORS) or not IS_SET(pexit.to_room.room_flags,ROOM_INDOORS)) \
         and (not IS_SET(ch.act, ACT_INDOORS) \
@@ -296,7 +298,7 @@ def mobile_update():
       
 #
 # * Update the weather.
-def weather_update():
+def weather_update( ):
     buf = ""
     time_info.hour += 1
     if time_info.hour == 5:
@@ -315,7 +317,7 @@ def weather_update():
         time_info.hour = 0
         time_info.day += 1
 
-    if time_info.day >= 35:
+    if time_info.day   >= 35:
         time_info.day = 0
         time_info.month += 1
     if time_info.month >= 17:
@@ -326,7 +328,7 @@ def weather_update():
     #
      #* Weather change.
     if time_info.month >= 9 and time_info.month <= 16:
-        diff = -2 if weather_info.mmhg > 985 else 2
+        diff = -2 if weather_info.mmhg >  985 else 2
     else:
         diff = -2 if weather_info.mmhg > 1015 else 2
 
@@ -335,33 +337,33 @@ def weather_update():
     weather_info.change = min(weather_info.change,  12)
 
     weather_info.mmhg += weather_info.change
-    weather_info.mmhg = max(weather_info.mmhg,  960)
-    weather_info.mmhg = min(weather_info.mmhg, 1040)
+    weather_info.mmhg  = max(weather_info.mmhg,  960)
+    weather_info.mmhg  = min(weather_info.mmhg, 1040)
 
     if weather_info.sky == SKY_CLOUDLESS:
-        if weather_info.mmhg < 990 or (weather_info.mmhg < 1010 and random.randint(0,  2) == 0):
+        if weather_info.mmhg <  990 or ( weather_info.mmhg < 1010 and random.randint(0,  2 ) == 0 ):
             buf += "The sky is getting cloudy.\n"
             weather_info.sky = SKY_CLOUDY
     elif weather_info.sky == SKY_CLOUDY:
-        if weather_info.mmhg < 970 or (weather_info.mmhg < 990 and random.randint(0, 2) == 0):
+        if weather_info.mmhg <  970 or ( weather_info.mmhg <  990 and random.randint(0, 2 ) == 0 ):
             buf += "It starts to rain.\n"
             weather_info.sky = SKY_RAINING
-        if weather_info.mmhg > 1030 and random.randint(0, 2) == 0:
+        if weather_info.mmhg > 1030 and random.randint(0, 2 ) == 0:
             buf += "The clouds disappear.\n"
             weather_info.sky = SKY_CLOUDLESS
     elif weather_info.sky == SKY_RAINING:
-        if weather_info.mmhg < 970 and number_bits(2) == 0:
-            strcat(buf, "Lightning flashes in the sky.\n")
+        if weather_info.mmhg <  970 and number_bits( 2 ) == 0:
+            strcat( buf, "Lightning flashes in the sky.\n" )
             weather_info.sky = SKY_LIGHTNING
-        if weather_info.mmhg > 1030 or (weather_info.mmhg > 1010 and random.randint(0, 2) == 0):
-            strcat(buf, "The rain stopped.\n")
+        if weather_info.mmhg > 1030 or ( weather_info.mmhg > 1010 and random.randint(0, 2) == 0 ):
+            strcat( buf, "The rain stopped.\n" )
             weather_info.sky = SKY_CLOUDY
     elif weather_info.sky == SKY_LIGHTNING:
-        if weather_info.mmhg > 1010 or (weather_info.mmhg > 990 and random.randint(0, 2) == 0):
-            strcat(buf, "The lightning has stopped.\n")
+        if weather_info.mmhg > 1010 or ( weather_info.mmhg >  990 and random.randint(0, 2 ) == 0 ):
+            strcat( buf, "The lightning has stopped.\n" )
             weather_info.sky = SKY_RAINING
     else:
-        print("Bug: Weather_update: bad sky %d." % weather_info.sky)
+        print ("Bug: Weather_update: bad sky %d." % weather_info.sky)
         weather_info.sky = SKY_CLOUDLESS
 
     if buf:
@@ -373,7 +375,7 @@ def weather_update():
 save_number = 0
 #
 # * Update all chars, including mobs.
-def char_update():
+def char_update( ):
     # update save counter */
     global save_number
     save_number += 1
@@ -393,7 +395,7 @@ def char_update():
                 extract_char(ch,True)
                 continue
 
-        if ch.hit < ch.max_hit:
+        if ch.hit  < ch.max_hit:
             ch.hit += hit_gain(ch)
         else:
             ch.hit = ch.max_hit
@@ -410,7 +412,7 @@ def char_update():
 
 
         if ch.position == POS_STUNNED:
-            update_pos(ch)
+            update_pos( ch )
 
         if not IS_NPC(ch) and ch.level < LEVEL_IMMORTAL:
             obj = get_eq_char(ch, WEAR_LIGHT)
@@ -418,9 +420,9 @@ def char_update():
                 obj.value[2] -= 1
                 if obj.value[2] == 0 and ch.in_room != None:
                     ch.in_room.light -= 1
-                    act("$p goes out.", ch, obj, None, TO_ROOM)
-                    act("$p flickers and goes out.", ch, obj, None, TO_CHAR)
-                    extract_obj(obj)
+                    act( "$p goes out.", ch, obj, None, TO_ROOM )
+                    act( "$p flickers and goes out.", ch, obj, None, TO_CHAR )
+                    extract_obj( obj )
                 elif obj.value[2] <= 5 and ch.in_room:
                     act("$p flickers.",ch,obj,None,TO_CHAR)
 
@@ -431,20 +433,20 @@ def char_update():
                 if not ch.was_in_room and ch.in_room:
                     ch.was_in_room = ch.in_room
                     if ch.fighting:
-                        stop_fighting(ch, True)
-                    act("$n disappears into the void.", ch, None, None, TO_ROOM)
+                        stop_fighting( ch, True )
+                    act( "$n disappears into the void.", ch, None, None, TO_ROOM )
                     ch.send("You disappear into the void.\n") 
                     if ch.level > 1:
-                        save_char_obj(ch)
-                    char_from_room(ch)
-                    char_to_room(ch, room_index_hash[ROOM_VNUM_LIMBO])
+                        save_char_obj( ch )
+                    char_from_room( ch )
+                    char_to_room( ch, room_index_hash[ROOM_VNUM_LIMBO] )
 
 
 
-            gain_condition(ch, COND_DRUNK, -1)
-            gain_condition(ch, COND_FULL, -4 if ch.size > SIZE_MEDIUM else -2)
-            gain_condition(ch, COND_THIRST, -1)
-            gain_condition(ch, COND_HUNGER, -2 if ch.size > SIZE_MEDIUM else -1)
+            gain_condition( ch, COND_DRUNK, -1 )
+            gain_condition( ch, COND_FULL, -4 if ch.size > SIZE_MEDIUM else -2 )
+            gain_condition( ch, COND_THIRST, -1 )
+            gain_condition( ch, COND_HUNGER, -2 if ch.size > SIZE_MEDIUM else -1)
 
 
         for paf in ch.affected[:]:
@@ -455,16 +457,16 @@ def char_update():
             elif paf.duration < 0:
                 pass
             else:
-                #multiple affects.  don't send the spelldown msg
+                #multiple affects. don't send the spelldown msg
                 multi = [a for a in ch.affected if a.type == paf.type and a is not paf and a.duration > 0]
                 if not multi and paf.type > 0 and skill_table[paf.type].msg_off:
-                    ch.send(skill_table[paf.type].msg_off + "\n")
+                    ch.send(skill_table[paf.type].msg_off+"\n")
          
-                affect_remove(ch, paf)
+                affect_remove( ch, paf )
     #
      #* Careful with the damages here,
-     #* MUST NOT refer to ch after damage taken,
-     #* as it may be lethal damage (on NPC).
+     #*   MUST NOT refer to ch after damage taken,
+     #*   as it may be lethal damage (on NPC).
      #*/
 
         if is_affected(ch, 'plague') and ch:
@@ -481,11 +483,11 @@ def char_update():
                 continue
             plague = AFFECT_DATA()    
             plague.where = TO_AFFECTS
-            plague.type = gsn_plague
+            plague.type  = gsn_plague
             plague.level = af.level - 1 
             plague.duration = random.randint(1, 2 * plague.level)
             plague.location = APPLY_STR
-            plague.modifier = -5
+            plague.modifier =-5
             plague.bitvector = AFF_PLAGUE
         
             for vch in ch.in_room.people:
@@ -494,7 +496,7 @@ def char_update():
                     vch.send("You feel hot and feverish.\n")
                     act("$n shivers and looks very ill.",vch,None,None,TO_ROOM)
                     affect_join(vch,plague)
-            dam = min(ch.level,af.level / 5 + 1)
+            dam = min(ch.level,af.level/5+1)
             ch.mana -= dam
             ch.move -= dam
             damage(ch, ch, dam, gsn_plague, DAM_DISEASE, False)
@@ -503,7 +505,7 @@ def char_update():
             if poison:
                 act("$n shivers and suffers.", ch, None, None, TO_ROOM)
                 ch.send("You shiver and suffer.\n")
-                damage(ch,ch,poison.level / 10 + 1,gsn_poison, DAM_POISON,False)
+                damage(ch,ch,poison.level/10 + 1,gsn_poison, DAM_POISON,False)
         elif ch.position == POS_INCAP and random.randint(0,1) == 0:
             damage(ch, ch, 1, TYPE_UNDEFINED, DAM_NONE, False)
         elif ch.position == POS_MORTAL:
@@ -523,7 +525,7 @@ def char_update():
  # Update all objs.
  # This function is performance sensitive.
 #
-def obj_update():
+def obj_update( ):
     for obj in object_list[:]:
         # go through affects and decrement */
         for paf in obj.affected[:]:
@@ -542,7 +544,7 @@ def obj_update():
 
                     if obj.in_room != None and obj.in_room.people:
                         act(skill_table[paf.type].msg_obj, obj.in_room.people ,obj,None,TO_ALL)
-                affect_remove_obj(obj, paf)
+                affect_remove_obj( obj, paf )
         obj.timer -= 1
         if obj.timer <= 0 or obj.timer > 0:
             continue
@@ -564,18 +566,18 @@ def obj_update():
         else: message = "$p crumbles into dust."
 
         if obj.carried_by:
-            if IS_NPC(obj.carried_by) and obj.carried_by.pIndexData.pShop:
-                obj.carried_by.silver += obj.cost / 5
+            if IS_NPC(obj.carried_by) and  obj.carried_by.pIndexData.pShop:
+                obj.carried_by.silver += obj.cost/5
             else:
-                act(message, obj.carried_by, obj, None, TO_CHAR)
+                act( message, obj.carried_by, obj, None, TO_CHAR )
                 if obj.wear_loc == WEAR_FLOAT:
                     act(message,obj.carried_by,obj,None,TO_ROOM)
         elif obj.in_room and obj.in_room.people:
             if not (obj.in_obj and obj.in_obj.pIndexData.vnum == OBJ_VNUM_PIT and not CAN_WEAR(obj.in_obj,ITEM_TAKE)):
-                act(message, obj.in_room.people[:1], obj, None, TO_ROOM)
-                act(message, obj.in_room.people[:1], obj, None, TO_CHAR)
+                act( message, obj.in_room.people[:1], obj, None, TO_ROOM )
+                act( message, obj.in_room.people[:1], obj, None, TO_CHAR )
 
-        if (obj.item_type == ITEM_CORPSE_PC or obj.wear_loc == WEAR_FLOAT) and obj.contains:
+        if (obj.item_type == ITEM_CORPSE_PC or obj.wear_loc == WEAR_FLOAT) and  obj.contains:
             # save the contents */
             for t_obj in obj.contains[:]:
                 obj_from_obj(t_obj)
@@ -595,23 +597,23 @@ def obj_update():
                 else: # to a room */
                     obj_to_room(t_obj,obj.in_room)
 
-        extract_obj(obj)
+        extract_obj( obj )
     return
 #
 # * Aggress.
 # *
 # * for each mortal PC
-# * for each mob in room
-# * aggress on some random PC
+# *     for each mob in room
+# *         aggress on some random PC
 # *
 # * This function takes 25% to 35% of ALL Merc cpu time.
 # * Unfortunately, checking on each PC move is too tricky,
-# * because we don't the mob to just attack the first PC
-# * who leads the party into the room.
+# *   because we don't the mob to just attack the first PC
+# *   who leads the party into the room.
 # *
 # * -- Furey
 # */
-def aggr_update():
+def aggr_update( ):
     for wch in char_list[:]:
         if IS_NPC(wch) \
         or wch.level >= LEVEL_IMMORTAL \
@@ -627,45 +629,44 @@ def aggr_update():
             or ch.fighting != None \
             or IS_AFFECTED(ch, AFF_CHARM) \
             or not IS_AWAKE(ch) \
-            or (IS_SET(ch.act, ACT_WIMPY) and IS_AWAKE(wch)) \
-            or not can_see(ch, wch)  \
+            or ( IS_SET(ch.act, ACT_WIMPY) and IS_AWAKE(wch) ) \
+            or not can_see( ch, wch )  \
             or random.randint(0,1) == 0:
                 continue
 
             #
-            #    * Ok we have a 'wch' player character and a 'ch' npc
-            #    aggressor.
+            #    * Ok we have a 'wch' player character and a 'ch' npc aggressor.
             #    * Now make the aggressor fight a RANDOM pc victim in the room,
-            #    * giving each 'vch' an equal chance of selection.
-            count = 0
+            #    *   giving each 'vch' an equal chance of selection.
+            count   = 0
             victim = None
             for vch in wch.in_room.people[:]:
                 if not IS_NPC(vch) \
-                and vch.level < LEVEL_IMMORTAL \
-                and ch.level >= vch.level - 5  \
-                and (not IS_SET(ch.act, ACT_WIMPY) or not IS_AWAKE(vch)) \
-                and can_see(ch, vch):
-                    if random.randint(0, count) == 0:
+                and   vch.level < LEVEL_IMMORTAL \
+                and   ch.level >= vch.level - 5  \
+                and   ( not IS_SET(ch.act, ACT_WIMPY) or not IS_AWAKE(vch) ) \
+                and   can_see( ch, vch ):
+                    if random.randint( 0, count ) == 0:
                         victim = vch
                     count += 1
 
             if not victim:
                 continue
 
-            multi_hit(ch, victim, TYPE_UNDEFINED)
+            multi_hit( ch, victim, TYPE_UNDEFINED )
 
 #
 # * Handle all kinds of updates.
 # * Called once per pulse from game loop.
 # * Random times to defeat tick-timing clients and players.
 # */
-pulse_area = 0
-pulse_mobile = 0
-pulse_violence = 0
-pulse_point = 0
+pulse_area=0
+pulse_mobile=0
+pulse_violence=0
+pulse_point=0
 
 
-def update_handler():
+def update_handler( ):
     global pulse_area
     global pulse_mobile
     global pulse_violence
@@ -678,18 +679,18 @@ def update_handler():
 
 
     if pulse_area <= 0:
-        pulse_area = PULSE_AREA
-        area_update()
+        pulse_area  = PULSE_AREA
+        area_update ( )
     if pulse_mobile <= 0:
-        pulse_mobile = PULSE_MOBILE
-        mobile_update()
+        pulse_mobile    = PULSE_MOBILE
+        mobile_update   ( )
     if pulse_violence <= 0:
-        pulse_violence = PULSE_VIOLENCE
-        violence_update()
+        pulse_violence  = PULSE_VIOLENCE
+        violence_update ( )
     if pulse_point <= 0:
         wiznet("TICK!",None,None,WIZ_TICKS,0,0)
-        pulse_point = PULSE_TICK
-        #weather_update ( )
-        char_update()
-        obj_update()
-    aggr_update()
+        pulse_point     = PULSE_TICK
+        #weather_update  ( )
+        char_update ( )
+        obj_update  ( )
+    aggr_update( )
