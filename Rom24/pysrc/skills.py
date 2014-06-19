@@ -55,9 +55,9 @@ def do_gain(self, argument):
 
     if "list".startswith(arg):
         col = 0
-        ch.send("%-18s %-5s %-18s %-5s %-18s %-5s\n" % ("group","cost","group","cost","group","cost") )
+        ch.send("%-18s %-5s %-18s %-5s %-18s %-5s\n" % ("group","cost","group","cost","group","cost"))
         for gn,group in const.group_table.items():
-            if gn not in ch.pcdata.group_known and  group.rating[ch.guild.name] > 0:
+            if gn not in ch.pcdata.group_known and group.rating[ch.guild.name] > 0:
                 ch.send("%-18s %-5d " % group.name,group.rating[ch.guild.name])
                 col+=1
                 if (col % 3) == 0:
@@ -73,8 +73,8 @@ def do_gain(self, argument):
  
         for sn,skill in const.skill_table.items():
             if sn not in ch.pcdata.learned \
-            and  skill.rating[ch.guild.name] > 0 \
-            and  skill.spell_fun == spell_null:
+            and skill.rating[ch.guild.name] > 0 \
+            and skill.spell_fun == spell_null:
                 ch.send("%-18s %-5d " % (const.skill_table[sn].name,skill.rating[ch.guild.name]))
                 col += 1
                 if (col % 3) == 0:
@@ -198,16 +198,16 @@ def do_spells(self, argument):
     for sn, skill in const.skill_table.items():
         level = skill.skill_level[ch.guild.name]
         if level < LEVEL_HERO + 1 \
-        and  (fAll or level <= ch.level) \
-        and  level >= min_lev and level <= max_lev \
-        and  skill.spell_fun != spell_null \
-        and  sn in ch.pcdata.learned:
+        and (fAll or level <= ch.level) \
+        and level >= min_lev and level <= max_lev \
+        and skill.spell_fun != spell_null \
+        and sn in ch.pcdata.learned:
             found = True
             level = skill.skill_level[ch.guild.name]
             if ch.level < level:
                 buf = "%-18s  n/a      " % skill.name
             else:
-                mana = max(skill.min_mana, 100/(2 + ch.level - level))
+                mana = max(skill.min_mana, 100 / (2 + ch.level - level))
                 buf = "%-18s  %3d mana  " % (skill.name,mana)
  
             if level not in spell_list:
@@ -229,7 +229,7 @@ def do_spells(self, argument):
     ch.send("\n")
 
 # recursively adds a group given its number -- uses group_add */
-def gn_add( ch, gn):
+def gn_add(ch, gn):
     ch.pcdata.group_known[gn.name] = True
     for i in gn.spells:
         if not i:
@@ -237,7 +237,7 @@ def gn_add( ch, gn):
         group_add(ch,i,False)
 
 # recusively removes a group given its number -- uses group_remove */
-def gn_remove( ch, gn):
+def gn_remove(ch, gn):
     if gn.name in ch.pcdata.group_known:
         del ch.pcdata.group_known[gn.name]
 
@@ -246,14 +246,14 @@ def gn_remove( ch, gn):
             return
         group_remove(ch,i)
 
-# use for processing a skill or group for addition  */
-def group_add( ch, name, deduct):
+# use for processing a skill or group for addition */
+def group_add(ch, name, deduct):
     if IS_NPC(ch): # NPCs do not have skills */
         return
     
     if name in const.skill_table:
         sn = const.skill_table[name]
-        if sn.name not in ch.pcdata.learned: # i.e. not known */
+        if sn.name not in ch.pcdata.learned: # i.e.  not known */
             ch.pcdata.learned[sn.name] = 1
         if deduct:
             ch.pcdata.points += sn.rating[ch.guild.name] 
@@ -271,8 +271,7 @@ def group_add( ch, name, deduct):
         gn_add(ch,gn) # make sure all skills in the group are known */
 
 
-# used for processing a skill or group for deletion -- no points back! */
-
+# used for processing a skill or group for deletion -- no points back!  */
 def group_remove(ch, name):
     
     if name in const.skill_table:
@@ -288,7 +287,6 @@ def group_remove(ch, name):
         if gn.name in ch.pcdata.group_known:
             del ch.pcdata.group_known[gn.name]
             gn_remove(ch,gn) # be sure to call gn_add on all remaining groups */
-
 def do_skills(self, argument):
     ch = self 
     if IS_NPC(ch):
@@ -332,10 +330,10 @@ def do_skills(self, argument):
     for sn, skill in const.skills_table.items():
         level = skill.skill_level[ch.guild.name]
         if level < LEVEL_HERO + 1 \
-        and  (fAll or level <= ch.level) \
-        and  level >= min_lev and level <= max_lev \
-        and  skill.spell_fun == spell_null \
-        and  sn in ch.pcdata.learned:
+        and (fAll or level <= ch.level) \
+        and level >= min_lev and level <= max_lev \
+        and skill.spell_fun == spell_null \
+        and sn in ch.pcdata.learned:
             found = True
             level = skill.skill_level[ch.guild.name]
             if ch.level < level:
@@ -344,7 +342,7 @@ def do_skills(self, argument):
                 buf = "%-18s %3d%%      " % (skill.name, ch.pcdata.learned[sn])
  
             if level not in skill_list:
-                skill_list[level] =  "\nLevel %2d: %s" % (level,buf)
+                skill_list[level] = "\nLevel %2d: %s" % (level,buf)
                 skill_columns[level] = 0
             else: # append */
                 skill_columns[level] += 1
@@ -385,14 +383,14 @@ def list_group_costs(ch):
     for sn, skill in const.skill_table.items():
         if sn not in ch.gen_data.skill_chosen \
         and sn not in ch.pcdata.learned \
-        and  skill.spell_fun == spell_null \
-        and  skill.rating[ch.guild.name] > 0:
+        and skill.spell_fun == spell_null \
+        and skill.rating[ch.guild.name] > 0:
             ch.send("%-18s %-5d " % (skill.name, skill.rating[ch.guild.name]))
             col += 1
             if col % 3 == 0:
                 ch.send("\n")
     if  col % 3 != 0:
-        ch.send( "\n" )
+        ch.send("\n")
     ch.send("\n")
 
     ch.send("Creation points: %d\n" % ch.pcdata.points)
@@ -407,12 +405,12 @@ def list_group_chosen(ch):
  
     for gn, group in const.group_table.items():
         if gn in ch.gen_data.group_chosen and group.rating[ch.guild.name] > 0:
-            ch.send("%-18s %-5d " % (group.name, group.rating[ch.guild.name]) )
+            ch.send("%-18s %-5d " % (group.name, group.rating[ch.guild.name]))
             col += 1
             if col % 3 == 0:
                 ch.send("\n")
     if col % 3 != 0:
-        ch.send( "\n" )
+        ch.send("\n")
     ch.send("\n")
  
     col = 0
@@ -421,12 +419,12 @@ def list_group_chosen(ch):
 
     for sn, skill in const.skill_table.items():
         if sn in ch.gen_data.skill_chosen and skill.rating[ch.guild.name] > 0:
-            ch.send("%-18s %-5d " % ( skill.name, skill.rating[ch.guild.name]) )
+            ch.send("%-18s %-5d " % (skill.name, skill.rating[ch.guild.name]))
             col += 1
             if col % 3 == 0:
                 ch.send("\n")
     if col % 3 != 0:
-        ch.send( "\n" )
+        ch.send("\n")
     ch.send("\n")
  
     ch.send("Creation points: %d\n" % ch.gen_data.points_chosen)
@@ -441,7 +439,7 @@ def exp_per_level(ch, points):
     inc = 500
 
     if points < 40:
-        return 1000 * const.pc_race_table[ch.race.name].class_mult[ch.guild.name]/100 if const.pc_race_table[ch.race.name].class_mult[ch.guild.name] else 1
+        return 1000 * const.pc_race_table[ch.race.name].class_mult[ch.guild.name] / 100 if const.pc_race_table[ch.race.name].class_mult[ch.guild.name] else 1
 
     # processing */
     points -= 40
@@ -456,7 +454,7 @@ def exp_per_level(ch, points):
 
     expl += points * inc / 10
 
-    return expl * const.pc_race_table[ch.race.name].class_mult[ch.guild.name]/100
+    return expl * const.pc_race_table[ch.race.name].class_mult[ch.guild.name] / 100
 
 # this procedure handles the input parsing for the skill generator */
 def parse_gen_groups(ch, argument):
@@ -586,7 +584,7 @@ def do_groups(self, argument):
                 if col % 3 == 0:
                     ch.send("\n")
         if col % 3 != 0:
-            ch.send( "\n" )
+            ch.send("\n")
         ch.send("Creation points: %d\n" % ch.pcdata.points)
         return
 
@@ -597,7 +595,7 @@ def do_groups(self, argument):
             if col % 3 == 0:
                 ch.send("\n")
         if col % 3 != 0:
-            ch.send( "\n" )
+            ch.send("\n")
         return
      
     # show the sub-members of a group */
@@ -615,19 +613,19 @@ def do_groups(self, argument):
         if col % 3 == 0:
             ch.send("\n")
     if col % 3 != 0:
-        ch.send( "\n" )
+        ch.send("\n")
 
 
 # checks for skill improvement */
-def check_improve( ch, sn, success, multiplier ):
+def check_improve(ch, sn, success, multiplier):
     if IS_NPC(ch):
         return
 
-    if ch.level <const.skill_table[sn].skill_level[ch.guild.name] \
+    if ch.level < const.skill_table[sn].skill_level[ch.guild.name] \
     or const.skill_table[sn].rating[ch.guild.name] == 0 \
-    or  sn not in ch.pcdata.learned \
-    or  ch.pcdata.learned[sn] == 100:
-        return  # skill is not known */ 
+    or sn not in ch.pcdata.learned \
+    or ch.pcdata.learned[sn] == 100:
+        return  # skill is not known */
 
     # check to see if the character has a chance to learn */
     chance = 10 * int_app[get_curr_stat(ch,STAT_INT)].learn
@@ -637,7 +635,7 @@ def check_improve( ch, sn, success, multiplier ):
     if random.randint(1,1000) > chance:
         return
 
-    # now that the character has a CHANCE to learn, see if they really have */ 
+    # now that the character has a CHANCE to learn, see if they really have */
 
     if success:
         chance = min(5, max(100 - ch.pcdata.learned[sn], 95))
@@ -646,7 +644,7 @@ def check_improve( ch, sn, success, multiplier ):
             ch.pcdata.learned[sn] += 1
             gain_exp(ch,2 * sn.rating[ch.guild.name])
     else:
-        chance = min(5, max(ch.pcdata.learned[sn]/2,30))
+        chance = min(5, max(ch.pcdata.learned[sn] / 2,30))
         if random.randint(1,99) < chance:
             ch.send("You learn from your mistakes, and your %s skill improves.\n" % const.skill_table[sn].name)
             ch.pcdata.learned[sn] += random.randint(1,3)

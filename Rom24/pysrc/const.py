@@ -39,45 +39,45 @@ class race_type:
     def __init__(self, name, pc_race, act, aff, off, imm, res, vuln, form, parts):
         self.name = name
         self.pc_race = pc_race
-        self.act=act
-        self.aff=aff
-        self.off=off
-        self.imm=imm
-        self.res=res
-        self.vuln=vuln
-        self.form=form
-        self.parts=parts
+        self.act = act
+        self.aff = aff
+        self.off = off
+        self.imm = imm
+        self.res = res
+        self.vuln = vuln
+        self.form = form
+        self.parts = parts
 
 race_table = OrderedDict()
 race_table["unique"] = race_type("unique", False, 0, 0, 0, 0, 0, 0, 0, 0)
-race_table["human"] = race_type("human", True, 0, 0, 0, 0, 0, 0, A|H|M|V, A|B|C|D|E|F|G|H|I|J|K)
-race_table["elf"] = race_type("elf", True, 0, AFF_INFRARED, 0, 0, RES_CHARM, VULN_IRON, A|H|M|V, A|B|C|D|E|F|G|H|I|J|K)
-race_table["dwarf"] = race_type("dwarf", True, 0, AFF_INFRARED, 0, 0, RES_POISON|RES_DISEASE, VULN_DROWNING, A|H|M|V, A|B|C|D|E|F|G|H|I|J|K)
-race_table["giant"] = race_type("giant", True, 0, 0, 0, 0, RES_FIRE|RES_COLD, VULN_MENTAL|VULN_LIGHTNING, A|H|M|V,  A|B|C|D|E|F|G|H|I|J|K)
-race_table["bat"] = race_type("bat", False, 0, AFF_FLYING|AFF_DARK_VISION, OFF_DODGE|OFF_FAST, 0, 0, VULN_LIGHT, A|G|V, A|C|D|E|F|H|J|K|P)
-race_table["bear"] = race_type("bear", False, 0, 0, OFF_CRUSH|OFF_DISARM|OFF_BERSERK, 0, RES_BASH|RES_COLD, 0, A|G|V, A|B|C|D|E|F|H|J|K|U|V)
-race_table["cat"] = race_type("cat", False, 0, AFF_DARK_VISION, OFF_FAST|OFF_DODGE, 0, 0, 0, A|G|V, A|C|D|E|F|H|J|K|Q|U|V) 
-race_table["centipede"] = race_type("centipede", False, 0, AFF_DARK_VISION, 0, 0, RES_PIERCE|RES_COLD, VULN_BASH, A|B|G|O, A|C|K) 
-race_table["dog"] = race_type("dog", False, 0, 0, OFF_FAST, 0, 0, 0, A|G|V, A|C|D|E|F|H|J|K|U|V) 
-race_table["doll"] = race_type("doll", False, 0, 0, 0, IMM_COLD|IMM_POISON|IMM_HOLY|IMM_NEGATIVE|IMM_MENTAL|IMM_DISEASE |IMM_DROWNING, RES_BASH|RES_LIGHT, VULN_SLASH|VULN_FIRE|VULN_ACID|VULN_LIGHTNING|VULN_ENERGY, E|J|M|cc, A|B|C|G|H|K) 
-race_table["dragon"] = race_type("dragon", False, 0, AFF_INFRARED|AFF_FLYING, 0, 0, RES_FIRE|RES_BASH|RES_CHARM, VULN_PIERCE|VULN_COLD, A|H|Z, A|C|D|E|F|G|H|I|J|K|P|Q|U|V|X) 
-race_table["fido"] = race_type("fido", False, 0, 0, OFF_DODGE|ASSIST_RACE, 0, 0, VULN_MAGIC, A|B|G|V, A|C|D|E|F|H|J|K|Q|V) 
-race_table["fox"] = race_type("fox", False, 0, AFF_DARK_VISION, OFF_FAST|OFF_DODGE, 0, 0, 0, A|G|V, A|C|D|E|F|H|J|K|Q|V) 
-race_table["goblin"] = race_type("goblin", False, 0, AFF_INFRARED, 0, 0, RES_DISEASE, VULN_MAGIC, A|H|M|V, A|B|C|D|E|F|G|H|I|J|K) 
-race_table["hobgoblin"] = race_type("hobgoblin", False, 0, AFF_INFRARED, 0, 0, RES_DISEASE|RES_POISON, 0, A|H|M|V, A|B|C|D|E|F|G|H|I|J|K|Y) 
-race_table["kobold"] = race_type("kobold", False, 0, AFF_INFRARED, 0, 0, RES_POISON, VULN_MAGIC, A|B|H|M|V, A|B|C|D|E|F|G|H|I|J|K|Q) 
-race_table["lizard"] = race_type("lizard", False, 0, 0, 0, 0, RES_POISON, VULN_COLD, A|G|X|cc, A|C|D|E|F|H|K|Q|V) 
-race_table["modron"] = race_type("modron", False, 0, AFF_INFRARED, ASSIST_RACE|ASSIST_ALIGN, IMM_CHARM|IMM_DISEASE|IMM_MENTAL|IMM_HOLY|IMM_NEGATIVE, RES_FIRE|RES_COLD|RES_ACID, 0, H, A|B|C|G|H|J|K) 
-race_table["orc"] = race_type("orc", False, 0, AFF_INFRARED, 0, 0, RES_DISEASE, VULN_LIGHT, A|H|M|V, A|B|C|D|E|F|G|H|I|J|K) 
-race_table["pig"] = race_type("pig", False, 0, 0, 0, 0, 0, 0, A|G|V, A|C|D|E|F|H|J|K) 
-race_table["rabbit"] = race_type("rabbit", False, 0, 0, OFF_DODGE|OFF_FAST, 0, 0, 0, A|G|V, A|C|D|E|F|H|J|K)
-race_table["school monster"] = race_type("school monster", False, ACT_NOALIGN, 0, 0, IMM_CHARM|IMM_SUMMON, 0, VULN_MAGIC, A|M|V, A|B|C|D|E|F|H|J|K|Q|U) 
-race_table["snake"] = race_type("snake", False, 0, 0, 0, 0, RES_POISON, VULN_COLD, A|G|X|Y|cc, A|D|E|F|K|L|Q|V|X)
-race_table["song bird"] = race_type("song bird", False, 0, AFF_FLYING, OFF_FAST|OFF_DODGE, 0, 0, 0, A|G|W, A|C|D|E|F|H|K|P) 
-race_table["troll"] = race_type("troll", False, 0, AFF_REGENERATION|AFF_INFRARED|AFF_DETECT_HIDDEN, OFF_BERSERK, 0, RES_CHARM|RES_BASH, VULN_FIRE|VULN_ACID, A|B|H|M|V, A|B|C|D|E|F|G|H|I|J|K|U|V) 
-race_table["water fowl"] = race_type("water fowl", False, 0, AFF_SWIM|AFF_FLYING, 0, 0, RES_DROWNING, 0, A|G|W, A|C|D|E|F|H|K|P) 
-race_table["wolf"] = race_type("wolf", False, 0, AFF_DARK_VISION, OFF_FAST|OFF_DODGE, 0, 0, 0, A|G|V, A|C|D|E|F|J|K|Q|V) 
-race_table["wyvern"] = race_type("wyvern", False, 0, AFF_FLYING|AFF_DETECT_INVIS|AFF_DETECT_HIDDEN, OFF_BASH|OFF_FAST|OFF_DODGE, IMM_POISON, 0, VULN_LIGHT, A|B|G|Z, A|C|D|E|F|H|J|K|Q|V|X) 
+race_table["human"] = race_type("human", True, 0, 0, 0, 0, 0, 0, A | H | M | V, A | B | C | D | E | F | G | H | I | J | K)
+race_table["elf"] = race_type("elf", True, 0, AFF_INFRARED, 0, 0, RES_CHARM, VULN_IRON, A | H | M | V, A | B | C | D | E | F | G | H | I | J | K)
+race_table["dwarf"] = race_type("dwarf", True, 0, AFF_INFRARED, 0, 0, RES_POISON | RES_DISEASE, VULN_DROWNING, A | H | M | V, A | B | C | D | E | F | G | H | I | J | K)
+race_table["giant"] = race_type("giant", True, 0, 0, 0, 0, RES_FIRE | RES_COLD, VULN_MENTAL | VULN_LIGHTNING, A | H | M | V,  A | B | C | D | E | F | G | H | I | J | K)
+race_table["bat"] = race_type("bat", False, 0, AFF_FLYING | AFF_DARK_VISION, OFF_DODGE | OFF_FAST, 0, 0, VULN_LIGHT, A | G | V, A | C | D | E | F | H | J | K | P)
+race_table["bear"] = race_type("bear", False, 0, 0, OFF_CRUSH | OFF_DISARM | OFF_BERSERK, 0, RES_BASH | RES_COLD, 0, A | G | V, A | B | C | D | E | F | H | J | K | U | V)
+race_table["cat"] = race_type("cat", False, 0, AFF_DARK_VISION, OFF_FAST | OFF_DODGE, 0, 0, 0, A | G | V, A | C | D | E | F | H | J | K | Q | U | V) 
+race_table["centipede"] = race_type("centipede", False, 0, AFF_DARK_VISION, 0, 0, RES_PIERCE | RES_COLD, VULN_BASH, A | B | G | O, A | C | K) 
+race_table["dog"] = race_type("dog", False, 0, 0, OFF_FAST, 0, 0, 0, A | G | V, A | C | D | E | F | H | J | K | U | V) 
+race_table["doll"] = race_type("doll", False, 0, 0, 0, IMM_COLD | IMM_POISON | IMM_HOLY | IMM_NEGATIVE | IMM_MENTAL | IMM_DISEASE | IMM_DROWNING, RES_BASH | RES_LIGHT, VULN_SLASH | VULN_FIRE | VULN_ACID | VULN_LIGHTNING | VULN_ENERGY, E | J | M | cc, A | B | C | G | H | K) 
+race_table["dragon"] = race_type("dragon", False, 0, AFF_INFRARED | AFF_FLYING, 0, 0, RES_FIRE | RES_BASH | RES_CHARM, VULN_PIERCE | VULN_COLD, A | H | Z, A | C | D | E | F | G | H | I | J | K | P | Q | U | V | X) 
+race_table["fido"] = race_type("fido", False, 0, 0, OFF_DODGE | ASSIST_RACE, 0, 0, VULN_MAGIC, A | B | G | V, A | C | D | E | F | H | J | K | Q | V) 
+race_table["fox"] = race_type("fox", False, 0, AFF_DARK_VISION, OFF_FAST | OFF_DODGE, 0, 0, 0, A | G | V, A | C | D | E | F | H | J | K | Q | V) 
+race_table["goblin"] = race_type("goblin", False, 0, AFF_INFRARED, 0, 0, RES_DISEASE, VULN_MAGIC, A | H | M | V, A | B | C | D | E | F | G | H | I | J | K) 
+race_table["hobgoblin"] = race_type("hobgoblin", False, 0, AFF_INFRARED, 0, 0, RES_DISEASE | RES_POISON, 0, A | H | M | V, A | B | C | D | E | F | G | H | I | J | K | Y) 
+race_table["kobold"] = race_type("kobold", False, 0, AFF_INFRARED, 0, 0, RES_POISON, VULN_MAGIC, A | B | H | M | V, A | B | C | D | E | F | G | H | I | J | K | Q) 
+race_table["lizard"] = race_type("lizard", False, 0, 0, 0, 0, RES_POISON, VULN_COLD, A | G | X | cc, A | C | D | E | F | H | K | Q | V) 
+race_table["modron"] = race_type("modron", False, 0, AFF_INFRARED, ASSIST_RACE | ASSIST_ALIGN, IMM_CHARM | IMM_DISEASE | IMM_MENTAL | IMM_HOLY | IMM_NEGATIVE, RES_FIRE | RES_COLD | RES_ACID, 0, H, A | B | C | G | H | J | K) 
+race_table["orc"] = race_type("orc", False, 0, AFF_INFRARED, 0, 0, RES_DISEASE, VULN_LIGHT, A | H | M | V, A | B | C | D | E | F | G | H | I | J | K) 
+race_table["pig"] = race_type("pig", False, 0, 0, 0, 0, 0, 0, A | G | V, A | C | D | E | F | H | J | K) 
+race_table["rabbit"] = race_type("rabbit", False, 0, 0, OFF_DODGE | OFF_FAST, 0, 0, 0, A | G | V, A | C | D | E | F | H | J | K)
+race_table["school monster"] = race_type("school monster", False, ACT_NOALIGN, 0, 0, IMM_CHARM | IMM_SUMMON, 0, VULN_MAGIC, A | M | V, A | B | C | D | E | F | H | J | K | Q | U) 
+race_table["snake"] = race_type("snake", False, 0, 0, 0, 0, RES_POISON, VULN_COLD, A | G | X | Y | cc, A | D | E | F | K | L | Q | V | X)
+race_table["song bird"] = race_type("song bird", False, 0, AFF_FLYING, OFF_FAST | OFF_DODGE, 0, 0, 0, A | G | W, A | C | D | E | F | H | K | P) 
+race_table["troll"] = race_type("troll", False, 0, AFF_REGENERATION | AFF_INFRARED | AFF_DETECT_HIDDEN, OFF_BERSERK, 0, RES_CHARM | RES_BASH, VULN_FIRE | VULN_ACID, A | B | H | M | V, A | B | C | D | E | F | G | H | I | J | K | U | V) 
+race_table["water fowl"] = race_type("water fowl", False, 0, AFF_SWIM | AFF_FLYING, 0, 0, RES_DROWNING, 0, A | G | W, A | C | D | E | F | H | K | P) 
+race_table["wolf"] = race_type("wolf", False, 0, AFF_DARK_VISION, OFF_FAST | OFF_DODGE, 0, 0, 0, A | G | V, A | C | D | E | F | J | K | Q | V) 
+race_table["wyvern"] = race_type("wyvern", False, 0, AFF_FLYING | AFF_DETECT_INVIS | AFF_DETECT_HIDDEN, OFF_BASH | OFF_FAST | OFF_DODGE, IMM_POISON, 0, VULN_LIGHT, A | B | G | Z, A | C | D | E | F | H | J | K | Q | V | X) 
 
 class pc_race_type:
     def __init__(self, name, who_name, points, class_mult, skills, stats, max_stats, size):
@@ -90,8 +90,8 @@ class pc_race_type:
         self.max_stats = max_stats
         self.size = size
 
-pc_race_table= OrderedDict()
-pc_race_table['human'] = pc_race_type("human", "Human", 0, { 'mage':100, 'cleric':100, 'thief':100, 'warrior':100 }, [ "" ], [13, 13, 13, 13, 13], [18, 18, 18, 18, 18 ], SIZE_MEDIUM)
+pc_race_table = OrderedDict()
+pc_race_table['human'] = pc_race_type("human", "Human", 0, { 'mage':100, 'cleric':100, 'thief':100, 'warrior':100 }, [""], [13, 13, 13, 13, 13], [18, 18, 18, 18, 18], SIZE_MEDIUM)
 pc_race_table['elf'] = pc_race_type("elf", " Elf ", 5, { 'mage':100, 'cleric':125, 'thief':100, 'warrior':120 }, ["sneak", "hide"], [12, 14, 13, 15, 11], [16, 20, 18, 21, 15], SIZE_SMALL)
 pc_race_table['dwarf'] = pc_race_type("dwarf", "Dwarf", 8, { 'mage':150, 'cleric':100, 'thief':125, 'warrior':100 }, ["berserk"], [14, 12, 14, 10, 15], [20, 16, 19, 14, 21], SIZE_MEDIUM)
 pc_race_table['giant'] = pc_race_type("giant", "Giant", 6, { 'mage':200, 'cleric':150, 'thief':150, 'warrior':105 }, ["bash", "fast healing"], [16, 11, 13, 11, 14], [22, 15, 18, 15, 20], SIZE_LARGE)
@@ -100,7 +100,7 @@ def SLOT(i):
     return i
 
 class skill_type:
-    def __init__(self, name, skill_level, rating, spell_fun, target, minimum_position, pgsn, slot, min_mana, beats, noun_damage, msg_off, msg_obj ):
+    def __init__(self, name, skill_level, rating, spell_fun, target, minimum_position, pgsn, slot, min_mana, beats, noun_damage, msg_off, msg_obj):
         self.name = name
         self.skill_level = skill_level
         self.rating = rating
@@ -115,14 +115,14 @@ class skill_type:
         self.msg_off = msg_off
         self.msg_obj = msg_obj
 
-skill_table =  OrderedDict()
-skill_table["reserved"] = skill_type("reserved", { 'mage':99, 'cleric':99, 'thief':99, 'warrior':99 }, { 'mage':99, 'cleric':99, 'thief':99, 'warrior':99 }, 0, TAR_IGNORE, POS_STANDING, None, SLOT( 0), 0, 0, "", "", "")
+skill_table = OrderedDict()
+skill_table["reserved"] = skill_type("reserved", { 'mage':99, 'cleric':99, 'thief':99, 'warrior':99 }, { 'mage':99, 'cleric':99, 'thief':99, 'warrior':99 }, 0, TAR_IGNORE, POS_STANDING, None, SLOT(0), 0, 0, "", "", "")
 skill_table["acid blast"] = skill_type("acid blast", { 'mage':28, 'cleric':53, 'thief':35, 'warrior':32 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_acid_blast, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None, SLOT(70), 20, 12, "acid blast", "!Acid Blast!", "")
-skill_table["armor"] = skill_type("armor", { 'mage':7, 'cleric':2, 'thief':10, 'warrior':5 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_armor, TAR_CHAR_DEFENSIVE, POS_STANDING, None, SLOT( 1), 5, 12, "", "You feel less armored.", "")
-skill_table["bless"] = skill_type("bless", { 'mage':53, 'cleric':7, 'thief':53, 'warrior':8 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_bless, TAR_OBJ_CHAR_DEF, POS_STANDING, None, SLOT( 3), 5, 12, "", "You feel less righteous.", "$p's holy aura fades.")
-skill_table["blindness"] = skill_type("blindness", { 'mage':12, 'cleric':8, 'thief':17, 'warrior':15 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_blindness, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None, SLOT( 4), 5, 12, "", "You can see again.", "")
-skill_table["burning hands"] = skill_type("burning hands", { 'mage':7, 'cleric':53, 'thief':10, 'warrior':9 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_burning_hands, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None, SLOT( 5), 15, 12, "burning hands", "!Burning Hands!", "")
-skill_table["call lightning"] = skill_type("call lightning", { 'mage':26, 'cleric':18, 'thief':31, 'warrior':22 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_call_lightning, TAR_IGNORE, POS_FIGHTING, None, SLOT( 6), 15, 12, "lightning bolt", "!Call Lightning!", "")
+skill_table["armor"] = skill_type("armor", { 'mage':7, 'cleric':2, 'thief':10, 'warrior':5 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_armor, TAR_CHAR_DEFENSIVE, POS_STANDING, None, SLOT(1), 5, 12, "", "You feel less armored.", "")
+skill_table["bless"] = skill_type("bless", { 'mage':53, 'cleric':7, 'thief':53, 'warrior':8 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_bless, TAR_OBJ_CHAR_DEF, POS_STANDING, None, SLOT(3), 5, 12, "", "You feel less righteous.", "$p's holy aura fades.")
+skill_table["blindness"] = skill_type("blindness", { 'mage':12, 'cleric':8, 'thief':17, 'warrior':15 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_blindness, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None, SLOT(4), 5, 12, "", "You can see again.", "")
+skill_table["burning hands"] = skill_type("burning hands", { 'mage':7, 'cleric':53, 'thief':10, 'warrior':9 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_burning_hands, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None, SLOT(5), 15, 12, "burning hands", "!Burning Hands!", "")
+skill_table["call lightning"] = skill_type("call lightning", { 'mage':26, 'cleric':18, 'thief':31, 'warrior':22 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_call_lightning, TAR_IGNORE, POS_FIGHTING, None, SLOT(6), 15, 12, "lightning bolt", "!Call Lightning!", "")
 skill_table["calm"] = skill_type("calm", { 'mage':48, 'cleric':16, 'thief':50, 'warrior':20 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_calm, TAR_IGNORE, POS_FIGHTING, None, SLOT(509), 30, 12, "", "You have lost your peace of mind.", "")
 skill_table["cancellation"] = skill_type("cancellation", { 'mage':18, 'cleric':26, 'thief':34, 'warrior':34 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_cancellation, TAR_CHAR_DEFENSIVE, POS_FIGHTING, None, SLOT(507), 20, 12, "", "!cancellation!", "")
 skill_table["cause critical"] = skill_type("cause critical", { 'mage':53, 'cleric':13, 'thief':53, 'warrior':19 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_cause_critical, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None, SLOT(63), 20, 12, "spell", "!Cause Critical!", "")
@@ -130,8 +130,8 @@ skill_table["cause light"] = skill_type("cause light", { 'mage':53, 'cleric':1, 
 skill_table["cause serious"] = skill_type("cause serious", { 'mage':53, 'cleric':7, 'thief':53, 'warrior':10 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_cause_serious, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None, SLOT(64), 17, 12, "spell", "!Cause Serious!", "")
 skill_table["chain lightning"] = skill_type("chain lightning", { 'mage':33, 'cleric':53, 'thief':39, 'warrior':36 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_chain_lightning, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None, SLOT(500), 25, 12, "lightning", "!Chain Lightning!", "")
 skill_table["change sex"] = skill_type("change sex", { 'mage':53, 'cleric':53, 'thief':53, 'warrior':53 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_change_sex, TAR_CHAR_DEFENSIVE, POS_FIGHTING, None, SLOT(82), 15, 12, "", "Your body feels familiar again.", "")
-skill_table["charm person"] = skill_type("charm person", { 'mage':20, 'cleric':53, 'thief':25, 'warrior':53 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_charm_person, TAR_CHAR_OFFENSIVE, POS_STANDING, None, SLOT( 7), 5, 12, "", "You feel more self-confident.", "")
-skill_table["chill touch"] = skill_type("chill touch", { 'mage':4, 'cleric':53, 'thief':6, 'warrior':6 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_chill_touch, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None, SLOT( 8), 15, 12, "chilling touch", "You feel less cold.", "")
+skill_table["charm person"] = skill_type("charm person", { 'mage':20, 'cleric':53, 'thief':25, 'warrior':53 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_charm_person, TAR_CHAR_OFFENSIVE, POS_STANDING, None, SLOT(7), 5, 12, "", "You feel more self-confident.", "")
+skill_table["chill touch"] = skill_type("chill touch", { 'mage':4, 'cleric':53, 'thief':6, 'warrior':6 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_chill_touch, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None, SLOT(8), 15, 12, "chilling touch", "You feel less cold.", "")
 skill_table["colour spray"] = skill_type("colour spray", { 'mage':16, 'cleric':53, 'thief':22, 'warrior':20 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_colour_spray, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None, SLOT(10), 15, 12, "colour spray", "!Colour Spray!", "")
 skill_table["continual light"] = skill_type("continual light", { 'mage':6, 'cleric':4, 'thief':6, 'warrior':9 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_continual_light, TAR_IGNORE, POS_STANDING, None, SLOT(57), 7, 12, "", "!Continual Light!", "")
 skill_table["control weather"] = skill_type("control weather", { 'mage':15, 'cleric':19, 'thief':28, 'warrior':22 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_control_weather, TAR_IGNORE, POS_STANDING, None, SLOT(11), 25, 12, "", "!Control Weather!", "")
@@ -203,7 +203,7 @@ skill_table["sleep"] = skill_type("sleep", { 'mage':10, 'cleric':53, 'thief':11,
 skill_table["slow"] = skill_type("slow", { 'mage':23, 'cleric':30, 'thief':29, 'warrior':32 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_slow, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None, SLOT(515), 30, 12, "", "You feel yourself speed up.", "")
 skill_table["stone skin"] = skill_type("stone skin", { 'mage':25, 'cleric':40, 'thief':40, 'warrior':45 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_stone_skin, TAR_CHAR_SELF, POS_STANDING, None, SLOT(66), 12, 18, "", "Your skin feels soft again.", "")
 skill_table["summon"] = skill_type("summon", { 'mage':24, 'cleric':12, 'thief':29, 'warrior':22 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_summon, TAR_IGNORE, POS_STANDING, None, SLOT(40), 50, 12, "", "!Summon!", "")
-skill_table["teleport"] = skill_type("teleport", { 'mage':13, 'cleric':22, 'thief':25, 'warrior':36 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_teleport, TAR_CHAR_SELF, POS_FIGHTING, None, SLOT( 2), 35, 12, "", "!Teleport!", "")
+skill_table["teleport"] = skill_type("teleport", { 'mage':13, 'cleric':22, 'thief':25, 'warrior':36 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_teleport, TAR_CHAR_SELF, POS_FIGHTING, None, SLOT(2), 35, 12, "", "!Teleport!", "")
 skill_table["ventriloquate"] = skill_type("ventriloquate", { 'mage':1, 'cleric':53, 'thief':2, 'warrior':53 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_ventriloquate, TAR_IGNORE, POS_STANDING, None, SLOT(41), 5, 12, "", "!Ventriloquate!", "")
 skill_table["weaken"] = skill_type("weaken", { 'mage':11, 'cleric':14, 'thief':16, 'warrior':17 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_weaken, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None, SLOT(68), 20, 12, "spell", "You feel stronger.", "")
 skill_table["word of recall"] = skill_type("word of recall", { 'mage':32, 'cleric':28, 'thief':40, 'warrior':30 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_word_of_recall, TAR_CHAR_SELF, POS_RESTING, None, SLOT(42), 5, 12, "", "!Word of Recall!", "") # * Dragon breath */
@@ -211,54 +211,54 @@ skill_table["acid breath"] = skill_type("acid breath", { 'mage':31, 'cleric':32,
 skill_table["fire breath"] = skill_type("fire breath", { 'mage':40, 'cleric':45, 'thief':50, 'warrior':51 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_fire_breath, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None, SLOT(201), 200, 24, "blast of flame", "The smoke leaves your eyes.", "")
 skill_table["frost breath"] = skill_type("frost breath", { 'mage':34, 'cleric':36, 'thief':38, 'warrior':40 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_frost_breath, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None, SLOT(202), 125, 24, "blast of frost", "!Frost Breath!", "")
 skill_table["gas breath"] = skill_type("gas breath", { 'mage':39, 'cleric':43, 'thief':47, 'warrior':50 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_gas_breath, TAR_IGNORE, POS_FIGHTING, None, SLOT(203), 175, 24, "blast of gas", "!Gas Breath!", "")
-skill_table["lightning breath"] = skill_type("lightning breath", { 'mage':37, 'cleric':40, 'thief':43, 'warrior':46 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_lightning_breath, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None, SLOT(204), 150, 24, "blast of lightning", "!Lightning Breath!", "") # * Spells for mega1.are from Glop/Erkenbrand. */
+skill_table["lightning breath"] = skill_type("lightning breath", { 'mage':37, 'cleric':40, 'thief':43, 'warrior':46 }, { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 }, spell_lightning_breath, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None, SLOT(204), 150, 24, "blast of lightning", "!Lightning Breath!", "") # * Spells for mega1.are from Glop/Erkenbrand.  */
 skill_table["general purpose"] = skill_type("general purpose", { 'mage':53, 'cleric':53, 'thief':53, 'warrior':53 }, { 'mage':0, 'cleric':0, 'thief':0, 'warrior':0 }, spell_general_purpose, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None, SLOT(401), 0, 12, "general purpose ammo", "!General Purpose Ammo!", "")
 skill_table["high explosive"] = skill_type("high explosive", { 'mage':53, 'cleric':53, 'thief':53, 'warrior':53 }, { 'mage':0, 'cleric':0, 'thief':0, 'warrior':0 }, spell_high_explosive, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None, SLOT(402), 0, 12, "high explosive ammo", "!High Explosive Ammo!", "") # combat and weapons skills */
-skill_table["axe"] = skill_type("axe", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':6, 'cleric':6, 'thief':5, 'warrior':4 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT( 0), 0, 0, "", "!Axe!", "")
-skill_table["dagger"] = skill_type("dagger", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':2, 'cleric':3, 'thief':2, 'warrior':2 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT( 0), 0, 0, "", "!Dagger!", "")
-skill_table["flail"] = skill_type("flail", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':6, 'cleric':3, 'thief':6, 'warrior':4 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT( 0), 0, 0, "", "!Flail!", "")
-skill_table["mace"] = skill_type("mace", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':5, 'cleric':2, 'thief':3, 'warrior':3 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT( 0), 0, 0, "", "!Mace!", "")
-skill_table["polearm"] = skill_type("polearm", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':6, 'cleric':6, 'thief':6, 'warrior':4 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT( 0), 0, 0, "", "!Polearm!", "")
+skill_table["axe"] = skill_type("axe", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':6, 'cleric':6, 'thief':5, 'warrior':4 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT(0), 0, 0, "", "!Axe!", "")
+skill_table["dagger"] = skill_type("dagger", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':2, 'cleric':3, 'thief':2, 'warrior':2 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT(0), 0, 0, "", "!Dagger!", "")
+skill_table["flail"] = skill_type("flail", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':6, 'cleric':3, 'thief':6, 'warrior':4 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT(0), 0, 0, "", "!Flail!", "")
+skill_table["mace"] = skill_type("mace", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':5, 'cleric':2, 'thief':3, 'warrior':3 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT(0), 0, 0, "", "!Mace!", "")
+skill_table["polearm"] = skill_type("polearm", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':6, 'cleric':6, 'thief':6, 'warrior':4 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT(0), 0, 0, "", "!Polearm!", "")
 skill_table["shield block"] = skill_type("shield block", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':6, 'cleric':4, 'thief':6, 'warrior':2 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT(0), 0, 0, "", "!Shield!", "")
-skill_table["spear"] = skill_type("spear", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':4, 'cleric':4, 'thief':4, 'warrior':3 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT( 0), 0, 0, "", "!Spear!", "")
-skill_table["sword"] = skill_type("sword", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':5, 'cleric':6, 'thief':3, 'warrior':2 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT( 0), 0, 0, "", "!sword!", "")
-skill_table["whip"] = skill_type("whip", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':6, 'cleric':5, 'thief':5, 'warrior':4 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT( 0), 0, 0, "", "!Whip!", "")
-skill_table["backstab"] = skill_type("backstab", { 'mage':53, 'cleric':53, 'thief':1, 'warrior':53 }, { 'mage':0, 'cleric':0, 'thief':5, 'warrior':0 }, spell_null, TAR_IGNORE, POS_STANDING, None, SLOT( 0), 0, 24, "backstab", "!Backstab!", "")
-skill_table["bash"] = skill_type("bash", { 'mage':53, 'cleric':53, 'thief':53, 'warrior':1 }, { 'mage':0, 'cleric':0, 'thief':0, 'warrior':4 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT( 0), 0, 24, "bash", "!Bash!", "")
-skill_table["berserk"] = skill_type("berserk", { 'mage':53, 'cleric':53, 'thief':53, 'warrior':18 }, { 'mage':0, 'cleric':0, 'thief':0, 'warrior':5 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT( 0), 0, 24, "", "You feel your pulse slow down.", "")
-skill_table["dirt kicking"] = skill_type("dirt kicking", { 'mage':53, 'cleric':53, 'thief':3, 'warrior':3 }, { 'mage':0, 'cleric':0, 'thief':4, 'warrior':4 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT( 0), 0, 24, "kicked dirt", "You rub the dirt out of your eyes.", "")
-skill_table["disarm"] = skill_type("disarm", { 'mage':53, 'cleric':53, 'thief':12, 'warrior':11 }, { 'mage':0, 'cleric':0, 'thief':6, 'warrior':4 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT( 0), 0, 24, "", "!Disarm!", "")
-skill_table["dodge"] = skill_type("dodge", { 'mage':20, 'cleric':22, 'thief':1, 'warrior':13 }, { 'mage':8, 'cleric':8, 'thief':4, 'warrior':6 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT( 0), 0, 0, "", "!Dodge!", "")
-skill_table["enhanced damage"] = skill_type("enhanced damage", { 'mage':45, 'cleric':30, 'thief':25, 'warrior':1 }, { 'mage':10, 'cleric':9, 'thief':5, 'warrior':3 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT( 0), 0, 0, "", "!Enhanced Damage!", "")
+skill_table["spear"] = skill_type("spear", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':4, 'cleric':4, 'thief':4, 'warrior':3 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT(0), 0, 0, "", "!Spear!", "")
+skill_table["sword"] = skill_type("sword", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':5, 'cleric':6, 'thief':3, 'warrior':2 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT(0), 0, 0, "", "!sword!", "")
+skill_table["whip"] = skill_type("whip", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':6, 'cleric':5, 'thief':5, 'warrior':4 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT(0), 0, 0, "", "!Whip!", "")
+skill_table["backstab"] = skill_type("backstab", { 'mage':53, 'cleric':53, 'thief':1, 'warrior':53 }, { 'mage':0, 'cleric':0, 'thief':5, 'warrior':0 }, spell_null, TAR_IGNORE, POS_STANDING, None, SLOT(0), 0, 24, "backstab", "!Backstab!", "")
+skill_table["bash"] = skill_type("bash", { 'mage':53, 'cleric':53, 'thief':53, 'warrior':1 }, { 'mage':0, 'cleric':0, 'thief':0, 'warrior':4 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT(0), 0, 24, "bash", "!Bash!", "")
+skill_table["berserk"] = skill_type("berserk", { 'mage':53, 'cleric':53, 'thief':53, 'warrior':18 }, { 'mage':0, 'cleric':0, 'thief':0, 'warrior':5 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT(0), 0, 24, "", "You feel your pulse slow down.", "")
+skill_table["dirt kicking"] = skill_type("dirt kicking", { 'mage':53, 'cleric':53, 'thief':3, 'warrior':3 }, { 'mage':0, 'cleric':0, 'thief':4, 'warrior':4 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT(0), 0, 24, "kicked dirt", "You rub the dirt out of your eyes.", "")
+skill_table["disarm"] = skill_type("disarm", { 'mage':53, 'cleric':53, 'thief':12, 'warrior':11 }, { 'mage':0, 'cleric':0, 'thief':6, 'warrior':4 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT(0), 0, 24, "", "!Disarm!", "")
+skill_table["dodge"] = skill_type("dodge", { 'mage':20, 'cleric':22, 'thief':1, 'warrior':13 }, { 'mage':8, 'cleric':8, 'thief':4, 'warrior':6 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT(0), 0, 0, "", "!Dodge!", "")
+skill_table["enhanced damage"] = skill_type("enhanced damage", { 'mage':45, 'cleric':30, 'thief':25, 'warrior':1 }, { 'mage':10, 'cleric':9, 'thief':5, 'warrior':3 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT(0), 0, 0, "", "!Enhanced Damage!", "")
 skill_table["envenom"] = skill_type("envenom", { 'mage':53, 'cleric':53, 'thief':10, 'warrior':53 }, { 'mage':0, 'cleric':0, 'thief':4, 'warrior':0 }, spell_null, TAR_IGNORE, POS_RESTING, None, SLOT(0), 0, 36, "", "!Envenom!", "")
-skill_table["hand to hand"] = skill_type("hand to hand", { 'mage':25, 'cleric':10, 'thief':15, 'warrior':6 }, { 'mage':8, 'cleric':5, 'thief':6, 'warrior':4 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT( 0), 0, 0, "", "!Hand to Hand!", "")
-skill_table["kick"] = skill_type("kick", { 'mage':53, 'cleric':12, 'thief':14, 'warrior':8 }, { 'mage':0, 'cleric':4, 'thief':6, 'warrior':3 }, spell_null, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None, SLOT( 0), 0, 12, "kick", "!Kick!", "")
-skill_table["parry"] = skill_type("parry", { 'mage':22, 'cleric':20, 'thief':13, 'warrior':1 }, { 'mage':8, 'cleric':8, 'thief':6, 'warrior':4 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT( 0), 0, 0, "", "!Parry!", "")
-skill_table["rescue"] = skill_type("rescue", { 'mage':53, 'cleric':53, 'thief':53, 'warrior':1 }, { 'mage':0, 'cleric':0, 'thief':0, 'warrior':4 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT( 0), 0, 12, "", "!Rescue!", "")
-skill_table["trip"] = skill_type("trip", { 'mage':53, 'cleric':53, 'thief':1, 'warrior':15 }, { 'mage':0, 'cleric':0, 'thief':4, 'warrior':8 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT( 0), 0, 24, "trip", "!Trip!", "")
-skill_table["second attack"] = skill_type("second attack", { 'mage':30, 'cleric':24, 'thief':12, 'warrior':5 }, { 'mage':10, 'cleric':8, 'thief':5, 'warrior':3 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT( 0), 0, 0, "", "!Second Attack!", "")
-skill_table["third attack"] = skill_type("third attack", { 'mage':53, 'cleric':53, 'thief':24, 'warrior':12 }, { 'mage':0, 'cleric':0, 'thief':10, 'warrior':4 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT( 0), 0, 0, "", "!Third Attack!", "") # non-combat skills */
-skill_table["fast healing"] = skill_type("fast healing", { 'mage':15, 'cleric':9, 'thief':16, 'warrior':6 }, { 'mage':8, 'cleric':5, 'thief':6, 'warrior':4 }, spell_null, TAR_IGNORE, POS_SLEEPING, None, SLOT( 0), 0, 0, "", "!Fast Healing!", "")
-skill_table["haggle"] = skill_type("haggle", { 'mage':7, 'cleric':18, 'thief':1, 'warrior':14 }, { 'mage':5, 'cleric':8, 'thief':3, 'warrior':6 }, spell_null, TAR_IGNORE, POS_RESTING, None, SLOT( 0), 0, 0, "", "!Haggle!", "")
-skill_table["hide"] = skill_type("hide", { 'mage':53, 'cleric':53, 'thief':1, 'warrior':12 }, { 'mage':0, 'cleric':0, 'thief':4, 'warrior':6 }, spell_null, TAR_IGNORE, POS_RESTING, None, SLOT( 0), 0, 12, "", "!Hide!", "")
-skill_table["lore"] = skill_type("lore", { 'mage':10, 'cleric':10, 'thief':6, 'warrior':20 }, { 'mage':6, 'cleric':6, 'thief':4, 'warrior':8 }, spell_null, TAR_IGNORE, POS_RESTING, None, SLOT( 0), 0, 36, "", "!Lore!", "")
-skill_table["meditation"] = skill_type("meditation", { 'mage':6, 'cleric':6, 'thief':15, 'warrior':15 }, { 'mage':5, 'cleric':5, 'thief':8, 'warrior':8 }, spell_null, TAR_IGNORE, POS_SLEEPING, None, SLOT( 0), 0, 0, "", "Meditation", "")
-skill_table["peek"] = skill_type("peek", { 'mage':8, 'cleric':21, 'thief':1, 'warrior':14 }, { 'mage':5, 'cleric':7, 'thief':3, 'warrior':6 }, spell_null, TAR_IGNORE, POS_STANDING, None, SLOT( 0), 0, 0, "", "!Peek!", "")
-skill_table["pick lock"] = skill_type("pick lock", { 'mage':25, 'cleric':25, 'thief':7, 'warrior':25 }, { 'mage':8, 'cleric':8, 'thief':4, 'warrior':8 }, spell_null, TAR_IGNORE, POS_STANDING, None, SLOT( 0), 0, 12, "", "!Pick!", "")
-skill_table["sneak"] = skill_type("sneak", { 'mage':53, 'cleric':53, 'thief':4, 'warrior':10 }, { 'mage':0, 'cleric':0, 'thief':4, 'warrior':6 }, spell_null, TAR_IGNORE, POS_STANDING, None, SLOT( 0), 0, 12, "", "You no longer feel stealthy.", "")
-skill_table["steal"] = skill_type("steal", { 'mage':53, 'cleric':53, 'thief':5, 'warrior':53 }, { 'mage':0, 'cleric':0, 'thief':4, 'warrior':0 }, spell_null, TAR_IGNORE, POS_STANDING, None, SLOT( 0), 0, 24, "", "!Steal!", "")
-skill_table["scrolls"] = skill_type("scrolls", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':2, 'cleric':3, 'thief':5, 'warrior':8 }, spell_null, TAR_IGNORE, POS_STANDING, None, SLOT( 0), 0, 24, "", "!Scrolls!", "")
-skill_table["staves"] = skill_type("staves", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':2, 'cleric':3, 'thief':5, 'warrior':8 }, spell_null, TAR_IGNORE, POS_STANDING, None, SLOT( 0), 0, 12, "", "!Staves!", "")
-skill_table["wands"] = skill_type("wands", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':2, 'cleric':3, 'thief':5, 'warrior':8 }, spell_null, TAR_IGNORE, POS_STANDING, None, SLOT( 0), 0, 12, "", "!Wands!", "")
-skill_table["recall"] = skill_type("recall", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':2, 'cleric':2, 'thief':2, 'warrior':2 }, spell_null, TAR_IGNORE, POS_STANDING, None, SLOT( 0), 0, 12, "", "!Recall!", "")
+skill_table["hand to hand"] = skill_type("hand to hand", { 'mage':25, 'cleric':10, 'thief':15, 'warrior':6 }, { 'mage':8, 'cleric':5, 'thief':6, 'warrior':4 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT(0), 0, 0, "", "!Hand to Hand!", "")
+skill_table["kick"] = skill_type("kick", { 'mage':53, 'cleric':12, 'thief':14, 'warrior':8 }, { 'mage':0, 'cleric':4, 'thief':6, 'warrior':3 }, spell_null, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None, SLOT(0), 0, 12, "kick", "!Kick!", "")
+skill_table["parry"] = skill_type("parry", { 'mage':22, 'cleric':20, 'thief':13, 'warrior':1 }, { 'mage':8, 'cleric':8, 'thief':6, 'warrior':4 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT(0), 0, 0, "", "!Parry!", "")
+skill_table["rescue"] = skill_type("rescue", { 'mage':53, 'cleric':53, 'thief':53, 'warrior':1 }, { 'mage':0, 'cleric':0, 'thief':0, 'warrior':4 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT(0), 0, 12, "", "!Rescue!", "")
+skill_table["trip"] = skill_type("trip", { 'mage':53, 'cleric':53, 'thief':1, 'warrior':15 }, { 'mage':0, 'cleric':0, 'thief':4, 'warrior':8 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT(0), 0, 24, "trip", "!Trip!", "")
+skill_table["second attack"] = skill_type("second attack", { 'mage':30, 'cleric':24, 'thief':12, 'warrior':5 }, { 'mage':10, 'cleric':8, 'thief':5, 'warrior':3 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT(0), 0, 0, "", "!Second Attack!", "")
+skill_table["third attack"] = skill_type("third attack", { 'mage':53, 'cleric':53, 'thief':24, 'warrior':12 }, { 'mage':0, 'cleric':0, 'thief':10, 'warrior':4 }, spell_null, TAR_IGNORE, POS_FIGHTING, None, SLOT(0), 0, 0, "", "!Third Attack!", "") # non-combat skills */
+skill_table["fast healing"] = skill_type("fast healing", { 'mage':15, 'cleric':9, 'thief':16, 'warrior':6 }, { 'mage':8, 'cleric':5, 'thief':6, 'warrior':4 }, spell_null, TAR_IGNORE, POS_SLEEPING, None, SLOT(0), 0, 0, "", "!Fast Healing!", "")
+skill_table["haggle"] = skill_type("haggle", { 'mage':7, 'cleric':18, 'thief':1, 'warrior':14 }, { 'mage':5, 'cleric':8, 'thief':3, 'warrior':6 }, spell_null, TAR_IGNORE, POS_RESTING, None, SLOT(0), 0, 0, "", "!Haggle!", "")
+skill_table["hide"] = skill_type("hide", { 'mage':53, 'cleric':53, 'thief':1, 'warrior':12 }, { 'mage':0, 'cleric':0, 'thief':4, 'warrior':6 }, spell_null, TAR_IGNORE, POS_RESTING, None, SLOT(0), 0, 12, "", "!Hide!", "")
+skill_table["lore"] = skill_type("lore", { 'mage':10, 'cleric':10, 'thief':6, 'warrior':20 }, { 'mage':6, 'cleric':6, 'thief':4, 'warrior':8 }, spell_null, TAR_IGNORE, POS_RESTING, None, SLOT(0), 0, 36, "", "!Lore!", "")
+skill_table["meditation"] = skill_type("meditation", { 'mage':6, 'cleric':6, 'thief':15, 'warrior':15 }, { 'mage':5, 'cleric':5, 'thief':8, 'warrior':8 }, spell_null, TAR_IGNORE, POS_SLEEPING, None, SLOT(0), 0, 0, "", "Meditation", "")
+skill_table["peek"] = skill_type("peek", { 'mage':8, 'cleric':21, 'thief':1, 'warrior':14 }, { 'mage':5, 'cleric':7, 'thief':3, 'warrior':6 }, spell_null, TAR_IGNORE, POS_STANDING, None, SLOT(0), 0, 0, "", "!Peek!", "")
+skill_table["pick lock"] = skill_type("pick lock", { 'mage':25, 'cleric':25, 'thief':7, 'warrior':25 }, { 'mage':8, 'cleric':8, 'thief':4, 'warrior':8 }, spell_null, TAR_IGNORE, POS_STANDING, None, SLOT(0), 0, 12, "", "!Pick!", "")
+skill_table["sneak"] = skill_type("sneak", { 'mage':53, 'cleric':53, 'thief':4, 'warrior':10 }, { 'mage':0, 'cleric':0, 'thief':4, 'warrior':6 }, spell_null, TAR_IGNORE, POS_STANDING, None, SLOT(0), 0, 12, "", "You no longer feel stealthy.", "")
+skill_table["steal"] = skill_type("steal", { 'mage':53, 'cleric':53, 'thief':5, 'warrior':53 }, { 'mage':0, 'cleric':0, 'thief':4, 'warrior':0 }, spell_null, TAR_IGNORE, POS_STANDING, None, SLOT(0), 0, 24, "", "!Steal!", "")
+skill_table["scrolls"] = skill_type("scrolls", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':2, 'cleric':3, 'thief':5, 'warrior':8 }, spell_null, TAR_IGNORE, POS_STANDING, None, SLOT(0), 0, 24, "", "!Scrolls!", "")
+skill_table["staves"] = skill_type("staves", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':2, 'cleric':3, 'thief':5, 'warrior':8 }, spell_null, TAR_IGNORE, POS_STANDING, None, SLOT(0), 0, 12, "", "!Staves!", "")
+skill_table["wands"] = skill_type("wands", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':2, 'cleric':3, 'thief':5, 'warrior':8 }, spell_null, TAR_IGNORE, POS_STANDING, None, SLOT(0), 0, 12, "", "!Wands!", "")
+skill_table["recall"] = skill_type("recall", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':2, 'cleric':2, 'thief':2, 'warrior':2 }, spell_null, TAR_IGNORE, POS_STANDING, None, SLOT(0), 0, 12, "", "!Recall!", "")
 
 class group_type:
     def __init__(self, name, rating, spells):
-        self.name=name;
-        self.rating=rating
-        self.spells=spells
+        self.name = name
+        self.rating = rating
+        self.spells = spells
 
-group_table =  OrderedDict()
+group_table = OrderedDict()
 group_table["rom basics"] = group_type("rom basics", { 'mage':0, 'cleric':0, 'thief':0, 'warrior':0 }, ["scrolls", "staves", "wands", "recall"])
 group_table["mage basics"] = group_type("mage basics", { 'mage':0, 'cleric':-1, 'thief':-1, 'warrior':-1 }, ["dagger"])
 group_table["cleric basics"] = group_type("cleric basics", { 'mage':-1, 'cleric':0, 'thief':-1, 'warrior':-1 }, ["mace"])
@@ -289,310 +289,309 @@ group_table["weather"] = group_type("weather", { 'mage':4, 'cleric':4, 'thief':8
     
 class guild_type:
     def __init__(self, name, who_name, attr_prime, weapon, guild_rooms, skill_adept, thac0_00, thac0_32, hp_min, hp_max, fMana, base_group, default_group):
-        self.name=name      # the full name of the class */
-        self.who_name=who_name      # Three-letter name for 'who'  */
-        self.attr_prime=attr_prime      # Prime attribute      */
-        self.weapon=weapon      # First weapon         */
+        self.name = name      # the full name of the class */
+        self.who_name = who_name      # Three-letter name for 'who' */
+        self.attr_prime = attr_prime      # Prime attribute */
+        self.weapon = weapon      # First weapon */
         self.guild_rooms = guild_rooms
-        self.skill_adept=skill_adept      # Maximum skill level      */
-        self.thac0_00=thac0_00      # Thac0 for level  0       */
-        self.thac0_32=thac0_32      # Thac0 for level 32       */
-        self.hp_min=hp_min      # Min hp gained on leveling    */
-        self.hp_max=hp_max      # Max hp gained on leveling    */
-        self.fMana=fMana      # Class gains mana on level    */
-        self.base_group=base_group      # base skills gained       */
-        self.default_group=default_group      # default skills gained    */
-
-guild_table= OrderedDict()
-guild_table["mage"] = guild_type("mage", "Mag", STAT_INT, OBJ_VNUM_SCHOOL_DAGGER, [3018,9618], 75, 20, 6, 6, 8, True, "mage basics", "mage default" )
+        self.skill_adept = skill_adept      # Maximum skill level */
+        self.thac0_00 = thac0_00      # Thac0 for level 0 */
+        self.thac0_32 = thac0_32      # Thac0 for level 32 */
+        self.hp_min = hp_min      # Min hp gained on leveling */
+        self.hp_max = hp_max      # Max hp gained on leveling */
+        self.fMana = fMana      # Class gains mana on level */
+        self.base_group = base_group      # base skills gained */
+        self.default_group = default_group      # default skills gained */
+guild_table = OrderedDict()
+guild_table["mage"] = guild_type("mage", "Mag", STAT_INT, OBJ_VNUM_SCHOOL_DAGGER, [3018,9618], 75, 20, 6, 6, 8, True, "mage basics", "mage default")
 guild_table["cleric"] = guild_type("cleric", "Cle", STAT_WIS, OBJ_VNUM_SCHOOL_MACE, [3003,9619], 75, 20, 2, 7, 10, True, "cleric basics", "cleric default")
 guild_table["thief"] = guild_type("thief", "Thi", STAT_DEX, OBJ_VNUM_SCHOOL_DAGGER, [3028,9639], 75, 20, -4, 8, 13, False, "thief basics", "thief default")
 guild_table["warrior"] = guild_type("warrior", "War", STAT_STR, OBJ_VNUM_SCHOOL_SWORD, [3022,9633], 75, 20, -10, 11, 15, False, "warrior basics", "warrior default")
 
 class weapon_type:
     def __init__(self, name, vnum, type, gsn):
-        self.name=name
-        self.vnum=vnum
-        self.type=type
-        self.gsn=gsn
+        self.name = name
+        self.vnum = vnum
+        self.type = type
+        self.gsn = gsn
 
-weapon_table =  OrderedDict()
-weapon_table['sword'] = weapon_type('sword',   OBJ_VNUM_SCHOOL_SWORD,  WEAPON_SWORD, 'sword'  )
-weapon_table['mace'] = weapon_type('mace',    OBJ_VNUM_SCHOOL_MACE,   WEAPON_MACE,   'mace'   )
-weapon_table['dagger'] = weapon_type('dagger',  OBJ_VNUM_SCHOOL_DAGGER, WEAPON_DAGGER,  'dagger' )
-weapon_table['axe'] = weapon_type('axe', OBJ_VNUM_SCHOOL_AXE,    WEAPON_AXE, 'axe'   )
-weapon_table['staff'] = weapon_type('staff',   OBJ_VNUM_SCHOOL_STAFF,  WEAPON_SPEAR,   'spear'  )
-weapon_table['flail'] = weapon_type('flail',   OBJ_VNUM_SCHOOL_FLAIL,  WEAPON_FLAIL,   'flail'  )
-weapon_table['whip'] = weapon_type('whip',    OBJ_VNUM_SCHOOL_WHIP,   WEAPON_WHIP,    'whip'   )
-weapon_table['polearm'] = weapon_type('polearm', OBJ_VNUM_SCHOOL_POLEARM,WEAPON_POLEARM, 'polearm'    )
+weapon_table = OrderedDict()
+weapon_table['sword'] = weapon_type('sword',   OBJ_VNUM_SCHOOL_SWORD,  WEAPON_SWORD, 'sword')
+weapon_table['mace'] = weapon_type('mace',    OBJ_VNUM_SCHOOL_MACE,   WEAPON_MACE,   'mace')
+weapon_table['dagger'] = weapon_type('dagger',  OBJ_VNUM_SCHOOL_DAGGER, WEAPON_DAGGER,  'dagger')
+weapon_table['axe'] = weapon_type('axe', OBJ_VNUM_SCHOOL_AXE,    WEAPON_AXE, 'axe')
+weapon_table['staff'] = weapon_type('staff',   OBJ_VNUM_SCHOOL_STAFF,  WEAPON_SPEAR,   'spear')
+weapon_table['flail'] = weapon_type('flail',   OBJ_VNUM_SCHOOL_FLAIL,  WEAPON_FLAIL,   'flail')
+weapon_table['whip'] = weapon_type('whip',    OBJ_VNUM_SCHOOL_WHIP,   WEAPON_WHIP,    'whip')
+weapon_table['polearm'] = weapon_type('polearm', OBJ_VNUM_SCHOOL_POLEARM,WEAPON_POLEARM, 'polearm')
 
-title_table  = {  "mage": [ [ "Man", "Woman" ],
-                            [ "Apprentice of Magic", "Apprentice of Magic" ],
-                            [ "Spell Student", "Spell Student" ],
-                            [ "Scholar of Magic",       "Scholar of Magic"],
-                            [ "Delver in Spells",       "Delveress in Spells"],
-                            [ "Medium of Magic", "Medium of Magic" ],
-                            [ "Scribe of Magic", "Scribess of Magic" ],
-                            [ "Seer", "Seeress" ],
-                            [ "Sage", "Sage" ],
-                            [ "Illusionist", "Illusionist" ],
-                            [ "Abjurer", "Abjuress" ],
-                            [ "Invoker", "Invoker" ],
-                            [ "Enchanter", "Enchantress" ],
-                            [ "Conjurer", "Conjuress" ],
-                            [ "Magician", "Witch" ],
-                            [ "Creator", "Creator" ],
-                            [ "Savant", "Savant" ],
-                            [ "Magus", "Craftess" ],
-                            [ "Wizard", "Wizard" ],
-                            [ "Warlock", "War Witch" ],
-                            [ "Sorcerer", "Sorceress" ],
-                            [ "Elder Sorcerer", "Elder Sorceress" ],
-                            [ "Grand Sorcerer", "Grand Sorceress" ],
-                            [ "Great Sorcerer", "Great Sorceress" ],
-                            [ "Golem Maker", "Golem Maker" ],
-                            [ "Greater Golem Maker", "Greater Golem Maker" ],
-                            [ "Maker of Stones", "Maker of Stones" ],
-                            [ "Maker of Potions", "Maker of Potions" ],
-                            [ "Maker of Scrolls", "Maker of Scrolls" ],
-                            [ "Maker of Wands", "Maker of Wands" ],
-                            [ "Maker of Staves", "Maker of Staves" ],
-                            [ "Demon Summoner", "Demon Summoner" ],
-                            [ "Greater Demon Summoner", "Greater Demon Summoner" ],
-                            [ "Dragon Charmer", "Dragon Charmer" ],
-                            [ "Greater Dragon Charmer", "Greater Dragon Charmer" ],
-                            [ "Master of all Magic", "Master of all Magic" ],
-                            [ "Master Mage", "Master Mage" ],
-                            [ "Master Mage", "Master Mage" ],
-                            [ "Master Mage", "Master Mage" ],
-                            [ "Master Mage", "Master Mage" ],
-                            [ "Master Mage", "Master Mage" ],
-                            [ "Master Mage", "Master Mage" ],
-                            [ "Master Mage", "Master Mage" ],
-                            [ "Master Mage", "Master Mage" ],
-                            [ "Master Mage", "Master Mage" ],
-                            [ "Master Mage", "Master Mage" ],
-                            [ "Master Mage", "Master Mage" ],
-                            [ "Master Mage", "Master Mage" ],
-                            [ "Master Mage", "Master Mage" ],
-                            [ "Master Mage", "Master Mage" ],
-                            [ "Master Mage", "Master Mage" ],
-                            [ "Mage Hero", "Mage Heroine" ],
-                            [ "Avatar of Magic", "Avatar of Magic" ],
-                            [ "Angel of Magic", "Angel of Magic" ],
-                            [ "Demigod of Magic", "Demigoddess of Magic" ],
-                            [ "Immortal of Magic", "Immortal of Magic" ],
-                            [ "God of Magic", "Goddess of Magic" ],
-                            [ "Deity of Magic", "Deity of Magic" ],
-                            [ "Supremity of Magic", "Supremity of Magic" ],
-                            [ "Creator", "Creator" ],
-                            [ "Implementor", "Implementress" ] ],
+title_table = {  "mage": [["Man", "Woman"],
+                            ["Apprentice of Magic", "Apprentice of Magic"],
+                            ["Spell Student", "Spell Student"],
+                            ["Scholar of Magic",       "Scholar of Magic"],
+                            ["Delver in Spells",       "Delveress in Spells"],
+                            ["Medium of Magic", "Medium of Magic"],
+                            ["Scribe of Magic", "Scribess of Magic"],
+                            ["Seer", "Seeress"],
+                            ["Sage", "Sage"],
+                            ["Illusionist", "Illusionist"],
+                            ["Abjurer", "Abjuress"],
+                            ["Invoker", "Invoker"],
+                            ["Enchanter", "Enchantress"],
+                            ["Conjurer", "Conjuress"],
+                            ["Magician", "Witch"],
+                            ["Creator", "Creator"],
+                            ["Savant", "Savant"],
+                            ["Magus", "Craftess"],
+                            ["Wizard", "Wizard"],
+                            ["Warlock", "War Witch"],
+                            ["Sorcerer", "Sorceress"],
+                            ["Elder Sorcerer", "Elder Sorceress"],
+                            ["Grand Sorcerer", "Grand Sorceress"],
+                            ["Great Sorcerer", "Great Sorceress"],
+                            ["Golem Maker", "Golem Maker"],
+                            ["Greater Golem Maker", "Greater Golem Maker"],
+                            ["Maker of Stones", "Maker of Stones"],
+                            ["Maker of Potions", "Maker of Potions"],
+                            ["Maker of Scrolls", "Maker of Scrolls"],
+                            ["Maker of Wands", "Maker of Wands"],
+                            ["Maker of Staves", "Maker of Staves"],
+                            ["Demon Summoner", "Demon Summoner"],
+                            ["Greater Demon Summoner", "Greater Demon Summoner"],
+                            ["Dragon Charmer", "Dragon Charmer"],
+                            ["Greater Dragon Charmer", "Greater Dragon Charmer"],
+                            ["Master of all Magic", "Master of all Magic"],
+                            ["Master Mage", "Master Mage"],
+                            ["Master Mage", "Master Mage"],
+                            ["Master Mage", "Master Mage"],
+                            ["Master Mage", "Master Mage"],
+                            ["Master Mage", "Master Mage"],
+                            ["Master Mage", "Master Mage"],
+                            ["Master Mage", "Master Mage"],
+                            ["Master Mage", "Master Mage"],
+                            ["Master Mage", "Master Mage"],
+                            ["Master Mage", "Master Mage"],
+                            ["Master Mage", "Master Mage"],
+                            ["Master Mage", "Master Mage"],
+                            ["Master Mage", "Master Mage"],
+                            ["Master Mage", "Master Mage"],
+                            ["Master Mage", "Master Mage"],
+                            ["Mage Hero", "Mage Heroine"],
+                            ["Avatar of Magic", "Avatar of Magic"],
+                            ["Angel of Magic", "Angel of Magic"],
+                            ["Demigod of Magic", "Demigoddess of Magic"],
+                            ["Immortal of Magic", "Immortal of Magic"],
+                            ["God of Magic", "Goddess of Magic"],
+                            ["Deity of Magic", "Deity of Magic"],
+                            ["Supremity of Magic", "Supremity of Magic"],
+                            ["Creator", "Creator"],
+                            ["Implementor", "Implementress"]],
 
-                'cleric': [ ["Man", "Woman"],
-                            [ "Believer", "Believer" ],
-                            [ "Attendant", "Attendant" ],
-                            [ "Acolyte", "Acolyte" ],
-                            [ "Novice", "Novice" ],
-                            [ "Missionary", "Missionary" ],
-                            [ "Adept", "Adept" ],
-                            [ "Deacon", "Deaconess" ],
-                            [ "Vicar", "Vicaress" ],
-                            [ "Priest", "Priestess" ],
-                            [ "Minister", "Lady Minister" ],
-                            [ "Canon", "Canon" ],
-                            [ "Levite", "Levitess" ],
-                            [ "Curate", "Curess" ],
-                            [ "Monk", "Nun" ],
-                            [ "Healer", "Healess" ],
-                            [ "Chaplain", "Chaplain" ],
-                            [ "Expositor", "Expositress" ],
-                            [ "Bishop", "Bishop" ],
-                            [ "Arch Bishop", "Arch Lady of the Church" ],
-                            [ "Patriarch", "Matriarch" ],
-                            [ "Elder Patriarch", "Elder Matriarch" ],
-                            [ "Grand Patriarch", "Grand Matriarch" ],
-                            [ "Great Patriarch", "Great Matriarch" ],
-                            [ "Demon Killer", "Demon Killer" ],
-                            [ "Greater Demon Killer", "Greater Demon Killer" ],
-                            [ "Cardinal of the Sea", "Cardinal of the Sea" ],
-                            [ "Cardinal of the Earth", "Cardinal of the Earth" ],
-                            [ "Cardinal of the Air", "Cardinal of the Air" ],
-                            [ "Cardinal of the Ether", "Cardinal of the Ether" ],
-                            [ "Cardinal of the Heavens", "Cardinal of the Heavens" ],
-                            [ "Avatar of an Immortal", "Avatar of an Immortal" ],
-                            [ "Avatar of a Deity", "Avatar of a Deity" ],
-                            [ "Avatar of a Supremity", "Avatar of a Supremity" ],
-                            [ "Avatar of an Implementor", "Avatar of an Implementor" ],
-                            [ "Master of all Divinity", "Mistress of all Divinity" ],
-                            [ "Master Cleric", "Master Cleric" ],
-                            [ "Master Cleric", "Master Cleric" ],
-                            [ "Master Cleric", "Master Cleric" ],
-                            [ "Master Cleric", "Master Cleric" ],  
-                            [ "Master Cleric", "Master Cleric" ],
-                            [ "Master Cleric", "Master Cleric" ],
-                            [ "Master Cleric", "Master Cleric" ],
-                            [ "Master Cleric", "Master Cleric" ],
-                            [ "Master Cleric", "Master Cleric" ],
-                            [ "Master Cleric", "Master Cleric" ],
-                            [ "Master Cleric", "Master Cleric" ],
-                            [ "Master Cleric", "Master Cleric" ],
-                            [ "Master Cleric", "Master Cleric" ],
-                            [ "Master Cleric", "Master Cleric" ],
-                            [ "Master Cleric", "Master Cleric" ],
-                            [ "Holy Hero", "Holy Heroine" ],
-                            [ "Holy Avatar", "Holy Avatar" ],
-                            [ "Angel", "Angel" ],
-                            [ "Demigod", "Demigoddess" ],
-                            [ "Immortal", "Immortal" ],
-                            [ "God", "Goddess" ],
-                            [ "Deity", "Deity" ],
-                            [ "Supreme Master", "Supreme Mistress" ],
-                            [ "Creator", "Creator" ],
-                            [ "Implementor", "Implementress" ] ],
-                'thief':  [ [ "Man", "Woman" ],
+                'cleric': [["Man", "Woman"],
+                            ["Believer", "Believer"],
+                            ["Attendant", "Attendant"],
+                            ["Acolyte", "Acolyte"],
+                            ["Novice", "Novice"],
+                            ["Missionary", "Missionary"],
+                            ["Adept", "Adept"],
+                            ["Deacon", "Deaconess"],
+                            ["Vicar", "Vicaress"],
+                            ["Priest", "Priestess"],
+                            ["Minister", "Lady Minister"],
+                            ["Canon", "Canon"],
+                            ["Levite", "Levitess"],
+                            ["Curate", "Curess"],
+                            ["Monk", "Nun"],
+                            ["Healer", "Healess"],
+                            ["Chaplain", "Chaplain"],
+                            ["Expositor", "Expositress"],
+                            ["Bishop", "Bishop"],
+                            ["Arch Bishop", "Arch Lady of the Church"],
+                            ["Patriarch", "Matriarch"],
+                            ["Elder Patriarch", "Elder Matriarch"],
+                            ["Grand Patriarch", "Grand Matriarch"],
+                            ["Great Patriarch", "Great Matriarch"],
+                            ["Demon Killer", "Demon Killer"],
+                            ["Greater Demon Killer", "Greater Demon Killer"],
+                            ["Cardinal of the Sea", "Cardinal of the Sea"],
+                            ["Cardinal of the Earth", "Cardinal of the Earth"],
+                            ["Cardinal of the Air", "Cardinal of the Air"],
+                            ["Cardinal of the Ether", "Cardinal of the Ether"],
+                            ["Cardinal of the Heavens", "Cardinal of the Heavens"],
+                            ["Avatar of an Immortal", "Avatar of an Immortal"],
+                            ["Avatar of a Deity", "Avatar of a Deity"],
+                            ["Avatar of a Supremity", "Avatar of a Supremity"],
+                            ["Avatar of an Implementor", "Avatar of an Implementor"],
+                            ["Master of all Divinity", "Mistress of all Divinity"],
+                            ["Master Cleric", "Master Cleric"],
+                            ["Master Cleric", "Master Cleric"],
+                            ["Master Cleric", "Master Cleric"],
+                            ["Master Cleric", "Master Cleric"],  
+                            ["Master Cleric", "Master Cleric"],
+                            ["Master Cleric", "Master Cleric"],
+                            ["Master Cleric", "Master Cleric"],
+                            ["Master Cleric", "Master Cleric"],
+                            ["Master Cleric", "Master Cleric"],
+                            ["Master Cleric", "Master Cleric"],
+                            ["Master Cleric", "Master Cleric"],
+                            ["Master Cleric", "Master Cleric"],
+                            ["Master Cleric", "Master Cleric"],
+                            ["Master Cleric", "Master Cleric"],
+                            ["Master Cleric", "Master Cleric"],
+                            ["Holy Hero", "Holy Heroine"],
+                            ["Holy Avatar", "Holy Avatar"],
+                            ["Angel", "Angel"],
+                            ["Demigod", "Demigoddess"],
+                            ["Immortal", "Immortal"],
+                            ["God", "Goddess"],
+                            ["Deity", "Deity"],
+                            ["Supreme Master", "Supreme Mistress"],
+                            ["Creator", "Creator"],
+                            ["Implementor", "Implementress"]],
+                'thief':  [["Man", "Woman"],
 
-                            [ "Pilferer", "Pilferess" ],
-                            [ "Footpad", "Footpad" ],
-                            [ "Filcher", "Filcheress" ],
-                            [ "Pick-Pocket", "Pick-Pocket" ],
-                            [ "Sneak", "Sneak" ],
+                            ["Pilferer", "Pilferess"],
+                            ["Footpad", "Footpad"],
+                            ["Filcher", "Filcheress"],
+                            ["Pick-Pocket", "Pick-Pocket"],
+                            ["Sneak", "Sneak"],
 
-                            [ "Pincher", "Pincheress" ],
-                            [ "Cut-Purse", "Cut-Purse" ],
-                            [ "Snatcher", "Snatcheress" ],
-                            [ "Sharper", "Sharpress" ],
-                            [ "Rogue", "Rogue" ],
+                            ["Pincher", "Pincheress"],
+                            ["Cut-Purse", "Cut-Purse"],
+                            ["Snatcher", "Snatcheress"],
+                            ["Sharper", "Sharpress"],
+                            ["Rogue", "Rogue"],
 
-                            [ "Robber", "Robber" ],
-                            [ "Magsman", "Magswoman" ],
-                            [ "Highwayman", "Highwaywoman" ],
-                            [ "Burglar", "Burglaress" ],
-                            [ "Thief", "Thief" ],
+                            ["Robber", "Robber"],
+                            ["Magsman", "Magswoman"],
+                            ["Highwayman", "Highwaywoman"],
+                            ["Burglar", "Burglaress"],
+                            ["Thief", "Thief"],
 
-                            [ "Knifer", "Knifer" ],
-                            [ "Quick-Blade", "Quick-Blade" ],
-                            [ "Killer", "Murderess" ],
-                            [ "Brigand", "Brigand" ],
-                            [ "Cut-Throat", "Cut-Throat" ],
+                            ["Knifer", "Knifer"],
+                            ["Quick-Blade", "Quick-Blade"],
+                            ["Killer", "Murderess"],
+                            ["Brigand", "Brigand"],
+                            ["Cut-Throat", "Cut-Throat"],
 
-                            [ "Spy", "Spy" ],
-                            [ "Grand Spy", "Grand Spy" ],
-                            [ "Master Spy", "Master Spy" ],
-                            [ "Assassin", "Assassin" ],
-                            [ "Greater Assassin", "Greater Assassin" ],
+                            ["Spy", "Spy"],
+                            ["Grand Spy", "Grand Spy"],
+                            ["Master Spy", "Master Spy"],
+                            ["Assassin", "Assassin"],
+                            ["Greater Assassin", "Greater Assassin"],
 
-                            [ "Master of Vision", "Mistress of Vision" ],
-                            [ "Master of Hearing", "Mistress of Hearing" ],
-                            [ "Master of Smell", "Mistress of Smell" ],
-                            [ "Master of Taste", "Mistress of Taste" ],
-                            [ "Master of Touch", "Mistress of Touch" ],
+                            ["Master of Vision", "Mistress of Vision"],
+                            ["Master of Hearing", "Mistress of Hearing"],
+                            ["Master of Smell", "Mistress of Smell"],
+                            ["Master of Taste", "Mistress of Taste"],
+                            ["Master of Touch", "Mistress of Touch"],
 
-                            [ "Crime Lord", "Crime Mistress" ],
-                            [ "Infamous Crime Lord", "Infamous Crime Mistress" ],
-                            [ "Greater Crime Lord", "Greater Crime Mistress" ],
-                            [ "Master Crime Lord", "Master Crime Mistress" ],
-                            [ "Godfather", "Godmother" ],
+                            ["Crime Lord", "Crime Mistress"],
+                            ["Infamous Crime Lord", "Infamous Crime Mistress"],
+                            ["Greater Crime Lord", "Greater Crime Mistress"],
+                            ["Master Crime Lord", "Master Crime Mistress"],
+                            ["Godfather", "Godmother"],
 
-                            [ "Master Thief", "Master Thief" ],
-                            [ "Master Thief", "Master Thief" ],
-                            [ "Master Thief", "Master Thief" ],
-                            [ "Master Thief", "Master Thief" ],
-                            [ "Master Thief", "Master Thief" ],
+                            ["Master Thief", "Master Thief"],
+                            ["Master Thief", "Master Thief"],
+                            ["Master Thief", "Master Thief"],
+                            ["Master Thief", "Master Thief"],
+                            ["Master Thief", "Master Thief"],
 
-                            [ "Master Thief", "Master Thief" ],
-                            [ "Master Thief", "Master Thief" ],
-                            [ "Master Thief", "Master Thief" ],
-                            [ "Master Thief", "Master Thief" ],
-                            [ "Master Thief", "Master Thief" ],
+                            ["Master Thief", "Master Thief"],
+                            ["Master Thief", "Master Thief"],
+                            ["Master Thief", "Master Thief"],
+                            ["Master Thief", "Master Thief"],
+                            ["Master Thief", "Master Thief"],
 
-                            [ "Master Thief", "Master Thief" ],
-                            [ "Master Thief", "Master Thief" ],
-                            [ "Master Thief", "Master Thief" ],
-                            [ "Master Thief", "Master Thief" ],
-                            [ "Master Thief", "Master Thief" ],
+                            ["Master Thief", "Master Thief"],
+                            ["Master Thief", "Master Thief"],
+                            ["Master Thief", "Master Thief"],
+                            ["Master Thief", "Master Thief"],
+                            ["Master Thief", "Master Thief"],
 
-                            [ "Assassin Hero", "Assassin Heroine" ],
-                            [ "Avatar of Death", "Avatar of Death" ],
-                            [ "Angel of Death", "Angel of Death" ],
-                            [ "Demigod of Assassins", "Demigoddess of Assassins" ],
-                            [ "Immortal Assasin", "Immortal Assassin" ],
-                            [ "God of Assassins", "God of Assassins" ],
-                            [ "Deity of Assassins", "Deity of Assassins" ],
-                            [ "Supreme Master", "Supreme Mistress" ],
-                            [ "Creator", "Creator" ],
-                            [ "Implementor", "Implementress" ] ],
-                'warrior': [[ "Man", "Woman" ],
+                            ["Assassin Hero", "Assassin Heroine"],
+                            ["Avatar of Death", "Avatar of Death"],
+                            ["Angel of Death", "Angel of Death"],
+                            ["Demigod of Assassins", "Demigoddess of Assassins"],
+                            ["Immortal Assasin", "Immortal Assassin"],
+                            ["God of Assassins", "God of Assassins"],
+                            ["Deity of Assassins", "Deity of Assassins"],
+                            ["Supreme Master", "Supreme Mistress"],
+                            ["Creator", "Creator"],
+                            ["Implementor", "Implementress"]],
+                'warrior': [["Man", "Woman"],
 
-                            [ "Swordpupil", "Swordpupil" ],
-                            [ "Recruit", "Recruit" ],
-                            [ "Sentry", "Sentress" ],
-                            [ "Fighter", "Fighter" ],
-                            [ "Soldier", "Soldier" ],
+                            ["Swordpupil", "Swordpupil"],
+                            ["Recruit", "Recruit"],
+                            ["Sentry", "Sentress"],
+                            ["Fighter", "Fighter"],
+                            ["Soldier", "Soldier"],
 
-                            [ "Warrior", "Warrior" ],
-                            [ "Veteran", "Veteran" ],
-                            [ "Swordsman", "Swordswoman" ],
-                            [ "Fencer", "Fenceress" ],
-                            [ "Combatant", "Combatess" ],
+                            ["Warrior", "Warrior"],
+                            ["Veteran", "Veteran"],
+                            ["Swordsman", "Swordswoman"],
+                            ["Fencer", "Fenceress"],
+                            ["Combatant", "Combatess"],
 
-                            [ "Hero", "Heroine" ],
-                            [ "Myrmidon", "Myrmidon" ],
-                            [ "Swashbuckler", "Swashbuckleress" ],
-                            [ "Mercenary", "Mercenaress" ],
-                            [ "Swordmaster", "Swordmistress" ],
+                            ["Hero", "Heroine"],
+                            ["Myrmidon", "Myrmidon"],
+                            ["Swashbuckler", "Swashbuckleress"],
+                            ["Mercenary", "Mercenaress"],
+                            ["Swordmaster", "Swordmistress"],
 
-                            [ "Lieutenant", "Lieutenant" ],
-                            [ "Champion", "Lady Champion" ],
-                            [ "Dragoon", "Lady Dragoon" ],
-                            [ "Cavalier", "Lady Cavalier" ],
-                            [ "Knight", "Lady Knight" ],
+                            ["Lieutenant", "Lieutenant"],
+                            ["Champion", "Lady Champion"],
+                            ["Dragoon", "Lady Dragoon"],
+                            ["Cavalier", "Lady Cavalier"],
+                            ["Knight", "Lady Knight"],
 
-                            [ "Grand Knight", "Grand Knight" ],
-                            [ "Master Knight", "Master Knight" ],
-                            [ "Paladin", "Paladin" ],
-                            [ "Grand Paladin", "Grand Paladin" ],
-                            [ "Demon Slayer", "Demon Slayer" ],
+                            ["Grand Knight", "Grand Knight"],
+                            ["Master Knight", "Master Knight"],
+                            ["Paladin", "Paladin"],
+                            ["Grand Paladin", "Grand Paladin"],
+                            ["Demon Slayer", "Demon Slayer"],
 
-                            [ "Greater Demon Slayer", "Greater Demon Slayer" ],
-                            [ "Dragon Slayer", "Dragon Slayer" ],
-                            [ "Greater Dragon Slayer", "Greater Dragon Slayer" ],
-                            [ "Underlord", "Underlord" ],
-                            [ "Overlord", "Overlord" ],
+                            ["Greater Demon Slayer", "Greater Demon Slayer"],
+                            ["Dragon Slayer", "Dragon Slayer"],
+                            ["Greater Dragon Slayer", "Greater Dragon Slayer"],
+                            ["Underlord", "Underlord"],
+                            ["Overlord", "Overlord"],
 
-                            [ "Baron of Thunder", "Baroness of Thunder" ],
-                            [ "Baron of Storms", "Baroness of Storms" ],
-                            [ "Baron of Tornadoes", "Baroness of Tornadoes" ],
-                            [ "Baron of Hurricanes", "Baroness of Hurricanes" ],
-                            [ "Baron of Meteors", "Baroness of Meteors" ],
+                            ["Baron of Thunder", "Baroness of Thunder"],
+                            ["Baron of Storms", "Baroness of Storms"],
+                            ["Baron of Tornadoes", "Baroness of Tornadoes"],
+                            ["Baron of Hurricanes", "Baroness of Hurricanes"],
+                            ["Baron of Meteors", "Baroness of Meteors"],
 
-                            [ "Master Warrior", "Master Warrior" ],
-                            [ "Master Warrior", "Master Warrior" ],
-                            [ "Master Warrior", "Master Warrior" ],
-                            [ "Master Warrior", "Master Warrior" ],
-                            [ "Master Warrior", "Master Warrior" ],
+                            ["Master Warrior", "Master Warrior"],
+                            ["Master Warrior", "Master Warrior"],
+                            ["Master Warrior", "Master Warrior"],
+                            ["Master Warrior", "Master Warrior"],
+                            ["Master Warrior", "Master Warrior"],
 
-                            [ "Master Warrior", "Master Warrior" ],
-                            [ "Master Warrior", "Master Warrior" ],
-                            [ "Master Warrior", "Master Warrior" ],
-                            [ "Master Warrior", "Master Warrior" ],
-                            [ "Master Warrior", "Master Warrior" ],
+                            ["Master Warrior", "Master Warrior"],
+                            ["Master Warrior", "Master Warrior"],
+                            ["Master Warrior", "Master Warrior"],
+                            ["Master Warrior", "Master Warrior"],
+                            ["Master Warrior", "Master Warrior"],
 
-                            [ "Master Warrior", "Master Warrior" ],
-                            [ "Master Warrior", "Master Warrior" ],
-                            [ "Master Warrior", "Master Warrior" ],
-                            [ "Master Warrior", "Master Warrior" ],
-                            [ "Master Warrior", "Master Warrior" ],
+                            ["Master Warrior", "Master Warrior"],
+                            ["Master Warrior", "Master Warrior"],
+                            ["Master Warrior", "Master Warrior"],
+                            ["Master Warrior", "Master Warrior"],
+                            ["Master Warrior", "Master Warrior"],
 
-                            [ "Knight Hero", "Knight Heroine" ],
-                            [ "Avatar of War", "Avatar of War" ],
-                            [ "Angel of War", "Angel of War" ],
-                            [ "Demigod of War", "Demigoddess of War" ],
-                            [ "Immortal Warlord", "Immortal Warlord" ],
-                            [ "God of War", "God of War" ],
-                            [ "Deity of War", "Deity of War" ],
-                            [ "Supreme Master of War", "Supreme Mistress of War" ],
-                            [ "Creator", "Creator" ],
-                            [ "Implementor", "Implementress" ] ] }
+                            ["Knight Hero", "Knight Heroine"],
+                            ["Avatar of War", "Avatar of War"],
+                            ["Angel of War", "Angel of War"],
+                            ["Demigod of War", "Demigoddess of War"],
+                            ["Immortal Warlord", "Immortal Warlord"],
+                            ["God of War", "God of War"],
+                            ["Deity of War", "Deity of War"],
+                            ["Supreme Master of War", "Supreme Mistress of War"],
+                            ["Creator", "Creator"],
+                            ["Implementor", "Implementress"]] }
         
 # * Attribute bonus structures.
 class str_app_type:
@@ -667,12 +666,12 @@ class wis_app_type:
         self.practice = p
 
 wis_app = OrderedDict()
-wis_app[0] = wis_app_type(0) #/*  0 */
-wis_app[1] = wis_app_type(0) #/*  1 */
+wis_app[0] = wis_app_type(0) #/* 0 */
+wis_app[1] = wis_app_type(0) #/* 1 */
 wis_app[2] = wis_app_type(0)
-wis_app[3] = wis_app_type(0) #/*  3 */
+wis_app[3] = wis_app_type(0) #/* 3 */
 wis_app[4] = wis_app_type(0)
-wis_app[5] = wis_app_type(1) #/*  5 */
+wis_app[5] = wis_app_type(1) #/* 5 */
 wis_app[6] = wis_app_type(1)
 wis_app[7] = wis_app_type(1)
 wis_app[8] = wis_app_type(1)
@@ -693,7 +692,6 @@ wis_app[22] = wis_app_type(4)
 wis_app[23] = wis_app_type(4)
 wis_app[24] = wis_app_type(4)
 wis_app[25] = wis_app_type(5)   #/* 25 */
-
 class dex_app_type:
     def __init__(self, d):
         self.defensive = d
@@ -725,19 +723,18 @@ dex_app[22] = dex_app_type(-75)
 dex_app[23] = dex_app_type(-90)
 dex_app[24] = dex_app_type(-105)
 dex_app[25] = dex_app_type(-120)    #/* 25 */
-
 class con_app_type:
     def __init__(self, h, s):
         self.hitp = h
         self.shock = s
 
 con_app = OrderedDict()
-con_app[0] = con_app_type(-4, 20)   #/*  0 */
-con_app[1] = con_app_type(-3, 25)   #/*  1 */
+con_app[0] = con_app_type(-4, 20)   #/* 0 */
+con_app[1] = con_app_type(-3, 25)   #/* 1 */
 con_app[2] = con_app_type(-2, 30)
-con_app[3] = con_app_type(-2, 35)   #/*  3 */
+con_app[3] = con_app_type(-2, 35)   #/* 3 */
 con_app[4] = con_app_type(-1, 40)
-con_app[5] = con_app_type(-1, 45)   #/*  5 */
+con_app[5] = con_app_type(-1, 45)   #/* 5 */
 con_app[6] = con_app_type(-1, 50)
 con_app[7] = con_app_type(0, 55)
 con_app[8] = con_app_type(0, 60)
@@ -760,7 +757,7 @@ con_app[24] = con_app_type(7, 99)
 con_app[25] = con_app_type(8, 99)    #/* 25 */
 
 
-#/* attack table  -- not very organized :( */
+#/* attack table -- not very organized :( */
 class attack_type:
     def __init__(self, name, noun, damage):
         self.name = name
@@ -773,7 +770,7 @@ attack_table[1] = attack_type("slice", "slice", DAM_SLASH)
 attack_table[2] = attack_type("stab", "stab", DAM_PIERCE)
 attack_table[3] = attack_type("slash", "slash", DAM_SLASH)
 attack_table[4] = attack_type("whip", "whip", DAM_SLASH)
-attack_table[5] = attack_type("claw", "claw", DAM_SLASH)  #/*  5 */
+attack_table[5] = attack_type("claw", "claw", DAM_SLASH)  #/* 5 */
 attack_table[6] = attack_type("blast", "blast", DAM_BASH)
 attack_table[7] = attack_type("pound", "pound", DAM_BASH)
 attack_table[8] = attack_type("crush", "crush", DAM_BASH)

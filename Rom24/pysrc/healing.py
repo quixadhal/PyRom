@@ -61,17 +61,17 @@ def do_heal(ch, argument):
         spell = spell_cure_light
         sn = skill_table["cure light"]
         words = "judicandus dies"
-        cost  = 1000
+        cost = 1000
     elif "serious".startswith(arg):
         spell = spell_cure_serious
         sn = skill_table["cure serious"]
         words = "judicandus gzfuajg"
-        cost  = 1600
+        cost = 1600
     elif "critical".startswith(arg):
         spell = spell_cure_critical
         sn = skill_table["cure critical"]
         words = "judicandus qfuhuqar"
-        cost  = 2500
+        cost = 2500
     elif "heal".startswith(arg):
         spell = spell_heal
         sn = skill_table["heal"]
@@ -81,7 +81,7 @@ def do_heal(ch, argument):
         spell = spell_cure_blindness
         sn = skill_table["cure blindness"]
         words = "judicandus noselacri"     
-        cost  = 2000
+        cost = 2000
     elif "disease".startswith(arg):
         spell = spell_cure_disease
         sn = skill_table["cure disease"]
@@ -91,22 +91,22 @@ def do_heal(ch, argument):
         spell = spell_cure_poison
         sn = skill_table["cure poison"]
         words = "judicandus sausabru"
-        cost  = 2500
+        cost = 2500
     elif "uncurse".startswith(arg) or "curse".startswith(arg):
         spell = spell_remove_curse 
         sn = skill_table["remove curse"]
         words = "candussido judifgz"
-        cost  = 5000
+        cost = 5000
     elif "mana".startswith(arg) or "energize".startswith(arg):
         spell = None
         sn = None
         words = "energizer"
         cost = 1000
     elif "refresh".startswith(arg) or "moves".startswith(arg):
-        spell =  spell_refresh
+        spell = spell_refresh
         sn = skill_table["refresh"]
         words = "candusima" 
-        cost  = 500
+        cost = 500
     else:
         act("$N says 'Type 'heal' for a list of spells.'",ch,None,mob,TO_CHAR)
         return

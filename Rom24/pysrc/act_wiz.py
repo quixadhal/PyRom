@@ -39,7 +39,7 @@ from const import weapon_table
 from settings import NEWLOCK
 
 def do_wiznet(self, argument):
-    ch=self
+    ch = self
     if not argument:
         if IS_SET(ch.wiznet, WIZ_ON):
             ch.send("Signing off of Wiznet.\n")
@@ -73,7 +73,7 @@ def do_wiznet(self, argument):
         for name, flag in wiznet_table.items():
             if flag.level <= get_trust(ch):
                 buf += name + " "
-        ch.send("Wiznet options available to you are:\n%s\n" % buf )
+        ch.send("Wiznet options available to you are:\n%s\n" % buf)
         return
     flag = prefix_lookup(wiznet_table, argument)
     if not flag or get_trust(ch) < flag.level:
@@ -89,9 +89,9 @@ def do_wiznet(self, argument):
         return
 
 def do_guild(self, argument):
-    ch=self
-    argument, arg1  = read_word(argument)
-    argument, arg2  = read_word(argument)
+    ch = self
+    argument, arg1 = read_word(argument)
+    argument, arg2 = read_word(argument)
 
     if not arg1 or not arg2:
         ch.send("Syntax: guild <char> <cln name>\n")
@@ -120,7 +120,7 @@ def do_guild(self, argument):
     victim.clan = clan
 
 # equips a character */
-def do_outfit ( self, argument ):
+def do_outfit(self, argument):
     ch = self
     if ch.level > 5 or IS_NPC(ch):
         ch.send("Find it yourself!\n")
@@ -128,23 +128,23 @@ def do_outfit ( self, argument ):
 
     obj = get_eq_char(ch, WEAR_LIGHT)
     if not obj:
-        obj = create_object( obj_index_hash[OBJ_VNUM_SCHOOL_BANNER], 0 )
+        obj = create_object(obj_index_hash[OBJ_VNUM_SCHOOL_BANNER], 0)
         obj.cost = 0
-        obj_to_char( obj, ch )
-        equip_char( ch, obj, WEAR_LIGHT )
+        obj_to_char(obj, ch)
+        equip_char(ch, obj, WEAR_LIGHT)
 
     obj = get_eq_char(ch, WEAR_BODY) 
     if not obj:
-        obj = create_object( obj_index_hash[OBJ_VNUM_SCHOOL_VEST], 0 )
+        obj = create_object(obj_index_hash[OBJ_VNUM_SCHOOL_VEST], 0)
         obj.cost = 0
-        obj_to_char( obj, ch )
-        equip_char( ch, obj, WEAR_BODY )
+        obj_to_char(obj, ch)
+        equip_char(ch, obj, WEAR_BODY)
 
     # do the weapon thing */
     obj = get_eq_char(ch,WEAR_WIELD)
     if not obj:
         sn = 'dagger'
-        vnum = OBJ_VNUM_SCHOOL_SWORD # just in case! */
+        vnum = OBJ_VNUM_SCHOOL_SWORD # just in case!  */
         for k,weapon in weapon_table.items():
             if sn not in ch.pcdata.learned or (weapon.gsn in ch.pcdata.learned and ch.pcdata.learned[sn] < ch.pcdata.learned[weapon.gsn]):
                 sn = weapon.gsn
@@ -155,29 +155,29 @@ def do_outfit ( self, argument ):
         equip_char(ch,obj,WEAR_WIELD)
 
     obj = get_eq_char(ch,WEAR_WIELD) 
-    shield = get_eq_char( ch, WEAR_SHIELD )
+    shield = get_eq_char(ch, WEAR_SHIELD)
     if (not obj or not IS_WEAPON_STAT(obj,WEAPON_TWO_HANDS)) and not shield:
-        obj = create_object( obj_index_hash[OBJ_VNUM_SCHOOL_SHIELD], 0 )
+        obj = create_object(obj_index_hash[OBJ_VNUM_SCHOOL_SHIELD], 0)
         obj.cost = 0
-        obj_to_char( obj, ch )
-        equip_char( ch, obj, WEAR_SHIELD )
+        obj_to_char(obj, ch)
+        equip_char(ch, obj, WEAR_SHIELD)
 
     ch.send("You have been equipped by Mota.\n")
 
      
 # RT nochannels command, for those spammers */
 def do_nochannels(self, argument):
-    ch=self
-    argument, arg = read_word( argument )
+    ch = self
+    argument, arg = read_word(argument)
     if not arg:
         ch.send("Nochannel whom?")
         return
    
-    victim = get_char_world(ch, arg )
+    victim = get_char_world(ch, arg)
     if not victim:
         ch.send("They aren't here.\n")
         return
-    if get_trust( victim ) >= get_trust( ch ):
+    if get_trust(victim) >= get_trust(ch):
         ch.send("You failed.\n")
         return
     
@@ -194,7 +194,7 @@ def do_nochannels(self, argument):
     return
 
 def do_smote(self, argument):
-    ch=self
+    ch = self
     matches = 0
     if not IS_NPC(ch) and IS_SET(ch.comm, COMM_NOEMOTE):
         ch.send("You can't show your emotions.\n")
@@ -219,7 +219,7 @@ def do_smote(self, argument):
     return
 
 def do_bamfin(self, argument):
-    ch=self
+    ch = self
     if not IS_NPC(ch):
         if not argument:
             ch.send("Your poofin is %s\n" % ch.pcdata.bamfin)
@@ -234,7 +234,7 @@ def do_bamfin(self, argument):
     return
 
 def do_bamfout(self, argument):
-    ch=self
+    ch = self
     if not IS_NPC(ch):
         if not argument:
             ch.send("Your poofout is %s\n" % ch.pcdata.bamfout)
@@ -247,19 +247,19 @@ def do_bamfout(self, argument):
     return
 
 def do_deny(self, argument):
-    ch=self
-    argument, arg = read_word( argument )
+    ch = self
+    argument, arg = read_word(argument)
     if not arg:
         ch.send("Deny whom?\n")
         return
-    victim = get_char_world(ch, arg )
+    victim = get_char_world(ch, arg)
     if not victim:
         ch.send("They aren't here.\n")
         return
     if IS_NPC(victim):
         ch.send("Not on NPC's.\n")
         return
-    if get_trust( victim ) >= get_trust( ch ):
+    if get_trust(victim) >= get_trust(ch):
         ch.send("You failed.\n")
         return
     SET_BIT(victim.act, PLR_DENY)
@@ -268,12 +268,12 @@ def do_deny(self, argument):
     ch.send("OK.\n")
     save_char_obj(victim)
     stop_fighting(victim,True)
-    victim.do_quit("" )
+    victim.do_quit("")
     return
 
 def do_disconnect(self, argument):
-    ch=self
-    argument, arg = read_word( argument )
+    ch = self
+    argument, arg = read_word(argument)
     if not arg:
         ch.send("Disconnect whom?\n")
         return
@@ -281,19 +281,19 @@ def do_disconnect(self, argument):
         desc = int(arg)
         for d in descriptor_list:
             if d.descriptor == desc:
-                close_socket( d )
+                close_socket(d)
                 ch.send("Ok.\n")
                 return
-    victim = get_char_world(ch, arg )
+    victim = get_char_world(ch, arg)
     if not victim:
         ch.send("They aren't here.\n")
         return
     if victim.desc == None:
-        act( "$N doesn't have a descriptor.", ch, None, victim, TO_CHAR )
+        act("$N doesn't have a descriptor.", ch, None, victim, TO_CHAR)
         return
     for d in descriptor_list:
         if d == victim.desc:
-            close_socket( d )
+            close_socket(d)
             ch.send("Ok.\n")
             return
     print("BUG: Do_disconnect: desc not found.")
@@ -301,13 +301,13 @@ def do_disconnect(self, argument):
     return
 
 def do_pardon(self, argument):
-    ch=self
-    argument, arg1  = read_word(argument)
-    argument, arg2  = read_word(argument)
+    ch = self
+    argument, arg1 = read_word(argument)
+    argument, arg2 = read_word(argument)
     if not arg1 or not arg2:
         ch.send("Syntax: pardon <character> <killer|thief>.\n")
         return
-    victim = get_char_world(ch, arg1 )
+    victim = get_char_world(ch, arg1)
     if not victim:
         ch.send("They aren't here.\n")
         return
@@ -317,13 +317,13 @@ def do_pardon(self, argument):
 
     if arg2 == "killer" :
         if IS_SET(victim.act, PLR_KILLER):
-            REMOVE_BIT( victim.act, PLR_KILLER )
+            REMOVE_BIT(victim.act, PLR_KILLER)
             ch.send("Killer flag removed.\n")
             victim.send("You are no longer a KILLER.\n")
         return
     if arg2 == "thief" :
         if IS_SET(victim.act, PLR_THIEF):
-            REMOVE_BIT( victim.act, PLR_THIEF )
+            REMOVE_BIT(victim.act, PLR_THIEF)
             ch.send("Thief flag removed.\n")
             victim.send("You are no longer a THIEF.\n")
         return
@@ -331,7 +331,7 @@ def do_pardon(self, argument):
     return
 
 def do_echo(self, argument):
-    ch=self
+    ch = self
     
     if not argument:
         ch.send("Global echo what?\n")
@@ -345,7 +345,7 @@ def do_echo(self, argument):
     return
 
 def do_recho(self, argument):
-    ch=self
+    ch = self
     if not argument:
         ch.send("Local echo what?\n")
         return
@@ -353,25 +353,25 @@ def do_recho(self, argument):
     for d in descriptor_list:
         if d.connected == con_playing and d.character.in_room == ch.in_room:
             if get_trust(d.character) >= get_trust(ch):
-                d.send( "local> ")
-            d.send( argument + "\n" )
+                d.send("local> ")
+            d.send(argument + "\n")
 
     return
 
 def do_zecho(self, argument):
-    ch=self
+    ch = self
     if not argument:
         ch.send("Zone echo what?\n")
         return
     for d in descriptor_list:
-        if d.connected == con_playing and  d.character.in_room and ch.in_room \
+        if d.connected == con_playing and d.character.in_room and ch.in_room \
         and d.character.in_room.area == ch.in_room.area:
             if get_trust(d.character) >= get_trust(ch):
                 d.send("zone> ")
-            d.send(argument +"\n")
+            d.send(argument + "\n")
 
 def do_pecho(self, argument):
-    ch=self
+    ch = self
     argument, arg = read_word(argument)
  
     if not argument or not arg:
@@ -391,25 +391,25 @@ def do_pecho(self, argument):
     ch.send(argument)
     ch.send("\n")
 
-def find_location( ch, arg ):
+def find_location(ch, arg):
     if arg.is_digit():
         vnum = int(arg)
         if vnum not in room_index_hash:
             return None
         else:
             return room_index_hash[vnum]
-    victim = get_char_world( ch, arg )
+    victim = get_char_world(ch, arg)
     if victim:
         return victim.in_room
-    obj = get_obj_world( ch, arg )
+    obj = get_obj_world(ch, arg)
     if obj:
         return obj.in_room
     return None
 
 def do_transfer(self, argument):
-    ch=self
-    argument, arg1  = read_word(argument)
-    argument, arg2  = read_word(argument)
+    ch = self
+    argument, arg1 = read_word(argument)
+    argument, arg2 = read_word(argument)
 
     if not arg1:
         ch.send("Transfer whom (and where)?\n")
@@ -419,23 +419,23 @@ def do_transfer(self, argument):
             if d.connected == con_playing \
             and d.character != ch \
             and d.character.in_room \
-            and can_see( ch, d.character ):
-                 ch.do_transfer("%s %s" % d.character.name, arg2 )
+            and can_see(ch, d.character):
+                 ch.do_transfer("%s %s" % d.character.name, arg2)
         return
     #
     # * Thanks to Grodyn for the optional location parameter.
     if not arg2:
         location = ch.in_room
     else:
-        location = find_location( ch, arg2 )
+        location = find_location(ch, arg2)
         if not location:
             ch.send("No such location.\n")
             return
-        if not is_room_owner(ch,location) and room_is_private( location ) \
+        if not is_room_owner(ch,location) and room_is_private(location) \
         and get_trust(ch) < MAX_LEVEL:
             ch.send("That room is private right now.\n")
             return
-    victim = get_char_world(ch, arg1 )
+    victim = get_char_world(ch, arg1)
     if not victim:
         ch.send("They aren't here.\n")
         return
@@ -444,52 +444,52 @@ def do_transfer(self, argument):
         return
 
     if victim.fighting:
-        stop_fighting( victim, True )
-    act( "$n disappears in a mushroom cloud.", victim, None, None, TO_ROOM )
-    char_from_room( victim )
-    char_to_room( victim, location )
-    act( "$n arrives from a puff of smoke.", victim, None, None, TO_ROOM )
+        stop_fighting(victim, True)
+    act("$n disappears in a mushroom cloud.", victim, None, None, TO_ROOM)
+    char_from_room(victim)
+    char_to_room(victim, location)
+    act("$n arrives from a puff of smoke.", victim, None, None, TO_ROOM)
     if ch != victim:
-        act( "$n has transferred you.", ch, None, victim, TO_VICT )
+        act("$n has transferred you.", ch, None, victim, TO_VICT)
     victim.do_look("auto")
     ch.send("Ok.\n")
 
 def do_at(self, argument):
-    ch=self
-    argument, arg  = read_word(argument)
+    ch = self
+    argument, arg = read_word(argument)
 
     if not arg or not argument:
         ch.send("At where what?\n")
         return
-    location = find_location( ch, arg )
+    location = find_location(ch, arg)
     if not location:
         ch.send("No such location.\n")
         return
-    if not is_room_owner(ch,location) and room_is_private( location ) \
+    if not is_room_owner(ch,location) and room_is_private(location) \
     and get_trust(ch) < MAX_LEVEL:
         ch.send("That room is private right now.\n")
         return
     original = ch.in_room
     on = ch.on
-    char_from_room( ch )
-    char_to_room( ch, location )
-    interpret( ch, argument )
+    char_from_room(ch)
+    char_to_room(ch, location)
+    interpret(ch, argument)
 
     # * See if 'ch' still exists before continuing!
     # * Handles 'at XXXX quit' case.
     for wch in char_list:
         if wch == ch:
-            char_from_room( ch )
-            char_to_room( ch, original )
+            char_from_room(ch)
+            char_to_room(ch, original)
             ch.on = on
             break
 
 def do_goto(self, argument):
-    ch=self
+    ch = self
     if not argument:
         ch.send("Goto where?\n")
         return
-    location = find_location( ch, argument )
+    location = find_location(ch, argument)
     if not location:
         ch.send("No such location.\n")
         return
@@ -499,15 +499,15 @@ def do_goto(self, argument):
         ch.send("That room is private right now.\n")
         return
     if ch.fighting:
-        stop_fighting( ch, True )
+        stop_fighting(ch, True)
     for rch in ch.in_room.people:
         if get_trust(rch) >= ch.invis_level:
             if ch.pcdata and ch.pcdata.bamfout:
                 act("$t",ch,ch.pcdata.bamfout,rch,TO_VICT)
             else:
                 act("$n leaves in a swirling mist.",ch,None,rch,TO_VICT)
-    char_from_room( ch )
-    char_to_room( ch, location )
+    char_from_room(ch)
+    char_to_room(ch, location)
 
     for rch in ch.in_room.people:
         if get_trust(rch) >= ch.invis_level:
@@ -515,24 +515,24 @@ def do_goto(self, argument):
                 act("$t",ch,ch.pcdata.bamfin,rch,TO_VICT)
             else:
                 act("$n appears in a swirling mist.",ch,None,rch,TO_VICT)
-    ch.do_look("auto" )
+    ch.do_look("auto")
     return
 
 def do_violate(self, argument):
-    ch=self
+    ch = self
     if not argument:
         ch.send("Goto where?\n")
         return
-    location = find_location( ch, argument )
+    location = find_location(ch, argument)
     if not location:
         ch.send("No such location.\n")
         return
-    if not room_is_private( location ):
+    if not room_is_private(location):
         ch.send("That room isn't private, use goto.\n")
         return
  
     if ch.fighting:
-        stop_fighting( ch, True )
+        stop_fighting(ch, True)
  
     for rch in ch.in_room.people:
         if get_trust(rch) >= ch.invis_level:
@@ -540,8 +540,8 @@ def do_violate(self, argument):
                 act("$t",ch,ch.pcdata.bamfout,rch,TO_VICT)
             else:
                 act("$n leaves in a swirling mist.",ch,None,rch,TO_VICT)
-    char_from_room( ch )
-    char_to_room( ch, location )
+    char_from_room(ch)
+    char_to_room(ch, location)
  
     for rch in ch.in_room.people:
         if get_trust(rch) >= ch.invis_level:
@@ -549,12 +549,12 @@ def do_violate(self, argument):
                 act("$t",ch,ch.pcdata.bamfin,rch,TO_VICT)
             else:
                 act("$n appears in a swirling mist.",ch,None,rch,TO_VICT)
-    ch.do_look("auto" )
+    ch.do_look("auto")
     return
 
 # RT to replace the 3 stat commands */
 def do_stat(self, argument):
-    ch=self
+    ch = self
     string, arg = read_word(argument)
     if not arg:
         ch.send("Syntax:\n")
@@ -590,26 +590,25 @@ def do_stat(self, argument):
     ch.send("Nothing by that name found anywhere.\n")
 
 def do_rstat(self, argument):
-    ch=self
+    ch = self
 
-    argument, arg = read_word( argument )
-    location = ch.in_room if not arg else find_location( ch, arg )
+    argument, arg = read_word(argument)
+    location = ch.in_room if not arg else find_location(ch, arg)
     if not location:
         ch.send("No such location.\n")
         return
 
     if not is_room_owner(ch,location) and ch.in_room != location \
-    and room_is_private( location ) and not IS_TRUSTED(ch,IMPLEMENTOR):
+    and room_is_private(location) and not IS_TRUSTED(ch,IMPLEMENTOR):
         ch.send("That room is private right now.\n")
         return
-    ch.send("Name: '%s'\nArea: '%s'\n" % (location.name, location.area.name ) )
-    ch.send("Vnum: %d  Sector: %d  Light: %d  Healing: %d  Mana: %d\n" % (
-              location.vnum,
+    ch.send("Name: '%s'\nArea: '%s'\n" % (location.name, location.area.name))
+    ch.send("Vnum: %d  Sector: %d  Light: %d  Healing: %d  Mana: %d\n" % (location.vnum,
               location.sector_type,
               location.light,
               location.heal_rate,
-              location.mana_rate ) )
-    ch.send("Room flags: %d.\nDescription:\n%s" % ( location.room_flags, location.description ) )
+              location.mana_rate))
+    ch.send("Room flags: %d.\nDescription:\n%s" % (location.room_flags, location.description))
     if location.extra_descr:
         ch.send("Extra description keywords: '")
         [ch.send(ed.keyword + " ") for ed in location.extra_descr]
@@ -621,52 +620,49 @@ def do_rstat(self, argument):
             ch.send("%s " % rch.name if not IS_NPC(rch) else rch.short_descr)
     ch.send(".\nObjects:   ")
     for obj in location.contents:
-        ch.send("'%s' " % obj.name )
+        ch.send("'%s' " % obj.name)
     ch.send(".\n")
     for pexit in location.exit:
         if pexit:
-            ch.send("Door: %d.  To: %d.  Key: %d.  Exit flags: %d.\nKeyword: '%s'.  Description: %s" % (
-            door,
+            ch.send("Door: %d.  To: %d.  Key: %d.  Exit flags: %d.\nKeyword: '%s'.  Description: %s" % (door,
             -1 if pexit.u1.to_room == None else pexit.u1.to_room.vnum,
             pexit.key,
             pexit.exit_info,
             pexit.keyword,
-            pexit.description if pexit.description else "(none).\n" ) )
+            pexit.description if pexit.description else "(none).\n"))
     return
 
 def do_ostat(self, argument):
-    ch=self
+    ch = self
     argument, arg = read_word(argument)
     if not arg:
         ch.send("Stat what?\n")
         return
-    obj = get_obj_world( ch, argument )
+    obj = get_obj_world(ch, argument)
     if not obj:
         ch.send("Nothing like that in hell, earth, or heaven.\n")
         return
 
-    ch.send("Name(s): %s\n" % obj.name )
-    ch.send("Vnum: %d  Format: %s  Type: %s  Resets: %d\n" % (
-        obj.pIndexData.vnum, "new" if obj.pIndexData.new_format else "old",
-        item_name(obj.item_type), obj.pIndexData.reset_num ) )
-    ch.send("Short description: %s\nLong description: %s\n" % (obj.short_descr, obj.description ))
-    ch.send("Wear bits: %s\nExtra bits: %s\n" % (wear_bit_name(obj.wear_flags), extra_bit_name( obj.extra_flags ) ) )
-    ch.send("Number: 1/%d  Weight: %d/%d/%d (10th pounds)\n" % ( get_obj_number( obj ),
-        obj.weight, get_obj_weight( obj ),get_true_weight(obj) ) )
-    ch.send("Level: %d  Cost: %d  Condition: %d  Timer: %d\n" % (obj.level, obj.cost, obj.condition, obj.timer ) )
+    ch.send("Name(s): %s\n" % obj.name)
+    ch.send("Vnum: %d  Format: %s  Type: %s  Resets: %d\n" % (obj.pIndexData.vnum, "new" if obj.pIndexData.new_format else "old",
+        item_name(obj.item_type), obj.pIndexData.reset_num))
+    ch.send("Short description: %s\nLong description: %s\n" % (obj.short_descr, obj.description))
+    ch.send("Wear bits: %s\nExtra bits: %s\n" % (wear_bit_name(obj.wear_flags), extra_bit_name(obj.extra_flags)))
+    ch.send("Number: 1/%d  Weight: %d/%d/%d (10th pounds)\n" % (get_obj_number(obj),
+        obj.weight, get_obj_weight(obj),get_true_weight(obj)))
+    ch.send("Level: %d  Cost: %d  Condition: %d  Timer: %d\n" % (obj.level, obj.cost, obj.condition, obj.timer))
 
-    ch.send( "In room: %d  In object: %s  Carried by: %s  Wear_loc: %d\n" % (
-        0 if not obj.in_room else obj.in_room.vnum,
+    ch.send("In room: %d  In object: %s  Carried by: %s  Wear_loc: %d\n" % (0 if not obj.in_room else obj.in_room.vnum,
         "(none)" if not obj.in_obj else obj.in_obj.short_descr,
         "(noone)" if not obj.carried_by else "someone" if not can_see(ch,obj.carried_by) else obj.carried_by.name,
-        obj.wear_loc ) )
+        obj.wear_loc))
     ch.send("Values: %d %d %d %d %d\n" % (v for v in obj.value))
     # now give out vital statistics as per identify */
 
     if obj.item_type == ITEM_SCROLL \
     or obj.item_type == ITEM_POTION \
     or obj.item_type == ITEM_PILL:
-        ch.send( "Level %d spells of:", obj.value[0] )
+        ch.send("Level %d spells of:", obj.value[0])
         for value in obj.value:
             if value and value in skill_table:
                 ch.send(" '%s'" % skill_table[value].name)
@@ -674,14 +670,14 @@ def do_ostat(self, argument):
         ch.send(".\n")
     elif obj.item_type == ITEM_WAND \
     or obj.item_type == ITEM_STAFF: 
-        ch.send("Has %d(%d) charges of level %d" % (obj.value[1], obj.value[2], obj.value[0] ))
+        ch.send("Has %d(%d) charges of level %d" % (obj.value[1], obj.value[2], obj.value[0]))
         ch.send(buf)
         
         if obj.value[3] and obj.value[3] in skill_table:
-              ch.send(" '%s'" %  (skill_table[obj.value[3]].name) )
+              ch.send(" '%s'" % (skill_table[obj.value[3]].name))
         ch.send(".\n")
     elif obj.item_type == ITEM_DRINK_CON:
-          ch.send("It holds %s-colored %s.\n" % (liq_table[obj.value[2]].liq_color, liq_table[obj.value[2]].liq_name) )
+          ch.send("It holds %s-colored %s.\n" % (liq_table[obj.value[2]].liq_color, liq_table[obj.value[2]].liq_name))
     elif obj.item_type == ITEM_WEAPON:
           ch.send("Weapon type is ")
           weapon_type = { WEAPON_EXOTIC:"exotic", WEAPON_SWORD:"sword",
@@ -696,13 +692,12 @@ def do_ostat(self, argument):
           if obj.pIndexData.new_format:
               ch.send("Damage is %dd%d (average %d)\n" % (obj.value[1],obj.value[2], (1 + obj.value[2]) * obj.value[1] / 2))
           else:
-              ch.send("Damage is %d to %d (average %d)\n" % ( obj.value[1], obj.value[2], ( obj.value[1] + obj.value[2] ) / 2 ) )
-          ch.send("Damage noun is %s.\n" % (attack_table[obj.value[3]].noun if obj.value[3] in attack_table else "undefined") )
+              ch.send("Damage is %d to %d (average %d)\n" % (obj.value[1], obj.value[2], (obj.value[1] + obj.value[2]) / 2))
+          ch.send("Damage noun is %s.\n" % (attack_table[obj.value[3]].noun if obj.value[3] in attack_table else "undefined"))
           if obj.value[4] > 0:  # weapon flags */
               ch.send("Weapons flags: %s\n" % weapon_bit_name(obj.value[4]))
     elif obj.item_type == ITEM_ARMOR:
-        ch.send( "Armor class is %d pierce, %d bash, %d slash, and %d vs. magic\n" % (
-              obj.value[0], obj.value[1], obj.value[2], obj.value[3] ) )
+        ch.send("Armor class is %d pierce, %d bash, %d slash, and %d vs. magic\n" % (obj.value[0], obj.value[1], obj.value[2], obj.value[3]))
     elif obj.item_type == ITEM_CONTAINER:
         ch.send("Capacity: %d#  Maximum weight: %d#  flags: %s\n" % (obj.value[0], obj.value[3], cont_bit_name(obj.value[1])))
         if obj.value[4] != 100:
@@ -719,7 +714,7 @@ def do_ostat(self, argument):
     if not obj.enchanted:
         affected.extend(obj.pIndexData.affected)
     for paf in affected:
-        ch.send("Affects %s by %d, level %d" % (affect_loc_name( paf.location ), paf.modifier,paf.level ) )
+        ch.send("Affects %s by %d, level %d" % (affect_loc_name(paf.location), paf.modifier,paf.level))
         if paf.duration > -1:
             ch.send(", %d hours.\n" % paf.duration)
         else:
@@ -741,63 +736,55 @@ def do_ostat(self, argument):
                 ch.send("Unknown bit %d: %d\n" % paf.where,paf.bitvector)
 
 def do_mstat(self, argument):
-    ch=self
-    argument, arg = read_word( argument )
+    ch = self
+    argument, arg = read_word(argument)
     if not arg:
         ch.send("Stat whom?\n")
         return
-    victim = get_char_world(ch, argument )
+    victim = get_char_world(ch, argument)
     if not victim:
         ch.send("They aren't here.\n")
         return
     ch.send("Name: %s\n" % victim.name)
-    ch.send("Vnum: %d  Format: %s  Race: %s  Group: %d  Sex: %s  Room: %d\n" % (
-                0 if not IS_NPC(victim) else victim.pIndexData.vnum,
+    ch.send("Vnum: %d  Format: %s  Race: %s  Group: %d  Sex: %s  Room: %d\n" % (0 if not IS_NPC(victim) else victim.pIndexData.vnum,
                 "pc" if not IS_NPC(victim) else "new" if victim.pIndexData.new_format else "old",
                 victim.race.name,
                 0 if not IS_NPC(victim) else victim.group, sex_table[victim.sex].name,
-                0 if not victim.in_room else victim.in_room.vnum ) )
+                0 if not victim.in_room else victim.in_room.vnum))
 
     if IS_NPC(victim):
         ch.send("Count: %d  Killed: %d\n" % (victim.pIndexData.count,victim.pIndexData.killed))
-    ch.send("Str: %d(%d)  Int: %d(%d)  Wis: %d(%d)  Dex: %d(%d)  Con: %d(%d)\n" % (
-                victim.perm_stat[STAT_STR], get_curr_stat(victim,STAT_STR),
+    ch.send("Str: %d(%d)  Int: %d(%d)  Wis: %d(%d)  Dex: %d(%d)  Con: %d(%d)\n" % (victim.perm_stat[STAT_STR], get_curr_stat(victim,STAT_STR),
                 victim.perm_stat[STAT_INT], get_curr_stat(victim,STAT_INT),
                 victim.perm_stat[STAT_WIS], get_curr_stat(victim,STAT_WIS),
                 victim.perm_stat[STAT_DEX], get_curr_stat(victim,STAT_DEX),
                 victim.perm_stat[STAT_CON], get_curr_stat(victim,STAT_CON)))
-    ch.send("Hp: %d/%d  Mana: %d/%d  Move: %d/%d  Practices: %d\n" % (
-                victim.hit, victim.max_hit,
+    ch.send("Hp: %d/%d  Mana: %d/%d  Move: %d/%d  Practices: %d\n" % (victim.hit, victim.max_hit,
                 victim.mana, victim.max_mana,
                 victim.move, victim.max_move,
-                0 if IS_NPC(ch) else victim.practice ) )
-    ch.send("Lv: %d  Class: %s  Align: %d  Gold: %ld  Silver: %ld  Exp: %d\n" % (
-                victim.level,       
+                0 if IS_NPC(ch) else victim.practice))
+    ch.send("Lv: %d  Class: %s  Align: %d  Gold: %ld  Silver: %ld  Exp: %d\n" % (victim.level,       
                 "mobile" if IS_NPC(victim) else victim.guild.name,            
-                victim.alignment, victim.gold, victim.silver, victim.exp ) )
-    ch.send("Armor: pierce: %d  bash: %d  slash: %d  magic: %d\n" % (
-                GET_AC(victim,AC_PIERCE), GET_AC(victim,AC_BASH),
+                victim.alignment, victim.gold, victim.silver, victim.exp))
+    ch.send("Armor: pierce: %d  bash: %d  slash: %d  magic: %d\n" % (GET_AC(victim,AC_PIERCE), GET_AC(victim,AC_BASH),
                 GET_AC(victim,AC_SLASH),  GET_AC(victim,AC_EXOTIC)))
-    ch.send("Hit: %d  Dam: %d  Saves: %d  Size: %s  Position: %s  Wimpy: %d\n" % (
-                GET_HITROLL(victim), GET_DAMROLL(victim), victim.saving_throw,
+    ch.send("Hit: %d  Dam: %d  Saves: %d  Size: %s  Position: %s  Wimpy: %d\n" % (GET_HITROLL(victim), GET_DAMROLL(victim), victim.saving_throw,
                 size_table[victim.size].name, position_table[victim.position].name,
-                victim.wimpy ))
+                victim.wimpy))
     if IS_NPC(victim) and victim.pIndexData.new_format:
-        ch.send("Damage: %dd%d  Message:  %s\n" % (
-              victim.damage[DICE_NUMBER],victim.damage[DICE_TYPE],
-              attack_table[victim.dam_type].noun) )
-    ch.send("Fighting: %s\n" % (victim.fighting.name if victim.fighting else "(none)" ))
+        ch.send("Damage: %dd%d  Message:  %s\n" % (victim.damage[DICE_NUMBER],victim.damage[DICE_TYPE],
+              attack_table[victim.dam_type].noun))
+    ch.send("Fighting: %s\n" % (victim.fighting.name if victim.fighting else "(none)"))
     if not IS_NPC(victim):
-        ch.send( "Thirst: %d  Hunger: %d  Full: %d  Drunk: %d\n" % (
-                    victim.pcdata.condition[COND_THIRST],
+        ch.send("Thirst: %d  Hunger: %d  Full: %d  Drunk: %d\n" % (victim.pcdata.condition[COND_THIRST],
                     victim.pcdata.condition[COND_HUNGER],
                     victim.pcdata.condition[COND_FULL],
-                    victim.pcdata.condition[COND_DRUNK] ))
-    ch.send("Carry number: %d  Carry weight: %ld\n" % ( victim.carry_number, get_carry_weight(victim) / 10 ) )
+                    victim.pcdata.condition[COND_DRUNK]))
+    ch.send("Carry number: %d  Carry weight: %ld\n" % (victim.carry_number, get_carry_weight(victim) / 10))
     if not IS_NPC(victim):
         ch.send("Age: %d  Played: %d  Last Level: %d  Timer: %d\n",
-                    get_age(victim), (int) (victim.played + current_time - victim.logon) / 3600, 
-                    victim.pcdata.last_level, victim.timer )
+                    get_age(victim), (int)(victim.played + current_time - victim.logon) / 3600, 
+                    victim.pcdata.last_level, victim.timer)
     ch.send("Act: %s\n" % act_bit_name(victim.act))
     if victim.comm:
         ch.send("Comm: %s\n" % comm_bit_name(victim.comm))
@@ -812,27 +799,25 @@ def do_mstat(self, argument):
     ch.send("Form: %s\nParts: %s\n" % (form_bit_name(victim.form), part_bit_name(victim.parts)))
     if victim.affected_by:
         ch.send("Affected by %s\n" % affect_bit_name(victim.affected_by))
-    ch.send("Master: %s  Leader: %s  Pet: %s\n" % (
-                victim.master.name if victim.master else "(none)",
+    ch.send("Master: %s  Leader: %s  Pet: %s\n" % (victim.master.name if victim.master else "(none)",
                 victim.leader.name if victim.leader else "(none)",
                 victim.pet.name if victim.pet else "(none)"))
-    ch.send("Short description: %s\nLong  description: %s" % (  victim.short_descr,
-                victim.long_descr if victim.long_descr else "(none)\n" ) )
+    ch.send("Short description: %s\nLong  description: %s" % (victim.short_descr,
+                victim.long_descr if victim.long_descr else "(none)\n"))
     if IS_NPC(victim) and victim.spec_fun != None:
         ch.send("Mobile has special procedure %s.\n" % victim.spec_fun.__name__)
 
     for paf in victim.affected:
-        ch.send( "Spell: '%s' modifies %s by %d for %d hours with bits %s, level %d.\n" % (
-                    paf.type,
-                    affect_loc_name( paf.location ),
+        ch.send("Spell: '%s' modifies %s by %d for %d hours with bits %s, level %d.\n" % (paf.type,
+                    affect_loc_name(paf.location),
                     paf.modifier,
                     paf.duration,
-                    affect_bit_name( paf.bitvector ),
+                    affect_bit_name(paf.bitvector),
                     paf.level))
     
 # ofind and mfind replaced with vnum, vnum skill also added */
 def do_vnum(self, argument):
-    ch=self
+    ch = self
     string, arg = read_word(argument)
  
     if not arg:
@@ -857,14 +842,14 @@ def do_vnum(self, argument):
     ch.do_ofind(argument)
 
 def do_mfind(self, argument):
-    ch=self
-    argument, arg = read_word( argument )
+    ch = self
+    argument, arg = read_word(argument)
     if not arg:
         ch.send("Find whom?\n")
         return
-    fAll  = False # !str_cmp( arg, "all" ) */
+    fAll = False # !str_cmp( arg, "all" ) */
     found = False
-    nMatch  = 0
+    nMatch = 0
 
 
      #* Yeah, so iterating over all vnum's takes 10,000 loops.
@@ -881,15 +866,15 @@ def do_mfind(self, argument):
     return
 
 def do_ofind(self, argument):
-    ch=self
-    argument, arg = read_word( argument )
+    ch = self
+    argument, arg = read_word(argument)
     if not arg:
         ch.send("Find what?\n")
         return
 
-    fAll  = False # !str_cmp( arg, "all" ) */
+    fAll = False # !str_cmp( arg, "all" ) */
     found = False
-    nMatch  = 0
+    nMatch = 0
     
     # * Yeah, so iterating over all vnum's takes 10,000 loops.
     # * Get_obj_index is fast, and I don't feel like threading another link.
@@ -904,7 +889,7 @@ def do_ofind(self, argument):
     return
 
 def do_owhere(self, argument):
-    ch=self
+    ch = self
     found = False
     number = 0
     max_found = 200
@@ -913,7 +898,7 @@ def do_owhere(self, argument):
         ch.send("Find what?\n")
         return
     for obj in object_list:
-        if not can_see_obj( ch, obj ) or argument not in obj.name or ch.level < obj.level:
+        if not can_see_obj(ch, obj) or argument not in obj.name or ch.level < obj.level:
             continue
         found = True
         number += 1
@@ -921,11 +906,9 @@ def do_owhere(self, argument):
         while in_obj.in_obj: in_obj = in_obj.in_obj
            
         if in_obj.carried_by and can_see(ch,in_obj.carried_by) and in_obj.carried_by.in_room:
-            ch.send("%3d) %s is carried by %s [Room %d]\n" % (
-                        number, obj.short_descr,PERS(in_obj.carried_by, ch), in_obj.carried_by.in_room.vnum ) )
+            ch.send("%3d) %s is carried by %s [Room %d]\n" % (number, obj.short_descr,PERS(in_obj.carried_by, ch), in_obj.carried_by.in_room.vnum))
         elif in_obj.in_room and can_see_room(ch,in_obj.in_room):
-            ch.send("%3d) %s is in %s [Room %d]\n" % (
-                        number, obj.short_descr,in_obj.in_room.name, in_obj.in_room.vnum) )
+            ch.send("%3d) %s is in %s [Room %d]\n" % (number, obj.short_descr,in_obj.in_room.name, in_obj.in_room.vnum))
         else:
             ch.send("%3d) %s is somewhere\n" % (number, obj.short_descr))
  
@@ -936,7 +919,7 @@ def do_owhere(self, argument):
         ch.send("Nothing like that in heaven or earth.\n")
 
 def do_mwhere(self, argument):
-    ch=self
+    ch = self
     count = 0
     if not argument:
         # show characters logged */
@@ -947,36 +930,33 @@ def do_mwhere(self, argument):
                 victim = d.character
                 count+=1
             if d.original:
-                ch.send("%3d) %s (in the body of %s) is in %s [%d]\n" % (
-                            count, d.original.name,victim.short_descr,
+                ch.send("%3d) %s (in the body of %s) is in %s [%d]\n" % (count, d.original.name,victim.short_descr,
                             victim.in_room.name,victim.in_room.vnum))
             else:
-                ch.send("%3d) %s is in %s [%d]\n" % (
-                            count, victim.name,victim.in_room.name, victim.in_room.vnum) )
+                ch.send("%3d) %s is in %s [%d]\n" % (count, victim.name,victim.in_room.name, victim.in_room.vnum))
         return
     found = False
     for victim in char_list:
-        if victim.in_room and  argument in victim.name:
+        if victim.in_room and argument in victim.name:
             found = True
             count += 1
-            ch.send("%3d) [%5d] %-28s [%5d] %s\n" % (
-                        count, 0 if not IS_NPC(victim) else victim.pIndexData.vnum,
+            ch.send("%3d) [%5d] %-28s [%5d] %s\n" % (count, 0 if not IS_NPC(victim) else victim.pIndexData.vnum,
                         victim.short_descr if IS_NPC(victim) else victim.name,
                         victim.in_room.vnum,
-                        victim.in_room.name ))
+                        victim.in_room.name))
     if found:
-        act( "You didn't find any $T.", ch, None, argument, TO_CHAR )
+        act("You didn't find any $T.", ch, None, argument, TO_CHAR)
 
 def do_reboo(self, argument):
-    ch=self
+    ch = self
     ch.send("If you want to REBOOT, spell it out.\n")
     return
 
 
 def do_reboot(self, argument):
-    ch=self
+    ch = self
     if ch.invis_level < LEVEL_HERO:
-        ch.do_echo("Reboot by %s." % ch.name )
+        ch.do_echo("Reboot by %s." % ch.name)
     merc_down = True
     for d in descriptor_list[:]:
         vch = CH(d)
@@ -985,15 +965,15 @@ def do_reboot(self, argument):
             close_socket(d)
 
 def do_shutdow(self, argument):
-    ch=self
+    ch = self
     ch.send("If you want to SHUTDOWN, spell it out.\n")
     return
 
 def do_shutdown(self, argument):
-    ch=self
-    ch=self
+    ch = self
+    ch = self
     if ch.invis_level < LEVEL_HERO:
-        ch.do_echo("Shutdown by %s." % ch.name )
+        ch.do_echo("Shutdown by %s." % ch.name)
     merc_down = True
     for d in descriptor_list[:]:
         vch = CH(d)
@@ -1002,7 +982,7 @@ def do_shutdown(self, argument):
             close_socket(d)
 
 def do_protect(self, argument):
-    ch=self
+    ch = self
     if not argument:
         ch.send("Protect whom from snooping?\n")
         return
@@ -1020,13 +1000,13 @@ def do_protect(self, argument):
         SET_BIT(victim.comm,COMM_SNOOP_PROOF)
 
 def do_snoop(self, argument):
-    ch=self
-    argument, arg = read_word( argument )
+    ch = self
+    argument, arg = read_word(argument)
 
     if not arg:
         ch.send("Snoop whom?\n")
         return
-    victim = get_char_world(ch, arg )
+    victim = get_char_world(ch, arg)
     if not victim:
         ch.send("They aren't here.\n")
         return
@@ -1047,7 +1027,7 @@ def do_snoop(self, argument):
     and room_is_private(victim.in_room) and not IS_TRUSTED(ch,IMPLEMENTOR):
         ch.send("That character is in a private room.\n")
         return
-    if get_trust( victim ) >= get_trust( ch ) or IS_SET(victim.comm,COMM_SNOOP_PROOF):
+    if get_trust(victim) >= get_trust(ch) or IS_SET(victim.comm,COMM_SNOOP_PROOF):
         ch.send("You failed.\n")
         return
     if ch.desc:
@@ -1064,8 +1044,8 @@ def do_snoop(self, argument):
     return
 
 def do_switch(self, argument):
-    ch=self
-    argument, arg = read_word( argument )
+    ch = self
+    argument, arg = read_word(argument)
     
     if not arg:
         ch.send("Switch into whom?\n")
@@ -1075,7 +1055,7 @@ def do_switch(self, argument):
     if ch.desc.original:
         ch.send("You are already switched.\n")
         return
-    victim = get_char_world(ch, arg )
+    victim = get_char_world(ch, arg)
     if not victim:
         ch.send("They aren't here.\n")
         return
@@ -1096,9 +1076,9 @@ def do_switch(self, argument):
     wiznet("$N switches into %s" % victim.short_descr,ch,None,WIZ_SWITCHES,WIZ_SECURE,get_trust(ch))
 
     ch.desc.character = victim
-    ch.desc.original  = ch
-    victim.desc        = ch.desc
-    ch.desc            = None
+    ch.desc.original = ch
+    victim.desc = ch.desc
+    ch.desc = None
     # change communications to match */
     if ch.prompt:
         victim.prompt = ch.prompt
@@ -1108,7 +1088,7 @@ def do_switch(self, argument):
     return
 
 def do_return(self, argument):
-    ch=self
+    ch = self
     if not ch.desc:
         return
     if not ch.desc.original:
@@ -1118,19 +1098,19 @@ def do_return(self, argument):
     if ch.prompt:
         ch.prompt = ''
     wiznet("$N returns from %s." % ch.short_descr,ch.desc.original,0,WIZ_SWITCHES,WIZ_SECURE,get_trust(ch))
-    ch.desc.character       = ch.desc.original
-    ch.desc.original        = None
+    ch.desc.character = ch.desc.original
+    ch.desc.original = None
     ch.desc.character.desc = ch.desc 
-    ch.desc                  = None
+    ch.desc = None
     return
 
 # trust levels for load and clone */
-def obj_check (ch, obj):
+def obj_check(ch, obj):
     if IS_TRUSTED(ch,GOD) \
     or (IS_TRUSTED(ch,IMMORTAL) and obj.level <= 20 and obj.cost <= 1000) \
-    or (IS_TRUSTED(ch,DEMI)     and obj.level <= 10 and obj.cost <= 500) \
-    or (IS_TRUSTED(ch,ANGEL)    and obj.level <=  5 and obj.cost <= 250) \
-    or (IS_TRUSTED(ch,AVATAR)   and obj.level ==  0 and obj.cost <= 100):
+    or (IS_TRUSTED(ch,DEMI) and obj.level <= 10 and obj.cost <= 500) \
+    or (IS_TRUSTED(ch,ANGEL) and obj.level <= 5 and obj.cost <= 250) \
+    or (IS_TRUSTED(ch,AVATAR) and obj.level == 0 and obj.cost <= 100):
         return True
     else:
         return False
@@ -1146,7 +1126,7 @@ def recursive_clone(ch, obj, clone):
 
 # command that is similar to load */
 def do_clone(self, argument):
-    ch=self
+    ch = self
     rest,arg = read_word(argument)
     mob = None
     obj = None
@@ -1175,7 +1155,7 @@ def do_clone(self, argument):
     # clone an object */
     if obj:
         if not obj_check(ch,obj):
-            ch.send(    "Your powers are not great enough for such a task.\n")
+            ch.send("Your powers are not great enough for such a task.\n")
             return
         clone = create_object(obj.pIndexData,0) 
         clone_object(obj,clone)
@@ -1195,10 +1175,10 @@ def do_clone(self, argument):
             return
         if (mob.level > 20 and not IS_TRUSTED(ch,GOD)) \
         or (mob.level > 10 and not IS_TRUSTED(ch,IMMORTAL)) \
-        or (mob.level >  5 and not IS_TRUSTED(ch,DEMI)) \
-        or (mob.level >  0 and not IS_TRUSTED(ch,ANGEL)) \
+        or (mob.level > 5 and not IS_TRUSTED(ch,DEMI)) \
+        or (mob.level > 0 and not IS_TRUSTED(ch,ANGEL)) \
         or not IS_TRUSTED(ch,AVATAR):
-            ch.send(    "Your powers are not great enough for such a task.\n")
+            ch.send("Your powers are not great enough for such a task.\n")
             return
         clone = create_mobile(mob.pIndexData)
         clone_mobile(mob,clone) 
@@ -1218,7 +1198,7 @@ def do_clone(self, argument):
 
 # RT to replace the two load commands */
 def do_load(self, argument):
-    ch=self
+    ch = self
     argument, arg = read_word(argument)
     if not arg:
         ch.send("Syntax:\n")
@@ -1235,7 +1215,7 @@ def do_load(self, argument):
     ch.do_load("")
 
 def do_mload(self, argument):
-    ch=self
+    ch = self
     argument, arg = read_word(argument)
 
     if not arg or not arg.is_digit():
@@ -1246,15 +1226,15 @@ def do_mload(self, argument):
         ch.send("No mob has that vnum.\n")
         return
     pMobIndex = mob_index_hash[vnum]
-    victim = create_mobile( pMobIndex )
-    char_to_room( victim, ch.in_room )
-    act( "$n has created $N!", ch, None, victim, TO_ROOM )
+    victim = create_mobile(pMobIndex)
+    char_to_room(victim, ch.in_room)
+    act("$n has created $N!", ch, None, victim, TO_ROOM)
     wiznet("$N loads %s." % victim.short_descr,ch,None,WIZ_LOAD,WIZ_SECURE,get_trust(ch))
     ch.send("Ok.\n")
     return
 
 def do_oload(self, argument):
-    ch=self
+    ch = self
     argument, arg1 = read_word(argument)
     argument, arg2 = read_word(argument)
 
@@ -1275,31 +1255,31 @@ def do_oload(self, argument):
     if vnum not in obj_index_hash:
         ch.send("No object has that vnum.\n")
         return
-    obj = create_object( pObjIndex, level )
+    obj = create_object(pObjIndex, level)
     if CAN_WEAR(obj, ITEM_TAKE):
-        obj_to_char( obj, ch )
+        obj_to_char(obj, ch)
     else:
-        obj_to_room( obj, ch.in_room )
-    act( "$n has created $p!", ch, obj, None, TO_ROOM )
+        obj_to_room(obj, ch.in_room)
+    act("$n has created $p!", ch, obj, None, TO_ROOM)
     wiznet("$N loads $p.",ch,obj,WIZ_LOAD,WIZ_SECURE,get_trust(ch))
     ch.send("Ok.\n")
     return
 
 def do_purge(self, argument):
-    ch=self
+    ch = self
     argument, arg = read_word(argument)
 
     if not arg:
         for victim in ch.in_room.people[:]:
             if IS_NPC(victim) and not IS_SET(victim.act,ACT_NOPURGE) and victim != ch: # safety precaution */ )
-                extract_char( victim, True )
+                extract_char(victim, True)
         for obj in ch.in_room.contents[:]:
             if not IS_OBJ_STAT(obj,ITEM_NOPURGE):
-                extract_obj( obj )
-        act( "$n purges the room!", ch, None, None, TO_ROOM)
+                extract_obj(obj)
+        act("$n purges the room!", ch, None, None, TO_ROOM)
         ch.send("Ok.\n")
         return
-    victim = get_char_world(ch, arg )
+    victim = get_char_world(ch, arg)
     if not victim:
         ch.send("They aren't here.\n")
         return
@@ -1314,25 +1294,25 @@ def do_purge(self, argument):
         act("$n disintegrates $N.",ch,0,victim,TO_NOTVICT)
 
         if victim.level > 1:
-            save_char_obj( victim )
+            save_char_obj(victim)
         d = victim.desc
-        extract_char( victim, True )
+        extract_char(victim, True)
         if d:
-            close_socket( d )
+            close_socket(d)
         return
-    act( "$n purges $N.", ch, None, victim, TO_NOTVICT )
-    extract_char( victim, True )
+    act("$n purges $N.", ch, None, victim, TO_NOTVICT)
+    extract_char(victim, True)
     return
 
 def do_advance(self, argument):
-    ch=self
-    argument, arg1  = read_word(argument)
-    argument, arg2  = read_word(argument)
+    ch = self
+    argument, arg1 = read_word(argument)
+    argument, arg2 = read_word(argument)
 
     if not arg1 or not arg2 or not arg2.is_digit():
         ch.send("Syntax: advance <char> <level>.\n")
         return
-    victim = get_char_world(ch, arg1 )
+    victim = get_char_world(ch, arg1)
     if not victim:
         ch.send("That player is not here.\n")
         return
@@ -1343,53 +1323,53 @@ def do_advance(self, argument):
     if level < 1 or level > MAX_LEVEL:
         ch.send("Level must be 1 to %d.\n" % MAX_LEVEL)
         return
-    if level > get_trust( ch ):
+    if level > get_trust(ch):
         ch.send("Limited to your trust level.\n")
         return
     
      #* Lower level:
-     #*   Reset to level 1.
-     #*   Then raise again.
-     #*   Currently, an imp can lower another imp.
-     #*   -- Swiftest
+     #* Reset to level 1.
+     #* Then raise again.
+     #* Currently, an imp can lower another imp.
+     #* -- Swiftest
      
     if level <= victim.level:
         ch.send("Lowering a player's level!\n")
         victim.send("**** OOOOHHHHHHHHHH  NNNNOOOO ****\n")
         temp_prac = victim.practice
-        victim.level    = 1
-        victim.exp      = exp_per_level(victim,victim.pcdata.points)
-        victim.max_hit  = 10
+        victim.level = 1
+        victim.exp = exp_per_level(victim,victim.pcdata.points)
+        victim.max_hit = 10
         victim.max_mana = 100
         victim.max_move = 100
         victim.practice = 0
-        victim.hit      = victim.max_hit
-        victim.mana     = victim.max_mana
-        victim.move     = victim.max_move
-        advance_level( victim, True )
+        victim.hit = victim.max_hit
+        victim.mana = victim.max_mana
+        victim.move = victim.max_move
+        advance_level(victim, True)
         victim.practice = temp_prac
     else:
         ch.send("Raising a player's level!\n")
         victim.send("**** OOOOHHHHHHHHHH  YYYYEEEESSS ****\n")
     for iLevel in range(victim.level, level):
         victim.level += 1
-        advance_level( victim,True)
+        advance_level(victim,True)
     victim.send("You are now level %d.\n" % victim.level)
-    victim.exp   = exp_per_level(victim,victim.pcdata.points) * max( 1, victim.level )
+    victim.exp = exp_per_level(victim,victim.pcdata.points) * max(1, victim.level)
     victim.trust = 0
     save_char_obj(victim)
     return
 
 def do_trust(self, argument):
-    ch=self
-    argument, arg1  = read_word(argument)
-    argument, arg2  = read_word(argument)
+    ch = self
+    argument, arg1 = read_word(argument)
+    argument, arg2 = read_word(argument)
 
     if not arg1 or not arg2 or not arg2.is_digit():
         ch.send("Syntax: trust <char> <level>.\n")
         return
     
-    victim = get_char_world(ch, arg1 )
+    victim = get_char_world(ch, arg1)
     if not victim:
         ch.send("That player is not here.\n")
         return
@@ -1397,14 +1377,14 @@ def do_trust(self, argument):
     if level < 0 or level > MAX_LEVEL:
         ch.send("Level must be 0 (reset) or 1 to %d.\n" % MAX_LEVEL)
         return
-    if level > get_trust( ch ):
+    if level > get_trust(ch):
         ch.send("Limited to your trust.\n")
         return
     victim.trust = level
     return
 
 def do_restore(self, argument):
-    ch=self
+    ch = self
     argument, arg = read_word(argument)
     if not arg or arg == "room":
         # cure room */
@@ -1415,10 +1395,10 @@ def do_restore(self, argument):
             affect_strip(vch,"sleep")
             affect_strip(vch,"curse")
             
-            vch.hit  = vch.max_hit
+            vch.hit = vch.max_hit
             vch.mana = vch.max_mana
             vch.move = vch.max_move
-            update_pos( vch)
+            update_pos(vch)
             act("$n has restored you.",ch,None,vch,TO_VICT)
         wiznet("$N restored room %d." % ch.in_room.vnum,ch,None,WIZ_RESTORE,WIZ_SECURE,get_trust(ch))
         ch.send("Room restored.\n")
@@ -1436,17 +1416,17 @@ def do_restore(self, argument):
             affect_strip(victim,"sleep")
             affect_strip(victim,"curse")
             
-            victim.hit   = victim.max_hit
-            victim.mana  = victim.max_mana
-            victim.move  = victim.max_move
-            update_pos( victim)
+            victim.hit = victim.max_hit
+            victim.mana = victim.max_mana
+            victim.move = victim.max_move
+            update_pos(victim)
             if victim.in_room:
                 act("$n has restored you.",ch,None,victim,TO_VICT)
         ch.send("All active players restored.\n")
         return
 
 
-    victim = get_char_world(ch, arg )
+    victim = get_char_world(ch, arg)
     if not victim:
         ch.send("They aren't here.\n")
         return
@@ -1455,32 +1435,32 @@ def do_restore(self, argument):
     affect_strip(victim,"blindness")
     affect_strip(victim,"sleep")
     affect_strip(victim,"curse")
-    victim.hit  = victim.max_hit
+    victim.hit = victim.max_hit
     victim.mana = victim.max_mana
     victim.move = victim.max_move
-    update_pos( victim )
-    act( "$n has restored you.", ch, None, victim, TO_VICT )
+    update_pos(victim)
+    act("$n has restored you.", ch, None, victim, TO_VICT)
     buf = "$N restored %s", (victim.short_descr if IS_NPC(victim) else victim.name)
     wiznet(buf,ch,None,WIZ_RESTORE,WIZ_SECURE,get_trust(ch))
     ch.send("Ok.\n")
     return
   
 def do_freeze(self, argument):
-    ch=self
-    argument, arg = read_word( argument)
+    ch = self
+    argument, arg = read_word(argument)
 
     if not arg:
         ch.send("Freeze whom?\n")
         return
 
-    victim = get_char_world(ch, arg )
+    victim = get_char_world(ch, arg)
     if not victim:
         ch.send("They aren't here.\n")
         return
     if IS_NPC(victim):
         ch.send("Not on NPC's.\n")
         return
-    if get_trust( victim ) >= get_trust( ch ):
+    if get_trust(victim) >= get_trust(ch):
         ch.send("You failed.\n")
         return
 
@@ -1495,11 +1475,11 @@ def do_freeze(self, argument):
         ch.send("FREEZE set.\n")
         wiznet("$N puts %s in the deep freeze." % victim.name,ch,None,WIZ_PENALTIES,WIZ_SECURE,0)
 
-    save_char_obj( victim )
+    save_char_obj(victim)
     return
 
 def do_log(self, argument):
-    ch=self
+    ch = self
     argument, arg = read_word(argument)
     if not arg:
         ch.send("Log whom?\n")
@@ -1512,7 +1492,7 @@ def do_log(self, argument):
             fLogAll = True
             ch.send("Log ALL on.\n")
         return
-    victim = get_char_world(ch, arg )
+    victim = get_char_world(ch, arg)
     if not victim:
         ch.send("They aren't here.\n")
         return
@@ -1529,16 +1509,16 @@ def do_log(self, argument):
         ch.send("LOG set.\n")
     return
 def do_noemote(self, argument):
-    ch=self
+    ch = self
     argument, arg = read_word(argument)
     if not arg:
         ch.send("Noemote whom?\n")
         return
-    victim = get_char_world(ch, arg )
+    victim = get_char_world(ch, arg)
     if not victim:
         ch.send("They aren't here.\n")
         return
-    if get_trust( victim ) >= get_trust( ch ):
+    if get_trust(victim) >= get_trust(ch):
         ch.send("You failed.\n")
         return
     if IS_SET(victim.comm, COMM_NOEMOTE):
@@ -1554,19 +1534,19 @@ def do_noemote(self, argument):
     return
 
 def do_noshout(self, argument):
-    ch=self
+    ch = self
     argument, arg = read_word(argument)
     if not arg:
         ch.send("Noshout whom?\n")
         return
-    victim = get_char_world(ch, arg )
+    victim = get_char_world(ch, arg)
     if not victim:
         ch.send("They aren't here.\n")
         return
     if IS_NPC(victim):
         ch.send("Not on NPC's.\n")
         return
-    if get_trust( victim ) >= get_trust( ch ):
+    if get_trust(victim) >= get_trust(ch):
           ch.send("You failed.\n")
           return
     if IS_SET(victim.comm, COMM_NOSHOUT):
@@ -1581,16 +1561,16 @@ def do_noshout(self, argument):
         wiznet("$N revokes %s's shouts." % victim.name,ch,None,WIZ_PENALTIES,WIZ_SECURE,0)
     return
 def do_notell(self, argument):
-    ch=self
+    ch = self
     argument, arg = read_word(argument)
     if not arg:
         ch.send("Notell whom?")
         return
-    victim = get_char_world(ch, arg )
+    victim = get_char_world(ch, arg)
     if not victim:
         ch.send("They aren't here.\n")
         return
-    if get_trust( victim ) >= get_trust( ch ):
+    if get_trust(victim) >= get_trust(ch):
         ch.send("You failed.\n")
         return
     if IS_SET(victim.comm, COMM_NOTELL):
@@ -1606,17 +1586,17 @@ def do_notell(self, argument):
     return
 
 def do_peace(self, argument):
-    ch=self
+    ch = self
     for rch in ch.in_room.people:
         if rch.fighting:
-            stop_fighting( rch, True )
+            stop_fighting(rch, True)
         if IS_NPC(rch) and IS_SET(rch.act,ACT_AGGRESSIVE):
             REMOVE_BIT(rch.act,ACT_AGGRESSIVE)
     ch.send("Ok.\n")
     return
 
 def do_wizlock(self, argument):
-    ch=self
+    ch = self
     global WIZLOCK
 
     if not WIZLOCK:
@@ -1630,7 +1610,7 @@ def do_wizlock(self, argument):
     return
 # RT anti-newbie code */
 def do_newlock(self, argument):
-    ch=self
+    ch = self
     global NEWLOCK
     if not NEWLOCK:
         wiznet("$N locks out new characters.",ch,None,0,0,0)
@@ -1643,25 +1623,25 @@ def do_newlock(self, argument):
     return
 
 def do_slookup(self, argument):
-    ch=self
-    argument, arg = read_word( argument )
+    ch = self
+    argument, arg = read_word(argument)
     if not arg:
         ch.send("Lookup which skill or spell?\n")
         return
     if arg == "all" :
         for sn, skill in skill_table.items():
-            ch.send("Sn: %15s  Slot: %3d  Skill/spell: '%s'\n", sn, skill.slot, skill.name )
+            ch.send("Sn: %15s  Slot: %3d  Skill/spell: '%s'\n", sn, skill.slot, skill.name)
     else:
         skill = prefix_lookup(skill_table, arg)
         if not skill:
             ch.send("No such skill or spell.\n")
             return
   
-        ch.send("Sn: %15s  Slot: %3d  Skill/spell: '%s'\n", skill.name, skill.slot, skill.name )
+        ch.send("Sn: %15s  Slot: %3d  Skill/spell: '%s'\n", skill.name, skill.slot, skill.name)
 
 # RT set replaces sset, mset, oset, and rset */
 def do_set(self, argument):
-    ch=self
+    ch = self
     argument, arg = read_word(argument)
 
     if not arg:
@@ -1687,10 +1667,10 @@ def do_set(self, argument):
     ch.do_set("")
 
 def do_sset(self, argument):
-    ch=self
-    argument, arg1  = read_word(argument)
-    argument, arg2  = read_word(argument)
-    argument, arg3  = read_word(argument)
+    ch = self
+    argument, arg1 = read_word(argument)
+    argument, arg2 = read_word(argument)
+    argument, arg3 = read_word(argument)
 
     if not arg1 or not arg2 or not arg3:
         ch.send("Syntax:\n")
@@ -1698,7 +1678,7 @@ def do_sset(self, argument):
         ch.send("  set skill <name> all <value>\n")  
         ch.send("   (use the name of the skill, not the number)\n")
         return
-    victim = get_char_world(ch, arg1 )
+    victim = get_char_world(ch, arg1)
     if not victim:
         ch.send("They aren't here.\n")
         return
@@ -1715,7 +1695,7 @@ def do_sset(self, argument):
     if not arg3.is_digit():
         ch.send("Value must be numeric.\n")
         return
-    value = int( arg3 )
+    value = int(arg3)
     if value < 0 or value > 100:
         ch.send("Value range is 0 to 100.\n")
         return
@@ -1727,9 +1707,9 @@ def do_sset(self, argument):
         victim.pcdata.learned[sn] = value
 
 def do_mset(self, argument):
-    ch=self
-    argument, arg1  = read_word(argument)
-    argument, arg2  = read_word(argument)
+    ch = self
+    argument, arg1 = read_word(argument)
+    argument, arg2 = read_word(argument)
     arg3 = argument
 
     if not arg1 or not arg2 or not arg3:
@@ -1740,7 +1720,7 @@ def do_mset(self, argument):
         ch.send("    race group gold silver hp mana move prac\n")
         ch.send("    align train thirst hunger drunk full\n")
         return
-    victim = get_char_world(ch, arg1 )
+    victim = get_char_world(ch, arg1)
     if not victim:
         ch.send("They aren't here.\n")
         return
@@ -1751,7 +1731,7 @@ def do_mset(self, argument):
     #* Set something.
     if arg2 == "str" :
         if value < 3 or value > get_max_train(victim,STAT_STR):
-            ch.send( "Strength range is 3 to %d\n." % get_max_train(victim,STAT_STR))
+            ch.send("Strength range is 3 to %d\n." % get_max_train(victim,STAT_STR))
             return
         victim.perm_stat[STAT_STR] = value
         return
@@ -1793,10 +1773,10 @@ def do_mset(self, argument):
             return
         guild = prefix_lookup(guild_table, arg3)
         if not guild:
-            ch.send("Possible classes are: " )
+            ch.send("Possible classes are: ")
             for guild in guild_table.keys():
-                ch.send("%s " % guild )
-            ch.send(".\n" )
+                ch.send("%s " % guild)
+            ch.send(".\n")
             return
         victim.guild = guild
         return
@@ -1910,13 +1890,13 @@ def do_mset(self, argument):
         victim.group = value
         return
     #* Generate usage message.
-    ch.do_mset("" )
+    ch.do_mset("")
 
 def do_string(self, argument):
-    ch=self
-    argument, type  = read_word(argument)
-    argument, arg1  = read_word(argument)
-    argument, arg2  = read_word(argument)
+    ch = self
+    argument, type = read_word(argument)
+    argument, arg1 = read_word(argument)
+    argument, arg2 = read_word(argument)
     arg3 = argument
 
     if not type or not arg1 or not arg2 or not arg3:
@@ -1927,7 +1907,7 @@ def do_string(self, argument):
         ch.send("    fields: name short long extended\n")
         return
     if "mobile".startswith(type) or "character".startswith(type):
-        victim = get_char_world(ch, arg1 )
+        victim = get_char_world(ch, arg1)
         if not victim:
             ch.send("They aren't here.\n")
             return
@@ -1953,7 +1933,7 @@ def do_string(self, argument):
             if IS_NPC(victim):
                 ch.send("Not on NPC's.\n")
                 return
-            set_title( victim, arg3 )
+            set_title(victim, arg3)
             return
         if "spec".startswith(arg2):
             if not IS_NPC(victim):
@@ -1968,7 +1948,7 @@ def do_string(self, argument):
             return
     if "object".startswith(type):
         # string an obj */
-        obj = get_obj_world( ch, arg1 )
+        obj = get_obj_world(ch, arg1)
         if not obj:
             ch.send("Nothing like that in heaven or earth.\n")
             return
@@ -1981,10 +1961,10 @@ def do_string(self, argument):
         if "long".startswith(arg2):
             obj.description = arg3
             return
-        if "extended".startswith(arg2) or  "ed".startswith(arg2):
-            argument, arg3  = read_word(argument)
+        if "extended".startswith(arg2) or "ed".startswith(arg2):
+            argument, arg3 = read_word(argument)
             if argument == None:
-                ch.send( "Syntax: oset <object> ed <keyword> <string>\n")
+                ch.send("Syntax: oset <object> ed <keyword> <string>\n")
                 return
             argument += "\n"
             ed = EXTRA_DESCR_DATA()
@@ -1996,9 +1976,9 @@ def do_string(self, argument):
     ch.do_string("")
 
 def do_oset(self, argument):
-    ch=self
-    argument, arg1  = read_word(argument)
-    argument, arg2  = read_word(argument)
+    ch = self
+    argument, arg1 = read_word(argument)
+    argument, arg2 = read_word(argument)
     arg3 = argument
 
     if not arg1 or not arg2 or not arg3:
@@ -2014,7 +1994,7 @@ def do_oset(self, argument):
         return
     #
     #* Snarf the value (which need not be numeric).
-    value = int( arg3 ) if arg3.is_digit else -1
+    value = int(arg3) if arg3.is_digit else -1
     if value == -1:
         ch.do_oset("")
     #* Set something.
@@ -2053,14 +2033,14 @@ def do_oset(self, argument):
         return
      
     #* Generate usage message.
-    ch.do_oset("" )
+    ch.do_oset("")
     return
 
 def do_rset(self, argument):
-    ch=self
-    argument, arg1  = read_word(argument)
-    argument, arg2  = read_word(argument)
-    strcpy( arg3, argument )
+    ch = self
+    argument, arg1 = read_word(argument)
+    argument, arg2 = read_word(argument)
+    strcpy(arg3, argument)
 
     if not arg1 or not arg2 or not arg3:
         ch.send("Syntax:\n")
@@ -2068,7 +2048,7 @@ def do_rset(self, argument):
         ch.send("  Field being one of:\n")
         ch.send("    flags sector\n")
         return
-    location = find_location( ch, arg1 )
+    location = find_location(ch, arg1)
     if not location:
         ch.send("No such location.\n")
         return
@@ -2081,11 +2061,11 @@ def do_rset(self, argument):
     if not arg3.is_digit():
         ch.send("Value must be numeric.\n")
         return
-    value = int( arg3 )
+    value = int(arg3)
 
     #* Set something.
     if "flags".startswith(arg2):
-        location.room_flags  = value
+        location.room_flags = value
         return
     if "sector".startswith(arg2):
         location.sector_type = value
@@ -2095,29 +2075,28 @@ def do_rset(self, argument):
     return
 
 def do_sockets(self, argument):
-    ch=self
+    ch = self
     count = 0
     argument, arg = read_word(argument)
     for d in descriptor_list:
-        if d.character and can_see( ch, d.character ) \
-        and (not arg or arg not in  d.character.name) \
+        if d.character and can_see(ch, d.character) \
+        and (not arg or arg not in d.character.name) \
         or (d.original and is_name(arg,d.original.name)):
             count+=1
-            ch.send("[%3d %2d] %s@%s\n" % (
-                    d.descriptor,
+            ch.send("[%3d %2d] %s@%s\n" % (d.descriptor,
                     d.connected,
                     d.original.name if d.original else d.character.name if d.character else "(none)",
-                    d.host ) )
+                    d.host))
     if count == 0:
         ch.send("No one by that name is connected.\n")
         return
-    ch.send("%d user%s\n" % (count, "" if count == 1 else "s" ) )
+    ch.send("%d user%s\n" % (count, "" if count == 1 else "s"))
     return
 #
 # * Thanks to Grodyn for pointing out bugs in this function.
 def do_force(self, argument):
-    ch=self
-    argument, arg  = read_word(argument)
+    ch = self
+    argument, arg = read_word(argument)
 
     if not arg or not argument:
         ch.send("Force whom to do what?\n")
@@ -2132,52 +2111,52 @@ def do_force(self, argument):
             ch.send("Not at your level!\n")
             return
         for vch in char_list[:]:
-            if not IS_NPC(vch) and get_trust( vch ) < get_trust( ch ):
-                act( buf, ch, None, vch, TO_VICT )
-                interpret( vch, argument )
+            if not IS_NPC(vch) and get_trust(vch) < get_trust(ch):
+                act(buf, ch, None, vch, TO_VICT)
+                interpret(vch, argument)
     elif arg == "players":
         if get_trust(ch) < MAX_LEVEL - 2:
             ch.send("Not at your level!\n")
             return
         for vch in char_list[:]:
-            if not IS_NPC(vch) and get_trust( vch ) < get_trust( ch ) and vch.level < LEVEL_HERO:
-                act( buf, ch, None, vch, TO_VICT )
-                interpret( vch, argument )
+            if not IS_NPC(vch) and get_trust(vch) < get_trust(ch) and vch.level < LEVEL_HERO:
+                act(buf, ch, None, vch, TO_VICT)
+                interpret(vch, argument)
     elif arg == "gods":
         if get_trust(ch) < MAX_LEVEL - 2:
             ch.send("Not at your level!\n")
             return
         for vch in char_list[:]:
-            if not IS_NPC(vch) and get_trust( vch ) < get_trust( ch ) and vch.level >= LEVEL_HERO:
-                act( buf, ch, None, vch, TO_VICT )
-                interpret( vch, argument )
+            if not IS_NPC(vch) and get_trust(vch) < get_trust(ch) and vch.level >= LEVEL_HERO:
+                act(buf, ch, None, vch, TO_VICT)
+                interpret(vch, argument)
     else:
-        victim = get_char_world(ch, arg )
+        victim = get_char_world(ch, arg)
         if not victim:
             ch.send("They aren't here.\n")
             return
         if victim == ch:
             ch.send("Aye aye, right away!\n")
             return
-        if not is_room_owner(ch,victim.in_room) and  ch.in_room != victim.in_room \
+        if not is_room_owner(ch,victim.in_room) and ch.in_room != victim.in_room \
         and room_is_private(victim.in_room) and not IS_TRUSTED(ch,IMPLEMENTOR):
             ch.send("That character is in a private room.\n")
             return
-        if get_trust( victim ) >= get_trust( ch ):
+        if get_trust(victim) >= get_trust(ch):
             ch.send("Do it yourself!\n")
             return
-        if not IS_NPC(victim) and get_trust(ch) < MAX_LEVEL -3:
+        if not IS_NPC(victim) and get_trust(ch) < MAX_LEVEL - 3:
             ch.send("Not at your level!\n")
             return
-        act( buf, ch, None, victim, TO_VICT )
-        interpret( victim, argument )
+        act(buf, ch, None, victim, TO_VICT)
+        interpret(victim, argument)
     ch.send("Ok.\n")
     return
 
 
 # * New routines by Dionysos.
 def do_invis(self, argument):
-    ch=self
+    ch = self
     # RT code for taking a level argument */
     argument, arg = read_word(argument)
 
@@ -2185,11 +2164,11 @@ def do_invis(self, argument):
     # take the default path */
         if ch.invis_level:
             ch.invis_level = 0
-            act( "$n slowly fades into existence.", ch, None, None, TO_ROOM )
+            act("$n slowly fades into existence.", ch, None, None, TO_ROOM)
             ch.send("You slowly fade back into existence.\n")
         else:
             ch.invis_level = get_trust(ch)
-            act( "$n slowly fades into thin air.", ch, None, None, TO_ROOM )
+            act("$n slowly fades into thin air.", ch, None, None, TO_ROOM)
             ch.send("You slowly vanish into thin air.\n")
     else:
     # do the level thing */
@@ -2200,24 +2179,24 @@ def do_invis(self, argument):
           else:
               ch.reply = None
               ch.invis_level = level
-              act( "$n slowly fades into thin air.", ch, None, None, TO_ROOM )
+              act("$n slowly fades into thin air.", ch, None, None, TO_ROOM)
               ch.send("You slowly vanish into thin air.\n")
               return
 
 
 def do_incognito(self, argument):
-    ch=self
+    ch = self
     # RT code for taking a level argument */
     argument, arg = read_word(argument)
     if not arg:
     # take the default path */
         if ch.incog_level:
             ch.incog_level = 0
-            act( "$n is no longer cloaked.", ch, None, None, TO_ROOM )
+            act("$n is no longer cloaked.", ch, None, None, TO_ROOM)
             ch.send("You are no longer cloaked.\n")
         else:
             ch.incog_level = get_trust(ch)
-            act( "$n cloaks $s presence.", ch, None, None, TO_ROOM )
+            act("$n cloaks $s presence.", ch, None, None, TO_ROOM)
             ch.send("You cloak your presence.\n")
     else:
     # do the level thing */
@@ -2228,13 +2207,13 @@ def do_incognito(self, argument):
           else:
               ch.reply = None
               ch.incog_level = level
-              act( "$n cloaks $s presence.", ch, None, None, TO_ROOM )
+              act("$n cloaks $s presence.", ch, None, None, TO_ROOM)
               ch.send("You cloak your presence.\n")
     return
 
 
 def do_holylight(self, argument):
-    ch=self
+    ch = self
     if IS_NPC(ch):
         return
     if IS_SET(ch.act, PLR_HOLYLIGHT):
@@ -2246,12 +2225,12 @@ def do_holylight(self, argument):
     return
 # prefix command: it will put the string typed on each line typed */
 def do_prefi(self, argument):
-    ch=self
+    ch = self
     ch.send("You cannot abbreviate the prefix command.\r\n")
     return
 
 def do_prefix(self, argument):
-    ch=self
+    ch = self
     if not argument:
         if not ch.prefix:
             ch.send("You have no prefix to clear.\r\n")
@@ -2278,7 +2257,4 @@ def do_areas(ch, argument):
             ch.send("\n")
         
 def do_memory(ch, argument):
-    pass
-
-def do_dump(ch,argument):
     pass

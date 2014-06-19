@@ -31,7 +31,9 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
-import os, sys, random
+import os
+import sys
+import random
 from settings import AREA_DIR, AREA_LIST
 from merc import *
 from handler import *
@@ -59,8 +61,8 @@ def load_areas():
     fp = open(area_list, 'r')
     area = fp.readline().strip()
     while area != "$":
-        afp = open(os.path.join(AREA_DIR, area), 'r' )
-        load_area( afp.read() )
+        afp = open(os.path.join(AREA_DIR, area), 'r')
+        load_area(afp.read())
         area = fp.readline().strip()
         afp.close()
     fp.close()
@@ -71,7 +73,7 @@ def load_area(area):
 
     area, w = read_word(area,False)
     pArea = None
-    while ( area ):
+    while (area):
         if w == "#AREA":
             pArea = AREA_DATA()
             area, pArea.file_name = read_string(area)
@@ -188,7 +190,7 @@ def load_mobiles(area):
             area, vector = read_flags(area)
             area, w = read_word(area,False)
 
-        w = w[1:] # strip the pound         
+        w = w[1:] # strip the pound
     return area
 
 def load_objects(area):
@@ -286,7 +288,7 @@ def load_objects(area):
 
             area, w = read_word(area,False)
 
-        w = w[1:] # strip the pound         
+        w = w[1:] # strip the pound
     return area
 
 def load_resets(area, pArea):
@@ -357,10 +359,10 @@ def load_rooms(area, pArea):
             elif letter == 'O':
                 area, room.owner = read_string(area)
             else:
-                print("RoomIndexData(%d) has flag other than SHMCDEO: %s" % ( room.vnum, letter ))
+                print("RoomIndexData(%d) has flag other than SHMCDEO: %s" % (room.vnum, letter))
                 sys.exit(1)
         area, w = read_word(area,False)
-        w = w[1:] # strip the pound         
+        w = w[1:] # strip the pound
     return area
 
 def load_shops(area):
@@ -505,7 +507,7 @@ def fix_exits():
                     e.to_room = room_index_hash[e.to_room]
 
 # * Repopulate areas periodically.
-def area_update( ):
+def area_update():
     for pArea in area_list:
         pArea.age += 1
         if pArea.age < 3:
@@ -515,10 +517,10 @@ def area_update( ):
         #* Note: Mud School resets every 3 minutes (not 15).
         #*/
         if(not pArea.empty and (pArea.nplayer == 0 or pArea.age >= 15)) or pArea.age >= 31:
-            reset_area( pArea )
+            reset_area(pArea)
             wiznet("%s has just been reset." % pArea.name,None,None,WIZ_RESETS,0,0)
     
-        pArea.age = random.randint( 0, 3 )
+        pArea.age = random.randint(0, 3)
         pRoomIndex = room_index_hash[ROOM_VNUM_SCHOOL]
         if pRoomIndex and pArea == pRoomIndex.area:
             pArea.age = 15 - 2
@@ -527,10 +529,10 @@ def area_update( ):
 
 #
 # * Reset one area.
-def reset_area( pArea ):
-    mob     = None
-    last    = True
-    level   = 0
+def reset_area(pArea):
+    mob = None
+    last = True
+    level = 0
     for pReset in pArea.reset_list:
         if pReset.command == 'M':
             if pReset.arg1 not in mob_index_hash:
@@ -557,26 +559,26 @@ def reset_area( pArea ):
             if count >= pReset.arg4:
                 continue
 
-            mob = create_mobile( pMobIndex )
+            mob = create_mobile(pMobIndex)
 
             #
             #* Check for pet shop.
             # */
             
             
-            if pRoomIndex.vnum-1 in room_index_hash:
-                pRoomIndexPrev = room_index_hash[pRoomIndex.vnum-1]
+            if pRoomIndex.vnum - 1 in room_index_hash:
+                pRoomIndexPrev = room_index_hash[pRoomIndex.vnum - 1]
                 if IS_SET(pRoomIndexPrev.room_flags, ROOM_PET_SHOP):
                     SET_BIT(mob.act, ACT_PET)
 
             # set area */
             mob.zone = pRoomIndex.area
 
-            char_to_room( mob, pRoomIndex )
-            level = min( 0, max(mob.level - 2, LEVEL_HERO - 1 ) )
-            last  = True
+            char_to_room(mob, pRoomIndex)
+            level = min(0, max(mob.level - 2, LEVEL_HERO - 1))
+            last = True
 
-        elif pReset.command ==  'O':
+        elif pReset.command == 'O':
             if pReset.arg1 not in obj_index_hash:
                 print("Reset_area: 'O': bad vnum %d." % pReset.arg1)
                 continue
@@ -587,13 +589,13 @@ def reset_area( pArea ):
                 continue
             pRoomIndex = room_index_hash[pReset.arg3]
 
-            if pArea.nplayer > 0 or count_obj_list( pObjIndex, pRoomIndex.contents ) > 0:
+            if pArea.nplayer > 0 or count_obj_list(pObjIndex, pRoomIndex.contents) > 0:
                 last = False
                 continue
 
-            obj = create_object( pObjIndex, min(number_fuzzy(level), LEVEL_HERO - 1) )
+            obj = create_object(pObjIndex, min(number_fuzzy(level), LEVEL_HERO - 1))
             obj.cost = 0
-            obj_to_room( obj, pRoomIndex )
+            obj_to_room(obj, pRoomIndex)
             last = True
             continue
 
@@ -619,19 +621,19 @@ def reset_area( pArea ):
             if pArea.nplayer > 0 \
             or not obj_to \
             or (obj_to.in_room == None and not last) \
-            or ( pObjIndex.count >= limit and random.randint(0,4) != 0) \
+            or (pObjIndex.count >= limit and random.randint(0,4) != 0) \
             or count_obj_list(pObjIndex, obj_to.contains) > pReset.arg4:
                 last = False
                 break
             count = count_obj_list(pObjIndex, obj_to.contains)
             while count < pReset.arg4:
-                obj = create_object( pObjIndex, number_fuzzy(obj_to.level) )
-                obj_to_obj( obj, obj_to )
+                obj = create_object(pObjIndex, number_fuzzy(obj_to.level))
+                obj_to_obj(obj, obj_to)
                 count += 1
                 if pObjIndex.count >= limit:
                     break
 
-            # fix object lock state! */
+            # fix object lock state!  */
             obj_to.value[1] = obj_to.pIndexData.value[1]
             last = True
         elif pReset.command == 'G' or pReset.command == 'E':
@@ -660,15 +662,15 @@ def reset_area( pArea ):
                        
                         olevel = max(0,(olevel * 3 / 4) - 2)
                         
-                    elif pObjIndex.item_type == ITEM_WAND: olevel = random.randint( 10, 20 )
-                    elif pObjIndex.item_type == ITEM_STAFF: olevel = random.randint( 15, 25 )
-                    elif pObjIndex.item_type == ITEM_ARMOR: olevel = random.randint(  5, 15 )
-                    elif pObjIndex.item_type == ITEM_WEAPON: olevel = random.randint(  5, 15 )
-                    elif pObjIndex.item_type == ITEM_TREASURE: olevel = random.randint( 10, 20 )
+                    elif pObjIndex.item_type == ITEM_WAND: olevel = random.randint(10, 20)
+                    elif pObjIndex.item_type == ITEM_STAFF: olevel = random.randint(15, 25)
+                    elif pObjIndex.item_type == ITEM_ARMOR: olevel = random.randint(5, 15)
+                    elif pObjIndex.item_type == ITEM_WEAPON: olevel = random.randint(5, 15)
+                    elif pObjIndex.item_type == ITEM_TREASURE: olevel = random.randint(10, 20)
 
 
-                obj = create_object( pObjIndex, olevel )
-                SET_BIT( obj.extra_flags, ITEM_INVENTORY )
+                obj = create_object(pObjIndex, olevel)
+                SET_BIT(obj.extra_flags, ITEM_INVENTORY)
             else:
                 if pReset.arg2 > 50: # old format */
                     limit = 6
@@ -681,17 +683,16 @@ def reset_area( pArea ):
                     obj = create_object(pObjIndex,min(number_fuzzy(level), LEVEL_HERO - 1))
                 # error message if it is too high */
                 if obj.level > mob.level + 3 \
-                or  (obj.item_type == ITEM_WEAPON  \
-                and   pReset.command == 'E' \
-                and   obj.level < mob.level -5 and obj.level < 45):
-                    print("Err: obj %s (%d) -- %d, mob %s (%d) -- %d\n" % (
-                    obj.short_descr,obj.pIndexData.vnum,obj.level,
+                or (obj.item_type == ITEM_WEAPON  \
+                and pReset.command == 'E' \
+                and obj.level < mob.level - 5 and obj.level < 45):
+                    print("Err: obj %s (%d) -- %d, mob %s (%d) -- %d\n" % (obj.short_descr,obj.pIndexData.vnum,obj.level,
                     mob.short_descr,mob.pIndexData.vnum,mob.level))
                 else:
                     continue
-            obj_to_char( obj, mob )
+            obj_to_char(obj, mob)
             if pReset.command == 'E':
-                equip_char( mob, obj, pReset.arg3 )
+                equip_char(mob, obj, pReset.arg3)
                 last = True
                 continue
 
@@ -705,16 +706,16 @@ def reset_area( pArea ):
                 continue
 
             if pReset.arg3 == 0:
-                REMOVE_BIT( pexit.exit_info, EX_CLOSED )
-                REMOVE_BIT( pexit.exit_info, EX_LOCKED )
+                REMOVE_BIT(pexit.exit_info, EX_CLOSED)
+                REMOVE_BIT(pexit.exit_info, EX_LOCKED)
                 continue
             elif pReset.arg3 == 1:
-                SET_BIT(pexit.exit_info, EX_CLOSED )
-                REMOVE_BIT(pexit.exit_info, EX_LOCKED )
+                SET_BIT(pexit.exit_info, EX_CLOSED)
+                REMOVE_BIT(pexit.exit_info, EX_LOCKED)
                 continue
             elif pReset.arg3 == 2:
-                SET_BIT(pexit.exit_info, EX_CLOSED )
-                SET_BIT(pexit.exit_info, EX_LOCKED )
+                SET_BIT(pexit.exit_info, EX_CLOSED)
+                SET_BIT(pexit.exit_info, EX_LOCKED)
                 continue
             last = True
             continue
@@ -725,8 +726,8 @@ def reset_area( pArea ):
                 continue
             pRoomIndex = room_index_hash[pReset.arg1]
             for d0 in range(pReset.arg2 - 1):
-                d1                   = random.randint( d0, pReset.arg2-1 )
-                pexit                = pRoomIndex.exit[d0]
+                d1 = random.randint(d0, pReset.arg2 - 1)
+                pexit = pRoomIndex.exit[d0]
                 pRoomIndex.exit[d0] = pRoomIndex.exit[d1]
                 pRoomIndex.exit[d1] = pexit
                 break
@@ -736,11 +737,10 @@ def reset_area( pArea ):
 
 #
 # * Create an instance of a mobile.
-
-def create_mobile( pMobIndex ):
+def create_mobile(pMobIndex):
     if pMobIndex == None:
         print("Create_mobile: None pMobIndex.")
-        sys.exit( 1 )
+        sys.exit(1)
     
     mob = CHAR_DATA()
 
@@ -757,7 +757,7 @@ def create_mobile( pMobIndex ):
 
     if pMobIndex.wealth == 0:
         mob.silver = 0
-        mob.gold   = 0
+        mob.gold = 0
     else:
         wealth = random.randint(pMobIndex.wealth // 2, 3 * pMobIndex.wealth // 2)
         mob.gold = random.randint(wealth // 200, wealth // 100)
@@ -769,7 +769,7 @@ def create_mobile( pMobIndex ):
         # read from prototype */
         mob.group = pMobIndex.group
         mob.act = pMobIndex.act
-        mob.comm = COMM_NOCHANNELS|COMM_NOSHOUT|COMM_NOTELL
+        mob.comm = COMM_NOCHANNELS | COMM_NOSHOUT | COMM_NOTELL
         mob.affected_by = pMobIndex.affected_by
         mob.alignment = pMobIndex.alignment
         mob.level = pMobIndex.level
@@ -789,13 +789,13 @@ def create_mobile( pMobIndex ):
             elif num == 3: mob.dam_type = 11 # pierce */
         for i in range(4):
             mob.armor[i] = pMobIndex.ac[i] 
-        mob.off_flags      = pMobIndex.off_flags
-        mob.imm_flags      = pMobIndex.imm_flags
-        mob.res_flags      = pMobIndex.res_flags
-        mob.vuln_flags     = pMobIndex.vuln_flags
-        mob.start_pos      = pMobIndex.start_pos
-        mob.default_pos    = pMobIndex.default_pos
-        mob.sex        = pMobIndex.sex
+        mob.off_flags = pMobIndex.off_flags
+        mob.imm_flags = pMobIndex.imm_flags
+        mob.res_flags = pMobIndex.res_flags
+        mob.vuln_flags = pMobIndex.vuln_flags
+        mob.start_pos = pMobIndex.start_pos
+        mob.default_pos = pMobIndex.default_pos
+        mob.sex = pMobIndex.sex
         if type(pMobIndex.sex) != int or mob.sex == 3: # random sex */
             mob.sex = random.randint(1,2)
         mob.race = pMobIndex.race
@@ -806,7 +806,7 @@ def create_mobile( pMobIndex ):
 
         # computed on the spot */
         for i in range(MAX_STATS):
-            mob.perm_stat[i] = min(25,11 + mob.level/4)
+            mob.perm_stat[i] = min(25,11 + mob.level / 4)
             
         if IS_SET(mob.act,ACT_WARRIOR):
             mob.perm_stat[STAT_STR] += 3
@@ -836,56 +836,56 @@ def create_mobile( pMobIndex ):
         af = AFFECT_DATA()
         # let's get some spell action */
         if IS_AFFECTED(mob,AFF_SANCTUARY):
-            af.where     = TO_AFFECTS
-            af.type      = "sanctuary"
-            af.level     = mob.level
-            af.duration  = -1
-            af.location  = APPLY_NONE
-            af.modifier  = 0
+            af.where = TO_AFFECTS
+            af.type = "sanctuary"
+            af.level = mob.level
+            af.duration = -1
+            af.location = APPLY_NONE
+            af.modifier = 0
             af.bitvector = AFF_SANCTUARY
-            affect_to_char( mob, af )
+            affect_to_char(mob, af)
 
         if IS_AFFECTED(mob,AFF_HASTE):
-            af.where     = TO_AFFECTS
-            af.type      = "haste"
-            af.level     = mob.level
-            af.duration  = -1
-            af.location  = APPLY_DEX
-            af.modifier  = 1 + (mob.level >= 18) + (mob.level >= 25) + (mob.level >= 32)
+            af.where = TO_AFFECTS
+            af.type = "haste"
+            af.level = mob.level
+            af.duration = -1
+            af.location = APPLY_DEX
+            af.modifier = 1 + (mob.level >= 18) + (mob.level >= 25) + (mob.level >= 32)
             af.bitvector = AFF_HASTE
-            affect_to_char( mob, af )
+            affect_to_char(mob, af)
 
         if IS_AFFECTED(mob,AFF_PROTECT_EVIL):
-            af.where     = TO_AFFECTS
-            af.type  = "protection evil"
-            af.level     = mob.level
-            af.duration  = -1
-            af.location  = APPLY_SAVES
-            af.modifier  = -1
+            af.where = TO_AFFECTS
+            af.type = "protection evil"
+            af.level = mob.level
+            af.duration = -1
+            af.location = APPLY_SAVES
+            af.modifier = -1
             af.bitvector = AFF_PROTECT_EVIL
             affect_to_char(mob,af)
 
         if IS_AFFECTED(mob,AFF_PROTECT_GOOD):
-            af.where     = TO_AFFECTS
-            af.type      = "protection good"
-            af.level     = mob.level
-            af.duration  = -1
-            af.location  = APPLY_SAVES
-            af.modifier  = -1
+            af.where = TO_AFFECTS
+            af.type = "protection good"
+            af.level = mob.level
+            af.duration = -1
+            af.location = APPLY_SAVES
+            af.modifier = -1
             af.bitvector = AFF_PROTECT_GOOD
             affect_to_char(mob,af)
     else: # read in old format and convert */
-        mob.act        = pMobIndex.act
-        mob.affected_by    = pMobIndex.affected_by
-        mob.alignment      = pMobIndex.alignment
-        mob.level      = pMobIndex.level
-        mob.hitroll        = pMobIndex.hitroll
-        mob.damroll        = 0
-        mob.max_hit        = mob.level * 8 + random.randint( mob.level * mob.level/4, mob.level * mob.level)
+        mob.act = pMobIndex.act
+        mob.affected_by = pMobIndex.affected_by
+        mob.alignment = pMobIndex.alignment
+        mob.level = pMobIndex.level
+        mob.hitroll = pMobIndex.hitroll
+        mob.damroll = 0
+        mob.max_hit = mob.level * 8 + random.randint(mob.level * mob.level / 4, mob.level * mob.level)
         mob.max_hit *= .9
-        mob.hit        = mob.max_hit
-        mob.max_mana       = 100 + dice(mob.level,10)
-        mob.mana       = mob.max_mana
+        mob.hit = mob.max_hit
+        mob.max_mana = 100 + dice(mob.level,10)
+        mob.mana = mob.max_mana
         num = random.randint(1,3)
         if num == 1: mob.dam_type = 3 # slash */
         elif num == 2: mob.dam_type = 7  # pound */
@@ -893,21 +893,21 @@ def create_mobile( pMobIndex ):
         for i in range(3):
             mob.armor[i] = interpolate(mob.level,100,-100)
         mob.armor[3] = interpolate(mob.level,100,0)
-        mob.race       = pMobIndex.race
-        mob.off_flags      = pMobIndex.off_flags
-        mob.imm_flags      = pMobIndex.imm_flags
-        mob.res_flags      = pMobIndex.res_flags
-        mob.vuln_flags     = pMobIndex.vuln_flags
-        mob.start_pos      = pMobIndex.start_pos
-        mob.default_pos    = pMobIndex.default_pos
-        mob.sex        = pMobIndex.sex
-        mob.form       = pMobIndex.form
-        mob.parts      = pMobIndex.parts
-        mob.size       = SIZE_MEDIUM
-        mob.material       = ""
+        mob.race = pMobIndex.race
+        mob.off_flags = pMobIndex.off_flags
+        mob.imm_flags = pMobIndex.imm_flags
+        mob.res_flags = pMobIndex.res_flags
+        mob.vuln_flags = pMobIndex.vuln_flags
+        mob.start_pos = pMobIndex.start_pos
+        mob.default_pos = pMobIndex.default_pos
+        mob.sex = pMobIndex.sex
+        mob.form = pMobIndex.form
+        mob.parts = pMobIndex.parts
+        mob.size = SIZE_MEDIUM
+        mob.material = ""
 
         for i in MAX_STATS:
-            mob.perm_stat[i] = 11 + mob.level/4
+            mob.perm_stat[i] = 11 + mob.level / 4
     mob.position = mob.start_pos
 
 
@@ -920,52 +920,52 @@ def clone_mobile(parent, clone):
     if not parent or not clone or not IS_NPC(parent):
         return
     
-    # start fixing values */ 
-    clone.name     = parent.name
-    clone.version  = parent.version
-    clone.short_descr  = parent.short_descr
-    clone.long_descr   = parent.long_descr
-    clone.description  = parent.description
-    clone.group    = parent.group
-    clone.sex      = parent.sex
-    clone.guild    = parent.guild
-    clone.race     = parent.race
-    clone.level    = parent.level
-    clone.trust    = 0
-    clone.timer    = parent.timer
-    clone.wait     = parent.wait
-    clone.hit      = parent.hit
-    clone.max_hit  = parent.max_hit
-    clone.mana     = parent.mana
+    # start fixing values */
+    clone.name = parent.name
+    clone.version = parent.version
+    clone.short_descr = parent.short_descr
+    clone.long_descr = parent.long_descr
+    clone.description = parent.description
+    clone.group = parent.group
+    clone.sex = parent.sex
+    clone.guild = parent.guild
+    clone.race = parent.race
+    clone.level = parent.level
+    clone.trust = 0
+    clone.timer = parent.timer
+    clone.wait = parent.wait
+    clone.hit = parent.hit
+    clone.max_hit = parent.max_hit
+    clone.mana = parent.mana
     clone.max_mana = parent.max_mana
-    clone.move     = parent.move
+    clone.move = parent.move
     clone.max_move = parent.max_move
-    clone.gold     = parent.gold
-    clone.silver   = parent.silver
-    clone.exp      = parent.exp
-    clone.act      = parent.act
-    clone.comm     = parent.comm
-    clone.imm_flags    = parent.imm_flags
-    clone.res_flags    = parent.res_flags
-    clone.vuln_flags   = parent.vuln_flags
-    clone.invis_level  = parent.invis_level
-    clone.affected_by  = parent.affected_by
+    clone.gold = parent.gold
+    clone.silver = parent.silver
+    clone.exp = parent.exp
+    clone.act = parent.act
+    clone.comm = parent.comm
+    clone.imm_flags = parent.imm_flags
+    clone.res_flags = parent.res_flags
+    clone.vuln_flags = parent.vuln_flags
+    clone.invis_level = parent.invis_level
+    clone.affected_by = parent.affected_by
     clone.position = parent.position
     clone.practice = parent.practice
-    clone.train    = parent.train
+    clone.train = parent.train
     clone.saving_throw = parent.saving_throw
-    clone.alignment    = parent.alignment
-    clone.hitroll  = parent.hitroll
-    clone.damroll  = parent.damroll
-    clone.wimpy    = parent.wimpy
-    clone.form     = parent.form
-    clone.parts    = parent.parts
-    clone.size     = parent.size
+    clone.alignment = parent.alignment
+    clone.hitroll = parent.hitroll
+    clone.damroll = parent.damroll
+    clone.wimpy = parent.wimpy
+    clone.form = parent.form
+    clone.parts = parent.parts
+    clone.size = parent.size
     clone.material = parent.material
-    clone.off_flags    = parent.off_flags
+    clone.off_flags = parent.off_flags
     clone.dam_type = parent.dam_type
-    clone.start_pos    = parent.start_pos
-    clone.default_pos  = parent.default_pos
+    clone.start_pos = parent.start_pos
+    clone.default_pos = parent.default_pos
     clone.spec_fun = parent.spec_fun
     
     for i in range(4):
@@ -973,47 +973,47 @@ def clone_mobile(parent, clone):
 
     for i in range(MAX_STATS):
         clone.perm_stat[i] = parent.perm_stat[i]
-        clone.mod_stat[i]  = parent.mod_stat[i]
+        clone.mod_stat[i] = parent.mod_stat[i]
     
     for i in range(3):
-        clone.damage[i]    = parent.damage[i]
+        clone.damage[i] = parent.damage[i]
 
     # now add the affects */
     for paf in parent.affected:
         affect_to_char(clone,paf)
 
 # * Create an instance of an object.
-def create_object( pObjIndex, level ):
+def create_object(pObjIndex, level):
     if not pObjIndex:
         print("Create_object: None pObjIndex.")
-        sys.exit( 1 )
+        sys.exit(1)
 
     obj = OBJ_DATA()
 
     obj.pIndexData = pObjIndex
-    obj.in_room    = None
-    obj.enchanted  = False
+    obj.in_room = None
+    obj.enchanted = False
 
     if pObjIndex.new_format == True:
         obj.level = pObjIndex.level
     else:
-        obj.level      = max(0,level)
-    obj.wear_loc   = -1
+        obj.level = max(0,level)
+    obj.wear_loc = -1
 
-    obj.name       = pObjIndex.name
-    obj.short_descr    = pObjIndex.short_descr
-    obj.description    = pObjIndex.description
-    obj.material   = pObjIndex.material
-    obj.item_type  = pObjIndex.item_type
-    obj.extra_flags    = pObjIndex.extra_flags
+    obj.name = pObjIndex.name
+    obj.short_descr = pObjIndex.short_descr
+    obj.description = pObjIndex.description
+    obj.material = pObjIndex.material
+    obj.item_type = pObjIndex.item_type
+    obj.extra_flags = pObjIndex.extra_flags
     obj.wear_flags = pObjIndex.wear_flags
     obj.value = pObjIndex.value[:]
-    obj.weight     = pObjIndex.weight
+    obj.weight = pObjIndex.weight
 
     if level == -1 or pObjIndex.new_format:
-        obj.cost   = pObjIndex.cost
+        obj.cost = pObjIndex.cost
     else:
-        obj.cost   = number_fuzzy( 10 ) * number_fuzzy( level ) * number_fuzzy( level )
+        obj.cost = number_fuzzy(10) * number_fuzzy(level) * number_fuzzy(level)
 
 
      # Mess with object properties.
@@ -1045,33 +1045,33 @@ def create_object( pObjIndex, level ):
         obj.value = [-1 for i in range(5)]
     elif obj.item_type == ITEM_SCROLL:
         if level != -1 and not pObjIndex.new_format:
-            obj.value[0]   = number_fuzzy( obj.value[0] )
+            obj.value[0] = number_fuzzy(obj.value[0])
     elif obj.item_type == ITEM_WAND \
       or obj.item_type == ITEM_STAFF:
         if level != -1 and not pObjIndex.new_format:
-            obj.value[0]   = number_fuzzy( obj.value[0] )
-            obj.value[1]   = number_fuzzy( obj.value[1] )
-            obj.value[2]   = obj.value[1]
+            obj.value[0] = number_fuzzy(obj.value[0])
+            obj.value[1] = number_fuzzy(obj.value[1])
+            obj.value[2] = obj.value[1]
         if not pObjIndex.new_format:
             obj.cost *= 2
     elif obj.item_type == ITEM_WEAPON:
         if level != -1 and not pObjIndex.new_format:
-            obj.value[1] = number_fuzzy( number_fuzzy( 1 * level / 4 + 2 ) )
-            obj.value[2] = number_fuzzy( number_fuzzy( 3 * level / 4 + 6 ) )
+            obj.value[1] = number_fuzzy(number_fuzzy(1 * level / 4 + 2))
+            obj.value[2] = number_fuzzy(number_fuzzy(3 * level / 4 + 6))
     elif obj.item_type == ITEM_ARMOR:
         if level != -1 and not pObjIndex.new_format:
-            obj.value[0]   = number_fuzzy( level / 5 + 3 )
-            obj.value[1]   = number_fuzzy( level / 5 + 3 )
-            obj.value[2]   = number_fuzzy( level / 5 + 3 )
+            obj.value[0] = number_fuzzy(level / 5 + 3)
+            obj.value[1] = number_fuzzy(level / 5 + 3)
+            obj.value[2] = number_fuzzy(level / 5 + 3)
     elif obj.item_type == ITEM_POTION \
       or obj.item_type == ITEM_PILL:
         if level != -1 and not pObjIndex.new_format:
-            obj.value[0] = number_fuzzy( number_fuzzy( obj.value[0] ) )
+            obj.value[0] = number_fuzzy(number_fuzzy(obj.value[0]))
     elif obj.item_type == ITEM_MONEY:
         if not pObjIndex.new_format:
-            obj.value[0]   = obj.cost
+            obj.value[0] = obj.cost
     else:
-        print("Bad item_type pObjIndex vnum: %s(%s)" % (pObjIndex.vnum, obj.item_type ))
+        print("Bad item_type pObjIndex vnum: %s(%s)" % (pObjIndex.vnum, obj.item_type))
   
     for paf in pObjIndex.affected:
         if paf.location == APPLY_SPELL_AFFECT:
@@ -1087,63 +1087,63 @@ def clone_object(parent, clone):
         return
 
     # start fixing the object */
-    clone.name     = parent.name
-    clone.short_descr  = parent.short_descr
-    clone.description  = parent.description
-    clone.item_type    = parent.item_type
-    clone.extra_flags  = parent.extra_flags
-    clone.wear_flags   = parent.wear_flags
-    clone.weight   = parent.weight
-    clone.cost     = parent.cost
-    clone.level    = parent.level
-    clone.condition    = parent.condition
+    clone.name = parent.name
+    clone.short_descr = parent.short_descr
+    clone.description = parent.description
+    clone.item_type = parent.item_type
+    clone.extra_flags = parent.extra_flags
+    clone.wear_flags = parent.wear_flags
+    clone.weight = parent.weight
+    clone.cost = parent.cost
+    clone.level = parent.level
+    clone.condition = parent.condition
     clone.material = parent.material
-    clone.timer    = parent.timer
+    clone.timer = parent.timer
 
     for i in parent.value:
         clone.value[i] = i
 
     # affects */
-    clone.enchanted    = parent.enchanted
+    clone.enchanted = parent.enchanted
   
     for paf in parent.affected:
         affect_to_obj(clone,paf)
 
     # extended desc */
     for ed in parent.extra_descr:
-        ed_new                  = EXTRA_DESCR_DATA()
-        ed_new.keyword     =  ed.keyword
-        ed_new.description     = ed.description
+        ed_new = EXTRA_DESCR_DATA()
+        ed_new.keyword = ed.keyword
+        ed_new.description = ed.description
         clone.extra_descr.append(ed)
 
 #
 # * Clear a new character.
 # */
-def clear_char( ch ):
-    ch.name            = ""
-    ch.short_descr     = ""
-    ch.long_descr      = ""
-    ch.description     = ""
-    ch.prompt          = ""
-    ch.logon           = time.time()
-    ch.lines           = 22
+def clear_char(ch):
+    ch.name = ""
+    ch.short_descr = ""
+    ch.long_descr = ""
+    ch.description = ""
+    ch.prompt = ""
+    ch.logon = time.time()
+    ch.lines = 22
     for i in range(4):
-        ch.armor[i]        = 100
-    ch.position        = POS_STANDING
-    ch.hit         = 20
-    ch.max_hit         = 20
-    ch.mana            = 100
-    ch.max_mana        = 100
-    ch.move            = 100
-    ch.max_move        = 100
-    ch.on          = None
+        ch.armor[i] = 100
+    ch.position = POS_STANDING
+    ch.hit = 20
+    ch.max_hit = 20
+    ch.mana = 100
+    ch.max_mana = 100
+    ch.move = 100
+    ch.max_move = 100
+    ch.on = None
     for i in MAX_STATS:
         ch.perm_stat[i] = 13 
         ch.mod_stat[i] = 0
     return
 #
 # * Get an extra description from a list.
-def get_extra_descr( name, edlist ):
+def get_extra_descr(name, edlist):
     if not edlist: return None
     for ed in edlist:
         if name.lower() in ed.keyword:
@@ -1159,9 +1159,9 @@ def init_time():
     time_info.month = lmonth % 17
     time_info.year = lmonth / 17
 
-    if time_info.hour <  5:
+    if time_info.hour < 5:
         weather_info.sunlight = SUN_DARK
-    elif time_info.hour <  6:
+    elif time_info.hour < 6:
         weather_info.sunlight = SUN_RISE
     elif time_info.hour < 19:
         weather_info.sunlight = SUN_LIGHT
@@ -1170,7 +1170,7 @@ def init_time():
     else:
         weather_info.sunlight = SUN_DARK
     weather_info.change = 0
-    weather_info.mmhg   = 960
+    weather_info.mmhg = 960
     if time_info.month >= 7 and time_info.month <= 12:
         weather_info.mmhg += random.randint(1, 50)
     else:
