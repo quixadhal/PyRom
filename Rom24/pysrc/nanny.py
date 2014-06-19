@@ -50,12 +50,12 @@ def licheck(c):
         return False
     
     return True
-def check_parse_name( name ):
+def check_parse_name(name):
     bad_names = ['All', 'Auto', 'Immortal', 'Self', 'Someone', 'Something', 'The', 'You', 'Loner', 'Alander']
     if name in bad_names:
         return False
     
-    if len(name) < 2 or len(name) >12:
+    if len(name) < 2 or len(name) > 12:
         return False
     
     if not name.isalpha():
@@ -67,7 +67,7 @@ def check_parse_name( name ):
     
     return True
 
-def con_get_name( self ):
+def con_get_name(self):
     argument = self.get_command()
 
     name = argument.title()
@@ -77,8 +77,8 @@ def con_get_name( self ):
 
     found,ch = load_char_obj(self,name)
 
-    if IS_SET( ch.act, PLR_DENY ):
-        print ("Denying access to %s@%s" % (ch.name, self.addrport()))
+    if IS_SET(ch.act, PLR_DENY):
+        print("Denying access to %s@%s" % (ch.name, self.addrport()))
         self.send("You have been denied access.")
         self.deactivate()
         return
@@ -100,7 +100,7 @@ def con_get_name( self ):
         self.set_connected(con_get_old_password)
         return
 
-    ch.send("Did I get that right, %s (Y/N)? " % ch.name )
+    ch.send("Did I get that right, %s (Y/N)? " % ch.name)
     self.set_connected(con_confirm_new_name)
     return
 
@@ -125,7 +125,7 @@ def con_get_new_password(self):
         return
     if ENCRYPT_PASSWORD:
         argument = argument.encode('utf8')
-        pwdnew = hashlib.sha512( argument ).hexdigest()
+        pwdnew = hashlib.sha512(argument).hexdigest()
     else:
         pwdnew = argument
 
@@ -140,7 +140,7 @@ def con_confirm_new_password(self):
 
     if ENCRYPT_PASSWORD:
         argument = argument.encode('utf8')
-        argument = hashlib.sha512( argument ).hexdigest()
+        argument = hashlib.sha512(argument).hexdigest()
 
     if argument != ch.pcdata.pwd:
         ch.send("Passwords don't match.\r\nRetype password: ")
@@ -149,7 +149,7 @@ def con_confirm_new_password(self):
 
     ch.send("The following races are available:\n  ")
     for race in pc_race_table:
-        ch.send("%s " % race_table[race].name )
+        ch.send("%s " % race_table[race].name)
         
     ch.send("\nWhat is your race (help for more information)? ")
     self.set_connected(con_get_new_race)
@@ -163,7 +163,7 @@ def con_get_new_race(self):
             ch.do_help('race help')
         else:
             ch.do_help(argument)
-        ch.send( "\r\nWhat is your race (help for more information)? ")
+        ch.send("\r\nWhat is your race (help for more information)? ")
         return
 
     race = prefix_lookup(pc_race_table, argument)
@@ -172,7 +172,7 @@ def con_get_new_race(self):
         ch.send("That is not a valid race.\n")
         ch.send("The following races are available:\n  ")
         for race in pc_race_table:
-            ch.send("%s " % race_table[race].name )
+            ch.send("%s " % race_table[race].name)
         ch.send("\r\nWhat is your race? (help for more information) ")
         return
     
@@ -180,12 +180,12 @@ def con_get_new_race(self):
     #initialize stats */
     for i in range(MAX_STATS):
         ch.perm_stat[i] = race.stats[i]
-    ch.affected_by = ch.affected_by|race_table[race.name].aff
-    ch.imm_flags   = ch.imm_flags|race_table[race.name].imm
-    ch.res_flags   = ch.res_flags|race_table[race.name].res
-    ch.vuln_flags  = ch.vuln_flags|race_table[race.name].vuln
-    ch.form    = race_table[race.name].form
-    ch.parts   = race_table[race.name].parts
+    ch.affected_by = ch.affected_by | race_table[race.name].aff
+    ch.imm_flags = ch.imm_flags | race_table[race.name].imm
+    ch.res_flags = ch.res_flags | race_table[race.name].res
+    ch.vuln_flags = ch.vuln_flags | race_table[race.name].vuln
+    ch.form = race_table[race.name].form
+    ch.parts = race_table[race.name].parts
 
     # add skills */
     for i in race.skills:
@@ -214,9 +214,9 @@ def con_get_new_sex(self):
         ch.send("That's not a sex.\nWhat IS your sex? ")
         return
 
-    ch.send("Select a class [" )
+    ch.send("Select a class [")
     for name, guild in guild_table.items():
-        ch.send("%s " % guild.name )
+        ch.send("%s " % guild.name)
     ch.send("]: ")
     self.set_connected(con_get_new_class)
     return
@@ -233,8 +233,8 @@ def con_get_new_class(self):
 
     ch.guild = guild
 
-    log_buf = "%s@%s new player." % ( ch.name, self.addrport() )
-    print (log_buf)
+    log_buf = "%s@%s new player." % (ch.name, self.addrport())
+    print(log_buf)
     wiznet("Newbie alert!  $N sighted.",ch,None,WIZ_NEWBIE,0,0)
     wiznet(log_buf,None,None,WIZ_SITES,0,get_trust(ch))
 
@@ -295,7 +295,7 @@ def con_default_choice(self):
 def con_pick_weapon(self):
     argument = self.get_command()
     ch = self.character
-    weapon = prefix_lookup(weapon_table, argument )
+    weapon = prefix_lookup(weapon_table, argument)
     if not weapon or ch.pcdata.learned[weapon.gsn] <= 0:
         ch.send("That's not a valid selection. Choices are:\n")
         for k,weapon in weapon_table.items():
@@ -321,7 +321,7 @@ def con_gen_groups(self):
             ch.send("You must take at least %d points of skills and groups" % (40 + pc_race_table[ch.race.name].points))
             return
 
-        ch.send("Creation points: %d\n" % ch.pcdata.points )
+        ch.send("Creation points: %d\n" % ch.pcdata.points)
         ch.send("Experience per level: %d\n" % exp_per_level(ch,ch.gen_data.points_chosen))
         if ch.pcdata.points < 40:
             ch.train = (40 - ch.pcdata.points + 1) / 2
@@ -349,12 +349,12 @@ def con_get_old_password(self):
     pwdcmp = ""
     if ENCRYPT_PASSWORD:
         argument = argument.encode('utf8')
-        pwdcmp = hashlib.sha512( argument ).hexdigest()
+        pwdcmp = hashlib.sha512(argument).hexdigest()
     else:
         pwdcmp = argument
     if pwdcmp != ch.pcdata.pwd:
         ch.send("Wrong password.\n")
-        comm.close_socket( self )
+        comm.close_socket(self)
         return
     #write_to_buffer( d, echo_on_str, 0 );
 
@@ -365,7 +365,7 @@ def con_get_old_password(self):
         return
 
     log_buf = "%s@%s has connected." % (ch.name, self.addrport())
-    print (log_buf)
+    print(log_buf)
     wiznet(log_buf,None,None,WIZ_SITES,0,get_trust(ch))
     if IS_IMMORTAL(ch):
         ch.do_help("imotd")
@@ -428,29 +428,29 @@ def con_read_motd(self):
     if ch.level == 0:
         ch.perm_stat[ch.guild.attr_prime] += 3
         ch.position = POS_STANDING
-        ch.level   = 1
+        ch.level = 1
         ch.exp = exp_per_level(ch,ch.pcdata.points)
         ch.hit = ch.max_hit
-        ch.mana    = ch.max_mana
-        ch.move    = ch.max_move
-        ch.train    = 3
+        ch.mana = ch.max_mana
+        ch.move = ch.max_move
+        ch.train = 3
         ch.practice = 5
-        buf = "the %s" % title_table[ch.guild.name][ch.level][ch.sex-1]
-        set_title( ch, buf )
+        buf = "the %s" % title_table[ch.guild.name][ch.level][ch.sex - 1]
+        set_title(ch, buf)
 
         ch.do_outfit("")
         obj_to_char(create_object(obj_index_hash[OBJ_VNUM_MAP],0),ch)
 
-        char_to_room( ch, room_index_hash[ ROOM_VNUM_SCHOOL ]) 
+        char_to_room(ch, room_index_hash[ROOM_VNUM_SCHOOL]) 
         ch.do_help("newbie info")
     elif ch.in_room:
-        char_to_room( ch, ch.in_room )
+        char_to_room(ch, ch.in_room)
     elif IS_IMMORTAL(ch):
-        char_to_room( ch, room_index_hash[ ROOM_VNUM_CHAT ] )
+        char_to_room(ch, room_index_hash[ROOM_VNUM_CHAT])
     else:
-        char_to_room( ch, room_index_hash[ ROOM_VNUM_TEMPLE ] )
+        char_to_room(ch, room_index_hash[ROOM_VNUM_TEMPLE])
 
-    act( "$n has entered the game.", ch, None, None, TO_ROOM )
+    act("$n has entered the game.", ch, None, None, TO_ROOM)
     ch.do_look("auto")
 
     wiznet("$N has left real life behind.",ch,None, WIZ_LOGINS,WIZ_SITES,get_trust(ch))

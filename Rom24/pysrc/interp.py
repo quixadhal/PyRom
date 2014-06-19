@@ -46,27 +46,26 @@ from fight import *
 from skills import do_groups, do_skills, do_spells, do_gain
 from settings import LOGALL
 
-ML=MAX_LEVEL   # implementor */
-L1=MAX_LEVEL - 1   # creator */
-L2=MAX_LEVEL - 2   # supreme being */
-L3=MAX_LEVEL - 3   # deity */
-L4=MAX_LEVEL - 4   # god */
-L5=MAX_LEVEL - 5   # immortal */
-L6=MAX_LEVEL - 6   # demigod */
-L7=MAX_LEVEL - 7   # angel */
-L8=MAX_LEVEL - 8   # avatar */
-IM=LEVEL_IMMORTAL  # avatar */
-HE=LEVEL_HERO  # hero */
-
+ML = MAX_LEVEL   # implementor */
+L1 = MAX_LEVEL - 1   # creator */
+L2 = MAX_LEVEL - 2   # supreme being */
+L3 = MAX_LEVEL - 3   # deity */
+L4 = MAX_LEVEL - 4   # god */
+L5 = MAX_LEVEL - 5   # immortal */
+L6 = MAX_LEVEL - 6   # demigod */
+L7 = MAX_LEVEL - 7   # angel */
+L8 = MAX_LEVEL - 8   # avatar */
+IM = LEVEL_IMMORTAL  # avatar */
+HE = LEVEL_HERO  # hero */
 
 class cmd_type:
     def __init__(self, name, do_fun, position, level, log, show):
-        self.name=name
-        self.do_fun=do_fun
-        self.position=position
-        self.level=level
-        self.log=log
-        self.show=show
+        self.name = name
+        self.do_fun = do_fun
+        self.position = position
+        self.level = level
+        self.log = log
+        self.show = show
 
 cmd_table = OrderedDict()
 
@@ -103,12 +102,13 @@ cmd_table['stand'] = cmd_type('stand', do_stand, POS_SLEEPING, 0, LOG_NORMAL, 1)
 cmd_table['tell'] = cmd_type('tell', do_tell, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['unlock'] = cmd_type('unlock', do_unlock, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['wield'] = cmd_type('wield', do_wear, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['wizhelp'] = cmd_type('wizhelp', do_wizhelp, POS_DEAD, IM, LOG_NORMAL, 1 )
+cmd_table['wizhelp'] = cmd_type('wizhelp', do_wizhelp, POS_DEAD, IM, LOG_NORMAL, 1)
 # * Informational commands.
 cmd_table['affects'] = cmd_type('affects', do_affects, POS_DEAD, 0, LOG_NORMAL, 1)
 cmd_table['areas'] = cmd_type('areas', do_areas, POS_DEAD, 0, LOG_NORMAL, 1)
 cmd_table['bug'] = cmd_type('bug', do_bug, POS_DEAD, 0, LOG_NORMAL, 1)
-#cmd_table['changes'] = cmd_type('changes', do_changes, POS_DEAD, 0, LOG_NORMAL, 1)
+#cmd_table['changes'] = cmd_type('changes', do_changes, POS_DEAD, 0,
+#LOG_NORMAL, 1)
 cmd_table['commands'] = cmd_type('commands', do_commands, POS_DEAD, 0, LOG_NORMAL, 1)
 cmd_table['compare'] = cmd_type('compare', do_compare, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['consider'] = cmd_type('consider', do_consider, POS_RESTING, 0, LOG_NORMAL, 1)
@@ -116,7 +116,8 @@ cmd_table['count'] = cmd_type('count', do_count, POS_SLEEPING, 0, LOG_NORMAL, 1)
 cmd_table['credits'] = cmd_type('credits', do_credits, POS_DEAD, 0, LOG_NORMAL, 1)
 cmd_table['equipment'] = cmd_type('equipment', do_equipment, POS_DEAD, 0, LOG_NORMAL, 1)
 cmd_table['examine'] = cmd_type('examine', do_examine, POS_RESTING, 0, LOG_NORMAL, 1)
-# cmd_table['groups'] = cmd_type('groups', do_groups, POS_SLEEPING, 0, LOG_NORMAL, 1)
+# cmd_table['groups'] = cmd_type('groups', do_groups, POS_SLEEPING, 0,
+# LOG_NORMAL, 1)
 cmd_table['help'] = cmd_type('help', do_help, POS_DEAD, 0, LOG_NORMAL, 1)
 #cmd_table['idea'] = cmd_type('idea', do_idea, POS_DEAD, 0, LOG_NORMAL, 1)
 cmd_table['info'] = cmd_type('info', do_groups, POS_SLEEPING, 0, LOG_NORMAL, 1)
@@ -149,7 +150,8 @@ cmd_table['autoloot'] = cmd_type('autoloot', do_autoloot, POS_DEAD, 0, LOG_NORMA
 cmd_table['autosac'] = cmd_type('autosac', do_autosac, POS_DEAD, 0, LOG_NORMAL, 1)
 cmd_table['autosplit'] = cmd_type('autosplit', do_autosplit, POS_DEAD, 0, LOG_NORMAL, 1)
 cmd_table['brief'] = cmd_type('brief', do_brief, POS_DEAD, 0, LOG_NORMAL, 1)
-#cmd_table['channels'] = cmd_type('channels', do_channels, POS_DEAD, 0, LOG_NORMAL, 1)
+#cmd_table['channels'] = cmd_type('channels', do_channels, POS_DEAD, 0,
+#LOG_NORMAL, 1)
 cmd_table['combine'] = cmd_type('combine', do_combine, POS_DEAD, 0, LOG_NORMAL, 1)
 cmd_table['compact'] = cmd_type('compact', do_compact, POS_DEAD, 0, LOG_NORMAL, 1)
 cmd_table['description'] = cmd_type('description', do_description, POS_DEAD, 0, LOG_NORMAL, 1)
@@ -168,17 +170,19 @@ cmd_table['wimpy'] = cmd_type('wimpy', do_wimpy, POS_DEAD, 0, LOG_NORMAL, 1)
 # Communication commands.
 cmd_table['afk'] = cmd_type('afk', do_afk, POS_SLEEPING, 0, LOG_NORMAL, 1)
 cmd_table['answer'] = cmd_type('answer', do_answer, POS_SLEEPING, 0, LOG_NORMAL, 1)
-# cmd_table['auction'] = cmd_type('auction', do_auction, POS_SLEEPING, 0, LOG_NORMAL, 1) */
+# cmd_table['auction'] = cmd_type('auction', do_auction, POS_SLEEPING, 0,
+# LOG_NORMAL, 1) */
 cmd_table['deaf'] = cmd_type('deaf', do_deaf, POS_DEAD, 0, LOG_NORMAL, 1)
 cmd_table['emote'] = cmd_type('emote', do_emote, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['pmote'] = cmd_type('pmote', do_pmote, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['.'] = cmd_type('.',  do_gossip,  POS_SLEEPING, 0,  LOG_NORMAL, 0 )
+cmd_table['.'] = cmd_type('.',  do_gossip,  POS_SLEEPING, 0,  LOG_NORMAL, 0)
 cmd_table['gossip'] = cmd_type('gossip', do_gossip, POS_SLEEPING, 0, LOG_NORMAL, 1)
 cmd_table[','] = cmd_type(',', do_emote, POS_RESTING, 0, LOG_NORMAL, 0)
 cmd_table['grats'] = cmd_type('grats', do_grats, POS_SLEEPING, 0, LOG_NORMAL, 1)
 cmd_table['gtell'] = cmd_type('gtell', do_gtell, POS_DEAD, 0, LOG_NORMAL, 1)
 cmd_table[';'] = cmd_type(';',  do_gtell,   POS_DEAD,    0,  LOG_NORMAL, 0)
-#cmd_table['music'] = cmd_type('music', do_music, POS_SLEEPING, 0, LOG_NORMAL, 1) */
+#cmd_table['music'] = cmd_type('music', do_music, POS_SLEEPING, 0, LOG_NORMAL,
+#1) */
 #cmd_table['note'] = cmd_type('note', do_note, POS_SLEEPING, 0, LOG_NORMAL, 1)
 cmd_table['pose'] = cmd_type('pose', do_pose, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['question'] = cmd_type('question', do_question, POS_SLEEPING, 0, LOG_NORMAL, 1)
@@ -189,7 +193,8 @@ cmd_table['replay'] = cmd_type('replay', do_replay, POS_SLEEPING, 0, LOG_NORMAL,
 cmd_table['say'] = cmd_type('say', do_say, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table["'"] = cmd_type("'",      do_say,     POS_RESTING,     0,  LOG_NORMAL, 0)
 cmd_table['shout'] = cmd_type('shout', do_shout, POS_RESTING, 3, LOG_NORMAL, 1)
-#cmd_table['unread'] = cmd_type('unread', do_unread, POS_SLEEPING, 0, LOG_NORMAL, 1)
+#cmd_table['unread'] = cmd_type('unread', do_unread, POS_SLEEPING, 0,
+#LOG_NORMAL, 1)
 cmd_table['yell'] = cmd_type('yell', do_yell, POS_RESTING, 0, LOG_NORMAL, 1)
 # * Object manipulation commands.
 cmd_table['brandish'] = cmd_type('brandish', do_brandish, POS_RESTING, 0, LOG_NORMAL, 1)
@@ -216,13 +221,13 @@ cmd_table['take'] = cmd_type('take', do_get, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['sacrifice'] = cmd_type('sacrifice', do_sacrifice, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['junk'] = cmd_type('junk', do_sacrifice, POS_RESTING, 0, LOG_NORMAL, 0)
 cmd_table['tap'] = cmd_type('tap', do_sacrifice, POS_RESTING, 0, LOG_NORMAL, 0)   
-#cmd_table['unlock'] = cmd_type('unlock', do_unlock, POS_RESTING, 0, LOG_NORMAL, 1)
+#cmd_table['unlock'] = cmd_type('unlock', do_unlock, POS_RESTING, 0,
+#LOG_NORMAL, 1)
 cmd_table['value'] = cmd_type('value', do_value, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['wear'] = cmd_type('wear', do_wear, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['zap'] = cmd_type('zap', do_zap, POS_RESTING, 0, LOG_NORMAL, 1)
 
 # * Combat commands.
-
 cmd_table['backstab'] = cmd_type('backstab', do_backstab, POS_FIGHTING, 0, LOG_NORMAL, 1)
 cmd_table['bash'] = cmd_type('bash', do_bash, POS_FIGHTING, 0, LOG_NORMAL, 1)
 cmd_table['bs'] = cmd_type('bs', do_backstab, POS_FIGHTING, 0, LOG_NORMAL, 0)
@@ -240,11 +245,13 @@ cmd_table['enter'] = cmd_type('enter', do_enter, POS_STANDING, 0, LOG_NORMAL, 1)
 cmd_table['follow'] = cmd_type('follow', do_follow, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['gain'] = cmd_type('gain', do_gain, POS_STANDING, 0, LOG_NORMAL, 1)
 cmd_table['go'] = cmd_type('go', do_enter, POS_STANDING, 0, LOG_NORMAL, 0)
-# cmd_table['group'] = cmd_type('group', do_group, POS_SLEEPING, 0, LOG_NORMAL, 1)
+# cmd_table['group'] = cmd_type('group', do_group, POS_SLEEPING, 0, LOG_NORMAL,
+# 1)
 cmd_table['groups'] = cmd_type('groups', do_groups, POS_SLEEPING, 0, LOG_NORMAL, 1)
 cmd_table['hide'] = cmd_type('hide', do_hide, POS_RESTING, 0, LOG_NORMAL, 1)
 #cmd_table['play'] = cmd_type('play', do_play, POS_RESTING, 0, LOG_NORMAL, 1)
-#cmd_table['practice'] = cmd_type('practice', do_practice, POS_SLEEPING, 0, LOG_NORMAL, 1) */
+#cmd_table['practice'] = cmd_type('practice', do_practice, POS_SLEEPING, 0,
+#LOG_NORMAL, 1) */
 cmd_table['qui'] = cmd_type('qui', do_qui, POS_DEAD, 0, LOG_NORMAL, 0)
 cmd_table['quit'] = cmd_type('quit', do_quit, POS_DEAD, 0, LOG_NORMAL, 1)
 cmd_table['recall'] = cmd_type('recall', do_recall, POS_FIGHTING, 0, LOG_NORMAL, 1)
@@ -270,14 +277,16 @@ cmd_table['violate'] = cmd_type('violate', do_violate, POS_DEAD,   ML,  LOG_ALWA
 cmd_table['disconnect'] = cmd_type('disconnect', do_disconnect, POS_DEAD, L3, LOG_ALWAYS, 1)
 #cmd_table['flag'] = cmd_type('flag', do_flag, POS_DEAD, L4, LOG_ALWAYS, 1)
 cmd_table['freeze'] = cmd_type('freeze', do_freeze, POS_DEAD, L4, LOG_ALWAYS, 1)
-#cmd_table['permban'] = cmd_type('permban', do_permban, POS_DEAD, L1, LOG_ALWAYS, 1)
+#cmd_table['permban'] = cmd_type('permban', do_permban, POS_DEAD, L1,
+#LOG_ALWAYS, 1)
 cmd_table['protect'] = cmd_type('protect', do_protect, POS_DEAD, L1, LOG_ALWAYS, 1)
 cmd_table['reboo'] = cmd_type('reboo', do_reboo, POS_DEAD, L1, LOG_NORMAL, 0)
 cmd_table['reboot'] = cmd_type('reboot', do_reboot, POS_DEAD, L1, LOG_ALWAYS, 1)
 cmd_table['set'] = cmd_type('set', do_set, POS_DEAD, L2, LOG_ALWAYS, 1)
 cmd_table['shutdow'] = cmd_type('shutdow', do_shutdow, POS_DEAD, L1, LOG_NORMAL, 0)
 cmd_table['shutdown'] = cmd_type('shutdown', do_shutdown, POS_DEAD, L1, LOG_ALWAYS, 1)
-#cmd_table['sockets'] = cmd_type('sockets', do_sockets, POS_DEAD, L4, LOG_NORMAL, 1) */
+#cmd_table['sockets'] = cmd_type('sockets', do_sockets, POS_DEAD, L4,
+#LOG_NORMAL, 1) */
 cmd_table['wizlock'] = cmd_type('wizlock', do_wizlock, POS_DEAD, L2, LOG_ALWAYS, 1)
 cmd_table['force'] = cmd_type('force', do_force, POS_DEAD, L7, LOG_ALWAYS, 1)
 cmd_table['load'] = cmd_type('load', do_load, POS_DEAD, L4, LOG_ALWAYS, 1)
@@ -307,7 +316,8 @@ cmd_table['memory'] = cmd_type('memory', do_memory,  POS_DEAD,   IM,  LOG_NORMAL
 cmd_table['mwhere'] = cmd_type('mwhere', do_mwhere,  POS_DEAD,   IM,  LOG_NORMAL, 1)
 cmd_table['owhere'] = cmd_type('owhere', do_owhere,  POS_DEAD,   IM,  LOG_NORMAL, 1)
 cmd_table['peace'] = cmd_type('peace', do_peace, POS_DEAD, L5, LOG_NORMAL, 1)
-#cmd_table['penalty'] = cmd_type('penalty', do_penalty, POS_DEAD, L7, LOG_NORMAL, 1)
+#cmd_table['penalty'] = cmd_type('penalty', do_penalty, POS_DEAD, L7,
+#LOG_NORMAL, 1)
 cmd_table['echo'] = cmd_type('echo', do_recho, POS_DEAD, L6, LOG_ALWAYS, 1)
 cmd_table['return'] = cmd_type('return', do_return, POS_DEAD, L6, LOG_NORMAL, 1)
 cmd_table['snoop'] = cmd_type('snoop', do_snoop, POS_DEAD, L5, LOG_ALWAYS, 1)
@@ -328,7 +338,7 @@ cmd_table['prefix'] = cmd_type('prefix', do_prefix,  POS_DEAD,   IM,  LOG_NORMAL
 
 #A little python vooodoo to make do_functions methods of char_data
 for k,cmd in cmd_table.items():
-    setattr(CHAR_DATA, cmd.do_fun.__name__, cmd.do_fun )
+    setattr(CHAR_DATA, cmd.do_fun.__name__, cmd.do_fun)
 
 
 def interpret(ch, argument):
@@ -344,7 +354,7 @@ def interpret(ch, argument):
         return
     # * Grab the command word.
     # * Special parsing so ' can be a command,
-    # *   also no spaces needed after punctuation.
+    # * also no spaces needed after punctuation.
     logline = argument
     if not argument[0].isalpha() and not argument[0].isdigit():
         command = argument[0]
@@ -352,7 +362,7 @@ def interpret(ch, argument):
     else:
         argument, command = read_word(argument)
     #* Look for command in command table.
-    trust = get_trust( ch )
+    trust = get_trust(ch)
     cmd = prefix_lookup(cmd_table, command)
     if cmd != None:
         if cmd.level > trust:
@@ -363,7 +373,7 @@ def interpret(ch, argument):
         if cmd and cmd.log != LOG_NEVER:
             log_buf = "Log %s: %s" % (ch.name, logline)
             wiznet(log_buf,ch,None,WIZ_SECURE,0,get_trust(ch))
-            print (log_buf + "\n")
+            print(log_buf + "\n")
     if ch.desc and ch.desc.snoop_by:
         ch.desc.snoop_by.send("% ")
         ch.desc.snoop_by.send(logline)
@@ -379,8 +389,8 @@ def interpret(ch, argument):
     if ch.position < cmd.position:
         if ch.position == POS_DEAD:
             ch.send("Lie still; you are DEAD.\n")
-        elif ch.position ==  POS_MORTAL \
-        or ch.position ==  POS_INCAP:
+        elif ch.position == POS_MORTAL \
+        or ch.position == POS_INCAP:
             ch.send("You are hurt far too bad for that.\n")
         elif ch.position == POS_STUNNED:
             ch.send("You are too stunned to do that.\n")
@@ -399,7 +409,7 @@ def interpret(ch, argument):
     return
 
 def check_social(ch, command, argument):
-    found  = False
+    found = False
     cmd = None
     for social in social_list:
         if argument == social.name[:len(argument)]:
@@ -430,7 +440,7 @@ def check_social(ch, command, argument):
                 ch.send("In your dreams, or what?\n")
                 return True
     holder, arg = read_word(argument)
-    victim = get_char_room( ch, arg )
+    victim = get_char_room(ch, arg)
     if not arg:
         act(cmd.others_no_arg, ch, None, victim, TO_ROOM)
         act(cmd.char_no_arg, ch, None, victim, TO_CHAR)

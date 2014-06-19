@@ -39,9 +39,9 @@ dir_name = ["north", "east", "south", "west", "up", "down"]
 rev_dir = [2, 3, 0, 1, 5, 4]
 movement_loss = [1, 2, 2, 3, 4, 6, 4, 1, 6, 10, 6]
 
-def move_char( ch, door, follow ):
+def move_char(ch, door, follow):
     if door < 0 or door > 5:
-        print ("BUG: Do_move: bad door %d." % door)
+        print("BUG: Do_move: bad door %d." % door)
         return
     in_room = ch.in_room
     pexit = in_room.exit[door]
@@ -52,12 +52,12 @@ def move_char( ch, door, follow ):
     if IS_SET(pexit.exit_info, EX_CLOSED) \
     and (not IS_AFFECTED(ch, AFF_PASS_DOOR) or IS_SET(pexit.exit_info,EX_NOPASS)) \
     and not IS_TRUSTED(ch,ANGEL):
-        act( "The $d is closed.", ch, None, pexit.keyword, TO_CHAR )
+        act("The $d is closed.", ch, None, pexit.keyword, TO_CHAR)
         return
     if IS_AFFECTED(ch, AFF_CHARM) and ch.master and in_room == ch.master.in_room:
         ch.send("What?  And leave your beloved master?\n")
         return
-    if not is_room_owner(ch,to_room) and room_is_private( to_room ):
+    if not is_room_owner(ch,to_room) and room_is_private(to_room):
         ch.send("That room is private right now.\n")
         return
     if not IS_NPC(ch):
@@ -70,15 +70,15 @@ def move_char( ch, door, follow ):
             if not IS_AFFECTED(ch, AFF_FLYING) and not IS_IMMORTAL(ch):
                 ch.send("You can't fly.\n")
                 return
-        if ( in_room.sector_type == SECT_WATER_NOSWIM or to_room.sector_type == SECT_WATER_NOSWIM ) \
+        if (in_room.sector_type == SECT_WATER_NOSWIM or to_room.sector_type == SECT_WATER_NOSWIM) \
         and not IS_AFFECTED(ch,AFF_FLYING):
            # Look for a boat.
           boats = [obj for obj in ch.carrying if obj.item_type == ITEM_BOAT]
           if not boats and not IS_IMMORTAL(ch):
               ch.send("You need a boat to go there.\n")
               return
-        move = movement_loss[min(SECT_MAX-1, in_room.sector_type)] + movement_loss[min(SECT_MAX-1, to_room.sector_type)]
-        move /= 2  # i.e. the average */
+        move = movement_loss[min(SECT_MAX - 1, in_room.sector_type)] + movement_loss[min(SECT_MAX - 1, to_room.sector_type)]
+        move /= 2  # i.e.  the average */
         # conditional effects */
         if IS_AFFECTED(ch,AFF_FLYING) or IS_AFFECTED(ch,AFF_HASTE):
             move /= 2
@@ -87,15 +87,15 @@ def move_char( ch, door, follow ):
         if ch.move < move:
             ch.send("You are too exhausted.\n")
             return
-        WAIT_STATE( ch, 1 )
+        WAIT_STATE(ch, 1)
         ch.move -= move
     if not IS_AFFECTED(ch, AFF_SNEAK) and ch.invis_level < LEVEL_HERO:
-        act( "$n leaves $T.", ch, None, dir_name[door], TO_ROOM )
-    char_from_room( ch )
-    char_to_room( ch, to_room )
+        act("$n leaves $T.", ch, None, dir_name[door], TO_ROOM)
+    char_from_room(ch)
+    char_to_room(ch, to_room)
     if not IS_AFFECTED(ch, AFF_SNEAK) and ch.invis_level < LEVEL_HERO:
-        act( "$n has arrived.", ch, None, None, TO_ROOM )
-    ch.do_look("auto" )
+        act("$n has arrived.", ch, None, None, TO_ROOM)
+    ch.do_look("auto")
     if in_room == to_room: # no circular follows */
         return
 
@@ -109,40 +109,40 @@ def move_char( ch, door, follow ):
                 act("You aren't allowed in the city.",fch,None,None,TO_CHAR)
                 continue
     
-            act( "You follow $N.", fch, None, ch, TO_CHAR )
-            move_char( fch, door, True )
+            act("You follow $N.", fch, None, ch, TO_CHAR)
+            move_char(fch, door, True)
 
 def do_north(self, argument):
-    ch=self
-    move_char( ch, DIR_NORTH, False )
+    ch = self
+    move_char(ch, DIR_NORTH, False)
     return
 
 def do_east(self, argument):
-    ch=self
-    move_char( ch, DIR_EAST, False )
+    ch = self
+    move_char(ch, DIR_EAST, False)
     return
 
 def do_south(self, argument):
-    ch=self
-    move_char( ch, DIR_SOUTH, False )
+    ch = self
+    move_char(ch, DIR_SOUTH, False)
     return
 
 def do_west(self, argument):
-    ch=self
-    move_char( ch, DIR_WEST, False )
+    ch = self
+    move_char(ch, DIR_WEST, False)
     return
 
 def do_up(self, argument):
-    ch=self
-    move_char( ch, DIR_UP, False )
+    ch = self
+    move_char(ch, DIR_UP, False)
     return
 
 def do_down(self, argument):
-    ch=self
-    move_char( ch, DIR_DOWN, False )
+    ch = self
+    move_char(ch, DIR_DOWN, False)
     return
 
-def find_door( ch, arg ):
+def find_door(ch, arg):
     if arg == "n" or arg == "north": door = 0
     elif arg == "e" or arg == "east": door = 1
     elif arg == "s" or arg == "south": door = 2
@@ -153,11 +153,11 @@ def find_door( ch, arg ):
         for pexit in ch.in_room.exit:
             if pexit and IS_SET(pexit.exit_info, EX_ISDOOR) and pexit.keyword and arg in pexit.keyword:
                 return door
-        act( "I see no $T here.", ch, None, arg, TO_CHAR )
+        act("I see no $T here.", ch, None, arg, TO_CHAR)
         return -1
     pexit = ch.in_room.exit[door]
     if not pexit:
-        act( "I see no door $T here.", ch, None, arg, TO_CHAR )
+        act("I see no door $T here.", ch, None, arg, TO_CHAR)
         return -1
     if not IS_SET(pexit.exit_info, EX_ISDOOR):
         ch.send("You can't do that.\n")
@@ -165,7 +165,7 @@ def find_door( ch, arg ):
     return door
 
 def do_open(self, argument):
-    ch=self
+    ch = self
     argument = read_word(argument)
     if not arg:
         ch.send("Open what?\n")
@@ -199,11 +199,11 @@ def do_open(self, argument):
             ch.send("You can't do that.\n")
             return 
         if IS_SET(obj.value[1], CONT_LOCKED):
-            ch.send( "It's locked.\n")
+            ch.send("It's locked.\n")
             return
         REMOVE_BIT(obj.value[1], CONT_CLOSED)
         act("You open $p.",ch,obj,None,TO_CHAR)
-        act( "$n opens $p.", ch, obj, None, TO_ROOM )
+        act("$n opens $p.", ch, obj, None, TO_ROOM)
         return
 
     door = find_door(ch, arg)
@@ -217,19 +217,19 @@ def do_open(self, argument):
             ch.send("It's locked.\n")
             return
         REMOVE_BIT(pexit.exit_info, EX_CLOSED)
-        act( "$n opens the $d.", ch, None, pexit.keyword, TO_ROOM )
+        act("$n opens the $d.", ch, None, pexit.keyword, TO_ROOM)
         ch.send("Ok.\n")
 
       # open the other side */
         to_room = pexit.to_room
-        if to_room and  to_room.exit[rev_dir[door]] and to_room.exit[rev_dir[door]].to_room == ch.in_room:
+        if to_room and to_room.exit[rev_dir[door]] and to_room.exit[rev_dir[door]].to_room == ch.in_room:
             pexit_rev = to_room.exit[rev_dir[door]]
-            REMOVE_BIT( pexit_rev.exit_info, EX_CLOSED )
+            REMOVE_BIT(pexit_rev.exit_info, EX_CLOSED)
             for rch in to_room.people:
-                act("The $d opens.", rch, None, pexit_rev.keyword, TO_CHAR )
+                act("The $d opens.", rch, None, pexit_rev.keyword, TO_CHAR)
 
 def do_close(self, argument):
-    ch=self
+    ch = self
     argument, arg = read_word(argument)
 
     if not arg:
@@ -261,7 +261,7 @@ def do_close(self, argument):
             return
         SET_BIT(obj.value[1], CONT_CLOSED)
         act("You close $p.",ch,obj,None,TO_CHAR)
-        act( "$n closes $p.", ch, obj, None, TO_ROOM )
+        act("$n closes $p.", ch, obj, None, TO_ROOM)
         return
     door = find_door(ch, arg)
     if find_door(ch, arg) >= 0:
@@ -271,24 +271,24 @@ def do_close(self, argument):
             ch.send("It's already closed.\n")
             return
     SET_BIT(pexit.exit_info, EX_CLOSED)
-    act( "$n closes the $d.", ch, None, pexit.keyword, TO_ROOM )
+    act("$n closes the $d.", ch, None, pexit.keyword, TO_ROOM)
     ch.send("Ok.\n")
     # close the other side */
     to_room = pexit.to_room
     pexit_rev = to_room.exit[rev_dir[door]] if pexit.to_room else None
     if to_room and pexit_rev and pexit_rev.to_room == ch.in_room:
-        SET_BIT( pexit_rev.exit_info, EX_CLOSED )
+        SET_BIT(pexit_rev.exit_info, EX_CLOSED)
         for rch in to_room.people:
-            act( "The $d closes.", rch, None, pexit_rev.keyword, TO_CHAR )
+            act("The $d closes.", rch, None, pexit_rev.keyword, TO_CHAR)
 
-def has_key( ch, key ):
+def has_key(ch, key):
     for obj in ch.carrying:
         if obj.pIndexData.vnum == key:
             return True
     return False
 
 def do_lock(self, argument):
-    ch=self
+    ch = self
     argument, arg = read_word(argument)
     if not arg:
         ch.send("Lock what?\n")
@@ -326,7 +326,7 @@ def do_lock(self, argument):
         if obj.value[2] < 0:
             ch.send("It can't be locked.\n")
             return
-        if not has_key( ch, obj.value[2] ):
+        if not has_key(ch, obj.value[2]):
             ch.send("You lack the key.\n")
             return
         if IS_SET(obj.value[1], CONT_LOCKED):
@@ -336,9 +336,9 @@ def do_lock(self, argument):
 
         SET_BIT(obj.value[1], CONT_LOCKED)
         act("You lock $p.",ch,obj,None,TO_CHAR)
-        act( "$n locks $p.", ch, obj, None, TO_ROOM )
+        act("$n locks $p.", ch, obj, None, TO_ROOM)
         return
-    door = find_door( ch, arg )
+    door = find_door(ch, arg)
     if door >= 0:
         # 'lock door' */
         pexit = ch.in_room.exit[door]
@@ -348,8 +348,8 @@ def do_lock(self, argument):
         if pexit.key < 0:
             ch.send("It can't be locked.\n")
             return
-        if not has_key( ch, pexit.key):
-            ch.send( "You lack the key.\n")
+        if not has_key(ch, pexit.key):
+            ch.send("You lack the key.\n")
             return
         if IS_SET(pexit.exit_info, EX_LOCKED):
             ch.send("It's already locked.\n")
@@ -357,15 +357,15 @@ def do_lock(self, argument):
 
         SET_BIT(pexit.exit_info, EX_LOCKED)
         ch.send("*Click*\n")
-        act( "$n locks the $d.", ch, None, pexit.keyword, TO_ROOM )
+        act("$n locks the $d.", ch, None, pexit.keyword, TO_ROOM)
         # lock the other side */
         to_room = pexit.to_room
-        if to_room and  to_room.exit[rev_dir[door]] != 0 \
+        if to_room and to_room.exit[rev_dir[door]] != 0 \
         and to_room.exit[rev_dir[door]].to_room == ch.in_room:
-            SET_BIT( to_room.exit[rev_dir[door]].exit_info, EX_LOCKED )
+            SET_BIT(to_room.exit[rev_dir[door]].exit_info, EX_LOCKED)
 
 def do_unlock(self, argument):
-    ch=self
+    ch = self
     argument, arg = read_word(argument)
 
     if not arg:
@@ -399,12 +399,12 @@ def do_unlock(self, argument):
             ch.send("That's not a container.\n")
             return
         if not IS_SET(obj.value[1], CONT_CLOSED):
-            ch.send( "It's not closed.\n")
+            ch.send("It's not closed.\n")
             return
         if obj.value[2] < 0:
             ch.send("It can't be unlocked.\n")
             return
-        if not has_key( ch, obj.value[2] ):
+        if not has_key(ch, obj.value[2]):
             ch.send("You lack the key.\n")
             return
         if not IS_SET(obj.value[1], CONT_LOCKED):
@@ -413,15 +413,15 @@ def do_unlock(self, argument):
 
         REMOVE_BIT(obj.value[1], CONT_LOCKED)
         act("You unlock $p.",ch,obj,None,TO_CHAR)
-        act( "$n unlocks $p.", ch, obj, None, TO_ROOM )
+        act("$n unlocks $p.", ch, obj, None, TO_ROOM)
         return
 
-    door = find_door( ch, arg )
+    door = find_door(ch, arg)
     if door >= 0:
         # 'unlock door' */
-        ROOM_INDEX_DATA *to_room
-        EXIT_DATA *pexit
-        EXIT_DATA *pexit_rev
+        ROOM_INDEX_DATA * to_room
+        EXIT_DATA * pexit
+        EXIT_DATA * pexit_rev
         pexit = ch.in_room.exit[door]
         if not IS_SET(pexit.exit_info, EX_CLOSED):
             ch.send("It's not closed.\n")
@@ -429,7 +429,7 @@ def do_unlock(self, argument):
         if pexit.key < 0:
             ch.send("It can't be unlocked.\n")
             return
-        if not has_key( ch, pexit.key):
+        if not has_key(ch, pexit.key):
             ch.send("You lack the key.\n")
             return
         if not IS_SET(pexit.exit_info, EX_LOCKED):
@@ -437,17 +437,17 @@ def do_unlock(self, argument):
             return
         REMOVE_BIT(pexit.exit_info, EX_LOCKED)
         ch.send("*Click*\n")
-        act( "$n unlocks the $d.", ch, None, pexit.keyword, TO_ROOM )
+        act("$n unlocks the $d.", ch, None, pexit.keyword, TO_ROOM)
 
         # unlock the other side */
         to_room = pexit.u1.to_room
-        if to_room and   to_room.exit[rev_dir[door]] \
-        and  to_room.exit[rev_dir[door]] == ch.in_room:
-            REMOVE_BIT( pexit_rev.exit_info, EX_LOCKED )
+        if to_room and to_room.exit[rev_dir[door]] \
+        and to_room.exit[rev_dir[door]] == ch.in_room:
+            REMOVE_BIT(pexit_rev.exit_info, EX_LOCKED)
   
 
 def do_pick(self, argument):
-    ch=self
+    ch = self
     argument, arg = read_word(argument)
 
     if not arg:
@@ -459,7 +459,7 @@ def do_pick(self, argument):
     # look for guards */
     for gch in ch.in_room.people:
         if IS_NPC(gch) and IS_AWAKE(gch) and ch.level + 5 < gch.level:
-            act( "$N is standing too close to the lock.", ch, None, gch, TO_CHAR )
+            act("$N is standing too close to the lock.", ch, None, gch, TO_CHAR)
             return
         if not IS_NPC(ch) and random.randint(1,99) > get_skill(ch,"pick lock"):
             ch.send("You failed.\n")
@@ -510,12 +510,12 @@ def do_pick(self, argument):
             act("$n picks the lock on $p.",ch,obj,None,TO_ROOM)
             check_improve(ch,"pick lock",True,2)
             return
-        door = find_door( ch, arg )            
+        door = find_door(ch, arg)            
         if  door >= 0:
             # 'pick door' */
-            ROOM_INDEX_DATA *to_room
-            EXIT_DATA *pexit
-            EXIT_DATA *pexit_rev
+            ROOM_INDEX_DATA * to_room
+            EXIT_DATA * pexit
+            EXIT_DATA * pexit_rev
 
             pexit = ch.in_room.exit[door]
             if not IS_SET(pexit.exit_info, EX_CLOSED) and not IS_IMMORTAL(ch):
@@ -532,15 +532,15 @@ def do_pick(self, argument):
                 return
             REMOVE_BIT(pexit.exit_info, EX_LOCKED)
             ch.send("*Click*\n")
-            act( "$n picks the $d.", ch, None, pexit.keyword, TO_ROOM )
+            act("$n picks the $d.", ch, None, pexit.keyword, TO_ROOM)
             check_improve(ch,"pick_lock",True,2)
              # pick the other side */
-            to_room   = pexit.u1.to_room
+            to_room = pexit.u1.to_room
             if to_room and to_room.exit[rev_dir[door]] and to_room.exit[rev_dir[door]].to_room == ch.in_room:
-                REMOVE_BIT( pexit_rev.exit_info, EX_LOCKED )
+                REMOVE_BIT(pexit_rev.exit_info, EX_LOCKED)
       
 def do_stand(self, argument):
-    ch=self
+    ch = self
     obj = None
     if argument:
         if ch.position == POS_FIGHTING:
@@ -551,7 +551,7 @@ def do_stand(self, argument):
             ch.send("You don't see that here.\n")
             return
         if obj.item_type != ITEM_FURNITURE \
-        or  ( not IS_SET(obj.value[2],STAND_AT) \
+        or (not IS_SET(obj.value[2],STAND_AT) \
         and not IS_SET(obj.value[2],STAND_ON) \
         and not IS_SET(obj.value[2],STAND_IN)):
             ch.send("You can't seem to find a place to stand.\n")
@@ -567,7 +567,7 @@ def do_stand(self, argument):
             return
         if not obj:
             ch.send("You wake and stand up.\n")
-            act( "$n wakes and stands up.", ch, None, None, TO_ROOM )
+            act("$n wakes and stands up.", ch, None, None, TO_ROOM)
             ch.on = None
         elif IS_SET(obj.value[2], STAND_AT):
             act_new("You wake and stand at $p.",ch,obj,None,TO_CHAR,POS_DEAD)
@@ -584,7 +584,7 @@ def do_stand(self, argument):
     elif ch.position == POS_RESTING or ch.position == POS_SITTING:
         if not obj:
             ch.send("You stand up.\n")
-            act( "$n stands up.", ch, None, None, TO_ROOM )
+            act("$n stands up.", ch, None, None, TO_ROOM)
             ch.on = None
         elif IS_SET(obj.value[2], STAND_AT):
             act("You stand at $p.",ch,obj,None,TO_CHAR)
@@ -605,7 +605,7 @@ def do_stand(self, argument):
         return
 
 def do_rest(self, argument):
-    ch=self
+    ch = self
     obj = None
     if ch.position == POS_FIGHTING:
         ch.send("You are already fighting!\n")
@@ -620,7 +620,7 @@ def do_rest(self, argument):
 
         if obj:
             if obj.item_type != ITEM_FURNITURE \
-            or ( not IS_SET(obj.value[2],REST_ON) \
+            or (not IS_SET(obj.value[2],REST_ON) \
             and not IS_SET(obj.value[2],REST_IN) \
             and not IS_SET(obj.value[2],REST_AT)):
                 ch.send("You can't rest on that.\n")
@@ -636,7 +636,7 @@ def do_rest(self, argument):
             return
         if not obj:
             ch.send("You wake up and start resting.\n")
-            act ("$n wakes up and starts resting.",ch,None,None,TO_ROOM)
+            act("$n wakes up and starts resting.",ch,None,None,TO_ROOM)
         elif IS_SET(obj.value[2], REST_AT):
             act("You wake up and rest at $p.",ch,obj,None,TO_CHAR,POS_SLEEPING)
             act("$n wakes up and rests at $p.",ch,obj,None,TO_ROOM)
@@ -654,7 +654,7 @@ def do_rest(self, argument):
     elif ch.position == POS_STANDING:
         if obj == None:
             ch.send("You rest.\n")
-            act( "$n sits down and rests.", ch, None, None, TO_ROOM )
+            act("$n sits down and rests.", ch, None, None, TO_ROOM)
         elif IS_SET(obj.value[2], REST_AT):
             act("You sit down at $p and rest.",ch,obj,None,TO_CHAR)
             act("$n sits down at $p and rests.",ch,obj,None,TO_ROOM)
@@ -666,7 +666,7 @@ def do_rest(self, argument):
             act("$n rests in $p.",ch,obj,None,TO_ROOM)
         ch.position = POS_RESTING
         return
-    elif ch.position ==  POS_SITTING:
+    elif ch.position == POS_SITTING:
       if not obj:
           ch.send("You rest.\n")
           act("$n rests.",ch,None,None,TO_ROOM)
@@ -683,8 +683,8 @@ def do_rest(self, argument):
       return
       
 def do_sit(self, argument):
-    ch=self
-    obj=None
+    ch = self
+    obj = None
     if ch.position == POS_FIGHTING:
         ch.send("Maybe you should finish this fight first?\n")
         return
@@ -698,7 +698,7 @@ def do_sit(self, argument):
 
         if obj:
             if obj.item_type != ITEM_FURNITURE \
-            or ( not IS_SET(obj.value[2],SIT_ON) \
+            or (not IS_SET(obj.value[2],SIT_ON) \
             and not IS_SET(obj.value[2],SIT_IN) \
             and not IS_SET(obj.value[2],SIT_AT)):
                 ch.send("You can't sit on that.\n")
@@ -715,7 +715,7 @@ def do_sit(self, argument):
           
         if obj == None:
             ch.send("You wake and sit up.\n")
-            act( "$n wakes and sits up.", ch, None, None, TO_ROOM )
+            act("$n wakes and sits up.", ch, None, None, TO_ROOM)
         elif IS_SET(obj.value[2], SIT_AT):
             act_new("You wake and sit at $p.",ch,obj,None,TO_CHAR,POS_DEAD)
             act("$n wakes and sits at $p.",ch,obj,None,TO_ROOM)
@@ -758,8 +758,8 @@ def do_sit(self, argument):
     
     
 def do_sleep(self, argument):
-    ch=self
-    obj=None
+    ch = self
+    obj = None
     if ch.position == POS_SLEEPING:
         ch.send("You are already sleeping.\n")
         return
@@ -768,19 +768,19 @@ def do_sleep(self, argument):
     or ch.position == POS_STANDING: 
         if not argument and not ch.on:
             ch.send("You go to sleep.\n")
-            act( "$n goes to sleep.", ch, None, None, TO_ROOM )
+            act("$n goes to sleep.", ch, None, None, TO_ROOM)
             ch.position = POS_SLEEPING
         else:  # find an object and sleep on it */
             if not argument:
                 obj = ch.on
             else:
-                obj = get_obj_list( ch, argument,  ch.in_room.contents )
+                obj = get_obj_list(ch, argument,  ch.in_room.contents)
 
             if obj == None:
                 ch.send("You don't see that here.\n")
                 return
             if obj.item_type != ITEM_FURNITURE \
-            or ( not IS_SET(obj.value[2],SLEEP_ON) \
+            or (not IS_SET(obj.value[2],SLEEP_ON) \
             and not IS_SET(obj.value[2],SLEEP_IN) \
             and not IS_SET(obj.value[2],SLEEP_AT)):
                 ch.send("You can't sleep on that!\n")
@@ -805,204 +805,25 @@ def do_sleep(self, argument):
         return
 
 def do_wake(self, argument):
-    ch=self
+    ch = self
     argument, arg = read_word(argument)
     if not arg:
         ch.do_stand("")
         return
 
     if not IS_AWAKE(ch):
-        ch.send( "You are asleep yourself!\n")
+        ch.send("You are asleep yourself!\n")
         return
-    victim = get_char_room( ch, arg )
+    victim = get_char_room(ch, arg)
     if not victim:
         ch.send("They aren't here.\n")
         return
     if IS_AWAKE(victim):
-        act( "$N is already awake.", ch, None, victim, TO_CHAR )
+        act("$N is already awake.", ch, None, victim, TO_CHAR)
         return
     if IS_AFFECTED(victim, AFF_SLEEP):
-        act( "You can't wake $M!",   ch, None, victim, TO_CHAR )
+        act("You can't wake $M!",   ch, None, victim, TO_CHAR)
         return
-    act("$n wakes you.", ch, None, victim, TO_VICT,POS_SLEEPING )
+    act("$n wakes you.", ch, None, victim, TO_VICT,POS_SLEEPING)
     victim.do_stand("")
-    return
-
-def do_sneak(self, argument):
-    ch=self
-    ch.send("You attempt to move silently.\n")
-    affect_strip( ch, "sneak" )
-
-    if IS_AFFECTED(ch,AFF_SNEAK):
-        return
-
-    if random.randint(1,99) < get_skill(ch,"sneak"):
-        check_improve(ch,"sneak",True,3)
-        af = AFFECT_DATA()
-        af.where     = TO_AFFECTS
-        af.type      = "sneak"
-        af.level     = ch.level 
-        af.duration  = ch.level
-        af.location  = APPLY_NONE
-        af.modifier  = 0
-        af.bitvector = AFF_SNEAK
-        affect_to_char( ch, af )
-    else:
-        check_improve(ch,"sneak",False,3)
-    return
-
-def do_hide(self, argument):
-    ch=self
-    ch.send("You attempt to hide.\n")
-
-    if IS_AFFECTED(ch, AFF_HIDE):
-        REMOVE_BIT(ch.affected_by, AFF_HIDE)
-
-    if random.randint(1,99) < get_skill(ch,"hide"):
-        SET_BIT(ch.affected_by, AFF_HIDE)
-        check_improve(ch,"hide",True,3)
-    else:
-        check_improve(ch,"hide",False,3)
-    return
-
-#
-# * Contributed by Alander.
-def do_visible(self, argument):
-    ch=self
-    affect_strip ( ch, "invis"      )
-    affect_strip ( ch, "mass_invis"     )
-    affect_strip ( ch, "sneak"      )
-    REMOVE_BIT   ( ch.affected_by, AFF_HIDE    )
-    REMOVE_BIT   ( ch.affected_by, AFF_INVISIBLE )
-    REMOVE_BIT   ( ch.affected_by, AFF_SNEAK   )
-    ch.send("Ok.\n")
-    return
-
-def do_recall(self, argument):
-    ch=self
-
-    if IS_NPC(ch) and not IS_SET(ch.act,ACT_PET):
-        ch.send("Only players can recall.\n")
-        return
-    act( "$n prays for transportation!", ch, 0, 0, TO_ROOM )
-    location = room_index_hash[ROOM_VNUM_TEMPLE]
-    if not location:
-        ch.send("You are completely lost.\n")
-        return
-    if ch.in_room == location:
-        return
-    if IS_SET(ch.in_room.room_flags, ROOM_NO_RECALL) or IS_AFFECTED(ch, AFF_CURSE):
-        ch.send("Mota has forsaken you.\n")
-        return
-    victim = ch.fighting
-    if victim:
-        skill = get_skill(ch,"recall")
-        if random.randint(1,99) < 80 * skill / 100:
-            check_improve(ch,"recall",False,6)
-            WAIT_STATE( ch, 4 )
-            sprintf( buf, "You failed!.\n")
-            ch.send(buf)
-            return
-        lose = 25 if ch.desc else 50
-        gain_exp( ch, 0 - lose )
-        check_improve(ch,"recall",True,4)
-        ch.send("You recall from combat!  You lose %d exps.\n" % lose )
-        stop_fighting( ch, True )
-    ch.move /= 2
-    act( "$n disappears.", ch, None, None, TO_ROOM )
-    char_from_room( ch )
-    char_to_room( ch, location )
-    act( "$n appears in the room.", ch, None, None, TO_ROOM )
-    ch.do_look("auto" )
-   
-    if ch.pet != None:
-        ch.pet.do_recall("")
-    return
-
-def do_train(self, argument):
-    ch=self
-    stat = -1
-    pOutput = ""
-    if IS_NPC(ch):
-        return
-
-     # Check for trainer.
-    trainers = [mob for mob in ch.in_room.people if IS_NPC(mob) and IS_SET(mob.act, ACT_TRAIN)]
-    if not trainers:
-        ch.send("You can't do that here.\n")
-        return
-    if not argument:
-        ch.send("You have %d training sessions.\n" % ch.train )
-        argument = "foo"
-    cost = 1
-    if argument == "str" :
-        if ch.guild.attr_prime == STAT_STR:
-            cost = 1
-        stat = STAT_STR
-        pOutput = "strength"
-    elif argument == "int" :
-        if ch.guild.attr_prime == STAT_INT:
-            cost = 1
-        stat = STAT_INT
-        pOutput = "intelligence"
-    elif argument == "wis" :
-        if ch.guild.attr_prime == STAT_WIS:
-            cost = 1
-        stat = STAT_WIS
-        pOutput = "wisdom"
-    elif argument == "dex" :
-        if ch.guild.attr_prime == STAT_DEX:
-            cost = 1
-        stat = STAT_DEX
-        pOutput = "dexterity"
-    elif argument == "con" :
-        if ch.guild.attr_prime == STAT_CON:
-            cost = 1
-        stat = STAT_CON
-        pOutput = "constitution"
-    elif argument == "hp" :
-        cost = 1
-    elif argument == "mana":
-        cost = 1
-    elif "hp" == argument:
-        if cost > ch.train:
-            ch.send("You don't have enough training sessions.\n")
-            return
-        ch.train -= cost
-        ch.pcdata.perm_hit += 10
-        ch.max_hit += 10
-        ch.hit +=10
-        act( "Your durability increases!",ch,None,None,TO_CHAR)
-        act( "$n's durability increases!",ch,None,None,TO_ROOM)
-        return
-    elif "mana" == argument:
-        if cost > ch.train:
-            ch.send("You don't have enough training sessions.\n")
-            return
-        ch.train -= cost
-        ch.pcdata.perm_mana += 10
-        ch.max_mana += 10
-        ch.mana += 10
-        act( "Your power increases!",ch,None,None,TO_CHAR)
-        act( "$n's power increases!",ch,None,None,TO_ROOM)
-        return
-    else:
-        ch.send("You can train:")
-        if ch.perm_stat[STAT_STR] < get_max_train(ch,STAT_STR): ch.send(" str")
-        if ch.perm_stat[STAT_INT] < get_max_train(ch,STAT_INT): ch.send(" int")
-        if ch.perm_stat[STAT_WIS] < get_max_train(ch,STAT_WIS): ch.send(" wis")
-        if ch.perm_stat[STAT_DEX] < get_max_train(ch,STAT_DEX): ch.send(" dex")
-        if ch.perm_stat[STAT_CON] < get_max_train(ch,STAT_CON): ch.send(" con")
-        ch.send(" hp mana")
-        return
-    if ch.perm_stat[stat]  >= get_max_train(ch,stat):
-        act( "Your $T is already at maximum.", ch, None, pOutput, TO_CHAR )
-        return
-    if cost > ch.train:
-        ch.send("You don't have enough training sessions.\n")
-        return
-    ch.train -= cost
-    ch.perm_stat[stat]   += 1
-    act( "Your $T increases!", ch, None, pOutput, TO_CHAR )
-    act( "$n's $T increases!", ch, None, pOutput, TO_ROOM )
     return

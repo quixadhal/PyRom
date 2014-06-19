@@ -54,7 +54,7 @@ def substitute_alias(d, argument):
     if sub not in ch.pcdata.alias:
         interp.interpret(ch, argument)
         return
-    buf = "%s %s" % ( ch.pcdata.alias[sub], remains )
+    buf = "%s %s" % (ch.pcdata.alias[sub], remains)
     interp.interpret(ch,buf)
 
 def do_alia(self,argument):
@@ -79,10 +79,10 @@ def do_alias(self, argument):
         ch.send("Your current aliases are:\n\r")
 
         for alias,sub in rch.pcdata.alias.iteritems():
-            ch.send("    %s:  %s\n\r" % (alias, sub) )
+            ch.send("    %s:  %s\n\r" % (alias, sub))
         return
 
-    if "unalias" ==  arg or "alias" == arg:
+    if "unalias" == arg or "alias" == arg:
         ch.send("Sorry, that word is reserved.\n\r")
         return
 
@@ -90,7 +90,7 @@ def do_alias(self, argument):
         if arg not in rch.pcdata.alias:
             ch.send("That alias is not defined.\n\r")
             return
-        ch.send("%s aliases to '%s'.\n\r" % (arg, rch.pcdata.alias[arg]) )
+        ch.send("%s aliases to '%s'.\n\r" % (arg, rch.pcdata.alias[arg]))
         return
 
     if argument.startswith("delete") or argument.startswith("prefix"):
@@ -99,13 +99,13 @@ def do_alias(self, argument):
 
     if arg in rch.pcdata.alias:
         rch.pcdata.alias[arg] = argument
-        ch.send("%s is now realiased to '%s'.\n\r" % (arg,argument) )
+        ch.send("%s is now realiased to '%s'.\n\r" % (arg,argument))
         return
     elif len(rch.pcdata.alias) > MAX_ALIAS:
         ch.send("Sorry, you have reached the alias limit.\r\n")
         return
     rch.pcdata.alias[arg] = argument
-    ch.send("%s is now aliased to '%s'.\n\r" % (arg,argument) )
+    ch.send("%s is now aliased to '%s'.\n\r" % (arg,argument))
     return
 
 def do_unalias(ch, argument):

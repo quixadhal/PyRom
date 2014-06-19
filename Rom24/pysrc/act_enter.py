@@ -49,24 +49,24 @@ def get_random_room(ch):
 
 # RT Enter portals */
 def do_enter(self, argument):
-    ch=self
-    ROOM_INDEX_DATA *location 
+    ch = self
+    ROOM_INDEX_DATA * location 
 
     if ch.fighting:
         return
     # nifty portal stuff */
     if argument:
         old_room = ch.in_room
-        portal = get_obj_list( ch, argument,  ch.in_room.contents )
+        portal = get_obj_list(ch, argument,  ch.in_room.contents)
         if not portal:
             ch.send("You don't see that here.\n")
             return
         if portal.item_type != ITEM_PORTAL \
-        or  (IS_SET(portal.value[1],EX_CLOSED) and not IS_TRUSTED(ch,ANGEL)):
+        or (IS_SET(portal.value[1],EX_CLOSED) and not IS_TRUSTED(ch,ANGEL)):
             ch.send("You can't seem to find a way in.\n")
             return
         if not IS_TRUSTED(ch,ANGEL) and not IS_SET(portal.value[2],GATE_NOCURSE) \
-        and  (IS_AFFECTED(ch,AFF_CURSE) or IS_SET(old_room.room_flags,ROOM_NO_RECALL)):
+        and (IS_AFFECTED(ch,AFF_CURSE) or IS_SET(old_room.room_flags,ROOM_NO_RECALL)):
             ch.send("Something prevents you from leaving...\n")
             return
         location = None
@@ -78,12 +78,12 @@ def do_enter(self, argument):
         else:
             location = get_room_index(portal.value[3])
         if not location or location == old_room \
-        or  not can_see_room(ch,location) \
+        or not can_see_room(ch,location) \
         or (room_is_private(location) and not IS_TRUSTED(ch,IMPLEMENTOR)):
             act("$p doesn't seem to go anywhere.",ch,portal,None,TO_CHAR)
             return
         if IS_NPC(ch) and IS_SET(ch.act,ACT_AGGRESSIVE) \
-        and  IS_SET(location.room_flags,ROOM_LAW):
+        and IS_SET(location.room_flags,ROOM_LAW):
             ch.send("Something prevents you from leaving...\n")
             return
         act("$n steps into $p.",ch,portal,None,TO_ROOM)
@@ -118,11 +118,11 @@ def do_enter(self, argument):
             if fch.master == ch and IS_AFFECTED(fch,AFF_CHARM) and fch.position < POS_STANDING:
                 fch.do_stand("")
             if fch.master == ch and fch.position == POS_STANDING:
-                if IS_SET(ch.in_room.room_flags,ROOM_LAW) and  (IS_NPC(fch) and IS_SET(fch.act,ACT_AGGRESSIVE)):
+                if IS_SET(ch.in_room.room_flags,ROOM_LAW) and (IS_NPC(fch) and IS_SET(fch.act,ACT_AGGRESSIVE)):
                     act("You can't bring $N into the city.", ch,None,fch,TO_CHAR)
                     act("You aren't allowed in the city.", fch,None,None,TO_CHAR)
                     continue
-                act( "You follow $N.", fch, None, ch, TO_CHAR )
+                act("You follow $N.", fch, None, ch, TO_CHAR)
                 fch.do_enter(argument)
         if portal and portal.value[0] == -1:
             act("$p fades out of existence.",ch,portal,None,TO_CHAR)
