@@ -233,7 +233,7 @@ def do_cast(ch, argument):
                 ch.send("You don't see that here.\n")
                 return
     else:
-        print ("BUG: Do_cast: bad target for sn %s." % sn)
+        print("BUG: Do_cast: bad target for sn %s." % sn)
         return
         
     if not IS_NPC(ch) and ch.mana < mana:

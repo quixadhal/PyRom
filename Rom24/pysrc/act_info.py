@@ -1346,7 +1346,7 @@ def do_consider(self, argument):
 
 def set_title(ch, title):
     if IS_NPC(ch):
-        print ("BUG: Set_title: NPC.")
+        print("BUG: Set_title: NPC.")
         return
     buf = ''
     if title[0] != '.' and title[0] != ',' and title[0] != '!' and title[0] != '?':

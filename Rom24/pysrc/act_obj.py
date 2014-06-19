@@ -629,7 +629,7 @@ def do_drink(self, argument):
     if obj.item_type == ITEM_FOUNTAIN:
         liquid = obj.value[2]
         if liquid < 0:
-            print ("BUG: Do_drink: bad liquid number %s." % liquid)
+            print("BUG: Do_drink: bad liquid number %s." % liquid)
             liquid = obj.value[2] = 0
         amount = liq_table[liquid].liq_affect[4] * 3
     elif obj.item_type == ITEM_DRINK_CON:
@@ -638,7 +638,7 @@ def do_drink(self, argument):
             return
         liquid = obj.value[2]
         if liquid < 0:
-            print ("BUG: Do_drink: bad liquid number %s." % liquid)
+            print("BUG: Do_drink: bad liquid number %s." % liquid)
             liquid = obj.value[2] = 0
         amount = liq_table[liquid].liq_affect[4]
         amount = min(amount, obj.value[1])
@@ -770,7 +770,7 @@ def wear_obj( ch, obj, fReplace ):
             act( "You wear $p on your right finger.", ch, obj, None, TO_CHAR )
             equip_char( ch, obj, WEAR_FINGER_R )
             return
-        print ("BUG: Wear_obj: no free finger.")
+        print("BUG: Wear_obj: no free finger.")
         ch.send("You already wear two rings.\n")
         return
     if CAN_WEAR(obj, ITEM_WEAR_NECK):
@@ -787,7 +787,7 @@ def wear_obj( ch, obj, fReplace ):
             act( "You wear $p around your neck.", ch, obj, None, TO_CHAR )
             equip_char( ch, obj, WEAR_NECK_2 )
             return
-        print ("BUG: Wear_obj: no free neck.")
+        print("BUG: Wear_obj: no free neck.")
         ch.send("You already wear two neck items.\n")
         return
     if CAN_WEAR(obj, ITEM_WEAR_BODY):
@@ -861,7 +861,7 @@ def wear_obj( ch, obj, fReplace ):
             equip_char( ch, obj, WEAR_WRIST_R )
             return
     
-        print ("BUG: Wear_obj: no free wrist.")
+        print("BUG: Wear_obj: no free wrist.")
         ch.send("You already wear two wrist items.\n")
         return
     if CAN_WEAR(obj, ITEM_WEAR_SHIELD):
@@ -1077,7 +1077,7 @@ def do_brandish(self, argument):
         return
     sn = staff.value[3]
     if sn < 0 or not skill_table[sn].spell_fun:
-        print ("BUG: Do_brandish: bad sn %s." % sn)
+        print("BUG: Do_brandish: bad sn %s." % sn)
         return
     WAIT_STATE( ch, 2 * PULSE_VIOLENCE )
 
@@ -1105,7 +1105,7 @@ def do_brandish(self, argument):
                     if vch != ch:
                         continue
                 else:
-                    print ("BUG: Do_brandish: bad target for sn %s." % sn)
+                    print("BUG: Do_brandish: bad target for sn %s." % sn)
                     return
                 obj_cast_spell( staff.value[3], staff.value[0], ch, vch, None )
                 check_improve(ch,"staves",True,2)
@@ -1391,7 +1391,7 @@ def do_buy(self, argument):
             if ch.in_room.vnum+1 in room_index_hash:
                 pRoomIndexNext = room_index_hash(ch.in_room.vnum+1)
         if not pRoomIndexNext:
-            print ("BUG: Do_buy: bad pet shop at vnum %d." % ch.in_room.vnum)
+            print("BUG: Do_buy: bad pet shop at vnum %d." % ch.in_room.vnum)
             ch.send("Sorry, you can't buy that here.\n")
             return
         in_room     = ch.in_room
@@ -1521,7 +1521,7 @@ def do_list(self, argument):
             if ch.in_room.vnum+1 in room_index_hash:
                 pRoomIndexNext = room_index_hash[ch.in_room.vnum+1]
         if not pRoomIndexNext:
-            print ("BUG: Do_list: bad pet shop at vnum %d." % ch.in_room.vnum)
+            print("BUG: Do_list: bad pet shop at vnum %d." % ch.in_room.vnum)
             ch.send("You can't do that here.\n")
             return
         found = False

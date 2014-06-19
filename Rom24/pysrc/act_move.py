@@ -41,7 +41,7 @@ movement_loss = [1, 2, 2, 3, 4, 6, 4, 1, 6, 10, 6]
 
 def move_char( ch, door, follow ):
     if door < 0 or door > 5:
-        print ("BUG: Do_move: bad door %d." % door)
+        print("BUG: Do_move: bad door %d." % door)
         return
     in_room = ch.in_room
     pexit = in_room.exit[door]

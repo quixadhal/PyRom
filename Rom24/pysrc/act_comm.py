@@ -777,7 +777,7 @@ def do_quit(self, argument):
         return
     ch.send( "Alas, all good things must come to an end.\n")
     act( "$n has left the game.", ch, None, None, TO_ROOM )
-    print ("%s has quit." % ch.name)
+    print("%s has quit." % ch.name)
     wiznet("$N rejoins the real world.",ch,None,WIZ_LOGINS,0,get_trust(ch))
     #* After extract_char the ch is no longer valid!
     save_char_obj( ch )
@@ -835,7 +835,7 @@ def do_follow(self, argument):
 
 def add_follower( ch, master ):
     if ch.master:
-        print ("BUG: Add_follower: non-null master.")
+        print("BUG: Add_follower: non-null master.")
         return
     ch.master        = master
     ch.leader        = None
@@ -846,7 +846,7 @@ def add_follower( ch, master ):
 
 def stop_follower( ch ):
     if not ch.master:
-        print ("BUG: Stop_follower: null master.")
+        print("BUG: Stop_follower: null master.")
         return
 
     if IS_AFFECTED(ch, AFF_CHARM):

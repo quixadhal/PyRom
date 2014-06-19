@@ -296,7 +296,7 @@ def do_disconnect(self, argument):
             close_socket( d )
             ch.send("Ok.\n")
             return
-    print ("BUG: Do_disconnect: desc not found.")
+    print("BUG: Do_disconnect: desc not found.")
     ch.send("Descriptor not found!\n")
     return
 

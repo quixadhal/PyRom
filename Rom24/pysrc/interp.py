@@ -363,7 +363,7 @@ def interpret(ch, argument):
         if cmd and cmd.log != LOG_NEVER:
             log_buf = "Log %s: %s" % (ch.name, logline)
             wiznet(log_buf,ch,None,WIZ_SECURE,0,get_trust(ch))
-            print (log_buf + "\n")
+            print(log_buf + "\n")
     if ch.desc and ch.desc.snoop_by:
         ch.desc.snoop_by.send("% ")
         ch.desc.snoop_by.send(logline)

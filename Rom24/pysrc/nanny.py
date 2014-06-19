@@ -78,7 +78,7 @@ def con_get_name( self ):
     found,ch = load_char_obj(self,name)
 
     if IS_SET( ch.act, PLR_DENY ):
-        print ("Denying access to %s@%s" % (ch.name, self.addrport()))
+        print("Denying access to %s@%s" % (ch.name, self.addrport()))
         self.send("You have been denied access.")
         self.deactivate()
         return
@@ -234,7 +234,7 @@ def con_get_new_class(self):
     ch.guild = guild
 
     log_buf = "%s@%s new player." % ( ch.name, self.addrport() )
-    print (log_buf)
+    print(log_buf)
     wiznet("Newbie alert!  $N sighted.",ch,None,WIZ_NEWBIE,0,0)
     wiznet(log_buf,None,None,WIZ_SITES,0,get_trust(ch))
 
@@ -365,7 +365,7 @@ def con_get_old_password(self):
         return
 
     log_buf = "%s@%s has connected." % (ch.name, self.addrport())
-    print (log_buf)
+    print(log_buf)
     wiznet(log_buf,None,None,WIZ_SITES,0,get_trust(ch))
     if IS_IMMORTAL(ch):
         ch.do_help("imotd")

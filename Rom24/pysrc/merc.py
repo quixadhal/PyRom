@@ -1490,7 +1490,7 @@ def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
 
     if send_to is TO_VICT:
         if not vch:
-            print ("Act: null vict with TO_VICT: " + format)
+            print("Act: null vict with TO_VICT: " + format)
             return
         if not vch.in_room:
             return

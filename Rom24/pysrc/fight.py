@@ -442,7 +442,7 @@ def damage(ch,victim,dam,dt,dam_type,show):
 
     #Stop up any residual loopholes.
     if dam > 1200 and dt >= TYPE_HIT:
-        print ("BUG: Damage: %d: more than 1200 points!" % dam)
+        print("BUG: Damage: %d: more than 1200 points!" % dam)
         dam = 1200
         if not IS_IMMORTAL(ch):
             obj = get_eq_char( ch, WEAR_WIELD )
@@ -549,7 +549,7 @@ def damage(ch,victim,dam,dt,dam_type,show):
         group_gain( ch, victim )
 
         if not IS_NPC(victim):
-            print ("%s killed by %s at %d" % ( victim.name, ch.short_descr if IS_NPC(ch) else ch.name, ch.in_room.vnum ))
+            print("%s killed by %s at %d" % ( victim.name, ch.short_descr if IS_NPC(ch) else ch.name, ch.in_room.vnum ))
             # Dying penalty:
             # 2/3 way back to previous level.
             if victim.exp > exp_per_level(victim,victim.pcdata.points) * victim.level:
@@ -752,7 +752,7 @@ def check_killer( ch, victim ):
      # Charm-o-rama.
     if IS_SET(ch.affected_by, AFF_CHARM):
         if ch.master == None:
-            print ("BUG: Check_killer: %s bad AFF_CHARM" % (ch.short_descr if IS_NPC(ch) else ch.name ))
+            print("BUG: Check_killer: %s bad AFF_CHARM" % (ch.short_descr if IS_NPC(ch) else ch.name ))
             affect_strip( ch, 'charm person' )
             REMOVE_BIT( ch.affected_by, AFF_CHARM )
             return
@@ -844,7 +844,7 @@ def update_pos(victim):
 # Start fights.
 def set_fighting( ch, victim ):
     if ch.fighting != None:
-        print ("BUG: Set_fighting: already fighting")
+        print("BUG: Set_fighting: already fighting")
         return
 
     if IS_AFFECTED(ch, AFF_SLEEP):
@@ -1026,7 +1026,7 @@ def group_gain( ch, victim ):
             group_levels += gch.level // 2 if IS_NPC(gch) else gch.level
 
     if members == 0:
-        print ("BUG: Group_gain: members. %s" % members)
+        print("BUG: Group_gain: members. %s" % members)
         members = 1
         group_levels = ch.level 
 
@@ -1214,7 +1214,7 @@ def dam_message( ch, victim, dam, dt, immune ):
         elif dt >= TYPE_HIT and dt < TYPE_HIT + len(const.attack_table):
             attack = const.attack_table[dt - TYPE_HIT].noun
         else:
-            print ("BUG: Dam_message: bad dt %d.")
+            print("BUG: Dam_message: bad dt %d.")
             dt = TYPE_HIT
             attack  = const.attack_table[0].name
         if immune:
