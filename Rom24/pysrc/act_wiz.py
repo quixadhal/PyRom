@@ -337,7 +337,7 @@ def do_echo(self, argument):
         return
    
     for d in descriptor_list:
-        if d.connected == con_playing:
+        if d.is_connected(con_playing):
             if get_trust(d.character) >= ch.get_trust():
                 d.send("global> ")
             d.send(argument + "\n")
@@ -350,7 +350,7 @@ def do_recho(self, argument):
         return
 
     for d in descriptor_list:
-        if d.connected == con_playing and d.character.in_room == ch.in_room:
+        if d.is_connected(con_playing) and d.character.in_room == ch.in_room:
             if get_trust(d.character) >= ch.get_trust():
                 d.send( "local> ")
             d.send( argument + "\n" )
@@ -363,7 +363,7 @@ def do_zecho(self, argument):
         ch.send("Zone echo what?\n")
         return
     for d in descriptor_list:
-        if d.connected == con_playing and  d.character.in_room and ch.in_room \
+        if d.is_connected(con_playing) and  d.character.in_room and ch.in_room \
         and d.character.in_room.area == ch.in_room.area:
             if get_trust(d.character) >= ch.get_trust():
                 d.send("zone> ")
@@ -415,7 +415,7 @@ def do_transfer(self, argument):
         return
     if arg1 == "all" :
         for d in descriptor_list:
-            if d.connected == con_playing \
+            if d.is_connected(con_playing) \
             and d.character != ch \
             and d.character.in_room \
             and ch.can_see(d.character):
@@ -940,7 +940,7 @@ def do_mwhere(self, argument):
     if not argument:
         # show characters logged */
         for d in descriptor_list:
-            if d.character and d.connected == con_playing \
+            if d.character and d.is_connected(con_playing) \
             and d.character.in_room and ch.can_see(d.character) \
             and ch.can_see_room(d.character.in_room):
                 victim = d.character

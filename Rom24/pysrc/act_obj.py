@@ -960,7 +960,7 @@ def do_remove(self, argument):
 
 def do_sacrifice(self, argument):
     ch=self
-    read_word( argument, arg )
+    argument, arg = read_word(argument)
 
     if not arg or arg == ch.name.lower():
         act("$n offers $mself to Mota, who graciously declines.",ch, None, None, TO_ROOM )
