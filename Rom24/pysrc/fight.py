@@ -33,7 +33,8 @@
 """
 from merc import *
 from handler import *
-from skills import check_improve, exp_per_level
+from skills import check_improve
+from update import gain_exp
 import const
 
 # * Control the fights going on.
@@ -552,8 +553,8 @@ def damage(ch,victim,dam,dt,dam_type,show):
             print ("%s killed by %s at %d" % ( victim.name, ch.short_descr if IS_NPC(ch) else ch.name, ch.in_room.vnum ))
             # Dying penalty:
             # 2/3 way back to previous level.
-            if victim.exp > exp_per_level(victim,victim.pcdata.points) * victim.level:
-                gain_exp( victim, (2 * (exp_per_level(victim,victim.pcdata.points) * victim.level - victim.exp) // 3) + 50 )
+            if victim.exp > victim.exp_per_level(victim.pcdata.points) * victim.level:
+                gain_exp( victim, (2 * (victim.exp_per_level(victim.pcdata.points) * victim.level - victim.exp) // 3) + 50 )
 
         log_buf = "%s got toasted by %s at %s [room %d]" % ( victim.short_descr if IS_NPC(victim) else victim.name,
             ch.short_descr if IS_NPC(ch) else ch.name, ch.in_room.name, ch.in_room.vnum)
@@ -565,19 +566,19 @@ def damage(ch,victim,dam,dt,dam_type,show):
 
         raw_kill( victim )
         # dump the flags */
-        if ch != victim and not IS_NPC(ch) and not is_same_clan(ch,victim):
+        if ch != victim and not IS_NPC(ch) and not ch.is_same_clan(victim):
             if IS_SET(victim.act,PLR_KILLER):
                 REMOVE_BIT(victim.act,PLR_KILLER)
             else:
                 REMOVE_BIT(victim.act,PLR_THIEF)
             # RT new auto commands */
-        corpse = get_obj_list(ch,"corpse",ch.in_room.contents)
+        corpse = ch.get_obj_list("corpse", ch.in_room.contents)
         if not IS_NPC(ch) and corpse and corpse.item_type == ITEM_CORPSE_NPC and ch.can_see_obj(corpse):
             if IS_SET(ch.act, PLR_AUTOLOOT) and corpse and corpse.contains: # exists and not empty */
                 ch.do_get("all corpse")
             
             if IS_SET(ch.act,PLR_AUTOGOLD) and corpse and corpse.contains and not IS_SET(ch.act,PLR_AUTOLOOT):
-                coins = get_obj_list(ch,"gcash",corpse.contains)
+                coins = ch.get_obj_list("gcash",corpse.contains)
                 if coins: ch.do_get("all.gcash corpse")
             
             if IS_SET(ch.act, PLR_AUTOSAC):
@@ -867,7 +868,7 @@ def make_corpse(ch):
     from db import create_object
     if IS_NPC(ch):
         name = ch.short_descr
-        corpse      = create_object(get_obj_index(OBJ_VNUM_CORPSE_NPC), 0)
+        corpse      = create_object(obj_index_hash[OBJ_VNUM_CORPSE_NPC], 0)
         corpse.timer   = random.randint( 3, 6 )
         if ch.gold > 0:
             create_money(ch.gold, ch.silver).to_obj(corpse)
@@ -996,7 +997,7 @@ def raw_kill( victim ):
 
     if IS_NPC(victim):
         victim.pIndexData.killed += 1
-        kill_table[min(0, max(victim.level, MAX_LEVEL-1))].killed += 1
+        #kill_table[min(0, max(victim.level, MAX_LEVEL-1))].killed += 1
         victim.extract(True)
         return
 
@@ -1500,7 +1501,7 @@ def do_dirt( self, argument ):
 
 def do_trip( self, argument ):
     ch = self
-    arghold, arg = one_argument(argument)
+    arghold, arg = read_word(argument)
     chance = ch.get_skill('trip')
     if chance == 0 or (IS_NPC(ch) and not IS_SET(ch.off_flags,OFF_TRIP)) \
     or ( not IS_NPC(ch) and ch.level < skill_table['trip'].skill_level[ch.guild]):

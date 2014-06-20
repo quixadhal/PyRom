@@ -322,7 +322,7 @@ def con_gen_groups(self):
             return
 
         ch.send("Creation points: %d\n" % ch.pcdata.points )
-        ch.send("Experience per level: %d\n" % exp_per_level(ch,ch.gen_data.points_chosen))
+        ch.send("Experience per level: %d\n" % ch.exp_per_level(ch.gen_data.points_chosen))
         if ch.pcdata.points < 40:
             ch.train = (40 - ch.pcdata.points + 1) / 2
         del ch.gen_data
@@ -429,7 +429,7 @@ def con_read_motd(self):
         ch.perm_stat[ch.guild.attr_prime] += 3
         ch.position = POS_STANDING
         ch.level   = 1
-        ch.exp = exp_per_level(ch,ch.pcdata.points)
+        ch.exp = ch.exp_per_level(ch.pcdata.points)
         ch.hit = ch.max_hit
         ch.mana    = ch.max_mana
         ch.move    = ch.max_move

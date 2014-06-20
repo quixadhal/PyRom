@@ -382,7 +382,7 @@ def do_clantalk(self, argument):
 
     ch.send("You clan '%s'\n" % argument )
     for d in descriptor_list:
-        if d.connected == con_playing and d.character != ch and is_same_clan(ch,d.character) \
+        if d.connected == con_playing and d.character != ch and ch.is_same_clan(d.character) \
         and not IS_SET(d.character.comm,COMM_NOCLAN) and not IS_SET(d.character.comm,COMM_QUIET):
             act("$n clans '$t'",ch,argument,d.character,TO_VICT,POS_DEAD)
 
@@ -938,7 +938,7 @@ def do_order(self, argument):
 def do_group(self, argument):
     ch=self
 
-    argument, arg = one_argument( argument )
+    argument, arg = read_word(argument)
     if not arg:
         leader = ch.leader if ch.leader else ch
         ch.send("%s's group:\n" % PERS(leader, ch) )

@@ -35,6 +35,7 @@
 from merc import *
 from const import *
 from magic import spell_null
+from fight import stop_fighting
 
 depth = 0  
 class handler_ch:
@@ -639,7 +640,7 @@ class handler_ch:
 
         #if fPull:
         #    die_follower( ch )
-        fight.stop_fighting( ch, True )
+        stop_fighting( ch, True )
 
         for obj in ch.carrying[:]:
             obj.extract()
@@ -1037,6 +1038,39 @@ class handler_ch:
 
     def is_clan(ch):
         return ch.clan.name != ""
+
+    def is_same_clan(ch, victim):
+        if ch.clan.independent:
+            return False
+        else:
+            return ch.clan == victim.clan
+
+    def exp_per_level(ch, points):
+        if IS_NPC(ch):
+            return 1000
+
+        expl = 1000
+        inc = 500
+
+        if points < 40:
+            return 1000 * pc_race_table[ch.race.name].class_mult[ch.guild.name]/100 if pc_race_table[ch.race.name].class_mult[ch.guild.name] else 1
+
+        # processing */
+        points -= 40
+
+        while points > 9:
+            expl += inc
+            points -= 10
+            if points > 9:
+                expl += inc
+                inc = inc * 2
+                points -= 10
+
+        expl += points * inc / 10
+
+        return expl * pc_race_table[ch.race.name].class_mult[ch.guild.name]/100
+
+
 
 
 methods = {d:f for d,f in handler_ch.__dict__.items() if not d.startswith('__')}

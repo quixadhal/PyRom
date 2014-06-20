@@ -39,7 +39,6 @@ from act_move import dir_name
 from db import get_extra_descr
 from const import skill_table, guild_table, pc_race_table, int_app
 from tables import clan_table
-from skills import exp_per_level
 
 where_name = ["<used as light>     ",
               "<worn on finger>    ",
@@ -822,7 +821,7 @@ def do_worth(self, argument):
         ch.send(buf)
         return
     ch.send("You have %ld gold, %ld silver, and %d experience (%d exp to level).\n" % (
-        ch.gold, ch.silver, ch.exp, (ch.level + 1) * exp_per_level(ch, ch.pcdata.points) - ch.exp))
+        ch.gold, ch.silver, ch.exp, (ch.level + 1) * ch.exp_per_level(ch.pcdata.points) - ch.exp))
 
 def do_score(self, argument):
     ch = self
@@ -848,7 +847,7 @@ def do_score(self, argument):
     ch.send("You have scored %d exp, and have %ld gold and %ld silver coins.\n" %(ch.exp, ch.gold, ch.silver))
     # RT shows exp to level */
     if not IS_NPC(ch) and ch.level < LEVEL_HERO:
-        ch.send("You need %d exp to level.\n" % ((ch.level + 1) * exp_per_level(ch, ch.pcdata.points) - ch.exp))
+        ch.send("You need %d exp to level.\n" % ((ch.level + 1) * ch.exp_per_level(ch.pcdata.points) - ch.exp))
     ch.send("Wimpy set to %d hit points.\n" % ch.wimpy)
     if not IS_NPC(ch) and ch.pcdata.condition[COND_DRUNK] > 10:
         ch.send("You are drunk.\n")

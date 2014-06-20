@@ -716,7 +716,7 @@ def spell_continual_light( sn, level, ch, victim, target ):
         return
 
 
-    light = create_object( get_obj_index( OBJ_VNUM_LIGHT_BALL ), 0 )
+    light = create_object( obj_index_hash[OBJ_VNUM_LIGHT_BALL], 0 )
     light.to_room(ch.in_room)
     act( "$n twiddles $s thumbs and $p appears.",   ch, light, None, TO_ROOM )
     act( "You twiddle your thumbs and $p appears.", ch, light, None, TO_CHAR )
@@ -733,7 +733,7 @@ def spell_control_weather( sn, level, ch, victim, target ):
     return
 
 def spell_create_food( sn, level, ch, victim, target ):
-    mushroom = create_object( get_obj_index( OBJ_VNUM_MUSHROOM ), 0 )
+    mushroom = create_object( obj_index_hash[OBJ_VNUM_MUSHROOM], 0 )
     mushroom.value[0] = level // 2
     mushroom.value[1] = level
     mushroom.to_room(ch.in_room)
@@ -742,13 +742,13 @@ def spell_create_food( sn, level, ch, victim, target ):
     return
 
 def spell_create_rose( sn, level, ch, victim, target ):
-    rose = create_object(get_obj_index(OBJ_VNUM_ROSE), 0)
+    rose = create_object(obj_index_hash[OBJ_VNUM_ROSE], 0)
     act("$n has created a beautiful red rose.",ch,rose,None,TO_ROOM)
     ch.send("You create a beautiful red rose.\n")
     rose.to_char(ch)
 
 def spell_create_spring( sn, level, ch, victim, target ):
-    spring = create_object( get_obj_index( OBJ_VNUM_SPRING ), 0 )
+    spring = create_object( obj_index_hash[OBJ_VNUM_SPRING], 0 )
     spring.timer = level
     spring.to_room(ch.in_room)
     act( "$p flows from the ground.", ch, spring, None, TO_ROOM )
@@ -1494,7 +1494,7 @@ def spell_floating_disc( sn, level, ch, victim, target ):
         act("You can't remove $p.",ch,floating,None,TO_CHAR)
         return
 
-    disc = create_object(get_obj_index(OBJ_VNUM_DISC), 0)
+    disc = create_object(obj_index_hash[OBJ_VNUM_DISC], 0)
     disc.value[0]  = ch.level * 10 # 10 pounds per level capacity */
     disc.value[3]  = ch.level * 5 # 5 pounds per level max per item */
     disc.timer     = ch.level * 2 - random.randint(0,level // 2) 
@@ -1579,7 +1579,7 @@ def spell_gate( sn, level, ch, victim, target ):
     or   IS_SET(victim.in_room.room_flags, ROOM_NO_RECALL) \
     or   IS_SET(ch.in_room.room_flags, ROOM_NO_RECALL) \
     or   victim.level >= level + 3 \
-    or   (victim.is_clan() and not is_same_clan(ch,victim)) \
+    or   (victim.is_clan() and not ch.is_same_clan(victim)) \
     or   (not IS_NPC(victim) and victim.level >= LEVEL_HERO) \
     or   (IS_NPC(victim) and IS_SET(victim.imm_flags,IMM_SUMMON)) \
     or   (IS_NPC(victim) and saves_spell( level, victim,DAM_OTHER) ):
@@ -2671,7 +2671,7 @@ def spell_portal( sn, level, ch, victim, target):
     or   (not IS_NPC(victim) and victim.level >= LEVEL_HERO) \
     or   (IS_NPC(victim) and IS_SET(victim.imm_flags,IMM_SUMMON)) \
     or   (IS_NPC(victim) and saves_spell( level, victim,DAM_NONE) ) \
-    or  (victim.is_clan() and not is_same_clan(ch,victim)):
+    or  (victim.is_clan() and not ch.is_same_clan(victim)):
         ch.send( "You failed.\n")
         return
     
@@ -2716,7 +2716,7 @@ def spell_nexus( sn, level, ch, victim, target):
     or (not IS_NPC(victim) and victim.level >= LEVEL_HERO) \
     or (IS_NPC(victim) and IS_SET(victim.imm_flags,IMM_SUMMON)) \
     or (IS_NPC(victim) and saves_spell( level, victim,DAM_NONE) ) \
-    or (victim.is_clan() and not is_same_clan(ch,victim)):
+    or (victim.is_clan() and not ch.is_same_clan(victim)):
         ch.send("You failed.\n")
         return
  
@@ -2745,7 +2745,7 @@ def spell_nexus( sn, level, ch, victim, target):
         return
 
     # portal two */
-    portal = create_object(get_obj_index(OBJ_VNUM_PORTAL),0)
+    portal = create_object(obj_index_hash[OBJ_VNUM_PORTAL],0)
     portal.timer = 1 + level//10
     portal.value[3] = from_room.vnum
 

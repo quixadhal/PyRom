@@ -49,7 +49,7 @@ def do_gain(self, argument):
         return
     
 
-    argmod, arg = one_argument(argument)
+    argmod, arg = read_word(argument)
 
     if not arg:
         trainer.do_say("Pardon me?")
@@ -106,7 +106,7 @@ def do_gain(self, argument):
 
         ch.train -= 2
         ch.pcdata.points -= 1
-        ch.exp = exp_per_level(ch,ch.pcdata.points) * ch.level
+        ch.exp = ch.exp_per_level(ch.pcdata.points) * ch.level
         return
 
     
@@ -405,7 +405,7 @@ def list_group_costs(ch):
     ch.send("\n")
 
     ch.send("Creation points: %d\n" % ch.pcdata.points)
-    ch.send("Experience per level: %d\n" % exp_per_level(ch,ch.gen_data.points_chosen))
+    ch.send("Experience per level: %d\n" % ch.exp_per_level(ch.gen_data.points_chosen))
     return
 
 def list_group_chosen(ch):
@@ -439,33 +439,8 @@ def list_group_chosen(ch):
     ch.send("\n")
  
     ch.send("Creation points: %d\n" % ch.gen_data.points_chosen)
-    ch.send("Experience per level: %d\n" % exp_per_level(ch,ch.gen_data.points_chosen))
+    ch.send("Experience per level: %d\n" % ch.exp_per_level(ch.gen_data.points_chosen))
     return
-
-def exp_per_level(ch, points):
-    if IS_NPC(ch):
-        return 1000
-
-    expl = 1000
-    inc = 500
-
-    if points < 40:
-        return 1000 * const.pc_race_table[ch.race.name].class_mult[ch.guild.name]/100 if const.pc_race_table[ch.race.name].class_mult[ch.guild.name] else 1
-
-    # processing */
-    points -= 40
-
-    while points > 9:
-        expl += inc
-        points -= 10
-        if points > 9:
-            expl += inc
-            inc = inc * 2
-            points -= 10
-
-    expl += points * inc / 10
-
-    return expl * const.pc_race_table[ch.race.name].class_mult[ch.guild.name]/100
 
 # this procedure handles the input parsing for the skill generator */
 def parse_gen_groups(ch, argument):

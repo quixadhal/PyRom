@@ -181,7 +181,7 @@ def bust_a_prompt( ch ):
     replace['%v'] = "%d" % ch.move
     replace['%V'] = "%d" % ch.max_move
     replace['%x'] = "%d" % ch.exp
-    replace['%X'] = "%d" % (0 if IS_NPC(ch) else (ch.level + 1) * exp_per_level(ch,ch.pcdata.points) - ch.exp)
+    replace['%X'] = "%d" % (0 if IS_NPC(ch) else (ch.level + 1) * ch.exp_per_level(ch.pcdata.points) - ch.exp)
     replace['%g'] = "%ld" % ch.gold
     replace['%s'] = "%ld" % ch.silver
     if ch.level > 9:

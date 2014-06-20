@@ -78,8 +78,8 @@ def gain_exp( ch, gain ):
     if IS_NPC(ch) or ch.level >= LEVEL_HERO:
         return
 
-    ch.exp = max( exp_per_level(ch,ch.pcdata.points), ch.exp + gain )
-    while ch.level < LEVEL_HERO and ch.exp >= exp_per_level(ch,ch.pcdata.points) * (ch.level+1):
+    ch.exp = max( ch.exp_per_level(ch.pcdata.points), ch.exp + gain )
+    while ch.level < LEVEL_HERO and ch.exp >= ch.exp_per_level(ch.pcdata.points) * (ch.level+1):
         ch.send("You raise a level!!  ")
         ch.level += 1
         print ("%s gained level %d\r\n" % (ch.name,ch.level))
