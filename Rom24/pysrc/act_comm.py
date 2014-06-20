@@ -33,8 +33,8 @@
 """
 
 from merc import *
-from handler import get_trust, extract_char, wiznet
 from save import save_char_obj
+import interp
 import comm
 
 def do_delet(self, argument):
@@ -67,7 +67,7 @@ def do_delete(self, argument):
     ch.send("WARNING: this command is irreversible.\n")
     ch.send("Typing delete with an argument will undo delete status.\n")
     ch.pcdata.confirm_delete = True
-    wiznet("$N is contemplating deletion.",ch,None,0,0,get_trust(ch))
+    wiznet("$N is contemplating deletion.",ch,None,0,0,ch.get_trust())
 
 # RT code to display channel status */
 
@@ -363,7 +363,7 @@ def do_music(self, argument):
 # clan channels */
 def do_clantalk(self, argument):
     ch=self
-    if not is_clan(ch) or ch.clan.independent:
+    if not ch.is_clan() or ch.clan.independent:
         ch.send("You aren't in a clan.\n")
         return
     if not argument:
@@ -452,7 +452,7 @@ def do_tell(self, argument):
         return
      # Can tell to PC's anywhere, but NPC's only in same room.
      # -- Furey
-    victim = get_char_world(ch,arg)
+    victim = ch.get_char_world(arg)
     if not victim or ( IS_NPC(victim) and victim.in_room != ch.in_room ):
         ch.send("They aren't here.\n")
         return
@@ -778,12 +778,12 @@ def do_quit(self, argument):
     ch.send( "Alas, all good things must come to an end.\n")
     act( "$n has left the game.", ch, None, None, TO_ROOM )
     print ("%s has quit." % ch.name)
-    wiznet("$N rejoins the real world.",ch,None,WIZ_LOGINS,0,get_trust(ch))
+    wiznet("$N rejoins the real world.",ch,None,WIZ_LOGINS,0,ch.get_trust())
     #* After extract_char the ch is no longer valid!
     save_char_obj( ch )
     id = ch.id
     d = ch.desc
-    extract_char( ch, True )
+    ch.extract(True)
     if d != None:
         comm.close_socket( d )
 
@@ -791,7 +791,7 @@ def do_quit(self, argument):
     for d in descriptor_list[:]:
         tch = CH(d)
         if tch and tch.id == id:
-            extract_char(tch,True)
+            tch.extract(True)
             comm.close_socket(d)
     return
 
@@ -811,7 +811,7 @@ def do_follow(self, argument):
     if not arg:
         ch.send("Follow whom?\n")
         return
-    victim = get_char_room( ch, arg )
+    victim = ch.get_char_room(arg)
     if not victim:
         ch.send("They aren't here.\n")
         return
@@ -839,7 +839,7 @@ def add_follower( ch, master ):
         return
     ch.master        = master
     ch.leader        = None
-    if can_see( master, ch ):
+    if master.can_see(ch):
         act( "$n now follows you.", ch, None, master, TO_VICT )
     act( "You now follow $N.",  ch, None, master, TO_CHAR )
     return
@@ -851,9 +851,9 @@ def stop_follower( ch ):
 
     if IS_AFFECTED(ch, AFF_CHARM):
         REMOVE_BIT( ch.affected_by, AFF_CHARM )
-        affect_strip( ch, gsn_charm_person )
+        ch.affect_strip('charm person')
 
-    if can_see( ch.master, ch ) and ch.in_room:
+    if ch.master.can_see(ch) and ch.in_room:
         act( "$n stops following you.", ch, None, ch.master, TO_VICT)
         act( "You stop following $N.", ch, None, ch.master, TO_CHAR)
     if ch.master.pet == ch:
@@ -868,7 +868,7 @@ def nuke_pets( ch ):
         stop_follower(ch.pet)
         if ch.pet.in_room:
             act("$N slowly fades away.",ch,None,ch.pet,TO_NOTVICT)
-        extract_char(ch.pet,True)
+        ch.pet.extract(True)
     ch.pet = None
     return
 
@@ -908,7 +908,7 @@ def do_order(self, argument):
         victim = None
     else:
         fAll   = False
-        victim = get_char_room( ch, arg )
+        victim = ch.get_char_room(arg)
         if not victim:
             ch.send("They aren't here.\n")
             return
@@ -944,7 +944,7 @@ def do_group(self, argument):
         ch.send("%s's group:\n" % PERS(leader, ch) )
 
         for gch in char_list:
-            if is_same_group( gch, ch ):
+            if gch.is_same_group(ch):
                 ch.send( "[%2d %s] %-16s %4d/%4d hp %4d/%4d mana %4d/%4d mv %5d xp\n" % (
                           gch.level,
                           "Mob" if IS_NPC(gch) else gch.guild.who_name,
@@ -954,7 +954,7 @@ def do_group(self, argument):
                           gch.move,  gch.max_move,
                           gch.exp    ) )
         return
-    victim = get_char_room( ch, arg )
+    victim = ch.get_char_room(arg)
     if not victim:
         ch.send("They aren't here.\n")
         return
@@ -970,7 +970,7 @@ def do_group(self, argument):
     if IS_AFFECTED(ch,AFF_CHARM):
         act("You like your master too much to leave $m!", ch,None,victim,TO_VICT,POS_SLEEPING)
         return
-    if is_same_group( victim, ch ) and ch != victim:
+    if victim.is_same_group(ch) and ch != victim:
         victim.leader = None
         act("$n removes $N from $s group.", ch,None,victim,TO_NOTVICT,POS_RESTING)
         act("$n removes you from $s group.", ch,None,victim,TO_VICT,POS_SLEEPING)
@@ -1008,7 +1008,7 @@ def do_split(self, argument):
         return
     members = 0
     for gch in ch.in_room.people[:]:
-        if is_same_group( gch, ch ) and not IS_AFFECTED(gch,AFF_CHARM):
+        if gch.is_same_group(ch) and not IS_AFFECTED(gch,AFF_CHARM):
             members+=1
     if members < 2:
         ch.send("Just keep it all.\n")
@@ -1036,7 +1036,7 @@ def do_split(self, argument):
         buf = '$n splits %d silver and %d gold coins, giving you %d silver and %d gold.\n' % (amount_silver,amount_gold,share_silver,share_gold)
 
     for gch in ch.in_room.people[:]:
-        if gch != ch and is_same_group(gch,ch) and not IS_AFFECTED(gch,AFF_CHARM):
+        if gch != ch and gch.is_same_group(ch) and not IS_AFFECTED(gch,AFF_CHARM):
             act( buf, ch, None, gch, TO_VICT )
             gch.gold += share_gold
             gch.silver += share_silver
@@ -1052,15 +1052,15 @@ def do_gtell(self, argument):
         return
 
     for gch in char_list[:]:
-        if is_same_group( gch, ch ):
+        if gch.is_same_group(ch):
           act("$n tells the group '$t'", ch,argument,gch,TO_VICT,POS_SLEEPING)
     return
 
 def do_commands(self, argument):
     ch = self
     col = 0;
-    for key, cmd in cmd_table.items():
-        if cmd.level <  LEVEL_HERO and cmd.level <= get_trust( ch ) and cmd.show:
+    for key, cmd in interp.cmd_table.items():
+        if cmd.level <  LEVEL_HERO and cmd.level <= ch.get_trust() and cmd.show:
             ch.send("%-12s" % key)
             col += 1
             if col % 6 == 0:
@@ -1071,8 +1071,8 @@ def do_commands(self, argument):
 def do_wizhelp(self, argument):
     ch = self
     col = 0;
-    for key, cmd in cmd_table.items():
-        if cmd.level >= LEVEL_HERO and cmd.level <= get_trust( ch )  and cmd.show:
+    for key, cmd in interp.cmd_table.items():
+        if cmd.level >= LEVEL_HERO and cmd.level <= ch.get_trust()  and cmd.show:
             ch.send("%-12s" % key)
             col += 1
             if col % 6 == 0:

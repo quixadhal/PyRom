@@ -33,7 +33,7 @@
 """
 from merc import *
 from handler import *
-from const import guild_table
+import const
 
 dir_name = ["north", "east", "south", "west", "up", "down"]
 rev_dir = [2, 3, 0, 1, 5, 4]
@@ -45,7 +45,7 @@ def move_char( ch, door, follow ):
         return
     in_room = ch.in_room
     pexit = in_room.exit[door]
-    if not pexit or not pexit.to_room or not can_see_room(ch,pexit.to_room):
+    if not pexit or not pexit.to_room or not ch.can_see_room(pexit.to_room):
         ch.send("Alas, you cannot go that way.\n")
         return
     to_room = pexit.to_room
@@ -57,11 +57,11 @@ def move_char( ch, door, follow ):
     if IS_AFFECTED(ch, AFF_CHARM) and ch.master and in_room == ch.master.in_room:
         ch.send("What?  And leave your beloved master?\n")
         return
-    if not is_room_owner(ch,to_room) and room_is_private( to_room ):
+    if not ch.is_room_owner(to_room) and to_room.is_private():
         ch.send("That room is private right now.\n")
         return
     if not IS_NPC(ch):
-        for gn, guild in guild_table.items():
+        for gn, guild in const.guild_table.items():
             for room in guild.guild_rooms:
                 if guild != ch.guild and to_room.vnum == room:
                     ch.send("You aren't allowed in there.\n")
@@ -91,8 +91,8 @@ def move_char( ch, door, follow ):
         ch.move -= move
     if not IS_AFFECTED(ch, AFF_SNEAK) and ch.invis_level < LEVEL_HERO:
         act( "$n leaves $T.", ch, None, dir_name[door], TO_ROOM )
-    char_from_room( ch )
-    char_to_room( ch, to_room )
+    ch.from_room()
+    ch.to_room(to_room)
     if not IS_AFFECTED(ch, AFF_SNEAK) and ch.invis_level < LEVEL_HERO:
         act( "$n has arrived.", ch, None, None, TO_ROOM )
     ch.do_look("auto" )
@@ -103,7 +103,7 @@ def move_char( ch, door, follow ):
         if fch.master == ch and IS_AFFECTED(fch,AFF_CHARM) and fch.position < POS_STANDING:
             fch.do_stand("")
 
-        if fch.master == ch and fch.position == POS_STANDING and can_see_room(fch,to_room):
+        if fch.master == ch and fch.position == POS_STANDING and fch.can_see_room(to_room):
             if IS_SET(ch.in_room.room_flags,ROOM_LAW) and (IS_NPC(fch) and IS_SET(fch.act,ACT_AGGRESSIVE)):
                 act("You can't bring $N into the city.",ch,None,fch,TO_CHAR)
                 act("You aren't allowed in the city.",fch,None,None,TO_CHAR)
@@ -171,7 +171,7 @@ def do_open(self, argument):
         ch.send("Open what?\n")
         return
 
-    obj = get_obj_here(ch, arg)
+    obj = ch.get_obj_here(arg)
     if obj:
         # open portal */
         if obj.item_type == ITEM_PORTAL:
@@ -235,7 +235,7 @@ def do_close(self, argument):
     if not arg:
         ch.send("Close what?\n")
         return
-    obj = get_obj_here(ch, arg)
+    obj = ch.get_obj_here(arg)
     if obj:
         # portal stuff */
         if obj.item_type == ITEM_PORTAL:
@@ -293,7 +293,7 @@ def do_lock(self, argument):
     if not arg:
         ch.send("Lock what?\n")
         return
-    obj = get_obj_here(ch, arg)
+    obj = ch.get_obj_here(arg)
     if obj:
         # portal stuff */
         if obj.item_type == ITEM_PORTAL:
@@ -371,7 +371,7 @@ def do_unlock(self, argument):
     if not arg:
         ch.send("Unlock what?\n")
         return
-    obj = get_obj_here(ch, arg)
+    obj = ch.get_obj_here(arg)
     if obj:
         # portal stuff */
         if obj.item_type == ITEM_PORTAL:
@@ -461,11 +461,11 @@ def do_pick(self, argument):
         if IS_NPC(gch) and IS_AWAKE(gch) and ch.level + 5 < gch.level:
             act( "$N is standing too close to the lock.", ch, None, gch, TO_CHAR )
             return
-        if not IS_NPC(ch) and random.randint(1,99) > get_skill(ch,"pick lock"):
+        if not IS_NPC(ch) and random.randint(1,99) > ch.get_skill("pick lock"):
             ch.send("You failed.\n")
             check_improve(ch,"pick lock",False,2)
             return
-        obj = get_obj_here(ch, arg)
+        obj = ch.get_obj_here(arg)
         if obj:
         # portal stuff */
             if obj.item_type == ITEM_PORTAL:
@@ -546,7 +546,7 @@ def do_stand(self, argument):
         if ch.position == POS_FIGHTING:
             ch.send("Maybe you should finish fighting first?\n")
             return
-        obj = get_obj_list(ch,argument,ch.in_room.contents)
+        obj = ch.get_obj_list(argument, ch.in_room.contents)
         if not obj:
             ch.send("You don't see that here.\n")
             return
@@ -612,7 +612,7 @@ def do_rest(self, argument):
         return
      # okay, now that we know we can rest, find an object to rest on */
     if argument:
-        obj = get_obj_list(ch,argument,ch.in_room.contents)
+        obj = ch.get_obj_list(argument, ch.in_room.contents)
         if not obj:
             ch.send("You don't see that here.\n")
             return
@@ -690,7 +690,7 @@ def do_sit(self, argument):
         return
     # okay, now that we know we can sit, find an object to sit on */
     if argument:
-        obj = get_obj_list(ch,argument,ch.in_room.contents)
+        obj = ch.get_obj_list(argument, ch.in_room.contents)
         if obj == None:
             ch.send("You don't see that here.\n")
             return
@@ -774,7 +774,7 @@ def do_sleep(self, argument):
             if not argument:
                 obj = ch.on
             else:
-                obj = get_obj_list( ch, argument,  ch.in_room.contents )
+                obj = ch.get_obj_list(argument, ch.in_room.contents)
 
             if obj == None:
                 ch.send("You don't see that here.\n")
@@ -814,7 +814,7 @@ def do_wake(self, argument):
     if not IS_AWAKE(ch):
         ch.send( "You are asleep yourself!\n")
         return
-    victim = get_char_room( ch, arg )
+    victim = ch.get_char_room(arg)
     if not victim:
         ch.send("They aren't here.\n")
         return
@@ -831,12 +831,12 @@ def do_wake(self, argument):
 def do_sneak(self, argument):
     ch=self
     ch.send("You attempt to move silently.\n")
-    affect_strip( ch, "sneak" )
+    ch.affect_strip("sneak")
 
     if IS_AFFECTED(ch,AFF_SNEAK):
         return
 
-    if random.randint(1,99) < get_skill(ch,"sneak"):
+    if random.randint(1,99) < ch.get_skill("sneak"):
         check_improve(ch,"sneak",True,3)
         af = AFFECT_DATA()
         af.where     = TO_AFFECTS
@@ -846,7 +846,7 @@ def do_sneak(self, argument):
         af.location  = APPLY_NONE
         af.modifier  = 0
         af.bitvector = AFF_SNEAK
-        affect_to_char( ch, af )
+        ch.affect_add(af)
     else:
         check_improve(ch,"sneak",False,3)
     return
@@ -858,7 +858,7 @@ def do_hide(self, argument):
     if IS_AFFECTED(ch, AFF_HIDE):
         REMOVE_BIT(ch.affected_by, AFF_HIDE)
 
-    if random.randint(1,99) < get_skill(ch,"hide"):
+    if random.randint(1,99) < ch.get_skill("hide"):
         SET_BIT(ch.affected_by, AFF_HIDE)
         check_improve(ch,"hide",True,3)
     else:
@@ -869,12 +869,12 @@ def do_hide(self, argument):
 # * Contributed by Alander.
 def do_visible(self, argument):
     ch=self
-    affect_strip ( ch, "invis"      )
-    affect_strip ( ch, "mass_invis"     )
-    affect_strip ( ch, "sneak"      )
-    REMOVE_BIT   ( ch.affected_by, AFF_HIDE    )
-    REMOVE_BIT   ( ch.affected_by, AFF_INVISIBLE )
-    REMOVE_BIT   ( ch.affected_by, AFF_SNEAK   )
+    ch.affect_strip("invis")
+    ch.affect_strip("mass invis")
+    ch.affect_strip("sneak")
+    REMOVE_BIT(ch.affected_by, AFF_HIDE)
+    REMOVE_BIT(ch.affected_by, AFF_INVISIBLE)
+    REMOVE_BIT(ch.affected_by, AFF_SNEAK)
     ch.send("Ok.\n")
     return
 
@@ -896,7 +896,7 @@ def do_recall(self, argument):
         return
     victim = ch.fighting
     if victim:
-        skill = get_skill(ch,"recall")
+        skill = ch.get_skill("recall")
         if random.randint(1,99) < 80 * skill / 100:
             check_improve(ch,"recall",False,6)
             WAIT_STATE( ch, 4 )
@@ -910,8 +910,8 @@ def do_recall(self, argument):
         stop_fighting( ch, True )
     ch.move /= 2
     act( "$n disappears.", ch, None, None, TO_ROOM )
-    char_from_room( ch )
-    char_to_room( ch, location )
+    ch.from_room()
+    ch.to_room(location)
     act( "$n appears in the room.", ch, None, None, TO_ROOM )
     ch.do_look("auto" )
    
@@ -988,14 +988,14 @@ def do_train(self, argument):
         return
     else:
         ch.send("You can train:")
-        if ch.perm_stat[STAT_STR] < get_max_train(ch,STAT_STR): ch.send(" str")
-        if ch.perm_stat[STAT_INT] < get_max_train(ch,STAT_INT): ch.send(" int")
-        if ch.perm_stat[STAT_WIS] < get_max_train(ch,STAT_WIS): ch.send(" wis")
-        if ch.perm_stat[STAT_DEX] < get_max_train(ch,STAT_DEX): ch.send(" dex")
-        if ch.perm_stat[STAT_CON] < get_max_train(ch,STAT_CON): ch.send(" con")
+        if ch.perm_stat[STAT_STR] < ch.get_max_train(STAT_STR): ch.send(" str")
+        if ch.perm_stat[STAT_INT] < ch.get_max_train(STAT_INT): ch.send(" int")
+        if ch.perm_stat[STAT_WIS] < ch.get_max_train(STAT_WIS): ch.send(" wis")
+        if ch.perm_stat[STAT_DEX] < ch.get_max_train(STAT_DEX): ch.send(" dex")
+        if ch.perm_stat[STAT_CON] < ch.get_max_train(STAT_CON): ch.send(" con")
         ch.send(" hp mana")
         return
-    if ch.perm_stat[stat]  >= get_max_train(ch,stat):
+    if ch.perm_stat[stat]  >= ch.get_max_train(stat):
         act( "Your $T is already at maximum.", ch, None, pOutput, TO_CHAR )
         return
     if cost > ch.train:

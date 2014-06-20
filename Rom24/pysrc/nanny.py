@@ -39,7 +39,7 @@ from const import race_table, pc_race_table, guild_table, weapon_table, title_ta
 from save import load_char_obj
 from db import read_word, create_object
 from skills import *
-from handler import get_trust, reset_char, obj_to_char, char_to_room, room_is_dark, wiznet
+from handler import wiznet
 from alias import substitute_alias
 import comm
 
@@ -236,7 +236,7 @@ def con_get_new_class(self):
     log_buf = "%s@%s new player." % ( ch.name, self.addrport() )
     print (log_buf)
     wiznet("Newbie alert!  $N sighted.",ch,None,WIZ_NEWBIE,0,0)
-    wiznet(log_buf,None,None,WIZ_SITES,0,get_trust(ch))
+    wiznet(log_buf,None,None,WIZ_SITES,0,ch.get_trust())
 
     ch.send("\r\nYou may be good, neutral, or evil.\n")
     ch.send("Which alignment (G/N/E)? ")
@@ -366,7 +366,7 @@ def con_get_old_password(self):
 
     log_buf = "%s@%s has connected." % (ch.name, self.addrport())
     print (log_buf)
-    wiznet(log_buf,None,None,WIZ_SITES,0,get_trust(ch))
+    wiznet(log_buf,None,None,WIZ_SITES,0,ch.get_trust())
     if IS_IMMORTAL(ch):
         ch.do_help("imotd")
         self.set_connected(con_read_imotd)
@@ -422,8 +422,8 @@ def con_read_motd(self):
 
     ch.send("\nWelcome to ROM 2.4.  Please do not feed the mobiles.\n")
     char_list.append(ch)
+    ch.reset()
     self.set_connected(con_playing)
-    reset_char(ch)
 
     if ch.level == 0:
         ch.perm_stat[ch.guild.attr_prime] += 3
@@ -439,23 +439,23 @@ def con_read_motd(self):
         set_title( ch, buf )
 
         ch.do_outfit("")
-        obj_to_char(create_object(obj_index_hash[OBJ_VNUM_MAP],0),ch)
+        create_object(obj_index_hash[OBJ_VNUM_MAP],0).to_char(ch)
 
-        char_to_room( ch, room_index_hash[ ROOM_VNUM_SCHOOL ]) 
+        ch.to_room(room_index_hash[ROOM_VNUM_SCHOOL]) 
         ch.do_help("newbie info")
     elif ch.in_room:
-        char_to_room( ch, ch.in_room )
+        ch.to_room(ch.in_room)
     elif IS_IMMORTAL(ch):
-        char_to_room( ch, room_index_hash[ ROOM_VNUM_CHAT ] )
+        ch.to_room(room_index_hash[ROOM_VNUM_CHAT])
     else:
-        char_to_room( ch, room_index_hash[ ROOM_VNUM_TEMPLE ] )
+        ch.to_room(ch, room_index_hash[ROOM_VNUM_TEMPLE])
 
     act( "$n has entered the game.", ch, None, None, TO_ROOM )
     ch.do_look("auto")
 
-    wiznet("$N has left real life behind.",ch,None, WIZ_LOGINS,WIZ_SITES,get_trust(ch))
+    wiznet("$N has left real life behind.",ch,None, WIZ_LOGINS,WIZ_SITES,ch.get_trust())
     if ch.pet:
-        char_to_room(ch.pet,ch.in_room)
+        ch.pet.to_room(ch.in_room)
         act("$n has entered the game.",ch.pet,None,None,TO_ROOM)
 
 def con_playing(self):

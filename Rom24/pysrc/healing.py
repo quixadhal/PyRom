@@ -115,7 +115,7 @@ def do_heal(ch, argument):
         return
     WAIT_STATE(ch,PULSE_VIOLENCE)
 
-    deduct_cost(ch,cost)
+    ch.deduct_cost(cost)
     mob.gold += cost / 100
     mob.silver += cost % 100
     act("$n utters the words '$T'.",mob,None,words,TO_ROOM)

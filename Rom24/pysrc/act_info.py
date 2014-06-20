@@ -37,7 +37,7 @@ from nanny import con_playing, con_gen_groups
 from handler import *
 from act_move import dir_name
 from db import get_extra_descr
-from const import skill_table, guild_table, pc_race_table
+from const import skill_table, guild_table, pc_race_table, int_app
 from tables import clan_table
 from skills import exp_per_level
 
@@ -94,7 +94,7 @@ def show_list_to_char(clist, ch, fShort, fShowNothing):
         return
     objects = OrderedDict()
     for obj in clist:
-        if obj.wear_loc == WEAR_NONE and can_see_obj(ch, obj):
+        if obj.wear_loc == WEAR_NONE and ch.can_see_obj(obj):
             frmt = format_obj_to_char(obj, ch, fShort)
             if frmt not in objects:
                 objects[frmt] = 1
@@ -212,7 +212,7 @@ def show_char_to_char_0(victim, ch):
     return
 
 def show_char_to_char_1(victim, ch):
-    if can_see(victim, ch):
+    if victim.can_see(ch):
         if ch == victim:
             act("$n looks at $mself.", ch, None, None, TO_ROOM)
         else:
@@ -249,8 +249,8 @@ def show_char_to_char_1(victim, ch):
 
     found = False
     for iWear in range(MAX_WEAR):
-        obj = get_eq_char(victim, iWear)
-        if obj and can_see_obj(ch, obj):
+        obj = victim.get_eq(iWear)
+        if obj and ch.can_see_obj(obj):
             if not found:
                 act("$N is using:", ch, None, victim, TO_CHAR)
                 found = True
@@ -258,7 +258,7 @@ def show_char_to_char_1(victim, ch):
             ch.send(format_obj_to_char(obj, ch, True) + "\n")
 
     if victim != ch and not IS_NPC(ch) \
-    and random.randint(1, 99) < get_skill(ch, "peek"):
+    and random.randint(1, 99) < ch.get_skill("peek"):
         ch.send("\nYou peek at the inventory:\n")
         check_improve(ch, 'peek', True, 4)
         show_list_to_char(victim.carrying, ch, True, True)
@@ -269,13 +269,13 @@ def show_char_to_char(list, ch):
         if rch == ch:
             continue
 
-        if get_trust(ch) < rch.invis_level:
+        if ch.get_trust() < rch.invis_level:
             continue
 
-        if can_see(ch, rch):
+        if ch.can_see(rch):
             show_char_to_char_0(rch, ch)
             ch.send("\n")
-        elif room_is_dark(ch.in_room) and IS_AFFECTED(rch, AFF_INFRARED):
+        elif ch.in_room.is_dark() and IS_AFFECTED(rch, AFF_INFRARED):
             ch.send("You see glowing red eyes watching YOU!\n")
 
 def check_blind(ch):
@@ -590,8 +590,7 @@ def do_nosummon(self, argument):
             ch.send("You are now immune to summoning.\n")
             ch.act = SET_BIT(ch.act, PLR_NOSUMMON)
 
-def do_look(self, argument):
-    ch = self
+def do_look(ch, argument):
     if not ch.desc:
         return
 
@@ -607,7 +606,7 @@ def do_look(self, argument):
         return
 
     if not IS_NPC(ch) and not IS_SET(ch.act, PLR_HOLYLIGHT) \
-    and room_is_dark(ch.in_room):
+    and ch.in_room.is_dark():
         ch.send("It is pitch black ... \n")
         show_char_to_char(ch.in_room.people, ch)
         return
@@ -640,7 +639,7 @@ def do_look(self, argument):
         if not arg2:
             ch.send("Look in what?\n")
             return
-        obj = get_obj_here(ch, arg2)
+        obj = ch.get_obj_here(arg2)
         if not obj:
             ch.send("You do not see that here.\n")
             return
@@ -668,14 +667,14 @@ def do_look(self, argument):
         else:
             ch.send("That is not a container.\n")
             return
-    victim = get_char_room(ch, arg1)
+    victim = ch.get_char_room(arg1)
     if victim:
         show_char_to_char_1(victim, ch)
         return
     obj_list = ch.carrying
     obj_list.extend(ch.in_room.contents)
     for obj in obj_list:
-        if can_see_obj(ch, obj):
+        if ch.can_see_obj(obj):
             #player can see object */
             pdesc = get_extra_descr(arg3, obj.extra_descr)
             
@@ -756,7 +755,7 @@ def do_examine(self, argument):
         return
     ch.do_look(arg)
     buf = ""
-    obj = get_obj_here(ch, arg)
+    obj = ch.get_obj_here(arg)
     if obj:
         if obj.item_type == ITEM_JUKEBOX:
             ch.do_play("list")
@@ -798,14 +797,14 @@ def do_exits(self, argument):
 
     found = False
     for door, pexit in enumerate(ch.in_room.exit):
-        if pexit and pexit.to_room and can_see_room(ch, pexit.to_room) \
+        if pexit and pexit.to_room and ch.can_see_room(pexit.to_room) \
         and not IS_SET(pexit.exit_info, EX_CLOSED):
             found = True
             if fAuto:
                 buf += " %s" % dir_name[door]
             else:
                 buf += "%-5s - %s" % (dir_name[door].capitalize(),
-                  "Too dark to tell" if room_is_dark(pexit.to_room) else pexit.to_room.name)
+                  "Too dark to tell" if pexit.to_room.is_dark() else pexit.to_room.name)
                 if IS_IMMORTAL(ch): buf += " (room %d)\n" % pexit.to_room.vnum
                 else: buf += "\n"
     if not found:
@@ -828,23 +827,23 @@ def do_worth(self, argument):
 def do_score(self, argument):
     ch = self
     ch.send("You are %s%s, level %d, %d years old (%d hours).\n" % (ch.name, "" if IS_NPC(ch) else ch.pcdata.title,
-            ch.level, get_age(ch), (ch.played + (int)(current_time - ch.logon)) / 3600))
+            ch.level, ch.get_age(), (ch.played + (int)(current_time - ch.logon)) / 3600))
 
-    if get_trust(ch) != ch.level:
-        ch.send("You are trusted at level %d.\n" % get_trust(ch))
+    if ch.get_trust() != ch.level:
+        ch.send("You are trusted at level %d.\n" % ch.get_trust())
     ch.send("Race: %s  Sex: %s  Class: %s\n" % (ch.race.name, "sexless" if ch.sex == 0 else "male" if ch.sex == 1 else "female",
               "mobile" if IS_NPC(ch) else ch.guild.name))
     ch.send("You have %d/%d hit, %d/%d mana, %d/%d movement.\n" % (ch.hit, ch.max_hit,
               ch.mana, ch.max_mana, ch.move, ch.max_move))
     ch.send("You have %d practices and %d training sessions.\n" % (ch.practice, ch.train))
-    ch.send("You are carrying %d/%d items with weight %ld/%d pounds.\n" % (ch.carry_number, can_carry_n(ch),
-              get_carry_weight(ch) / 10, can_carry_w(ch) /10))
+    ch.send("You are carrying %d/%d items with weight %ld/%d pounds.\n" % (ch.carry_number, ch.can_carry_n(),
+              get_carry_weight(ch) / 10, ch.can_carry_w() /10))
     ch.send("Str: %d(%d)  Int: %d(%d)  Wis: %d(%d)  Dex: %d(%d)  Con: %d(%d)\n" % (
-              ch.perm_stat[STAT_STR], get_curr_stat(ch, STAT_STR),
-              ch.perm_stat[STAT_INT], get_curr_stat(ch, STAT_INT),
-              ch.perm_stat[STAT_WIS], get_curr_stat(ch, STAT_WIS),
-              ch.perm_stat[STAT_DEX], get_curr_stat(ch, STAT_DEX),
-              ch.perm_stat[STAT_CON], get_curr_stat(ch, STAT_CON)))
+              ch.perm_stat[STAT_STR], ch.get_curr_stat(STAT_STR),
+              ch.perm_stat[STAT_INT], ch.get_curr_stat(STAT_INT),
+              ch.perm_stat[STAT_WIS], ch.get_curr_stat(STAT_WIS),
+              ch.perm_stat[STAT_DEX], ch.get_curr_stat(STAT_DEX),
+              ch.perm_stat[STAT_CON], ch.get_curr_stat(STAT_CON)))
 
     ch.send("You have scored %d exp, and have %ld gold and %ld silver coins.\n" %(ch.exp, ch.gold, ch.silver))
     # RT shows exp to level */
@@ -997,7 +996,7 @@ def do_help(self, argument):
     if not argument:
         argument = "summary"
 
-    found = [h for h in help_list if h.level <= get_trust(self) and argument.lower() in h.keyword.lower()]
+    found = [h for h in help_list if h.level <= self.get_trust() and argument.lower() in h.keyword.lower()]
 
     for pHelp in found:
         if ch.desc.connected == con_playing:
@@ -1027,10 +1026,10 @@ def do_whois(self, argument):
         ch.send("You must provide a name.\n")
         return
     for d in descriptor_list[:]:
-        if d.connected != con_playing or not can_see(ch, d.character):
+        if d.connected != con_playing or not ch.can_see(d.character):
             continue
         wch = CH(d)
-        if not can_see(ch, wch):
+        if not ch.can_see(wch):
             continue
         if arg.startswith(wch.name.lower()):
             found = True
@@ -1131,19 +1130,19 @@ def do_who(self, argument):
     for d in descriptor_list:
         #* Check for match against restrictions.
         #* Don't use trust as that exposes trusted mortals.
-        if not d.is_connected(con_playing) or not can_see(ch, d.character):
+        if not d.is_connected(con_playing) or not ch.can_see(d.character):
             continue
 
         wch = CH(d)
 
-        if not can_see(ch, wch):
+        if not ch.can_see(wch):
             continue
 
         if wch.level < iLevelLower or wch.level > iLevelUpper \
         or (fImmortalOnly  and wch.level < LEVEL_IMMORTAL) \
         or (fClassRestrict and not rgfClass[wch.guild.name]) \
         or (fRaceRestrict and not rgfRace[wch.race.name]) \
-        or (fClan and not is_clan(wch)) or (fClanRestrict and not rgfClan[wch.clan.name]):
+        or (fClan and not wch.is_clan()) or (fClanRestrict and not rgfClan[wch.clan.name]):
             continue
 
         nMatch += 1
@@ -1206,12 +1205,12 @@ def do_equipment(self, argument):
     ch.send("You are using:\n")
     found = False
     for iWear in range(MAX_WEAR):
-        obj = get_eq_char(ch, iWear)
+        obj = ch.get_eq(iWear)
         if not obj:
             continue
 
         ch.send(where_name[iWear])
-        if can_see_obj(ch, obj):
+        if ch.can_see_obj(obj):
             ch.send(format_obj_to_char(obj, ch, True) + "\n")
         else:
             ch.send("something.\n")
@@ -1227,14 +1226,14 @@ def do_compare(self, argument):
     if not arg1:
         ch.send("Compare what to what?\n")
         return
-    obj1 = get_obj_carry(ch, arg1, ch)
+    obj1 = ch.get_obj_carry(arg1, ch)
     if not obj1:
         ch.send("You do not have that item.\n")
         return
     obj2 = None
     if not arg2:
         for obj2 in ch.carrying:
-            if obj2.wear_loc != WEAR_NONE and  can_see_obj(ch, obj2) and  obj1.item_type == obj2.item_type \
+            if obj2.wear_loc != WEAR_NONE and  ch.can_see_obj(obj2) and  obj1.item_type == obj2.item_type \
             and (obj1.wear_flags & obj2.wear_flags & ~ITEM_TAKE) != 0:
                 break
 
@@ -1242,7 +1241,7 @@ def do_compare(self, argument):
             ch.send("You aren't wearing anything comparable.\n")
             return
     else:
-        obj2 = get_obj_carry(ch, arg2, ch)
+        obj2 = ch.get_obj_carry(arg2, ch)
         if not obj2:
             ch.send("You do not have that item.\n")
             return
@@ -1294,9 +1293,9 @@ def do_where(self, argument):
             and not IS_NPC(victim) \
             and victim.in_room \
             and not IS_SET(victim.in_room.room_flags,ROOM_NOWHERE) \
-            and (is_room_owner(ch,victim.in_room) or not room_is_private(victim.in_room)) \
+            and (ch.is_room_owner(victim.in_room) or not victim.in_room.is_private()) \
             and victim.in_room.area == ch.in_room.area \
-            and can_see(ch, victim):
+            and ch.can_see(victim):
                 found = True
                 ch.send("%-28s %s\n" % (victim.name, victim.in_room.name))
         if not found:
@@ -1309,7 +1308,7 @@ def do_where(self, argument):
             and victim.in_room.area == ch.in_room.area \
             and not IS_AFFECTED(victim, AFF_HIDE) \
             and not IS_AFFECTED(victim, AFF_SNEAK) \
-            and can_see(ch, victim) \
+            and ch.can_see(victim) \
             and arg in victim.name.lower():
                 found = True
                 ch.send("%-28s %s\n" % (PERS(victim, ch), victim.in_room.name))
@@ -1324,7 +1323,7 @@ def do_consider(self, argument):
     if not arg:
         ch.send("Consider killing whom?\n")
         return
-    victim = get_char_room(ch, arg)
+    victim = ch.get_char_room(arg)
     if not victim:
         ch.send("They're not here.\n")
         return
@@ -1423,7 +1422,8 @@ def do_practice(self, argument):
     if not argument:
         col = 0
         for sn, skill in skill_table.items():
-            if ch.level < skill.skill_level[ch.guild.name] or ch.pcdata.learned[sn] < 1: # skill is not known */)
+            if ch.level < skill.skill_level[ch.guild.name] \
+            or sn not in ch.pcdata.learned or ch.pcdata.learned[sn] < 1: # skill is not known */)
                 continue
 
             ch.send("%-18s %3d%%  " % (skill.name, ch.pcdata.learned[sn]))
@@ -1439,8 +1439,8 @@ def do_practice(self, argument):
            ch.send("In your dreams, or what?\n")
            return
         mob = None
-        prac_mobs = [ mob for mob in ch.in_room.people if IS_NPC(mob) and IS_SET(mob.act, ACT_PRACTICE) ][:1]
-        if not prac_mob:
+        prac_mobs = [mob for mob in ch.in_room.people if IS_NPC(mob) and IS_SET(mob.act, ACT_PRACTICE)][:1]
+        if not prac_mobs:
             ch.send("You can't do that here.\n")
             return
         else:
@@ -1450,7 +1450,7 @@ def do_practice(self, argument):
             return
         skill = prefix_lookup(skill_table, argument)
         if not skill or not IS_NPC(ch) \
-        and (ch.level < skill.skill_level[ch.guild.name] or ch.pcdata.learned[sn] < 1 \
+        and (ch.level < skill.skill_level[ch.guild.name] or ch.pcdata.learned[skill.name] < 1 \
         or skill.rating[ch.guild.name] == 0):
             ch.send("You can't practice that.\n")
             return
@@ -1460,10 +1460,10 @@ def do_practice(self, argument):
             ch.send("You are already learned at %s.\n" % skill.name)
         else:
             ch.practice -= 1
-            ch.pcdata.learned[skill.name] += int_app[get_curr_stat(ch,STAT_INT)].learn / skill.rating[ch.guild.name]
+            ch.pcdata.learned[skill.name] += int_app[ch.get_curr_stat(STAT_INT)].learn / skill.rating[ch.guild.name]
             if ch.pcdata.learned[skill.name] < adept:
-                act("You practice $T.", ch, None, skill_table[sn].name, TO_CHAR)
-                act("$n practices $T.", ch, None, skill_table[sn].name, TO_ROOM)
+                act("You practice $T.", ch, None, skill.name, TO_CHAR)
+                act("$n practices $T.", ch, None, skill.name, TO_ROOM)
             else:
                 ch.pcdata.learned[skill.name] = adept
                 act("You are now learned at $T.", ch, None, skill.name, TO_CHAR)

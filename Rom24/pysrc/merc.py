@@ -140,7 +140,7 @@ class CHAR_DATA(object):
         return self.name
     def send(self, str):
         pass
-        
+
 class PC_DATA:
     def __init__(self):
         self.buffer = None
@@ -1237,8 +1237,7 @@ def mass_replace(str, dict):
     return str
 
 def PERS(ch, looker):
-    from handler import can_see
-    if not can_see(looker, ch):
+    if not looker.can_see(ch):
         return "someone"
     if IS_NPC(ch):
         return ch.short_descr
@@ -1246,8 +1245,7 @@ def PERS(ch, looker):
         return ch.name
 
 def OPERS(looker, obj):
-    from handler import can_see_obj
-    if not can_see_obj(looker,obj):
+    if not looker.can_see_obj(obj):
         return "something"
     return obj.short_descr
 
@@ -1255,16 +1253,13 @@ def IS_NPC(ch):
     return IS_SET(ch.act, ACT_IS_NPC)
 
 def IS_IMMORTAL(ch):
-    from handler import get_trust
-    return get_trust(ch) >= LEVEL_IMMORTAL
+    return ch.get_trust() >= LEVEL_IMMORTAL
 
 def IS_HERO(ch):
-    from handler import get_trust
-    return get_trust(ch) >= LEVEL_HERO
+    return ch.get_trust() >= LEVEL_HERO
 
 def IS_TRUSTED(ch,level):
-    from handler import get_trust
-    return get_trust(ch) >= level
+    return ch.get_trust() >= level
 def is_affected( ch, sn ):
     return True if [paf for paf in ch.affected if paf.type == sn ][:1] else False
 
@@ -1288,18 +1283,15 @@ def IS_AWAKE(ch):
 
 def GET_AC(ch,type):
     from const import dex_app
-    from handler import get_curr_stat
-    return (ch.armor[type] + ( dex_app[get_curr_stat(ch,STAT_DEX)].defensive if IS_AWAKE(ch) else 0 ) )
+    return (ch.armor[type] + ( dex_app[ch.get_curr_stat(STAT_DEX)].defensive if IS_AWAKE(ch) else 0 ) )
 
 def GET_HITROLL(ch):
     from const import str_app
-    from handler import get_curr_stat
-    return ( ( ch.hitroll+str_app[ get_curr_stat(ch,STAT_STR)].tohit) )
+    return ( ( ch.hitroll+str_app[ ch.get_curr_stat(STAT_STR)].tohit) )
 
 def GET_DAMROLL(ch):
     from const import str_app
-    from handler import get_curr_stat
-    return ( (ch.damroll+str_app[get_curr_stat(ch,STAT_STR)].todam) )
+    return ( (ch.damroll+str_app[ch.get_curr_stat(STAT_STR)].todam) )
 
 def IS_OUTSIDE(ch):
     return not IS_SET( ch.in_room.room_flags, ROOM_INDOORS )
@@ -1454,6 +1446,25 @@ def get_mob_id():
 def number_door( ):
     return random.randint(0,5)
 
+# * Count occurrences of an obj in a list.
+def count_obj_list(pObjIndex, contents):
+    return len([obj for obj in contents if obj.pIndexData == pObjIndex])
+
+# find an effect in an affect list */
+def affect_find(paf, sn):
+    found = [paf_find for paf_find in paf if paf_find.type == sn][:1]
+    if found:
+        return found[0]
+    else:
+        return None
+
+# * Find some object with a given index data.
+# * Used by area-reset 'P' command.
+def get_obj_type( pObjIndex ):
+    search = [obj for obj in object_list if obj.pIndexData == pObjIndex][:1]
+    return search[0] if search else None
+
+
 def CH(d): return d.original if d.original else d.character
 
 # * Simple linear interpolation.
@@ -1532,6 +1543,23 @@ def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
         format = mass_replace(format, act_trans)
         to.send(format+"\n")
     return
+    
+def wiznet( string, ch, obj, flag, flag_skip, min_level):
+    from nanny import con_playing
+    for d in descriptor_list:
+        if   d.is_connected(con_playing) \
+        and  IS_IMMORTAL(d.character) \
+        and  IS_SET(d.character.wiznet, WIZ_ON) \
+        and  (not flag or IS_SET(d.character.wiznet,flag)) \
+        and  (not flag_skip or not IS_SET(d.character.wiznet,flag_skip)) \
+        and  get_trust(d.character) >= min_level \
+        and  d.character != ch:
+            if IS_SET(d.character.wiznet,WIZ_PREFIX):
+                d.send("-. ",d.character)
+            act(string,d.character,obj,ch,TO_CHAR,POS_DEAD)
 
 #ensureall do_functions become class methods
 import interp
+import handler_ch
+import handler_obj
+import handler_room

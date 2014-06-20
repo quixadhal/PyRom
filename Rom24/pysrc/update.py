@@ -34,9 +34,8 @@
 from merc import *
 from db import area_update
 from handler import *
-from comm import act
 from save import save_char_obj
-from fight import violence_update, damage
+import fight
 import act_move
 # * Advancement stuff.
 
@@ -46,12 +45,12 @@ def advance_level( ch, hide ):
     buf = "the %s" % ( title_table [ch.guild ] [ch.level] [1 if ch.sex == SEX_FEMALE else 0] )
     set_title( ch, buf )
 
-    add_hp = con_app[get_curr_stat(ch,STAT_CON)].hitp + random.randint( ch.guild.hp_min, ch.guild.hp_max )
-    add_mana = random.randint( 2, (2*get_curr_stat(ch,STAT_INT) + get_curr_stat(ch,STAT_WIS))/5)
+    add_hp = con_app[ch.get_curr_stat(STAT_CON)].hitp + random.randint( ch.guild.hp_min, ch.guild.hp_max )
+    add_mana = random.randint( 2, (2*ch.get_curr_stat(STAT_INT) + ch.get_curr_stat(STAT_WIS))/5)
     if not ch.guild.fMana:
         add_mana /= 2
-    add_move    = random.randint( 1, (get_curr_stat(ch,STAT_CON) + get_curr_stat(ch,STAT_DEX))/6 )
-    add_prac    = wis_app[get_curr_stat(ch,STAT_WIS)].practice
+    add_move    = random.randint( 1, (ch.get_curr_stat(STAT_CON) + ch.get_curr_stat(STAT_DEX))/6 )
+    add_prac    = wis_app[ch.get_curr_stat(STAT_WIS)].practice
 
     add_hp = add_hp * 9/10
     add_mana = add_mana * 9/10
@@ -103,10 +102,10 @@ def hit_gain( ch ):
         elif ch.position == POS_FIGHTING:  gain /= 3
         else: gain /= 2
     else:
-        gain = max(3,get_curr_stat(ch,STAT_CON) - 3 + ch.level/2) 
+        gain = max(3,ch.get_curr_stat(STAT_CON) - 3 + ch.level/2) 
         gain += ch.guild.hp_max - 10
         number = random.randint(1,99)
-        if number < get_skill(ch,'fast healing'):
+        if number < ch.get_skill('fast healing'):
             gain += number * gain / 100
             if ch.hit < ch.max_hit:
                 check_improve(ch,'fast healing',True,8)
@@ -149,9 +148,9 @@ def mana_gain( ch ):
         elif ch.position == POS_FIGHTING:  gain /= 3
         else: gain /= 2
     else:
-        gain = (get_curr_stat(ch,STAT_WIS) + get_curr_stat(ch,STAT_INT) + ch.level) / 2
+        gain = (ch.get_curr_stat(STAT_WIS) + ch.get_curr_stat(STAT_INT) + ch.level) / 2
         number = random.randint(1,99)
-        if number < get_skill(ch,'meditation'):
+        if number < ch.get_skill('meditation'):
             gain += number * gain / 100
             if ch.mana < ch.max_mana:
                 check_improve(ch,'meditation',True,8)
@@ -194,8 +193,8 @@ def move_gain( ch ):
     else:
         gain = max( 15, ch.level )
     
-        if ch.position == POS_SLEEPING: gain += get_curr_stat(ch,STAT_DEX)
-        elif ch.position == POS_RESTING: gain += get_curr_stat(ch,STAT_DEX) / 2
+        if ch.position == POS_SLEEPING: gain += ch.get_curr_stat(STAT_DEX)
+        elif ch.position == POS_RESTING: gain += ch.get_curr_stat(STAT_DEX) / 2
 
         if not ch.pcdata.condition[COND_HUNGER]:
             gain /= 2
@@ -276,8 +275,8 @@ def mobile_update( ):
                     top = obj.cost
 
             if obj_best:
-                obj_from_room(obj_best)
-                obj_to_char(obj_best, ch)
+                obj_best.from_room()
+                obj_best.to_char(ch)
                 act("$n gets $p.", ch, obj_best, None, TO_ROOM)
 
         # Wander */
@@ -392,7 +391,7 @@ def char_update( ):
             if IS_NPC(ch) and ch.zone and ch.zone != ch.in_room.area  \
             and not ch.desc and not ch.fighting and not IS_AFFECTED(ch,AFF_CHARM) and random.randint(1,99) < 5:
                 act("$n wanders on home.",ch,None,None,TO_ROOM)
-                extract_char(ch,True)
+                ch.extract(True)
                 continue
 
         if ch.hit  < ch.max_hit:
@@ -415,14 +414,14 @@ def char_update( ):
             update_pos( ch )
 
         if not IS_NPC(ch) and ch.level < LEVEL_IMMORTAL:
-            obj = get_eq_char(ch, WEAR_LIGHT)
+            obj = ch.get_eq(WEAR_LIGHT)
             if obj and obj.item_type == ITEM_LIGHT and obj.value[2] > 0:
                 obj.value[2] -= 1
                 if obj.value[2] == 0 and ch.in_room != None:
                     ch.in_room.light -= 1
                     act( "$p goes out.", ch, obj, None, TO_ROOM )
                     act( "$p flickers and goes out.", ch, obj, None, TO_CHAR )
-                    extract_obj( obj )
+                    obj.extract()
                 elif obj.value[2] <= 5 and ch.in_room:
                     act("$p flickers.",ch,obj,None,TO_CHAR)
 
@@ -438,8 +437,8 @@ def char_update( ):
                     ch.send("You disappear into the void.\n") 
                     if ch.level > 1:
                         save_char_obj( ch )
-                    char_from_room( ch )
-                    char_to_room( ch, room_index_hash[ROOM_VNUM_LIMBO] )
+                    ch.from_room()
+                    ch.to_room(room_index_hash[ROOM_VNUM_LIMBO])
 
 
 
@@ -462,7 +461,7 @@ def char_update( ):
                 if not multi and paf.type > 0 and skill_table[paf.type].msg_off:
                     ch.send(skill_table[paf.type].msg_off+"\n")
          
-                affect_remove( ch, paf )
+                ch.affect_remove(paf)
     #
      #* Careful with the damages here,
      #*   MUST NOT refer to ch after damage taken,
@@ -495,7 +494,7 @@ def char_update( ):
                 and not IS_AFFECTED(vch,AFF_PLAGUE) and random.randint(0,4) == 0:
                     vch.send("You feel hot and feverish.\n")
                     act("$n shivers and looks very ill.",vch,None,None,TO_ROOM)
-                    affect_join(vch,plague)
+                    vch.affect_join(plague)
             dam = min(ch.level,af.level/5+1)
             ch.mana -= dam
             ch.move -= dam
@@ -544,7 +543,7 @@ def obj_update( ):
 
                     if obj.in_room != None and obj.in_room.people:
                         act(skill_table[paf.type].msg_obj, obj.in_room.people ,obj,None,TO_ALL)
-                affect_remove_obj( obj, paf )
+                obj.affect_remove(paf)
         obj.timer -= 1
         if obj.timer <= 0 or obj.timer > 0:
             continue
@@ -580,24 +579,24 @@ def obj_update( ):
         if (obj.item_type == ITEM_CORPSE_PC or obj.wear_loc == WEAR_FLOAT) and  obj.contains:
             # save the contents */
             for t_obj in obj.contains[:]:
-                obj_from_obj(t_obj)
+                t_obj.from_obj()
 
                 if obj.in_obj: # in another object */
-                    obj_to_obj(t_obj,obj.in_obj)
+                    t_obj.to_obj(obj.in_obj)
                 elif obj.carried_by:  # carried */
                     if obj.wear_loc == WEAR_FLOAT:
                         if obj.carried_by.in_room == None:
-                            extract_obj(t_obj)
+                            t_obj.extract()
                         else:
-                            obj_to_room(t_obj,obj.carried_by.in_room)
+                            t_obj.to_room(obj.carried_by.in_room)
                     else:
-                        obj_to_char(t_obj,obj.carried_by)
+                        t_obj.to_char(obj.carried_by)
                 elif not obj.in_room:  # destroy it */
-                    extract_obj(t_obj)
+                    t_obj.extract()
                 else: # to a room */
-                    obj_to_room(t_obj,obj.in_room)
+                    t_obj.to_room(obj.in_room)
 
-        extract_obj( obj )
+        obj.extract()
     return
 #
 # * Aggress.
@@ -630,7 +629,7 @@ def aggr_update( ):
             or IS_AFFECTED(ch, AFF_CHARM) \
             or not IS_AWAKE(ch) \
             or ( IS_SET(ch.act, ACT_WIMPY) and IS_AWAKE(wch) ) \
-            or not can_see( ch, wch )  \
+            or not ch.can_see(wch)  \
             or random.randint(0,1) == 0:
                 continue
 
@@ -645,7 +644,7 @@ def aggr_update( ):
                 and   vch.level < LEVEL_IMMORTAL \
                 and   ch.level >= vch.level - 5  \
                 and   ( not IS_SET(ch.act, ACT_WIMPY) or not IS_AWAKE(vch) ) \
-                and   can_see( ch, vch ):
+                and   ch.can_see(vch):
                     if random.randint( 0, count ) == 0:
                         victim = vch
                     count += 1
@@ -686,7 +685,7 @@ def update_handler( ):
         mobile_update   ( )
     if pulse_violence <= 0:
         pulse_violence  = PULSE_VIOLENCE
-        violence_update ( )
+        fight.violence_update ( )
     if pulse_point <= 0:
         wiznet("TICK!",None,None,WIZ_TICKS,0,0)
         pulse_point     = PULSE_TICK
