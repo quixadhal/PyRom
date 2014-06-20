@@ -1,6 +1,6 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-/Rom24/pysrc/PyRom.sln
-/Rom24/pysrc/PyRom.v12.suo
-/Rom24/player/Testme.js
+*.pyproj
+*.sln
+*.suo

@@ -51,7 +51,7 @@ from miniboa.colors import _TERMINAL_TYPES, _COLOR_TOKENS, _COLOR_MAP
 
 _PARA_BREAK = re.compile(r"(\n\s*\n)", re.MULTILINE)
 
-def word_wrap(text, columns=80, indent=4, padding=2):
+def word_wrap(text, columns = 80, indent = 4, padding = 2):
     """
     Given a block of text, breaks into a list of lines wrapped to
     length.
@@ -79,7 +79,7 @@ def word_wrap(text, columns=80, indent=4, padding=2):
             lines.append(line)
     return lines
 
-def colorize(text, terminal='ansi'):
+def colorize(text, terminal = 'ansi'):
     """
     Given a chunk of text, replace color tokesn with the appropriate
     color codes for the given terminal type
