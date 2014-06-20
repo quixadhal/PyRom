@@ -33,7 +33,8 @@
 """
 from merc import *
 from handler import *
-from skills import check_improve, exp_per_level
+from skills import check_improve
+from update import gain_exp
 import const
 
 # * Control the fights going on.
@@ -69,7 +70,7 @@ def check_assist( ch, victim):
         if not IS_NPC(ch) or IS_AFFECTED(ch,AFF_CHARM):
             if( (not IS_NPC(rch) and IS_SET(rch.act,PLR_AUTOASSIST)) \
             or IS_AFFECTED(rch,AFF_CHARM)) \
-            and is_same_group(ch,rch) \
+            and ch.is_same_group(rch) \
             and not is_safe(rch, victim):
                 multi_hit (rch,victim,TYPE_UNDEFINED)
                 continue
@@ -89,7 +90,7 @@ def check_assist( ch, victim):
                 target = None
                 number = 0
                 for vch in ch.in_room.people:
-                    if can_see(rch,vch) and is_same_group(vch,victim) and random.randint(0,number) == 0:
+                    if rch.can_see(vch) and vch.is_same_group(victim) and random.randint(0,number) == 0:
                         target = vch
                         number += 1
                 if target:
@@ -126,7 +127,7 @@ def multi_hit( ch, victim, dt ):
     if ch.fighting != victim or dt == 'backstab':
         return
 
-    chance = get_skill(ch,'second attack') // 2
+    chance = ch.get_skill('second attack') // 2
 
     if IS_AFFECTED(ch,AFF_SLOW):
         chance //= 2
@@ -137,7 +138,7 @@ def multi_hit( ch, victim, dt ):
         if ch.fighting != victim:
             return
     
-    chance = get_skill(ch,'third attack') // 4
+    chance = ch.get_skill('third attack') // 4
 
     if IS_AFFECTED(ch,AFF_SLOW):
         chance = 0
@@ -165,7 +166,7 @@ def mob_hit (ch, victim, dt):
     if ch.fighting != victim or dt == 'backstab':
         return
 
-    chance = get_skill(ch,"second attack") // 2
+    chance = ch.get_skill("second attack") // 2
 
     if IS_AFFECTED(ch,AFF_SLOW) and not IS_SET(ch.off_flags,OFF_FAST):
         chance //= 2
@@ -174,7 +175,7 @@ def mob_hit (ch, victim, dt):
         one_hit(ch,victim,dt)
         if ch.fighting != victim:
             return
-    chance = get_skill(ch,'third attack') // 4
+    chance = ch.get_skill('third attack') // 4
 
     if IS_AFFECTED(ch,AFF_SLOW) and not IS_SET(ch.off_flags,OFF_FAST):
         chance = 0
@@ -210,7 +211,7 @@ def mob_hit (ch, victim, dt):
             ch.do_berserk("")
     elif number == 2:
         if IS_SET(ch.off_flags,OFF_DISARM) \
-        or (get_weapon_sn(ch) != 'hand_to_hand' \
+        or (ch.get_weapon_sn() != 'hand_to_hand' \
         and (IS_SET(ch.act,ACT_WARRIOR) \
         or  IS_SET(ch.act,ACT_THIEF))):
             ch.do_disarm("")
@@ -246,7 +247,7 @@ def one_hit( ch, victim, dt ):
         return
 
      #* Figure out the type of damage message.
-    wield = get_eq_char( ch, WEAR_WIELD )
+    wield = ch.get_eq(WEAR_WIELD)
     if dt == TYPE_UNDEFINED:
         dt = TYPE_HIT
         if wield and wield.item_type == ITEM_WEAPON:
@@ -266,8 +267,8 @@ def one_hit( ch, victim, dt ):
         dam_type = DAM_BASH
 
     # get the weapon skill */
-    sn = get_weapon_sn(ch)
-    skill = 20 + get_weapon_skill(ch,sn)
+    sn = ch.get_weapon_sn()
+    skill = 20 + ch.get_weapon_skill(sn)
 
     #* Calculate to-hit-armor-guild-0 versus armor.
     if IS_NPC(ch):
@@ -297,7 +298,7 @@ def one_hit( ch, victim, dt ):
     thac0 += 5 * (100 - skill) // 100
 
     if dt == 'backstab':
-        thac0 -= 10 * (100 - get_skill(ch,'backstab'))
+        thac0 -= 10 * (100 - ch.get_skill('backstab'))
 
     if dam_type == DAM_PIERCE: victim_ac = GET_AC(victim,AC_PIERCE) // 10
     elif dam_type == DAM_BASH: victim_ac = GET_AC(victim,AC_BASH) // 10
@@ -307,7 +308,7 @@ def one_hit( ch, victim, dt ):
     if victim_ac < -15:
         victim_ac = (victim_ac + 15) // 5 - 15
      
-    if not can_see( ch, victim ):
+    if not ch.can_see(victim):
         victim_ac -= 4
 
     if victim.position < POS_FIGHTING:
@@ -340,7 +341,7 @@ def one_hit( ch, victim, dt ):
             else:
                 dam = random.randint( wield.value[1] * skill // 100, wield.value[2] * skill // 100)
 
-            if get_eq_char(ch,WEAR_SHIELD) == None:  # no shield = more */
+            if ch.get_eq(WEAR_SHIELD) == None:  # no shield = more */
                 dam = dam * 11 // 10
             # sharpness! */
             if IS_WEAPON_STAT(wield,WEAPON_SHARP):
@@ -356,9 +357,9 @@ def one_hit( ch, victim, dt ):
                 dam = low
     #
     # * Bonuses.
-    if get_skill(ch,'enhanced damage') > 0:
+    if ch.get_skill('enhanced damage') > 0:
         diceroll = random.randint(1,99)
-        if diceroll <= get_skill(ch,'enhanced_damage'):
+        if diceroll <= ch.get_skill('enhanced_damage'):
             check_improve(ch,'enhanced damage',True,6)
             dam += 2 * ( dam * diceroll // 300)
     if not IS_AWAKE(victim):
@@ -398,7 +399,7 @@ def one_hit( ch, victim, dt ):
                 af.location  = APPLY_STR
                 af.modifier  = -1
                 af.bitvector = AFF_POISON
-                affect_join( victim, af )
+                victim.affect_join(af)
 
             # weaken the poison if it's temporary */
             if poison:
@@ -445,10 +446,10 @@ def damage(ch,victim,dam,dt,dam_type,show):
         print ("BUG: Damage: %d: more than 1200 points!" % dam)
         dam = 1200
         if not IS_IMMORTAL(ch):
-            obj = get_eq_char( ch, WEAR_WIELD )
+            obj = ch.get_eq(WEAR_WIELD)
             ch.send("You really shouldn't cheat.\n\r")
             if obj:
-                extract_obj(obj)
+                obj.extract()
     
     # damage reduction */
     if dam > 35:
@@ -477,8 +478,8 @@ def damage(ch,victim,dam,dt,dam_type,show):
             stop_follower( victim )
     # * Inviso attacks ... not.
     if IS_AFFECTED(ch, AFF_INVISIBLE):
-        affect_strip( ch, "invis" )
-        affect_strip( ch, "mass invis" )
+        ch.affect_strip("invis")
+        ch.affect_strip("mass invis")
         REMOVE_BIT( ch.affected_by, AFF_INVISIBLE )
         act( "$n fades into existence.", ch, None, None, TO_ROOM )
 
@@ -501,7 +502,7 @@ def damage(ch,victim,dam,dt,dam_type,show):
             return False
         if check_shield_block(ch,victim):
             return False
-    imm = check_immune(victim, dam_type)
+    imm = victim.check_immune(dam_type)
 
     if imm == IS_IMMUNE:
         immune = True
@@ -552,8 +553,8 @@ def damage(ch,victim,dam,dt,dam_type,show):
             print ("%s killed by %s at %d" % ( victim.name, ch.short_descr if IS_NPC(ch) else ch.name, ch.in_room.vnum ))
             # Dying penalty:
             # 2/3 way back to previous level.
-            if victim.exp > exp_per_level(victim,victim.pcdata.points) * victim.level:
-                gain_exp( victim, (2 * (exp_per_level(victim,victim.pcdata.points) * victim.level - victim.exp) // 3) + 50 )
+            if victim.exp > victim.exp_per_level(victim.pcdata.points) * victim.level:
+                gain_exp( victim, (2 * (victim.exp_per_level(victim.pcdata.points) * victim.level - victim.exp) // 3) + 50 )
 
         log_buf = "%s got toasted by %s at %s [room %d]" % ( victim.short_descr if IS_NPC(victim) else victim.name,
             ch.short_descr if IS_NPC(ch) else ch.name, ch.in_room.name, ch.in_room.vnum)
@@ -565,19 +566,19 @@ def damage(ch,victim,dam,dt,dam_type,show):
 
         raw_kill( victim )
         # dump the flags */
-        if ch != victim and not IS_NPC(ch) and not is_same_clan(ch,victim):
+        if ch != victim and not IS_NPC(ch) and not ch.is_same_clan(victim):
             if IS_SET(victim.act,PLR_KILLER):
                 REMOVE_BIT(victim.act,PLR_KILLER)
             else:
                 REMOVE_BIT(victim.act,PLR_THIEF)
             # RT new auto commands */
-        corpse = get_obj_list(ch,"corpse",ch.in_room.contents)
-        if not IS_NPC(ch) and corpse and corpse.item_type == ITEM_CORPSE_NPC and can_see_obj(ch,corpse):
+        corpse = ch.get_obj_list("corpse", ch.in_room.contents)
+        if not IS_NPC(ch) and corpse and corpse.item_type == ITEM_CORPSE_NPC and ch.can_see_obj(corpse):
             if IS_SET(ch.act, PLR_AUTOLOOT) and corpse and corpse.contains: # exists and not empty */
                 ch.do_get("all corpse")
             
             if IS_SET(ch.act,PLR_AUTOGOLD) and corpse and corpse.contains and not IS_SET(ch.act,PLR_AUTOLOOT):
-                coins = get_obj_list(ch,"gcash",corpse.contains)
+                coins = ch.get_obj_list("gcash",corpse.contains)
                 if coins: ch.do_get("all.gcash corpse")
             
             if IS_SET(ch.act, PLR_AUTOSAC):
@@ -656,14 +657,14 @@ def is_safe(ch, victim):
                 return True
         # player doing the killing */
         else:
-            if not is_clan(ch):
+            if not ch.is_clan():
                 ch.send("Join a clan if you want to kill players.\n\r")
                 return True
 
             if IS_SET(victim.act,PLR_KILLER) or IS_SET(victim.act,PLR_THIEF):
                 return False
 
-            if not is_clan(victim):
+            if not victim.is_clan():
                 ch.send("They aren't in a clan, leave them alone.\n\r")
                 return True
 
@@ -702,11 +703,11 @@ def is_safe_spell(ch, victim, area ):
             if IS_AFFECTED(victim,AFF_CHARM) and (area or ch != victim.master):
                 return True
             # legal kill? -- cannot hit mob fighting non-group member */
-            if victim.fighting != None and not is_same_group(ch,victim.fighting):
+            if victim.fighting != None and not ch.is_same_group(victim.fighting):
                 return True
         else:
             # area effect spells do not hit other mobs */
-            if area and not is_same_group(victim,ch.fighting):
+            if area and not victim.is_same_group(ch.fighting):
                 return True
     # killing players */
     else:
@@ -723,15 +724,15 @@ def is_safe_spell(ch, victim, area ):
                 return True
 
             # legal kill? -- mobs only hit players grouped with opponent*/
-            if ch.fighting and not is_same_group(ch.fighting,victim):
+            if ch.fighting and not ch.fighting.is_same_group(victim):
                 return True
         # player doing the killing */
         else:
-            if not is_clan(ch):
+            if not ch.is_clan():
                 return True
             if IS_SET(victim.act,PLR_KILLER) or IS_SET(victim.act,PLR_THIEF):
                 return False
-            if not is_clan(victim):
+            if not victim.is_clan():
                 return True
             if ch.level > victim.level + 8:
                 return True
@@ -753,8 +754,8 @@ def check_killer( ch, victim ):
     if IS_SET(ch.affected_by, AFF_CHARM):
         if ch.master == None:
             print ("BUG: Check_killer: %s bad AFF_CHARM" % (ch.short_descr if IS_NPC(ch) else ch.name ))
-            affect_strip( ch, 'charm person' )
-            REMOVE_BIT( ch.affected_by, AFF_CHARM )
+            ch.affect_strip('charm person')
+            REMOVE_BIT(ch.affected_by, AFF_CHARM)
             return
     #    send_to_char( "*** You are now a KILLER!! ***\n\r", ch.master )
     #    SET_BIT(ch.master.act, PLR_KILLER)
@@ -766,7 +767,7 @@ def check_killer( ch, victim ):
      # So is being immortal (Alander's idea).
      # And current killers stay as they are.
     if IS_NPC(ch) or ch == victim or ch.level >= LEVEL_IMMORTAL \
-    or not is_clan(ch) or IS_SET(ch.act, PLR_KILLER) or ch.fighting == victim:
+    or not ch.is_clan() or IS_SET(ch.act, PLR_KILLER) or ch.fighting == victim:
         return
 
     ch.send("*** You are now a KILLER!! ***\n\r")
@@ -778,14 +779,14 @@ def check_killer( ch, victim ):
 def check_parry( ch, victim ):
     if IS_AWAKE(victim):
         return False
-    chance = get_skill(victim,'parry') // 2
+    chance = victim.get_skill('parry') // 2
 
-    if get_eq_char( victim, WEAR_WIELD ) == None:
+    if victim.get_eq(WEAR_WIELD) == None:
         if IS_NPC(victim):
             chance //= 2
         else:
             return False
-    if not can_see(ch,victim):
+    if not ch.can_see(victim):
         chance //= 2
 
     if random.randint(1,99) >= chance + victim.level - ch.level:
@@ -800,8 +801,8 @@ def check_parry( ch, victim ):
 def check_shield_block( ch, victim ):
     if not IS_AWAKE(victim):
         return False
-    chance = get_skill(victim,'shield block') // 5 + 3
-    if get_eq_char( victim, WEAR_SHIELD ) == None:
+    chance = victim.get_skill('shield block') // 5 + 3
+    if victim.get_eq(WEAR_SHIELD) == None:
         return False
     if random.randint(1,99) >= chance + victim.level - ch.level:
         return False
@@ -814,8 +815,8 @@ def check_shield_block( ch, victim ):
 def check_dodge( ch, victim ):
     if not IS_AWAKE(victim):
         return False
-    chance = get_skill(victim,'dodge') // 2
-    if not can_see(victim,ch):
+    chance = victim.get_skill('dodge') // 2
+    if not victim.can_see(ch):
         chance //= 2
     if random.randint(1,99) >= chance + victim.level - ch.level:
         return False
@@ -848,7 +849,7 @@ def set_fighting( ch, victim ):
         return
 
     if IS_AFFECTED(ch, AFF_SLEEP):
-        affect_strip( ch, 'sleep' )
+        ch.affect_strip('sleep')
 
     ch.fighting = victim
     ch.position = POS_FIGHTING
@@ -863,28 +864,28 @@ def stop_fighting( ch, fBoth ):
     return
 #
 # * Make a corpse out of a character.
-def make_corpse( ch ):
+def make_corpse(ch):
     from db import create_object
     if IS_NPC(ch):
         name = ch.short_descr
-        corpse      = create_object(get_obj_index(OBJ_VNUM_CORPSE_NPC), 0)
+        corpse      = create_object(obj_index_hash[OBJ_VNUM_CORPSE_NPC], 0)
         corpse.timer   = random.randint( 3, 6 )
         if ch.gold > 0:
-            obj_to_obj( create_money( ch.gold, ch.silver ), corpse )
+            create_money(ch.gold, ch.silver).to_obj(corpse)
             ch.gold = 0
             ch.silver = 0
         corpse.cost = 0
     else:
         name = ch.name
         corpse = create_object(obj_index_hash[OBJ_VNUM_CORPSE_PC], 0)
-        corpse.timer = random.randint( 25, 40 )
-        REMOVE_BIT(ch.act,PLR_CANLOOT)
-        if not is_clan(ch):
+        corpse.timer = random.randint(25, 40)
+        REMOVE_BIT(ch.act, PLR_CANLOOT)
+        if not ch.is_clan():
             corpse.owner = ch.name
         else:
             corpse.owner = ""
             if ch.gold > 1 or ch.silver > 1:
-                obj_to_obj(create_money(ch.gold // 2, ch.silver // 2), corpse)
+                create_money(ch.gold // 2, ch.silver // 2).to_obj(corpse)
                 ch.gold -= ch.gold // 2
                 ch.silver -= ch.silver // 2
         corpse.cost = 0
@@ -896,7 +897,7 @@ def make_corpse( ch ):
         floating = False
         if obj.wear_loc == WEAR_FLOAT:
             floating = True
-        obj_from_char( obj )
+        obj.from_char()
         if obj.item_type == ITEM_POTION:
             obj.timer = random.randint(500,1000)
         if obj.item_type == ITEM_SCROLL:
@@ -907,23 +908,23 @@ def make_corpse( ch ):
         REMOVE_BIT(obj.extra_flags,ITEM_VIS_DEATH)
 
         if IS_SET( obj.extra_flags, ITEM_INVENTORY ):
-            extract_obj( obj )
+            obj.extract()
         elif floating:
             if IS_OBJ_STAT(obj,ITEM_ROT_DEATH): # get rid of it! */
                 if obj.contains:
                     act("$p evaporates,scattering its contents.", ch,obj,None,TO_ROOM)
                     for o in obj.contains[:]:
-                        obj_from_obj(o)
-                        obj_to_room(o,ch.in_room)
+                        o.from_obj()
+                        o.to_room(ch.in_room)
                 else:
                     act("$p evaporates.", ch,obj,None,TO_ROOM)
-                extract_obj(obj)
+                obj.extract()
             else:
                 act("$p falls to the floor.",ch,obj,None,TO_ROOM)
-                obj_to_room(obj,ch.in_room)
+                obj.to_room(ch.in_room)
         else:
-            obj_to_obj( obj, corpse )
-    obj_to_room( corpse, ch.in_room )
+            obj.to_obj(corpse)
+    corpse.to_room(ch.in_room)
     return
 
 #
@@ -974,7 +975,7 @@ def death_cry( ch ):
                 obj.value[3] = 1
             elif not IS_SET(ch.form,FORM_EDIBLE):
                 obj.item_type = ITEM_TRASH
-            obj_to_room( obj, ch.in_room )
+            obj.to_room(ch.in_room)
 
     if IS_NPC(ch):
         msg = "You hear something's death cry."
@@ -996,13 +997,13 @@ def raw_kill( victim ):
 
     if IS_NPC(victim):
         victim.pIndexData.killed += 1
-        kill_table[min(0, max(victim.level, MAX_LEVEL-1))].killed += 1
-        extract_char( victim, True )
+        #kill_table[min(0, max(victim.level, MAX_LEVEL-1))].killed += 1
+        victim.extract(True)
         return
 
-    extract_char( victim, False )
+    victim.extract(False)
     for af in victim.affected[:]:
-        affect_remove( victim, af )
+        victim.affect_remove(af)
     victim.affected_by = victim.race.aff
     victim.armor = [100 for i in range(4)]
     victim.position = POS_RESTING
@@ -1021,7 +1022,7 @@ def group_gain( ch, victim ):
     members = 0
     group_levels = 0
     for gch in ch.in_room.people:
-        if is_same_group( gch, ch ):
+        if gch.is_same_group(ch):
             members += 1
             group_levels += gch.level // 2 if IS_NPC(gch) else gch.level
 
@@ -1033,7 +1034,7 @@ def group_gain( ch, victim ):
     lch = ch.leader if ch.leader else ch
 
     for gch in ch.in_room.people:
-        if not is_same_group( gch, ch ) or IS_NPC(gch):
+        if not gch.is_same_group(ch) or IS_NPC(gch):
             continue
 
         #Taken out, add it back if you want it
@@ -1056,8 +1057,8 @@ def group_gain( ch, victim ):
             or (IS_OBJ_STAT(obj, ITEM_ANTI_NEUTRAL) and IS_NEUTRAL(ch) ):
                 act( "You are zapped by $p.", ch, obj, None, TO_CHAR )
                 act( "$n is zapped by $p.",   ch, obj, None, TO_ROOM )
-                obj_from_char( obj )
-                obj_to_room( obj, ch.in_room )
+                obj.from_char()
+                obj.to_room(ch.in_room)
 
  # Compute xp for a kill.
  # Also adjust alignment of killer.
@@ -1246,7 +1247,7 @@ def dam_message( ch, victim, dam, dt, immune ):
 # * Disarm a creature.
 # * Caller must check for successful attack.
 def disarm( ch, victim ):
-    obj = get_eq_char( victim, WEAR_WIELD )
+    obj = victim.get_eq(WEAR_WIELD)
     if not obj:
         ch.send("I think you're taking disarm a little too literally")
         return
@@ -1259,18 +1260,18 @@ def disarm( ch, victim ):
     act( "$n DISARMS you and sends your weapon flying!", ch, None, victim, TO_VICT)
     act( "You disarm $N!",  ch, None, victim, TO_CHAR    )
     act( "$n disarms $N!",  ch, None, victim, TO_NOTVICT )
-    obj_from_char( obj )
+    obj.from_char()
     if IS_OBJ_STAT(obj,ITEM_NODROP) or IS_OBJ_STAT(obj,ITEM_INVENTORY):
-        obj_to_char( obj, victim )
+        obj.to_char(victim)
     else:
-        obj_to_room( obj, victim.in_room )
-        if IS_NPC(victim) and victim.wait == 0 and can_see_obj(victim,obj):
+        obj.to_room(victim.in_room)
+        if IS_NPC(victim) and victim.wait == 0 and victim.can_see_obj(obj):
             get_obj(victim,obj,None)
     return
 
 def do_berserk( self, argument):
     ch = self
-    chance = get_skill(ch, 'berserk')
+    chance = ch.get_skill('berserk')
     if chance== 0 or (IS_NPC(ch) and not IS_SET(ch.off_flags,OFF_BERSERK)) \
     or  (not IS_NPC(ch) and ch.level < skill_table['berserk'].skill_level[ch.guild]):
         ch.send("You turn red in the face, but nothing happens.\n\r")
@@ -1313,14 +1314,14 @@ def do_berserk( self, argument):
         af.bitvector    = AFF_BERSERK
 
         af.location = APPLY_HITROLL
-        affect_to_char(ch,af)
+        ch.affect_add(af)
 
         af.location = APPLY_DAMROLL
-        affect_to_char(ch,af)
+        ch.affect_add(af)
 
         af.modifier = max(10,10 * (ch.level // 5))
         af.location = APPLY_AC
-        affect_to_char(ch,af)
+        ch.affect_add(af)
     else:
         WAIT_STATE(ch,3 * PULSE_VIOLENCE)
         ch.mana -= 25
@@ -1331,7 +1332,7 @@ def do_berserk( self, argument):
 
 def do_bash( ch, argument ):
     arghold, arg = read_word(argument)
-    chance = get_skill(ch,'bash')
+    chance = ch.get_skill('bash')
     if chance == 0 or (IS_NPC(ch) and not IS_SET(ch.off_flags,OFF_BASH)) \
     or (not IS_NPC(ch) and ch.level < skill_table['bash'].skill_level[ch.guild.name] ):
         ch.send("Bashing? What's that?\n\r")
@@ -1343,7 +1344,7 @@ def do_bash( ch, argument ):
             ch.send("But you aren't fighting anyone!\n\r")
             return
     else:
-        victim = get_char_room(ch,arg)
+        victim = ch.get_char_room(arg)
         if not victim:
             ch.send("They aren't here.\n\r")
             return
@@ -1355,7 +1356,7 @@ def do_bash( ch, argument ):
         return
     if is_safe(ch,victim):
         return
-    if IS_NPC(victim) and victim.fighting and not is_same_group(ch,victim.fighting):
+    if IS_NPC(victim) and victim.fighting and not ch.is_same_group(victim.fighting):
         ch.send("Kill stealing is not permitted.\n\r")
         return
     if IS_AFFECTED(ch,AFF_CHARM) and ch.master == victim:
@@ -1373,8 +1374,8 @@ def do_bash( ch, argument ):
 
 
     # stats */
-    chance += get_curr_stat(ch,STAT_STR)
-    chance -= (get_curr_stat(victim,STAT_DEX) * 4) // 3
+    chance += ch.get_curr_stat(STAT_STR)
+    chance -= (victim.get_curr_stat(STAT_DEX) * 4) // 3
     chance -= GET_AC(victim,AC_BASH) // 25
     # speed */
     if IS_SET(ch.off_flags,OFF_FAST) or IS_AFFECTED(ch,AFF_HASTE):
@@ -1383,13 +1384,13 @@ def do_bash( ch, argument ):
         chance -= 30
     # level */
     chance += (ch.level - victim.level)
-    if not IS_NPC(victim) and chance < get_skill(victim,'dodge'):
+    if not IS_NPC(victim) and chance < victim.get_skill('dodge'):
         pass
         #act("$n tries to bash you, but you dodge it.",ch,None,victim,TO_VICT)
         #act("$N dodges your bash, you fall flat on your face.",ch,None,victim,TO_CHAR)
         #WAIT_STATE(ch,skill_table['bash'].beats)
         #return*/
-        chance -= 3 * (get_skill(victim,'dodge') - chance)
+        chance -= 3 * (victim.get_skill('dodge') - chance)
     # now the attack */
     if random.randint(1,99) < chance:
         act("$n sends you sprawling with a powerful bash!", ch,None,victim,TO_VICT)
@@ -1413,7 +1414,7 @@ def do_bash( ch, argument ):
 def do_dirt( self, argument ):
     ch = self
     arghold, arg = read_word(argument)
-    chance = get_skill(ch, 'dirt kicking')
+    chance = ch.get_skill('dirt kicking')
     if chance == 0 or (IS_NPC(ch) and not IS_SET(ch.off_flags,OFF_KICK_DIRT)) \
     or ( not IS_NPC(ch) and ch.level < skill_table['dirt kicking'].skill_level[ch.guild]):
         ch.send("You get your feet dirty.\n\r")
@@ -1424,7 +1425,7 @@ def do_dirt( self, argument ):
             ch.send("But you aren't in combat!\n\r")
             return
     else:
-        victim = get_char_room(ch,arg)
+        victim = ch.get_char_room(arg)
         if victim == None:
             ch.send("They aren't here.\n\r")
             return
@@ -1436,7 +1437,7 @@ def do_dirt( self, argument ):
         return
     if is_safe(ch,victim):
         return
-    if IS_NPC(victim) and victim.fighting != None and not is_same_group(ch,victim.fighting):
+    if IS_NPC(victim) and victim.fighting != None and not ch.is_same_group(victim.fighting):
         ch.send("Kill stealing is not permitted.\n\r")
         return
     if IS_AFFECTED(ch,AFF_CHARM) and ch.master == victim:
@@ -1445,8 +1446,8 @@ def do_dirt( self, argument ):
 
     # modifiers */
     # dexterity */
-    chance += get_curr_stat(ch,STAT_DEX)
-    chance -= 2 * get_curr_stat(victim,STAT_DEX)
+    chance += ch.get_curr_stat(STAT_DEX)
+    chance -= 2 * victim.get_curr_stat(STAT_DEX)
 
     # speed  */
     if IS_SET(ch.off_flags,OFF_FAST) or IS_AFFECTED(ch,AFF_HASTE):
@@ -1491,7 +1492,7 @@ def do_dirt( self, argument ):
         af.location = APPLY_HITROLL
         af.modifier = -4
         af.bitvector    = AFF_BLIND
-        affect_to_char(victim,af)
+        victim.affect_add(af)
     else:
         damage(ch,victim,0,'dirt kicking',DAM_NONE,True)
         check_improve(ch,'dirt kicking',False,2)
@@ -1500,8 +1501,8 @@ def do_dirt( self, argument ):
 
 def do_trip( self, argument ):
     ch = self
-    arghold, arg = one_argument(argument)
-    chance = get_skill(ch, 'trip')
+    arghold, arg = read_word(argument)
+    chance = ch.get_skill('trip')
     if chance == 0 or (IS_NPC(ch) and not IS_SET(ch.off_flags,OFF_TRIP)) \
     or ( not IS_NPC(ch) and ch.level < skill_table['trip'].skill_level[ch.guild]):
         ch.send("Tripping?  What's that?\n\r")
@@ -1512,13 +1513,13 @@ def do_trip( self, argument ):
             ch.send("But you aren't fighting anyone!\n\r")
             return
     else:
-        victim = get_char_room(ch,arg)
+        victim = ch.get_char_room(arg)
         if victim == None:
             ch.send("They aren't here.\n\r")
             return
     if is_safe(ch,victim):
         return
-    if IS_NPC(victim) and victim.fighting and not is_same_group(ch,victim.fighting):
+    if IS_NPC(victim) and victim.fighting and not ch.is_same_group(victim.fighting):
         ch.send("Kill stealing is not permitted.\n\r")
         return
     if IS_AFFECTED(victim,AFF_FLYING):
@@ -1542,8 +1543,8 @@ def do_trip( self, argument ):
         chance += (ch.size - victim.size) * 10  # bigger = harder to trip */
 
     # dex */
-    chance += get_curr_stat(ch,STAT_DEX)
-    chance -= get_curr_stat(victim,STAT_DEX) * 3 // 2
+    chance += ch.get_curr_stat(STAT_DEX)
+    chance -= victim.get_curr_stat(STAT_DEX) * 3 // 2
 
     # speed */
     if IS_SET(ch.off_flags,OFF_FAST) or IS_AFFECTED(ch,AFF_HASTE):
@@ -1576,7 +1577,7 @@ def do_kill( self, argument ):
     if not arg:
         ch.send("Kill whom?\n\r")
         return
-    victim = get_char_room( ch, arg )
+    victim = ch.get_char_room(arg)
     if victim == None:
         ch.send("They aren't here.\n\r")
         return
@@ -1592,7 +1593,7 @@ def do_kill( self, argument ):
         return
     if is_safe( ch, victim ):
         return
-    if victim.fighting and not is_same_group(ch,victim.fighting):
+    if victim.fighting and not ch.is_same_group(victim.fighting):
         ch.send("Kill stealing is not permitted.\n\r")
         return
     if IS_AFFECTED(ch, AFF_CHARM) and ch.master == victim:
@@ -1621,7 +1622,7 @@ def do_murder( self, argument ):
 
     if IS_AFFECTED(ch,AFF_CHARM) or (IS_NPC(ch) and IS_SET(ch.act,ACT_PET)):
         return
-    victim = get_char_room( ch, arg )
+    victim = ch.get_char_room(arg)
     if victim == None:
         ch.send("They aren't here.\n\r")
         return
@@ -1630,7 +1631,7 @@ def do_murder( self, argument ):
         return
     if is_safe( ch, victim ):
         return
-    if IS_NPC(victim) and victim.fighting and not is_same_group(ch,victim.fighting):
+    if IS_NPC(victim) and victim.fighting and not ch.is_same_group(victim.fighting):
         ch.send("Kill stealing is not permitted.\n\r")
         return
     if IS_AFFECTED(ch, AFF_CHARM) and ch.master == victim:
@@ -1662,7 +1663,7 @@ def do_backstab( self, argument ):
         ch.send("You're facing the wrong end.\n\r")
         return
     else:
-        victim = get_char_room(ch,arg)
+        victim = ch.get_char_room(arg)
         if not victim:
             ch.send("They aren't here.\n\r")
             return
@@ -1673,10 +1674,10 @@ def do_backstab( self, argument ):
         if is_safe( ch, victim ):
             return
 
-        if IS_NPC(victim) and victim.fighting and not is_same_group(ch,victim.fighting):
+        if IS_NPC(victim) and victim.fighting and not ch.is_same_group(victim.fighting):
             ch.send("Kill stealing is not permitted.\n\r")
             return
-        obj = get_eq_char( ch, WEAR_WIELD )
+        obj = ch.get_eq(WEAR_WIELD)
         if obj:
             ch.send("You need to wield a weapon to backstab.\n\r")
             return
@@ -1685,8 +1686,8 @@ def do_backstab( self, argument ):
             return
         check_killer( ch, victim )
         WAIT_STATE( ch, skill_table['backstab'].beats )
-        if random.randint(1,99) < get_skill(ch,'backstab') \
-        or ( get_skill(ch,'backstab') >= 2 and not IS_AWAKE(victim) ):
+        if random.randint(1,99) < ch.get_skill('backstab') \
+        or ( ch.get_skill('backstab') >= 2 and not IS_AWAKE(victim) ):
             check_improve(ch,'backstab',True,1)
             multi_hit( ch, victim, 'backstab' )
         else:
@@ -1739,7 +1740,7 @@ def do_rescue( self, argument ):
     if not arg:
         ch.send("Rescue whom?\n\r")
         return
-    victim = get_char_room(ch,arg)
+    victim = ch.get_char_room(arg)
     if not victim:
         ch.send("They aren't here.\n\r")
         return
@@ -1756,11 +1757,11 @@ def do_rescue( self, argument ):
     if not fch:
         ch.send("That person is not fighting right now.\n\r")
         return
-    if IS_NPC(fch) and not is_same_group(ch,victim):
+    if IS_NPC(fch) and not ch.is_same_group(victim):
         ch.send("Kill stealing is not permitted.\n\r")
         return
     WAIT_STATE( ch, skill_table['rescue'].beats )
-    if random.randint(1,99) > get_skill(ch,'rescue'):
+    if random.randint(1,99) > ch.get_skill('rescue'):
         ch.send("You fail the rescue.\n\r")
         check_improve(ch,'rescue',False,1)
         return
@@ -1790,7 +1791,7 @@ def do_kick( self, argument ):
         return
 
     WAIT_STATE( ch, skill_table['kick'].beats )
-    if get_skill(ch,'kick') > random.randint(1,99):
+    if ch.get_skill('kick') > random.randint(1,99):
         damage(ch,victim,random.randint( 1, ch.level ), 'kick',DAM_BASH,True)
         check_improve(ch,'kick',True,1)
     else:
@@ -1801,12 +1802,12 @@ def do_kick( self, argument ):
 
 def do_disarm( ch, argument ):
     hth = 0
-    chance = get_skill(ch,'disarm')
+    chance = ch.get_skill('disarm')
     if chance == 0:
         ch.send("You don't know how to disarm opponents.\n\r")
         return
-    hth = get_skill(ch,'hand to hand')
-    if not get_eq_char( ch, WEAR_WIELD ) \
+    hth = ch.get_skill('hand to hand')
+    if not ch.get_eq(WEAR_WIELD) \
     and hth == 0 or (IS_NPC(ch) and not IS_SET(ch.off_flags,OFF_DISARM)):
         ch.send("You must wield a weapon to disarm.\n\r")
         return
@@ -1814,20 +1815,20 @@ def do_disarm( ch, argument ):
     if not victim:
         ch.send("You aren't fighting anyone.\n\r")
         return
-    obj = get_eq_char( victim, WEAR_WIELD )
+    obj = victim.get_eq(WEAR_WIELD)
     if not obj:
         ch.send("Your opponent is not wielding a weapon.\n\r")
         return
 
     # find weapon skills */
-    ch_weapon = get_weapon_skill(ch,get_weapon_sn(ch))
-    vict_weapon = get_weapon_skill(victim,get_weapon_sn(victim))
-    ch_vict_weapon = get_weapon_skill(ch,get_weapon_sn(victim))
+    ch_weapon = ch.get_weapon_skill(ch.get_weapon_sn())
+    vict_weapon = victim.get_weapon_skill(victim.get_weapon_sn())
+    ch_vict_weapon = ch.get_weapon_skill(victim.get_weapon_sn())
 
     # modifiers */
 
     # skill */
-    if get_eq_char(ch,WEAR_WIELD) == None:
+    if ch.get_eq(WEAR_WIELD) == None:
         chance = chance * hth // 150
     else:
         chance = chance * ch_weapon // 100
@@ -1835,8 +1836,8 @@ def do_disarm( ch, argument ):
     chance += (ch_vict_weapon // 2 - vict_weapon) // 2 
 
     # dex vs. strength */
-    chance += get_curr_stat(ch,STAT_DEX)
-    chance -= 2 * get_curr_stat(victim,STAT_STR)
+    chance += ch.get_curr_stat(STAT_DEX)
+    chance -= 2 * victim.get_curr_stat(STAT_STR)
 
     # level */
     chance += (ch.level - victim.level) * 2
@@ -1864,14 +1865,14 @@ def do_slay( ch, argument ):
     if not arg:
         ch.send("Slay whom?\n\r")
         return
-    victim = get_char_room( ch, arg )
+    victim = ch.get_char_room(arg)
     if not victim:
         ch.send("They aren't here.\n\r")
         return
     if ch == victim:
         ch.send("Suicide is a mortal sin.\n\r")
         return
-    if not IS_NPC(victim) and victim.level >= get_trust(ch):
+    if not IS_NPC(victim) and victim.level >= ch.get_trust():
         ch.send("You failed.\n\r")
         return
     act( "You slay $M in cold blood!",  ch, None, victim, TO_CHAR    )

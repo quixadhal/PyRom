@@ -86,7 +86,7 @@ def acid_effect(vo, level, dam, target):
             act(msg,obj.in_room.people,obj,None,TO_ALL)
         if obj.item_type == ITEM_ARMOR:  # etch it */
             af_found = False
-            affect_enchant(obj)
+            obj.affect_enchant()
             for paf in obj.affected:
                 if paf.location == APPLY_AC:
                     af_found = True
@@ -94,17 +94,16 @@ def acid_effect(vo, level, dam, target):
                     paf.modifier += 1
                     paf.level = max(paf.level,level)
                     break
-
      
             if not af_found:
                 # needs a new affect */
                 paf = AFFECT_DATA()
-                paf.type       = -1
-                paf.level      = level
-                paf.duration   = -1
-                paf.location   = APPLY_AC
-                paf.modifier   =  1
-                paf.bitvector  = 0
+                paf.type = -1
+                paf.level = level
+                paf.duration = -1
+                paf.location = APPLY_AC
+                paf.modifier =  1
+                paf.bitvector = 0
                 obj.affected.append(paf)
 
             if obj.carried_by and obj.wear_loc != WEAR_NONE:
@@ -113,16 +112,16 @@ def acid_effect(vo, level, dam, target):
         # get rid of the object */
         if obj.contains:  # dump contents */
             for t_obj in obj.contains[:]:
-                obj_from_obj(t_obj)
+                t_obj.from_obj()
                 if obj.in_room :
-                    obj_to_room(t_obj,obj.in_room)
+                    t_obj.to_room(obj.in_room)
                 elif obj.carried_by:
-                    obj_to_room(t_obj,obj.carried_by.in_room)
+                    t_obj.to_room(obj.carried_by.in_room)
                 else:
-                    extract_obj(t_obj)
+                    t_obj.extract()
                     continue
                 acid_effect(t_obj,level/2,dam/2,TARGET_OBJ)
-            extract_obj(obj)
+            obj.extract()
 
 
 def cold_effect( vo, level, dam, target):
@@ -145,7 +144,7 @@ def cold_effect( vo, level, dam, target):
             af.location  = APPLY_STR
             af.modifier  = -1
             af.bitvector = 0
-            affect_join( victim, af )
+            victim.affect_join(af)
 
         # hunger! (warmth sucked out */
         if not IS_NPC(victim):
@@ -188,7 +187,7 @@ def cold_effect( vo, level, dam, target):
             act(msg,obj.carried_by,obj,None,TO_ALL)
         elif obj.in_room and obj.in_room.people:
             act(msg,obj.in_room.people,obj,None,TO_ALL)
-        extract_obj(obj)
+        obj.extract()
         return
 
 def fire_effect(vo, level, dam, target):
@@ -211,7 +210,7 @@ def fire_effect(vo, level, dam, target):
             af.location     = APPLY_HITROLL
             af.modifier     = -4
             af.bitvector    = AFF_BLIND
-            affect_to_char(victim,af)
+            victim.affect_add(af)
         # getting thirsty */
         if not IS_NPC(victim):
             gain_condition(victim,COND_THIRST,dam/20)
@@ -270,17 +269,17 @@ def fire_effect(vo, level, dam, target):
         if obj.contains:
             # dump the contents */
             for t_obj in obj.contains[:]:
-                obj_from_obj(t_obj)
+                t_obj.from_obj()
                 if obj.in_room:
-                    obj_to_room(t_obj,obj.in_room)
+                    t_obj.to_room(obj.in_room)
                 elif obj.carried_by:
-                    obj_to_room(t_obj,obj.carried_by.in_room)
+                    t_obj.to_room(obj.carried_by.in_room)
                 else:
-                    extract_obj(t_obj)
+                    t_obj.extract()
                     continue
                 fire_effect(t_obj,level/2,dam/2,TARGET_OBJ)
 
-        extract_obj( obj )
+        obj.extract()
         return
 
 def poison_effect( vo, level, dam, target):
@@ -306,7 +305,7 @@ def poison_effect( vo, level, dam, target):
             af.location  = APPLY_STR
             af.modifier  = -1
             af.bitvector = AFF_POISON
-            affect_join( victim, af )
+            victim.affect_join(af)
     # equipment */
         for obj in victim.carrying[:]:
             poison_effect(obj,level,dam,TARGET_OBJ)
@@ -393,5 +392,5 @@ def shock_effect( vo, level, dam, target):
         elif obj.in_room and obj.in_room.people:
             act(msg,obj.in_room.people,obj,None,TO_ALL)
 
-        extract_obj(obj)
+        obj.extract()
         return

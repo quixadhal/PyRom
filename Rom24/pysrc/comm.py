@@ -38,7 +38,6 @@ from merc import descriptor_list, greeting_list, POS_RESTING
 from db import boot_db
 from nanny import *
 from alias import *
-from handler import can_see_room, can_see
 
 def process_input():
     for d in descriptor_list:
@@ -60,7 +59,7 @@ def process_output(self):
     if ch and self.is_connected(con_playing) and self.send_buffer:
         #/* battle prompt */
         victim = ch.fighting
-        if victim and can_see(ch,victim):
+        if victim and ch.can_see(victim):
             percent = 0
             wound = ""
             if victim.max_hit > 0:
@@ -165,7 +164,7 @@ def bust_a_prompt( ch ):
     for door, pexit in enumerate(ch.in_room.exit):
         if pexit \
         and pexit.to_room \
-        and (can_see_room(ch,pexit.to_room) or (IS_AFFECTED(ch,AFF_INFRARED) \
+        and (ch.can_see_room(pexit.to_room) or (IS_AFFECTED(ch,AFF_INFRARED) \
         and not IS_AFFECTED(ch,AFF_BLIND))) \
         and not IS_SET(pexit.exit_info,EX_CLOSED):
             found = True
@@ -182,7 +181,7 @@ def bust_a_prompt( ch ):
     replace['%v'] = "%d" % ch.move
     replace['%V'] = "%d" % ch.max_move
     replace['%x'] = "%d" % ch.exp
-    replace['%X'] = "%d" % (0 if IS_NPC(ch) else (ch.level + 1) * exp_per_level(ch,ch.pcdata.points) - ch.exp)
+    replace['%X'] = "%d" % (0 if IS_NPC(ch) else (ch.level + 1) * ch.exp_per_level(ch.pcdata.points) - ch.exp)
     replace['%g'] = "%ld" % ch.gold
     replace['%s'] = "%ld" % ch.silver
     if ch.level > 9:
@@ -192,7 +191,7 @@ def bust_a_prompt( ch ):
     
     if ch.in_room:
         if ( not IS_NPC(ch) and IS_SET(ch.act,PLR_HOLYLIGHT)) or \
-        (not IS_AFFECTED(ch,AFF_BLIND) and not room_is_dark( ch.in_room )):
+        (not IS_AFFECTED(ch,AFF_BLIND) and not ch.in_room.is_dark()):
             replace['%r'] = ch.in_room.name 
         else: 
             replace['%r'] = "darkness"

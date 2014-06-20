@@ -37,7 +37,7 @@ from merc import *
 from handler import *
 from special import spec_table
 from tables import sex_table, position_table
-from const import attack_table
+import const
 
 def boot_db():
     print ("Loading Areas...")
@@ -161,7 +161,7 @@ def load_mobiles(area):
         area = read_forward(area)
         area, mob.damage[2] = read_int(area)
         area, mob.dam_type = read_word(area,False)
-        mob.dam_type = name_lookup(attack_table, mob.dam_type)
+        mob.dam_type = name_lookup(const.attack_table, mob.dam_type)
         area, mob.ac[0] = read_int(area)
         area, mob.ac[1] = read_int(area)
         area, mob.ac[2] = read_int(area)
@@ -213,7 +213,7 @@ def load_objects(area):
             area, obj.value[1] = read_int(area)
             area, obj.value[2] = read_int(area)
             area, obj.value[3] = read_word(area,False)
-            obj.value[3] = name_lookup(attack_table, obj.value[3])
+            obj.value[3] = name_lookup(const.attack_table, obj.value[3])
             area, obj.value[4] = read_flags(area)
         elif obj.item_type == ITEM_CONTAINER:
             area, obj.value[0] = read_int(area)
@@ -572,7 +572,7 @@ def reset_area( pArea ):
             # set area */
             mob.zone = pRoomIndex.area
 
-            char_to_room( mob, pRoomIndex )
+            mob.to_room(pRoomIndex)
             level = min( 0, max(mob.level - 2, LEVEL_HERO - 1 ) )
             last  = True
 
@@ -593,7 +593,7 @@ def reset_area( pArea ):
 
             obj = create_object( pObjIndex, min(number_fuzzy(level), LEVEL_HERO - 1) )
             obj.cost = 0
-            obj_to_room( obj, pRoomIndex )
+            obj.to_room(pRoomIndex)
             last = True
             continue
 
@@ -626,7 +626,7 @@ def reset_area( pArea ):
             count = count_obj_list(pObjIndex, obj_to.contains)
             while count < pReset.arg4:
                 obj = create_object( pObjIndex, number_fuzzy(obj_to.level) )
-                obj_to_obj( obj, obj_to )
+                obj.to_obj(obj_to)
                 count += 1
                 if pObjIndex.count >= limit:
                     break
@@ -689,9 +689,9 @@ def reset_area( pArea ):
                     mob.short_descr,mob.pIndexData.vnum,mob.level))
                 else:
                     continue
-            obj_to_char( obj, mob )
+            obj.to_char(mob)
             if pReset.command == 'E':
-                equip_char( mob, obj, pReset.arg3 )
+                mob.equip(obj, pReset.arg3)
                 last = True
                 continue
 
@@ -843,7 +843,7 @@ def create_mobile( pMobIndex ):
             af.location  = APPLY_NONE
             af.modifier  = 0
             af.bitvector = AFF_SANCTUARY
-            affect_to_char( mob, af )
+            mob.affect_add(af)
 
         if IS_AFFECTED(mob,AFF_HASTE):
             af.where     = TO_AFFECTS
@@ -853,7 +853,7 @@ def create_mobile( pMobIndex ):
             af.location  = APPLY_DEX
             af.modifier  = 1 + (mob.level >= 18) + (mob.level >= 25) + (mob.level >= 32)
             af.bitvector = AFF_HASTE
-            affect_to_char( mob, af )
+            mob.affect_add(af)
 
         if IS_AFFECTED(mob,AFF_PROTECT_EVIL):
             af.where     = TO_AFFECTS
@@ -863,7 +863,7 @@ def create_mobile( pMobIndex ):
             af.location  = APPLY_SAVES
             af.modifier  = -1
             af.bitvector = AFF_PROTECT_EVIL
-            affect_to_char(mob,af)
+            mob.affect_add(af)
 
         if IS_AFFECTED(mob,AFF_PROTECT_GOOD):
             af.where     = TO_AFFECTS
@@ -873,7 +873,7 @@ def create_mobile( pMobIndex ):
             af.location  = APPLY_SAVES
             af.modifier  = -1
             af.bitvector = AFF_PROTECT_GOOD
-            affect_to_char(mob,af)
+            mob.affect_add(af)
     else: # read in old format and convert */
         mob.act        = pMobIndex.act
         mob.affected_by    = pMobIndex.affected_by
@@ -980,7 +980,7 @@ def clone_mobile(parent, clone):
 
     # now add the affects */
     for paf in parent.affected:
-        affect_to_char(clone,paf)
+        clone.affect_add(paf)
 
 # * Create an instance of an object.
 def create_object( pObjIndex, level ):
@@ -1075,7 +1075,7 @@ def create_object( pObjIndex, level ):
   
     for paf in pObjIndex.affected:
         if paf.location == APPLY_SPELL_AFFECT:
-            affect_to_obj(obj,paf)
+            obj.affect_add(paf)
     obj.extra_descr = pObjIndex.extra_descr
     object_list.append(obj)
     return obj
@@ -1107,7 +1107,7 @@ def clone_object(parent, clone):
     clone.enchanted    = parent.enchanted
   
     for paf in parent.affected:
-        affect_to_obj(clone,paf)
+        clone.affect_add(paf)
 
     # extended desc */
     for ed in parent.extra_descr:
@@ -1141,9 +1141,41 @@ def clear_char( ch ):
         ch.perm_stat[i] = 13 
         ch.mod_stat[i] = 0
     return
-#
+
+# * Create a 'money' obj.
+def create_money(gold, silver):
+    if gold < 0 or silver < 0 or (gold == 0 and silver == 0):
+        print ("BUG: Create_money: zero or negative money. %d " % min(gold,silver))
+        gold = max(1,gold)
+        silver = max(1,silver)
+
+    if gold == 0 and silver == 1:
+        obj = create_object(obj_index_hash[OBJ_VNUM_SILVER_ONE], 0)
+    elif gold == 1 and silver == 0:
+        obj = create_object(obj_index_hash[OBJ_VNUM_GOLD_ONE], 0)
+    elif silver == 0:
+        obj = create_object(obj_index_hash[OBJ_VNUM_GOLD_SOME], 0)
+        obj.short_descr += " %d" % gold
+        obj.value[1] = gold
+        obj.cost = gold
+        obj.weight = gold/5
+    elif gold == 0:
+        obj = create_object(obj_index_hash[OBJ_VNUM_SILVER_SOME], 0)
+        obj.short_descr += " %d" % silver
+        obj.value[0] = silver
+        obj.cost = silver
+        obj.weight = silver/20
+    else:
+        obj = create_object(obj_index_hash[OBJ_VNUM_COINS], 0)
+        obj.short_descr += " %d %d" % (gold, silver)
+        obj.value[0] = silver
+        obj.value[1] = gold
+        obj.cost = 100 * gold + silver
+        obj.weight = gold / 5 + silver / 20
+    return obj
+
 # * Get an extra description from a list.
-def get_extra_descr( name, edlist ):
+def get_extra_descr(name, edlist):
     if not edlist: return None
     for ed in edlist:
         if name.lower() in ed.keyword:

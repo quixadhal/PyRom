@@ -32,12 +32,9 @@
  ************/
 """
 from merc import *
-from handler import can_see
-from magic import (spell_armor, spell_bless, spell_refresh, spell_poison,
-                   spell_cure_blindness, spell_cure_light, spell_cure_poison,
-                   spell_cure_disease)
-from const import skill_table
-from fight import multi_hit
+import magic
+import const
+import fight
 
 def spec_troll_member( ch ):
     if not IS_AWAKE(ch) or IS_AFFECTED(ch,AFF_CALM) or ch.in_room == None  \
@@ -70,7 +67,7 @@ def spec_troll_member( ch ):
                  "$n says 'Let's rock.'"]
     message = random.choice(messages)
     act(message,ch,None,victim,TO_ALL)
-    multi_hit( ch, victim, TYPE_UNDEFINED )
+    fight.multi_hit( ch, victim, TYPE_UNDEFINED )
     return True
 
 def spec_ogre_member( ch ):
@@ -122,8 +119,8 @@ def spec_patrolman(ch):
 
     if victim == None or (IS_NPC(victim) and victim.spec_fun == ch.spec_fun):
         return False
-    neck1 = get_eq_char(ch,WEAR_NECK_1)
-    neck2 = get_eq_char(ch,WEAR_NECK_2)
+    neck1 = ch.get_eq(WEAR_NECK_1)
+    neck2 = ch.get_eq(WEAR_NECK_2)
     if (neck1 and neck1.pIndexData.vnum == OBJ_VNUM_WHISTLE) or ( neck2 and neck2.pIndexData.vnum == OBJ_VNUM_WHISTLE):
         act("You blow down hard on $p.",ch,obj,None,TO_CHAR)
         act("$n blows on $p, ***WHEEEEEEEEEEEET***",ch,obj,None,TO_ROOM)
@@ -193,9 +190,9 @@ def dragon( ch, spell_name ):
 
     if victim == None:
         return False
-    if spell_name not in skill_table:
+    if spell_name not in const.skill_table:
         return False
-    skill_table[spell_name].spell_fun( sn, ch.level, ch, victim, TARGET_CHAR)
+    const.skill_table[spell_name].spell_fun( sn, ch.level, ch, victim, TARGET_CHAR)
     return True
 # Special procedures for mobiles.
 
@@ -222,9 +219,9 @@ def spec_breath_gas( ch ):
     if ch.position != POS_FIGHTING:
         return False
 
-    if "gas breath" not in skill_table:
+    if "gas breath" not in const.skill_table:
         return False
-    skill_table["gas breath"].spell_fun( sn, ch.level, ch, None,TARGET_CHAR)
+    const.skill_table["gas breath"].spell_fun( sn, ch.level, ch, None,TARGET_CHAR)
     return True
 
 def spec_breath_lightning( ch ):
@@ -235,7 +232,7 @@ def spec_cast_adept( ch ):
         return False
     victim = None
     for vch in ch.in_room.people[:]:
-        if vch != ch and can_see( ch, vch ) and random.randint(0, 1 ) == 0 and not IS_NPC(vch) and vch.level < 11:
+        if vch != ch and ch.can_see(vch) and random.randint(0, 1 ) == 0 and not IS_NPC(vch) and vch.level < 11:
             victim = vch
             break
 
@@ -245,31 +242,31 @@ def spec_cast_adept( ch ):
     num = random.randint(1,15)
     if num ==  0:
         act( "$n utters the word 'abrazak'.", ch, None, None, TO_ROOM )
-        spell_armor( skill_table["armor"], ch.level,ch,victim,TARGET_CHAR)
+        magic.spell_armor( const.skill_table["armor"], ch.level,ch,victim,TARGET_CHAR)
         return True
     elif num ==   1:
         act( "$n utters the word 'fido'.", ch, None, None, TO_ROOM )
-        spell_bless( skill_table["bless"], ch.level,ch,victim,TARGET_CHAR)
+        magic.spell_bless( const.skill_table["bless"], ch.level,ch,victim,TARGET_CHAR)
         return True
     elif num == 2:
         act("$n utters the words 'judicandus noselacri'.",ch,None,None,TO_ROOM)
-        spell_cure_blindness( skill_table["cure blindness"], ch.level, ch, victim,TARGET_CHAR)
+        magic.spell_cure_blindness( const.skill_table["cure blindness"], ch.level, ch, victim,TARGET_CHAR)
         return True
     elif num == 3:
         act("$n utters the words 'judicandus dies'.", ch,None, None, TO_ROOM )
-        spell_cure_light( skill_table["cure light"], ch.level, ch, victim,TARGET_CHAR)
+        magic.spell_cure_light( const.skill_table["cure light"], ch.level, ch, victim,TARGET_CHAR)
         return True
     elif num == 4:
         act( "$n utters the words 'judicandus sausabru'.",ch,None,None,TO_ROOM)
-        spell_cure_poison( skill_table["cure poison"], ch.level, ch, victim,TARGET_CHAR)
+        magic.spell_cure_poison( const.skill_table["cure poison"], ch.level, ch, victim,TARGET_CHAR)
         return True
     elif num == 5:
         act("$n utters the word 'candusima'.", ch, None, None, TO_ROOM )
-        spell_refresh( skill_table["refresh"],ch.level,ch,victim,TARGET_CHAR)
+        magic.spell_refresh( const.skill_table["refresh"],ch.level,ch,victim,TARGET_CHAR)
         return True
     elif num == 6:
         act("$n utters the words 'judicandus eugzagz'.",ch,None,None,TO_ROOM)
-        spell_cure_disease( skill_table["cure disease"], ch.level,ch,victim,TARGET_CHAR)
+        magic.spell_cure_disease( const.skill_table["cure disease"], ch.level,ch,victim,TARGET_CHAR)
         return False
 
 def spec_cast_cleric( ch ):
@@ -323,9 +320,9 @@ def spec_cast_cleric( ch ):
         if ch.level >= min_level:
             break
 
-    if spell not in skill_table:
+    if spell not in const.skill_table:
         return False
-    skill_table[spell].spell_fun( sn, ch.level, ch, victim,TARGET_CHAR)
+    const.skill_table[spell].spell_fun( sn, ch.level, ch, victim,TARGET_CHAR)
     return True
 
 def spec_cast_judge( ch ):
@@ -342,9 +339,9 @@ def spec_cast_judge( ch ):
         return False
  
     spell = "high explosive"
-    if spell not in skill_table:
+    if spell not in const.skill_table:
         return False
-    skill_table[spell].spell_fun( sn, ch.level, ch, victim,TARGET_CHAR)
+    const.skill_table[spell].spell_fun( sn, ch.level, ch, victim,TARGET_CHAR)
     return True
 
 def spec_cast_mage( ch ):
@@ -395,9 +392,9 @@ def spec_cast_mage( ch ):
         if ch.level >= min_level:
             break
 
-    if spell not in skill_table:
+    if spell not in const.skill_table:
         return False
-    skill_table[spell].spell_fun( sn, ch.level, ch, victim,TARGET_CHAR)
+    const.skill_table[spell].spell_fun( sn, ch.level, ch, victim,TARGET_CHAR)
     return True
 
 def spec_cast_undead( ch ):
@@ -446,9 +443,9 @@ def spec_cast_undead( ch ):
 
         if ch.level >= min_level:
             break
-    if spell not in skill_table:
+    if spell not in const.skill_table:
         return False
-    skill_table[spell].spell_fun( sn, ch.level, ch, victim,TARGET_CHAR)
+    const.skill_table[spell].spell_fun( sn, ch.level, ch, victim,TARGET_CHAR)
     return True
 
 def spec_executioner( ch ):
@@ -458,11 +455,11 @@ def spec_executioner( ch ):
     crime = ""
     victim = None
     for vch in ch.in_room.people[:]:
-        if not IS_NPC(vch) and IS_SET(vch.act, PLR_KILLER) and can_see(ch,vch):
+        if not IS_NPC(vch) and IS_SET(vch.act, PLR_KILLER) and ch.can_see(vch):
             victim = vch
             crime = "KILLER"
 
-        if not IS_NPC(vch) and IS_SET(vch.act, PLR_THIEF) and can_see(ch,vch):
+        if not IS_NPC(vch) and IS_SET(vch.act, PLR_THIEF) and ch.can_see(vch):
             victim = vch
             crime = "THIEF"
 
@@ -483,10 +480,10 @@ def spec_fido( ch ):
             continue
         act( "$n savagely devours a corpse.", ch, None, None, TO_ROOM )
         for obj in corpse.contains[:]:
-            obj_from_obj( obj )
-            obj_to_room( obj, ch.in_room )
+            obj.from_obj()
+            obj.to_room(ch.in_room)
 
-        extract_obj( corpse )
+        corpse.extract()
         return True
     return False
 
@@ -499,12 +496,12 @@ def spec_guard( ch ):
     crime = ""
     victim = None
     for vch in ch.in_room.people:
-        if not IS_NPC(vch) and IS_SET(vch.act, PLR_KILLER) and can_see(ch,vch):
+        if not IS_NPC(vch) and IS_SET(vch.act, PLR_KILLER) and ch.can_see(vch):
             victim = vch
             crime = "KILLER"
             break
 
-        if not IS_NPC(vch) and IS_SET(vch.act, PLR_THIEF) and can_see(ch,vch):
+        if not IS_NPC(vch) and IS_SET(vch.act, PLR_THIEF) and ch.can_see(vch):
             crime = "THIEF" 
             victim = vch
             break
@@ -535,8 +532,8 @@ def spec_janitor( ch ):
             continue
         if trash.item_type == ITEM_DRINK_CON or trash.item_type == ITEM_TRASH or trash.cost < 10:
             act( "$n picks up some trash.", ch, None, None, TO_ROOM )
-            obj_from_room( trash )
-            obj_to_char( trash, ch )
+            trash.from_room()
+            trash.to_char(ch)
             return True
     return False
 
@@ -605,7 +602,7 @@ def spec_poison( ch ):
     act( "You bite $N!",  ch, None, victim, TO_CHAR    )
     act( "$n bites $N!",  ch, None, victim, TO_NOTVICT )
     act( "$n bites you!", ch, None, victim, TO_VICT    )
-    spell_poison( skill_table['poison'], ch.level, ch, victim,TARGET_CHAR)
+    spell_poison( const.skill_table['poison'], ch.level, ch, victim,TARGET_CHAR)
     return True
 
 def spec_thief( ch ):
@@ -613,7 +610,7 @@ def spec_thief( ch ):
         return False
 
     for victim in ch.in_room.people:
-        if IS_NPC(victim) or victim.level >= LEVEL_IMMORTAL or random.randint(0,31) != 0 or not can_see(ch,victim):
+        if IS_NPC(victim) or victim.level >= LEVEL_IMMORTAL or random.randint(0,31) != 0 or not ch.can_see(victim):
             continue
 
         if IS_AWAKE(victim) and random.randint( 0, ch.level ) == 0:

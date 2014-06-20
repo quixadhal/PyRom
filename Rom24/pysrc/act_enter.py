@@ -38,7 +38,7 @@ def get_random_room(ch):
     room = None
     while True:
         room = random.choice(room_index_hash)
-        if can_see_room(ch,room) and not room_is_private(room) \
+        if ch.can_see_room(room) and not room.is_private() \
         and not IS_SET(room.room_flags, ROOM_PRIVATE) \
         and not IS_SET(room.room_flags, ROOM_SOLITARY) \
         and not IS_SET(room.room_flags, ROOM_SAFE) \
@@ -57,7 +57,7 @@ def do_enter(self, argument):
     # nifty portal stuff */
     if argument:
         old_room = ch.in_room
-        portal = get_obj_list( ch, argument,  ch.in_room.contents )
+        portal = ch.get_obj_list(argument, ch.in_room.contents)
         if not portal:
             ch.send("You don't see that here.\n")
             return
@@ -78,8 +78,8 @@ def do_enter(self, argument):
         else:
             location = get_room_index(portal.value[3])
         if not location or location == old_room \
-        or  not can_see_room(ch,location) \
-        or (room_is_private(location) and not IS_TRUSTED(ch,IMPLEMENTOR)):
+        or  not ch.can_see_room(location) \
+        or (location.is_private() and not IS_TRUSTED(ch,IMPLEMENTOR)):
             act("$p doesn't seem to go anywhere.",ch,portal,None,TO_CHAR)
             return
         if IS_NPC(ch) and IS_SET(ch.act,ACT_AGGRESSIVE) \
@@ -92,11 +92,11 @@ def do_enter(self, argument):
             act("You enter $p.",ch,portal,None,TO_CHAR)
         else:
             act("You walk through $p and find yourself somewhere else:...",ch,portal,None,TO_CHAR) 
-        char_from_room(ch)
-        char_to_room(ch, location)
+        ch.from_room()
+        ch.to_room(location)
         if IS_SET(portal.value[2], GATE_GOWITH): # take the gate along */
-            obj_from_room(portal)
-            obj_to_room(portal,location)
+            portal.from_room()
+            portal.to_room(location)
         if IS_SET(portal.value[2], GATE_NORMAL_EXIT):
             act("$n has arrived.",ch,portal,None,TO_ROOM)
         else:
@@ -131,7 +131,7 @@ def do_enter(self, argument):
             elif old_room.people:
                 act("$p fades out of existence.", old_room.people,portal,None,TO_CHAR)
                 act("$p fades out of existence.", old_room.people,portal,None,TO_ROOM)
-            extract_obj(portal)
+            portal.extract()
         return
     ch.send("Nope, can't do it.\n")
     return

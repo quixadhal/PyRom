@@ -36,11 +36,10 @@ import json
 import errno
 from collections import OrderedDict
 from merc import *
-from const import race_table, guild_table
 from settings import PLAYER_DIR
-from handler import obj_to_char, obj_to_obj
 from tables import clan_table
 from db import create_object
+import const
 
 def save_char_obj(ch):
     if IS_NPC(ch):
@@ -193,10 +192,10 @@ def fread_char(chdict, ch):
     ch.long_descr = chdict["LnD"]
     ch.description = chdict["Desc"]
     ch.prompt = chdict["Prom"]
-    ch.race = race_table[chdict["Race"]]
+    ch.race = const.race_table[chdict["Race"]]
     ch.clan = clan_table[chdict["Clan"]]
     ch.sex = int(chdict["Sex"])
-    ch.guild = guild_table[chdict["Cla"]]
+    ch.guild = const.guild_table[chdict["Cla"]]
     ch.level = chdict["Levl"]
     ch.trust = chdict["Tru"]
     ch.played = chdict["Plyd"]
@@ -247,9 +246,9 @@ def fread_objs(carrying, objects, contained_by=None):
     for odict in objects:
         obj = fread_obj(carrying, odict)
         if not contained_by:
-            obj_to_char(obj,carrying)
+            obj.to_char(carrying)
         else:
-            obj_to_obj(obj, contained_by)
+            obj.to_obj(contained_by)
         if 'contains' in odict:
             fread_objs(carrying, odict['contains'], obj)
 

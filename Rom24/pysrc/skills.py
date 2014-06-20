@@ -33,7 +33,9 @@
 """
 
 from merc import *
+import handler
 import const
+import update
 
 # used to get new skills */
 def do_gain(self, argument):
@@ -42,12 +44,12 @@ def do_gain(self, argument):
         return
     trainer = [t for t in ch.in_room.people if IS_NPC(TRAINER) and IS_SET(trainer.act,ACT_GAIN)]
     # find a trainer */
-    if not trainer or not can_see(ch,trainer):
+    if not trainer or not ch.can_see(trainer):
         ch.send("You can't do that here.\n")
         return
     
 
-    argmod, arg = one_argument(argument)
+    argmod, arg = read_word(argument)
 
     if not arg:
         trainer.do_say("Pardon me?")
@@ -104,7 +106,7 @@ def do_gain(self, argument):
 
         ch.train -= 2
         ch.pcdata.points -= 1
-        ch.exp = exp_per_level(ch,ch.pcdata.points) * ch.level
+        ch.exp = ch.exp_per_level(ch.pcdata.points) * ch.level
         return
 
     
@@ -158,6 +160,12 @@ def do_gain(self, argument):
 # RT spells and skills show the players spells (or skills) */
 def do_spells(self, argument):
     ch = self
+    fAll = False
+    min_lev = 0
+    max_lev = 0
+    level = 0
+    skill = None
+
     if IS_NPC(ch):
       return
     argument = argument.lower()
@@ -193,6 +201,7 @@ def do_spells(self, argument):
                     ch.send("That would be silly.\n")
                     return
 
+    found = False
     spell_list = {} 
     spell_column = {}
     for sn, skill in const.skill_table.items():
@@ -396,7 +405,7 @@ def list_group_costs(ch):
     ch.send("\n")
 
     ch.send("Creation points: %d\n" % ch.pcdata.points)
-    ch.send("Experience per level: %d\n" % exp_per_level(ch,ch.gen_data.points_chosen))
+    ch.send("Experience per level: %d\n" % ch.exp_per_level(ch.gen_data.points_chosen))
     return
 
 def list_group_chosen(ch):
@@ -430,33 +439,8 @@ def list_group_chosen(ch):
     ch.send("\n")
  
     ch.send("Creation points: %d\n" % ch.gen_data.points_chosen)
-    ch.send("Experience per level: %d\n" % exp_per_level(ch,ch.gen_data.points_chosen))
+    ch.send("Experience per level: %d\n" % ch.exp_per_level(ch.gen_data.points_chosen))
     return
-
-def exp_per_level(ch, points):
-    if IS_NPC(ch):
-        return 1000
-
-    expl = 1000
-    inc = 500
-
-    if points < 40:
-        return 1000 * const.pc_race_table[ch.race.name].class_mult[ch.guild.name]/100 if const.pc_race_table[ch.race.name].class_mult[ch.guild.name] else 1
-
-    # processing */
-    points -= 40
-
-    while points > 9:
-        expl += inc
-        points -= 10
-        if points > 9:
-            expl += inc
-            inc = inc * 2
-            points -= 10
-
-    expl += points * inc / 10
-
-    return expl * const.pc_race_table[ch.race.name].class_mult[ch.guild.name]/100
 
 # this procedure handles the input parsing for the skill generator */
 def parse_gen_groups(ch, argument):
@@ -622,16 +606,18 @@ def do_groups(self, argument):
 def check_improve( ch, sn, success, multiplier ):
     if IS_NPC(ch):
         return
+    if type(sn) == str:
+        sn = const.skill_table[sn]
 
-    if ch.level <const.skill_table[sn].skill_level[ch.guild.name] \
-    or const.skill_table[sn].rating[ch.guild.name] == 0 \
-    or  sn not in ch.pcdata.learned \
-    or  ch.pcdata.learned[sn] == 100:
+    if ch.level < sn.skill_level[ch.guild.name] \
+    or sn.rating[ch.guild.name] == 0 \
+    or sn.name not in ch.pcdata.learned \
+    or ch.pcdata.learned[sn.name] == 100:
         return  # skill is not known */ 
 
     # check to see if the character has a chance to learn */
-    chance = 10 * int_app[get_curr_stat(ch,STAT_INT)].learn
-    chance /= (multiplier * const.skill_table[sn].rating[ch.guild.name] * 4)
+    chance = 10 * const.int_app[handler.ch.get_curr_stat(STAT_INT)].learn
+    chance /= (multiplier * sn.rating[ch.guild.name] * 4)
     chance += ch.level
 
     if random.randint(1,1000) > chance:
@@ -640,15 +626,15 @@ def check_improve( ch, sn, success, multiplier ):
     # now that the character has a CHANCE to learn, see if they really have */ 
 
     if success:
-        chance = min(5, max(100 - ch.pcdata.learned[sn], 95))
+        chance = min(5, max(100 - ch.pcdata.learned[sn.name], 95))
         if random.randint(1,99) < chance:
-            ch.send("You have become better at %s!\n" % const.skill_table[sn].name)
-            ch.pcdata.learned[sn] += 1
-            gain_exp(ch,2 * sn.rating[ch.guild.name])
+            ch.send("You have become better at %s!\n" % sn.name)
+            ch.pcdata.learned[sn.name] += 1
+            update.gain_exp(ch,2 * sn.rating[ch.guild.name])
     else:
-        chance = min(5, max(ch.pcdata.learned[sn]/2,30))
+        chance = min(5, max(ch.pcdata.learned[sn.name]/2,30))
         if random.randint(1,99) < chance:
-            ch.send("You learn from your mistakes, and your %s skill improves.\n" % const.skill_table[sn].name)
-            ch.pcdata.learned[sn] += random.randint(1,3)
-            ch.pcdata.learned[sn] = min(ch.pcdata.learned[sn],100)
-            gain_exp(ch,2 * sn.rating[ch.guild.name])
+            ch.send("You learn from your mistakes, and your %s skill improves.\n" % sn.name)
+            ch.pcdata.learned[sn.name] += random.randint(1,3)
+            ch.pcdata.learned[sn.name] = min(ch.pcdata.learned[sn.name],100)
+            update.gain_exp(ch,2 * sn.rating[ch.guild.name])

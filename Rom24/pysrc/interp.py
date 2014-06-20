@@ -352,7 +352,7 @@ def interpret(ch, argument):
     else:
         argument, command = read_word(argument)
     #* Look for command in command table.
-    trust = get_trust( ch )
+    trust = ch.get_trust()
     cmd = prefix_lookup(cmd_table, command)
     if cmd != None:
         if cmd.level > trust:
@@ -362,7 +362,7 @@ def interpret(ch, argument):
     if (not IS_NPC(ch) and IS_SET(ch.act, PLR_LOG)) or LOGALL or (cmd and cmd.log == LOG_ALWAYS):
         if cmd and cmd.log != LOG_NEVER:
             log_buf = "Log %s: %s" % (ch.name, logline)
-            wiznet(log_buf,ch,None,WIZ_SECURE,0,get_trust(ch))
+            wiznet(log_buf,ch,None,WIZ_SECURE,0,ch.get_trust())
             print (log_buf + "\n")
     if ch.desc and ch.desc.snoop_by:
         ch.desc.snoop_by.send("% ")
@@ -430,7 +430,7 @@ def check_social(ch, command, argument):
                 ch.send("In your dreams, or what?\n")
                 return True
     holder, arg = read_word(argument)
-    victim = get_char_room( ch, arg )
+    victim = ch.get_char_room(arg)
     if not arg:
         act(cmd.others_no_arg, ch, None, victim, TO_ROOM)
         act(cmd.char_no_arg, ch, None, victim, TO_CHAR)
