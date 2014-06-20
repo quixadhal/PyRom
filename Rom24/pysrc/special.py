@@ -39,9 +39,9 @@ from magic import (spell_armor, spell_bless, spell_refresh, spell_poison,
 from const import skill_table
 from fight import multi_hit
 
-def spec_troll_member(ch):
+def spec_troll_member( ch ):
     if not IS_AWAKE(ch) or IS_AFFECTED(ch,AFF_CALM) or ch.in_room == None  \
-    or IS_AFFECTED(ch,AFF_CHARM) or ch.fighting != None:
+    or  IS_AFFECTED(ch,AFF_CHARM) or ch.fighting != None:
         return False
     count = 0
     # find an ogre to beat up */
@@ -61,7 +61,7 @@ def spec_troll_member(ch):
         return False
 
     # say something, then raise hell */
-    messages = ["$n yells 'I've been looking for you, punk!'",
+    messages = [ "$n yells 'I've been looking for you, punk!'",
                  "With a scream of rage, $n attacks $N.",
                  "$n says 'What's slimy Ogre trash like you doing around here?'",
                  "$n cracks his knuckles and says 'Do ya feel lucky?'",
@@ -70,10 +70,10 @@ def spec_troll_member(ch):
                  "$n says 'Let's rock.'"]
     message = random.choice(messages)
     act(message,ch,None,victim,TO_ALL)
-    multi_hit(ch, victim, TYPE_UNDEFINED)
+    multi_hit( ch, victim, TYPE_UNDEFINED )
     return True
 
-def spec_ogre_member(ch):
+def spec_ogre_member( ch ):
     if not IS_AWAKE(ch) or IS_AFFECTED(ch,AFF_CALM) or not ch.in_room or IS_AFFECTED(ch,AFF_CHARM) or ch.fighting:
         return False
     count = 0
@@ -100,10 +100,10 @@ def spec_ogre_member(ch):
                 "$n cracks his knuckles and says 'Do ya feel lucky?'",
                 "$n says 'There's no cops to save you this time!'",
                 "$n says 'Time to join your brother, spud.'",
-                "$n says 'Let's rock.'"]
+                "$n says 'Let's rock.'" ]
     message = random.choice(messages)
     act(message,ch,None,victim,TO_ALL)
-    multi_hit(ch, victim, TYPE_UNDEFINED)
+    multi_hit( ch, victim, TYPE_UNDEFINED )
     return True
 
 def spec_patrolman(ch):
@@ -115,7 +115,7 @@ def spec_patrolman(ch):
         if vch == ch:
             continue
 
-        if vch.fighting != None:  # break it up!  */
+        if vch.fighting != None:  # break it up! */
             if random.randint(0,count) == 0:
                 victim = vch if (vch.level > vch.fighting.level) else vch.fighting
                 count += 1
@@ -124,7 +124,7 @@ def spec_patrolman(ch):
         return False
     neck1 = get_eq_char(ch,WEAR_NECK_1)
     neck2 = get_eq_char(ch,WEAR_NECK_2)
-    if (neck1 and neck1.pIndexData.vnum == OBJ_VNUM_WHISTLE) or (neck2 and neck2.pIndexData.vnum == OBJ_VNUM_WHISTLE):
+    if (neck1 and neck1.pIndexData.vnum == OBJ_VNUM_WHISTLE) or ( neck2 and neck2.pIndexData.vnum == OBJ_VNUM_WHISTLE):
         act("You blow down hard on $p.",ch,obj,None,TO_CHAR)
         act("$n blows on $p, ***WHEEEEEEEEEEEET***",ch,obj,None,TO_ROOM)
 
@@ -140,13 +140,13 @@ def spec_patrolman(ch):
                 "$n shouts 'Stop that! Stop that!' and attacks.",
                 "$n pulls out his billy and goes to work.",
                 "$n sighs in resignation and proceeds to break up the fight.",
-                "$n says 'Settle down, you hooligans!'"]
+                "$n says 'Settle down, you hooligans!'" ]
     message = random.choice(messages)
     act(message,ch,None,None,TO_ALL)
     multi_hit(ch,victim,TYPE_UNDEFINED)
     return True
 
-def spec_nasty(ch):
+def spec_nasty( ch ):
     if not IS_AWAKE(ch):
        return False
 
@@ -156,19 +156,19 @@ def spec_nasty(ch):
                 ch.do_backstab(victim.name)
             if ch.position != POS_FIGHTING:
                 ch.do_murder(victim.name)
-              # should steal some coins right away?  :) */
+              # should steal some coins right away? :) */
                 return True
         return False    #  No one to attack */
  
-    # okay, we must be fighting....  steal some coins and flee */
+    # okay, we must be fighting.... steal some coins and flee */
     if not ch.fighting:
-        return False   # let's be paranoid....  */
+        return False   # let's be paranoid.... */
     victim = ch.fighting
     num = random.randint(0,2)
     if num == 0: 
-        act("$n rips apart your coin purse, spilling your gold!", ch, None, victim, TO_VICT)
-        act("You slash apart $N's coin purse and gather his gold.", ch, None, victim, TO_CHAR)
-        act("$N's coin purse is ripped apart!", ch, None, victim, TO_NOTVICT)
+        act( "$n rips apart your coin purse, spilling your gold!", ch, None, victim, TO_VICT)
+        act( "You slash apart $N's coin purse and gather his gold.", ch, None, victim, TO_CHAR)
+        act( "$N's coin purse is ripped apart!", ch, None, victim, TO_NOTVICT)
         gold = victim.gold / 10  # steal 10% of his gold */
         victim.gold -= gold
         ch.gold += gold
@@ -181,7 +181,7 @@ def spec_nasty(ch):
 
 #
 # Core procedure for dragons.
-def dragon(ch, spell_name):
+def dragon( ch, spell_name ):
     if ch.position != POS_FIGHTING:
         return False
     victim = None
@@ -195,46 +195,47 @@ def dragon(ch, spell_name):
         return False
     if spell_name not in skill_table:
         return False
-    skill_table[spell_name].spell_fun(sn, ch.level, ch, victim, TARGET_CHAR)
+    skill_table[spell_name].spell_fun( sn, ch.level, ch, victim, TARGET_CHAR)
     return True
 # Special procedures for mobiles.
-def spec_breath_any(ch):
+
+def spec_breath_any( ch ):
     if ch.position != POS_FIGHTING:
         return False
 
-    breaths = [spec_breath_fire, spec_breath_lightning, spec_breath_gas, spec_breath_acid, spec_breath_frost]
-    breath = random.randint(0, len(breaths) + 3)
+    breaths = [ spec_breath_fire, spec_breath_lightning, spec_breath_gas, spec_breath_acid, spec_breath_frost ]
+    breath = random.randint(0, len(breaths)+3)
     if breath < len(breaths):
         return breaths[breath](ch)
     return False
 
-def spec_breath_acid(ch):
-    return dragon(ch, "acid breath")
+def spec_breath_acid( ch ):
+    return dragon( ch, "acid breath" )
 
-def spec_breath_fire(ch):
-    return dragon(ch, "fire breath")
+def spec_breath_fire( ch ):
+    return dragon( ch, "fire breath" )
 
-def spec_breath_frost(ch):
-    return dragon(ch, "frost breath")
+def spec_breath_frost( ch ):
+    return dragon( ch, "frost breath" )
 
-def spec_breath_gas(ch):
+def spec_breath_gas( ch ):
     if ch.position != POS_FIGHTING:
         return False
 
     if "gas breath" not in skill_table:
         return False
-    skill_table["gas breath"].spell_fun(sn, ch.level, ch, None,TARGET_CHAR)
+    skill_table["gas breath"].spell_fun( sn, ch.level, ch, None,TARGET_CHAR)
     return True
 
-def spec_breath_lightning(ch):
-    return dragon(ch, "lightning breath")
+def spec_breath_lightning( ch ):
+    return dragon( ch, "lightning breath" )
 
-def spec_cast_adept(ch):
+def spec_cast_adept( ch ):
     if not IS_AWAKE(ch):
         return False
     victim = None
     for vch in ch.in_room.people[:]:
-        if vch != ch and can_see(ch, vch) and random.randint(0, 1) == 0 and not IS_NPC(vch) and vch.level < 11:
+        if vch != ch and can_see( ch, vch ) and random.randint(0, 1 ) == 0 and not IS_NPC(vch) and vch.level < 11:
             victim = vch
             break
 
@@ -242,36 +243,36 @@ def spec_cast_adept(ch):
         return False
     
     num = random.randint(1,15)
-    if num == 0:
-        act("$n utters the word 'abrazak'.", ch, None, None, TO_ROOM)
-        spell_armor(skill_table["armor"], ch.level,ch,victim,TARGET_CHAR)
+    if num ==  0:
+        act( "$n utters the word 'abrazak'.", ch, None, None, TO_ROOM )
+        spell_armor( skill_table["armor"], ch.level,ch,victim,TARGET_CHAR)
         return True
-    elif num == 1:
-        act("$n utters the word 'fido'.", ch, None, None, TO_ROOM)
-        spell_bless(skill_table["bless"], ch.level,ch,victim,TARGET_CHAR)
+    elif num ==   1:
+        act( "$n utters the word 'fido'.", ch, None, None, TO_ROOM )
+        spell_bless( skill_table["bless"], ch.level,ch,victim,TARGET_CHAR)
         return True
     elif num == 2:
         act("$n utters the words 'judicandus noselacri'.",ch,None,None,TO_ROOM)
-        spell_cure_blindness(skill_table["cure blindness"], ch.level, ch, victim,TARGET_CHAR)
+        spell_cure_blindness( skill_table["cure blindness"], ch.level, ch, victim,TARGET_CHAR)
         return True
     elif num == 3:
-        act("$n utters the words 'judicandus dies'.", ch,None, None, TO_ROOM)
-        spell_cure_light(skill_table["cure light"], ch.level, ch, victim,TARGET_CHAR)
+        act("$n utters the words 'judicandus dies'.", ch,None, None, TO_ROOM )
+        spell_cure_light( skill_table["cure light"], ch.level, ch, victim,TARGET_CHAR)
         return True
     elif num == 4:
-        act("$n utters the words 'judicandus sausabru'.",ch,None,None,TO_ROOM)
-        spell_cure_poison(skill_table["cure poison"], ch.level, ch, victim,TARGET_CHAR)
+        act( "$n utters the words 'judicandus sausabru'.",ch,None,None,TO_ROOM)
+        spell_cure_poison( skill_table["cure poison"], ch.level, ch, victim,TARGET_CHAR)
         return True
     elif num == 5:
-        act("$n utters the word 'candusima'.", ch, None, None, TO_ROOM)
-        spell_refresh(skill_table["refresh"],ch.level,ch,victim,TARGET_CHAR)
+        act("$n utters the word 'candusima'.", ch, None, None, TO_ROOM )
+        spell_refresh( skill_table["refresh"],ch.level,ch,victim,TARGET_CHAR)
         return True
     elif num == 6:
         act("$n utters the words 'judicandus eugzagz'.",ch,None,None,TO_ROOM)
-        spell_cure_disease(skill_table["cure disease"], ch.level,ch,victim,TARGET_CHAR)
+        spell_cure_disease( skill_table["cure disease"], ch.level,ch,victim,TARGET_CHAR)
         return False
 
-def spec_cast_cleric(ch):
+def spec_cast_cleric( ch ):
     if ch.position != POS_FIGHTING:
         return False
     victim = None
@@ -286,16 +287,16 @@ def spec_cast_cleric(ch):
     while True:
         num = random.randint(0,16)
         if num == 0: 
-            min_level = 0 
+            min_level =  0 
             spell = "blindness"
         elif num == 1: 
-            min_level = 3 
+            min_level =  3 
             spell = "cause serious"
         elif num == 2:
-            min_level = 7 
+            min_level =  7 
             spell = "earthquake"
         elif num == 3: 
-            min_level = 9 
+            min_level =  9 
             spell = "cause critical"
         elif num == 4:
             min_level = 10
@@ -324,16 +325,16 @@ def spec_cast_cleric(ch):
 
     if spell not in skill_table:
         return False
-    skill_table[spell].spell_fun(sn, ch.level, ch, victim,TARGET_CHAR)
+    skill_table[spell].spell_fun( sn, ch.level, ch, victim,TARGET_CHAR)
     return True
 
-def spec_cast_judge(ch):
+def spec_cast_judge( ch ):
     if ch.position != POS_FIGHTING:
         return False
  
     victim = None
     for vch in ch.in_room.people:
-        if vch.fighting == ch and random.randint(0, 3) == 0:
+        if vch.fighting == ch and random.randint(0, 3 ) == 0:
             victim = vch
             break
 
@@ -343,10 +344,10 @@ def spec_cast_judge(ch):
     spell = "high explosive"
     if spell not in skill_table:
         return False
-    skill_table[spell].spell_fun(sn, ch.level, ch, victim,TARGET_CHAR)
+    skill_table[spell].spell_fun( sn, ch.level, ch, victim,TARGET_CHAR)
     return True
 
-def spec_cast_mage(ch):
+def spec_cast_mage( ch ):
     if ch.position != POS_FIGHTING:
         return False
     victim = None
@@ -396,10 +397,10 @@ def spec_cast_mage(ch):
 
     if spell not in skill_table:
         return False
-    skill_table[spell].spell_fun(sn, ch.level, ch, victim,TARGET_CHAR)
+    skill_table[spell].spell_fun( sn, ch.level, ch, victim,TARGET_CHAR)
     return True
 
-def spec_cast_undead(ch):
+def spec_cast_undead( ch ):
     if ch.position != POS_FIGHTING:
         return False
 
@@ -413,16 +414,16 @@ def spec_cast_undead(ch):
     while True:
         num = random.randint(0,16)
         if num == 0:
-            min_level = 0
+            min_level =  0
             spell = "curse"
         elif num == 1:
-            min_level = 3
+            min_level =  3
             spell = "weaken"
         elif num == 2:
-            min_level = 6
+            min_level =  6
             spell = "chill touch"
         elif num == 3:
-            min_level = 9
+            min_level =  9
             spell = "blindness"
         elif num == 4:
             min_level = 12
@@ -447,10 +448,10 @@ def spec_cast_undead(ch):
             break
     if spell not in skill_table:
         return False
-    skill_table[spell].spell_fun(sn, ch.level, ch, victim,TARGET_CHAR)
+    skill_table[spell].spell_fun( sn, ch.level, ch, victim,TARGET_CHAR)
     return True
 
-def spec_executioner(ch):
+def spec_executioner( ch ):
     if not IS_AWAKE(ch) or ch.fighting != None:
         return False
 
@@ -470,26 +471,26 @@ def spec_executioner(ch):
  
     REMOVE_BIT(ch.comm,COMM_NOSHOUT)
     ch.do_yell("%s is a %s!  PROTECT THE INNOCENT!  MORE BLOOOOD!!!" % (victim.name, crime))
-    multi_hit(ch, victim, TYPE_UNDEFINED)
+    multi_hit( ch, victim, TYPE_UNDEFINED )
     return True            
 
-def spec_fido(ch):
+def spec_fido( ch ):
     if not IS_AWAKE(ch):
         return False
 
     for corpse in ch.in_room.contents:
         if corpse.item_type != ITEM_CORPSE_NPC:
             continue
-        act("$n savagely devours a corpse.", ch, None, None, TO_ROOM)
+        act( "$n savagely devours a corpse.", ch, None, None, TO_ROOM )
         for obj in corpse.contains[:]:
-            obj_from_obj(obj)
-            obj_to_room(obj, ch.in_room)
+            obj_from_obj( obj )
+            obj_to_room( obj, ch.in_room )
 
-        extract_obj(corpse)
+        extract_obj( corpse )
         return True
     return False
 
-def spec_guard(ch):
+def spec_guard( ch ):
     if not IS_AWAKE(ch) or ch.fighting != None:
         return False
 
@@ -513,36 +514,36 @@ def spec_guard(ch):
             ech = vch
 
     if victim:
-        buf = "%s is a %s!  PROTECT THE INNOCENT!!  BANZAI!!" % (victim.name, crime)
+        buf = "%s is a %s!  PROTECT THE INNOCENT!!  BANZAI!!" % ( victim.name, crime )
         REMOVE_BIT(ch.comm,COMM_NOSHOUT)
         ch.do_yell(buf)
-        multi_hit(ch, victim, TYPE_UNDEFINED)
+        multi_hit( ch, victim, TYPE_UNDEFINED )
         return True
 
     if ech:
-        act("$n screams 'PROTECT THE INNOCENT!!  BANZAI!!", ch, None, None, TO_ROOM)
-        multi_hit(ch, ech, TYPE_UNDEFINED)
+        act( "$n screams 'PROTECT THE INNOCENT!!  BANZAI!!", ch, None, None, TO_ROOM )
+        multi_hit( ch, ech, TYPE_UNDEFINED )
         return True
     return False
 
-def spec_janitor(ch):
+def spec_janitor( ch ):
     if not IS_AWAKE(ch):
         return False
 
     for trash in ch.in_room.contents:
-        if not IS_SET(trash.wear_flags, ITEM_TAKE) or not can_loot(ch,trash):
+        if not IS_SET( trash.wear_flags, ITEM_TAKE ) or not can_loot(ch,trash):
             continue
         if trash.item_type == ITEM_DRINK_CON or trash.item_type == ITEM_TRASH or trash.cost < 10:
-            act("$n picks up some trash.", ch, None, None, TO_ROOM)
-            obj_from_room(trash)
-            obj_to_char(trash, ch)
+            act( "$n picks up some trash.", ch, None, None, TO_ROOM )
+            obj_from_room( trash )
+            obj_to_char( trash, ch )
             return True
     return False
 
-pos = 0
-move = False
-path = ""
-def spec_mayor(ch):
+pos=0
+move=False
+path=""
+def spec_mayor( ch ):
     open_path = "W3a3003b33000c111d0d111Oe333333Oe22c222112212111a1S."
 
     close_path = "W3a3003b33000c111d0d111CE333333CE22c222112212111a1S."
@@ -551,41 +552,41 @@ def spec_mayor(ch):
 
 
     if not move:
-        if time_info.hour == 6:
+        if time_info.hour ==  6:
             path = open_path
             move = True
-            pos = 0
+            pos  = 0
 
         if time_info.hour == 20:
             path = close_path
             move = True
-            pos = 0
+            pos  = 0
 
     if ch.fighting != None:
-        return spec_cast_mage(ch)
+        return spec_cast_mage( ch )
     if not move or ch.position < POS_SLEEPING:
         return False
 
-    if path[pos] == '0' or path[pos] == '1' or path[pos] == '2' or path[pos] == '3':
-        move_char(ch, path[pos] - '0', False)
+    if path[pos] == '0' or path[pos] =='1' or path[pos] =='2' or path[pos] =='3':
+        move_char( ch, path[pos] - '0', False )
     elif path[pos] == 'W':
         ch.position = POS_STANDING
-        act("$n awakens and groans loudly.", ch, None, None, TO_ROOM)
-    elif path[pos] == 'S':
+        act( "$n awakens and groans loudly.", ch, None, None, TO_ROOM )
+    elif path[pos] ==  'S':
         ch.position = POS_SLEEPING
-        act("$n lies down and falls asleep.", ch, None, None, TO_ROOM)
+        act( "$n lies down and falls asleep.", ch, None, None, TO_ROOM )
     elif path[pos] == 'a':
-        act("$n says 'Hello Honey!'", ch, None, None, TO_ROOM)
-    elif path[pos] == 'b':
-        act("$n says 'What a view!  I must do something about that dump!'", ch, None, None, TO_ROOM)
+        act( "$n says 'Hello Honey!'", ch, None, None, TO_ROOM )
+    elif path[pos] ==  'b':
+        act( "$n says 'What a view!  I must do something about that dump!'", ch, None, None, TO_ROOM )
     elif path[pos] == 'c':
-        act("$n says 'Vandals!  Youngsters have no respect for anything!'", ch, None, None, TO_ROOM)
+        act( "$n says 'Vandals!  Youngsters have no respect for anything!'", ch, None, None, TO_ROOM )
     elif path[pos] == 'd':
-        act("$n says 'Good day, citizens!'", ch, None, None, TO_ROOM)
+        act( "$n says 'Good day, citizens!'", ch, None, None, TO_ROOM )
     elif path[pos] == 'e':
-        act("$n says 'I hereby declare the city of Midgaard open!'", ch, None, None, TO_ROOM)
+        act( "$n says 'I hereby declare the city of Midgaard open!'", ch, None, None, TO_ROOM )
     elif path[pos] == 'E':
-        act("$n says 'I hereby declare the city of Midgaard closed!'", ch, None, None, TO_ROOM)
+        act( "$n says 'I hereby declare the city of Midgaard closed!'", ch, None, None, TO_ROOM )
     elif path[pos] == 'O':
         #  do_function(ch, &do_unlock, "gate" ) */
         ch.do_open("gate")
@@ -597,17 +598,17 @@ def spec_mayor(ch):
     pos += 1
     return False
 
-def spec_poison(ch):
+def spec_poison( ch ):
     if ch.position != POS_FIGHTING or not ch.fighting or random.randint(1,99) > 2 * ch.level:
         return False
     victim = ch.fighting
-    act("You bite $N!",  ch, None, victim, TO_CHAR)
-    act("$n bites $N!",  ch, None, victim, TO_NOTVICT)
-    act("$n bites you!", ch, None, victim, TO_VICT)
-    spell_poison(skill_table['poison'], ch.level, ch, victim,TARGET_CHAR)
+    act( "You bite $N!",  ch, None, victim, TO_CHAR    )
+    act( "$n bites $N!",  ch, None, victim, TO_NOTVICT )
+    act( "$n bites you!", ch, None, victim, TO_VICT    )
+    spell_poison( skill_table['poison'], ch.level, ch, victim,TARGET_CHAR)
     return True
 
-def spec_thief(ch):
+def spec_thief( ch ):
     if ch.position != POS_STANDING:
         return False
 
@@ -615,17 +616,17 @@ def spec_thief(ch):
         if IS_NPC(victim) or victim.level >= LEVEL_IMMORTAL or random.randint(0,31) != 0 or not can_see(ch,victim):
             continue
 
-        if IS_AWAKE(victim) and random.randint(0, ch.level) == 0:
-            act("You discover $n's hands in your wallet!", ch, None, victim, TO_VICT)
-            act("$N discovers $n's hands in $S wallet!", ch, None, victim, TO_NOTVICT)
+        if IS_AWAKE(victim) and random.randint( 0, ch.level ) == 0:
+            act( "You discover $n's hands in your wallet!", ch, None, victim, TO_VICT )
+            act( "$N discovers $n's hands in $S wallet!", ch, None, victim, TO_NOTVICT )
             return True
         else:
             gold = victim.gold * min(random.randint(1,20),ch.level / 2) / 100
-            gold = min(gold, ch.level * ch.level * 10)
+            gold = min(gold, ch.level * ch.level * 10 )
             ch.gold     += gold
             victim.gold -= gold
-            silver = victim.silver * min(random.randint(1,20),ch.level / 2) / 100
-            silver = min(silver,ch.level * ch.level * 25)
+            silver = victim.silver * min(random.randint(1,20),ch.level/2)/100
+            silver = min(silver,ch.level*ch.level * 25)
             ch.silver  += silver
             victim.silver -= silver
             return True

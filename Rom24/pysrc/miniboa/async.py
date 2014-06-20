@@ -56,15 +56,15 @@ def _on_disconnect(client):
     """
     Placeholder lost connection handler.
     """
-    logging.info("-- Lost connection to %s".format(client.addrport()))
+    logging.info ("-- Lost connection to %s".format(client.addrport()))
         
 class TelnetServer(object):
     """
     Poll sockets for new connections and sending/receiving data from clients.
     """
-    def __init__(self, port = 23, address = '', on_connect = _on_connect,
-            on_disconnect = _on_disconnect, max_connections = MAX_CONNECTIONS,
-            timeout = 0.1):
+    def __init__(self, port=23, address='', on_connect=_on_connect,
+            on_disconnect=_on_disconnect, max_connections=MAX_CONNECTIONS,
+            timeout=0.1):
         """
         Create a new Telnet Server.
 
@@ -174,8 +174,7 @@ class TelnetServer(object):
         ## Process socket file descriptors with data to recieve
         for sock_fileno in rlist:
 
-            ## If it's coming from the server's socket then this is a new
-            ## connection request.
+            ## If it's coming from the server's socket then this is a new connection request.
             if sock_fileno == self.server_fileno:
 
                 try:

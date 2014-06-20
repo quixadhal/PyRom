@@ -61,7 +61,7 @@ where_name = ["<used as light>     ",
               "<held>              ",
               "<floating nearby>   "]
 
-# for keeping track of the player count */
+# for  keeping track of the player count */
 max_on = 0
 
 def format_obj_to_char(obj, ch, fShort):
@@ -73,7 +73,7 @@ def format_obj_to_char(obj, ch, fShort):
     if IS_AFFECTED(ch, AFF_DETECT_EVIL) \
          and IS_OBJ_STAT(obj, ITEM_EVIL): buf += "(Red Aura) "
     if IS_AFFECTED(ch, AFF_DETECT_GOOD) \
-    and IS_OBJ_STAT(obj, ITEM_BLESS): buf += "(Blue Aura) "
+    and  IS_OBJ_STAT(obj, ITEM_BLESS): buf += "(Blue Aura) "
     if IS_AFFECTED(ch, AFF_DETECT_MAGIC) \
          and IS_OBJ_STAT(obj, ITEM_MAGIC): buf += "(Magical) "
     if IS_OBJ_STAT(obj, ITEM_GLOW): buf += "(Glowing) "
@@ -294,7 +294,8 @@ def do_scroll(self, argument):
         if ch.lines == 0:
             ch.send("You do not page long messages.\n")
         else:
-            ch.send("You currently display %d lines per page.\n" % (ch.lines + 2))
+            ch.send("You currently display %d lines per page.\n" % (
+                ch.lines + 2))
         return
     if not arg.is_digit():
         ch.send("You must provide a number.\n")
@@ -343,6 +344,7 @@ def do_wizlist(self, argument):
     ch.do_help("wizlist")
 # RT this following section holds all the auto commands from ROM, as well as
 #   replacements for config */
+
 def do_autolist(self, argument):
     ch = self
     # lists most player flags */
@@ -653,7 +655,8 @@ def do_look(self, argument):
                 amnt = "abount half-"
             else:
                 amnt = "more than half-"
-            ch.send("It's %sfilled with a %s liquid.\n" % (amnt, liq_table[obj.value[2]].liq_color))
+            ch.send("It's %sfilled with a %s liquid.\n" % (
+                amnt, liq_table[obj.value[2]].liq_color))
         elif item_type == ITEM_CONTAINER or item_type == ITEM_CORPSE_NPC \
         or item_type == ITEM_CORPSE_PC:
             if IS_SET(obj.value[1], CONT_CLOSED):
@@ -819,7 +822,8 @@ def do_worth(self, argument):
         ch.send("You have %ld gold and %ld silver.\n" % (ch.gold, ch.silver))
         ch.send(buf)
         return
-    ch.send("You have %ld gold, %ld silver, and %d experience (%d exp to level).\n" % (ch.gold, ch.silver, ch.exp, (ch.level + 1) * exp_per_level(ch, ch.pcdata.points) - ch.exp))
+    ch.send("You have %ld gold, %ld silver, and %d experience (%d exp to level).\n" % (
+        ch.gold, ch.silver, ch.exp, (ch.level + 1) * exp_per_level(ch, ch.pcdata.points) - ch.exp))
 
 def do_score(self, argument):
     ch = self
@@ -834,14 +838,15 @@ def do_score(self, argument):
               ch.mana, ch.max_mana, ch.move, ch.max_move))
     ch.send("You have %d practices and %d training sessions.\n" % (ch.practice, ch.train))
     ch.send("You are carrying %d/%d items with weight %ld/%d pounds.\n" % (ch.carry_number, can_carry_n(ch),
-              get_carry_weight(ch) / 10, can_carry_w(ch) / 10))
-    ch.send("Str: %d(%d)  Int: %d(%d)  Wis: %d(%d)  Dex: %d(%d)  Con: %d(%d)\n" % (ch.perm_stat[STAT_STR], get_curr_stat(ch, STAT_STR),
+              get_carry_weight(ch) / 10, can_carry_w(ch) /10))
+    ch.send("Str: %d(%d)  Int: %d(%d)  Wis: %d(%d)  Dex: %d(%d)  Con: %d(%d)\n" % (
+              ch.perm_stat[STAT_STR], get_curr_stat(ch, STAT_STR),
               ch.perm_stat[STAT_INT], get_curr_stat(ch, STAT_INT),
               ch.perm_stat[STAT_WIS], get_curr_stat(ch, STAT_WIS),
               ch.perm_stat[STAT_DEX], get_curr_stat(ch, STAT_DEX),
               ch.perm_stat[STAT_CON], get_curr_stat(ch, STAT_CON)))
 
-    ch.send("You have scored %d exp, and have %ld gold and %ld silver coins.\n" % (ch.exp, ch.gold, ch.silver))
+    ch.send("You have scored %d exp, and have %ld gold and %ld silver coins.\n" %(ch.exp, ch.gold, ch.silver))
     # RT shows exp to level */
     if not IS_NPC(ch) and ch.level < LEVEL_HERO:
         ch.send("You need %d exp to level.\n" % ((ch.level + 1) * exp_per_level(ch, ch.pcdata.points) - ch.exp))
@@ -864,7 +869,8 @@ def do_score(self, argument):
     elif ch.position == POS_FIGHTING: ch.send("You are fighting.\n")
     # print AC values */
     if ch.level >= 25:
-        ch.send("Armor: pierce: %d  bash: %d  slash: %d  magic: %d\n" % (GET_AC(ch, AC_PIERCE),
+        ch.send("Armor: pierce: %d  bash: %d  slash: %d  magic: %d\n" % (
+                  GET_AC(ch, AC_PIERCE),
                   GET_AC(ch, AC_BASH),
                   GET_AC(ch, AC_SLASH),
                   GET_AC(ch, AC_EXOTIC)))
@@ -967,11 +973,11 @@ def do_time(self, argument):
         suf = "rd"
     else:
         suf = "th"
-    ch.send("It is %d o'clock %s, Day of %s, %d%s the Month of %s.\n" % (12 if (time_info.hour % 12 == 0) else time_info.hour % 12,
+    ch.send("It is %d o'clock %s, Day of %s, %d%s the Month of %s.\n" % (
+        12 if (time_info.hour % 12 == 0) else time_info.hour % 12,
         "pm" if time_info.hour >= 12 else "am",
         day_name[day % 7], day, suf, month_name[time_info.month]))
-    #ch.send("ROM started up at %s\nThe system time is %s.\n", str_boot_time,
-    #(char *) ctime(&current_time)
+    #ch.send("ROM started up at %s\nThe system time is %s.\n", str_boot_time, (char *) ctime(&current_time)
     ch.send(buf)
     return
 
@@ -1049,7 +1055,8 @@ def do_whois(self, argument):
             elif wch.level == MAX_LEVEL - 8:
                 guild = "AVA"
             # a little formatting */
-            ch.send("[%2d %6s %s] %s%s%s%s%s%s%s%s\n" % (wch.level,
+            ch.send("[%2d %6s %s] %s%s%s%s%s%s%s%s\n" % (
+                    wch.level,
                     pc_race_table[wch.race.name].who_name if wch.race.name in pc_race_table else "     ",
                     guild,
                     "(Incog) " if wch.incog_level >= LEVEL_HERO else "",
@@ -1133,7 +1140,7 @@ def do_who(self, argument):
             continue
 
         if wch.level < iLevelLower or wch.level > iLevelUpper \
-        or (fImmortalOnly and wch.level < LEVEL_IMMORTAL) \
+        or (fImmortalOnly  and wch.level < LEVEL_IMMORTAL) \
         or (fClassRestrict and not rgfClass[wch.guild.name]) \
         or (fRaceRestrict and not rgfRace[wch.race.name]) \
         or (fClan and not is_clan(wch)) or (fClanRestrict and not rgfClan[wch.clan.name]):
@@ -1163,7 +1170,8 @@ def do_who(self, argument):
         elif wch.level == MAX_LEVEL - 8:
             guild = "AVA"
         # a little formatting */
-        ch.send("[%2d %6s %s] %s%s%s%s%s%s%s%s\n" % (wch.level,
+        ch.send("[%2d %6s %s] %s%s%s%s%s%s%s%s\n" % (
+                wch.level,
                 pc_race_table[wch.race.name].who_name if wch.race.name in pc_race_table else "     ",
                 guild,
                 "(Incog) " if wch.incog_level >= LEVEL_HERO else "",
@@ -1226,7 +1234,7 @@ def do_compare(self, argument):
     obj2 = None
     if not arg2:
         for obj2 in ch.carrying:
-            if obj2.wear_loc != WEAR_NONE and can_see_obj(ch, obj2) and obj1.item_type == obj2.item_type \
+            if obj2.wear_loc != WEAR_NONE and  can_see_obj(ch, obj2) and  obj1.item_type == obj2.item_type \
             and (obj1.wear_flags & obj2.wear_flags & ~ITEM_TAKE) != 0:
                 break
 
@@ -1239,9 +1247,9 @@ def do_compare(self, argument):
             ch.send("You do not have that item.\n")
             return
     
-    msg = None
-    value1 = 0
-    value2 = 0
+    msg   = None
+    value1  = 0
+    value2  = 0
 
     if obj1 is obj2:
         msg = "You compare $p to itself.  It looks about the same."
@@ -1338,7 +1346,7 @@ def do_consider(self, argument):
 
 def set_title(ch, title):
     if IS_NPC(ch):
-        print("BUG: Set_title: NPC.")
+        print ("BUG: Set_title: NPC.")
         return
     buf = ''
     if title[0] != '.' and title[0] != ',' and title[0] != '!' and title[0] != '?':
@@ -1395,14 +1403,16 @@ def do_description(self, argument):
 
 def do_report(self, argument):
     ch = self
-    ch.send("You say 'I have %d/%d hp %d/%d mana %d/%d mv %d xp.'\n" % (ch.hit,  ch.max_hit,
+    ch.send("You say 'I have %d/%d hp %d/%d mana %d/%d mv %d xp.'\n" %  (
+              ch.hit,  ch.max_hit,
               ch.mana, ch.max_mana,
               ch.move, ch.max_move,
-              ch.exp))
-    buf = "$n says 'I have %d/%d hp %d/%d mana %d/%d mv %d xp.'" % (ch.hit,  ch.max_hit,
+              ch.exp  ))
+    buf = "$n says 'I have %d/%d hp %d/%d mana %d/%d mv %d xp.'" % (
+              ch.hit,  ch.max_hit,
               ch.mana, ch.max_mana,
               ch.move, ch.max_move,
-              ch.exp)
+              ch.exp  )
     act(buf, ch, None, None, TO_ROOM)
     return
 
@@ -1470,7 +1480,7 @@ def do_wimpy(self, argument):
     if wimpy < 0:
         ch.send("Your courage exceeds your wisdom.\n")
         return
-    if wimpy > ch.max_hit / 2:
+    if wimpy > ch.max_hit/2:
         ch.send("Such cowardice ill becomes you.\n")
         return
     ch.wimpy = wimpy
@@ -1484,7 +1494,7 @@ def do_password(self, argument):
 
      #* Can't use read_word here because it smashes case.
      #* So we just steal all its code.  Bleagh.
-     # -- It actually doesn't now because it loads areas too.  Davion.
+     # -- It actually doesn't now because it loads areas too. Davion.
     argument, arg1 = read_word(argument, False)
     argument, arg2 = read_word(argument, False)
 
@@ -1505,7 +1515,7 @@ def do_password(self, argument):
         return
 
      #* No tilde allowed because of player file format.
-     # Also now not true.  Davion
+     # Also now not true. Davion
     
     ch.pcdata.pwd = arg2
     save_char_obj(ch)

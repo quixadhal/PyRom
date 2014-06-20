@@ -99,16 +99,16 @@ def acid_effect(vo, level, dam, target):
             if not af_found:
                 # needs a new affect */
                 paf = AFFECT_DATA()
-                paf.type = -1
-                paf.level = level
-                paf.duration = -1
-                paf.location = APPLY_AC
-                paf.modifier = 1
-                paf.bitvector = 0
+                paf.type       = -1
+                paf.level      = level
+                paf.duration   = -1
+                paf.location   = APPLY_AC
+                paf.modifier   =  1
+                paf.bitvector  = 0
                 obj.affected.append(paf)
 
             if obj.carried_by and obj.wear_loc != WEAR_NONE:
-                obj.carried_by.armor[i] = [ i + 1 for i in obj.carried_by.armor ]
+                obj.carried_by.armor[i] = [ i+1 for i in obj.carried_by.armor ]
                 return
         # get rid of the object */
         if obj.contains:  # dump contents */
@@ -121,11 +121,11 @@ def acid_effect(vo, level, dam, target):
                 else:
                     extract_obj(t_obj)
                     continue
-                acid_effect(t_obj,level / 2,dam / 2,TARGET_OBJ)
+                acid_effect(t_obj,level/2,dam/2,TARGET_OBJ)
             extract_obj(obj)
 
 
-def cold_effect(vo, level, dam, target):
+def cold_effect( vo, level, dam, target):
     if target == TARGET_ROOM: # nail objects on the floor */
         room = vo
         for obj in room.contents[:]:
@@ -134,22 +134,22 @@ def cold_effect(vo, level, dam, target):
     if target == TARGET_CHAR: # whack a character */
         victim = vo
         # chill touch effect */
-        if not saves_spell(level / 4 + dam / 20, victim, DAM_COLD):
+        if not saves_spell(level/4 + dam / 20, victim, DAM_COLD):
             af = AFFECT_DATA()
             act("$n turns blue and shivers.",victim,None,None,TO_ROOM)
             act("A chill sinks deep into your bones.",victim,None,None,TO_CHAR)
-            af.where = TO_AFFECTS
-            af.type = skill_table["chill touch"]
-            af.level = level
-            af.duration = 6
-            af.location = APPLY_STR
-            af.modifier = -1
+            af.where     = TO_AFFECTS
+            af.type      = skill_table["chill touch"]
+            af.level     = level
+            af.duration  = 6
+            af.location  = APPLY_STR
+            af.modifier  = -1
             af.bitvector = 0
-            affect_join(victim, af)
+            affect_join( victim, af )
 
-        # hunger!  (warmth sucked out */
+        # hunger! (warmth sucked out */
         if not IS_NPC(victim):
-            gain_condition(victim,COND_HUNGER,dam / 20)
+            gain_condition(victim,COND_HUNGER,dam/20)
 
         # let's toast some gear */
         for obj in victim.carrying[:]:
@@ -204,19 +204,19 @@ def fire_effect(vo, level, dam, target):
             act("$n is blinded by smoke!",victim,None,None,TO_ROOM)
             act("Your eyes tear up from smoke...you can't see a thing!", victim,None,None,TO_CHAR)
             af = AFFECT_DATA()
-            af.where = TO_AFFECTS
-            af.type = skill_table["fire breath"]
-            af.level = level
-            af.duration = random.randint(0,level / 10)
-            af.location = APPLY_HITROLL
-            af.modifier = -4
-            af.bitvector = AFF_BLIND
+            af.where        = TO_AFFECTS
+            af.type         = skill_table["fire breath"]
+            af.level        = level
+            af.duration     = random.randint(0,level/10)
+            af.location     = APPLY_HITROLL
+            af.modifier     = -4
+            af.bitvector    = AFF_BLIND
             affect_to_char(victim,af)
         # getting thirsty */
         if not IS_NPC(victim):
-            gain_condition(victim,COND_THIRST,dam / 20)
+            gain_condition(victim,COND_THIRST,dam/20)
 
-        # let's toast some gear!  */
+        # let's toast some gear! */
         for obj in victim.carrying[:]:
             fire_effect(obj,level,dam,TARGET_OBJ)
         return
@@ -263,7 +263,7 @@ def fire_effect(vo, level, dam, target):
             return
  
         if obj.carried_by:
-            act(msg, obj.carried_by, obj, None, TO_ALL)
+            act( msg, obj.carried_by, obj, None, TO_ALL )
         elif obj.in_room and obj.in_room.people:
             act(msg,obj.in_room.people,obj,None,TO_ALL)
 
@@ -278,12 +278,12 @@ def fire_effect(vo, level, dam, target):
                 else:
                     extract_obj(t_obj)
                     continue
-                fire_effect(t_obj,level / 2,dam / 2,TARGET_OBJ)
+                fire_effect(t_obj,level/2,dam/2,TARGET_OBJ)
 
-        extract_obj(obj)
+        extract_obj( obj )
         return
 
-def poison_effect(vo, level, dam, target):
+def poison_effect( vo, level, dam, target):
     if target == TARGET_ROOM:  # nail objects on the floor */
         room = vo
         for obj in room.contents[:]:
@@ -299,14 +299,14 @@ def poison_effect(vo, level, dam, target):
             victim.send("You feel poison coursing through your veins.\n\r")
             act("$n looks very ill.",victim,None,None,TO_ROOM)
 
-            af.where = TO_AFFECTS
-            af.type = gsn_poison
-            af.level = level
-            af.duration = level / 2
-            af.location = APPLY_STR
-            af.modifier = -1
+            af.where     = TO_AFFECTS
+            af.type      = gsn_poison
+            af.level     = level
+            af.duration  = level / 2
+            af.location  = APPLY_STR
+            af.modifier  = -1
             af.bitvector = AFF_POISON
-            affect_join(victim, af)
+            affect_join( victim, af )
     # equipment */
         for obj in victim.carrying[:]:
             poison_effect(obj,level,dam,TARGET_OBJ)
@@ -325,7 +325,7 @@ def poison_effect(vo, level, dam, target):
         chance -= obj.level * 2
 
 
-        if obj.item_type == ITEM_FOOD:
+        if obj.item_type ==  ITEM_FOOD:
             pass
         if obj.item_type == ITEM_DRINK_CON:
             if obj.value[0] == obj.value[1]:
@@ -340,7 +340,7 @@ def poison_effect(vo, level, dam, target):
         obj.value[3] = 1
         return
 
-def shock_effect(vo, level, dam, target):
+def shock_effect( vo, level, dam, target):
     if target == TARGET_ROOM:
         room = vo
         for obj in room.contents[:]:
@@ -349,10 +349,10 @@ def shock_effect(vo, level, dam, target):
 
     if target == TARGET_CHAR:
         victim = vo
-        # daze and confused?  */
-        if not saves_spell(level / 4 + dam / 20,victim,DAM_LIGHTNING):
+        # daze and confused? */
+        if not saves_spell(level/4 + dam/20,victim,DAM_LIGHTNING):
             victim.send("Your muscles stop responding.\n\r")
-            DAZE_STATE(victim,max(12,level / 4 + dam / 20))
+            DAZE_STATE(victim,max(12,level/4 + dam/20))
         # toast some gear */
         for obj in victim.carrying[:]:
             shock_effect(obj,level,dam,TARGET_OBJ)
@@ -367,7 +367,7 @@ def shock_effect(vo, level, dam, target):
         if chance > 25:
             chance = (chance - 25) / 2 + 25
         if chance > 50:
-            chance = (chance - 50) / 2 + 50
+            chance = (chance - 50) /2 + 50
 
         if IS_OBJ_STAT(obj,ITEM_BLESS):
             chance -= 5
