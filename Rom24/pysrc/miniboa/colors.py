@@ -45,9 +45,8 @@ Split off the color codes themselves into a seperate module
 to make it easier to edit the actual terminal code
 """
 
-_TERMINAL_TYPES = [ 'unknown', 'ansi', 'imc2', 'i3', 'mxp' ]
-_COLOR_TOKENS = [
-    'BOLD', 'FLASH', 'ITALIC', 'RESET', 'REVERSE', 'STRIKETHRU', 'UNDERLINE',
+_TERMINAL_TYPES = ['unknown', 'ansi', 'imc2', 'i3', 'mxp']
+_COLOR_TOKENS = ['BOLD', 'FLASH', 'ITALIC', 'RESET', 'REVERSE', 'STRIKETHRU', 'UNDERLINE',
     'CLEARLINE', 'CURS_DOWN', 'CURS_LEFT', 'CURS_RIGHT', 'CURS_UP',
     'ENDTERM', 'HOME', 'INITTERM', 'RESTORE', 'SAVE',
     'BLACK', 'RED', 'GREEN', 'ORANGE',
@@ -57,8 +56,7 @@ _COLOR_TOKENS = [
     'B_BLACK', 'B_RED', 'B_GREEN', 'B_ORANGE',
     'B_BLUE', 'B_MAGENTA', 'B_CYAN', 'B_GREY',
     'B_DARKGREY', 'B_LIGHTRED', 'B_LIGHTGREEN', 'B_YELLOW',
-    'B_LIGHTBLUE', 'B_PINK', 'B_LIGHTCYAN', 'B_WHITE'
-    ]
+    'B_LIGHTBLUE', 'B_PINK', 'B_LIGHTCYAN', 'B_WHITE']
 
 _COLOR_MAP = {}
 
