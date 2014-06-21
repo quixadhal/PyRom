@@ -35,6 +35,7 @@ from collections import OrderedDict
 from merc import *
 from handler import *
 from db import create_object, create_mobile, create_money
+from update import gain_condition
 
 def can_loot(ch, obj):
     if IS_IMMORTAL(ch):

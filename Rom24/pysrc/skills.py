@@ -624,13 +624,13 @@ def check_improve( ch, sn, success, multiplier ):
     # now that the character has a CHANCE to learn, see if they really have */ 
 
     if success:
-        chance = min(5, max(100 - ch.pcdata.learned[sn.name], 95))
+        chance = max(5, min(100 - ch.pcdata.learned[sn.name], 95))
         if random.randint(1,99) < chance:
             ch.send("You have become better at %s!\n" % sn.name)
             ch.pcdata.learned[sn.name] += 1
             update.gain_exp(ch,2 * sn.rating[ch.guild.name])
     else:
-        chance = min(5, max(ch.pcdata.learned[sn.name]/2,30))
+        chance = max(5, min(ch.pcdata.learned[sn.name]/2,30))
         if random.randint(1,99) < chance:
             ch.send("You learn from your mistakes, and your %s skill improves.\n" % sn.name)
             ch.pcdata.learned[sn.name] += random.randint(1,3)

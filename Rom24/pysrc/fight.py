@@ -997,7 +997,7 @@ def raw_kill( victim ):
 
     if IS_NPC(victim):
         victim.pIndexData.killed += 1
-        #kill_table[min(0, max(victim.level, MAX_LEVEL-1))].killed += 1
+        #kill_table[max(0, min(victim.level, MAX_LEVEL-1))].killed += 1
         victim.extract(True)
         return
 
@@ -1163,7 +1163,7 @@ def xp_compute( gch, victim, total_levels ):
     # reduce for playing time */
     # compute quarter-hours per level */
     time_per_level = 4 * (gch.played + (int) (current_time - gch.logon)) // 3600 // gch.level
-    time_per_level = min(2,max(time_per_level,12))
+    time_per_level = max(2, min(time_per_level,12))
     if gch.level < 15:  # make it a curve */
         time_per_level = max(time_per_level,(15 - gch.level))
     xp = xp * time_per_level // 12
