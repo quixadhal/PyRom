@@ -76,7 +76,7 @@ def acid_effect(vo, level, dam, target):
         else:
             return
 
-        chance = min(5,max(chance,95))
+        chance = max(5, min(chance,95))
 
         if random.randint(1,99) > chance:
             return
@@ -178,7 +178,7 @@ def cold_effect( vo, level, dam, target):
         else:
             return
 
-        chance = min(5,max(chance,95))
+        chance = max(5, min(chance,95))
 
         if random.randint(1,99) > chance:
             return
@@ -256,7 +256,7 @@ def fire_effect(vo, level, dam, target):
             msg = "$p melts and drips!"
         else:
             return
-        chance = min(5,max(chance,95))
+        chance = max(5, min(chance,95))
 
         if random.randint(1,99) > chance:
             return
@@ -331,7 +331,7 @@ def poison_effect( vo, level, dam, target):
                 return
         else:
             return
-        chance = min(5,max(chance,95))
+        chance = max(5, min(chance,95))
 
         if random.randint(1,99) > chance:
             return
@@ -382,7 +382,7 @@ def shock_effect( vo, level, dam, target):
             msg = "$p is fused into a worthless lump."
         else:
             return
-        chance = min(5,max(chance,95))
+        chance = max(5, min(chance,95))
 
         if random.randint(1,99) > chance:
             return

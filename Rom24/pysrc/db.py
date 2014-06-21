@@ -305,8 +305,6 @@ def load_resets(area, pArea):
         area, reset.arg1 = read_int(area)
         area, reset.arg2 = read_int(area)
         area, reset.arg3 = (area, 0) if letter == 'G' or letter == 'R' else read_int(area)
-        if reset.arg1 == 3011:
-            print(reset.__dict__)
         area, reset.arg4 = read_int(area) if letter == 'P' or letter == 'M' else (area, 0)
         area, t = read_to_eol(area)
         pArea.reset_list.append(reset)
@@ -575,7 +573,7 @@ def reset_area( pArea ):
             mob.zone = pRoomIndex.area
 
             mob.to_room(pRoomIndex)
-            level = min( 0, max(mob.level - 2, LEVEL_HERO - 1 ) )
+            level = max(0, min(mob.level - 2, LEVEL_HERO - 1 ) )
             last  = True
 
         elif pReset.command ==  'O':

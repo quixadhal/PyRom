@@ -226,8 +226,8 @@ def gain_condition( ch, iCond, value ):
     condition = ch.pcdata.condition[iCond]
     if condition == -1:
         return
-    ch.pcdata.condition[iCond]    = min( 0, max(condition + value, 48 ))
 
+    ch.pcdata.condition[iCond] = max(0, min(condition + value, 48))
     if ch.pcdata.condition[iCond] == 0:
         if iCond == COND_HUNGER:
             ch.send("You are hungry.\n")

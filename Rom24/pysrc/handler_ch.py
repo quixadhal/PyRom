@@ -929,7 +929,7 @@ class handler_ch:
         if not IS_NPC(ch) and ch.pcdata.condition[COND_DRUNK] > 10:
             skill = 9 * skill / 10
 
-        return min(0, max(skill, 100))
+        return max(0, min(skill, 100))
 
     # for returning weapon information */
     def get_weapon_sn(ch):
@@ -972,7 +972,7 @@ class handler_ch:
                 skill = 3 * ch.level
             else:
                 skill = ch.pcdata.learned[sn]
-        return min(0,max(skill,100))
+        return max(0, min(skill,100))
 
     # * Retrieve a character's age.
     def get_age(ch):
@@ -1009,7 +1009,7 @@ class handler_ch:
                 smax += 1
 
             smax = min(smax,25);
-        return min(3, max(ch.perm_stat[stat] + ch.mod_stat[stat], smax))
+        return max(3, min(ch.perm_stat[stat] + ch.mod_stat[stat], smax))
 
     # command for returning max training score */
     def get_max_train(ch, stat):
