@@ -1205,8 +1205,11 @@ MEM_SELLER = B
 MEM_HOSTILE = C
 MEM_AFRAID = D
 
+PAGELEN = 22
+
 boot_time = time.time()
 current_time = 0
+
 #utility functions
 
 def name_lookup(dict, arg, key='name'):
