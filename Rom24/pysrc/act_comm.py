@@ -37,6 +37,7 @@ from fight import stop_fighting
 from merc import *
 from nanny import con_playing
 from save import save_char_obj
+from nanny import con_playing
 import interp
 import comm
 import os

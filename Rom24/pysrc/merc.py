@@ -1377,7 +1377,8 @@ def read_int(str):
         return (str, int(number) )
     else:
         str = str[len(number)+1:]
-        return (str, int(number)*-1 )
+        number = int(number)*-1
+        return (str, number)
 
 def read_string(str):
     if not str:
@@ -1422,6 +1423,13 @@ def read_to_eol(str):
     return (str, line);
 
 
+def is_name(arg, name):
+    name, tmp = read_word(name)
+    while tmp:
+        if tmp.lower().startswith(arg):
+            return True
+        name, tmp = read_word(name)
+    return False
 
 # * Given a string like 14.foo, return 14 and 'foo'
 def number_argument( argument ):
