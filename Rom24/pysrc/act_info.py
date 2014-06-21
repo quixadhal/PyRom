@@ -39,6 +39,7 @@ from act_move import dir_name
 from db import get_extra_descr
 from const import skill_table, guild_table, pc_race_table, int_app
 from tables import clan_table
+from fight import is_safe
 
 where_name = ["<used as light>     ",
               "<worn on finger>    ",
@@ -1182,10 +1183,11 @@ def do_who(self, argument):
                 "" if IS_NPC(wch) else wch.pcdata.title))
     ch.send("\nPlayers found: %d\n" % nMatch)
     return
-
+max_on = 0
 def do_count(self, argument):
+    global max_on
     ch = self
-    count = len([d for d in descriptor_list if d.is_connected(con_playing) and can_see(ch, CH(d))])
+    count = len([d for d in descriptor_list if d.is_connected(con_playing) and ch.can_see(CH(d))])
     max_on = max(count, max_on)
 
     if max_on == count:

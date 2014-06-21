@@ -35,6 +35,7 @@
 from merc import *
 import const
 import update
+import magic
 
 # used to get new skills */
 def do_gain(self, argument):
@@ -74,7 +75,7 @@ def do_gain(self, argument):
         for sn,skill in const.skill_table.items():
             if sn not in ch.pcdata.learned \
             and  skill.rating[ch.guild.name] > 0 \
-            and  skill.spell_fun == spell_null:
+            and  skill.spell_fun == magic.spell_null:
                 ch.send("%-18s %-5d " % (const.skill_table[sn].name,skill.rating[ch.guild.name]))
                 col += 1
                 if (col % 3) == 0:
@@ -130,7 +131,7 @@ def do_gain(self, argument):
 
     if argument.lower() in const.skill_table:
         sn = const.skill_table[argument.lower()]
-        if sn.spell_fun != spell_null:
+        if sn.spell_fun != magic.spell_null:
             act("$N tells you 'You must learn the full group.'", ch,None,trainer,TO_CHAR)
             return
         
@@ -159,18 +160,18 @@ def do_gain(self, argument):
 def do_spells(self, argument):
     ch = self
     fAll = False
-    min_lev = 0
-    max_lev = 0
+    min_lev = 1
+    max_lev = LEVEL_HERO
     level = 0
     skill = None
 
     if IS_NPC(ch):
       return
     argument = argument.lower()
-    if not argument:
+    if argument:
         fAll = True
 
-        if "all".startswith(argument):
+        if not "all".startswith(argument):
             argument, arg = read_word(argument)
             if not arg.isdigit():
                 ch.send("Arguments must be numerical or all.\n")
@@ -207,7 +208,7 @@ def do_spells(self, argument):
         if level < LEVEL_HERO + 1 \
         and  (fAll or level <= ch.level) \
         and  level >= min_lev and level <= max_lev \
-        and  skill.spell_fun != spell_null \
+        and  skill.spell_fun != magic.spell_null \
         and  sn in ch.pcdata.learned:
             found = True
             level = skill.skill_level[ch.guild.name]
@@ -222,7 +223,7 @@ def do_spells(self, argument):
                 spell_column[level] = 0
             else: # append */
                 spell_column[level] += 1
-                if spell_columns[level] % 2 == 0:
+                if spell_column[level] % 2 == 0:
                     spell_list[level] += "\n          "
                 spell_list[level] += buf
 
@@ -297,14 +298,20 @@ def group_remove(ch, name):
             gn_remove(ch,gn) # be sure to call gn_add on all remaining groups */
 
 def do_skills(self, argument):
-    ch = self 
+    ch = self
+    fAll = False
+    found = False
+    min_lev = 1
+    max_lev = LEVEL_HERO
+    level = 0
+    skill = None
     if IS_NPC(ch):
       return
     argument = argument.lower()
-    if not argument:
+    if argument:
         fAll = True
 
-        if "all".startswith(argument):
+        if not "all".startswith(argument):
             argument, arg = read_word(argument)
             if not arg.isdigit():
                 ch.send("Arguments must be numerical or all.\n")
@@ -336,12 +343,12 @@ def do_skills(self, argument):
     skill_columns = {}
     skill_list = {}
  
-    for sn, skill in const.skills_table.items():
+    for sn, skill in const.skill_table.items():
         level = skill.skill_level[ch.guild.name]
         if level < LEVEL_HERO + 1 \
         and  (fAll or level <= ch.level) \
         and  level >= min_lev and level <= max_lev \
-        and  skill.spell_fun == spell_null \
+        and  skill.spell_fun == magic.spell_null \
         and  sn in ch.pcdata.learned:
             found = True
             level = skill.skill_level[ch.guild.name]
@@ -392,7 +399,7 @@ def list_group_costs(ch):
     for sn, skill in const.skill_table.items():
         if sn not in ch.gen_data.skill_chosen \
         and sn not in ch.pcdata.learned \
-        and  skill.spell_fun == spell_null \
+        and  skill.spell_fun == magic.spell_null \
         and  skill.rating[ch.guild.name] > 0:
             ch.send("%-18s %-5d " % (skill.name, skill.rating[ch.guild.name]))
             col += 1
@@ -487,7 +494,7 @@ def parse_gen_groups(ch, argument):
                 ch.send("You already know that skill!\n")
                 return True
 
-            if sn.rating[ch.guild.name] < 1 or sn.spell_fun != spell_null:
+            if sn.rating[ch.guild.name] < 1 or sn.spell_fun != magic.spell_null:
                 ch.send("That skill is not available.\n")
                 return True
             # Close security hole */
@@ -562,7 +569,7 @@ def do_groups(self, argument):
     if not argument:
         # show all groups */
         for gn, group in const.group_table.items():
-            if gn in ch.pcdata.group_known[gn]:
+            if gn in ch.pcdata.group_known:
                 ch.send("%-20s " % group.name)
                 col += 1
                 if col % 3 == 0:
