@@ -305,6 +305,8 @@ def load_resets(area, pArea):
         area, reset.arg1 = read_int(area)
         area, reset.arg2 = read_int(area)
         area, reset.arg3 = (area, 0) if letter == 'G' or letter == 'R' else read_int(area)
+        if reset.arg1 == 3011:
+            print(reset.__dict__)
         area, reset.arg4 = read_int(area) if letter == 'P' or letter == 'M' else (area, 0)
         area, t = read_to_eol(area)
         pArea.reset_list.append(reset)
@@ -567,7 +569,7 @@ def reset_area( pArea ):
             if pRoomIndex.vnum-1 in room_index_hash:
                 pRoomIndexPrev = room_index_hash[pRoomIndex.vnum-1]
                 if IS_SET(pRoomIndexPrev.room_flags, ROOM_PET_SHOP):
-                    SET_BIT(mob.act, ACT_PET)
+                    mob.act = SET_BIT(mob.act, ACT_PET)
 
             # set area */
             mob.zone = pRoomIndex.area
@@ -668,7 +670,7 @@ def reset_area( pArea ):
 
 
                 obj = create_object( pObjIndex, olevel )
-                SET_BIT( obj.extra_flags, ITEM_INVENTORY )
+                obj.extra_flags = SET_BIT(obj.extra_flags, ITEM_INVENTORY)
             else:
                 if pReset.arg2 > 50: # old format */
                     limit = 6
@@ -705,16 +707,16 @@ def reset_area( pArea ):
                 continue
 
             if pReset.arg3 == 0:
-                REMOVE_BIT( pexit.exit_info, EX_CLOSED )
-                REMOVE_BIT( pexit.exit_info, EX_LOCKED )
+                pexit.exit_info = REMOVE_BIT(pexit.exit_info, EX_CLOSED)
+                pexit.exit_info = REMOVE_BIT(pexit.exit_info, EX_LOCKED)
                 continue
             elif pReset.arg3 == 1:
-                SET_BIT(pexit.exit_info, EX_CLOSED )
-                REMOVE_BIT(pexit.exit_info, EX_LOCKED )
+                pexit.exit_info = SET_BIT(pexit.exit_info, EX_CLOSED )
+                pexit.exit_info = REMOVE_BIT(pexit.exit_info, EX_LOCKED )
                 continue
             elif pReset.arg3 == 2:
-                SET_BIT(pexit.exit_info, EX_CLOSED )
-                SET_BIT(pexit.exit_info, EX_LOCKED )
+                pexit.exit_info = SET_BIT(pexit.exit_info, EX_CLOSED )
+                pexit.exit_info = SET_BIT(pexit.exit_info, EX_LOCKED )
                 continue
             last = True
             continue

@@ -34,7 +34,7 @@
 
 from merc import *
 from handler import *
-from fight import update_pos, is_safe, is_safe_spell, check_killer
+from fight import update_pos, is_safe, is_safe_spell, check_killer, multi_hit
 from skills import check_improve
 import const
 
@@ -258,7 +258,7 @@ def do_cast(ch, argument):
         say_spell(ch, sn)
     WAIT_STATE(ch, sn.beats)
      
-    if random.randint(1,99) > ch.get_skill(sn):
+    if random.randint(1,99) > ch.get_skill(sn.name):
         ch.send("You lost your concentration.\n")
         check_improve(ch,sn,False,1)
         ch.mana -= mana // 2

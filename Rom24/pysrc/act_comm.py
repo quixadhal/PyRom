@@ -34,6 +34,7 @@
 
 from merc import *
 from save import save_char_obj
+from nanny import con_playing
 import interp
 import comm
 

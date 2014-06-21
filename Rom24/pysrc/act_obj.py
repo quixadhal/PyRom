@@ -31,9 +31,10 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
-
+from collections import OrderedDict
 from merc import *
 from handler import *
+from db import create_object, create_mobile, create_money
 
 def can_loot(ch, obj):
     if IS_IMMORTAL(ch):
@@ -1338,8 +1339,10 @@ def obj_to_keeper(obj, ch):
 # get an object from a shopkeeper's list */
 def get_obj_keeper(ch, keeper, argument):
     number, arg = number_argument(argument)
-    for count, obj in enumerate(keeper.carrying, 1):
-        if obj.wear_loc == WEAR_NONE and keeper.can_see_obj(obj) and ch.can_see_obj(obj) and arg in obj.name.lower():
+    count = 0
+    for obj in keeper.carrying:
+        if obj.wear_loc == WEAR_NONE and keeper.can_see_obj(obj) and ch.can_see_obj(obj) and is_name(arg, obj.name):
+            count += 1
             if count == number:
                 return obj
   
@@ -1411,7 +1414,7 @@ def do_buy(self, argument):
             ch.send("You can't afford it.\n")
             return
         if ch.level < pet.level:
-            ch.send(    "You're not powerful enough to master this pet.\n")
+            ch.send("You're not powerful enough to master this pet.\n")
             return
         # haggle */
         roll = random.randint(1,99)
@@ -1441,8 +1444,8 @@ def do_buy(self, argument):
         if not keeper:
             return
         number, arg = mult_argument(argument)
-        obj = get_obj_keeper( ch,keeper, arg )
-        cost = get_cost( keeper, obj, True )
+        obj = get_obj_keeper(ch,keeper, arg)
+        cost = get_cost(keeper, obj, True)
         if number < 1 or number > 99:
             act("$n tells you 'Get real!",keeper,None,ch,TO_VICT)
             return
@@ -1493,7 +1496,7 @@ def do_buy(self, argument):
         keeper.gold += cost * number/100
         keeper.silver += cost * number - (cost * number/100) * 100
         t_obj = None
-        if IS_SET(obj.extra_flags, ITEM_INVENTORY ):
+        if IS_SET(obj.extra_flags, ITEM_INVENTORY):
             items = []
             for count in range(number):
                 t_obj = create_object( obj.pIndexData, obj.level )

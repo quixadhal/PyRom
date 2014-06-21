@@ -777,7 +777,7 @@ class handler_ch:
     # deduct cost from a character */
     def deduct_cost(ch, cost):
         silver = min(ch.silver, cost) 
-
+        gold = 0
         if silver < cost:
             gold = ((cost - silver + 99) / 100)
             silver = cost - 100 * gold
@@ -872,6 +872,7 @@ class handler_ch:
     # for returning skill information */
     def get_skill(ch, sn):
         skill = 0
+
         if sn == -1: # shorthand for level based skills */
             skill = ch.level * 5 / 2
         elif sn not in skill_table:
