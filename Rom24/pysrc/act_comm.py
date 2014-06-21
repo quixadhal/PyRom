@@ -31,11 +31,17 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/ 
  ************/
 """
+from const import guild_table
+from fight import stop_fighting
 
 from merc import *
+from nanny import con_playing
 from save import save_char_obj
 import interp
 import comm
+import os
+from settings import PLAYER_DIR
+
 
 def do_delet(self, argument):
     ch=self
@@ -309,7 +315,7 @@ def do_question(self, argument):
         for d in descriptor_list:
             victim = CH(d)
             if d.is_connected(con_playing) and d.character != ch and not IS_SET(victim.comm,COMM_NOQUESTION) and not IS_SET(victim.comm,COMM_QUIET):
-                act_new("$n questions '$t'", ch,argument,d.character,TO_VICT,POS_SLEEPING)
+                act("$n questions '$t'", ch,argument,d.character,TO_VICT,POS_SLEEPING)
 
 # RT answer channel - uses same line as questions */
 def do_answer(self, argument):
@@ -400,7 +406,7 @@ def do_immtalk(self, argument):
     REMOVE_BIT(ch.comm,COMM_NOWIZ)
     act("$n: $t",ch,argument,None,TO_CHAR,POS_DEAD)
     for d in descriptor_list:
-        if d.connected == CON_PLAYING and IS_IMMORTAL(d.character) and not IS_SET(d.character.comm,COMM_NOWIZ):
+        if d.is_connected(con_playing) and IS_IMMORTAL(d.character) and not IS_SET(d.character.comm,COMM_NOWIZ):
             act("$n: $t",ch,argument,d.character,TO_VICT,POS_DEAD)
 
 def do_say(self, argument):
@@ -430,7 +436,7 @@ def do_shout(self, argument):
     act( "You shout '$T'", ch, None, argument, TO_CHAR )
     for d in descriptor_list:
         victim = CH(d)
-        if d.connected == CON_PLAYING and d.character != ch \
+        if d.is_connected(con_playing) and d.character != ch \
         and not IS_SET(victim.comm, COMM_SHOUTSOFF) and not IS_SET(victim.comm, COMM_QUIET):
             act("$n shouts '$t'",ch,argument,d.character,TO_VICT)
 
@@ -572,7 +578,7 @@ def do_pmote(self, argument):
         act("$N $t",vch,temp,ch,TO_CHAR)
     return
 
-# * All the posing stuff.
+# All the posing stuff.
 pose_table = [ [ [  "You sizzle with energy.",
                     "$n sizzles with energy.",
                     "You feel very holy.",
