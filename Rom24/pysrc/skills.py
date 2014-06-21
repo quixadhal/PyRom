@@ -42,13 +42,12 @@ def do_gain(self, argument):
     ch = self
     if IS_NPC(ch):
         return
-    trainer = [t for t in ch.in_room.people if IS_NPC(TRAINER) and IS_SET(trainer.act,ACT_GAIN)]
+    trainer = [t for t in ch.in_room.people if IS_NPC(t) and IS_SET(t.act,ACT_GAIN)]
     # find a trainer */
     if not trainer or not ch.can_see(trainer):
         ch.send("You can't do that here.\n")
         return
-    
-
+   
     argmod, arg = read_word(argument)
 
     if not arg:

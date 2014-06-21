@@ -367,7 +367,7 @@ def weather_update( ):
 
     if buf:
         for d in descriptor_list:
-            if d.connected == con_playing and IS_OUTSIDE(d.character) and IS_AWAKE(d.character):
+            if d.is_connected(con_playing) and IS_OUTSIDE(d.character) and IS_AWAKE(d.character):
                 ch.send(buf)
     return
 

@@ -998,7 +998,7 @@ def do_help(self, argument):
     found = [h for h in help_list if h.level <= self.get_trust() and argument.lower() in h.keyword.lower()]
 
     for pHelp in found:
-        if ch.desc.connected == con_playing:
+        if ch.desc.is_connected(con_playing):
             self.send("\n============================================================\n")
             ch.send(pHelp.keyword)
             ch.send("\n")
@@ -1185,7 +1185,7 @@ def do_who(self, argument):
 
 def do_count(self, argument):
     ch = self
-    count = len([d for d in descriptor_list if d.connected == con_playing and can_see(ch, CH(d))])
+    count = len([d for d in descriptor_list if d.is_connected(con_playing) and can_see(ch, CH(d))])
     max_on = max(count, max_on)
 
     if max_on == count:
@@ -1287,7 +1287,7 @@ def do_where(self, argument):
         found = False
         for d in descriptor_list:
             victim = CH(d)
-            if d.connected == con_playing \
+            if d.is_connected(con_playing) \
             and victim \
             and not IS_NPC(victim) \
             and victim.in_room \
