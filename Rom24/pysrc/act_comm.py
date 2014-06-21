@@ -31,17 +31,15 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/ 
  ************/
 """
+import os
+from merc import *
 from const import guild_table
 from fight import stop_fighting
-
-from merc import *
-from save import save_char_obj
 from nanny import con_playing
-import interp
+from save import save_char_obj
+from settings import PLAYER_DIR, BUG_FILE, TYPO_FILE
 import comm
-import os
-from settings import PLAYER_DIR
-
+import interp
 
 def do_delet(self, argument):
     ch=self
@@ -932,7 +930,7 @@ def do_order(self, argument):
         and ( fAll or och == victim ):
             found = True
             act( "$n orders you to '%s'." % argument, ch, None, och, TO_VICT )
-            interpret( och, argument )
+            interp.interpret(och, argument)
 
     if found:
         WAIT_STATE(ch,PULSE_VIOLENCE)

@@ -1494,6 +1494,10 @@ def mult_argument(argument):
     return (int(number), rest)
 
 
+def append_file(ch, fp, str):
+    with open(fp, "a") as f:
+        f.write(str + "\n")
+
 def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
     if not format:
         return
