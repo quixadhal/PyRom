@@ -686,7 +686,7 @@ class handler_ch:
                 continue
             if not IS_NPC(rch) and not rch.name.lower().startswith(arg):
                 continue
-            if IS_NPC(rch) and arg not in rch.name:
+            if IS_NPC(rch) and not is_name(arg, rch.name):
                 continue
             count += 1
             if count == number:
@@ -704,7 +704,7 @@ class handler_ch:
         for wch in char_list:
             if wch.in_room == None or not ch.can_see(wch):
                 continue
-            if not IS_NPC(wch) and not wch.name.lower().startswith(arg):
+            if not IS_NPC(wch) and not is_name(arg, wch.name.lower()):
                 continue
             if IS_NPC(wch) and arg not in wch.name:
                 continue
@@ -718,7 +718,7 @@ class handler_ch:
         number, arg = number_argument(argument)
         count  = 0
         for obj in contents:
-            if ch.can_see_obj(obj) and arg.lower() in  obj.name.lower():
+            if ch.can_see_obj(obj) and is_name(arg, obj.name.lower()):
                 count += 1
                 if count == number:
                     return obj
@@ -729,7 +729,7 @@ class handler_ch:
         number, arg = number_argument(argument)
         count  = 0
         for obj in ch.carrying:
-            if obj.wear_loc == WEAR_NONE and viewer.can_see_obj(obj) and arg.lower() in obj.name.lower():
+            if obj.wear_loc == WEAR_NONE and viewer.can_see_obj(obj) and is_name(arg, obj.name.lower()):
                 count += 1
                 if count == number:
                     return obj
@@ -740,7 +740,7 @@ class handler_ch:
         number, arg = number_argument(argument)
         count = 0
         for obj in ch.carrying:
-            if obj.wear_loc != WEAR_NONE and ch.can_see_obj(obj) and arg.lower() in obj.name.lower():
+            if obj.wear_loc != WEAR_NONE and ch.can_see_obj(obj) and is_name(arg, obj.name.lower()):
                 count += 1   
                 if count == number:
                     return obj
@@ -769,7 +769,7 @@ class handler_ch:
         count = 0
         arg = arg.lower()
         for obj in object_list:
-            if ch.can_see_obj(obj) and arg in obj.name.lower():
+            if ch.can_see_obj(obj) and is_name(arg, obj.name.lower()):
                 count += 1
             if count == number:
                return obj
