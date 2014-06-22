@@ -138,9 +138,11 @@ def load_mobiles(area):
         area, mob.long_descr = read_string(area)
         area, mob.description = read_string(area)
         area, mob.race = read_string(area)
+        mob.race = const.race_table[mob.race]
         area, mob.act = read_flags(area)
-        mob.act = mob.act | ACT_IS_NPC
+        mob.act = mob.act | ACT_IS_NPC | mob.race.act
         area, mob.affected_by = read_flags(area)
+        mob.affected_by = mob.affected_by | mob.race.aff
         area, mob.alignment = read_int(area)
         area, mob.group = read_int(area)
         area, mob.level = read_int(area)
@@ -167,9 +169,13 @@ def load_mobiles(area):
         area, mob.ac[2] = read_int(area)
         area, mob.ac[3] = read_int(area)
         area, mob.off_flags = read_flags(area)
+        mob.off_flags = mob.off_flags | mob.race.off
         area, mob.imm_flags = read_flags(area)
+        mob.imm_flags = mob.imm_flags | mob.race.imm
         area, mob.res_flags = read_flags(area)
+        mob.res_flags = mob.res_flags | mob.race.res
         area, mob.vuln_flags = read_flags(area)
+        mob.vuln_flags = mob.vuln_flags | mob.race.vuln
         area, mob.start_pos = read_word(area,False)
         area, mob.default_pos = read_word(area,False)
         mob.start_pos = name_lookup(position_table, mob.start_pos, 'short_name')
@@ -178,7 +184,9 @@ def load_mobiles(area):
         mob.sex = value_lookup(sex_table, sex)
         area, mob.wealth = read_int(area)
         area, mob.form = read_flags(area)
+        mob.form = mob.form | mob.race.form
         area, mob.parts = read_flags(area)
+        mob.parts = mob.parts | mob.race.parts
         area, mob.size = read_word(area,False)
         area, mob.material = read_word(area,False)
         area, w = read_word(area,False)

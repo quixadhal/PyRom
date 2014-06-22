@@ -270,7 +270,7 @@ def mobile_update( ):
             top = 1
             obj_best = 0
             for obj in ch.in_room.contents:
-                if CAN_WEAR(obj, ITEM_TAKE) and can_loot(ch, obj) and obj.cost > top and obj.cost > 0:
+                if CAN_WEAR(obj, ITEM_TAKE) and ch.can_loot(obj) and obj.cost > top and obj.cost > 0:
                     obj_best = obj
                     top = obj.cost
 

@@ -234,7 +234,7 @@ def wear_bit_name(wear_flags):
     return "none" if not buf else buf
 
 def form_bit_name(form_flags):
-    buf[0] = ""
+    buf = ""
     if form_flags & FORM_POISON: buf += " poison"
     elif form_flags & FORM_EDIBLE: buf += " edible"
     if form_flags & FORM_MAGICAL: buf += " magical"

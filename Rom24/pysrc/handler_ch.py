@@ -93,6 +93,7 @@ class handler_ch:
     # * Give an affect to a char.
     def affect_add(ch, paf):
         paf_new = AFFECT_DATA()
+        paf_new = paf
         ch.affected.append(paf_new)
         ch.affect_modify(paf_new, True)
         return
@@ -1071,8 +1072,24 @@ class handler_ch:
 
         return expl * pc_race_table[ch.race.name].class_mult[ch.guild.name]/100
 
-
-
+    def can_loot(ch, obj):
+        if IS_IMMORTAL(ch):
+            return True
+        if not obj.owner or obj.owner == None:
+            return True
+        owner = None
+        for wch in char_list:
+            if wch.name == obj.owner:
+                owner = wch
+        if owner == None:
+            return True
+        if ch.name == owner.name:
+            return True
+        if not IS_NPC(owner) and IS_SET(owner.act,PLR_CANLOOT):
+            return True
+        if ch.is_same_group(owner):
+            return True
+        return False
 
 methods = {d:f for d,f in handler_ch.__dict__.items() if not d.startswith('__')}
 for m,f in methods.items():

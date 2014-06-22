@@ -42,6 +42,7 @@ MAX_STATS = 5
 MAX_SKILL = 150
 MAX_GROUP = 30
 MAX_LEVEL = 60
+MAX_ALIAS = 10
 LEVEL_HERO = (MAX_LEVEL - 9)
 LEVEL_IMMORTAL = (MAX_LEVEL - 8)
 
@@ -1403,16 +1404,17 @@ def read_flags(str):
     for c in w:
         flag = 0
         if 'A' <= c and c <= 'Z':
-            flag = 1
+            flag = A
             while c != 'A':
                 flag *= 2
                 c = chr( ord(c)-1 )
 
         elif 'a' <= c and c <= 'z':
-            flag = 2 ** 26
+            flag = aa
             while c != 'a':
                 flag *= 2
                 c = chr( ord(c)-1 )
+
         flags += flag
     return (str, flags)
 

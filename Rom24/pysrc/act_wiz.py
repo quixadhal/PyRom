@@ -34,8 +34,10 @@
 from merc import *
 import nanny
 from db import create_object
-from const import weapon_table
+from const import weapon_table, attack_table
 from settings import NEWLOCK
+from tables import *
+from handler import *
 
 def do_wiznet(self, argument):
     ch=self
@@ -754,7 +756,7 @@ def do_mstat(self, argument):
                 0 if not IS_NPC(victim) else victim.pIndexData.vnum,
                 "pc" if not IS_NPC(victim) else "new" if victim.pIndexData.new_format else "old",
                 victim.race.name,
-                0 if not IS_NPC(victim) else victim.group, sex_table[victim.sex].name,
+                0 if not IS_NPC(victim) else victim.group, sex_table[victim.sex],
                 0 if not victim.in_room else victim.in_room.vnum ) )
 
     if IS_NPC(victim):
@@ -779,7 +781,7 @@ def do_mstat(self, argument):
                 GET_AC(victim,AC_SLASH),  GET_AC(victim,AC_EXOTIC)))
     ch.send("Hit: %d  Dam: %d  Saves: %d  Size: %s  Position: %s  Wimpy: %d\n" % (
                 GET_HITROLL(victim), GET_DAMROLL(victim), victim.saving_throw,
-                size_table[victim.size].name, position_table[victim.position].name,
+                size_table[victim.size], position_table[victim.position].name,
                 victim.wimpy ))
     if IS_NPC(victim) and victim.pIndexData.new_format:
         ch.send("Damage: %dd%d  Message:  %s\n" % (

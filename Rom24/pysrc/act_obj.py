@@ -37,25 +37,6 @@ from handler import *
 from db import create_object, create_mobile, create_money
 from update import gain_condition
 
-def can_loot(ch, obj):
-    if IS_IMMORTAL(ch):
-        return True
-    if not obj.owner or obj.owner == None:
-        return True
-    owner = None
-    for wch in char_list:
-        if wch.name == obj.owner:
-            owner = wch
-    if owner == None:
-        return True
-    if ch.name == owner.name:
-        return True
-    if not IS_NPC(owner) and IS_SET(owner.act,PLR_CANLOOT):
-        return True
-    if ch.is_same_group(owner):
-        return True
-    return False
-
 def get_obj(ch, obj, container):
     # variables for AUTOSPLIT */
     if not CAN_WEAR(obj, ITEM_TAKE):
@@ -68,7 +49,7 @@ def get_obj(ch, obj, container):
     and (get_carry_weight(ch) + obj.get_weight() > ch.can_carry_w()):
         act( "$d: you can't carry that much weight.", ch, None, obj.name, TO_CHAR )
         return
-    if not can_loot(ch,obj):
+    if not ch.can_loot(obj):
         act("Corpse looting is not permitted.",ch,None,None,TO_CHAR )
         return
     if obj.in_room != None:
@@ -148,7 +129,7 @@ def do_get(self, argument):
         or container.item_type == ITEM_CORPSE_NPC:
             pass
         elif container.item_type == ITEM_CORPSE_PC:
-          if not can_loot(ch,container):
+          if not ch.can_loot(container):
               ch.send("You can't do that.\n")
               return
         else:
