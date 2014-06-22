@@ -34,7 +34,7 @@
 from merc import *
 import nanny
 from db import create_object
-from const import weapon_table, attack_table, wiznet_table
+from const import weapon_table, attack_table, wiznet_table, skill_table
 from settings import NEWLOCK
 from tables import *
 from handler import *
@@ -875,8 +875,8 @@ def do_mfind(self, argument):
      #* Get_mob_index is fast, and I don't feel like threading another link.
      #* Do you?
      # -- Furey
-    for pMobIndex in mob_index_hash:
-        if fAll or argument in pMobIndex.player_name:
+    for pMobIndex in mob_index_hash.values():
+        if fAll or is_name(arg, pMobIndex.player_name):
             found = True
             ch.send("[%5d] %s\n" % (pMobIndex.vnum, pMobIndex.short_descr))
     if not found:
@@ -899,10 +899,10 @@ def do_ofind(self, argument):
     # * Get_obj_index is fast, and I don't feel like threading another link.
     # * Do you?
     # * -- Furey
-    for pObjIndex in obj_index_hash:
-        if fAll or argument in pObjIndex.name:
+    for pObjIndex in obj_index_hash.values():
+        if fAll or is_name(arg, pObjIndex.name):
             found = True
-            ch.send("[%5d] %s\n" % (pObjIndex.vnum, pObjIndex.short_descr))
+            ch.send("[%5d] %s(%s)\n" % (pObjIndex.vnum, pObjIndex.short_descr, pObjIndex.name))
     if not found:
         ch.send("No objects by that name.\n")
     return
@@ -1714,7 +1714,7 @@ def do_sset(self, argument):
     if not fAll and not sn:
         ch.send("No such skill or spell.\n")
         return
-    sn = sn.name
+
     # Snarf the value.
     if not arg3.isdigit():
         ch.send("Value must be numeric.\n")
@@ -1728,7 +1728,8 @@ def do_sset(self, argument):
         for sn in skill_table.keys():
             victim.pcdata.learned[sn] = value
     else:
-        victim.pcdata.learned[sn] = value
+        victim.pcdata.learned[sn.name] = value
+    ch.send("Skill set.\n")
 
 def do_mset(self, argument):
     ch=self

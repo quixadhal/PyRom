@@ -93,7 +93,7 @@ class handler_ch:
     # * Give an affect to a char.
     def affect_add(ch, paf):
         paf_new = AFFECT_DATA()
-        paf_new = paf
+        paf_new.__dict__ = paf.__dict__.copy()
         ch.affected.append(paf_new)
         ch.affect_modify(paf_new, True)
         return

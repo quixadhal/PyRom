@@ -1439,6 +1439,8 @@ def read_to_eol(str):
 
 def is_name(arg, name):
     name, tmp = read_word(name)
+    if not arg:
+        return False
     while tmp:
         if tmp.lower().startswith(arg):
             return True

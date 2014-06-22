@@ -35,6 +35,7 @@ from merc import *
 from db import area_update
 from handler import *
 from save import save_char_obj
+import skills
 import const
 import fight
 import act_move
@@ -109,7 +110,7 @@ def hit_gain( ch ):
         if number < ch.get_skill('fast healing'):
             gain += number * gain // 100
             if ch.hit < ch.max_hit:
-                check_improve(ch,'fast healing',True,8)
+                skills.check_improve(ch,'fast healing',True,8)
 
         if ch.position == POS_SLEEPING: pass
         elif ch.position == POS_RESTING: gain //= 2
@@ -154,7 +155,7 @@ def mana_gain( ch ):
         if number < ch.get_skill('meditation'):
             gain += number * gain // 100
             if ch.mana < ch.max_mana:
-                check_improve(ch,'meditation',True,8)
+                skills.check_improve(ch,'meditation',True,8)
 
         if not ch.guild.fMana:
             gain //= 2
