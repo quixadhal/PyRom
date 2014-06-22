@@ -566,7 +566,7 @@ def spec_mayor( ch ):
         return False
 
     if path[pos] == '0' or path[pos] =='1' or path[pos] =='2' or path[pos] =='3':
-        move_char( ch, path[pos] - '0', False )
+        move_char( ch, int(path[pos]), False )
     elif path[pos] == 'W':
         ch.position = POS_STANDING
         act( "$n awakens and groans loudly.", ch, None, None, TO_ROOM )

@@ -93,7 +93,7 @@ class handler_ch:
     # * Give an affect to a char.
     def affect_add(ch, paf):
         paf_new = AFFECT_DATA()
-        paf_new = paf
+        paf_new.__dict__ = paf.__dict__.copy()
         ch.affected.append(paf_new)
         ch.affect_modify(paf_new, True)
         return
@@ -686,7 +686,7 @@ class handler_ch:
                 continue
             if not IS_NPC(rch) and not rch.name.lower().startswith(arg):
                 continue
-            if IS_NPC(rch) and arg not in rch.name:
+            if IS_NPC(rch) and not is_name(arg, rch.name):
                 continue
             count += 1
             if count == number:
@@ -704,7 +704,7 @@ class handler_ch:
         for wch in char_list:
             if wch.in_room == None or not ch.can_see(wch):
                 continue
-            if not IS_NPC(wch) and not wch.name.lower().startswith(arg):
+            if not IS_NPC(wch) and not is_name(arg, wch.name.lower()):
                 continue
             if IS_NPC(wch) and arg not in wch.name:
                 continue
@@ -718,7 +718,7 @@ class handler_ch:
         number, arg = number_argument(argument)
         count  = 0
         for obj in contents:
-            if ch.can_see_obj(obj) and arg.lower() in  obj.name.lower():
+            if ch.can_see_obj(obj) and is_name(arg, obj.name.lower()):
                 count += 1
                 if count == number:
                     return obj
@@ -729,7 +729,7 @@ class handler_ch:
         number, arg = number_argument(argument)
         count  = 0
         for obj in ch.carrying:
-            if obj.wear_loc == WEAR_NONE and viewer.can_see_obj(obj) and arg.lower() in obj.name.lower():
+            if obj.wear_loc == WEAR_NONE and viewer.can_see_obj(obj) and is_name(arg, obj.name.lower()):
                 count += 1
                 if count == number:
                     return obj
@@ -740,7 +740,7 @@ class handler_ch:
         number, arg = number_argument(argument)
         count = 0
         for obj in ch.carrying:
-            if obj.wear_loc != WEAR_NONE and ch.can_see_obj(obj) and arg.lower() in obj.name.lower():
+            if obj.wear_loc != WEAR_NONE and ch.can_see_obj(obj) and is_name(arg, obj.name.lower()):
                 count += 1   
                 if count == number:
                     return obj
@@ -769,7 +769,7 @@ class handler_ch:
         count = 0
         arg = arg.lower()
         for obj in object_list:
-            if ch.can_see_obj(obj) and arg in obj.name.lower():
+            if ch.can_see_obj(obj) and is_name(arg, obj.name.lower()):
                 count += 1
             if count == number:
                return obj
@@ -936,27 +936,10 @@ class handler_ch:
     def get_weapon_sn(ch):
         sn = None
         wield = ch.get_eq(WEAR_WIELD)
+
         if not wield or wield.item_type != ITEM_WEAPON:
             sn = "hand to hand"
-        elif wield.value[0] == WEAPON_SWORD:
-            sn = "sword"
-        elif wield.value[0] == WEAPON_DAGGER:
-            sn = "dagger"
-        elif wield.value[0] == WEAPON_SPEAR:
-            sn = "spear"
-        elif wield.value[0] == WEAPON_MACE:
-            sn = "mace"
-        elif wield.value[0] == WEAPON_AXE:
-            sn = "axe"
-        elif wield.value[0] == WEAPON_FLAIL:
-            sn = "flail"
-        elif wield.value[0] == WEAPON_WHIP:
-            sn = "whip"
-        elif wield.value[0] == WEAPON_POLEARM:
-            sn = "polearm"
-        else:
-            sn = -1
-        return sn
+        return wield.value[0]
 
     def get_weapon_skill(ch, sn):
         skill = 0
