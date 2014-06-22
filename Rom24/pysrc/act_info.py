@@ -223,7 +223,7 @@ def show_char_to_char_1(victim, ch):
     else:
         act("You see nothing special about $M.", ch, None, victim, TO_CHAR)
     if victim.max_hit > 0:
-        percent = (100 * victim.hit) / victim.max_hit
+        percent = (100 * victim.hit) // victim.max_hit
     else:
         percent = -1
     buf = PERS(victim, ch)
@@ -648,9 +648,9 @@ def do_look(ch, argument):
             if obj.value[1] <= 0:
                 ch.send("It is empty.\n")
                 return
-            if obj.value[1] < obj.value[0] / 4:
+            if obj.value[1] < obj.value[0] // 4:
                 amnt = "less than half-"
-            elif obj.value[1] < 3 * obj.value[0] / 4:
+            elif obj.value[1] < 3 * obj.value[0] // 4:
                 amnt = "abount half-"
             else:
                 amnt = "more than half-"
@@ -827,7 +827,7 @@ def do_worth(self, argument):
 def do_score(self, argument):
     ch = self
     ch.send("You are %s%s, level %d, %d years old (%d hours).\n" % (ch.name, "" if IS_NPC(ch) else ch.pcdata.title,
-            ch.level, ch.get_age(), (ch.played + (int)(current_time - ch.logon)) / 3600))
+            ch.level, ch.get_age(), (ch.played + (int)(current_time - ch.logon)) // 3600))
 
     if ch.get_trust() != ch.level:
         ch.send("You are trusted at level %d.\n" % ch.get_trust())
@@ -837,7 +837,7 @@ def do_score(self, argument):
               ch.mana, ch.max_mana, ch.move, ch.max_move))
     ch.send("You have %d practices and %d training sessions.\n" % (ch.practice, ch.train))
     ch.send("You are carrying %d/%d items with weight %ld/%d pounds.\n" % (ch.carry_number, ch.can_carry_n(),
-              get_carry_weight(ch) / 10, ch.can_carry_w() /10))
+              get_carry_weight(ch) // 10, ch.can_carry_w() // 10))
     ch.send("Str: %d(%d)  Int: %d(%d)  Wis: %d(%d)  Dex: %d(%d)  Con: %d(%d)\n" % (
               ch.perm_stat[STAT_STR], ch.get_curr_stat(STAT_STR),
               ch.perm_stat[STAT_INT], ch.get_curr_stat(STAT_INT),
@@ -972,12 +972,12 @@ def do_time(self, argument):
         suf = "rd"
     else:
         suf = "th"
+
     ch.send("It is %d o'clock %s, Day of %s, %d%s the Month of %s.\n" % (
         12 if (time_info.hour % 12 == 0) else time_info.hour % 12,
         "pm" if time_info.hour >= 12 else "am",
         day_name[day % 7], day, suf, month_name[time_info.month]))
     #ch.send("ROM started up at %s\nThe system time is %s.\n", str_boot_time, (char *) ctime(&current_time)
-    ch.send(buf)
     return
 
 def do_weather(self, argument):
@@ -1026,12 +1026,12 @@ def do_whois(self, argument):
         ch.send("You must provide a name.\n")
         return
     for d in descriptor_list[:]:
-        if d.connected != con_playing or not ch.can_see(d.character):
+        if not d.is_connected(con_playing) or not ch.can_see(d.character):
             continue
         wch = CH(d)
         if not ch.can_see(wch):
             continue
-        if arg.startswith(wch.name.lower()):
+        if wch.name.lower().startswith(arg):
             found = True
         # work out the printing */
             guild = wch.guild.who_name
@@ -1056,18 +1056,18 @@ def do_whois(self, argument):
             # a little formatting */
             ch.send("[%2d %6s %s] %s%s%s%s%s%s%s%s\n" % (
                     wch.level,
-                    pc_race_table[wch.race.name].who_name if wch.race.name in pc_race_table else "     ",
+                    (pc_race_table[wch.race.name].who_name if wch.race.name in pc_race_table else "     "),
                     guild,
-                    "(Incog) " if wch.incog_level >= LEVEL_HERO else "",
-                    "(Wizi) " if wch.invis_level >= LEVEL_HERO else "",
+                    ("(Incog) " if wch.incog_level >= LEVEL_HERO else ""),
+                    ("(Wizi) " if wch.invis_level >= LEVEL_HERO else ""),
                     wch.clan.who_name,
-                    "[AFK] " if IS_SET(wch.comm, COMM_AFK) else "",
-                    "(KILLER) " if IS_SET(wch.act, PLR_KILLER) else "",
-                    "(THIEF) " if IS_SET(wch.act, PLR_THIEF) else "",
+                    ("[AFK] " if IS_SET(wch.comm, COMM_AFK) else ""),
+                    ("(KILLER) " if IS_SET(wch.act, PLR_KILLER) else ""),
+                    ("(THIEF) " if IS_SET(wch.act, PLR_THIEF) else ""),
                     wch.name,
-                    "" if IS_NPC(wch) else wch.pcdata.title))
+                    ("" if IS_NPC(wch) else wch.pcdata.title)))
 
-    if found:
+    if not found:
         ch.send("No one of that name is playing.\n")
         return
 #
@@ -1461,7 +1461,7 @@ def do_practice(self, argument):
             ch.send("You are already learned at %s.\n" % skill.name)
         else:
             ch.practice -= 1
-            ch.pcdata.learned[skill.name] += int_app[ch.get_curr_stat(STAT_INT)].learn / skill.rating[ch.guild.name]
+            ch.pcdata.learned[skill.name] += int_app[ch.get_curr_stat(STAT_INT)].learn // skill.rating[ch.guild.name]
             if ch.pcdata.learned[skill.name] < adept:
                 act("You practice $T.", ch, None, skill.name, TO_CHAR)
                 act("$n practices $T.", ch, None, skill.name, TO_ROOM)
@@ -1475,13 +1475,13 @@ def do_wimpy(self, argument):
     ch = self
     argument, arg = read_word(argument)
     if not arg:
-        wimpy = ch.max_hit / 5
+        wimpy = ch.max_hit // 5
     else:
         wimpy = int(arg)
     if wimpy < 0:
         ch.send("Your courage exceeds your wisdom.\n")
         return
-    if wimpy > ch.max_hit/2:
+    if wimpy > ch.max_hit // 2:
         ch.send("Such cowardice ill becomes you.\n")
         return
     ch.wimpy = wimpy

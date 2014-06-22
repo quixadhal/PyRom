@@ -35,6 +35,7 @@ from merc import *
 import magic
 import const
 import fight
+from act_move import move_char
 
 def spec_troll_member( ch ):
     if not IS_AWAKE(ch) or IS_AFFECTED(ch,AFF_CALM) or ch.in_room == None  \

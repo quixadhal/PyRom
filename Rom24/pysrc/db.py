@@ -658,7 +658,7 @@ def reset_area( pArea ):
                                 for j in skill_table[pObjIndex.value[i]].skill_level:
                                     olevel = min(olevel, j)
                        
-                        olevel = max(0,(olevel * 3 / 4) - 2)
+                        olevel = max(0,(olevel * 3 // 4) - 2)
                         
                     elif pObjIndex.item_type == ITEM_WAND: olevel = random.randint( 10, 20 )
                     elif pObjIndex.item_type == ITEM_STAFF: olevel = random.randint( 15, 25 )
@@ -806,7 +806,7 @@ def create_mobile( pMobIndex ):
 
         # computed on the spot */
         for i in range(MAX_STATS):
-            mob.perm_stat[i] = min(25,11 + mob.level/4)
+            mob.perm_stat[i] = min(25, 11 + mob.level // 4)
             
         if IS_SET(mob.act,ACT_WARRIOR):
             mob.perm_stat[STAT_STR] += 3
@@ -832,7 +832,7 @@ def create_mobile( pMobIndex ):
             mob.perm_stat[STAT_DEX] += 2
             
         mob.perm_stat[STAT_STR] += mob.size - SIZE_MEDIUM
-        mob.perm_stat[STAT_CON] += (mob.size - SIZE_MEDIUM) / 2
+        mob.perm_stat[STAT_CON] += (mob.size - SIZE_MEDIUM) // 2
         af = AFFECT_DATA()
         # let's get some spell action */
         if IS_AFFECTED(mob,AFF_SANCTUARY):
@@ -881,7 +881,7 @@ def create_mobile( pMobIndex ):
         mob.level      = pMobIndex.level
         mob.hitroll        = pMobIndex.hitroll
         mob.damroll        = 0
-        mob.max_hit        = mob.level * 8 + random.randint( mob.level * mob.level/4, mob.level * mob.level)
+        mob.max_hit        = mob.level * 8 + random.randint( mob.level * mob.level // 4, mob.level * mob.level)
         mob.max_hit *= .9
         mob.hit        = mob.max_hit
         mob.max_mana       = 100 + dice(mob.level,10)
@@ -907,7 +907,7 @@ def create_mobile( pMobIndex ):
         mob.material       = ""
 
         for i in MAX_STATS:
-            mob.perm_stat[i] = 11 + mob.level/4
+            mob.perm_stat[i] = 11 + mob.level // 4
     mob.position = mob.start_pos
 
 
@@ -1034,7 +1034,7 @@ def create_object( pObjIndex, level ):
       or obj.item_type == ITEM_CLOTHING \
       or obj.item_type == ITEM_PORTAL:
         if not pObjIndex.new_format:
-            obj.cost /= 5
+            obj.cost //= 5
     elif obj.item_type == ITEM_TREASURE \
       or obj.item_type == ITEM_WARP_STONE \
       or obj.item_type == ITEM_ROOM_KEY \
@@ -1045,24 +1045,24 @@ def create_object( pObjIndex, level ):
         obj.value = [-1 for i in range(5)]
     elif obj.item_type == ITEM_SCROLL:
         if level != -1 and not pObjIndex.new_format:
-            obj.value[0]   = number_fuzzy( obj.value[0] )
+            obj.value[0]   = number_fuzzy( obj.value[0])
     elif obj.item_type == ITEM_WAND \
       or obj.item_type == ITEM_STAFF:
         if level != -1 and not pObjIndex.new_format:
-            obj.value[0]   = number_fuzzy( obj.value[0] )
-            obj.value[1]   = number_fuzzy( obj.value[1] )
-            obj.value[2]   = obj.value[1]
+            obj.value[0] = number_fuzzy( obj.value[0])
+            obj.value[1] = number_fuzzy( obj.value[1])
+            obj.value[2] = obj.value[1]
         if not pObjIndex.new_format:
             obj.cost *= 2
     elif obj.item_type == ITEM_WEAPON:
         if level != -1 and not pObjIndex.new_format:
-            obj.value[1] = number_fuzzy( number_fuzzy( 1 * level / 4 + 2 ) )
-            obj.value[2] = number_fuzzy( number_fuzzy( 3 * level / 4 + 6 ) )
+            obj.value[1] = number_fuzzy( number_fuzzy( 1 * level // 4 + 2 ) )
+            obj.value[2] = number_fuzzy( number_fuzzy( 3 * level // 4 + 6 ) )
     elif obj.item_type == ITEM_ARMOR:
         if level != -1 and not pObjIndex.new_format:
-            obj.value[0]   = number_fuzzy( level / 5 + 3 )
-            obj.value[1]   = number_fuzzy( level / 5 + 3 )
-            obj.value[2]   = number_fuzzy( level / 5 + 3 )
+            obj.value[0]   = number_fuzzy( level // 5 + 3 )
+            obj.value[1]   = number_fuzzy( level // 5 + 3 )
+            obj.value[2]   = number_fuzzy( level // 5 + 3 )
     elif obj.item_type == ITEM_POTION \
       or obj.item_type == ITEM_PILL:
         if level != -1 and not pObjIndex.new_format:
@@ -1158,20 +1158,20 @@ def create_money(gold, silver):
         obj.short_descr += " %d" % gold
         obj.value[1] = gold
         obj.cost = gold
-        obj.weight = gold/5
+        obj.weight = gold // 5
     elif gold == 0:
         obj = create_object(obj_index_hash[OBJ_VNUM_SILVER_SOME], 0)
         obj.short_descr += " %d" % silver
         obj.value[0] = silver
         obj.cost = silver
-        obj.weight = silver/20
+        obj.weight = silver // 20
     else:
         obj = create_object(obj_index_hash[OBJ_VNUM_COINS], 0)
         obj.short_descr += " %d %d" % (gold, silver)
         obj.value[0] = silver
         obj.value[1] = gold
         obj.cost = 100 * gold + silver
-        obj.weight = gold / 5 + silver / 20
+        obj.weight = gold // 5 + silver // 20
     return obj
 
 # * Get an extra description from a list.
@@ -1183,13 +1183,14 @@ def get_extra_descr(name, edlist):
     return None
 
 def init_time():
-    lhour = (time.time() - 650336715) / (PULSE_TICK / PULSE_PER_SECOND)
+    lhour = (time.time() - 650336715) // (PULSE_TICK // PULSE_PER_SECOND)
+    lhour = int(lhour)
     time_info.hour = lhour % 24
-    lday = lhour / 24
-    time_info.day = lday % 35
-    lmonth = lday / 35
+    lday = lhour // 24
+    time_info.day = int(lday % 35)
+    lmonth = lday // 35
     time_info.month = lmonth % 17
-    time_info.year = lmonth / 17
+    time_info.year = lmonth // 17
 
     if time_info.hour <  5:
         weather_info.sunlight = SUN_DARK
