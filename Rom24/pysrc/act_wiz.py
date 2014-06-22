@@ -644,7 +644,7 @@ def do_ostat(self, argument):
     if not arg:
         ch.send("Stat what?\n")
         return
-    obj = ch.get_obj_world(argument)
+    obj = ch.get_obj_world(arg)
     if not obj:
         ch.send("Nothing like that in hell, earth, or heaven.\n")
         return
@@ -652,7 +652,7 @@ def do_ostat(self, argument):
     ch.send("Name(s): %s\n" % obj.name )
     ch.send("Vnum: %d  Format: %s  Type: %s  Resets: %d\n" % (
         obj.pIndexData.vnum, "new" if obj.pIndexData.new_format else "old",
-        item_name(obj.item_type), obj.pIndexData.reset_num ) )
+        obj.item_type, obj.pIndexData.reset_num ) )
     ch.send("Short description: %s\nLong description: %s\n" % (obj.short_descr, obj.description ))
     ch.send("Wear bits: %s\nExtra bits: %s\n" % (wear_bit_name(obj.wear_flags), extra_bit_name( obj.extra_flags ) ) )
     ch.send("Number: 1/%d  Weight: %d/%d/%d (10th pounds)\n" % ( obj.get_number(),
@@ -664,7 +664,7 @@ def do_ostat(self, argument):
         "(none)" if not obj.in_obj else obj.in_obj.short_descr,
         "(noone)" if not obj.carried_by else "someone" if not ch.can_see(obj.carried_by) else obj.carried_by.name,
         obj.wear_loc ) )
-    ch.send("Values: %d %d %d %d %d\n" % (v for v in obj.value))
+    ch.send("Values: %s\n" % [v for v in obj.value])
     # now give out vital statistics as per identify */
 
     if obj.item_type == ITEM_SCROLL \
@@ -750,7 +750,7 @@ def do_mstat(self, argument):
     if not arg:
         ch.send("Stat whom?\n")
         return
-    victim = ch.get_char_world(argument)
+    victim = ch.get_char_world(arg)
     if not victim:
         ch.send("They aren't here.\n")
         return
@@ -1279,13 +1279,13 @@ def do_oload(self, argument):
     if vnum not in obj_index_hash:
         ch.send("No object has that vnum.\n")
         return
-    obj = create_object( pObjIndex, level )
+    obj = create_object(obj_index_hash[vnum], level)
     if CAN_WEAR(obj, ITEM_TAKE):
         obj.to_char(ch)
     else:
         obj.to_room(ch.in_room)
-    act( "$n has created $p!", ch, obj, None, TO_ROOM )
-    wiznet("$N loads $p.",ch,obj,WIZ_LOAD,WIZ_SECURE,ch.get_trust())
+    act("$n has created $p!", ch, obj, None, TO_ROOM)
+    wiznet("$N loads $p.", ch, obj, WIZ_LOAD, WIZ_SECURE, ch.get_trust())
     ch.send("Ok.\n")
     return
 

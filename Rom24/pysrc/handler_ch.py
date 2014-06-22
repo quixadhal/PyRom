@@ -936,27 +936,10 @@ class handler_ch:
     def get_weapon_sn(ch):
         sn = None
         wield = ch.get_eq(WEAR_WIELD)
+
         if not wield or wield.item_type != ITEM_WEAPON:
             sn = "hand to hand"
-        elif wield.value[0] == WEAPON_SWORD:
-            sn = "sword"
-        elif wield.value[0] == WEAPON_DAGGER:
-            sn = "dagger"
-        elif wield.value[0] == WEAPON_SPEAR:
-            sn = "spear"
-        elif wield.value[0] == WEAPON_MACE:
-            sn = "mace"
-        elif wield.value[0] == WEAPON_AXE:
-            sn = "axe"
-        elif wield.value[0] == WEAPON_FLAIL:
-            sn = "flail"
-        elif wield.value[0] == WEAPON_WHIP:
-            sn = "whip"
-        elif wield.value[0] == WEAPON_POLEARM:
-            sn = "polearm"
-        else:
-            sn = -1
-        return sn
+        return wield.value[0]
 
     def get_weapon_skill(ch, sn):
         skill = 0
