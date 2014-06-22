@@ -808,3 +808,32 @@ attack_table[36] = attack_type("shock", "shock", DAM_LIGHTNING)
 attack_table[37] = attack_type("thwack", "thwack", DAM_BASH)
 attack_table[38] = attack_type("flame", "flame", DAM_FIRE)
 attack_table[39] = attack_type("chill", "chill", DAM_COLD)
+
+
+class wiznet_type:
+    def __init__(self, n, f, l):
+        self.name = n
+        self.flag = f
+        self.level = l
+wiznet_table = OrderedDict()
+wiznet_table["on"] = wiznet_type("on", WIZ_ON, IM)
+wiznet_table["prefix"] = wiznet_type("prefix", WIZ_PREFIX, IM)
+wiznet_table["ticks"] = wiznet_type("ticks", WIZ_TICKS, IM)
+wiznet_table["logins"] = wiznet_type("logins", WIZ_LOGINS, IM)
+wiznet_table["sites"] = wiznet_type("sites", WIZ_SITES, L4)
+wiznet_table["links"] = wiznet_type("links", WIZ_LINKS, L7)
+wiznet_table["newbies"] = wiznet_type("newbies", WIZ_NEWBIE, IM)
+wiznet_table["spam"] = wiznet_type("spam", WIZ_SPAM, L5)
+wiznet_table["deaths"] = wiznet_type("deaths", WIZ_DEATHS, IM)
+wiznet_table["resets"] = wiznet_type("resets", WIZ_RESETS, L4)
+wiznet_table["mobdeaths"] = wiznet_type("mobdeaths", WIZ_MOBDEATHS, L4)
+wiznet_table["flags"] = wiznet_type("flags", WIZ_FLAGS, L5)
+wiznet_table["penalties"] = wiznet_type("penalties", WIZ_PENALTIES, L5)
+wiznet_table["saccing"] = wiznet_type("saccing", WIZ_SACCING, L5)
+wiznet_table["levels"] = wiznet_type("levels", WIZ_LEVELS, IM)
+wiznet_table["load"] = wiznet_type("load", WIZ_LOAD, L2)
+wiznet_table["restore"] = wiznet_type("restore", WIZ_RESTORE, L2)
+wiznet_table["snoops"] = wiznet_type("snoops", WIZ_SNOOPS, L2)
+wiznet_table["switches"] = wiznet_type("switches", WIZ_SWITCHES, L2)
+wiznet_table["secure"] = wiznet_type("secure", WIZ_SECURE, L1)
+

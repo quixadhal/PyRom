@@ -34,10 +34,13 @@
 from merc import *
 import nanny
 from db import create_object
-from const import weapon_table, attack_table
+from const import weapon_table, attack_table, wiznet_table
 from settings import NEWLOCK
 from tables import *
 from handler import *
+from update import advance_level
+from save import save_char_obj
+import interp
 
 def do_wiznet(self, argument):
     ch=self
@@ -474,7 +477,7 @@ def do_at(self, argument):
     on = ch.on
     ch.from_room()
     ch.to_room(location)
-    interpret( ch, argument )
+    interp.interpret( ch, argument )
 
     # * See if 'ch' still exists before continuing!
     # * Handles 'at XXXX quit' case.
@@ -1374,7 +1377,7 @@ def do_advance(self, argument):
         victim.send("**** OOOOHHHHHHHHHH  YYYYEEEESSS ****\n")
     for iLevel in range(victim.level, level):
         victim.level += 1
-        advance_level( victim,True)
+        advance_level(victim, True)
     victim.send("You are now level %d.\n" % victim.level)
     victim.exp   = victim.exp_per_level(victim.pcdata.points) * max( 1, victim.level )
     victim.trust = 0
@@ -2124,11 +2127,9 @@ def do_sockets(self, argument):
         and (not arg or arg not in  d.character.name) \
         or (d.original and is_name(arg,d.original.name)):
             count+=1
-            ch.send("[%3d %2d] %s@%s\n" % (
-                    d.descriptor,
-                    d.connected,
+            ch.send("%s@%s\n" % (
                     d.original.name if d.original else d.character.name if d.character else "(none)",
-                    d.host ) )
+                    d.address))
     if count == 0:
         ch.send("No one by that name is connected.\n")
         return

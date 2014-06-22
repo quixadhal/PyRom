@@ -46,18 +46,6 @@ from fight import *
 from skills import do_groups, do_skills, do_spells, do_gain
 from settings import LOGALL
 
-ML=MAX_LEVEL   # implementor */
-L1=MAX_LEVEL - 1   # creator */
-L2=MAX_LEVEL - 2   # supreme being */
-L3=MAX_LEVEL - 3   # deity */
-L4=MAX_LEVEL - 4   # god */
-L5=MAX_LEVEL - 5   # immortal */
-L6=MAX_LEVEL - 6   # demigod */
-L7=MAX_LEVEL - 7   # angel */
-L8=MAX_LEVEL - 8   # avatar */
-IM=LEVEL_IMMORTAL  # avatar */
-HE=LEVEL_HERO  # hero */
-
 
 class cmd_type:
     def __init__(self, name, do_fun, position, level, log, show):
