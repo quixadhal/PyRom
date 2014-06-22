@@ -297,7 +297,7 @@ def do_scroll(self, argument):
             ch.send("You currently display %d lines per page.\n" % (
                 ch.lines + 2))
         return
-    if not arg.is_digit():
+    if not arg.isdigit():
         ch.send("You must provide a number.\n")
         return
     lines = int(arg)
@@ -1093,7 +1093,7 @@ def do_who(self, argument):
         argument, arg = read_word(argument)
         if not arg:
             break
-        if arg.is_digit():
+        if arg.isdigit():
             nNumber += 1
             if nNumber == 1:
                 iLevelLower = int(arg)

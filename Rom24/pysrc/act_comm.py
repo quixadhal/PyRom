@@ -997,9 +997,9 @@ def do_split(self, argument):
     amount_gold = 0
     amount_silver = 0
 
-    if arg1.is_digit():
+    if arg1.isdigit():
         amount_silver = int(arg1)
-    if arg2.is_digit():
+    if arg2.isdigit():
         amount_gold = int(arg2)
     if amount_gold < 0 or amount_silver < 0:
         ch.send("Your group wouldn't like that.\n")

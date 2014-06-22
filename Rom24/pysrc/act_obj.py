@@ -340,7 +340,7 @@ def do_give(self, argument):
     if not arg1 or not arg2:
         ch.send("Give what to whom?\n")
         return
-    if arg1.is_digit():
+    if arg1.isdigit():
         # 'give NNNN coins victim' */
         amount   = int(arg1)
         if amount <= 0 or (arg2 != "coins" and arg2 != "coin" and arg2 != "gold" and arg2 != "silver"):
