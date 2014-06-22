@@ -326,6 +326,7 @@ for k,cmd in cmd_table.items():
 def interpret(ch, argument):
      # Strip leading spaces.
     argument = argument.lstrip()
+    command = ''
 
     # No hiding.
     REMOVE_BIT(ch.affected_by, AFF_HIDE)
@@ -364,8 +365,6 @@ def interpret(ch, argument):
         #* Look for command in socials table.
         if not check_social(ch, command, argument):
             ch.send("Huh?\n")
-            return
-        ch.send("Huh?\n")
         return
     #* Character not in position for command?
     if ch.position < cmd.position:
@@ -391,17 +390,12 @@ def interpret(ch, argument):
     return
 
 def check_social(ch, command, argument):
-    found  = False
     cmd = None
     for social in social_list:
-        if argument == social.name[:len(argument)]:
-            found = True
+        if social.name.lower().startswith(command):
             cmd = social
-            break
-
-    if not found:
+    if not cmd:
         return False
-
     if not IS_NPC(ch) and IS_SET(ch.comm, COMM_NOEMOTE):
         ch.send("You are anti-social!\n")
         return True

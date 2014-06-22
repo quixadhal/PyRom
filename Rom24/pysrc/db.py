@@ -398,8 +398,8 @@ def load_socials(area):
             return
         social = SOCIAL_DATA()
         social.name = word
+        area, throwaway = read_to_eol(area)
         area, line = read_to_eol(area)
-
         if line == '$':
             social.char_no_arg = None
         elif line == '#':

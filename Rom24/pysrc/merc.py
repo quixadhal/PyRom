@@ -1434,7 +1434,7 @@ def read_to_eol(str):
     str = str.split('\n')
     line = str.pop(0)
     str = "\n".join(str)
-    return (str, line);
+    return (str, line)
 
 
 def is_name(arg, name):
