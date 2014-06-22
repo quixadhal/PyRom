@@ -34,6 +34,8 @@
 
 from merc import *
 from magic import *
+from const import skill_table
+
 def do_heal(ch, argument):
     # check for healer */
     mob = [mob for mob in ch.in_room.people if IS_NPC(mob) and IS_SET(mob.act, ACT_IS_HEALER)][:1]
@@ -57,6 +59,10 @@ def do_heal(ch, argument):
         ch.send("  mana:  restore mana       10 gold\n\r")
         ch.send(" Type heal <type> to be healed.\n\r")
         return
+    spell = None
+    sn = None
+    words = None
+    cost = 0
     if "light".startswith(arg):
         spell = spell_cure_light
         sn = skill_table["cure light"]

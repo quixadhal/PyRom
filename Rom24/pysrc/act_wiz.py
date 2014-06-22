@@ -34,8 +34,10 @@
 from merc import *
 import nanny
 from db import create_object
-from const import weapon_table
+from const import weapon_table, attack_table
 from settings import NEWLOCK
+from tables import *
+from handler import *
 
 def do_wiznet(self, argument):
     ch=self
@@ -276,7 +278,7 @@ def do_disconnect(self, argument):
     if not arg:
         ch.send("Disconnect whom?\n")
         return
-    if arg.is_digit():
+    if arg.isdigit():
         desc = int(arg)
         for d in descriptor_list:
             if d.descriptor == desc:
@@ -391,7 +393,7 @@ def do_pecho(self, argument):
     ch.send("\n")
 
 def find_location( ch, arg ):
-    if arg.is_digit():
+    if arg.isdigit():
         vnum = int(arg)
         if vnum not in room_index_hash:
             return None
@@ -754,7 +756,7 @@ def do_mstat(self, argument):
                 0 if not IS_NPC(victim) else victim.pIndexData.vnum,
                 "pc" if not IS_NPC(victim) else "new" if victim.pIndexData.new_format else "old",
                 victim.race.name,
-                0 if not IS_NPC(victim) else victim.group, sex_table[victim.sex].name,
+                0 if not IS_NPC(victim) else victim.group, sex_table[victim.sex],
                 0 if not victim.in_room else victim.in_room.vnum ) )
 
     if IS_NPC(victim):
@@ -779,7 +781,7 @@ def do_mstat(self, argument):
                 GET_AC(victim,AC_SLASH),  GET_AC(victim,AC_EXOTIC)))
     ch.send("Hit: %d  Dam: %d  Saves: %d  Size: %s  Position: %s  Wimpy: %d\n" % (
                 GET_HITROLL(victim), GET_DAMROLL(victim), victim.saving_throw,
-                size_table[victim.size].name, position_table[victim.position].name,
+                size_table[victim.size], position_table[victim.position].name,
                 victim.wimpy ))
     if IS_NPC(victim) and victim.pIndexData.new_format:
         ch.send("Damage: %dd%d  Message:  %s\n" % (
@@ -1237,7 +1239,7 @@ def do_mload(self, argument):
     ch=self
     argument, arg = read_word(argument)
 
-    if not arg or not arg.is_digit():
+    if not arg or not arg.isdigit():
         ch.send("Syntax: load mob <vnum>.\n")
         return
     vnum = int(arg)
@@ -1257,13 +1259,13 @@ def do_oload(self, argument):
     argument, arg1 = read_word(argument)
     argument, arg2 = read_word(argument)
 
-    if not arg1 or not arg1.is_digit():
+    if not arg1 or not arg1.isdigit():
         ch.send("Syntax: load obj <vnum> <level>.\n")
         return
     level = ch.get_trust() # default */
   
     if arg2:  # load with a level */
-        if not arg2.is_digit():
+        if not arg2.isdigit():
             ch.send("Syntax: oload <vnum> <level>.\n")
             return
         level = int(arg2)
@@ -1328,7 +1330,7 @@ def do_advance(self, argument):
     argument, arg1  = read_word(argument)
     argument, arg2  = read_word(argument)
 
-    if not arg1 or not arg2 or not arg2.is_digit():
+    if not arg1 or not arg2 or not arg2.isdigit():
         ch.send("Syntax: advance <char> <level>.\n")
         return
     victim = ch.get_char_world(arg1)
@@ -1384,7 +1386,7 @@ def do_trust(self, argument):
     argument, arg1  = read_word(argument)
     argument, arg2  = read_word(argument)
 
-    if not arg1 or not arg2 or not arg2.is_digit():
+    if not arg1 or not arg2 or not arg2.isdigit():
         ch.send("Syntax: trust <char> <level>.\n")
         return
     
@@ -1711,7 +1713,7 @@ def do_sset(self, argument):
         return
     sn = sn.name
     # Snarf the value.
-    if not arg3.is_digit():
+    if not arg3.isdigit():
         ch.send("Value must be numeric.\n")
         return
     value = int( arg3 )
@@ -1746,18 +1748,20 @@ def do_mset(self, argument):
     # clear zones for mobs */
     victim.zone = None
     #* Snarf the value (which need not be numeric).
-    value = int(arg3) if arg3.is_digit() else -1
+    value = int(arg3) if arg3.isdigit() else -1
     #* Set something.
     if arg2 == "str" :
         if value < 3 or value > victim.get_max_train(STAT_STR):
             ch.send( "Strength range is 3 to %d\n." % victim.get_max_train(STAT_STR))
             return
         victim.perm_stat[STAT_STR] = value
+        ch.send("Str set to %d.\n" % value)
         return
     if arg2 == "int" :
         if value < 3 or value > victim.get_max_train(STAT_INT):
             ch.send("Intelligence range is 3 to %d.\n" % victim.get_max_train(STAT_INT))
             return
+        ch.send("Int set to %d.\n" % value)
         victim.perm_stat[STAT_INT] = value
         return
     if arg2 == "wis" :
@@ -1770,12 +1774,14 @@ def do_mset(self, argument):
         if value < 3 or value > victim.get_max_train(STAT_DEX):
             ch.send("Dexterity range is 3 to %d.\n" % victim.get_max_train(STAT_DEX))
             return
+        ch.send("Dex set to %d.\n" % value)
         victim.perm_stat[STAT_DEX] = value
         return
     if arg2 == "con" :
         if value < 3 or value > victim.get_max_train(STAT_CON):
             ch.send("Constitution range is 3 to %d.\n" % victim.get_max_train(STAT_CON))
             return
+        ch.send("Con set to %d.\n" % value)
         victim.perm_stat[STAT_CON] = value
         return
     if "sex".startswith(arg2):
@@ -1785,6 +1791,7 @@ def do_mset(self, argument):
         victim.sex = value
         if not IS_NPC(victim):
             victim.pcdata.true_sex = value
+        ch.send("Sex set to %s.\n" % sex_table[value])
         return
     if "class".startswith(arg2):
         if IS_NPC(victim):
@@ -1797,6 +1804,7 @@ def do_mset(self, argument):
                 ch.send("%s " % guild )
             ch.send(".\n" )
             return
+        ch.send("Guild set to %s\n" % guild.name)
         victim.guild = guild
         return
     if "level".startswith(arg2):
@@ -1806,19 +1814,23 @@ def do_mset(self, argument):
         if value < 0 or value > MAX_LEVEL:
             ch.send("Level range is 0 to %d.\n" % MAX_LEVEL)
             return
+        ch.send("Level set to %d.\n" % value)
         victim.level = value
         return
     if "gold".startswith(arg2):
         victim.gold = value
+        ch.send("Gold set to %d\n" % victim.gold)
         return
     if "silver".startswith(arg2):
         victim.silver = value
+        ch.send("Silver set to %d\n" % victim.silver)
         return
     if "hp".startswith(arg2):
         if value < -10 or value > 30000:
             ch.send("Hp range is -10 to 30,000 hit points.\n")
             return
         victim.max_hit = value
+        ch.send("Max Hitpoints set to %d\n" % value)
         if not IS_NPC(victim):
             victim.pcdata.perm_hit = value
         return
@@ -1827,6 +1839,7 @@ def do_mset(self, argument):
             ch.send("Mana range is 0 to 30,000 mana points.\n")
             return
         victim.max_mana = value
+        ch.send("Max Mana set to %d\n" % value)
         if not IS_NPC(victim):
             victim.pcdata.perm_mana = value
         return
@@ -1835,6 +1848,7 @@ def do_mset(self, argument):
             ch.send("Move range is 0 to 30,000 move points.\n")
             return
         victim.max_move = value
+        ch.send("Max Move set to %d.\n" % value)
         if not IS_NPC(victim):
             victim.pcdata.perm_move = value
         return
@@ -1843,18 +1857,21 @@ def do_mset(self, argument):
             ch.send("Practice range is 0 to 250 sessions.\n")
             return
         victim.practice = value
+        ch.send("Victims practices set to %d.\n" % value)
         return
     if "train".startswith(arg2):
         if value < 0 or value > 50:
             ch.send("Training session range is 0 to 50 sessions.\n")
             return
         victim.train = value
+        ch.send("Trains set to %d.\n" % value)
         return
     if "align".startswith(arg2):
         if value < -1000 or value > 1000:
             ch.send("Alignment range is -1000 to 1000.\n")
             return
         victim.alignment = value
+        ch.send("Alignment set to %d.\n" % value)
         return
     if "thirst".startswith(arg2):
         if IS_NPC(victim):
@@ -1864,6 +1881,7 @@ def do_mset(self, argument):
             ch.send("Thirst range is -1 to 100.\n")
             return
         victim.pcdata.condition[COND_THIRST] = value
+        ch.send("Victims thirst set to %d.\n" % value)
         return
     if "drunk".startswith(arg2):
         if IS_NPC(victim):
@@ -1873,6 +1891,7 @@ def do_mset(self, argument):
             ch.send("Drunk range is -1 to 100.\n")
             return
         victim.pcdata.condition[COND_DRUNK] = value
+        ch.send("Victims Drunk set to %d.\n" % value)
         return
     if "full".startswith(arg2):
         if IS_NPC(victim):
@@ -1881,6 +1900,7 @@ def do_mset(self, argument):
         if value < -1 or value > 100:
             ch.send("Full range is -1 to 100.\n")
             return
+        ch.send("Full condition set to %d\n" % value)
         victim.pcdata.condition[COND_FULL] = value
         return
     if "hunger".startswith(arg2):
@@ -1890,6 +1910,7 @@ def do_mset(self, argument):
         if value < -1 or value > 100:
             ch.send("Full range is -1 to 100.\n")
             return
+        ch.send("Hunger set to %d.\n" % value)
         victim.pcdata.condition[COND_HUNGER] = value
         return
     if "race".startswith(arg2):
@@ -1900,6 +1921,7 @@ def do_mset(self, argument):
         if not IS_NPC(victim) and race.name not in pc_race_table:
             ch.send("That is not a valid player race.\n")
             return
+        ch.send("Race set to %s.\n" % race.name)
         victim.race = race
         return
     if "group".startswith(arg2):
@@ -2013,7 +2035,7 @@ def do_oset(self, argument):
         return
     #
     #* Snarf the value (which need not be numeric).
-    value = int( arg3 ) if arg3.is_digit else -1
+    value = int( arg3 ) if arg3.isdigit else -1
     if value == -1:
         ch.do_oset("")
     #* Set something.
@@ -2077,7 +2099,7 @@ def do_rset(self, argument):
         return
 
     #* Snarf the value.
-    if not arg3.is_digit():
+    if not arg3.isdigit():
         ch.send("Value must be numeric.\n")
         return
     value = int( arg3 )
@@ -2192,7 +2214,7 @@ def do_invis(self, argument):
             ch.send("You slowly vanish into thin air.\n")
     else:
     # do the level thing */
-          level = int(arg) if arg.is_digit() else -1
+          level = int(arg) if arg.isdigit() else -1
           if level < 2 or level > ch.get_trust():
               ch.send("Invis level must be between 2 and your level.\n")
               return
@@ -2220,7 +2242,7 @@ def do_incognito(self, argument):
             ch.send("You cloak your presence.\n")
     else:
     # do the level thing */
-          level = int(arg) if arg.is_digit() else -1
+          level = int(arg) if arg.isdigit() else -1
           if level < 2 or level > ch.get_trust():
               ch.send("Incog level must be between 2 and your level.\n")
               return

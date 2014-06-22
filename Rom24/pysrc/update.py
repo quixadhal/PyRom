@@ -40,25 +40,25 @@ import act_move
 # * Advancement stuff.
 
 def advance_level( ch, hide ):
-    ch.pcdata.last_level = ( ch.played + (int) (current_time - ch.logon) ) / 3600
+    ch.pcdata.last_level = ( ch.played + (int) (current_time - ch.logon) ) // 3600
 
     buf = "the %s" % ( title_table [ch.guild ] [ch.level] [1 if ch.sex == SEX_FEMALE else 0] )
     set_title( ch, buf )
 
     add_hp = con_app[ch.get_curr_stat(STAT_CON)].hitp + random.randint( ch.guild.hp_min, ch.guild.hp_max )
-    add_mana = random.randint( 2, (2*ch.get_curr_stat(STAT_INT) + ch.get_curr_stat(STAT_WIS))/5)
+    add_mana = random.randint( 2, (2*ch.get_curr_stat(STAT_INT) + ch.get_curr_stat(STAT_WIS)) // 5)
     if not ch.guild.fMana:
-        add_mana /= 2
-    add_move    = random.randint( 1, (ch.get_curr_stat(STAT_CON) + ch.get_curr_stat(STAT_DEX))/6 )
+        add_mana //= 2
+    add_move    = random.randint( 1, (ch.get_curr_stat(STAT_CON) + ch.get_curr_stat(STAT_DEX)) // 6 )
     add_prac    = wis_app[ch.get_curr_stat(STAT_WIS)].practice
 
-    add_hp = add_hp * 9/10
-    add_mana = add_mana * 9/10
-    add_move = add_move * 9/10
+    add_hp = add_hp * 9 // 10
+    add_mana = add_mana * 9 // 10
+    add_move = add_move * 9 // 10
 
-    add_hp = max(  2, add_hp   )
-    add_mana = max(  2, add_mana )
-    add_move = max(  6, add_move )
+    add_hp = max(2, add_hp)
+    add_mana = max(2, add_mana)
+    add_move = max(6, add_move)
 
     ch.max_hit     += add_hp
     ch.max_mana    += add_mana
@@ -97,43 +97,43 @@ def hit_gain( ch ):
         if IS_AFFECTED(ch,AFF_REGENERATION):
             gain *= 2
 
-        if ch.position == POS_SLEEPING:  gain = 3 * gain/2
+        if ch.position == POS_SLEEPING:  gain = 3 * gain // 2
         elif ch.position == POS_RESTING: pass
-        elif ch.position == POS_FIGHTING:  gain /= 3
-        else: gain /= 2
+        elif ch.position == POS_FIGHTING:  gain //= 3
+        else: gain //= 2
     else:
-        gain = max(3,ch.get_curr_stat(STAT_CON) - 3 + ch.level/2) 
+        gain = max(3,ch.get_curr_stat(STAT_CON) - 3 + ch.level // 2) 
         gain += ch.guild.hp_max - 10
         number = random.randint(1,99)
         if number < ch.get_skill('fast healing'):
-            gain += number * gain / 100
+            gain += number * gain // 100
             if ch.hit < ch.max_hit:
                 check_improve(ch,'fast healing',True,8)
 
         if ch.position == POS_SLEEPING: pass
-        elif ch.position == POS_RESTING: gain /= 2
-        elif ch.position == POS_FIGHTING:  gain /= 6
-        else: gain /= 4
+        elif ch.position == POS_RESTING: gain //= 2
+        elif ch.position == POS_FIGHTING:  gain //= 6
+        else: gain //= 4
 
         if not ch.pcdata.condition[COND_HUNGER]:
-            gain /= 2
+            gain //= 2
 
         if not ch.pcdata.condition[COND_THIRST]:
-            gain /= 2
+            gain //= 2
 
-    gain = gain * ch.in_room.heal_rate / 100
+    gain = gain * ch.in_room.heal_rate // 100
     
     if ch.on and ch.on.item_type == ITEM_FURNITURE:
-        gain = gain * ch.on.value[3] / 100
+        gain = gain * ch.on.value[3] // 100
 
     if IS_AFFECTED(ch, AFF_POISON):
-        gain /= 4
+        gain //= 4
 
     if IS_AFFECTED(ch, AFF_PLAGUE):
-        gain /= 8
+        gain //= 8
 
     if IS_AFFECTED(ch,AFF_HASTE) or IS_AFFECTED(ch,AFF_SLOW):
-        gain /=2 
+        gain //=2 
 
     return int(min(gain, ch.max_hit - ch.hit))
 
@@ -143,44 +143,44 @@ def mana_gain( ch ):
 
     if IS_NPC(ch):
         gain = 5 + ch.level
-        if ch.position == POS_SLEEPING: 3 * gain/2
+        if ch.position == POS_SLEEPING: 3 * gain // 2
         elif ch.position == POS_RESTING: pass
-        elif ch.position == POS_FIGHTING:  gain /= 3
-        else: gain /= 2
+        elif ch.position == POS_FIGHTING:  gain //= 3
+        else: gain //= 2
     else:
-        gain = (ch.get_curr_stat(STAT_WIS) + ch.get_curr_stat(STAT_INT) + ch.level) / 2
+        gain = (ch.get_curr_stat(STAT_WIS) + ch.get_curr_stat(STAT_INT) + ch.level) // 2
         number = random.randint(1,99)
         if number < ch.get_skill('meditation'):
-            gain += number * gain / 100
+            gain += number * gain // 100
             if ch.mana < ch.max_mana:
                 check_improve(ch,'meditation',True,8)
 
         if not ch.guild.fMana:
-            gain /= 2
+            gain //= 2
         if ch.position == POS_SLEEPING: pass
-        elif ch.position == POS_RESTING: gain /= 2
-        elif ch.position == POS_FIGHTING:  gain /= 6
-        else: gain /= 4
+        elif ch.position == POS_RESTING: gain //= 2
+        elif ch.position == POS_FIGHTING:  gain //= 6
+        else: gain //= 4
 
         if not ch.pcdata.condition[COND_HUNGER]:
-            gain /= 2
+            gain //= 2
 
         if not ch.pcdata.condition[COND_THIRST]:
-            gain /= 2
+            gain //= 2
 
-    gain = gain * ch.in_room.mana_rate / 100
+    gain = gain * ch.in_room.mana_rate // 100
 
     if ch.on and ch.on.item_type == ITEM_FURNITURE:
-        gain = gain * ch.on.value[4] / 100
+        gain = gain * ch.on.value[4] // 100
 
     if IS_AFFECTED( ch, AFF_POISON ):
-        gain /= 4
+        gain //= 4
 
     if IS_AFFECTED(ch, AFF_PLAGUE):
-        gain /= 8
+        gain //= 8
 
     if IS_AFFECTED(ch,AFF_HASTE) or IS_AFFECTED(ch,AFF_SLOW):
-        gain /=2 
+        gain //=2 
 
     return int(min(gain, ch.max_mana - ch.mana))
 
@@ -194,28 +194,28 @@ def move_gain( ch ):
         gain = max( 15, ch.level )
     
         if ch.position == POS_SLEEPING: gain += ch.get_curr_stat(STAT_DEX)
-        elif ch.position == POS_RESTING: gain += ch.get_curr_stat(STAT_DEX) / 2
+        elif ch.position == POS_RESTING: gain += ch.get_curr_stat(STAT_DEX) // 2
 
         if not ch.pcdata.condition[COND_HUNGER]:
-            gain /= 2
+            gain //= 2
 
         if not ch.pcdata.condition[COND_THIRST]:
-            gain /= 2
+            gain //= 2
     
 
-    gain = gain * ch.in_room.heal_rate/100
+    gain = gain * ch.in_room.heal_rate // 100
 
     if ch.on and ch.on.item_type == ITEM_FURNITURE:
-        gain = gain * ch.on.value[3] / 100
+        gain = gain * ch.on.value[3] // 100
 
     if IS_AFFECTED(ch, AFF_POISON):
-        gain /= 4
+        gain //= 4
 
     if IS_AFFECTED(ch, AFF_PLAGUE):
-        gain /= 8
+        gain //= 8
 
     if IS_AFFECTED(ch,AFF_HASTE) or IS_AFFECTED(ch,AFF_SLOW):
-        gain /=2 
+        gain //=2 
 
     return int(min(gain, ch.max_move - ch.move))
 
@@ -257,8 +257,8 @@ def mobile_update( ):
 
         if ch.pIndexData.pShop: # give him some gold */
             if (ch.gold * 100 + ch.silver) < ch.pIndexData.wealth:
-                ch.gold += ch.pIndexData.wealth * random.randint(1,20)/5000000
-                ch.silver += ch.pIndexData.wealth * random.randint(1,20)/50000
+                ch.gold += ch.pIndexData.wealth * random.randint(1,20) // 5000000
+                ch.silver += ch.pIndexData.wealth * random.randint(1,20) // 50000
      
 
         # That's all for sleeping / busy monster, and empty zones */
@@ -270,7 +270,7 @@ def mobile_update( ):
             top = 1
             obj_best = 0
             for obj in ch.in_room.contents:
-                if CAN_WEAR(obj, ITEM_TAKE) and can_loot(ch, obj) and obj.cost > top and obj.cost > 0:
+                if CAN_WEAR(obj, ITEM_TAKE) and ch.can_loot(obj) and obj.cost > top and obj.cost > 0:
                     obj_best = obj
                     top = obj.cost
 
@@ -491,11 +491,11 @@ def char_update( ):
         
             for vch in ch.in_room.people:
                 if not saves_spell(plague.level - 2,vch,DAM_DISEASE) and not IS_IMMORTAL(vch) \
-                and not IS_AFFECTED(vch,AFF_PLAGUE) and random.randint(0,4) == 0:
+                and not IS_AFFECTED(vch, AFF_PLAGUE) and random.randint(0, 4) == 0:
                     vch.send("You feel hot and feverish.\n")
-                    act("$n shivers and looks very ill.",vch,None,None,TO_ROOM)
+                    act("$n shivers and looks very ill.", vch, None, None, TO_ROOM)
                     vch.affect_join(plague)
-            dam = min(ch.level,af.level/5+1)
+            dam = min(ch.level, af.level // 5 + 1)
             ch.mana -= dam
             ch.move -= dam
             damage(ch, ch, dam, gsn_plague, DAM_DISEASE, False)
@@ -504,7 +504,7 @@ def char_update( ):
             if poison:
                 act("$n shivers and suffers.", ch, None, None, TO_ROOM)
                 ch.send("You shiver and suffer.\n")
-                damage(ch,ch,poison.level/10 + 1,gsn_poison, DAM_POISON,False)
+                damage(ch,ch,poison.level // 10 + 1,gsn_poison, DAM_POISON,False)
         elif ch.position == POS_INCAP and random.randint(0,1) == 0:
             damage(ch, ch, 1, TYPE_UNDEFINED, DAM_NONE, False)
         elif ch.position == POS_MORTAL:
@@ -566,7 +566,7 @@ def obj_update( ):
 
         if obj.carried_by:
             if IS_NPC(obj.carried_by) and  obj.carried_by.pIndexData.pShop:
-                obj.carried_by.silver += obj.cost/5
+                obj.carried_by.silver += obj.cost // 5
             else:
                 act( message, obj.carried_by, obj, None, TO_CHAR )
                 if obj.wear_loc == WEAR_FLOAT:

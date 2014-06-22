@@ -206,10 +206,10 @@ def do_spells(self, argument):
     for sn, skill in const.skill_table.items():
         level = skill.skill_level[ch.guild.name]
         if level < LEVEL_HERO + 1 \
-        and  (fAll or level <= ch.level) \
-        and  level >= min_lev and level <= max_lev \
-        and  skill.spell_fun != magic.spell_null \
-        and  sn in ch.pcdata.learned:
+        and (fAll or level <= ch.level) \
+        and level >= min_lev and level <= max_lev \
+        and skill.spell_fun != magic.spell_null \
+        and sn in ch.pcdata.learned:
             found = True
             level = skill.skill_level[ch.guild.name]
             if ch.level < level:

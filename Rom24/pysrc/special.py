@@ -35,6 +35,7 @@ from merc import *
 import magic
 import const
 import fight
+from act_move import move_char
 
 def spec_troll_member( ch ):
     if not IS_AWAKE(ch) or IS_AFFECTED(ch,AFF_CALM) or ch.in_room == None  \
@@ -528,7 +529,7 @@ def spec_janitor( ch ):
         return False
 
     for trash in ch.in_room.contents:
-        if not IS_SET( trash.wear_flags, ITEM_TAKE ) or not can_loot(ch,trash):
+        if not IS_SET( trash.wear_flags, ITEM_TAKE ) or not ch.can_loot(trash):
             continue
         if trash.item_type == ITEM_DRINK_CON or trash.item_type == ITEM_TRASH or trash.cost < 10:
             act( "$n picks up some trash.", ch, None, None, TO_ROOM )
