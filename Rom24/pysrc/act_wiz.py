@@ -2307,7 +2307,7 @@ def do_dump(ch,argument):
 
 def do_reload(ch, argument):
     from hotfix import reload_files
-    reload_files()
+    reload_files(ch)
     ch.send("Files reload\n")
 
 def do_omni(ch, argument):

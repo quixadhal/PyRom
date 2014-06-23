@@ -33,6 +33,7 @@
 """
 import os
 import importlib
+import traceback
 
 #dictionary of files to track. will be key'd by file name and the value will be modified unix timestamp
 tracked_files = {}
@@ -68,7 +69,7 @@ def poll_files():
             modified_files[fp] = [os.path.getmtime(fp), modules]
 
 
-def reload_files():
+def reload_files(ch):
     for fp, pair in modified_files.copy().items():
         mod, modules = pair
         print("Reloading %s" % fp)
@@ -76,5 +77,7 @@ def reload_files():
             try:
                 importlib.reload(m)
             except:
-                print("Failed to reload %s" % fp )
+                ch.send(traceback.format_exc())
+                print("Failed to reload %s" % fp)
+
         del modified_files[fp]
