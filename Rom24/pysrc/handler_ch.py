@@ -876,16 +876,16 @@ class handler_ch:
 
         if sn == -1: # shorthand for level based skills */
             skill = ch.level * 5 / 2
-        elif sn not in skill_table:
+        elif sn not in const.skill_table:
             print ("BUG: Bad sn %s in get_skill." % sn)
             skill = 0
         elif not IS_NPC(ch):
-            if ch.level < skill_table[sn].skill_level[ch.guild.name] or sn not in ch.pcdata.learned:
+            if ch.level < const.skill_table[sn].skill_level[ch.guild.name] or sn not in ch.pcdata.learned:
                 skill = 0
             else:
                 skill = ch.pcdata.learned[sn]
         else: # mobiles */
-            if skill_table[sn].spell_fun != magic.spell_null:
+            if const.skill_table[sn].spell_fun != magic.spell_null:
                 skill = 40 + 2 * ch.level;
             elif sn == 'sneak' or sn == 'hide':
                 skill = ch.level * 2 + 20
@@ -923,7 +923,7 @@ class handler_ch:
             else:
                 skill = 0
         if ch.daze > 0:
-            if skill_table[sn].spell_fun != magic.spell_null:
+            if const.skill_table[sn].spell_fun != magic.spell_null:
                 skill /= 2
             else:
                 skill = 2 * skill / 3
