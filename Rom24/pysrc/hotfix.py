@@ -32,10 +32,7 @@
  ************/
 """
 import os
-from importlib import reload
-import act_info, act_comm, act_enter, act_move, act_obj
-import act_wiz, handler_ch, handler_obj, handler_room
-import interp
+import importlib
 
 #dictionary of files to track. will be key'd by file name and the value will be modified unix timestamp
 tracked_files = {}
@@ -43,21 +40,22 @@ modified_files = {}
 
 def init_file(path, modules):
 #called by init_monitoring to begin tracking a file.
+    modules = [importlib.import_module(m) for m in modules]
     tracked_files[path] = [os.path.getmtime(path), modules]
     print("\t...Tracking %s" % path)
 
 def init_monitoring():
 #Called in main function to begin tracking files.
     print("Monitoring files for modifications.")
-    init_file('act_info.py', [act_info, interp])
-    init_file('act_enter.py', [act_enter, interp])
-    init_file('act_wiz.py', [act_wiz, interp])
-    init_file('act_move.py', [act_move, interp])
-    init_file('act_obj.py', [act_obj, interp])
-    init_file('act_comm.py', [act_comm, interp])
-    init_file('handler_ch.py', [handler_ch])
-    init_file('handler_obj.py', [handler_obj])
-    init_file('handler_room.py', [handler_room])
+    init_file('act_info.py', ['act_info', 'interp'])
+    init_file('act_enter.py', ['act_enter', 'interp'])
+    init_file('act_wiz.py', ['act_wiz', 'interp'])
+    init_file('act_move.py', ['act_move', 'interp'])
+    init_file('act_obj.py', ['act_obj', 'interp'])
+    init_file('act_comm.py', ['act_comm', 'interp'])
+    init_file('handler_ch.py', ['handler_ch'])
+    init_file('handler_obj.py', ['handler_obj'])
+    init_file('handler_room.py', ['handler_room'])
 
 def poll_files():
 #Called in game_loop of program to check if files have been modified.
@@ -76,7 +74,7 @@ def reload_files():
         print("Reloading %s" % fp)
         for m in modules:
             try:
-                reload(m)
+                importlib.reload(m)
             except:
                 print("Failed to reload %s" % fp )
         del modified_files[fp]

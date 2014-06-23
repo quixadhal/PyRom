@@ -164,6 +164,7 @@ def act_bit_name( act_flags ):
         if act_flags & PLR_FREEZE: buf += " frozen"
         if act_flags & PLR_THIEF: buf += " thief"
         if act_flags & PLR_KILLER: buf += " killer"
+        if act_flags & PLR_OMNI: buf += " omni"
     return "none" if not buf else buf
 
 def comm_bit_name(comm_flags):

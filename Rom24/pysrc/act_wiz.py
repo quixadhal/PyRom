@@ -2309,3 +2309,11 @@ def do_reload(ch, argument):
     from hotfix import reload_files
     reload_files()
     ch.send("Files reload\n")
+
+def do_omni(ch, argument):
+    if IS_SET(ch.act, PLR_OMNI):
+        ch.send("Omnimode removed\n")
+        ch.act = REMOVE_BIT(ch.act, PLR_OMNI)
+    else:
+        ch.send("Omnimode enabled.\n")
+        ch.act = SET_BIT(ch.act, PLR_OMNI)

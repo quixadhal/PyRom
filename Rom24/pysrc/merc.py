@@ -1159,7 +1159,7 @@ PLR_DENY = X
 PLR_FREEZE = Y
 PLR_THIEF = Z
 PLR_KILLER = aa
-
+PLR_OMNI = bb
 
 # RT comm flags -- may be used on both mobs and chars */
 COMM_QUIET = A

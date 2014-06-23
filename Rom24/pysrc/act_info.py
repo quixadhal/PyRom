@@ -85,6 +85,8 @@ def format_obj_to_char(obj, ch, fShort):
     else:
         if obj.description:
             buf += obj.description
+    if IS_SET(ch.act, PLR_OMNI):
+        buf += "(%d)" % obj.pIndexData.vnum
     return buf
 
 # * Show a list to a character.
@@ -142,9 +144,11 @@ def show_char_to_char_0(victim, ch):
     if not IS_NPC(victim) and IS_SET(victim.act, PLR_THIEF):
         buf += "(THIEF) "
 
-    if victim.position == victim.start_pos and victim.long_descr:
+    if IS_NPC(victim) and victim.position == victim.start_pos and victim.long_descr:
         buf += victim.long_descr
         ch.send(buf)
+        if IS_SET(ch.act, PLR_OMNI):
+            ch.send("(%d)" % victim.pIndexData.vnum)
         return
 
     buf += PERS(victim, ch)
@@ -206,9 +210,10 @@ def show_char_to_char_0(victim, ch):
             buf += "%s." % PERS(victim.fighting, ch)
         else:
             buf += "someone who left??"
-   
     buf = buf.capitalize()
-    ch.send(buf + "\n")
+    if IS_NPC(victim) and IS_SET(ch.act, PLR_OMNI):
+        buf += "(%s)" % victim.pIndexData.vnum
+    ch.send(buf)
     return
 
 def show_char_to_char_1(victim, ch):
@@ -620,7 +625,7 @@ def do_look(ch, argument):
         # 'look' or 'look auto' */
         ch.send(ch.in_room.name)
 
-        if IS_IMMORTAL(ch) and (IS_NPC(ch) or IS_SET(ch.act, PLR_HOLYLIGHT)):
+        if IS_IMMORTAL(ch) and (IS_NPC(ch) or (IS_SET(ch.act, PLR_HOLYLIGHT) or IS_SET(ch.act, PLR_OMNI))):
             ch.send(" [Room %d]" % ch.in_room.vnum)
         ch.send("\n")
         if not arg1 or (not IS_NPC(ch) and not IS_SET(ch.comm, COMM_BRIEF)):
