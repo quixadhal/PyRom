@@ -35,6 +35,7 @@ from merc import *
 from db import area_update
 from handler import *
 from save import save_char_obj
+from hotfix import poll_files
 import skills
 import const
 import fight
@@ -681,17 +682,19 @@ def update_handler( ):
 
     if pulse_area <= 0:
         pulse_area  = PULSE_AREA
-        area_update ( )
+        area_update()
+
     if pulse_mobile <= 0:
-        pulse_mobile    = PULSE_MOBILE
-        mobile_update   ( )
+        pulse_mobile = PULSE_MOBILE
+        mobile_update()
     if pulse_violence <= 0:
-        pulse_violence  = PULSE_VIOLENCE
-        fight.violence_update ( )
+        poll_files()
+        pulse_violence = PULSE_VIOLENCE
+        fight.violence_update()
     if pulse_point <= 0:
         wiznet("TICK!",None,None,WIZ_TICKS,0,0)
         pulse_point     = PULSE_TICK
         #weather_update  ( )
-        char_update ( )
-        obj_update  ( )
-    aggr_update( )
+        char_update()
+        obj_update()
+    aggr_update()

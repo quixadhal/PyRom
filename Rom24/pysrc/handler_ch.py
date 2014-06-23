@@ -33,9 +33,9 @@
 """
 # * Move a char into a room.
 from merc import *
-from const import *
-from magic import spell_null
-from fight import stop_fighting
+import const
+import magic
+import fight
 
 depth = 0  
 class handler_ch:
@@ -641,7 +641,7 @@ class handler_ch:
 
         #if fPull:
         #    die_follower( ch )
-        stop_fighting( ch, True )
+        fight.stop_fighting( ch, True )
 
         for obj in ch.carrying[:]:
             obj.extract()
@@ -885,7 +885,7 @@ class handler_ch:
             else:
                 skill = ch.pcdata.learned[sn]
         else: # mobiles */
-            if skill_table[sn].spell_fun != spell_null:
+            if skill_table[sn].spell_fun != magic.spell_null:
                 skill = 40 + 2 * ch.level;
             elif sn == 'sneak' or sn == 'hide':
                 skill = ch.level * 2 + 20
@@ -923,7 +923,7 @@ class handler_ch:
             else:
                 skill = 0
         if ch.daze > 0:
-            if skill_table[sn].spell_fun != spell_null:
+            if skill_table[sn].spell_fun != magic.spell_null:
                 skill /= 2
             else:
                 skill = 2 * skill / 3
@@ -984,7 +984,7 @@ class handler_ch:
         if IS_NPC(ch) or ch.level > LEVEL_IMMORTAL:
             smax = 25
         else:
-            smax = pc_race_table[ch.race.name].max_stats[stat] + 4
+            smax = const.pc_race_table[ch.race.name].max_stats[stat] + 4
 
             if ch.guild.attr_prime == stat:
                 smax += 2
@@ -1001,7 +1001,7 @@ class handler_ch:
         if IS_NPC(ch) or ch.level > LEVEL_IMMORTAL:
             return 25
 
-        smax = pc_race_table[ch.race.name].max_stats[stat]
+        smax = const.pc_race_table[ch.race.name].max_stats[stat]
         if ch.guild.attr_prime == stat:
             if ch.race == race_table["human"]:
                 smax += 3
@@ -1038,7 +1038,7 @@ class handler_ch:
         inc = 500
 
         if points < 40:
-            return 1000 * pc_race_table[ch.race.name].class_mult[ch.guild.name]/100 if pc_race_table[ch.race.name].class_mult[ch.guild.name] else 1
+            return 1000 * const.pc_race_table[ch.race.name].class_mult[ch.guild.name]/100 if const.pc_race_table[ch.race.name].class_mult[ch.guild.name] else 1
 
         # processing */
         points -= 40
@@ -1053,7 +1053,7 @@ class handler_ch:
 
         expl += points * inc / 10
 
-        return expl * pc_race_table[ch.race.name].class_mult[ch.guild.name]/100
+        return expl * const.pc_race_table[ch.race.name].class_mult[ch.guild.name]/100
 
     def can_loot(ch, obj):
         if IS_IMMORTAL(ch):

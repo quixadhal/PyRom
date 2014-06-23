@@ -33,11 +33,10 @@
 """
 import os
 from merc import *
-from const import guild_table
-from fight import stop_fighting
-from nanny import con_playing
-from save import save_char_obj
-from settings import PLAYER_DIR, BUG_FILE, TYPO_FILE
+import fight
+import nanny
+import save
+import settings
 import comm
 import interp
 
@@ -57,9 +56,9 @@ def do_delete(self, argument):
             ch.pcdata.confirm_delete = False
             return
         else:
-            pfile = os.path.join(PLAYER_DIR, ch.name+'.js')
+            pfile = os.path.join(settings.PLAYER_DIR, ch.name+'.js')
             wiznet("$N turns $Mself into line noise.",ch,None,0,0,0)
-            stop_fighting(ch,True)
+            fight.stop_fighting(ch,True)
             ch.do_quit("")
             os.remove(pfile)
             return
@@ -216,7 +215,7 @@ def do_auction(self, argument):
         ch.send("You auction '%s'\n" % argument )
         for d in descriptor_list:
             victim = CH(D)
-            if d.is_connected(con_playing) and d.character != ch and not IS_SET(victim.comm,COMM_NOAUCTION) and not IS_SET(victim.comm,COMM_QUIET):
+            if d.is_connected(nanny.con_playing) and d.character != ch and not IS_SET(victim.comm,COMM_NOAUCTION) and not IS_SET(victim.comm,COMM_QUIET):
                 act("$n auctions '$t'", ch,argument,d.character,TO_VICT,POS_DEAD)
 # RT chat replaced with ROM gossip */
 def do_gossip(self, argument):
@@ -239,7 +238,7 @@ def do_gossip(self, argument):
         ch.send("You gossip '%s'\n" % argument )
         for d in descriptor_list:
             victim = CH(d)
-            if d.is_connected(con_playing) and d.character != ch and not IS_SET(victim.comm,COMM_NOGOSSIP) and not IS_SET(victim.comm,COMM_QUIET):
+            if d.is_connected(nanny.con_playing) and d.character != ch and not IS_SET(victim.comm,COMM_NOGOSSIP) and not IS_SET(victim.comm,COMM_QUIET):
                 act( "$n gossips '$t'", ch,argument, d.character, TO_VICT,POS_SLEEPING )
 
 def do_grats(self, argument):
@@ -262,7 +261,7 @@ def do_grats(self, argument):
         ch.send("You grats '%s'\n" % argument )
         for d in descriptor_list:
             victim = CH(d)
-            if d.is_connected(con_playing) and d.character != ch and not IS_SET(victim.comm,COMM_NOGRATS) and not IS_SET(victim.comm,COMM_QUIET):
+            if d.is_connected(nanny.con_playing) and d.character != ch and not IS_SET(victim.comm,COMM_NOGRATS) and not IS_SET(victim.comm,COMM_QUIET):
                 act( "$n grats '$t'", ch,argument, d.character, TO_VICT,POS_SLEEPING )
 
 def do_quote(self, argument):
@@ -287,7 +286,7 @@ def do_quote(self, argument):
         for d in descriptor_list:
             victim = CH(d)
 
-            if d.is_connected(con_playing) and d.character != ch and not IS_SET(victim.comm,COMM_NOQUOTE) and not IS_SET(victim.comm,COMM_QUIET):
+            if d.is_connected(nanny.con_playing) and d.character != ch and not IS_SET(victim.comm,COMM_NOQUOTE) and not IS_SET(victim.comm,COMM_QUIET):
                 act( "$n quotes '$t'", ch,argument, d.character, TO_VICT,POS_SLEEPING )
 
 # RT question channel */
@@ -312,7 +311,7 @@ def do_question(self, argument):
         ch.send( "You question '%s'\n" % argument )
         for d in descriptor_list:
             victim = CH(d)
-            if d.is_connected(con_playing) and d.character != ch and not IS_SET(victim.comm,COMM_NOQUESTION) and not IS_SET(victim.comm,COMM_QUIET):
+            if d.is_connected(nanny.con_playing) and d.character != ch and not IS_SET(victim.comm,COMM_NOQUESTION) and not IS_SET(victim.comm,COMM_QUIET):
                 act("$n questions '$t'", ch,argument,d.character,TO_VICT,POS_SLEEPING)
 
 # RT answer channel - uses same line as questions */
@@ -336,7 +335,7 @@ def do_answer(self, argument):
         ch.send("You answer '%s'\n" % argument )
         for d in descriptor_list:
             victim = CH(d)
-            if d.is_connected(con_playing) and d.character != ch and not IS_SET(victim.comm,COMM_NOQUESTION) and not IS_SET(victim.comm,COMM_QUIET):
+            if d.is_connected(nanny.con_playing) and d.character != ch and not IS_SET(victim.comm,COMM_NOQUESTION) and not IS_SET(victim.comm,COMM_QUIET):
                 act("$n answers '$t'", ch,argument,d.character,TO_VICT,POS_SLEEPING)
 
 # RT music channel */
@@ -361,7 +360,7 @@ def do_music(self, argument):
         ch.send("You MUSIC: '%s'\n" % argument )
         for d in descriptor_list:
             victim = CH(d)
-            if d.is_connected(con_playing) and d.character != ch and not IS_SET(victim.comm,COMM_NOMUSIC) and not IS_SET(victim.comm,COMM_QUIET):
+            if d.is_connected(nanny.con_playing) and d.character != ch and not IS_SET(victim.comm,COMM_NOMUSIC) and not IS_SET(victim.comm,COMM_QUIET):
                 act("$n MUSIC: '$t'",ch,argument,d.character,TO_VICT,POS_SLEEPING)
 
 # clan channels */
@@ -386,7 +385,7 @@ def do_clantalk(self, argument):
 
     ch.send("You clan '%s'\n" % argument )
     for d in descriptor_list:
-        if d.is_connected(con_playing) and d.character != ch and ch.is_same_clan(d.character) \
+        if d.is_connected(nanny.con_playing) and d.character != ch and ch.is_same_clan(d.character) \
         and not IS_SET(d.character.comm,COMM_NOCLAN) and not IS_SET(d.character.comm,COMM_QUIET):
             act("$n clans '$t'",ch,argument,d.character,TO_VICT,POS_DEAD)
 
@@ -404,7 +403,7 @@ def do_immtalk(self, argument):
     REMOVE_BIT(ch.comm,COMM_NOWIZ)
     act("$n: $t",ch,argument,None,TO_CHAR,POS_DEAD)
     for d in descriptor_list:
-        if d.is_connected(con_playing) and IS_IMMORTAL(d.character) and not IS_SET(d.character.comm,COMM_NOWIZ):
+        if d.is_connected(nanny.con_playing) and IS_IMMORTAL(d.character) and not IS_SET(d.character.comm,COMM_NOWIZ):
             act("$n: $t",ch,argument,d.character,TO_VICT,POS_DEAD)
 
 def do_say(self, argument):
@@ -434,7 +433,7 @@ def do_shout(self, argument):
     act( "You shout '$T'", ch, None, argument, TO_CHAR )
     for d in descriptor_list:
         victim = CH(d)
-        if d.is_connected(con_playing) and d.character != ch \
+        if d.is_connected(nanny.con_playing) and d.character != ch \
         and not IS_SET(victim.comm, COMM_SHOUTSOFF) and not IS_SET(victim.comm, COMM_QUIET):
             act("$n shouts '$t'",ch,argument,d.character,TO_VICT)
 
@@ -537,7 +536,7 @@ def do_yell(self, argument):
 
     act("You yell '$t'",ch,argument,None,TO_CHAR)
     for d in descriptor_list:
-        if d.is_connected(con_playing) \
+        if d.is_connected(nanny.con_playing) \
         and d.character != ch \
         and d.character.in_room != None \
         and d.character.in_room.area == ch.in_room.area \
@@ -750,13 +749,13 @@ def do_pose(self, argument):
 
 def do_bug(self, argument):
     ch=self
-    append_file( ch, BUG_FILE, argument )
+    append_file( ch, settings.BUG_FILE, argument )
     ch.send("Bug logged.\n")
     return
 
 def do_typo(self, argument):
     ch=self
-    append_file( ch, TYPO_FILE, argument )
+    append_file( ch, settings.TYPO_FILE, argument )
     ch.send("Typo logged.\n")
     return
 
@@ -785,7 +784,7 @@ def do_quit(self, argument):
     print ("%s has quit." % ch.name)
     wiznet("$N rejoins the real world.",ch,None,WIZ_LOGINS,0,ch.get_trust())
     #* After extract_char the ch is no longer valid!
-    save_char_obj( ch )
+    save.save_char_obj( ch )
     id = ch.id
     d = ch.desc
     ch.extract(True)
@@ -804,7 +803,7 @@ def do_save(self, argument):
     ch=self
     if IS_NPC(ch):
         return
-    save_char_obj( ch )
+    save.save_char_obj( ch )
     ch.send("Saving. Remember that ROM has automatic saving now.\n")
     WAIT_STATE(ch,4 * PULSE_VIOLENCE)
     return

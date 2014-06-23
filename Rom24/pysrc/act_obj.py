@@ -34,9 +34,9 @@
 from collections import OrderedDict
 from merc import *
 from handler import *
-from db import create_object, create_mobile, create_money
-from update import gain_condition
-from const import str_app
+import db
+import update
+import const
 
 def get_obj(ch, obj, container):
     # variables for AUTOSPLIT */
@@ -289,7 +289,7 @@ def do_drop(self, argument):
                 silver += obj.value[0]
                 gold += obj.value[1]
                 obj.extract()
-        obj_to_room( create_money( gold, silver ), ch.in_room )
+        obj_to_room( db.create_money( gold, silver ), ch.in_room )
         act( "$n drops some coins.", ch, None, None, TO_ROOM )
         ch.send("OK.\n")
         return
@@ -634,10 +634,10 @@ def do_drink(self, argument):
         return
     act( "$n drinks $T from $p.", ch, obj, liq_table[liquid].liq_name, TO_ROOM )
     act( "You drink $T from $p.", ch, obj, liq_table[liquid].liq_name, TO_CHAR )
-    gain_condition( ch, COND_DRUNK, amount * liq_table[liquid].liq_affect[COND_DRUNK] / 36 )
-    gain_condition( ch, COND_FULL, amount * liq_table[liquid].liq_affect[COND_FULL] / 4 )
-    gain_condition( ch, COND_THIRST,amount * liq_table[liquid].liq_affect[COND_THIRST] / 10 )
-    gain_condition(ch, COND_HUNGER, amount * liq_table[liquid].liq_affect[COND_HUNGER] / 2 )
+    update.gain_condition( ch, COND_DRUNK, amount * liq_table[liquid].liq_affect[COND_DRUNK] / 36 )
+    update.gain_condition( ch, COND_FULL, amount * liq_table[liquid].liq_affect[COND_FULL] / 4 )
+    update.gain_condition( ch, COND_THIRST,amount * liq_table[liquid].liq_affect[COND_THIRST] / 10 )
+    update.gain_condition(ch, COND_HUNGER, amount * liq_table[liquid].liq_affect[COND_HUNGER] / 2 )
     if not IS_NPC(ch) and ch.pcdata.condition[COND_DRUNK] > 10:
         ch.send("You feel drunk.\n")
     if not IS_NPC(ch) and ch.pcdata.condition[COND_FULL] > 40:
@@ -683,8 +683,8 @@ def do_eat(self, argument):
     if obj.item_type == ITEM_FOOD:
         if not IS_NPC(ch):
             condition = ch.pcdata.condition[COND_HUNGER]
-            gain_condition( ch, COND_FULL, obj.value[0] )
-            gain_condition( ch, COND_HUNGER, obj.value[1])
+            update.gain_condition( ch, COND_FULL, obj.value[0] )
+            update.gain_condition( ch, COND_HUNGER, obj.value[1])
             if condition == 0 and ch.pcdata.condition[COND_HUNGER] > 0:
                 ch.send("You are no longer hungry.\n")
             elif ch.pcdata.condition[COND_FULL] > 40:
@@ -862,7 +862,7 @@ def wear_obj( ch, obj, fReplace ):
     if CAN_WEAR( obj, ITEM_WIELD ):
         if not remove_obj( ch, WEAR_WIELD, fReplace ):
             return
-        if not IS_NPC(ch) and obj.get_weight() > (str_app[ch.get_curr_stat(STAT_STR)].wield * 10):
+        if not IS_NPC(ch) and obj.get_weight() > (const.str_app[ch.get_curr_stat(STAT_STR)].wield * 10):
             ch.send("It is too heavy for you to wield.\n")
             return
         if not IS_NPC(ch) and ch.size < SIZE_LARGE \
@@ -1405,7 +1405,7 @@ def do_buy(self, argument):
             ch.send("You haggle the price down to %d coins.\n" % cost)
             check_improve(ch,"haggle",True,4)
         ch.deduct_cost(cost)
-        pet = create_mobile( pet.pIndexData )
+        pet = db.create_mobile( pet.pIndexData )
         SET_BIT(pet.act, ACT_PET)
         SET_BIT(pet.affected_by, AFF_CHARM)
         pet.comm = COMM_NOTELL|COMM_NOSHOUT|COMM_NOCHANNELS
@@ -1481,7 +1481,7 @@ def do_buy(self, argument):
         if IS_SET(obj.extra_flags, ITEM_INVENTORY):
             items = []
             for count in range(number):
-                t_obj = create_object( obj.pIndexData, obj.level )
+                t_obj = db.create_object( obj.pIndexData, obj.level )
                 items.append(t_obj)
         for t_obj in items[:]:
             if not IS_SET(obj.extra_flags, ITEM_INVENTORY):
