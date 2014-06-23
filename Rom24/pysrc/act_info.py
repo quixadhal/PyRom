@@ -802,11 +802,16 @@ def do_exits(self, argument):
 
     found = False
     for door, pexit in enumerate(ch.in_room.exit):
-        if pexit and pexit.to_room and ch.can_see_room(pexit.to_room) \
-        and not IS_SET(pexit.exit_info, EX_CLOSED):
+        if pexit and pexit.to_room and (IS_SET(ch.act, PLR_OMNI) or (ch.can_see_room(pexit.to_room) \
+        and not IS_SET(pexit.exit_info, EX_CLOSED))):
             found = True
             if fAuto:
-                buf += " %s" % dir_name[door]
+                if IS_SET(pexit.exit_info, EX_CLOSED):
+                    buf += " [%s]" % (dir_name[door])
+                else:
+                    buf += " %s" % dir_name[door]
+                if IS_SET(ch.act, PLR_OMNI):
+                    buf += "(%d)" % pexit.to_room.vnum
             else:
                 buf += "%-5s - %s" % (dir_name[door].capitalize(),
                   "Too dark to tell" if pexit.to_room.is_dark() else pexit.to_room.name)

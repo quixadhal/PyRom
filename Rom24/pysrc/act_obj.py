@@ -1548,7 +1548,10 @@ def do_list(self, argument):
         for k, p in items.items():
             obj, count = p
             cost = get_cost( keeper, obj, True )
-            ch.send("[%2d %5d %2s ] %s\n" % (obj.level,cost, ("--" if count == -1 else count),obj.short_descr))
+            ch.send("[%2d %5d %2s ] %s" % (obj.level,cost, ("--" if count == -1 else count),obj.short_descr))
+            if IS_SET(ch.act, PLR_OMNI):
+                ch.send("(%d)" % obj.pIndexData.vnum)
+            ch.send("\n")
 
 def do_sell(self, argument):
     ch=self
