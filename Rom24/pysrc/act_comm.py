@@ -57,7 +57,7 @@ def do_delete(self, argument):
             ch.pcdata.confirm_delete = False
             return
         else:
-            pfile = os.path.join(PLAYER_DIR, ch.name+'.js')
+            pfile = os.path.join(PLAYER_DIR, ch.name+'.json')
             wiznet("$N turns $Mself into line noise.",ch,None,0,0,0)
             stop_fighting(ch,True)
             ch.do_quit("")
