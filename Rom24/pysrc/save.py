@@ -48,7 +48,7 @@ def save_char_obj(ch):
     if ch.desc and ch.desc.original:
         ch = ch.desc.original
 
-    pfile = os.path.join(PLAYER_DIR, ch.name+'.js')
+    pfile = os.path.join(PLAYER_DIR, ch.name+'.json')
     #A Quick Quix fix!
     os.makedirs(PLAYER_DIR, 0o755, True)
 
@@ -77,7 +77,7 @@ def load_char_obj(d, name):
     ch.name = name
     ch.act = 0
     found = False
-    pfile = os.path.join(PLAYER_DIR, name+'.js')
+    pfile = os.path.join(PLAYER_DIR, name+'.json')
     if os.path.isfile(pfile):
         chdict = json.load(open(pfile,'r'))
         ch = fread_char(chdict, ch)
