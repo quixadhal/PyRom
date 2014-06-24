@@ -36,6 +36,7 @@ from merc import *
 from handler import *
 from db import create_object, create_mobile, create_money
 from update import gain_condition
+from const import str_app
 
 def get_obj(ch, obj, container):
     # variables for AUTOSPLIT */
@@ -879,7 +880,6 @@ def wear_obj( ch, obj, fReplace ):
             return
 
         skill = ch.get_weapon_skill(sn)
- 
         if skill >= 100: act("$p feels like a part of you!",ch,obj,None,TO_CHAR)
         elif skill > 85: act("You feel quite confident with $p.",ch,obj,None,TO_CHAR)
         elif skill > 70: act("You are skilled with $p.",ch,obj,None,TO_CHAR)

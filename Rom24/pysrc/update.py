@@ -35,6 +35,8 @@ from merc import *
 from db import area_update
 from handler import *
 from save import save_char_obj
+import skills
+import const
 import fight
 import act_move
 # * Advancement stuff.
@@ -42,15 +44,15 @@ import act_move
 def advance_level( ch, hide ):
     ch.pcdata.last_level = ( ch.played + (int) (current_time - ch.logon) ) // 3600
 
-    buf = "the %s" % ( title_table [ch.guild ] [ch.level] [1 if ch.sex == SEX_FEMALE else 0] )
+    buf = "the %s" % ( const.title_table [ch.guild.name] [ch.level] [1 if ch.sex == SEX_FEMALE else 0] )
     set_title( ch, buf )
 
-    add_hp = con_app[ch.get_curr_stat(STAT_CON)].hitp + random.randint( ch.guild.hp_min, ch.guild.hp_max )
+    add_hp = const.con_app[ch.get_curr_stat(STAT_CON)].hitp + random.randint( ch.guild.hp_min, ch.guild.hp_max )
     add_mana = random.randint( 2, (2*ch.get_curr_stat(STAT_INT) + ch.get_curr_stat(STAT_WIS)) // 5)
     if not ch.guild.fMana:
         add_mana //= 2
     add_move    = random.randint( 1, (ch.get_curr_stat(STAT_CON) + ch.get_curr_stat(STAT_DEX)) // 6 )
-    add_prac    = wis_app[ch.get_curr_stat(STAT_WIS)].practice
+    add_prac    = const.wis_app[ch.get_curr_stat(STAT_WIS)].practice
 
     add_hp = add_hp * 9 // 10
     add_mana = add_mana * 9 // 10
@@ -108,7 +110,7 @@ def hit_gain( ch ):
         if number < ch.get_skill('fast healing'):
             gain += number * gain // 100
             if ch.hit < ch.max_hit:
-                check_improve(ch,'fast healing',True,8)
+                skills.check_improve(ch,'fast healing',True,8)
 
         if ch.position == POS_SLEEPING: pass
         elif ch.position == POS_RESTING: gain //= 2
@@ -153,7 +155,7 @@ def mana_gain( ch ):
         if number < ch.get_skill('meditation'):
             gain += number * gain // 100
             if ch.mana < ch.max_mana:
-                check_improve(ch,'meditation',True,8)
+                skills.check_improve(ch,'meditation',True,8)
 
         if not ch.guild.fMana:
             gain //= 2

@@ -1211,7 +1211,7 @@ def dam_message( ch, victim, dam, dt, immune ):
             buf3 = "$n %s you%c" % ( vp, punct )
     else:
         if dt >= 0 and dt < MAX_SKILL:
-            attack  = skill_table[dt].noun_damage
+            attack  = const.skill_table[dt].noun_damage
         elif dt >= TYPE_HIT and dt < TYPE_HIT + len(const.attack_table):
             attack = const.attack_table[dt - TYPE_HIT].noun
         else:
@@ -1273,7 +1273,7 @@ def do_berserk( self, argument):
     ch = self
     chance = ch.get_skill('berserk')
     if chance== 0 or (IS_NPC(ch) and not IS_SET(ch.off_flags,OFF_BERSERK)) \
-    or  (not IS_NPC(ch) and ch.level < skill_table['berserk'].skill_level[ch.guild]):
+    or  (not IS_NPC(ch) and ch.level < const.skill_table['berserk'].skill_level[ch.guild.name]):
         ch.send("You turn red in the face, but nothing happens.\n\r")
         return
 
@@ -1334,7 +1334,7 @@ def do_bash( ch, argument ):
     arghold, arg = read_word(argument)
     chance = ch.get_skill('bash')
     if chance == 0 or (IS_NPC(ch) and not IS_SET(ch.off_flags,OFF_BASH)) \
-    or (not IS_NPC(ch) and ch.level < skill_table['bash'].skill_level[ch.guild.name] ):
+    or (not IS_NPC(ch) and ch.level < const.skill_table['bash'].skill_level[ch.guild.name] ):
         ch.send("Bashing? What's that?\n\r")
         return
     victim = None 
@@ -1388,7 +1388,7 @@ def do_bash( ch, argument ):
         pass
         #act("$n tries to bash you, but you dodge it.",ch,None,victim,TO_VICT)
         #act("$N dodges your bash, you fall flat on your face.",ch,None,victim,TO_CHAR)
-        #WAIT_STATE(ch,skill_table['bash'].beats)
+        #WAIT_STATE(ch,const.skill_table['bash'].beats)
         #return*/
         chance -= 3 * (victim.get_skill('dodge') - chance)
     # now the attack */
@@ -1398,7 +1398,7 @@ def do_bash( ch, argument ):
         act("$n sends $N sprawling with a powerful bash.", ch,None,victim,TO_NOTVICT)
         check_improve(ch,'bash',True,1)
         DAZE_STATE(victim, 3 * PULSE_VIOLENCE)
-        WAIT_STATE(ch,skill_table['bash'].beats)
+        WAIT_STATE(ch,const.skill_table['bash'].beats)
         victim.position = POS_RESTING
         damage(ch,victim,random.randint(2,2 + 2 * ch.size + chance // 20),'bash', DAM_BASH,False)
     else:
@@ -1408,7 +1408,7 @@ def do_bash( ch, argument ):
         act("You evade $n's bash, causing $m to fall flat on $s face.", ch,None,victim,TO_VICT)
         check_improve(ch,'bash',False,1)
         ch.position = POS_RESTING
-        WAIT_STATE(ch,skill_table['bash'].beats * 3 // 2) 
+        WAIT_STATE(ch,const.skill_table['bash'].beats * 3 // 2) 
     check_killer(ch,victim)
 
 def do_dirt( self, argument ):
@@ -1416,7 +1416,7 @@ def do_dirt( self, argument ):
     arghold, arg = read_word(argument)
     chance = ch.get_skill('dirt kicking')
     if chance == 0 or (IS_NPC(ch) and not IS_SET(ch.off_flags,OFF_KICK_DIRT)) \
-    or ( not IS_NPC(ch) and ch.level < skill_table['dirt kicking'].skill_level[ch.guild]):
+    or ( not IS_NPC(ch) and ch.level < const.skill_table['dirt kicking'].skill_level[ch.guild.name]):
         ch.send("You get your feet dirty.\n\r")
         return
     if not arg:
@@ -1483,7 +1483,7 @@ def do_dirt( self, argument ):
         damage(ch,victim,random.randint(2,5),'dirt kicking',DAM_NONE,False)
         victim.send("You can't see a thing!\n\r")
         check_improve(ch,'dirt kicking',True,2)
-        WAIT_STATE(ch,skill_table['dirt kicking'].beats)
+        WAIT_STATE(ch,const.skill_table['dirt kicking'].beats)
         af = AFFECT_DATA()
         af.where    = TO_AFFECTS
         af.type     = 'dirt kicking'
@@ -1496,7 +1496,7 @@ def do_dirt( self, argument ):
     else:
         damage(ch,victim,0,'dirt kicking',DAM_NONE,True)
         check_improve(ch,'dirt kicking',False,2)
-        WAIT_STATE(ch,skill_table['dirt kicking'].beats)
+        WAIT_STATE(ch,const.skill_table['dirt kicking'].beats)
     check_killer(ch,victim)
 
 def do_trip( self, argument ):
@@ -1504,7 +1504,7 @@ def do_trip( self, argument ):
     arghold, arg = read_word(argument)
     chance = ch.get_skill('trip')
     if chance == 0 or (IS_NPC(ch) and not IS_SET(ch.off_flags,OFF_TRIP)) \
-    or ( not IS_NPC(ch) and ch.level < skill_table['trip'].skill_level[ch.guild]):
+    or ( not IS_NPC(ch) and ch.level < const.skill_table['trip'].skill_level[ch.guild.name]):
         ch.send("Tripping?  What's that?\n\r")
         return
     if not arg:
@@ -1530,7 +1530,7 @@ def do_trip( self, argument ):
         return
     if victim == ch:
         ch.send("You fall flat on your face!\n\r")
-        WAIT_STATE(ch,2 * skill_table['trip'].beats)
+        WAIT_STATE(ch,2 * const.skill_table['trip'].beats)
         act("$n trips over $s own feet!",ch,None,None,TO_ROOM)
         return
 
@@ -1561,12 +1561,12 @@ def do_trip( self, argument ):
         check_improve(ch,'trip',True,1)
 
         DAZE_STATE(victim,2 * PULSE_VIOLENCE)
-        WAIT_STATE(ch,skill_table['trip'].beats)
+        WAIT_STATE(ch,const.skill_table['trip'].beats)
         victim.position = POS_RESTING
         damage(ch,victim,random.randint(2, 2 +  2 * victim.size),'trip', DAM_BASH,True)
     else:
         damage(ch,victim,0,'trip',DAM_BASH,True)
-        WAIT_STATE(ch,skill_table['trip'].beats*2 // 3)
+        WAIT_STATE(ch,const.skill_table['trip'].beats*2 // 3)
         check_improve(ch,'trip',False,1)
     check_killer(ch,victim)
 
@@ -1685,7 +1685,7 @@ def do_backstab( self, argument ):
             act( "$N is hurt and suspicious ... you can't sneak up.", ch, None, victim, TO_CHAR )
             return
         check_killer( ch, victim )
-        WAIT_STATE( ch, skill_table['backstab'].beats )
+        WAIT_STATE( ch, const.skill_table['backstab'].beats )
         if random.randint(1,99) < ch.get_skill('backstab') \
         or ( ch.get_skill('backstab') >= 2 and not IS_AWAKE(victim) ):
             check_improve(ch,'backstab',True,1)
@@ -1722,7 +1722,7 @@ def do_flee( ch, argument ):
 
         if not IS_NPC(ch):
             ch.send("You flee from combat!\n\r")
-            if ch.guild == 2 and (random.randint(1,99) < 3*(ch.level // 2) ):
+            if ch.guild.name == 'thief' and (random.randint(1,99) < 3*(ch.level // 2) ):
                 ch.send("You snuck away safely.\n\r")
             else:
                 ch.send("You lost 10 exp.\n\r") 
@@ -1760,7 +1760,7 @@ def do_rescue( self, argument ):
     if IS_NPC(fch) and not ch.is_same_group(victim):
         ch.send("Kill stealing is not permitted.\n\r")
         return
-    WAIT_STATE( ch, skill_table['rescue'].beats )
+    WAIT_STATE( ch, const.skill_table['rescue'].beats )
     if random.randint(1,99) > ch.get_skill('rescue'):
         ch.send("You fail the rescue.\n\r")
         check_improve(ch,'rescue',False,1)
@@ -1780,7 +1780,7 @@ def do_rescue( self, argument ):
 
 def do_kick( self, argument ):
     ch = self
-    if not IS_NPC(ch) and ch.level < skill_table['kick'].skill_level[ch.guild]:
+    if not IS_NPC(ch) and ch.level < const.skill_table['kick'].skill_level[ch.guild.name]:
         ch.send("You better leave the martial arts to fighters.\n\r")
         return
     if IS_NPC(ch) and not IS_SET(ch.off_flags,OFF_KICK):
@@ -1790,7 +1790,7 @@ def do_kick( self, argument ):
         ch.send("You aren't fighting anyone.\n\r")
         return
 
-    WAIT_STATE( ch, skill_table['kick'].beats )
+    WAIT_STATE( ch, const.skill_table['kick'].beats )
     if ch.get_skill('kick') > random.randint(1,99):
         damage(ch,victim,random.randint( 1, ch.level ), 'kick',DAM_BASH,True)
         check_improve(ch,'kick',True,1)
@@ -1844,11 +1844,11 @@ def do_disarm( ch, argument ):
  
     # and now the attack */
     if random.randint(1,99) < chance:
-        WAIT_STATE( ch, skill_table['disarm'].beats )
+        WAIT_STATE( ch, const.skill_table['disarm'].beats )
         disarm( ch, victim )
         check_improve(ch,'disarm',True,1)
     else:
-        WAIT_STATE(ch,skill_table['disarm'].beats)
+        WAIT_STATE(ch,const.skill_table['disarm'].beats)
         act("You fail to disarm $N.",ch,None,victim,TO_CHAR)
         act("$n tries to disarm you, but fails.",ch,None,victim,TO_VICT)
         act("$n tries to disarm $N, but fails.",ch,None,victim,TO_NOTVICT)

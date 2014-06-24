@@ -34,10 +34,13 @@
 from merc import *
 import nanny
 from db import create_object
-from const import weapon_table, attack_table
+from const import weapon_table, attack_table, wiznet_table, skill_table
 from settings import NEWLOCK
 from tables import *
 from handler import *
+from update import advance_level
+from save import save_char_obj
+import interp
 
 def do_wiznet(self, argument):
     ch=self
@@ -474,7 +477,7 @@ def do_at(self, argument):
     on = ch.on
     ch.from_room()
     ch.to_room(location)
-    interpret( ch, argument )
+    interp.interpret( ch, argument )
 
     # * See if 'ch' still exists before continuing!
     # * Handles 'at XXXX quit' case.
@@ -641,7 +644,7 @@ def do_ostat(self, argument):
     if not arg:
         ch.send("Stat what?\n")
         return
-    obj = ch.get_obj_world(argument)
+    obj = ch.get_obj_world(arg)
     if not obj:
         ch.send("Nothing like that in hell, earth, or heaven.\n")
         return
@@ -649,7 +652,7 @@ def do_ostat(self, argument):
     ch.send("Name(s): %s\n" % obj.name )
     ch.send("Vnum: %d  Format: %s  Type: %s  Resets: %d\n" % (
         obj.pIndexData.vnum, "new" if obj.pIndexData.new_format else "old",
-        item_name(obj.item_type), obj.pIndexData.reset_num ) )
+        obj.item_type, obj.pIndexData.reset_num ) )
     ch.send("Short description: %s\nLong description: %s\n" % (obj.short_descr, obj.description ))
     ch.send("Wear bits: %s\nExtra bits: %s\n" % (wear_bit_name(obj.wear_flags), extra_bit_name( obj.extra_flags ) ) )
     ch.send("Number: 1/%d  Weight: %d/%d/%d (10th pounds)\n" % ( obj.get_number(),
@@ -661,7 +664,7 @@ def do_ostat(self, argument):
         "(none)" if not obj.in_obj else obj.in_obj.short_descr,
         "(noone)" if not obj.carried_by else "someone" if not ch.can_see(obj.carried_by) else obj.carried_by.name,
         obj.wear_loc ) )
-    ch.send("Values: %d %d %d %d %d\n" % (v for v in obj.value))
+    ch.send("Values: %s\n" % [v for v in obj.value])
     # now give out vital statistics as per identify */
 
     if obj.item_type == ITEM_SCROLL \
@@ -747,7 +750,7 @@ def do_mstat(self, argument):
     if not arg:
         ch.send("Stat whom?\n")
         return
-    victim = ch.get_char_world(argument)
+    victim = ch.get_char_world(arg)
     if not victim:
         ch.send("They aren't here.\n")
         return
@@ -872,8 +875,8 @@ def do_mfind(self, argument):
      #* Get_mob_index is fast, and I don't feel like threading another link.
      #* Do you?
      # -- Furey
-    for pMobIndex in mob_index_hash:
-        if fAll or argument in pMobIndex.player_name:
+    for pMobIndex in mob_index_hash.values():
+        if fAll or is_name(arg, pMobIndex.player_name):
             found = True
             ch.send("[%5d] %s\n" % (pMobIndex.vnum, pMobIndex.short_descr))
     if not found:
@@ -896,10 +899,10 @@ def do_ofind(self, argument):
     # * Get_obj_index is fast, and I don't feel like threading another link.
     # * Do you?
     # * -- Furey
-    for pObjIndex in obj_index_hash:
-        if fAll or argument in pObjIndex.name:
+    for pObjIndex in obj_index_hash.values():
+        if fAll or is_name(arg, pObjIndex.name):
             found = True
-            ch.send("[%5d] %s\n" % (pObjIndex.vnum, pObjIndex.short_descr))
+            ch.send("[%5d] %s(%s)\n" % (pObjIndex.vnum, pObjIndex.short_descr, pObjIndex.name))
     if not found:
         ch.send("No objects by that name.\n")
     return
@@ -1276,13 +1279,13 @@ def do_oload(self, argument):
     if vnum not in obj_index_hash:
         ch.send("No object has that vnum.\n")
         return
-    obj = create_object( pObjIndex, level )
+    obj = create_object(obj_index_hash[vnum], level)
     if CAN_WEAR(obj, ITEM_TAKE):
         obj.to_char(ch)
     else:
         obj.to_room(ch.in_room)
-    act( "$n has created $p!", ch, obj, None, TO_ROOM )
-    wiznet("$N loads $p.",ch,obj,WIZ_LOAD,WIZ_SECURE,ch.get_trust())
+    act("$n has created $p!", ch, obj, None, TO_ROOM)
+    wiznet("$N loads $p.", ch, obj, WIZ_LOAD, WIZ_SECURE, ch.get_trust())
     ch.send("Ok.\n")
     return
 
@@ -1374,7 +1377,7 @@ def do_advance(self, argument):
         victim.send("**** OOOOHHHHHHHHHH  YYYYEEEESSS ****\n")
     for iLevel in range(victim.level, level):
         victim.level += 1
-        advance_level( victim,True)
+        advance_level(victim, True)
     victim.send("You are now level %d.\n" % victim.level)
     victim.exp   = victim.exp_per_level(victim.pcdata.points) * max( 1, victim.level )
     victim.trust = 0
@@ -1711,7 +1714,7 @@ def do_sset(self, argument):
     if not fAll and not sn:
         ch.send("No such skill or spell.\n")
         return
-    sn = sn.name
+
     # Snarf the value.
     if not arg3.isdigit():
         ch.send("Value must be numeric.\n")
@@ -1725,7 +1728,8 @@ def do_sset(self, argument):
         for sn in skill_table.keys():
             victim.pcdata.learned[sn] = value
     else:
-        victim.pcdata.learned[sn] = value
+        victim.pcdata.learned[sn.name] = value
+    ch.send("Skill set.\n")
 
 def do_mset(self, argument):
     ch=self
@@ -2124,11 +2128,9 @@ def do_sockets(self, argument):
         and (not arg or arg not in  d.character.name) \
         or (d.original and is_name(arg,d.original.name)):
             count+=1
-            ch.send("[%3d %2d] %s@%s\n" % (
-                    d.descriptor,
-                    d.connected,
+            ch.send("%s@%s\n" % (
                     d.original.name if d.original else d.character.name if d.character else "(none)",
-                    d.host ) )
+                    d.address))
     if count == 0:
         ch.send("No one by that name is connected.\n")
         return

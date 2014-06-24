@@ -46,18 +46,6 @@ from fight import *
 from skills import do_groups, do_skills, do_spells, do_gain
 from settings import LOGALL
 
-ML=MAX_LEVEL   # implementor */
-L1=MAX_LEVEL - 1   # creator */
-L2=MAX_LEVEL - 2   # supreme being */
-L3=MAX_LEVEL - 3   # deity */
-L4=MAX_LEVEL - 4   # god */
-L5=MAX_LEVEL - 5   # immortal */
-L6=MAX_LEVEL - 6   # demigod */
-L7=MAX_LEVEL - 7   # angel */
-L8=MAX_LEVEL - 8   # avatar */
-IM=LEVEL_IMMORTAL  # avatar */
-HE=LEVEL_HERO  # hero */
-
 
 class cmd_type:
     def __init__(self, name, do_fun, position, level, log, show):
@@ -276,6 +264,7 @@ cmd_table['reboo'] = cmd_type('reboo', do_reboo, POS_DEAD, L1, LOG_NORMAL, 0)
 cmd_table['reboot'] = cmd_type('reboot', do_reboot, POS_DEAD, L1, LOG_ALWAYS, 1)
 cmd_table['set'] = cmd_type('set', do_set, POS_DEAD, L2, LOG_ALWAYS, 1)
 cmd_table['mset'] = cmd_type('mset', do_mset, POS_DEAD, L2, LOG_ALWAYS, 1)
+cmd_table['sset'] = cmd_type('sset', do_sset, POS_DEAD, L2, LOG_ALWAYS, 1)
 cmd_table['oset'] = cmd_type('oset', do_oset, POS_DEAD, L2, LOG_ALWAYS, 1)
 cmd_table['shutdow'] = cmd_type('shutdow', do_shutdow, POS_DEAD, L1, LOG_NORMAL, 0)
 cmd_table['shutdown'] = cmd_type('shutdown', do_shutdown, POS_DEAD, L1, LOG_ALWAYS, 1)
@@ -283,6 +272,8 @@ cmd_table['shutdown'] = cmd_type('shutdown', do_shutdown, POS_DEAD, L1, LOG_ALWA
 cmd_table['wizlock'] = cmd_type('wizlock', do_wizlock, POS_DEAD, L2, LOG_ALWAYS, 1)
 cmd_table['force'] = cmd_type('force', do_force, POS_DEAD, L7, LOG_ALWAYS, 1)
 cmd_table['load'] = cmd_type('load', do_load, POS_DEAD, L4, LOG_ALWAYS, 1)
+cmd_table['mload'] = cmd_type('m load', do_mload, POS_DEAD, L4, LOG_ALWAYS, 1)
+cmd_table['oload'] = cmd_type('oload', do_oload, POS_DEAD, L4, LOG_ALWAYS, 1)
 cmd_table['newlock'] = cmd_type('newlock', do_newlock, POS_DEAD, L4, LOG_ALWAYS, 1)
 cmd_table['nochannels'] = cmd_type('nochannels', do_nochannels, POS_DEAD, L5, LOG_ALWAYS, 1)
 cmd_table['noemote'] = cmd_type('noemote', do_noemote, POS_DEAD, L5, LOG_ALWAYS, 1)
@@ -320,6 +311,8 @@ cmd_table['string'] = cmd_type('string', do_string, POS_DEAD, L5, LOG_ALWAYS, 1)
 cmd_table['switch'] = cmd_type('switch', do_switch, POS_DEAD, L6, LOG_ALWAYS, 1)
 cmd_table['wizinvis'] = cmd_type('wizinvis', do_invis,   POS_DEAD,   IM,  LOG_NORMAL, 1)
 cmd_table['vnum'] = cmd_type('vnum', do_vnum, POS_DEAD, L4, LOG_NORMAL, 1)
+cmd_table['mfind'] = cmd_type('mfind', do_mfind, POS_DEAD, L4, LOG_NORMAL, 1)
+cmd_table['ofind'] = cmd_type('ofind', do_ofind, POS_DEAD, L4, LOG_NORMAL, 1)
 cmd_table['zecho'] = cmd_type('zecho', do_zecho, POS_DEAD, L4, LOG_ALWAYS, 1)
 cmd_table['clone'] = cmd_type('clone', do_clone, POS_DEAD, L5, LOG_ALWAYS, 1)
 cmd_table['wiznet'] = cmd_type('wiznet', do_wiznet,  POS_DEAD,   IM,  LOG_NORMAL, 1)
@@ -338,6 +331,7 @@ for k,cmd in cmd_table.items():
 def interpret(ch, argument):
      # Strip leading spaces.
     argument = argument.lstrip()
+    command = ''
 
     # No hiding.
     REMOVE_BIT(ch.affected_by, AFF_HIDE)
@@ -376,8 +370,6 @@ def interpret(ch, argument):
         #* Look for command in socials table.
         if not check_social(ch, command, argument):
             ch.send("Huh?\n")
-            return
-        ch.send("Huh?\n")
         return
     #* Character not in position for command?
     if ch.position < cmd.position:
@@ -403,17 +395,12 @@ def interpret(ch, argument):
     return
 
 def check_social(ch, command, argument):
-    found  = False
     cmd = None
     for social in social_list:
-        if argument == social.name[:len(argument)]:
-            found = True
+        if social.name.lower().startswith(command):
             cmd = social
-            break
-
-    if not found:
+    if not cmd:
         return False
-
     if not IS_NPC(ch) and IS_SET(ch.comm, COMM_NOEMOTE):
         ch.send("You are anti-social!\n")
         return True
