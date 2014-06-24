@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*- line endings: unix -*-
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   miniboa/__init__.py
 #   Copyright 2009 Jim Storch
 #   Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -24,4 +24,3 @@
 #------------------------------------------------------------------------------
 
 from miniboa.async import TelnetServer
-

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*- line endings: unix -*-
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   miniboa/terminal.py
 #   Copyright 2009 Jim Storch
 #   Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -47,11 +47,14 @@ terminal-like systems
 """
 
 import re
+
 from miniboa.colors import _TERMINAL_TYPES, _COLOR_TOKENS, _COLOR_MAP
+
 
 _PARA_BREAK = re.compile(r"(\n\s*\n)", re.MULTILINE)
 
-def word_wrap(text, columns = 80, indent = 4, padding = 2):
+
+def word_wrap(text, columns=80, indent=4, padding=2):
     """
     Given a block of text, breaks into a list of lines wrapped to
     length.
@@ -79,14 +82,15 @@ def word_wrap(text, columns = 80, indent = 4, padding = 2):
             lines.append(line)
     return lines
 
-def colorize(text, terminal = 'ansi'):
+
+def colorize(text, terminal='ansi'):
     """
     Given a chunk of text, replace color tokesn with the appropriate
     color codes for the given terminal type
     """
-    if text == None or text == '':
+    if text is None or text == '':
         return text
-    if terminal == None or terminal not in _TERMINAL_TYPES:
+    if terminal is None or terminal not in _TERMINAL_TYPES:
         terminal = 'unknown'
     words = text.split('%^')
     for word in words:
@@ -100,13 +104,13 @@ def colorize(text, terminal = 'ansi'):
         words[i] = _COLOR_MAP[terminal][word]
     return ''.join(words)
 
+
 def escape(text):
     """
     Escape all the color tokens in the given text chunk, so they
     can be safely printed through the color parser
     """
-    if text == None or text == '':
+    if text is None or text == '':
         return text
     text = text.replace('%^', '%%^^')
     return text
-

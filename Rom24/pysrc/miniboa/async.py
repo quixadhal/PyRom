@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*- line endings: unix -*-
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 #   miniboa/async.py
 #   Copyright 2009 Jim Storch
 #   Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -30,9 +30,11 @@ Handle Asynchronous Telnet Connections.
 import socket
 import select
 import sys
+import logging
 
 from miniboa.telnet import TelnetClient
 from miniboa.telnet import ConnectionLost
+
 
 ## Cap sockets to 512 on Windows because winsock can only process 512 at time
 if sys.platform == 'win32':
@@ -43,6 +45,7 @@ else:
 
 #--[ Telnet Server ]-----------------------------------------------------------
 
+
 ## Default connection handler
 def _on_connect(client):
     """
@@ -51,20 +54,23 @@ def _on_connect(client):
     logging.info("++ Opened connection to {}, sending greeting...".format(client.addrport()))
     client.send("Greetings from Miniboa-py3!\n")
 
+
 ## Default disconnection handler
 def _on_disconnect(client):
     """
     Placeholder lost connection handler.
     """
     logging.info("-- Lost connection to %s".format(client.addrport()))
-        
+
+
 class TelnetServer(object):
     """
     Poll sockets for new connections and sending/receiving data from clients.
     """
-    def __init__(self, port = 23, address = '', on_connect = _on_connect,
-            on_disconnect = _on_disconnect, max_connections = MAX_CONNECTIONS,
-            timeout = 0.1):
+
+    def __init__(self, port=23, address='', on_connect=_on_connect,
+                 on_disconnect=_on_disconnect, max_connections=MAX_CONNECTIONS,
+                 timeout=0.1):
         """
         Create a new Telnet Server.
 
@@ -101,7 +107,7 @@ class TelnetServer(object):
         try:
             server_socket.bind((address, port))
             server_socket.listen(5)
-        except socket.err as err:
+        except socket.error as err:
             logging.critical("Unable to create the server socket: " + str(err))
             raise
 
@@ -111,7 +117,7 @@ class TelnetServer(object):
         ## Dictionary of active clients,
         ## key = file descriptor, value = TelnetClient instance
         self.clients = {}
-    
+
     def stop(self):
         """
         Disconnects the clients and shuts down the server
@@ -120,7 +126,7 @@ class TelnetServer(object):
             clients.sock.close()
         self.server_socket.close()
         ## TODO: Anything else need doing?
-        
+
     def client_count(self):
         """
         Returns the number of active connections.
@@ -141,10 +147,10 @@ class TelnetServer(object):
         be partial.
         """
         ## Build a list of connections to test for receive data pending
-        recv_list = [self.server_fileno]    # always add the server
-        
-        del_list = [] # list of clients to delete after polling
-        
+        recv_list = [self.server_fileno]  # always add the server
+
+        del_list = []  # list of clients to delete after polling
+
         for client in self.clients.values():
             if client.active:
                 recv_list.append(client.fileno)
@@ -166,13 +172,13 @@ class TelnetServer(object):
         ## Get active socket file descriptors from select.select()
         try:
             rlist, slist, elist = select.select(recv_list, send_list, [],
-                self.timeout)
+                                                self.timeout)
         except select.error as err:
             ## If we can't even use select(), game over man, game over
             logging.critical("SELECT socket error '{}'".format(str(err)))
             raise
 
-        ## Process socket file descriptors with data to recieve
+        ## Process socket file descriptors with data to receive
         for sock_fileno in rlist:
 
             ## If it's coming from the server's socket then this is a new
@@ -193,7 +199,7 @@ class TelnetServer(object):
 
                 ## Create the client instance
                 new_client = TelnetClient(sock, addr_tup)
-                
+
                 ## Add the connection to our dictionary and call handler
                 self.clients[new_client.fileno] = new_client
                 self.on_connect(new_client)
@@ -209,4 +215,3 @@ class TelnetServer(object):
         for sock_fileno in slist:
             ## Call the connection's send method
             self.clients[sock_fileno].socket_send()
-
