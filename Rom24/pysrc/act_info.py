@@ -32,12 +32,16 @@
  ************/
 """
 from collections import OrderedDict
+import hashlib
 from merc import *
 from nanny import con_playing, con_gen_groups
 from handler import *
 from act_move import dir_name
 from db import get_extra_descr
-from const import skill_table, guild_table, pc_race_table, int_app
+from const import skill_table, guild_table, pc_race_table, int_app, liquid_table
+from save import save_char_obj
+from settings import ENCRYPT_PASSWORD
+from skills import check_improve
 from tables import clan_table
 from fight import is_safe
 
@@ -576,7 +580,7 @@ def do_nofollow(self, argument):
     else:
         ch.send("You no longer accept followers.\n")
         ch.act = SET_BIT(ch.act, PLR_NOFOLLOW)
-        die_follower(ch)
+        die_follower(ch)  # TODO: import this in a way that doesn't break everything else
 
 def do_nosummon(self, argument):
     ch = self
@@ -660,7 +664,7 @@ def do_look(ch, argument):
             else:
                 amnt = "more than half-"
             ch.send("It's %sfilled with a %s liquid.\n" % (
-                amnt, liq_table[obj.value[2]].liq_color))
+                amnt, liquid_table[obj.value[2]].color))
         elif item_type == ITEM_CONTAINER or item_type == ITEM_CORPSE_NPC \
         or item_type == ITEM_CORPSE_PC:
             if IS_SET(obj.value[1], CONT_CLOSED):
@@ -829,7 +833,6 @@ def do_worth(self, argument):
     ch = self
     if IS_NPC(ch):
         ch.send("You have %ld gold and %ld silver.\n" % (ch.gold, ch.silver))
-        ch.send(buf)
         return
     ch.send("You have %ld gold, %ld silver, and %d experience (%d exp to level).\n" % (
         ch.gold, ch.silver, ch.exp, (ch.level + 1) * ch.exp_per_level(ch.pcdata.points) - ch.exp))
