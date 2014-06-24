@@ -33,13 +33,13 @@
 """
 from merc import *
 import nanny
-from db import create_object
-from const import weapon_table, attack_table, wiznet_table, skill_table
-from settings import NEWLOCK
-from tables import *
-from handler import *
-from update import advance_level
-from save import save_char_obj
+import db
+import const
+import settings
+import tables
+import handler
+import update
+import save
 import interp
 
 def do_wiznet(self, argument):
@@ -66,7 +66,7 @@ def do_wiznet(self, argument):
     if "status".startswith(argument): 
         if not IS_SET(ch.wiznet, WIZ_ON):
           buf += "off "
-        for name, flag in wiznet_table.items():
+        for name, flag in const.wiznet_table.items():
             if IS_SET(ch.wiznet, flag.flag):
                 buf += name + " "
             ch.send("Wiznet status:\n%s\n" % buf)
@@ -74,12 +74,12 @@ def do_wiznet(self, argument):
     if "show".startswith(argument):
     # list of all wiznet options */
         buf = ''
-        for name, flag in wiznet_table.items():
+        for name, flag in const.wiznet_table.items():
             if flag.level <= ch.get_trust():
                 buf += name + " "
         ch.send("Wiznet options available to you are:\n%s\n" % buf )
         return
-    flag = prefix_lookup(wiznet_table, argument)
+    flag = prefix_lookup(const.wiznet_table, argument)
     if not flag or ch.get_trust() < flag.level:
         ch.send("No such option.\n")
         return
@@ -132,14 +132,14 @@ def do_outfit ( self, argument ):
 
     obj = ch.get_eq(WEAR_LIGHT)
     if not obj:
-        obj = create_object( obj_index_hash[OBJ_VNUM_SCHOOL_BANNER], 0 )
+        obj = db.create_object( obj_index_hash[OBJ_VNUM_SCHOOL_BANNER], 0 )
         obj.cost = 0
         obj.to_char(ch)
         ch.equip(obj, WEAR_LIGHT)
 
     obj = ch.get_eq(WEAR_BODY) 
     if not obj:
-        obj = create_object( obj_index_hash[OBJ_VNUM_SCHOOL_VEST], 0 )
+        obj = db.create_object( obj_index_hash[OBJ_VNUM_SCHOOL_VEST], 0 )
         obj.cost = 0
         obj.to_char(ch)
         ch.equip(obj, WEAR_BODY)
@@ -149,19 +149,19 @@ def do_outfit ( self, argument ):
     if not obj:
         sn = 'dagger'
         vnum = OBJ_VNUM_SCHOOL_SWORD # just in case! */
-        for k,weapon in weapon_table.items():
+        for k,weapon in const.weapon_table.items():
             if sn not in ch.pcdata.learned or (weapon.gsn in ch.pcdata.learned and ch.pcdata.learned[sn] < ch.pcdata.learned[weapon.gsn]):
                 sn = weapon.gsn
                 vnum = weapon.vnum
 
-        obj = create_object(obj_index_hash[vnum],0)
+        obj = db.create_object(obj_index_hash[vnum],0)
         obj.to_char(ch)
         ch.equip(obj, WEAR_WIELD)
 
     obj = ch.get_eq(WEAR_WIELD) 
     shield = ch.get_eq(WEAR_SHIELD)
     if (not obj or not IS_WEAPON_STAT(obj,WEAPON_TWO_HANDS)) and not shield:
-        obj = create_object( obj_index_hash[OBJ_VNUM_SCHOOL_SHIELD], 0 )
+        obj = db.create_object( obj_index_hash[OBJ_VNUM_SCHOOL_SHIELD], 0 )
         obj.cost = 0
         obj.to_char(ch)
         ch.equip(obj, WEAR_SHIELD)
@@ -270,7 +270,7 @@ def do_deny(self, argument):
     victim.send("You are denied access!\n")
     wiznet("$N denies access to %s" % victim.name,ch,None,WIZ_PENALTIES,WIZ_SECURE,0)
     ch.send("OK.\n")
-    save_char_obj(victim)
+    save.save_char_obj(victim)
     stop_fighting(victim,True)
     victim.do_quit("" )
     return
@@ -342,7 +342,7 @@ def do_echo(self, argument):
         return
    
     for d in descriptor_list:
-        if d.is_connected(con_playing):
+        if d.is_connected(nanny.con_playing):
             if get_trust(d.character) >= ch.get_trust():
                 d.send("global> ")
             d.send(argument + "\n")
@@ -355,7 +355,7 @@ def do_recho(self, argument):
         return
 
     for d in descriptor_list:
-        if d.is_connected(con_playing) and d.character.in_room == ch.in_room:
+        if d.is_connected(nanny.con_playing) and d.character.in_room == ch.in_room:
             if get_trust(d.character) >= ch.get_trust():
                 d.send( "local> ")
             d.send( argument + "\n" )
@@ -368,7 +368,7 @@ def do_zecho(self, argument):
         ch.send("Zone echo what?\n")
         return
     for d in descriptor_list:
-        if d.is_connected(con_playing) and  d.character.in_room and ch.in_room \
+        if d.is_connected(nanny.con_playing) and  d.character.in_room and ch.in_room \
         and d.character.in_room.area == ch.in_room.area:
             if get_trust(d.character) >= ch.get_trust():
                 d.send("zone> ")
@@ -420,7 +420,7 @@ def do_transfer(self, argument):
         return
     if arg1 == "all" :
         for d in descriptor_list:
-            if d.is_connected(con_playing) \
+            if d.is_connected(nanny.con_playing) \
             and d.character != ch \
             and d.character.in_room \
             and ch.can_see(d.character):
@@ -654,7 +654,8 @@ def do_ostat(self, argument):
         obj.pIndexData.vnum, "new" if obj.pIndexData.new_format else "old",
         obj.item_type, obj.pIndexData.reset_num ) )
     ch.send("Short description: %s\nLong description: %s\n" % (obj.short_descr, obj.description ))
-    ch.send("Wear bits: %s\nExtra bits: %s\n" % (wear_bit_name(obj.wear_flags), extra_bit_name( obj.extra_flags ) ) )
+    ch.send("Wear bits: %s\nExtra bits: %s\n" % (handler.wear_bit_name(obj.wear_flags),
+                                                 handler.extra_bit_name( obj.extra_flags)))
     ch.send("Number: 1/%d  Weight: %d/%d/%d (10th pounds)\n" % ( obj.get_number(),
         obj.weight, obj.get_weight(),obj.true_weight() ) )
     ch.send("Level: %d  Cost: %d  Condition: %d  Timer: %d\n" % (obj.level, obj.cost, obj.condition, obj.timer ) )
@@ -672,8 +673,8 @@ def do_ostat(self, argument):
     or obj.item_type == ITEM_PILL:
         ch.send( "Level %d spells of:", obj.value[0] )
         for value in obj.value:
-            if value and value in skill_table:
-                ch.send(" '%s'" % skill_table[value].name)
+            if value and value in const.skill_table:
+                ch.send(" '%s'" % const.skill_table[value].name)
 
         ch.send(".\n")
     elif obj.item_type == ITEM_WAND \
@@ -681,11 +682,12 @@ def do_ostat(self, argument):
         ch.send("Has %d(%d) charges of level %d" % (obj.value[1], obj.value[2], obj.value[0] ))
         ch.send(buf)
         
-        if obj.value[3] and obj.value[3] in skill_table:
-              ch.send(" '%s'" %  (skill_table[obj.value[3]].name) )
+        if obj.value[3] and obj.value[3] in const.skill_table:
+              ch.send(" '%s'" %  (const.skill_table[obj.value[3]].name) )
         ch.send(".\n")
     elif obj.item_type == ITEM_DRINK_CON:
-          ch.send("It holds %s-colored %s.\n" % (liq_table[obj.value[2]].liq_color, liq_table[obj.value[2]].liq_name) )
+          ch.send("It holds %s-colored %s.\n" % (tables.liq_table[obj.value[2]].liq_color,
+                                                 tables.liq_table[obj.value[2]].liq_name) )
     elif obj.item_type == ITEM_WEAPON:
           ch.send("Weapon type is ")
           weapon_type = { WEAPON_EXOTIC:"exotic", WEAPON_SWORD:"sword",
@@ -698,17 +700,17 @@ def do_ostat(self, argument):
           else:
               ch.send(weapon_type[obj.value[0]] + "\n")
           if obj.pIndexData.new_format:
-              ch.send("Damage is %dd%d (average %d)\n" % (obj.value[1],obj.value[2], (1 + obj.value[2]) * obj.value[1] / 2))
+              ch.send("Damage is %dd%d (average %d)\n" % (obj.value[1],obj.value[2], (1 + obj.value[2]) * obj.value[1] // 2))
           else:
-              ch.send("Damage is %d to %d (average %d)\n" % ( obj.value[1], obj.value[2], ( obj.value[1] + obj.value[2] ) / 2 ) )
-          ch.send("Damage noun is %s.\n" % (attack_table[obj.value[3]].noun if obj.value[3] in attack_table else "undefined") )
+              ch.send("Damage is %d to %d (average %d)\n" % ( obj.value[1], obj.value[2], ( obj.value[1] + obj.value[2] ) // 2 ) )
+          ch.send("Damage noun is %s.\n" % (const.attack_table[obj.value[3]].noun if obj.value[3] in const.attack_table else "undefined") )
           if obj.value[4] > 0:  # weapon flags */
-              ch.send("Weapons flags: %s\n" % weapon_bit_name(obj.value[4]))
+              ch.send("Weapons flags: %s\n" % handler.weapon_bit_name(obj.value[4]))
     elif obj.item_type == ITEM_ARMOR:
         ch.send( "Armor class is %d pierce, %d bash, %d slash, and %d vs. magic\n" % (
               obj.value[0], obj.value[1], obj.value[2], obj.value[3] ) )
     elif obj.item_type == ITEM_CONTAINER:
-        ch.send("Capacity: %d#  Maximum weight: %d#  flags: %s\n" % (obj.value[0], obj.value[3], cont_bit_name(obj.value[1])))
+        ch.send("Capacity: %d#  Maximum weight: %d#  flags: %s\n" % (obj.value[0], obj.value[3], handler.cont_bit_name(obj.value[1])))
         if obj.value[4] != 100:
             ch.send("Weight multiplier: %d%%\n" % obj.value[4])
 
@@ -730,17 +732,17 @@ def do_ostat(self, argument):
             ch.send(".\n")
         if paf.bitvector:
             if paf.where == TO_AFFECTS:
-                ch.send("Adds %s affect.\n" % affect_bit_name(paf.bitvector))
+                ch.send("Adds %s affect.\n" % handler.affect_bit_name(paf.bitvector))
             elif paf.where == TO_WEAPON:
-                ch.send("Adds %s weapon flags.\n" % weapon_bit_name(paf.bitvector))
+                ch.send("Adds %s weapon flags.\n" % handler.weapon_bit_name(paf.bitvector))
             elif paf.where == TO_OBJECT:
-                ch.send("Adds %s object flag.\n" % extra_bit_name(paf.bitvector))
+                ch.send("Adds %s object flag.\n" % handler.extra_bit_name(paf.bitvector))
             elif paf.where == TO_IMMUNE:
-                ch.send("Adds immunity to %s.\n" % imm_bit_name(paf.bitvector))
+                ch.send("Adds immunity to %s.\n" % handler.imm_bit_name(paf.bitvector))
             elif paf.where == TO_RESIST:
-                ch.send("Adds resistance to %s.\n" % imm_bit_name(paf.bitvector))
+                ch.send("Adds resistance to %s.\n" % handler.imm_bit_name(paf.bitvector))
             elif paf.where == TO_VULN:
-                ch.send("Adds vulnerability to %s.\n" % imm_bit_name(paf.bitvector))
+                ch.send("Adds vulnerability to %s.\n" % handler.imm_bit_name(paf.bitvector))
             else:
                 ch.send("Unknown bit %d: %d\n" % paf.where,paf.bitvector)
 
@@ -759,7 +761,7 @@ def do_mstat(self, argument):
                 0 if not IS_NPC(victim) else victim.pIndexData.vnum,
                 "pc" if not IS_NPC(victim) else "new" if victim.pIndexData.new_format else "old",
                 victim.race.name,
-                0 if not IS_NPC(victim) else victim.group, sex_table[victim.sex],
+                0 if not IS_NPC(victim) else victim.group, tables.sex_table[victim.sex],
                 0 if not victim.in_room else victim.in_room.vnum ) )
 
     if IS_NPC(victim):
@@ -784,12 +786,12 @@ def do_mstat(self, argument):
                 GET_AC(victim,AC_SLASH),  GET_AC(victim,AC_EXOTIC)))
     ch.send("Hit: %d  Dam: %d  Saves: %d  Size: %s  Position: %s  Wimpy: %d\n" % (
                 GET_HITROLL(victim), GET_DAMROLL(victim), victim.saving_throw,
-                size_table[victim.size], position_table[victim.position].name,
+                tables.size_table[victim.size], tables.position_table[victim.position].name,
                 victim.wimpy ))
     if IS_NPC(victim) and victim.pIndexData.new_format:
         ch.send("Damage: %dd%d  Message:  %s\n" % (
               victim.damage[DICE_NUMBER],victim.damage[DICE_TYPE],
-              attack_table[victim.dam_type].noun) )
+              const.attack_table[victim.dam_type].noun) )
     ch.send("Fighting: %s\n" % (victim.fighting.name if victim.fighting else "(none)" ))
     if not IS_NPC(victim):
         ch.send( "Thirst: %d  Hunger: %d  Full: %d  Drunk: %d\n" % (
@@ -802,20 +804,20 @@ def do_mstat(self, argument):
         ch.send("Age: %d  Played: %d  Last Level: %d  Timer: %d\n",
                     victim.get_age(), (int) (victim.played + current_time - victim.logon) / 3600, 
                     victim.pcdata.last_level, victim.timer )
-    ch.send("Act: %s\n" % act_bit_name(victim.act))
+    ch.send("Act: %s\n" % handler.act_bit_name(victim.act))
     if victim.comm:
-        ch.send("Comm: %s\n" % comm_bit_name(victim.comm))
+        ch.send("Comm: %s\n" % handler.comm_bit_name(victim.comm))
     if IS_NPC(victim) and victim.off_flags:
-        ch.send("Offense: %s\n" % off_bit_name(victim.off_flags))
+        ch.send("Offense: %s\n" % handler.off_bit_name(victim.off_flags))
     if victim.imm_flags:
-        ch.send("Immune: %s\n" % imm_bit_name(victim.imm_flags))
+        ch.send("Immune: %s\n" % handler.imm_bit_name(victim.imm_flags))
     if victim.res_flags:
-        ch.send("Resist: %s\n" % imm_bit_name(victim.res_flags))
+        ch.send("Resist: %s\n" % handler.imm_bit_name(victim.res_flags))
     if victim.vuln_flags:
-        ch.send("Vulnerable: %s\n" % imm_bit_name(victim.vuln_flags))
-    ch.send("Form: %s\nParts: %s\n" % (form_bit_name(victim.form), part_bit_name(victim.parts)))
+        ch.send("Vulnerable: %s\n" % handler.imm_bit_name(victim.vuln_flags))
+    ch.send("Form: %s\nParts: %s\n" % (handler.form_bit_name(victim.form), handler.part_bit_name(victim.parts)))
     if victim.affected_by:
-        ch.send("Affected by %s\n" % affect_bit_name(victim.affected_by))
+        ch.send("Affected by %s\n" % handler.affect_bit_name(victim.affected_by))
     ch.send("Master: %s  Leader: %s  Pet: %s\n" % (
                 victim.master.name if victim.master else "(none)",
                 victim.leader.name if victim.leader else "(none)",
@@ -831,7 +833,7 @@ def do_mstat(self, argument):
                     affect_loc_name( paf.location ),
                     paf.modifier,
                     paf.duration,
-                    affect_bit_name( paf.bitvector ),
+                    handler.affect_bit_name( paf.bitvector ),
                     paf.level))
     
 # ofind and mfind replaced with vnum, vnum skill also added */
@@ -945,7 +947,7 @@ def do_mwhere(self, argument):
     if not argument:
         # show characters logged */
         for d in descriptor_list:
-            if d.character and d.is_connected(con_playing) \
+            if d.character and d.is_connected(nanny.con_playing) \
             and d.character.in_room and ch.can_see(d.character) \
             and ch.can_see_room(d.character.in_room):
                 victim = d.character
@@ -985,7 +987,7 @@ def do_reboot(self, argument):
     for d in descriptor_list[:]:
         vch = CH(d)
         if vch:
-            save_char_obj(vch)
+            save.save_char_obj(vch)
             close_socket(d)
 
 def do_shutdow(self, argument):
@@ -1002,7 +1004,7 @@ def do_shutdown(self, argument):
     for d in descriptor_list[:]:
         vch = CH(d)
         if vch:
-            save_char_obj(vch)
+            save.save_char_obj(vch)
             close_socket(d)
 
 def do_protect(self, argument):
@@ -1143,7 +1145,7 @@ def obj_check (ch, obj):
 def recursive_clone(ch, obj, clone):
     for c_obj in obj.contains:
         if obj_check(ch,c_obj):
-            t_obj = create_object(c_obj.pIndexData,0)
+            t_obj = db.create_object(c_obj.pIndexData,0)
             clone_object(c_obj,t_obj)
             t_obj.to_obj(clone)
             recursive_clone(ch,c_obj,t_obj)
@@ -1181,7 +1183,7 @@ def do_clone(self, argument):
         if not obj_check(ch,obj):
             ch.send(    "Your powers are not great enough for such a task.\n")
             return
-        clone = create_object(obj.pIndexData,0) 
+        clone = db.create_object(obj.pIndexData,0) 
         clone_object(obj,clone)
         if obj.carried_by:
             clone.to_char(ch)
@@ -1209,7 +1211,7 @@ def do_clone(self, argument):
   
         for obj in mob.carrying:
             if obj_check(ch,obj):
-                new_obj = create_object(obj.pIndexData,0)
+                new_obj = db.create_object(obj.pIndexData,0)
                 clone_object(obj,new_obj)
                 recursive_clone(ch,obj,new_obj)
                 new_obj.to_char(clone)
@@ -1279,7 +1281,7 @@ def do_oload(self, argument):
     if vnum not in obj_index_hash:
         ch.send("No object has that vnum.\n")
         return
-    obj = create_object(obj_index_hash[vnum], level)
+    obj = db.create_object(obj_index_hash[vnum], level)
     if CAN_WEAR(obj, ITEM_TAKE):
         obj.to_char(ch)
     else:
@@ -1318,7 +1320,7 @@ def do_purge(self, argument):
         act("$n disintegrates $N.",ch,0,victim,TO_NOTVICT)
 
         if victim.level > 1:
-            save_char_obj( victim )
+            save.save_char_obj( victim )
         d = victim.desc
         victim.extract(True)
         if d:
@@ -1370,18 +1372,18 @@ def do_advance(self, argument):
         victim.hit      = victim.max_hit
         victim.mana     = victim.max_mana
         victim.move     = victim.max_move
-        advance_level( victim, True )
+        update.advance_level( victim, True )
         victim.practice = temp_prac
     else:
         ch.send("Raising a player's level!\n")
         victim.send("**** OOOOHHHHHHHHHH  YYYYEEEESSS ****\n")
     for iLevel in range(victim.level, level):
         victim.level += 1
-        advance_level(victim, True)
+        update.advance_level(victim, True)
     victim.send("You are now level %d.\n" % victim.level)
     victim.exp   = victim.exp_per_level(victim.pcdata.points) * max( 1, victim.level )
     victim.trust = 0
-    save_char_obj(victim)
+    save.save_char_obj(victim)
     return
 
 def do_trust(self, argument):
@@ -1499,7 +1501,7 @@ def do_freeze(self, argument):
         ch.send("FREEZE set.\n")
         wiznet("$N puts %s in the deep freeze." % victim.name,ch,None,WIZ_PENALTIES,WIZ_SECURE,0)
 
-    save_char_obj( victim )
+    save.save_char_obj( victim )
     return
 
 def do_log(self, argument):
@@ -1621,29 +1623,26 @@ def do_peace(self, argument):
 
 def do_wizlock(self, argument):
     ch=self
-    global WIZLOCK
-
-    if not WIZLOCK:
+    if not settings.WIZLOCK:
         wiznet("$N has wizlocked the game.",ch,None,0,0,0)
         ch.send("Game wizlocked.\n")
-        WIZLOCK = True
+        settings.WIZLOCK = True
     else:
         wiznet("$N removes wizlock.",ch,None,0,0,0)
         ch.send("Game un-wizlocked.\n")
-        WIZLOCK = False
+        settings.WIZLOCK = False
     return
 # RT anti-newbie code */
 def do_newlock(self, argument):
     ch=self
-    global NEWLOCK
-    if not NEWLOCK:
+    if not settings.NEWLOCK:
         wiznet("$N locks out new characters.",ch,None,0,0,0)
         ch.send("New characters have been locked out.\n")
-        NEWLOCK = True
+        settings.NEWLOCK = True
     else:
         wiznet("$N allows new characters back in.",ch,None,0,0,0)
         ch.send("Newlock removed.\n")
-        NEWLOCK = False 
+        settings.NEWLOCK = False 
     return
 
 def do_slookup(self, argument):
@@ -1653,10 +1652,10 @@ def do_slookup(self, argument):
         ch.send("Lookup which skill or spell?\n")
         return
     if arg == "all" :
-        for sn, skill in skill_table.items():
+        for sn, skill in const.skill_table.items():
             ch.send("Sn: %15s  Slot: %3d  Skill/spell: '%s'\n", sn, skill.slot, skill.name )
     else:
-        skill = prefix_lookup(skill_table, arg)
+        skill = prefix_lookup(const.skill_table, arg)
         if not skill:
             ch.send("No such skill or spell.\n")
             return
@@ -1710,7 +1709,7 @@ def do_sset(self, argument):
         ch.send("Not on NPC's.\n")
         return
     fAll = arg2 == "all"
-    sn = prefix_lookup(skill_table,arg2)
+    sn = prefix_lookup(const.skill_table,arg2)
     if not fAll and not sn:
         ch.send("No such skill or spell.\n")
         return
@@ -1725,7 +1724,7 @@ def do_sset(self, argument):
         return
 
     if fAll:
-        for sn in skill_table.keys():
+        for sn in const.skill_table.keys():
             victim.pcdata.learned[sn] = value
     else:
         victim.pcdata.learned[sn.name] = value
@@ -1795,16 +1794,16 @@ def do_mset(self, argument):
         victim.sex = value
         if not IS_NPC(victim):
             victim.pcdata.true_sex = value
-        ch.send("Sex set to %s.\n" % sex_table[value])
+        ch.send("Sex set to %s.\n" % tables.sex_table[value])
         return
     if "class".startswith(arg2):
         if IS_NPC(victim):
             ch.send("Mobiles have no class.\n")
             return
-        guild = prefix_lookup(guild_table, arg3)
+        guild = prefix_lookup(const.guild_table, arg3)
         if not guild:
             ch.send("Possible classes are: " )
-            for guild in guild_table.keys():
+            for guild in const.guild_table.keys():
                 ch.send("%s " % guild )
             ch.send(".\n" )
             return
@@ -1918,11 +1917,11 @@ def do_mset(self, argument):
         victim.pcdata.condition[COND_HUNGER] = value
         return
     if "race".startswith(arg2):
-        race = prefix_lookup(race_table, arg3)
+        race = prefix_lookup(const.race_table, arg3)
         if not race:
             ch.send("That is not a valid race.\n")
             return
-        if not IS_NPC(victim) and race.name not in pc_race_table:
+        if not IS_NPC(victim) and race.name not in const.pc_race_table:
             ch.send("That is not a valid player race.\n")
             return
         ch.send("Race set to %s.\n" % race.name)
@@ -1984,7 +1983,7 @@ def do_string(self, argument):
             if not IS_NPC(victim):
                 ch.send("Not on PC's.\n")
                 return
-            spec = prefix_lookup(spec_table, arg3)
+            spec = prefix_lookup(special.spec_table, arg3)
             if not spec:
                 ch.send("No such spec fun.\n")
                 return
@@ -2305,3 +2304,16 @@ def do_memory(ch, argument):
 
 def do_dump(ch,argument):
     pass
+
+def do_reload(ch, argument):
+    from hotfix import reload_files
+    reload_files(ch)
+    ch.send("Files reload\n")
+
+def do_omni(ch, argument):
+    if IS_SET(ch.act, PLR_OMNI):
+        ch.send("Omnimode removed\n")
+        ch.act = REMOVE_BIT(ch.act, PLR_OMNI)
+    else:
+        ch.send("Omnimode enabled.\n")
+        ch.act = SET_BIT(ch.act, PLR_OMNI)

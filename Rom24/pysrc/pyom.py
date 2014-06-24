@@ -31,12 +31,18 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
-
 from miniboa import TelnetServer
 from settings import PORT
 from comm import game_loop, init_descriptor, close_socket
+from hotfix import init_monitoring
 
-server = TelnetServer(port=PORT)
-server.on_connect = init_descriptor
-server.on_disconnect = close_socket
-game_loop(server)
+def Pyom():
+    server = TelnetServer(port=PORT)
+    server.on_connect = init_descriptor
+    server.on_disconnect = close_socket
+    init_monitoring()
+    game_loop(server)
+
+if __name__ == "__main__":
+    Pyom()
+

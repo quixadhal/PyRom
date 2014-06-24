@@ -322,6 +322,8 @@ cmd_table[':'] = cmd_type(':', do_immtalk, POS_DEAD,   IM,  LOG_NORMAL, 0)
 cmd_table['smote'] = cmd_type('smote', do_smote,   POS_DEAD,   IM,  LOG_NORMAL, 1)
 cmd_table['prefi'] = cmd_type('prefi', do_prefi,   POS_DEAD,   IM,  LOG_NORMAL, 0)
 cmd_table['prefix'] = cmd_type('prefix', do_prefix,  POS_DEAD,   IM,  LOG_NORMAL, 1)
+cmd_table['reload'] = cmd_type('reload', do_reload,  POS_DEAD,   ML,  LOG_NORMAL, 1)
+cmd_table['omni'] = cmd_type('omni', do_omni,  POS_DEAD,   IM,  LOG_NORMAL, 1)
 
 #A little python vooodoo to make do_functions methods of char_data
 for k,cmd in cmd_table.items():

@@ -51,7 +51,7 @@ def move_char( ch, door, follow ):
     to_room = pexit.to_room
     if IS_SET(pexit.exit_info, EX_CLOSED) \
     and (not IS_AFFECTED(ch, AFF_PASS_DOOR) or IS_SET(pexit.exit_info,EX_NOPASS)) \
-    and not IS_TRUSTED(ch,ANGEL):
+    and not IS_TRUSTED(ch, L7):
         act( "The $d is closed.", ch, None, pexit.keyword, TO_CHAR )
         return
     if IS_AFFECTED(ch, AFF_CHARM) and ch.master and in_room == ch.master.in_room:
