@@ -151,6 +151,7 @@ class TelnetServer(object):
             else:
                 self.on_disconnect(client)
                 del_list.append(client.fileno)
+                client.sock.close()
 
         ## Delete inactive connections from the dictionary
         for client in del_list:
