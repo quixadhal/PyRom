@@ -35,10 +35,6 @@ from merc import *
 from handler import *
 import const
 
-dir_name = ["north", "east", "south", "west", "up", "down"]
-rev_dir = [2, 3, 0, 1, 5, 4]
-movement_loss = [1, 2, 2, 3, 4, 6, 4, 1, 6, 10, 6]
-
 def move_char( ch, door, follow ):
     if door < 0 or door > 5:
         print ("BUG: Do_move: bad door %d." % door)

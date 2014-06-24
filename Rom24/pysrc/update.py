@@ -35,7 +35,7 @@ from merc import *
 from db import area_update
 from handler import *
 from save import save_char_obj
-from hotfix import poll_files
+import hotfix
 import skills
 import const
 import fight
@@ -688,7 +688,7 @@ def update_handler( ):
         pulse_mobile = PULSE_MOBILE
         mobile_update()
     if pulse_violence <= 0:
-        poll_files()
+        hotfix.poll_files()
         pulse_violence = PULSE_VIOLENCE
         fight.violence_update()
     if pulse_point <= 0:

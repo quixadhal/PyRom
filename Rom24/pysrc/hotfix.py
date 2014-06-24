@@ -39,24 +39,34 @@ import traceback
 tracked_files = {}
 modified_files = {}
 
-def init_file(path, modules):
+def init_file(path, modules, silent = False):
 #called by init_monitoring to begin tracking a file.
     modules = [importlib.import_module(m) for m in modules]
     tracked_files[path] = [os.path.getmtime(path), modules]
-    print("\t...Tracking %s" % path)
+    if not silent:
+        print("\t...Tracking %s" % path)
+
+def init_directory(path, silent = False):
+    dir = os.listdir(path)
+    files = [f for f in dir if not f.startswith('__')]
+
+    for file in files:
+        full_path = os.path.join(path, file)
+        module = full_path.split('.')[0].replace(os.sep, '.')
+        init_file(full_path, [module], silent)
 
 def init_monitoring():
 #Called in main function to begin tracking files.
     print("Monitoring files for modifications.")
-    init_file('act_info.py', ['act_info', 'interp'])
-    init_file('act_enter.py', ['act_enter', 'interp'])
-    init_file('act_wiz.py', ['act_wiz', 'interp'])
-    init_file('act_move.py', ['act_move', 'interp'])
-    init_file('act_obj.py', ['act_obj', 'interp'])
-    init_file('act_comm.py', ['act_comm', 'interp'])
+    init_file('act_enter.py', ['act_enter'])
+    init_file('act_wiz.py', ['act_wiz'])
+    init_file('act_move.py', ['act_move'])
+    init_file('act_obj.py', ['act_obj'])
+    init_file('act_comm.py', ['act_comm'])
     init_file('handler_ch.py', ['handler_ch'])
     init_file('handler_obj.py', ['handler_obj'])
     init_file('handler_room.py', ['handler_room'])
+
 
 def poll_files():
 #Called in game_loop of program to check if files have been modified.
