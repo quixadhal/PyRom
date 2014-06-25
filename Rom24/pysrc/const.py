@@ -56,28 +56,28 @@ race_table["dwarf"] = race_type("dwarf", True, 0, AFF_INFRARED, 0, 0, RES_POISON
 race_table["giant"] = race_type("giant", True, 0, 0, 0, 0, RES_FIRE|RES_COLD, VULN_MENTAL|VULN_LIGHTNING, A|H|M|V,  A|B|C|D|E|F|G|H|I|J|K)
 race_table["bat"] = race_type("bat", False, 0, AFF_FLYING|AFF_DARK_VISION, OFF_DODGE|OFF_FAST, 0, 0, VULN_LIGHT, A|G|V, A|C|D|E|F|H|J|K|P)
 race_table["bear"] = race_type("bear", False, 0, 0, OFF_CRUSH|OFF_DISARM|OFF_BERSERK, 0, RES_BASH|RES_COLD, 0, A|G|V, A|B|C|D|E|F|H|J|K|U|V)
-race_table["cat"] = race_type("cat", False, 0, AFF_DARK_VISION, OFF_FAST|OFF_DODGE, 0, 0, 0, A|G|V, A|C|D|E|F|H|J|K|Q|U|V)
-race_table["centipede"] = race_type("centipede", False, 0, AFF_DARK_VISION, 0, 0, RES_PIERCE|RES_COLD, VULN_BASH, A|B|G|O, A|C|K)
-race_table["dog"] = race_type("dog", False, 0, 0, OFF_FAST, 0, 0, 0, A|G|V, A|C|D|E|F|H|J|K|U|V)
-race_table["doll"] = race_type("doll", False, 0, 0, 0, IMM_COLD|IMM_POISON|IMM_HOLY|IMM_NEGATIVE|IMM_MENTAL|IMM_DISEASE |IMM_DROWNING, RES_BASH|RES_LIGHT, VULN_SLASH|VULN_FIRE|VULN_ACID|VULN_LIGHTNING|VULN_ENERGY, E|J|M|cc, A|B|C|G|H|K)
-race_table["dragon"] = race_type("dragon", False, 0, AFF_INFRARED|AFF_FLYING, 0, 0, RES_FIRE|RES_BASH|RES_CHARM, VULN_PIERCE|VULN_COLD, A|H|Z, A|C|D|E|F|G|H|I|J|K|P|Q|U|V|X)
-race_table["fido"] = race_type("fido", False, 0, 0, OFF_DODGE|ASSIST_RACE, 0, 0, VULN_MAGIC, A|B|G|V, A|C|D|E|F|H|J|K|Q|V)
-race_table["fox"] = race_type("fox", False, 0, AFF_DARK_VISION, OFF_FAST|OFF_DODGE, 0, 0, 0, A|G|V, A|C|D|E|F|H|J|K|Q|V)
-race_table["goblin"] = race_type("goblin", False, 0, AFF_INFRARED, 0, 0, RES_DISEASE, VULN_MAGIC, A|H|M|V, A|B|C|D|E|F|G|H|I|J|K)
-race_table["hobgoblin"] = race_type("hobgoblin", False, 0, AFF_INFRARED, 0, 0, RES_DISEASE|RES_POISON, 0, A|H|M|V, A|B|C|D|E|F|G|H|I|J|K|Y)
-race_table["kobold"] = race_type("kobold", False, 0, AFF_INFRARED, 0, 0, RES_POISON, VULN_MAGIC, A|B|H|M|V, A|B|C|D|E|F|G|H|I|J|K|Q)
-race_table["lizard"] = race_type("lizard", False, 0, 0, 0, 0, RES_POISON, VULN_COLD, A|G|X|cc, A|C|D|E|F|H|K|Q|V)
-race_table["modron"] = race_type("modron", False, 0, AFF_INFRARED, ASSIST_RACE|ASSIST_ALIGN, IMM_CHARM|IMM_DISEASE|IMM_MENTAL|IMM_HOLY|IMM_NEGATIVE, RES_FIRE|RES_COLD|RES_ACID, 0, H, A|B|C|G|H|J|K)
-race_table["orc"] = race_type("orc", False, 0, AFF_INFRARED, 0, 0, RES_DISEASE, VULN_LIGHT, A|H|M|V, A|B|C|D|E|F|G|H|I|J|K)
-race_table["pig"] = race_type("pig", False, 0, 0, 0, 0, 0, 0, A|G|V, A|C|D|E|F|H|J|K)
+race_table["cat"] = race_type("cat", False, 0, AFF_DARK_VISION, OFF_FAST|OFF_DODGE, 0, 0, 0, A|G|V, A|C|D|E|F|H|J|K|Q|U|V) 
+race_table["centipede"] = race_type("centipede", False, 0, AFF_DARK_VISION, 0, 0, RES_PIERCE|RES_COLD, VULN_BASH, A|B|G|O, A|C|K) 
+race_table["dog"] = race_type("dog", False, 0, 0, OFF_FAST, 0, 0, 0, A|G|V, A|C|D|E|F|H|J|K|U|V) 
+race_table["doll"] = race_type("doll", False, 0, 0, 0, IMM_COLD|IMM_POISON|IMM_HOLY|IMM_NEGATIVE|IMM_MENTAL|IMM_DISEASE |IMM_DROWNING, RES_BASH|RES_LIGHT, VULN_SLASH|VULN_FIRE|VULN_ACID|VULN_LIGHTNING|VULN_ENERGY, E|J|M|cc, A|B|C|G|H|K) 
+race_table["dragon"] = race_type("dragon", False, 0, AFF_INFRARED|AFF_FLYING, 0, 0, RES_FIRE|RES_BASH|RES_CHARM, VULN_PIERCE|VULN_COLD, A|H|Z, A|C|D|E|F|G|H|I|J|K|P|Q|U|V|X) 
+race_table["fido"] = race_type("fido", False, 0, 0, OFF_DODGE|ASSIST_RACE, 0, 0, VULN_MAGIC, A|B|G|V, A|C|D|E|F|H|J|K|Q|V) 
+race_table["fox"] = race_type("fox", False, 0, AFF_DARK_VISION, OFF_FAST|OFF_DODGE, 0, 0, 0, A|G|V, A|C|D|E|F|H|J|K|Q|V) 
+race_table["goblin"] = race_type("goblin", False, 0, AFF_INFRARED, 0, 0, RES_DISEASE, VULN_MAGIC, A|H|M|V, A|B|C|D|E|F|G|H|I|J|K) 
+race_table["hobgoblin"] = race_type("hobgoblin", False, 0, AFF_INFRARED, 0, 0, RES_DISEASE|RES_POISON, 0, A|H|M|V, A|B|C|D|E|F|G|H|I|J|K|Y) 
+race_table["kobold"] = race_type("kobold", False, 0, AFF_INFRARED, 0, 0, RES_POISON, VULN_MAGIC, A|B|H|M|V, A|B|C|D|E|F|G|H|I|J|K|Q) 
+race_table["lizard"] = race_type("lizard", False, 0, 0, 0, 0, RES_POISON, VULN_COLD, A|G|X|cc, A|C|D|E|F|H|K|Q|V) 
+race_table["modron"] = race_type("modron", False, 0, AFF_INFRARED, ASSIST_RACE|ASSIST_ALIGN, IMM_CHARM|IMM_DISEASE|IMM_MENTAL|IMM_HOLY|IMM_NEGATIVE, RES_FIRE|RES_COLD|RES_ACID, 0, H, A|B|C|G|H|J|K) 
+race_table["orc"] = race_type("orc", False, 0, AFF_INFRARED, 0, 0, RES_DISEASE, VULN_LIGHT, A|H|M|V, A|B|C|D|E|F|G|H|I|J|K) 
+race_table["pig"] = race_type("pig", False, 0, 0, 0, 0, 0, 0, A|G|V, A|C|D|E|F|H|J|K) 
 race_table["rabbit"] = race_type("rabbit", False, 0, 0, OFF_DODGE|OFF_FAST, 0, 0, 0, A|G|V, A|C|D|E|F|H|J|K)
-race_table["school monster"] = race_type("school monster", False, ACT_NOALIGN, 0, 0, IMM_CHARM|IMM_SUMMON, 0, VULN_MAGIC, A|M|V, A|B|C|D|E|F|H|J|K|Q|U)
+race_table["school monster"] = race_type("school monster", False, ACT_NOALIGN, 0, 0, IMM_CHARM|IMM_SUMMON, 0, VULN_MAGIC, A|M|V, A|B|C|D|E|F|H|J|K|Q|U) 
 race_table["snake"] = race_type("snake", False, 0, 0, 0, 0, RES_POISON, VULN_COLD, A|G|X|Y|cc, A|D|E|F|K|L|Q|V|X)
-race_table["song bird"] = race_type("song bird", False, 0, AFF_FLYING, OFF_FAST|OFF_DODGE, 0, 0, 0, A|G|W, A|C|D|E|F|H|K|P)
-race_table["troll"] = race_type("troll", False, 0, AFF_REGENERATION|AFF_INFRARED|AFF_DETECT_HIDDEN, OFF_BERSERK, 0, RES_CHARM|RES_BASH, VULN_FIRE|VULN_ACID, A|B|H|M|V, A|B|C|D|E|F|G|H|I|J|K|U|V)
-race_table["water fowl"] = race_type("water fowl", False, 0, AFF_SWIM|AFF_FLYING, 0, 0, RES_DROWNING, 0, A|G|W, A|C|D|E|F|H|K|P)
-race_table["wolf"] = race_type("wolf", False, 0, AFF_DARK_VISION, OFF_FAST|OFF_DODGE, 0, 0, 0, A|G|V, A|C|D|E|F|J|K|Q|V)
-race_table["wyvern"] = race_type("wyvern", False, 0, AFF_FLYING|AFF_DETECT_INVIS|AFF_DETECT_HIDDEN, OFF_BASH|OFF_FAST|OFF_DODGE, IMM_POISON, 0, VULN_LIGHT, A|B|G|Z, A|C|D|E|F|H|J|K|Q|V|X)
+race_table["song bird"] = race_type("song bird", False, 0, AFF_FLYING, OFF_FAST|OFF_DODGE, 0, 0, 0, A|G|W, A|C|D|E|F|H|K|P) 
+race_table["troll"] = race_type("troll", False, 0, AFF_REGENERATION|AFF_INFRARED|AFF_DETECT_HIDDEN, OFF_BERSERK, 0, RES_CHARM|RES_BASH, VULN_FIRE|VULN_ACID, A|B|H|M|V, A|B|C|D|E|F|G|H|I|J|K|U|V) 
+race_table["water fowl"] = race_type("water fowl", False, 0, AFF_SWIM|AFF_FLYING, 0, 0, RES_DROWNING, 0, A|G|W, A|C|D|E|F|H|K|P) 
+race_table["wolf"] = race_type("wolf", False, 0, AFF_DARK_VISION, OFF_FAST|OFF_DODGE, 0, 0, 0, A|G|V, A|C|D|E|F|J|K|Q|V) 
+race_table["wyvern"] = race_type("wyvern", False, 0, AFF_FLYING|AFF_DETECT_INVIS|AFF_DETECT_HIDDEN, OFF_BASH|OFF_FAST|OFF_DODGE, IMM_POISON, 0, VULN_LIGHT, A|B|G|Z, A|C|D|E|F|H|J|K|Q|V|X) 
 
 class pc_race_type:
     def __init__(self, name, who_name, points, class_mult, skills, stats, max_stats, size):
@@ -286,7 +286,7 @@ group_table["maladictions"] = group_type("maladictions", { 'mage':5, 'cleric':5,
 group_table["protective"] = group_type("protective", { 'mage':4, 'cleric':4, 'thief':7, 'warrior':8 }, ["armor", "cancellation", "dispel magic", "fireproof", "protection evil", "protection good", "sanctuary", "shield", "stone skin"])
 group_table["transportation"] = group_type("transportation", { 'mage':4, 'cleric':4, 'thief':8, 'warrior':9 }, ["fly", "gate", "nexus", "pass door", "portal", "summon", "teleport", "word of recall"])
 group_table["weather"] = group_type("weather", { 'mage':4, 'cleric':4, 'thief':8, 'warrior':8 }, ["call lightning", "control weather", "faerie fire", "faerie fog", "lightning bolt"])
-
+    
 class guild_type:
     def __init__(self, name, who_name, attr_prime, weapon, guild_rooms, skill_adept, thac0_00, thac0_32, hp_min, hp_max, fMana, base_group, default_group):
         self.name=name      # the full name of the class */
@@ -427,7 +427,7 @@ title_table  = {  "mage": [ [ "Man", "Woman" ],
                             [ "Master Cleric", "Master Cleric" ],
                             [ "Master Cleric", "Master Cleric" ],
                             [ "Master Cleric", "Master Cleric" ],
-                            [ "Master Cleric", "Master Cleric" ],
+                            [ "Master Cleric", "Master Cleric" ],  
                             [ "Master Cleric", "Master Cleric" ],
                             [ "Master Cleric", "Master Cleric" ],
                             [ "Master Cleric", "Master Cleric" ],
@@ -593,7 +593,7 @@ title_table  = {  "mage": [ [ "Man", "Woman" ],
                             [ "Supreme Master of War", "Supreme Mistress of War" ],
                             [ "Creator", "Creator" ],
                             [ "Implementor", "Implementress" ] ] }
-
+        
 # * Attribute bonus structures.
 class str_app_type:
     def __init__(self, toh, tod, c, w):
@@ -769,7 +769,7 @@ class attack_type:
 
 attack_table = OrderedDict()
 attack_table[0] = attack_type("none", "hit", -1)  #  0 */
-attack_table[1] = attack_type("slice", "slice", DAM_SLASH)
+attack_table[1] = attack_type("slice", "slice", DAM_SLASH)  
 attack_table[2] = attack_type("stab", "stab", DAM_PIERCE)
 attack_table[3] = attack_type("slash", "slash", DAM_SLASH)
 attack_table[4] = attack_type("whip", "whip", DAM_SLASH)
@@ -837,8 +837,7 @@ wiznet_table["snoops"] = wiznet_type("snoops", WIZ_SNOOPS, L2)
 wiznet_table["switches"] = wiznet_type("switches", WIZ_SWITCHES, L2)
 wiznet_table["secure"] = wiznet_type("secure", WIZ_SECURE, L1)
 
-
-class liquid_type:
+class liq_type:
     def __init__(self, name: str, color: str, proof: int, full: int, thirst: int, food: int, ssize: int):
         assert isinstance(name, str)
         assert isinstance(color, str)
@@ -855,40 +854,40 @@ class liquid_type:
         self.food = food
         self.ssize = ssize
 
-liquid_table = OrderedDict()
-liquid_table["water"] = liquid_type("water", "clear", 0, 1, 10, 0, 16)
-liquid_table["beer"] = liquid_type("beer", "amber", 12, 1, 8, 1, 12)
-liquid_table["red wine"] = liquid_type("red wine", "burgundy", 30, 1, 8, 1, 5)
-liquid_table["ale"] = liquid_type("ale", "brown", 15, 1, 8, 1, 12)
-liquid_table["dark ale"] = liquid_type("dark ale", "dark", 16, 1, 8, 1, 12)
-liquid_table["whisky"] = liquid_type("whisky", "golden", 120, 1, 5, 0, 2)
-liquid_table["lemonade"] = liquid_type("lemonade", "pink", 0, 1, 9, 2, 12)
-liquid_table["firebreather"] = liquid_type("firebreather", "boiling", 190, 0, 4, 0, 2)
-liquid_table["local specialty"] = liquid_type("local specialty", "clear", 151, 1, 3, 0, 2)
-liquid_table["slime mold juice"] = liquid_type("slime mold juice", "green", 0, 2, -8, 1, 2)
-liquid_table["milk"] = liquid_type("milk", "white", 0, 2, 9, 3, 12)
-liquid_table["tea"] = liquid_type("tea", "tan", 0, 1, 8, 0, 6)
-liquid_table["coffee"] = liquid_type("coffee", "black", 0, 1, 8, 0, 6)
-liquid_table["blood"] = liquid_type("blood", "red", 0, 2, -1, 2, 6)
-liquid_table["salt water"] = liquid_type("salt water", "clear", 0, 1, -2, 0, 1)
-liquid_table["coke"] = liquid_type("coke", "brown", 0, 2, 9, 2, 12)
-liquid_table["root beer"] = liquid_type("root beer", "brown", 0, 2, 9, 2, 12)
-liquid_table["elvish wine"] = liquid_type("elvish wine", "green", 35, 2, 8, 1, 5)
-liquid_table["white wine"] = liquid_type("white wine", "golden", 28, 1, 8, 1, 5)
-liquid_table["champagne"] = liquid_type("champagne", "golden", 32, 1, 8, 1, 5)
-liquid_table["mead"] = liquid_type("mead", "honey-colored", 34, 2, 8, 2, 12)
-liquid_table["rose wine"] = liquid_type("rose wine", "pink", 26, 1, 8, 1, 5)
-liquid_table["benedictine wine"] = liquid_type("benedictine wine", "burgundy", 40, 1, 8, 1, 5)
-liquid_table["vodka"] = liquid_type("vodka", "clear", 130, 1, 5, 0, 2)
-liquid_table["cranberry juice"] = liquid_type("cranberry juice", "red", 0, 1, 9, 2, 12)
-liquid_table["orange juice"] = liquid_type("orange juice", "orange", 0, 2, 9, 3, 12)
-liquid_table["absinthe"] = liquid_type("absinthe", "green", 200, 1, 4, 0, 2)
-liquid_table["brandy"] = liquid_type("brandy", "golden", 80, 1, 5, 0, 4)
-liquid_table["aquavit"] = liquid_type("aquavit", "clear", 140, 1, 5, 0, 2)
-liquid_table["schnapps"] = liquid_type("schnapps", "clear", 90, 1, 5, 0, 2)
-liquid_table["icewine"] = liquid_type("icewine", "purple", 50, 2, 6, 1, 5)
-liquid_table["amontillado"] = liquid_type("amontillado", "burgundy", 35, 2, 8, 1, 5)
-liquid_table["sherry"] = liquid_type("sherry", "red", 38, 2, 7, 1, 5)
-liquid_table["framboise"] = liquid_type("framboise", "red", 50, 1, 7, 1, 5)
-liquid_table["rum"] = liquid_type("rum", "amber", 151, 1, 4, 0, 2)
-liquid_table["cordial"] = liquid_type("cordial", "clear", 100, 1, 5, 0, 2)
+liq_table = OrderedDict()
+liq_table["water"] = liq_type("water", "clear", 0, 1, 10, 0, 16)
+liq_table["beer"] = liq_type("beer", "amber", 12, 1, 8, 1, 12)
+liq_table["red wine"] = liq_type("red wine", "burgundy", 30, 1, 8, 1, 5)
+liq_table["ale"] = liq_type("ale", "brown", 15, 1, 8, 1, 12)
+liq_table["dark ale"] = liq_type("dark ale", "dark", 16, 1, 8, 1, 12)
+liq_table["whisky"] = liq_type("whisky", "golden", 120, 1, 5, 0, 2)
+liq_table["lemonade"] = liq_type("lemonade", "pink", 0, 1, 9, 2, 12)
+liq_table["firebreather"] = liq_type("firebreather", "boiling", 190, 0, 4, 0, 2)
+liq_table["local specialty"] = liq_type("local specialty", "clear", 151, 1, 3, 0, 2)
+liq_table["slime mold juice"] = liq_type("slime mold juice", "green", 0, 2, -8, 1, 2)
+liq_table["milk"] = liq_type("milk", "white", 0, 2, 9, 3, 12)
+liq_table["tea"] = liq_type("tea", "tan", 0, 1, 8, 0, 6)
+liq_table["coffee"] = liq_type("coffee", "black", 0, 1, 8, 0, 6)
+liq_table["blood"] = liq_type("blood", "red", 0, 2, -1, 2, 6)
+liq_table["salt water"] = liq_type("salt water", "clear", 0, 1, -2, 0, 1)
+liq_table["coke"] = liq_type("coke", "brown", 0, 2, 9, 2, 12)
+liq_table["root beer"] = liq_type("root beer", "brown", 0, 2, 9, 2, 12)
+liq_table["elvish wine"] = liq_type("elvish wine", "green", 35, 2, 8, 1, 5)
+liq_table["white wine"] = liq_type("white wine", "golden", 28, 1, 8, 1, 5)
+liq_table["champagne"] = liq_type("champagne", "golden", 32, 1, 8, 1, 5)
+liq_table["mead"] = liq_type("mead", "honey-colored", 34, 2, 8, 2, 12)
+liq_table["rose wine"] = liq_type("rose wine", "pink", 26, 1, 8, 1, 5)
+liq_table["benedictine wine"] = liq_type("benedictine wine", "burgundy", 40, 1, 8, 1, 5)
+liq_table["vodka"] = liq_type("vodka", "clear", 130, 1, 5, 0, 2)
+liq_table["cranberry juice"] = liq_type("cranberry juice", "red", 0, 1, 9, 2, 12)
+liq_table["orange juice"] = liq_type("orange juice", "orange", 0, 2, 9, 3, 12)
+liq_table["absinthe"] = liq_type("absinthe", "green", 200, 1, 4, 0, 2)
+liq_table["brandy"] = liq_type("brandy", "golden", 80, 1, 5, 0, 4)
+liq_table["aquavit"] = liq_type("aquavit", "clear", 140, 1, 5, 0, 2)
+liq_table["schnapps"] = liq_type("schnapps", "clear", 90, 1, 5, 0, 2)
+liq_table["icewine"] = liq_type("icewine", "purple", 50, 2, 6, 1, 5)
+liq_table["amontillado"] = liq_type("amontillado", "burgundy", 35, 2, 8, 1, 5)
+liq_table["sherry"] = liq_type("sherry", "red", 38, 2, 7, 1, 5)
+liq_table["framboise"] = liq_type("framboise", "red", 50, 1, 7, 1, 5)
+liq_table["rum"] = liq_type("rum", "amber", 151, 1, 4, 0, 2)
+liq_table["cordial"] = liq_type("cordial", "clear", 100, 1, 5, 0, 2)
