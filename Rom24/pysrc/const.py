@@ -838,7 +838,14 @@ wiznet_table["switches"] = wiznet_type("switches", WIZ_SWITCHES, L2)
 wiznet_table["secure"] = wiznet_type("secure", WIZ_SECURE, L1)
 
 class liq_type:
-    def __init__(self, name, color, proof, full, thirst, food, ssize):
+    def __init__(self, name: str, color: str, proof: int, full: int, thirst: int, food: int, ssize: int):
+        assert isinstance(name, str)
+        assert isinstance(color, str)
+        assert isinstance(proof, int)
+        assert isinstance(full, int)
+        assert isinstance(thirst, int)
+        assert isinstance(food, int)
+        assert isinstance(ssize, int)
         self.name = name
         self.color = color
         self.proof = proof

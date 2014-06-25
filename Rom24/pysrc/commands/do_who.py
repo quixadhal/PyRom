@@ -1,6 +1,7 @@
 import merc
 import const
 import interp
+import nanny
 import tables
 
 # * New 'who' command originally by Alander of Rivers of Mud.
@@ -12,7 +13,7 @@ def do_who(ch, argument):
     fImmortalOnly = False
      #* Set default arguments.
     iLevelLower = 0
-    iLevelUpper = MAX_LEVEL
+    iLevelUpper = merc.MAX_LEVEL
     rgfClass = {k:False for k, g in const.guild_table.items()}
     rgfRace = {k:False for k, r in const.pc_race_table.items()}
     rgfClan = {k:False for k, r in tables.clan_table.items()}
@@ -101,7 +102,7 @@ def do_who(ch, argument):
         # a little formatting */
         ch.send("[%2d %6s %s] %s%s%s%s%s%s%s%s\n" % (
                 wch.level,
-                const.pc_race_table[wch.race.name].who_name if wch.race.name in pc_race_table else "     ",
+                const.pc_race_table[wch.race.name].who_name if wch.race.name in const.pc_race_table else "     ",
                 guild,
                 "(Incog) " if wch.incog_level >= merc.LEVEL_HERO else "",
                 "(Wizi) " if wch.invis_level >= merc.LEVEL_HERO else "",
