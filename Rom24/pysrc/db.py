@@ -1182,14 +1182,6 @@ def create_money(gold, silver):
         obj.weight = gold // 5 + silver // 20
     return obj
 
-# * Get an extra description from a list.
-def get_extra_descr(name, edlist):
-    if not edlist: return None
-    for ed in edlist:
-        if name.lower() in ed.keyword:
-            return ed.description
-    return None
-
 def init_time():
     lhour = (time.time() - 650336715) // (PULSE_TICK // PULSE_PER_SECOND)
     lhour = int(lhour)

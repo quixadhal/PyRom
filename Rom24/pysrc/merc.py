@@ -34,6 +34,7 @@
 
 import time
 import random
+import collections
 
 #Global MAXes       
 MAX_TRADE = 5
@@ -1223,8 +1224,36 @@ PAGELEN = 22
 boot_time = time.time()
 current_time = 0
 
-#utility functions
+#movement
+dir_name = ["north", "east", "south", "west", "up", "down"]
+rev_dir = [2, 3, 0, 1, 5, 4]
+movement_loss = [1, 2, 2, 3, 4, 6, 4, 1, 6, 10, 6]
 
+#Character Tracking
+max_on = 0
+
+where_name = ["<used as light>     ",
+              "<worn on finger>    ",
+              "<worn on finger>    ",
+              "<worn around neck>  ",
+              "<worn around neck>  ",
+              "<worn on torso>     ",
+              "<worn on head>      ",
+              "<worn on legs>      ",
+              "<worn on feet>      ",
+              "<worn on hands>     ",
+              "<worn on arms>      ",
+              "<worn as shield>    ",
+              "<worn about body>   ",
+              "<worn about waist>  ",
+              "<worn around wrist> ",
+              "<worn around wrist> ",
+              "<wielded>           ",
+              "<held>              ",
+              "<floating nearby>   "]
+
+
+#utility functions
 def name_lookup(dict, arg, key='name'):
     for i, n in dict.items():
         if n.__dict__[key] == arg:
@@ -1513,6 +1542,297 @@ def mult_argument(argument):
 def append_file(ch, fp, str):
     with open(fp, "a") as f:
         f.write(str + "\n")
+
+def format_obj_to_char(obj, ch, fShort):
+    buf = ''
+    if (fShort and not obj.short_descr) or not obj.description:
+        return buf
+
+    if IS_OBJ_STAT(obj, ITEM_INVIS):
+        buf += "(Invis) "
+    if IS_AFFECTED(ch, AFF_DETECT_EVIL) and IS_OBJ_STAT(obj, ITEM_EVIL):
+        buf += "(Red Aura) "
+    if IS_AFFECTED(ch, AFF_DETECT_GOOD) and  IS_OBJ_STAT(obj, ITEM_BLESS):
+        buf += "(Blue Aura) "
+    if IS_AFFECTED(ch, AFF_DETECT_MAGIC) and IS_OBJ_STAT(obj, ITEM_MAGIC):
+        buf += "(Magical) "
+    if IS_OBJ_STAT(obj, ITEM_GLOW):
+        buf += "(Glowing) "
+    if IS_OBJ_STAT(obj, ITEM_HUM):
+        buf += "(Humming) "
+
+    if fShort:
+        if obj.short_descr:
+            buf += obj.short_descr
+    else:
+        if obj.description:
+            buf += obj.description
+    if IS_SET(ch.act, PLR_OMNI):
+        buf += "(%d)" % obj.pIndexData.vnum
+    return buf
+
+# * Show a list to a character.
+# * Can coalesce duplicated items.
+def show_list_to_char(clist, ch, fShort, fShowNothing):
+    if not ch.desc:
+        return
+    objects = collections.OrderedDict()
+    for obj in clist:
+        if obj.wear_loc == WEAR_NONE and ch.can_see_obj(obj):
+            frmt = format_obj_to_char(obj, ch, fShort)
+            if frmt not in objects:
+                objects[frmt] = 1
+            else:
+                objects[frmt] += 1
+
+
+    if not objects and fShowNothing:
+        if IS_NPC(ch) or IS_SET(ch.comm, COMM_COMBINE):
+            ch.send("     ")
+        ch.send("Nothing.\n")
+
+     #* Output the formatted list.
+    for desc, count in objects.items():
+        if IS_NPC(ch) or IS_SET(ch.comm, COMM_COMBINE) and count > 1:
+            ch.send("(%2d) %s\n" % (count, desc))
+        else:
+            for i in range(count):
+                ch.send("     %s\n" % desc)
+
+def show_char_to_char_0(victim, ch):
+    buf = ''
+    if IS_SET(victim.comm, COMM_AFK):
+        buf += "[AFK] "
+    if IS_AFFECTED(victim, AFF_INVISIBLE):
+        buf += "(Invis) "
+    if victim.invis_level >= LEVEL_HERO:
+        buf += "(Wizi) "
+    if IS_AFFECTED(victim, AFF_HIDE):
+        buf += "(Hide) "
+    if IS_AFFECTED(victim, AFF_CHARM):
+        buf += "(Charmed) "
+    if IS_AFFECTED(victim, AFF_PASS_DOOR):
+        buf += "(Translucent) "
+    if IS_AFFECTED(victim, AFF_FAERIE_FIRE):
+        buf += "(Pink Aura) "
+    if IS_EVIL(victim) and IS_AFFECTED(ch, AFF_DETECT_EVIL):
+        buf += "(Red Aura) "
+    if IS_GOOD(victim) and IS_AFFECTED(ch, AFF_DETECT_GOOD):
+        buf += "(Golden Aura) "
+    if IS_AFFECTED(victim, AFF_SANCTUARY):
+        buf += "(White Aura) "
+    if not IS_NPC(victim) and IS_SET(victim.act, PLR_KILLER):
+        buf += "(KILLER) "
+    if not IS_NPC(victim) and IS_SET(victim.act, PLR_THIEF):
+        buf += "(THIEF) "
+
+    if IS_NPC(victim) and victim.position == victim.start_pos and victim.long_descr:
+        buf += victim.long_descr
+        ch.send(buf)
+        if IS_SET(ch.act, PLR_OMNI):
+            ch.send("(%d)" % victim.pIndexData.vnum)
+        return
+
+    buf += PERS(victim, ch)
+    if not IS_NPC(victim) and not IS_SET(ch.comm, COMM_BRIEF) \
+    and victim.position == POS_STANDING and not ch.on:
+        buf += victim.pcdata.title
+
+    if victim.position == POS_DEAD: buf += " is DEAD!!"
+    elif victim.position == POS_MORTAL: buf += " is mortally wounded."
+    elif victim.position == POS_INCAP: buf += " is incapacitated."
+    elif victim.position == POS_STUNNED: buf += " is lying here stunned."
+    elif victim.position == POS_SLEEPING:
+        if victim.on:
+            if IS_SET(victim.on.value[2], SLEEP_AT):
+                buf += " is sleeping at %s." % (victim.on.short_descr)
+            elif IS_SET(victim.on.value[2], SLEEP_ON):
+                buf += " is sleeping on %s." % (victim.on.short_descr)
+            else:
+                buf += " is sleeping in %s." % (victim.on.short_descr)
+        else:
+            buf += " is sleeping here."
+    elif victim.position == POS_RESTING:
+        if victim.on:
+            if IS_SET(victim.on.value[2], REST_AT):
+                buf += " is resting at %s." % victim.on.short_descr
+            elif IS_SET(victim.on.value[2], REST_ON):
+                buf += " is resting on %s." % victim.on.short_descr
+            else:
+                buf += " is resting in %s." % victim.on.short_descr
+        else:
+            buf += " is resting here."
+    elif victim.position == POS_SITTING:
+        if victim.on:
+            if IS_SET(victim.on.value[2], SIT_AT):
+                buf += " is sitting at %s." % victim.on.short_descr
+            elif IS_SET(victim.on.value[2], SIT_ON):
+                buf += " is sitting on %s." % victim.on.short_descr
+            else:
+                buf += " is sitting in %s." % victim.on.short_descr
+        else:
+            buf += " is sitting here."
+    elif victim.position == POS_STANDING:
+        if victim.on:
+            if IS_SET(victim.on.value[2], STAND_AT):
+                buf += " is standing at %s." % victim.on.short_descr
+            elif IS_SET(victim.on.value[2], STAND_ON):
+                buf += " is standing on %s." % victim.on.short_descr
+            else:
+                buf += " is standing in %s." % victim.on.short_descr
+        else:
+            buf += " is here."
+    elif victim.position == POS_FIGHTING:
+        buf += " is here, fighting "
+        if not victim.fighting:
+            buf += "thin air??"
+        elif victim.fighting == ch:
+            buf += "YOU!"
+        elif victim.in_room == victim.fighting.in_room:
+            buf += "%s." % PERS(victim.fighting, ch)
+        else:
+            buf += "someone who left??"
+    buf = buf.capitalize()
+    if IS_NPC(victim) and IS_SET(ch.act, PLR_OMNI):
+        buf += "(%s)" % victim.pIndexData.vnum
+    ch.send(buf)
+    return
+
+def show_char_to_char_1(victim, ch):
+    if victim.can_see(ch):
+        if ch == victim:
+            act("$n looks at $mself.", ch, None, None, TO_ROOM)
+        else:
+            act("$n looks at you.", ch, None, victim, TO_VICT)
+            act("$n looks at $N.", ch, None, victim, TO_NOTVICT)
+    if victim.description:
+        ch.send(victim.description + "\n")
+    else:
+        act("You see nothing special about $M.", ch, None, victim, TO_CHAR)
+    if victim.max_hit > 0:
+        percent = (100 * victim.hit) // victim.max_hit
+    else:
+        percent = -1
+    buf = PERS(victim, ch)
+    if percent >= 100:
+        buf += " is in excellent condition.\n"
+    elif percent >= 90:
+        buf += " has a few scratches.\n"
+    elif percent >= 75:
+        buf += " has some small wounds and bruises.\n"
+    elif percent >= 50:
+        buf += " has quite a few wounds.\n"
+    elif percent >= 30:
+        buf += " has some big nasty wounds and scratches.\n"
+    elif percent >= 15:
+        buf += " looks pretty hurt.\n"
+    elif percent >= 0:
+        buf += " is in awful condition.\n"
+    else:
+        buf += " is bleeding to death.\n"
+
+    buf = buf.capitalize()
+    ch.send(buf)
+
+    found = False
+    for iWear in range(MAX_WEAR):
+        obj = victim.get_eq(iWear)
+        if obj and ch.can_see_obj(obj):
+            if not found:
+                act("$N is using:", ch, None, victim, TO_CHAR)
+                found = True
+            ch.send(where_name[iWear])
+            ch.send(format_obj_to_char(obj, ch, True) + "\n")
+
+    if victim != ch and not IS_NPC(ch) \
+    and random.randint(1, 99) < ch.get_skill("peek"):
+        ch.send("\nYou peek at the inventory:\n")
+        check_improve(ch, 'peek', True, 4)
+        show_list_to_char(victim.carrying, ch, True, True)
+    return
+
+def show_char_to_char(list, ch):
+    for rch in list:
+        if rch == ch:
+            continue
+
+        if ch.get_trust() < rch.invis_level:
+            continue
+
+        if ch.can_see(rch):
+            show_char_to_char_0(rch, ch)
+            ch.send("\n")
+        elif ch.in_room.is_dark() and IS_AFFECTED(rch, AFF_INFRARED):
+            ch.send("You see glowing red eyes watching YOU!\n")
+
+def check_blind(ch):
+    if not IS_NPC(ch) and IS_SET(ch.act, PLR_HOLYLIGHT):
+        return True
+    if IS_AFFECTED(ch, AFF_BLIND):
+        ch.send("You can't see a thing!\n")
+        return False
+    return True
+
+def add_follower( ch, master ):
+    if ch.master:
+        print ("BUG: Add_follower: non-null master.")
+        return
+    ch.master        = master
+    ch.leader        = None
+    if master.can_see(ch):
+        act( "$n now follows you.", ch, None, master, TO_VICT )
+    act( "You now follow $N.",  ch, None, master, TO_CHAR )
+    return
+
+def stop_follower( ch ):
+    if not ch.master:
+        print ("BUG: Stop_follower: null master.")
+        return
+
+    if IS_AFFECTED(ch, AFF_CHARM):
+        REMOVE_BIT( ch.affected_by, AFF_CHARM )
+        ch.affect_strip('charm person')
+
+    if ch.master.can_see(ch) and ch.in_room:
+        act( "$n stops following you.", ch, None, ch.master, TO_VICT)
+        act( "You stop following $N.", ch, None, ch.master, TO_CHAR)
+    if ch.master.pet == ch:
+        ch.master.pet = None
+    ch.master = None
+    ch.leader = None
+    return
+
+# nukes charmed monsters and pets */
+def nuke_pets( ch ):
+    if ch.pet:
+        stop_follower(ch.pet)
+        if ch.pet.in_room:
+            act("$N slowly fades away.",ch,None,ch.pet,TO_NOTVICT)
+        ch.pet.extract(True)
+    ch.pet = None
+    return
+
+def die_follower(ch):
+    if ch.master:
+        if ch.master.pet == ch:
+            ch.master.pet = None
+        stop_follower( ch )
+    ch.leader = None
+
+    for fch in char_list[:]:
+        if fch.master == ch:
+            stop_follower( fch )
+        if fch.leader == ch:
+            fch.leader = fch
+    return
+
+# * Get an extra description from a list.
+def get_extra_descr(name, edlist):
+    if not edlist: return None
+    for ed in edlist:
+        if name.lower() in ed.keyword:
+            return ed.description
+    return None
 
 def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
     if not format:

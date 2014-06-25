@@ -837,58 +837,6 @@ def do_follow(self, argument):
     add_follower( ch, victim )
     return
 
-def add_follower( ch, master ):
-    if ch.master:
-        print ("BUG: Add_follower: non-null master.")
-        return
-    ch.master        = master
-    ch.leader        = None
-    if master.can_see(ch):
-        act( "$n now follows you.", ch, None, master, TO_VICT )
-    act( "You now follow $N.",  ch, None, master, TO_CHAR )
-    return
-
-def stop_follower( ch ):
-    if not ch.master:
-        print ("BUG: Stop_follower: null master.")
-        return
-
-    if IS_AFFECTED(ch, AFF_CHARM):
-        REMOVE_BIT( ch.affected_by, AFF_CHARM )
-        ch.affect_strip('charm person')
-
-    if ch.master.can_see(ch) and ch.in_room:
-        act( "$n stops following you.", ch, None, ch.master, TO_VICT)
-        act( "You stop following $N.", ch, None, ch.master, TO_CHAR)
-    if ch.master.pet == ch:
-        ch.master.pet = None
-    ch.master = None
-    ch.leader = None
-    return
-
-# nukes charmed monsters and pets */
-def nuke_pets( ch ):
-    if ch.pet:
-        stop_follower(ch.pet)
-        if ch.pet.in_room:
-            act("$N slowly fades away.",ch,None,ch.pet,TO_NOTVICT)
-        ch.pet.extract(True)
-    ch.pet = None
-    return
-
-def die_follower(ch):
-    if ch.master:
-        if ch.master.pet == ch:
-            ch.master.pet = None
-        stop_follower( ch )
-    ch.leader = None
-
-    for fch in char_list[:]:
-        if fch.master == ch:
-            stop_follower( fch )
-        if fch.leader == ch:
-            fch.leader = fch
-    return
 
 def do_order(self, argument):
     ch=self
