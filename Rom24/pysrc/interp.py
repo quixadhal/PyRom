@@ -31,9 +31,7 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
-from collections import OrderedDict
 import hotfix
-from merc import *
 from act_wiz import *
 from act_obj import *
 from act_enter import *
@@ -61,12 +59,12 @@ class cmd_type:
 
 #These commands don't need to be here but are, for order. These will always match first with prefixes.
 cmd_table = OrderedDict()
-cmd_table['north'] = cmd_type('north', do_north, POS_STANDING, 0, LOG_NEVER, 0)
-cmd_table['east'] = cmd_type('east', do_east, POS_STANDING, 0, LOG_NEVER, 0)
-cmd_table['south'] = cmd_type('south', do_south, POS_STANDING, 0, LOG_NEVER, 0)
-cmd_table['west'] = cmd_type('west', do_west, POS_STANDING, 0, LOG_NEVER, 0)
-cmd_table['up'] = cmd_type('up', do_up, POS_STANDING, 0, LOG_NEVER, 0)
-cmd_table['down'] = cmd_type('down', do_down, POS_STANDING, 0, LOG_NEVER, 0)
+cmd_table['north'] = None  # cmd_type('north', do_north, POS_STANDING, 0, LOG_NEVER, 0)
+cmd_table['east'] = None  # cmd_type('east', do_east, POS_STANDING, 0, LOG_NEVER, 0)
+cmd_table['south'] = None  # cmd_type('south', do_south, POS_STANDING, 0, LOG_NEVER, 0)
+cmd_table['west'] = None  # cmd_type('west', do_west, POS_STANDING, 0, LOG_NEVER, 0)
+cmd_table['up'] = None  # cmd_type('up', do_up, POS_STANDING, 0, LOG_NEVER, 0)
+cmd_table['down'] = None  # cmd_type('down', do_down, POS_STANDING, 0, LOG_NEVER, 0)
 cmd_table['at'] = cmd_type('at', do_at, POS_DEAD, L6, LOG_NORMAL, 1)
 cmd_table['buy'] = cmd_type('buy', do_buy, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['cast'] = cmd_type('cast', do_cast, POS_FIGHTING, 0, LOG_NORMAL, 1)
@@ -94,7 +92,7 @@ cmd_table['sit'] = cmd_type('sit', do_sit, POS_SLEEPING, 0, LOG_NORMAL, 1)
 cmd_table['sockets'] = cmd_type('sockets', do_sockets, POS_DEAD, L4, LOG_NORMAL, 1)
 cmd_table['stand'] = cmd_type('stand', do_stand, POS_SLEEPING, 0, LOG_NORMAL, 1)
 cmd_table['tell'] = cmd_type('tell', do_tell, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['unlock'] = cmd_type('unlock', do_unlock, POS_RESTING, 0, LOG_NORMAL, 1)
+cmd_table['unlock'] = None  # cmd_type('unlock', do_unlock, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['wield'] = cmd_type('wield', do_wear, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['wizhelp'] = cmd_type('wizhelp', do_wizhelp, POS_DEAD, IM, LOG_NORMAL, 1 )
 # * Informational commands.
@@ -146,7 +144,7 @@ cmd_table['shout'] = cmd_type('shout', do_shout, POS_RESTING, 3, LOG_NORMAL, 1)
 cmd_table['yell'] = cmd_type('yell', do_yell, POS_RESTING, 0, LOG_NORMAL, 1)
 # * Object manipulation commands.
 cmd_table['brandish'] = cmd_type('brandish', do_brandish, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['close'] = cmd_type('close', do_close, POS_RESTING, 0, LOG_NORMAL, 1)
+cmd_table['close'] = None  # cmd_type('close', do_close, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['drink'] = cmd_type('drink', do_drink, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['drop'] = cmd_type('drop', do_drop, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['eat'] = cmd_type('eat', do_eat, POS_RESTING, 0, LOG_NORMAL, 1)
@@ -156,8 +154,8 @@ cmd_table['give'] = cmd_type('give', do_give, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['heal'] = cmd_type('heal', do_heal, POS_RESTING, 0, LOG_NORMAL, 1) 
 cmd_table['hold'] = cmd_type('hold', do_wear, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['list'] = cmd_type('list', do_list, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['lock'] = cmd_type('lock', do_lock, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['open'] = cmd_type('open', do_open, POS_RESTING, 0, LOG_NORMAL, 1)
+cmd_table['lock'] = None  # cmd_type('lock', do_lock, POS_RESTING, 0, LOG_NORMAL, 1)
+cmd_table['open'] = None  # cmd_type('open', do_open, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['pick'] = cmd_type('pick', do_pick, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['pour'] = cmd_type('pour', do_pour, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['put'] = cmd_type('put', do_put, POS_RESTING, 0, LOG_NORMAL, 1)

@@ -31,13 +31,13 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
-from merc import *
 from handler import *
 import const
 
-def move_char( ch, door, follow ):
+
+def move_char(ch, door, follow):
     if door < 0 or door > 5:
-        print ("BUG: Do_move: bad door %d." % door)
+        print("BUG: Do_move: bad door %d." % door)
         return
     in_room = ch.in_room
     pexit = in_room.exit[door]
@@ -46,9 +46,9 @@ def move_char( ch, door, follow ):
         return
     to_room = pexit.to_room
     if IS_SET(pexit.exit_info, EX_CLOSED) \
-    and (not IS_AFFECTED(ch, AFF_PASS_DOOR) or IS_SET(pexit.exit_info,EX_NOPASS)) \
-    and not IS_TRUSTED(ch, L7):
-        act( "The $d is closed.", ch, None, pexit.keyword, TO_CHAR )
+            and (not IS_AFFECTED(ch, AFF_PASS_DOOR) or IS_SET(pexit.exit_info, EX_NOPASS)) \
+            and not IS_TRUSTED(ch, L7):
+        act("The $d is closed.", ch, None, pexit.keyword, TO_CHAR)
         return
     if IS_AFFECTED(ch, AFF_CHARM) and ch.master and in_room == ch.master.in_room:
         ch.send("What?  And leave your beloved master?\n")
@@ -67,380 +67,88 @@ def move_char( ch, door, follow ):
                 ch.send("You can't fly.\n")
                 return
         if ( in_room.sector_type == SECT_WATER_NOSWIM or to_room.sector_type == SECT_WATER_NOSWIM ) \
-        and not IS_AFFECTED(ch,AFF_FLYING):
-           # Look for a boat.
-          boats = [obj for obj in ch.carrying if obj.item_type == ITEM_BOAT]
-          if not boats and not IS_IMMORTAL(ch):
-              ch.send("You need a boat to go there.\n")
-              return
-        move = movement_loss[min(SECT_MAX-1, in_room.sector_type)] + movement_loss[min(SECT_MAX-1, to_room.sector_type)]
+                and not IS_AFFECTED(ch, AFF_FLYING):
+            # Look for a boat.
+            boats = [obj for obj in ch.carrying if obj.item_type == ITEM_BOAT]
+            if not boats and not IS_IMMORTAL(ch):
+                ch.send("You need a boat to go there.\n")
+                return
+        move = movement_loss[min(SECT_MAX - 1, in_room.sector_type)] + movement_loss[
+            min(SECT_MAX - 1, to_room.sector_type)]
         move /= 2  # i.e. the average */
         # conditional effects */
-        if IS_AFFECTED(ch,AFF_FLYING) or IS_AFFECTED(ch,AFF_HASTE):
+        if IS_AFFECTED(ch, AFF_FLYING) or IS_AFFECTED(ch, AFF_HASTE):
             move /= 2
-        if IS_AFFECTED(ch,AFF_SLOW):
+        if IS_AFFECTED(ch, AFF_SLOW):
             move *= 2
         if ch.move < move:
             ch.send("You are too exhausted.\n")
             return
-        WAIT_STATE( ch, 1 )
+        WAIT_STATE(ch, 1)
         ch.move -= move
     if not IS_AFFECTED(ch, AFF_SNEAK) and ch.invis_level < LEVEL_HERO:
-        act( "$n leaves $T.", ch, None, dir_name[door], TO_ROOM )
+        act("$n leaves $T.", ch, None, dir_name[door], TO_ROOM)
     ch.from_room()
     ch.to_room(to_room)
     if not IS_AFFECTED(ch, AFF_SNEAK) and ch.invis_level < LEVEL_HERO:
-        act( "$n has arrived.", ch, None, None, TO_ROOM )
-    ch.do_look("auto" )
-    if in_room == to_room: # no circular follows */
+        act("$n has arrived.", ch, None, None, TO_ROOM)
+    ch.do_look("auto")
+    if in_room == to_room:  # no circular follows */
         return
 
     for fch in in_room.people[:]:
-        if fch.master == ch and IS_AFFECTED(fch,AFF_CHARM) and fch.position < POS_STANDING:
+        if fch.master == ch and IS_AFFECTED(fch, AFF_CHARM) and fch.position < POS_STANDING:
             fch.do_stand("")
 
         if fch.master == ch and fch.position == POS_STANDING and fch.can_see_room(to_room):
-            if IS_SET(ch.in_room.room_flags,ROOM_LAW) and (IS_NPC(fch) and IS_SET(fch.act,ACT_AGGRESSIVE)):
-                act("You can't bring $N into the city.",ch,None,fch,TO_CHAR)
-                act("You aren't allowed in the city.",fch,None,None,TO_CHAR)
+            if IS_SET(ch.in_room.room_flags, ROOM_LAW) and (IS_NPC(fch) and IS_SET(fch.act, ACT_AGGRESSIVE)):
+                act("You can't bring $N into the city.", ch, None, fch, TO_CHAR)
+                act("You aren't allowed in the city.", fch, None, None, TO_CHAR)
                 continue
-    
-            act( "You follow $N.", fch, None, ch, TO_CHAR )
-            move_char( fch, door, True )
 
-def do_north(self, argument):
-    ch=self
-    move_char( ch, DIR_NORTH, False )
-    return
+            act("You follow $N.", fch, None, ch, TO_CHAR)
+            move_char(fch, door, True)
 
-def do_east(self, argument):
-    ch=self
-    move_char( ch, DIR_EAST, False )
-    return
 
-def do_south(self, argument):
-    ch=self
-    move_char( ch, DIR_SOUTH, False )
-    return
-
-def do_west(self, argument):
-    ch=self
-    move_char( ch, DIR_WEST, False )
-    return
-
-def do_up(self, argument):
-    ch=self
-    move_char( ch, DIR_UP, False )
-    return
-
-def do_down(self, argument):
-    ch=self
-    move_char( ch, DIR_DOWN, False )
-    return
-
-def find_door( ch, arg ):
-    if arg == "n" or arg == "north": door = 0
-    elif arg == "e" or arg == "east": door = 1
-    elif arg == "s" or arg == "south": door = 2
-    elif arg == "w" or arg == "west": door = 3
-    elif arg == "u" or arg == "up": door = 4
-    elif arg == "d" or arg == "down": door = 5
+def find_door(ch, arg):
+    door = -1
+    if arg == "n" or arg == "north":
+        door = 0
+    elif arg == "e" or arg == "east":
+        door = 1
+    elif arg == "s" or arg == "south":
+        door = 2
+    elif arg == "w" or arg == "west":
+        door = 3
+    elif arg == "u" or arg == "up":
+        door = 4
+    elif arg == "d" or arg == "down":
+        door = 5
     else:
-        for pexit in ch.in_room.exit:
+        for door in range(0,5):
+            pexit = ch.in_room.exit[door]
             if pexit and IS_SET(pexit.exit_info, EX_ISDOOR) and pexit.keyword and arg in pexit.keyword:
                 return door
-        act( "I see no $T here.", ch, None, arg, TO_CHAR )
+        act("I see no $T here.", ch, None, arg, TO_CHAR)
         return -1
     pexit = ch.in_room.exit[door]
     if not pexit:
-        act( "I see no door $T here.", ch, None, arg, TO_CHAR )
+        act("I see no door $T here.", ch, None, arg, TO_CHAR)
         return -1
     if not IS_SET(pexit.exit_info, EX_ISDOOR):
         ch.send("You can't do that.\n")
         return -1
     return door
 
-def do_open(self, argument):
-    ch=self
-    argument = read_word(argument)
-    if not arg:
-        ch.send("Open what?\n")
-        return
 
-    obj = ch.get_obj_here(arg)
-    if obj:
-        # open portal */
-        if obj.item_type == ITEM_PORTAL:
-            if not IS_SET(obj.value[1], EX_ISDOOR):
-                ch.send("You can't do that.\n")
-                return
-            if not IS_SET(obj.value[1], EX_CLOSED):
-                ch.send("It's already open.\n")
-                return
-            if IS_SET(obj.value[1], EX_LOCKED):
-                ch.send("It's locked.\n")
-                return
-            REMOVE_BIT(obj.value[1], EX_CLOSED)
-            act("You open $p.",ch,obj,None,TO_CHAR)
-            act("$n opens $p.",ch,obj,None,TO_ROOM)
-            return
-      # 'open object' */
-        if obj.item_type != ITEM_CONTAINER:
-            ch.send("That's not a container.\n")
-            return
-        if not IS_SET(obj.value[1], CONT_CLOSED):
-            ch.send("It's already open.\n") 
-            return
-        if not IS_SET(obj.value[1], CONT_CLOSEABLE):
-            ch.send("You can't do that.\n")
-            return 
-        if IS_SET(obj.value[1], CONT_LOCKED):
-            ch.send( "It's locked.\n")
-            return
-        REMOVE_BIT(obj.value[1], CONT_CLOSED)
-        act("You open $p.",ch,obj,None,TO_CHAR)
-        act( "$n opens $p.", ch, obj, None, TO_ROOM )
-        return
-
-    door = find_door(ch, arg)
-    if door >= 0:
-        # 'open door' */
-        pexit = ch.in_room.exit[door]
-        if not IS_SET(pexit.exit_info, EX_CLOSED):
-            ch.send("It's already open.\n") 
-            return
-        if IS_SET(pexit.exit_info, EX_LOCKED):
-            ch.send("It's locked.\n")
-            return
-        REMOVE_BIT(pexit.exit_info, EX_CLOSED)
-        act( "$n opens the $d.", ch, None, pexit.keyword, TO_ROOM )
-        ch.send("Ok.\n")
-
-      # open the other side */
-        to_room = pexit.to_room
-        if to_room and  to_room.exit[rev_dir[door]] and to_room.exit[rev_dir[door]].to_room == ch.in_room:
-            pexit_rev = to_room.exit[rev_dir[door]]
-            REMOVE_BIT( pexit_rev.exit_info, EX_CLOSED )
-            for rch in to_room.people:
-                act("The $d opens.", rch, None, pexit_rev.keyword, TO_CHAR )
-
-def do_close(self, argument):
-    ch=self
-    argument, arg = read_word(argument)
-
-    if not arg:
-        ch.send("Close what?\n")
-        return
-    obj = ch.get_obj_here(arg)
-    if obj:
-        # portal stuff */
-        if obj.item_type == ITEM_PORTAL:
-            if not IS_SET(obj.value[1],EX_ISDOOR) or IS_SET(obj.value[1],EX_NOCLOSE):
-                ch.send("You can't do that.\n")
-                return
-            if IS_SET(obj.value[1], EX_CLOSED):
-                ch.send("It's already closed.\n")
-                return
-            SET_BIT(obj.value[1],EX_CLOSED)
-            act("You close $p.",ch,obj,None,TO_CHAR)
-            act("$n closes $p.",ch,obj,None,TO_ROOM)
-            return
-        # 'close object' */
-        if obj.item_type != ITEM_CONTAINER:
-            ch.send("That's not a container.\n") 
-            return
-        if IS_SET(obj.value[1], CONT_CLOSED):
-            ch.send("It's already closed.\n")
-            return
-        if not IS_SET(obj.value[1], CONT_CLOSEABLE):
-            ch.send("You can't do that.\n")
-            return
-        SET_BIT(obj.value[1], CONT_CLOSED)
-        act("You close $p.",ch,obj,None,TO_CHAR)
-        act( "$n closes $p.", ch, obj, None, TO_ROOM )
-        return
-    door = find_door(ch, arg)
-    if find_door(ch, arg) >= 0:
-        # 'close door' */
-        pexit = ch.in_room.exit[door]
-        if IS_SET(pexit.exit_info, EX_CLOSED):
-            ch.send("It's already closed.\n")
-            return
-    SET_BIT(pexit.exit_info, EX_CLOSED)
-    act( "$n closes the $d.", ch, None, pexit.keyword, TO_ROOM )
-    ch.send("Ok.\n")
-    # close the other side */
-    to_room = pexit.to_room
-    pexit_rev = to_room.exit[rev_dir[door]] if pexit.to_room else None
-    if to_room and pexit_rev and pexit_rev.to_room == ch.in_room:
-        SET_BIT( pexit_rev.exit_info, EX_CLOSED )
-        for rch in to_room.people:
-            act( "The $d closes.", rch, None, pexit_rev.keyword, TO_CHAR )
-
-def has_key( ch, key ):
+def has_key(ch, key):
     for obj in ch.carrying:
         if obj.pIndexData.vnum == key:
             return True
     return False
 
-def do_lock(self, argument):
-    ch=self
-    argument, arg = read_word(argument)
-    if not arg:
-        ch.send("Lock what?\n")
-        return
-    obj = ch.get_obj_here(arg)
-    if obj:
-        # portal stuff */
-        if obj.item_type == ITEM_PORTAL:
-            if not IS_SET(obj.value[1],EX_ISDOOR) or IS_SET(obj.value[1],EX_NOCLOSE):
-                ch.send("You can't do that.\n")
-                return
-            if not IS_SET(obj.value[1], EX_CLOSED):
-                ch.send("It's not closed.\n")
-                return
-            if obj.value[4] < 0 or IS_SET(obj.value[1],EX_NOLOCK):
-                ch.send("It can't be locked.\n")
-                return
-            if not has_key(ch,obj.value[4]):
-                ch.send("You lack the key.\n")
-                return
-            if IS_SET(obj.value[1], EX_LOCKED):
-                ch.send("It's already locked.\n")
-                return
-            SET_BIT(obj.value[1],EX_LOCKED)
-            act("You lock $p.",ch,obj,None,TO_CHAR)
-            act("$n locks $p.",ch,obj,None,TO_ROOM)
-            return
-        # 'lock object' */
-        if obj.item_type != ITEM_CONTAINER:
-              ch.send("That's not a container.\n")
-              return
-        if not IS_SET(obj.value[1], CONT_CLOSED):
-            ch.send("It's not closed.\n")
-            return
-        if obj.value[2] < 0:
-            ch.send("It can't be locked.\n")
-            return
-        if not has_key( ch, obj.value[2] ):
-            ch.send("You lack the key.\n")
-            return
-        if IS_SET(obj.value[1], CONT_LOCKED):
-            ch.send("It's already locked.\n")
-            return
 
-
-        SET_BIT(obj.value[1], CONT_LOCKED)
-        act("You lock $p.",ch,obj,None,TO_CHAR)
-        act( "$n locks $p.", ch, obj, None, TO_ROOM )
-        return
-    door = find_door( ch, arg )
-    if door >= 0:
-        # 'lock door' */
-        pexit = ch.in_room.exit[door]
-        if not IS_SET(pexit.exit_info, EX_CLOSED):
-            ch.send("It's not closed.\n")
-            return
-        if pexit.key < 0:
-            ch.send("It can't be locked.\n")
-            return
-        if not has_key( ch, pexit.key):
-            ch.send( "You lack the key.\n")
-            return
-        if IS_SET(pexit.exit_info, EX_LOCKED):
-            ch.send("It's already locked.\n")
-            return
-
-        SET_BIT(pexit.exit_info, EX_LOCKED)
-        ch.send("*Click*\n")
-        act( "$n locks the $d.", ch, None, pexit.keyword, TO_ROOM )
-        # lock the other side */
-        to_room = pexit.to_room
-        if to_room and  to_room.exit[rev_dir[door]] != 0 \
-        and to_room.exit[rev_dir[door]].to_room == ch.in_room:
-            SET_BIT( to_room.exit[rev_dir[door]].exit_info, EX_LOCKED )
-
-def do_unlock(self, argument):
-    ch=self
-    argument, arg = read_word(argument)
-
-    if not arg:
-        ch.send("Unlock what?\n")
-        return
-    obj = ch.get_obj_here(arg)
-    if obj:
-        # portal stuff */
-        if obj.item_type == ITEM_PORTAL:
-            if not IS_SET(obj.value[1], EX_ISDOOR):
-                ch.send("You can't do that.\n")
-                return
-            if not IS_SET(obj.value[1], EX_CLOSED):
-                ch.send("It's not closed.\n")
-                return
-            if obj.value[4] < 0:
-                ch.send("It can't be unlocked.\n")
-                return
-            if not has_key(ch,obj.value[4]):
-                ch.send("You lack the key.\n")
-                return
-            if not IS_SET(obj.value[1], EX_LOCKED):
-                ch.send("It's already unlocked.\n")
-                return
-            REMOVE_BIT(obj.value[1],EX_LOCKED)
-            act("You unlock $p.",ch,obj,None,TO_CHAR)
-            act("$n unlocks $p.",ch,obj,None,TO_ROOM)
-            return
-      # 'unlock object' */
-        if obj.item_type != ITEM_CONTAINER:
-            ch.send("That's not a container.\n")
-            return
-        if not IS_SET(obj.value[1], CONT_CLOSED):
-            ch.send( "It's not closed.\n")
-            return
-        if obj.value[2] < 0:
-            ch.send("It can't be unlocked.\n")
-            return
-        if not has_key( ch, obj.value[2] ):
-            ch.send("You lack the key.\n")
-            return
-        if not IS_SET(obj.value[1], CONT_LOCKED):
-            ch.send("It's already unlocked.\n")
-            return
-
-        REMOVE_BIT(obj.value[1], CONT_LOCKED)
-        act("You unlock $p.",ch,obj,None,TO_CHAR)
-        act( "$n unlocks $p.", ch, obj, None, TO_ROOM )
-        return
-
-    door = find_door( ch, arg )
-    if door >= 0:
-        # 'unlock door' */
-        ROOM_INDEX_DATA *to_room
-        EXIT_DATA *pexit
-        EXIT_DATA *pexit_rev
-        pexit = ch.in_room.exit[door]
-        if not IS_SET(pexit.exit_info, EX_CLOSED):
-            ch.send("It's not closed.\n")
-            return
-        if pexit.key < 0:
-            ch.send("It can't be unlocked.\n")
-            return
-        if not has_key( ch, pexit.key):
-            ch.send("You lack the key.\n")
-            return
-        if not IS_SET(pexit.exit_info, EX_LOCKED):
-            ch.send("It's already unlocked.\n")
-            return
-        REMOVE_BIT(pexit.exit_info, EX_LOCKED)
-        ch.send("*Click*\n")
-        act( "$n unlocks the $d.", ch, None, pexit.keyword, TO_ROOM )
-
-        # unlock the other side */
-        to_room = pexit.u1.to_room
-        if to_room and   to_room.exit[rev_dir[door]] \
-        and  to_room.exit[rev_dir[door]] == ch.in_room:
-            REMOVE_BIT( pexit_rev.exit_info, EX_LOCKED )
-  
+# TODO: continue from this point after a bit...
 
 def do_pick(self, argument):
     ch=self
