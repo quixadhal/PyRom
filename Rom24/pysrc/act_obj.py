@@ -34,7 +34,7 @@
 from collections import OrderedDict
 from merc import *
 from handler import *
-import db
+
 import update
 import const
 

@@ -36,7 +36,8 @@ import time
 import random
 import collections
 
-#Global MAXes       
+
+#Global MAXes
 MAX_TRADE = 5
 MAX_GUILDROOMS = 2
 MAX_STATS = 5
@@ -1833,6 +1834,125 @@ def get_extra_descr(name, edlist):
         if name.lower() in ed.keyword:
             return ed.description
     return None
+
+def find_location( ch, arg ):
+    if arg.isdigit():
+        vnum = int(arg)
+        if vnum not in room_index_hash:
+            return None
+        else:
+            return room_index_hash[vnum]
+    victim = ch.get_char_world(arg)
+    if victim:
+        return victim.in_room
+    obj = ch.get_obj_world(arg)
+    if obj:
+        return obj.in_room
+    return None
+
+#Magic functions
+def say_spell(ch, spell):
+    syl_dict = {"ar":"abra", "au":"kada", "bless":"fido", "blind":"nose", "bur":"mosa", "cu":"judi", "de":"oculo", "en":"unso", "light":"dies",
+            "lo":"hi", "mor":"zak", "move":"sido", "ness":"lacri", "ning":"illa", "per":"duda",  "ra":"gru", "fresh":"ima", "re":"candus",
+            "son":"sabru", "tect":"infra", "tri":"cula", "ven":"nofo", "a":"a", "b":"b", "c":"q", "d":"e", "e":"z", "f":"y", "g":"o",
+            "h":"p", "i":"u", "j":"y", "k":"t", "l":"r", "m":"w", "n":"i", "o":"a", "p":"s", "q":"d", "r":"f", "s":"g", "t":"h", "u":"j",
+            "v":"z", "w":"x", "x":"n", "y":"l", "z": "k" }
+    incantation = mass_replace(spell.name, syl_dict)
+
+    buf = "$n utters the words, '%s'." % incantation
+    buf2 = "$n utters the words, '%s'." % spell.name
+
+    for rch in ch.in_room.people:
+        send = buf2 if ch.guild==rch.guild else buf
+        act(send, ch, None, rch, TO_VICT)
+
+
+def saves_spell(level, victim, dam_type):
+    save = 50 + ( victim.level - level) * 5 - victim.saving_throw * 2
+    if IS_AFFECTED(victim, AFF_BERSERK):
+        save += victim.level//2
+
+    immunity = victim.check_immune(dam_type)
+    if immunity == IS_IMMUNE:
+        return True
+    elif immunity == IS_RESISTANT:
+        save += 2
+    elif immunity == IS_VULNERABLE:
+        save -= 2
+
+    if not IS_NPC(victim) and victim.guild.fMana:
+        save = 9 * save // 10
+    save = max( 5, min(save, 95 ) )
+
+    return random.randint(1,99) < save
+
+def saves_dispel(dis_level, spell_level, duration):
+    if duration == -1:
+      spell_level += 5
+      # very hard to dispel permanent effects */
+
+    save = 50 + (spell_level - dis_level) * 5
+    save = max( 5, min(save, 95 ) )
+    return random.randint(1,99) < save
+
+def check_dispel(dis_level, victim, skill):
+    from const import skill_table
+    if is_affected(victim, skill):
+        for af in victim.affected[:]:
+            if af.type == skill:
+                if not saves_dispel(dis_level,af.level,af.duration):
+                    victim.affect_strip(sn)
+                    if skill.msg_off:
+                        victim.send(skill_table[sn].msg_off + "\n")
+                    return True
+                else:
+                    af.level -= 1
+    return False
+
+target_name = ''
+fLogAll = False
+
+# for finding mana costs -- temporary version */
+def mana_cost (ch, min_mana, level):
+    if ch.level + 2 == level:
+        return 1000
+    return max(min_mana, (100 // (2 + ch.level - level)))
+
+def find_spell(ch, name):
+    #* finds a spell the character can cast if possible */
+    from const import skill_table
+    found = -1
+    if IS_NPC(ch):
+        return prefix_lookup(skill_table,name)
+    for key, sn in const.skill_table.items():
+        if sn.name.lower().startswith(name.lower()):
+            if found == -1:
+                found = sn
+        if ch.level >= sn.skill_level[ch.guild.name] and key in ch.pcdata.learned:
+            return sn
+    return found
+
+# trust levels for load and clone */
+def obj_check (ch, obj):
+    if IS_TRUSTED(ch,GOD) \
+    or (IS_TRUSTED(ch,IMMORTAL) and obj.level <= 20 and obj.cost <= 1000) \
+    or (IS_TRUSTED(ch,DEMI)     and obj.level <= 10 and obj.cost <= 500) \
+    or (IS_TRUSTED(ch,ANGEL)    and obj.level <=  5 and obj.cost <= 250) \
+    or (IS_TRUSTED(ch,AVATAR)   and obj.level ==  0 and obj.cost <= 100):
+        return True
+    else:
+        return False
+
+
+# for clone, to insure that cloning goes many levels deep */
+def recursive_clone(ch, obj, clone):
+    import db
+    for c_obj in obj.contains:
+        if obj_check(ch,c_obj):
+            t_obj = db.create_object(c_obj.pIndexData,0)
+            db.clone_object(c_obj,t_obj)
+            t_obj.to_obj(clone)
+            recursive_clone(ch,c_obj,t_obj)
 
 def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
     if not format:

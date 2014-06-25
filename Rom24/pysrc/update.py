@@ -32,9 +32,10 @@
  ************/
 """
 from merc import *
-from db import area_update
+
 from handler import *
 from save import save_char_obj
+import db
 import hotfix
 import skills
 import const
@@ -682,7 +683,7 @@ def update_handler( ):
 
     if pulse_area <= 0:
         pulse_area  = PULSE_AREA
-        area_update()
+        db.area_update()
 
     if pulse_mobile <= 0:
         pulse_mobile = PULSE_MOBILE
