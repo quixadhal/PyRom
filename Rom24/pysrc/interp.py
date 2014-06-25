@@ -35,7 +35,6 @@ import os
 from collections import OrderedDict
 import hotfix
 from merc import *
-from act_wiz import *
 from act_obj import *
 from act_enter import *
 from act_move import *
@@ -83,12 +82,12 @@ cmd_table['autolist'] = None
 cmd_table['get'] = cmd_type('get', do_get, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['rest'] = cmd_type('rest', do_rest, POS_SLEEPING, 0, LOG_NORMAL, 1)
 cmd_table['sit'] = cmd_type('sit', do_sit, POS_SLEEPING, 0, LOG_NORMAL, 1)
-cmd_table['sockets'] = cmd_type('sockets', do_sockets, POS_DEAD, L4, LOG_NORMAL, 1)
+
 cmd_table['stand'] = cmd_type('stand', do_stand, POS_SLEEPING, 0, LOG_NORMAL, 1)
 cmd_table['wield'] = cmd_type('wield', do_wear, POS_RESTING, 0, LOG_NORMAL, 1)
 
 # * Informational commands.
-cmd_table['areas'] = cmd_type('areas', do_areas, POS_DEAD, 0, LOG_NORMAL, 1)
+
 cmd_table['info'] = cmd_type('info', do_groups, POS_SLEEPING, 0, LOG_NORMAL, 1)
 cmd_table['skills'] = cmd_type('skills', do_skills, POS_DEAD, 0, LOG_NORMAL, 1)
 cmd_table['spells'] = cmd_type('spells', do_spells, POS_DEAD, 0, LOG_NORMAL, 1)
@@ -153,64 +152,8 @@ cmd_table['visible'] = cmd_type('visible', do_visible, POS_SLEEPING, 0, LOG_NORM
 cmd_table['wake'] = cmd_type('wake', do_wake, POS_SLEEPING, 0, LOG_NORMAL, 1)
 #* Immortal commands.
 
-cmd_table['dump'] = cmd_type('dump', do_dump,    POS_DEAD,   ML,  LOG_ALWAYS, 0)
-
-
-
-
-
-
-
-cmd_table['set'] = cmd_type('set', do_set, POS_DEAD, L2, LOG_ALWAYS, 1)
-cmd_table['mset'] = cmd_type('mset', do_mset, POS_DEAD, L2, LOG_ALWAYS, 1)
-cmd_table['sset'] = cmd_type('sset', do_sset, POS_DEAD, L2, LOG_ALWAYS, 1)
-cmd_table['oset'] = cmd_type('oset', do_oset, POS_DEAD, L2, LOG_ALWAYS, 1)
-
-
-cmd_table['wizlock'] = cmd_type('wizlock', do_wizlock, POS_DEAD, L2, LOG_ALWAYS, 1)
-cmd_table['force'] = cmd_type('force', do_force, POS_DEAD, L7, LOG_ALWAYS, 1)
-
-
-
-cmd_table['newlock'] = cmd_type('newlock', do_newlock, POS_DEAD, L4, LOG_ALWAYS, 1)
-
-cmd_table['noshout'] = cmd_type('noshout', do_noshout, POS_DEAD, L5, LOG_ALWAYS, 1)
-cmd_table['notell'] = cmd_type('notell', do_notell, POS_DEAD, L5, LOG_ALWAYS, 1)
-
-
-
-
 cmd_table['sla'] = cmd_type('sla', do_sla, POS_DEAD, L3, LOG_NORMAL, 0)
 cmd_table['slay'] = cmd_type('slay', do_slay, POS_DEAD, L3, LOG_ALWAYS, 1)
-
-
-cmd_table['holylight'] = cmd_type('holylight', do_holylight,   POS_DEAD,   IM,  LOG_NORMAL, 1)
-cmd_table['incognito'] = cmd_type('incognito', do_incognito,   POS_DEAD,   IM,  LOG_NORMAL, 1)
-cmd_table['invis'] = cmd_type('invis', do_invis,   POS_DEAD,   IM,  LOG_NORMAL, 0)
-
-cmd_table['memory'] = cmd_type('memory', do_memory,  POS_DEAD,   IM,  LOG_NORMAL, 1)
-
-
-cmd_table['peace'] = cmd_type('peace', do_peace, POS_DEAD, L5, LOG_NORMAL, 1)
-
-
-
-
-
-
-cmd_table['string'] = cmd_type('string', do_string, POS_DEAD, L5, LOG_ALWAYS, 1)
-
-cmd_table['wizinvis'] = cmd_type('wizinvis', do_invis,   POS_DEAD,   IM,  LOG_NORMAL, 1)
-
-
-
-
-
-cmd_table['prefi'] = cmd_type('prefi', do_prefi,   POS_DEAD,   IM,  LOG_NORMAL, 0)
-cmd_table['prefix'] = cmd_type('prefix', do_prefix,  POS_DEAD,   IM,  LOG_NORMAL, 1)
-cmd_table['reload'] = cmd_type('reload', do_reload,  POS_DEAD,   ML,  LOG_NORMAL, 1)
-cmd_table['omni'] = cmd_type('omni', do_omni,  POS_DEAD,   IM,  LOG_NORMAL, 1)
-
 hotfix.init_directory(os.path.join('commands'))
 
 def interpret(ch, argument):
