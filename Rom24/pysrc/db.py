@@ -31,9 +31,9 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
-import os, sys, random
+import os
+import sys
 from settings import AREA_DIR, AREA_LIST
-from merc import *
 from handler import *
 from special import spec_table
 from tables import sex_table, position_table
@@ -57,8 +57,8 @@ def boot_db():
 
 
 def load_areas():
-    area_list = os.path.join(AREA_DIR, AREA_LIST)
-    fp = open(area_list, 'r')
+    narea_list = os.path.join(AREA_DIR, AREA_LIST)
+    fp = open(narea_list, 'r')
     area = fp.readline().strip()
     while area != "$":
         afp = open(os.path.join(AREA_DIR, area), 'r')
@@ -74,7 +74,7 @@ def load_area(area):
 
     area, w = read_word(area, False)
     pArea = None
-    while ( area ):
+    while area:
         if w == "#AREA":
             pArea = AREA_DATA()
             area, pArea.file_name = read_string(area)
@@ -111,20 +111,20 @@ def load_area(area):
 
 def load_helps(area):
     while True:
-        help = HELP_DATA()
-        area, help.level = read_int(area)
-        area, help.keyword = read_string(area)
+        nhelp = HELP_DATA()
+        area, nhelp.level = read_int(area)
+        area, nhelp.keyword = read_string(area)
 
-        if help.keyword == '$':
-            del help
+        if nhelp.keyword == '$':
+            del nhelp
             break
 
-        area, help.text = read_string(area)
+        area, nhelp.text = read_string(area)
 
-        if help.keyword == "GREETING":
-            greeting_list.append(help)
+        if nhelp.keyword == "GREETING":
+            greeting_list.append(nhelp)
 
-        help_list.append(help)
+        help_list.append(nhelp)
     return area
 
 
@@ -354,14 +354,14 @@ def load_rooms(area, pArea):
             elif letter == 'C':  # Clan
                 area, room.clan = read_string(area)
             elif letter == 'D':  # exit
-                exit = EXIT_DATA()
+                nexit = EXIT_DATA()
                 area, door = read_int(area)
-                area, exit.description = read_string(area)
-                area, exit.keyword = read_string(area)
+                area, nexit.description = read_string(area)
+                area, nexit.keyword = read_string(area)
                 area, locks = read_int(area)
-                area, exit.key = read_int(area)
-                area, exit.to_room = read_int(area)
-                room.exit[door] = exit
+                area, nexit.key = read_int(area)
+                area, nexit.to_room = read_int(area)
+                room.exit[door] = nexit
             elif letter == 'E':
                 ed = EXTRA_DESCR_DATA()
                 area, ed.keyword = read_string(area)
@@ -370,7 +370,7 @@ def load_rooms(area, pArea):
             elif letter == 'O':
                 area, room.owner = read_string(area)
             else:
-                print("RoomIndexData(%d) has flag other than SHMCDEO: %s" % ( room.vnum, letter ))
+                print("RoomIndexData(%d) has flag other than SHMCDEO: %s" % (room.vnum, letter))
                 sys.exit(1)
         area, w = read_word(area, False)
         w = w[1:]  # strip the pound
@@ -582,7 +582,6 @@ def reset_area(pArea):
             # * Check for pet shop.
             # */
 
-
             if pRoomIndex.vnum - 1 in room_index_hash:
                 pRoomIndexPrev = room_index_hash[pRoomIndex.vnum - 1]
                 if IS_SET(pRoomIndexPrev.room_flags, ROOM_PET_SHOP):
@@ -704,9 +703,10 @@ def reset_area(pArea):
                     obj = create_object(pObjIndex, min(number_fuzzy(level), LEVEL_HERO - 1))
                 # error message if it is too high */
                 if obj.level > mob.level + 3 \
-                        or (obj.item_type == ITEM_WEAPON \
-                                    and pReset.command == 'E' \
-                                    and obj.level < mob.level - 5 and obj.level < 45):
+                        or (obj.item_type == ITEM_WEAPON
+                            and pReset.command == 'E'
+                            and obj.level < mob.level - 5
+                            and obj.level < 45):
                     print("Err: obj %s (%d) -- %d, mob %s (%d) -- %d\n" % (
                         obj.short_descr, obj.pIndexData.vnum, obj.level,
                         mob.short_descr, mob.pIndexData.vnum, mob.level))
