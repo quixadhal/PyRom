@@ -47,7 +47,6 @@ from skills import do_groups, do_skills, do_spells, do_gain
 from settings import LOGALL
 
 
-
 class cmd_type:
     def __init__(self, name, do_fun, position, level, log, show, default_arg=None):
         self.name=name
@@ -81,12 +80,12 @@ cmd_table['who'] = None
 cmd_table['autolist'] = None
 # * Common other commands.
 # * Placed here so one and two letter abbreviations work.
-cmd_table['auction'] = cmd_type('auction', do_auction, POS_SLEEPING, 0, LOG_NORMAL, 1)
-cmd_table['channels'] = cmd_type('channels', do_channels, POS_DEAD, 0, LOG_NORMAL, 1)
+
+
 cmd_table['get'] = cmd_type('get', do_get, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['guild'] = cmd_type('guild', do_guild, POS_DEAD, L4, LOG_ALWAYS, 1)
-cmd_table['clan'] = cmd_type('clan', do_clantalk, POS_SLEEPING, 0, LOG_NORMAL, 1)
-cmd_table['music'] = cmd_type('music', do_music, POS_SLEEPING, 0, LOG_NORMAL, 1) 
+
+
 cmd_table['order'] = cmd_type('order', do_order, POS_RESTING, 0, LOG_NORMAL, 1)
 
 cmd_table['rest'] = cmd_type('rest', do_rest, POS_SLEEPING, 0, LOG_NORMAL, 1)
@@ -114,34 +113,32 @@ cmd_table['typo'] = cmd_type('typo', do_typo, POS_DEAD, 0, LOG_NORMAL, 1)
 cmd_table['alia'] = cmd_type('alia', do_alia, POS_DEAD, 0, LOG_NORMAL, 0)
 cmd_table['alias'] = cmd_type('alias', do_alias, POS_DEAD, 0, LOG_NORMAL, 1)
 #cmd_table['channels'] = cmd_type('channels', do_channels, POS_DEAD, 0, LOG_NORMAL, 1)
-cmd_table['delet'] = cmd_type('delet', do_delet, POS_DEAD, 0, LOG_ALWAYS, 0)
-cmd_table['delete'] = cmd_type('delete', do_delete, POS_STANDING, 0, LOG_ALWAYS, 1)
+
+
 cmd_table['outfit'] = cmd_type('outfit', do_outfit, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['unalias'] = cmd_type('unalias', do_unalias, POS_DEAD, 0, LOG_NORMAL, 1)
 # Communication commands.
-cmd_table['afk'] = cmd_type('afk', do_afk, POS_SLEEPING, 0, LOG_NORMAL, 1)
-cmd_table['answer'] = cmd_type('answer', do_answer, POS_SLEEPING, 0, LOG_NORMAL, 1)
+
+
 # cmd_table['auction'] = cmd_type('auction', do_auction, POS_SLEEPING, 0, LOG_NORMAL, 1) */
-cmd_table['deaf'] = cmd_type('deaf', do_deaf, POS_DEAD, 0, LOG_NORMAL, 1)
+
 cmd_table['emote'] = cmd_type('emote', do_emote, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['pmote'] = cmd_type('pmote', do_pmote, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['.'] = cmd_type('.',  do_gossip,  POS_SLEEPING, 0,  LOG_NORMAL, 0 )
-cmd_table['gossip'] = cmd_type('gossip', do_gossip, POS_SLEEPING, 0, LOG_NORMAL, 1)
+
 cmd_table[','] = cmd_type(',', do_emote, POS_RESTING, 0, LOG_NORMAL, 0)
-cmd_table['grats'] = cmd_type('grats', do_grats, POS_SLEEPING, 0, LOG_NORMAL, 1)
+
 cmd_table['gtell'] = cmd_type('gtell', do_gtell, POS_DEAD, 0, LOG_NORMAL, 1)
 cmd_table[';'] = cmd_type(';',  do_gtell,   POS_DEAD,    0,  LOG_NORMAL, 0)
 #cmd_table['music'] = cmd_type('music', do_music, POS_SLEEPING, 0, LOG_NORMAL, 1) */
 #cmd_table['note'] = cmd_type('note', do_note, POS_SLEEPING, 0, LOG_NORMAL, 1)
 cmd_table['pose'] = cmd_type('pose', do_pose, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['question'] = cmd_type('question', do_question, POS_SLEEPING, 0, LOG_NORMAL, 1)
-cmd_table['quote'] = cmd_type('quote', do_quote, POS_SLEEPING, 0, LOG_NORMAL, 1)
-cmd_table['quiet'] = cmd_type('quiet', do_quiet, POS_SLEEPING, 0, LOG_NORMAL, 1)
+
+
+
 cmd_table['reply'] = cmd_type('reply', do_reply, POS_SLEEPING, 0, LOG_NORMAL, 1)
-cmd_table['replay'] = cmd_type('replay', do_replay, POS_SLEEPING, 0, LOG_NORMAL, 1)
-cmd_table['say'] = cmd_type('say', do_say, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table["'"] = cmd_type("'",      do_say,     POS_RESTING,     0,  LOG_NORMAL, 0)
-cmd_table['shout'] = cmd_type('shout', do_shout, POS_RESTING, 3, LOG_NORMAL, 1)
+
+
+
 #cmd_table['unread'] = cmd_type('unread', do_unread, POS_SLEEPING, 0, LOG_NORMAL, 1)
 cmd_table['yell'] = cmd_type('yell', do_yell, POS_RESTING, 0, LOG_NORMAL, 1)
 # * Object manipulation commands.
@@ -277,9 +274,7 @@ cmd_table['ofind'] = cmd_type('ofind', do_ofind, POS_DEAD, L4, LOG_NORMAL, 1)
 cmd_table['zecho'] = cmd_type('zecho', do_zecho, POS_DEAD, L4, LOG_ALWAYS, 1)
 cmd_table['clone'] = cmd_type('clone', do_clone, POS_DEAD, L5, LOG_ALWAYS, 1)
 cmd_table['wiznet'] = cmd_type('wiznet', do_wiznet,  POS_DEAD,   IM,  LOG_NORMAL, 1)
-cmd_table['immtalk'] = cmd_type('immtalk', do_immtalk, POS_DEAD,   IM,  LOG_NORMAL, 1)
 
-cmd_table[':'] = cmd_type(':', do_immtalk, POS_DEAD,   IM,  LOG_NORMAL, 0)
 cmd_table['smote'] = cmd_type('smote', do_smote,   POS_DEAD,   IM,  LOG_NORMAL, 1)
 cmd_table['prefi'] = cmd_type('prefi', do_prefi,   POS_DEAD,   IM,  LOG_NORMAL, 0)
 cmd_table['prefix'] = cmd_type('prefix', do_prefix,  POS_DEAD,   IM,  LOG_NORMAL, 1)
