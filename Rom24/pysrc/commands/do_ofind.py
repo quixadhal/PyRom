@@ -24,4 +24,4 @@ def do_ofind(ch, argument):
         ch.send("No objects by that name.\n")
     return
 
-interp.cmd_table['ofind'] = interp.cmd_type('ofind', do_ofind, merc.POS_DEAD, merc.L4, merc.LOG_NORMAL, 1)
+interp.cmd_type('ofind', do_ofind, merc.POS_DEAD, merc.L4, merc.LOG_NORMAL, 1)

@@ -19,4 +19,4 @@ def do_protect(ch, argument):
         victim.send("You are now immune to snooping.\n")
         victim.comm = merc.SET_BIT(victim.comm, merc.COMM_SNOOP_PROOF)
 
-interp.cmd_table['protect'] = interp.cmd_type('protect', do_protect, merc.POS_DEAD, merc.L1, merc.LOG_ALWAYS, 1)
+interp.cmd_type('protect', do_protect, merc.POS_DEAD, merc.L1, merc.LOG_ALWAYS, 1)

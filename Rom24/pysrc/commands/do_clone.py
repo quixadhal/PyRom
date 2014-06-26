@@ -72,4 +72,4 @@ def do_clone(ch, argument):
         merc.wiznet("$N clones %s." % clone.short_descr,ch,None, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.get_trust())
         return
 
-interp.cmd_table['clone'] = interp.cmd_type('clone', do_clone, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1)
+interp.cmd_type('clone', do_clone, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1)

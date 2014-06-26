@@ -59,4 +59,4 @@ def do_advance(ch, argument):
     save.save_char_obj(victim)
     return
 
-interp.cmd_table['advance'] = interp.cmd_type('advance', do_advance, merc.POS_DEAD, merc.ML, merc.LOG_ALWAYS, 1)
+interp.cmd_type('advance', do_advance, merc.POS_DEAD, merc.ML, merc.LOG_ALWAYS, 1)

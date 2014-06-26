@@ -36,4 +36,4 @@ def do_goto(ch, argument):
     ch.do_look("auto" )
     return
 
-interp.cmd_table['goto'] = interp.cmd_type('goto', do_goto, merc.POS_DEAD, merc.L8, merc.LOG_NORMAL, 1)
+interp.cmd_type('goto', do_goto, merc.POS_DEAD, merc.L8, merc.LOG_NORMAL, 1)

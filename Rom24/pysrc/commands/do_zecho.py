@@ -14,4 +14,4 @@ def do_zecho(ch, argument):
                 d.send("zone> ")
             d.send(argument +"\n")
 
-interp.cmd_table['zecho'] = interp.cmd_type('zecho', do_zecho, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)
+interp.cmd_type('zecho', do_zecho, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)

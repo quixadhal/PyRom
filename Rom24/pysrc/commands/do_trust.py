@@ -23,4 +23,4 @@ def do_trust(ch, argument):
     victim.trust = level
     return
 
-interp.cmd_table['trust'] = interp.cmd_type('trust', do_trust, merc.POS_DEAD, merc.ML, merc.LOG_ALWAYS, 1)
+interp.cmd_type('trust', do_trust, merc.POS_DEAD, merc.ML, merc.LOG_ALWAYS, 1)

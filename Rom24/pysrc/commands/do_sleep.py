@@ -1,4 +1,4 @@
-from interp import cmd_table, cmd_type
+from interp import cmd_type
 from merc import POS_SLEEPING, POS_RESTING, POS_SITTING, POS_STANDING, act, TO_ROOM, ITEM_FURNITURE, IS_SET, SLEEP_ON, \
     SLEEP_IN, SLEEP_AT, TO_CHAR, POS_DEAD, POS_FIGHTING, LOG_NORMAL
 
@@ -50,4 +50,4 @@ def do_sleep(ch, argument):
         return
 
 
-cmd_table['sleep'] = cmd_type('sleep', do_sleep, POS_SLEEPING, 0, LOG_NORMAL, 1)
+cmd_type('sleep', do_sleep, POS_SLEEPING, 0, LOG_NORMAL, 1)

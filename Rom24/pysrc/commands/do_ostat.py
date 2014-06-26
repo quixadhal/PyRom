@@ -111,4 +111,4 @@ def do_ostat(self, argument):
             else:
                 ch.send("Unknown bit %d: %d\n" % paf.where,paf.bitvector)
 
-interp.cmd_table['ostat'] = interp.cmd_type('ostat', do_ostat, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+interp.cmd_type('ostat', do_ostat, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)

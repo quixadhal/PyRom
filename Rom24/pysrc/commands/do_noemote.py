@@ -26,4 +26,4 @@ def do_noemote(ch, argument):
         merc.wiznet("$N revokes %s's emotes." % victim.name,ch, None, merc.WIZ_PENALTIES, merc.WIZ_SECURE, 0)
     return
 
-interp.cmd_table['noemote'] = interp.cmd_type('noemote', do_noemote, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1)
+interp.cmd_type('noemote', do_noemote, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1)

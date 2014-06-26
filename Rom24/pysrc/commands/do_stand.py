@@ -1,4 +1,4 @@
-from interp import cmd_table, cmd_type
+from interp import cmd_type
 from merc import POS_FIGHTING, ITEM_FURNITURE, IS_SET, STAND_AT, STAND_ON, STAND_IN, TO_CHAR, POS_DEAD, POS_SLEEPING, \
     IS_AFFECTED, AFF_SLEEP, act, TO_ROOM, POS_STANDING, POS_RESTING, POS_SITTING, LOG_NORMAL
 
@@ -67,4 +67,4 @@ def do_stand(ch, argument):
         return
 
 
-cmd_table['stand'] = cmd_type('stand', do_stand, POS_SLEEPING, 0, LOG_NORMAL, 1)
+cmd_type('stand', do_stand, POS_SLEEPING, 0, LOG_NORMAL, 1)

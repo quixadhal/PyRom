@@ -85,4 +85,4 @@ def do_string(ch, argument):
     # echo bad use message */
     ch.do_string("")
 
-interp.cmd_table['string'] = interp.cmd_type('string', do_string, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1)
+interp.cmd_type('string', do_string, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1)

@@ -59,4 +59,4 @@ def do_restore(ch, argument):
     ch.send("Ok.\n")
     return
 
-interp.cmd_table['restore'] = interp.cmd_type('restore', do_restore, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)
+interp.cmd_type('restore', do_restore, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)

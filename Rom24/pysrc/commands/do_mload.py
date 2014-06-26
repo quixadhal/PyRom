@@ -20,4 +20,4 @@ def do_mload(ch, argument):
     ch.send("Ok.\n")
     return
 
-interp.cmd_table['mload'] = interp.cmd_type('mload', do_mload, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)
+interp.cmd_type('mload', do_mload, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)

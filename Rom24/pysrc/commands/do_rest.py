@@ -1,4 +1,4 @@
-from interp import cmd_table, cmd_type
+from interp import cmd_type
 from merc import POS_FIGHTING, ITEM_FURNITURE, IS_SET, REST_ON, REST_IN, REST_AT, act, TO_CHAR, POS_DEAD, POS_SLEEPING, \
     IS_AFFECTED, AFF_SLEEP, TO_ROOM, POS_RESTING, POS_STANDING, POS_SITTING, LOG_NORMAL
 
@@ -82,4 +82,4 @@ def do_rest(self, argument):
         return
 
 
-cmd_table['rest'] = cmd_type('rest', do_rest, POS_SLEEPING, 0, LOG_NORMAL, 1)
+cmd_type('rest', do_rest, POS_SLEEPING, 0, LOG_NORMAL, 1)

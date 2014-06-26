@@ -1,4 +1,4 @@
-from interp import cmd_table, cmd_type
+from interp import cmd_type
 from merc import POS_FIGHTING, ITEM_FURNITURE, IS_SET, SIT_ON, SIT_IN, SIT_AT, act, TO_CHAR, POS_DEAD, POS_SLEEPING, \
     IS_AFFECTED, AFF_SLEEP, TO_ROOM, POS_SITTING, POS_RESTING, POS_STANDING, LOG_NORMAL
 
@@ -78,4 +78,4 @@ def do_sit(ch, argument):
         ch.position = POS_SITTING
 
 
-cmd_table['sit'] = cmd_type('sit', do_sit, POS_SLEEPING, 0, LOG_NORMAL, 1)
+cmd_type('sit', do_sit, POS_SLEEPING, 0, LOG_NORMAL, 1)

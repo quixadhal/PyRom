@@ -14,4 +14,4 @@ def do_bamfin(ch, argument):
         ch.send("Your poofin is now %s\n" % ch.pcdata.bamfin)
     return
 
-interp.cmd_table['poofin'] = interp.cmd_type('poofin', do_bamfin, merc.POS_DEAD, merc.L8, merc.LOG_NORMAL, 1)
+interp.cmd_type('poofin', do_bamfin, merc.POS_DEAD, merc.L8, merc.LOG_NORMAL, 1)

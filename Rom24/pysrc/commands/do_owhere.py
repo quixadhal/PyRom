@@ -33,4 +33,4 @@ def do_owhere(ch, argument):
     if not found:
         ch.send("Nothing like that in heaven or earth.\n")
 
-interp.cmd_table['owhere'] = interp.cmd_type('owhere', do_owhere, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+interp.cmd_type('owhere', do_owhere, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)

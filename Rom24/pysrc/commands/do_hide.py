@@ -1,5 +1,5 @@
 import random
-from interp import cmd_table, cmd_type
+from interp import cmd_type
 from merc import IS_AFFECTED, AFF_HIDE, REMOVE_BIT, SET_BIT, POS_RESTING, LOG_NORMAL
 from skills import check_improve
 
@@ -18,4 +18,4 @@ def do_hide(ch, argument):
     return
 
 
-cmd_table['hide'] = cmd_type('hide', do_hide, POS_RESTING, 0, LOG_NORMAL, 1)
+cmd_type('hide', do_hide, POS_RESTING, 0, LOG_NORMAL, 1)

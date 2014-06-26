@@ -10,4 +10,4 @@ def do_omni(ch, argument):
         ch.send("Omnimode enabled.\n")
         ch.act = merc.SET_BIT(ch.act, merc.PLR_OMNI)
 
-interp.cmd_table['omni'] = interp.cmd_type('omni', do_omni, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+interp.cmd_type('omni', do_omni, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)

@@ -24,4 +24,4 @@ def do_slay(ch, argument):
     fight.raw_kill(victim)
     return
 
-interp.cmd_table['slay'] = interp.cmd_type('slay', do_slay, merc.POS_DEAD, merc.L3, merc.LOG_ALWAYS, 1)
+interp.cmd_type('slay', do_slay, merc.POS_DEAD, merc.L3, merc.LOG_ALWAYS, 1)

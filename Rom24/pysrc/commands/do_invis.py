@@ -30,5 +30,5 @@ def do_invis(ch, argument):
               return
 
 
-interp.cmd_table['invis'] = interp.cmd_type('invis', do_invis, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 0)
-interp.cmd_table['wizinvis'] = interp.cmd_type('wizinvis', do_invis, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+interp.cmd_type('invis', do_invis, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 0)
+interp.cmd_type('wizinvis', do_invis, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)

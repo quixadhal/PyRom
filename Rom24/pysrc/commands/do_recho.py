@@ -15,4 +15,4 @@ def do_recho(ch, argument):
 
     return
 
-interp.cmd_table['echo'] = interp.cmd_type('echo', do_recho, merc.POS_DEAD, merc.L6, merc.LOG_ALWAYS, 1)
+interp.cmd_type('echo', do_recho, merc.POS_DEAD, merc.L6, merc.LOG_ALWAYS, 1)

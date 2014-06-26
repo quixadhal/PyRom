@@ -36,4 +36,4 @@ def do_stat(ch, argument):
         return
     ch.send("Nothing by that name found anywhere.\n")
 
-interp.cmd_table['stat'] = interp.cmd_type('stat', do_stat, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+interp.cmd_type('stat', do_stat, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)

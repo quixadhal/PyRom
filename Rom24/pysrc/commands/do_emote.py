@@ -14,4 +14,4 @@ def do_emote(ch, argument):
     return
 
 interp.cmd_type('emote', do_emote, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
-interp.cmd_table[','] = interp.cmd_type(',', do_emote, merc.POS_RESTING, 0, merc.LOG_NORMAL, 0)
+interp.cmd_type(',', do_emote, merc.POS_RESTING, 0, merc.LOG_NORMAL, 0)

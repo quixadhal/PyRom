@@ -18,4 +18,4 @@ def do_return(ch, argument):
     ch.desc = None
     return
 
-interp.cmd_table['return'] = interp.cmd_type('return', do_return, merc.POS_DEAD, merc.L6, merc.LOG_NORMAL, 1)
+interp.cmd_type('return', do_return, merc.POS_DEAD, merc.L6, merc.LOG_NORMAL, 1)

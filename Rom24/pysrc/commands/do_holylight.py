@@ -13,4 +13,4 @@ def do_holylight(ch, argument):
         ch.send("Holy light mode on.\n")
     return
 
-interp.cmd_table['holylight'] = interp.cmd_type('holylight', do_holylight, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+interp.cmd_type('holylight', do_holylight, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)

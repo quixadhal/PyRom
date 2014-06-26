@@ -1,4 +1,4 @@
-from interp import cmd_table, cmd_type
+from interp import cmd_type
 from merc import REMOVE_BIT, AFF_HIDE, AFF_INVISIBLE, AFF_SNEAK, POS_SLEEPING, LOG_NORMAL
 
 
@@ -13,4 +13,4 @@ def do_visible(ch, argument):
     ch.send("Ok.\n")
 
 
-cmd_table['visible'] = cmd_type('visible', do_visible, POS_SLEEPING, 0, LOG_NORMAL, 1)
+cmd_type('visible', do_visible, POS_SLEEPING, 0, LOG_NORMAL, 1)

@@ -31,4 +31,4 @@ def do_log(ch, argument):
         ch.send("LOG set.\n")
     return
 
-interp.cmd_table['log'] = interp.cmd_type('log', do_log, merc.POS_DEAD, merc.L1, merc.LOG_ALWAYS, 1)
+interp.cmd_type('log', do_log, merc.POS_DEAD, merc.L1, merc.LOG_ALWAYS, 1)

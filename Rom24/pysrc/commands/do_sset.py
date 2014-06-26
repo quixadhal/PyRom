@@ -43,4 +43,4 @@ def do_sset(ch, argument):
         victim.pcdata.learned[sn.name] = value
     ch.send("Skill set.\n")
 
-interp.cmd_table['sset'] = interp.cmd_type('sset', do_sset, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1)
+interp.cmd_type('sset', do_sset, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1)

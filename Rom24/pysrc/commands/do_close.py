@@ -1,5 +1,5 @@
 from handler_room import find_door
-from interp import cmd_table, cmd_type
+from interp import cmd_type
 from merc import read_word, ITEM_PORTAL, IS_SET, EX_ISDOOR, EX_NOCLOSE, EX_CLOSED, SET_BIT, act, TO_CHAR, TO_ROOM, \
     ITEM_CONTAINER, CONT_CLOSED, CONT_CLOSEABLE, rev_dir, POS_RESTING, LOG_NORMAL
 
@@ -58,4 +58,4 @@ def do_close(ch, argument):
                 act("The $d closes.", rch, None, pexit_rev.keyword, TO_CHAR)
 
 
-cmd_table['close'] = cmd_type('close', do_close, POS_RESTING, 0, LOG_NORMAL, 1)
+cmd_type('close', do_close, POS_RESTING, 0, LOG_NORMAL, 1)

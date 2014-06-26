@@ -1,4 +1,4 @@
-from interp import cmd_table, cmd_type
+from interp import cmd_type
 from merc import read_word, IS_AWAKE, act, TO_CHAR, IS_AFFECTED, AFF_SLEEP, TO_VICT, POS_SLEEPING, LOG_NORMAL
 
 
@@ -26,4 +26,4 @@ def do_wake(ch, argument):
     return
 
 
-cmd_table['wake'] = cmd_type('wake', do_wake, POS_SLEEPING, 0, LOG_NORMAL, 1)
+cmd_type('wake', do_wake, POS_SLEEPING, 0, LOG_NORMAL, 1)

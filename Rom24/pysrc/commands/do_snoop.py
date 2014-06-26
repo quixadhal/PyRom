@@ -44,4 +44,4 @@ def do_snoop(ch, argument):
     ch.send("Ok.\n")
     return
 
-interp.cmd_table['snoop'] = interp.cmd_type('snoop', do_snoop, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1)
+interp.cmd_type('snoop', do_snoop, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1)

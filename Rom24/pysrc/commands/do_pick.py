@@ -1,7 +1,7 @@
 import random
 import const
 from handler_room import find_door
-from interp import cmd_table, cmd_type
+from interp import cmd_type
 from merc import read_word, WAIT_STATE, IS_NPC, IS_AWAKE, act, TO_CHAR, ITEM_PORTAL, IS_SET, EX_ISDOOR, EX_CLOSED, \
     EX_PICKPROOF, REMOVE_BIT, EX_LOCKED, TO_ROOM, ITEM_CONTAINER, CONT_CLOSED, CONT_LOCKED, CONT_PICKPROOF, IS_IMMORTAL, \
     rev_dir, POS_RESTING, LOG_NORMAL
@@ -100,4 +100,4 @@ def do_pick(self, argument):
                 REMOVE_BIT(to_room.exit[rev_dir[door]].exit_info, EX_LOCKED)
 
 
-cmd_table['pick'] = cmd_type('pick', do_pick, POS_RESTING, 0, LOG_NORMAL, 1)
+cmd_type('pick', do_pick, POS_RESTING, 0, LOG_NORMAL, 1)

@@ -15,4 +15,4 @@ def do_newlock(ch, argument):
         settings.NEWLOCK = False
     return
 
-interp.cmd_table['newlock'] = interp.cmd_type('newlock', do_newlock, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)
+interp.cmd_type('newlock', do_newlock, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)

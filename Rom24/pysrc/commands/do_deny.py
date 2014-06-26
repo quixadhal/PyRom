@@ -27,4 +27,4 @@ def do_deny(ch, argument):
     victim.do_quit("" )
     return
 
-interp.cmd_table['deny'] = interp.cmd_type("deny", do_deny, merc.POS_DEAD, merc.L1, merc.LOG_ALWAYS, 1)
+interp.cmd_type("deny", do_deny, merc.POS_DEAD, merc.L1, merc.LOG_ALWAYS, 1)

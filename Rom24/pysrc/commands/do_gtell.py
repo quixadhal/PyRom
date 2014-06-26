@@ -15,4 +15,4 @@ def do_gtell(ch, argument):
     return
 
 interp.cmd_type('gtell', do_gtell, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
-interp.cmd_table[';'] = interp.cmd_type(';', do_gtell, merc.POS_DEAD, 0,  merc.LOG_NORMAL, 0)
+interp.cmd_type(';', do_gtell, merc.POS_DEAD, 0,  merc.LOG_NORMAL, 0)

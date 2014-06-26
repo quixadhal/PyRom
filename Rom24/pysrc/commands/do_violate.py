@@ -35,4 +35,4 @@ def do_violate(ch, argument):
     ch.do_look("auto" )
     return
 
-interp.cmd_table['violate'] = interp.cmd_type('violate', do_violate, merc.POS_DEAD, merc.ML, merc.LOG_ALWAYS, 1)
+interp.cmd_type('violate', do_violate, merc.POS_DEAD, merc.ML, merc.LOG_ALWAYS, 1)

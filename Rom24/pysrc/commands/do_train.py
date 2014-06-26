@@ -1,4 +1,4 @@
-from interp import cmd_table, cmd_type
+from interp import cmd_type
 from merc import IS_NPC, IS_SET, ACT_TRAIN, STAT_STR, STAT_INT, STAT_WIS, STAT_DEX, STAT_CON, act, TO_CHAR, TO_ROOM, \
     POS_RESTING, LOG_NORMAL
 
@@ -91,4 +91,4 @@ def do_train(ch, argument):
     return
 
 
-cmd_table['train'] = cmd_type('train', do_train, POS_RESTING, 0, LOG_NORMAL, 1)
+cmd_type('train', do_train, POS_RESTING, 0, LOG_NORMAL, 1)

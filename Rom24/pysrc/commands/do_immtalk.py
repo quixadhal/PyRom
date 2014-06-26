@@ -20,5 +20,5 @@ def do_immtalk(ch, argument):
         and not merc.IS_SET(d.character.comm, merc.COMM_NOWIZ):
             merc.act("$n: $t", ch, argument, d.character, merc.TO_VICT, merc.POS_DEAD)
 
-interp.cmd_table['immtalk'] = interp.cmd_type('immtalk', do_immtalk, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
-interp.cmd_table[':'] = interp.cmd_type(':', do_immtalk, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 0)
+interp.cmd_type('immtalk', do_immtalk, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+interp.cmd_type(':', do_immtalk, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 0)

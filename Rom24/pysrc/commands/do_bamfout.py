@@ -14,4 +14,4 @@ def do_bamfout(ch, argument):
         ch.send("Your poofout is now %s\n" % ch.pcdata.bamfout)
     return
 
-interp.cmd_table['poofout'] = interp.cmd_type('poofout', do_bamfout, merc.POS_DEAD, merc.L8, merc.LOG_NORMAL, 1)
+interp.cmd_type('poofout', do_bamfout, merc.POS_DEAD, merc.L8, merc.LOG_NORMAL, 1)

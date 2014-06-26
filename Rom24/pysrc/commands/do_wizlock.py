@@ -14,4 +14,4 @@ def do_wizlock(ch, argument):
         settings.WIZLOCK = False
     return
 
-interp.cmd_table['wizlock'] = interp.cmd_type('wizlock', do_wizlock, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1)
+interp.cmd_type('wizlock', do_wizlock, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1)

@@ -51,4 +51,4 @@ def do_wiznet(ch, argument):
         ch.wiznet = merc.SET_BIT(ch.wiznet, flag.flag)
         return
 
-interp.cmd_table['wiznet'] = interp.cmd_type('wiznet', do_wiznet, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+interp.cmd_type('wiznet', do_wiznet, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)

@@ -45,4 +45,4 @@ def do_rstat(ch, argument):
             pexit.description if pexit.description else "(none).\n" ) )
     return
 
-interp.cmd_table['rstat'] = interp.cmd_type('rstat', do_rstat, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+interp.cmd_type('rstat', do_rstat, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)

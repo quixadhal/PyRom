@@ -32,4 +32,4 @@ def do_freeze(ch, argument):
     save.save_char_obj( victim )
     return
 
-interp.cmd_table['freeze'] = interp.cmd_type('freeze', do_freeze, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)
+interp.cmd_type('freeze', do_freeze, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)

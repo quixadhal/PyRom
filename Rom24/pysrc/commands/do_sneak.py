@@ -1,5 +1,5 @@
 import random
-from interp import cmd_table, cmd_type
+from interp import cmd_type
 from merc import IS_AFFECTED, AFF_SNEAK, AFFECT_DATA, TO_AFFECTS, APPLY_NONE, POS_STANDING, LOG_NORMAL
 from skills import check_improve
 
@@ -27,4 +27,4 @@ def do_sneak(ch, argument):
     return
 
 
-cmd_table['sneak'] = cmd_type('sneak', do_sneak, POS_STANDING, 0, LOG_NORMAL, 1)
+cmd_type('sneak', do_sneak, POS_STANDING, 0, LOG_NORMAL, 1)
