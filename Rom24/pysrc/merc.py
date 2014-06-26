@@ -36,7 +36,8 @@ import time
 import random
 import collections
 
-#Global MAXes       
+
+#Global MAXes
 MAX_TRADE = 5
 MAX_GUILDROOMS = 2
 MAX_STATS = 5
@@ -1834,6 +1835,138 @@ def get_extra_descr(name, edlist):
             return ed.description
     return None
 
+def find_location( ch, arg ):
+    if arg.isdigit():
+        vnum = int(arg)
+        if vnum not in room_index_hash:
+            return None
+        else:
+            return room_index_hash[vnum]
+    victim = ch.get_char_world(arg)
+    if victim:
+        return victim.in_room
+    obj = ch.get_obj_world(arg)
+    if obj:
+        return obj.in_room
+    return None
+
+#Magic functions
+def say_spell(ch, spell):
+    syl_dict = {"ar":"abra", "au":"kada", "bless":"fido", "blind":"nose", "bur":"mosa", "cu":"judi", "de":"oculo", "en":"unso", "light":"dies",
+            "lo":"hi", "mor":"zak", "move":"sido", "ness":"lacri", "ning":"illa", "per":"duda",  "ra":"gru", "fresh":"ima", "re":"candus",
+            "son":"sabru", "tect":"infra", "tri":"cula", "ven":"nofo", "a":"a", "b":"b", "c":"q", "d":"e", "e":"z", "f":"y", "g":"o",
+            "h":"p", "i":"u", "j":"y", "k":"t", "l":"r", "m":"w", "n":"i", "o":"a", "p":"s", "q":"d", "r":"f", "s":"g", "t":"h", "u":"j",
+            "v":"z", "w":"x", "x":"n", "y":"l", "z": "k" }
+    incantation = mass_replace(spell.name, syl_dict)
+
+    buf = "$n utters the words, '%s'." % incantation
+    buf2 = "$n utters the words, '%s'." % spell.name
+
+    for rch in ch.in_room.people:
+        send = buf2 if ch.guild==rch.guild else buf
+        act(send, ch, None, rch, TO_VICT)
+
+
+def saves_spell(level, victim, dam_type):
+    save = 50 + ( victim.level - level) * 5 - victim.saving_throw * 2
+    if IS_AFFECTED(victim, AFF_BERSERK):
+        save += victim.level//2
+
+    immunity = victim.check_immune(dam_type)
+    if immunity == IS_IMMUNE:
+        return True
+    elif immunity == IS_RESISTANT:
+        save += 2
+    elif immunity == IS_VULNERABLE:
+        save -= 2
+
+    if not IS_NPC(victim) and victim.guild.fMana:
+        save = 9 * save // 10
+    save = max( 5, min(save, 95 ) )
+
+    return random.randint(1,99) < save
+
+def saves_dispel(dis_level, spell_level, duration):
+    if duration == -1:
+      spell_level += 5
+      # very hard to dispel permanent effects */
+
+    save = 50 + (spell_level - dis_level) * 5
+    save = max( 5, min(save, 95 ) )
+    return random.randint(1,99) < save
+
+def check_dispel(dis_level, victim, skill):
+    from const import skill_table
+    if is_affected(victim, skill):
+        for af in victim.affected[:]:
+            if af.type == skill:
+                if not saves_dispel(dis_level,af.level,af.duration):
+                    victim.affect_strip(sn)
+                    if skill.msg_off:
+                        victim.send(skill_table[sn].msg_off + "\n")
+                    return True
+                else:
+                    af.level -= 1
+    return False
+
+target_name = ''
+fLogAll = False
+
+# for finding mana costs -- temporary version */
+def mana_cost (ch, min_mana, level):
+    if ch.level + 2 == level:
+        return 1000
+    return max(min_mana, (100 // (2 + ch.level - level)))
+
+def find_spell(ch, name):
+    #* finds a spell the character can cast if possible */
+    from const import skill_table
+    found = -1
+    if IS_NPC(ch):
+        return prefix_lookup(skill_table,name)
+    for key, sn in const.skill_table.items():
+        if sn.name.lower().startswith(name.lower()):
+            if found == -1:
+                found = sn
+        if ch.level >= sn.skill_level[ch.guild.name] and key in ch.pcdata.learned:
+            return sn
+    return found
+
+# trust levels for load and clone */
+def obj_check (ch, obj):
+    if IS_TRUSTED(ch,GOD) \
+    or (IS_TRUSTED(ch,IMMORTAL) and obj.level <= 20 and obj.cost <= 1000) \
+    or (IS_TRUSTED(ch,DEMI)     and obj.level <= 10 and obj.cost <= 500) \
+    or (IS_TRUSTED(ch,ANGEL)    and obj.level <=  5 and obj.cost <= 250) \
+    or (IS_TRUSTED(ch,AVATAR)   and obj.level ==  0 and obj.cost <= 100):
+        return True
+    else:
+        return False
+
+
+# for clone, to insure that cloning goes many levels deep */
+def recursive_clone(ch, obj, clone):
+    import db
+    for c_obj in obj.contains:
+        if obj_check(ch,c_obj):
+            t_obj = db.create_object(c_obj.pIndexData,0)
+            db.clone_object(c_obj,t_obj)
+            t_obj.to_obj(clone)
+            recursive_clone(ch,c_obj,t_obj)
+
+def get_random_room(ch):
+    room = None
+    while True:
+        room = random.choice(room_index_hash)
+        if ch.can_see_room(room) and not room.is_private() \
+        and not IS_SET(room.room_flags, ROOM_PRIVATE) \
+        and not IS_SET(room.room_flags, ROOM_SOLITARY) \
+        and not IS_SET(room.room_flags, ROOM_SAFE) \
+        and (IS_NPC(ch) or IS_SET(ch.act, ACT_AGGRESSIVE) \
+        or not IS_SET(room.room_flags, ROOM_LAW)):
+            break
+    return room
+
 def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
     if not format:
         return
@@ -1908,6 +2041,430 @@ def wiznet( string, ch, obj, flag, flag_skip, min_level):
             if IS_SET(d.character.wiznet,WIZ_PREFIX):
                 d.send("-. ",d.character)
             act(string,d.character,obj,ch,TO_CHAR,POS_DEAD)
+
+def get_obj(ch, obj, container):
+    # variables for AUTOSPLIT */
+    if not CAN_WEAR(obj, ITEM_TAKE):
+        ch.send("You can't take that.\n")
+        return
+    if ch.carry_number + obj.get_number() > ch.can_carry_n():
+        act( "$d: you can't carry that many items.", ch, None, obj.name, TO_CHAR )
+        return
+    if ( not obj.in_obj or obj.in_obj.carried_by != ch) \
+    and (get_carry_weight(ch) + obj.get_weight() > ch.can_carry_w()):
+        act( "$d: you can't carry that much weight.", ch, None, obj.name, TO_CHAR )
+        return
+    if not ch.can_loot(obj):
+        act("Corpse looting is not permitted.",ch,None,None,TO_CHAR )
+        return
+    if obj.in_room != None:
+        for gch in obj.in_room.people:
+            if gch.on == obj:
+                act("$N appears to be using $p.", ch,obj,gch,TO_CHAR)
+                return
+    if container:
+        if container.pIndexData.vnum == OBJ_VNUM_PIT and ch.get_trust() < obj.level:
+            ch.send("You are not powerful enough to use it.\n")
+            return
+    if container.pIndexData.vnum == OBJ_VNUM_PIT \
+    and not CAN_WEAR(container, ITEM_TAKE) \
+    and not IS_OBJ_STAT(obj,ITEM_HAD_TIMER):
+        obj.timer = 0
+        act( "You get $p from $P.", ch, obj, container, TO_CHAR )
+        act( "$n gets $p from $P.", ch, obj, container, TO_ROOM )
+        REMOVE_BIT(obj.extra_flags,ITEM_HAD_TIMER)
+        obj.from_obj()
+    else:
+        act( "You get $p.", ch, obj, container, TO_CHAR )
+        act( "$n gets $p.", ch, obj, container, TO_ROOM )
+        obj.from_room()
+    if obj.item_type == ITEM_MONEY:
+        ch.silver += obj.value[0]
+        ch.gold += obj.value[1]
+        if IS_SET(ch.act, PLR_AUTOSPLIT):
+            # AUTOSPLIT code */
+            members = len([gch for gch in ch.in_room.people if not IS_AFFECTED(gch,AFF_CHARM) and gch.is_same_group(ch)])
+            if members > 1 and (obj.value[0] > 1 or obj.value[1]):
+                ch.do_split("%d %d" % (obj.value[0],obj.value[1]))
+        obj.extract()
+    else:
+        obj.to_char(ch)
+    return
+
+#Cast spells at targets using a magical object.
+def obj_cast_spell(sn, level, ch, victim, obj):
+    import const
+    import fight
+    target = TARGET_NONE
+    vo = None
+    if not sn:
+        return
+    if sn not in const.skill_table or not const.skill_table[sn].spell_fun:
+        print("BUG: Obj_cast_spell: bad sn %d." % sn)
+        return
+    sn = const.skill_table[sn]
+    if sn.target == TAR_IGNORE:
+        vo = None
+    elif sn.target == TAR_CHAR_OFFENSIVE:
+        if not victim:
+            victim = ch.fighting
+        if not victim:
+            ch.send("You can't do that.\n")
+            return
+        if fight.is_safe(ch, victim) and ch != victim:
+            ch.send("Something isn't right...\n")
+            return
+        vo = victim
+        target = TARGET_CHAR
+    elif sn.target == TAR_CHAR_DEFENSIVE \
+    or sn.target == TAR_CHAR_SELF:
+        if not victim:
+            victim = ch
+            vo = victim
+            target = TARGET_CHAR
+    elif sn.target == TAR_OBJ_INV:
+        if not obj:
+            ch.send("You can't do that.\n")
+            return
+        vo = obj
+        target = TARGET_OBJ
+    elif sn.target == TAR_OBJ_CHAR_OFF:
+        if not victim and not obj:
+            if ch.fighting:
+                victim = ch.fighting
+            else:
+                ch.send("You can't do that.\n")
+                return
+        if victim:
+            if fight.is_safe_spell(ch, victim, False) and ch != victim:
+                ch.send("Somehting isn't right...\n")
+                return
+            vo = victim
+            target = TARGET_CHAR
+        else:
+            vo = obj
+            target = TARGET_OBJ
+    elif sn.target == TAR_OBJ_CHAR_DEF:
+        if not victim and not obj:
+            vo = ch
+            target = TARGET_CHAR
+        elif victim:
+            vo = victim
+            target = TARGET_CHAR
+        else:
+            vo = obj
+            target = TARGET_OBJ
+    else:
+        print("BUG: Obj_cast_spell: bad target for sn %s." % sn.name)
+        return
+    target_name = ""
+    sn.spell_fun(sn, level, ch, vo, target)
+    if (sn.target == TAR_CHAR_OFFENSIVE \
+    or (sn.target == TAR_OBJ_CHAR_OFF and target == TARGET_CHAR)) \
+    and victim != ch \
+    and victim.master != ch:
+        for vch in ch.in_room.people[:]:
+            if victim == vch and not victim.fighting:
+                fight.check_killer(victim, ch)
+                fight.multi_hit(victim, ch, TYPE_UNDEFINED)
+
+# * Remove an object.
+def remove_obj(ch, iWear, fReplace):
+    obj = ch.get_eq(iWear)
+    if not obj:
+        return True
+    if not fReplace:
+        return False
+    if IS_SET(obj.extra_flags, ITEM_NOREMOVE):
+        act("You can't remove $p.", ch, obj, None, TO_CHAR)
+        return False
+    ch.unequip(obj)
+    act("$n stops using $p.", ch, obj, None, TO_ROOM)
+    act("You stop using $p.", ch, obj, None, TO_CHAR)
+    return True
+
+#
+# * Wear one object.
+# * Optional replacement of existing objects.
+# * Big repetitive code, ick.
+def wear_obj( ch, obj, fReplace ):
+    if ch.level < obj.level:
+        ch.send("You must be level %d to use this object.\n" % obj.level)
+        act( "$n tries to use $p, but is too inexperienced.", ch, obj, None, TO_ROOM )
+        return
+    if obj.item_type == ITEM_LIGHT:
+        if not remove_obj( ch, WEAR_LIGHT, fReplace ):
+            return
+        act( "$n lights $p and holds it.", ch, obj, None, TO_ROOM )
+        act( "You light $p and hold it.",  ch, obj, None, TO_CHAR )
+        ch.equip(obj, WEAR_LIGHT)
+        return
+    if CAN_WEAR(obj, ITEM_WEAR_FINGER):
+        if ch.get_eq(WEAR_FINGER_L) and ch.get_eq(WEAR_FINGER_R) \
+        and not remove_obj(ch, WEAR_FINGER_L, fReplace) and not remove_obj(ch, WEAR_FINGER_R, fReplace):
+            return
+        if not ch.get_eq(WEAR_FINGER_L):
+            act( "$n wears $p on $s left finger.",    ch, obj, None, TO_ROOM )
+            act( "You wear $p on your left finger.",  ch, obj, None, TO_CHAR )
+            ch.equip(obj, WEAR_FINGER_L)
+            return
+        if not ch.get_eq(WEAR_FINGER_R):
+            act( "$n wears $p on $s right finger.",   ch, obj, None, TO_ROOM )
+            act( "You wear $p on your right finger.", ch, obj, None, TO_CHAR )
+            ch.equip(obj, WEAR_FINGER_R)
+            return
+        print ("BUG: Wear_obj: no free finger.")
+        ch.send("You already wear two rings.\n")
+        return
+    if CAN_WEAR(obj, ITEM_WEAR_NECK):
+        if ch.get_eq(WEAR_NECK_1) and ch.get_eq(WEAR_NECK_2) \
+        and not remove_obj(ch, WEAR_NECK_1, fReplace) and not remove_obj(ch, WEAR_NECK_2, fReplace):
+            return
+        if not ch.get_eq(WEAR_NECK_1):
+            act( "$n wears $p around $s neck.",   ch, obj, None, TO_ROOM )
+            act( "You wear $p around your neck.", ch, obj, None, TO_CHAR )
+            ch.equip(obj, WEAR_NECK_1)
+            return
+        if not ch.get_eq(WEAR_NECK_2):
+            act( "$n wears $p around $s neck.",   ch, obj, None, TO_ROOM )
+            act( "You wear $p around your neck.", ch, obj, None, TO_CHAR )
+            ch.equip(obj, WEAR_NECK_2)
+            return
+        print ("BUG: Wear_obj: no free neck.")
+        ch.send("You already wear two neck items.\n")
+        return
+    if CAN_WEAR(obj, ITEM_WEAR_BODY):
+        if not remove_obj( ch, WEAR_BODY, fReplace ):
+            return
+        act( "$n wears $p on $s torso.",   ch, obj, None, TO_ROOM )
+        act( "You wear $p on your torso.", ch, obj, None, TO_CHAR )
+        ch.equip(obj, WEAR_BODY)
+        return
+    if CAN_WEAR(obj, ITEM_WEAR_HEAD):
+        if not remove_obj(ch, WEAR_HEAD, fReplace):
+            return
+        act( "$n wears $p on $s head.",   ch, obj, None, TO_ROOM )
+        act( "You wear $p on your head.", ch, obj, None, TO_CHAR )
+        ch.equip(obj, WEAR_HEAD)
+        return
+    if CAN_WEAR( obj, ITEM_WEAR_LEGS):
+        if not remove_obj( ch, WEAR_LEGS, fReplace):
+            return
+        act( "$n wears $p on $s legs.",   ch, obj, None, TO_ROOM )
+        act( "You wear $p on your legs.", ch, obj, None, TO_CHAR )
+        ch.equip(obj, WEAR_LEGS)
+        return
+    if CAN_WEAR(obj, ITEM_WEAR_FEET):
+        if not remove_obj( ch, WEAR_FEET, fReplace ):
+            return
+        act( "$n wears $p on $s feet.",   ch, obj, None, TO_ROOM )
+        act( "You wear $p on your feet.", ch, obj, None, TO_CHAR )
+        ch.equip(obj, WEAR_FEET)
+        return
+    if CAN_WEAR(obj, ITEM_WEAR_HANDS):
+        if not remove_obj( ch, WEAR_HANDS, fReplace ):
+            return
+        act( "$n wears $p on $s hands.",   ch, obj, None, TO_ROOM )
+        act( "You wear $p on your hands.", ch, obj, None, TO_CHAR )
+        ch.equip(obj, WEAR_HANDS)
+        return
+    if CAN_WEAR( obj, ITEM_WEAR_ARMS ):
+        if not remove_obj( ch, WEAR_ARMS, fReplace ):
+            return
+        act( "$n wears $p on $s arms.",   ch, obj, None, TO_ROOM )
+        act( "You wear $p on your arms.", ch, obj, None, TO_CHAR )
+        ch.equip(obj, WEAR_ARMS)
+        return
+    if CAN_WEAR( obj, ITEM_WEAR_ABOUT ):
+        if not remove_obj( ch, WEAR_ABOUT, fReplace ):
+            return
+        act( "$n wears $p about $s torso.",   ch, obj, None, TO_ROOM )
+        act( "You wear $p about your torso.", ch, obj, None, TO_CHAR )
+        ch.equip(obj, WEAR_ABOUT)
+        return
+    if CAN_WEAR( obj, ITEM_WEAR_WAIST ):
+        if not remove_obj( ch, WEAR_WAIST, fReplace ):
+            return
+        act( "$n wears $p about $s waist.",   ch, obj, None, TO_ROOM )
+        act( "You wear $p about your waist.", ch, obj, None, TO_CHAR )
+        ch.equip(obj, WEAR_WAIST)
+        return
+    if CAN_WEAR( obj, ITEM_WEAR_WRIST ):
+        if ch.get_eq(WEAR_WRIST_L) and ch.get_eq(WEAR_WRIST_R) \
+        and not remove_obj(ch, WEAR_WRIST_L, fReplace) and not remove_obj( ch, WEAR_WRIST_R, fReplace ):
+            return
+        if not ch.get_eq(WEAR_WRIST_L):
+            act( "$n wears $p around $s left wrist.",ch, obj, None, TO_ROOM )
+            act( "You wear $p around your left wrist.",ch, obj, None, TO_CHAR )
+            ch.equip(obj, WEAR_WRIST_L)
+            return
+        if not ch.get_eq(WEAR_WRIST_R):
+            act( "$n wears $p around $s right wrist.",ch, obj, None, TO_ROOM )
+            act( "You wear $p around your right wrist.",ch, obj, None, TO_CHAR )
+            ch.equip(obj, WEAR_WRIST_R)
+            return
+
+        print ("BUG: Wear_obj: no free wrist.")
+        ch.send("You already wear two wrist items.\n")
+        return
+    if CAN_WEAR(obj, ITEM_WEAR_SHIELD):
+        if not remove_obj(ch, WEAR_SHIELD, fReplace):
+            return
+        weapon = ch.get_eq(WEAR_WIELD)
+        if weapon and ch.size < SIZE_LARGE and IS_WEAPON_STAT(weapon,WEAPON_TWO_HANDS):
+            ch.send("Your hands are tied up with your weapon!\n")
+            return
+        act( "$n wears $p as a shield.", ch, obj, None, TO_ROOM )
+        act( "You wear $p as a shield.", ch, obj, None, TO_CHAR )
+        ch.equip(obj, WEAR_SHIELD)
+        return
+    if CAN_WEAR( obj, ITEM_WIELD ):
+        if not remove_obj( ch, WEAR_WIELD, fReplace ):
+            return
+        if not IS_NPC(ch) and obj.get_weight() > (const.str_app[ch.get_curr_stat(STAT_STR)].wield * 10):
+            ch.send("It is too heavy for you to wield.\n")
+            return
+        if not IS_NPC(ch) and ch.size < SIZE_LARGE \
+        and IS_WEAPON_STAT(obj,WEAPON_TWO_HANDS) \
+        and ch.get_eq(WEAR_SHIELD) != None:
+            ch.send("You need two hands free for that weapon.\n")
+            return
+        act( "$n wields $p.", ch, obj, None, TO_ROOM )
+        act( "You wield $p.", ch, obj, None, TO_CHAR )
+        ch.equip(obj, WEAR_WIELD)
+
+        sn = ch.get_weapon_sn()
+
+        if sn == "hand to hand":
+            return
+
+        skill = ch.get_weapon_skill(sn)
+        if skill >= 100: act("$p feels like a part of you!",ch,obj,None,TO_CHAR)
+        elif skill > 85: act("You feel quite confident with $p.",ch,obj,None,TO_CHAR)
+        elif skill > 70: act("You are skilled with $p.",ch,obj,None,TO_CHAR)
+        elif skill > 50: act("Your skill with $p is adequate.",ch,obj,None,TO_CHAR)
+        elif skill > 25: act("$p feels a little clumsy in your hands.",ch,obj,None,TO_CHAR)
+        elif skill > 1: act("You fumble and almost drop $p.",ch,obj,None,TO_CHAR)
+        else: act("You don't even know which end is up on $p.",ch,obj,None,TO_CHAR)
+        return
+    if CAN_WEAR( obj, ITEM_HOLD ):
+        if not remove_obj( ch, WEAR_HOLD, fReplace ):
+            return
+        act( "$n holds $p in $s hand.",   ch, obj, None, TO_ROOM )
+        act( "You hold $p in your hand.", ch, obj, None, TO_CHAR )
+        ch.equip(obj, WEAR_HOLD)
+        return
+    if CAN_WEAR(obj,ITEM_WEAR_FLOAT):
+        if not remove_obj(ch,WEAR_FLOAT, fReplace):
+            return
+        act("$n releases $p to float next to $m.",ch,obj,None,TO_ROOM)
+        act("You release $p and it floats next to you.",ch,obj,None,TO_CHAR)
+        ch.equip(obj, WEAR_FLOAT)
+        return
+    if fReplace:
+        ch.send("You can't wear, wield, or hold that.\n")
+    return
+
+ #* Shopping commands.
+def find_keeper(ch):
+    pShop = None
+    for keeper in ch.in_room.people:
+        if IS_NPC(keeper) and keeper.pIndexData.pShop:
+            pShop = keeper.pIndexData.pShop
+            break
+    if not pShop:
+        ch.send("You can't do that here.\n")
+        return None
+    #* Undesirables.
+    #if not IS_NPC(ch) and IS_SET(ch.act, PLR_KILLER):
+    #    keeper.do_say("Killers are not welcome!")
+    #    keeper.do_yell("%s the KILLER is over here!\n" % ch.name)
+    #    return None
+    #if not IS_NPC(ch) and IS_SET(ch.act, PLR_THIEF):
+    #    keeper.do_say("Thieves are not welcome!")
+    #    keeper.do_yell("%s the THIEF is over here!\n" % ch.name)
+    #    return None
+    #* Shop hours.
+    if time_info.hour < pShop.open_hour:
+        keeper.do_say("Sorry, I am closed. Come back later.")
+        return None
+    if time_info.hour > pShop.close_hour:
+        keeper.do_say("Sorry, I am closed. Come back tomorrow.")
+        return None
+    #* Invisible or hidden people.
+    if not keeper.can_see(ch):
+        keeper.do_say("I don't trade with folks I can't see.")
+        return None
+    return keeper
+
+# insert an object at the right spot for the keeper */
+def obj_to_keeper(obj, ch):
+    # see if any duplicates are found */
+    n_obj = None
+    spot = -1
+    for i, t_obj in enumerate(ch.carrying):
+        if obj.pIndexData == t_obj.pIndexData \
+        and obj.short_descr == t_obj.short_descr:
+            # if this is an unlimited item, destroy the new one */
+            if IS_OBJ_STAT(t_obj,ITEM_INVENTORY):
+                obj.extract()
+                return
+            obj.cost = t_obj.cost # keep it standard */
+            n_obj = t_obj
+            spot = i
+            break
+
+    if n_obj == None or spot == -1:
+        ch.carrying.remove(obj)
+    else:
+        ch.carrying.insert(spot, t_obj)
+    obj.carried_by      = ch
+    obj.in_room         = None
+    obj.in_obj          = None
+    ch.carry_number    += obj.get_number()
+    ch.carry_weight    += obj.get_weight()
+
+# get an object from a shopkeeper's list */
+def get_obj_keeper(ch, keeper, argument):
+    number, arg = number_argument(argument)
+    count = 0
+    for obj in keeper.carrying:
+        if obj.wear_loc == WEAR_NONE and keeper.can_see_obj(obj) and ch.can_see_obj(obj) and is_name(arg, obj.name):
+            count += 1
+            if count == number:
+                return obj
+
+    return None
+
+def get_cost(keeper, obj, fBuy):
+    if not obj or not keeper.pIndexData.pShop:
+        return 0
+    pShop = keeper.pIndexData.pShop
+    cost = 0
+    if fBuy:
+        cost = obj.cost * pShop.profit_buy  / 100
+    else:
+        cost = 0
+        for itype in pShop.buy_type:
+            if obj.item_type == itype:
+                cost = obj.cost * pShop.profit_sell / 100
+                break
+
+        if not IS_OBJ_STAT(obj,ITEM_SELL_EXTRACT):
+            for obj2 in keeper.carrying:
+                if obj.pIndexData == obj2.pIndexData and obj.short_descr == obj2.short_descr:
+                    if IS_OBJ_STAT(obj2,ITEM_INVENTORY):
+                        cost /= 2
+                    else:
+                        cost = cost * 3 / 4
+    if obj.item_type == ITEM_STAFF or obj.item_type == ITEM_WAND:
+        if obj.value[1] == 0:
+            cost /= 4
+        else:
+            cost = cost * obj.value[2] / obj.value[1]
+    return cost
+
+
 
 #ensureall do_functions become class methods
 import interp

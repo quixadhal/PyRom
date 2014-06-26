@@ -34,7 +34,7 @@
 from merc import *
 from handler import *
 from skills import check_improve
-from update import gain_exp
+import update
 import const
 
 # * Control the fights going on.
@@ -554,7 +554,7 @@ def damage(ch,victim,dam,dt,dam_type,show):
             # Dying penalty:
             # 2/3 way back to previous level.
             if victim.exp > victim.exp_per_level(victim.pcdata.points) * victim.level:
-                gain_exp( victim, (2 * (victim.exp_per_level(victim.pcdata.points) * victim.level - victim.exp) // 3) + 50 )
+                update.gain_exp( victim, (2 * (victim.exp_per_level(victim.pcdata.points) * victim.level - victim.exp) // 3) + 50 )
 
         log_buf = "%s got toasted by %s at %s [room %d]" % ( victim.short_descr if IS_NPC(victim) else victim.name,
             ch.short_descr if IS_NPC(ch) else ch.name, ch.in_room.name, ch.in_room.vnum)
@@ -1048,7 +1048,7 @@ def group_gain( ch, victim ):
 
         xp = xp_compute( gch, victim, group_levels )  
         gch.send("You receive %d experience points.\n\r" % xp)
-        gain_exp( gch, xp )
+        update.gain_exp( gch, xp )
         for obj in ch.carrying[:]:
             if obj.wear_loc == WEAR_NONE:
                 continue
@@ -1726,7 +1726,7 @@ def do_flee( ch, argument ):
                 ch.send("You snuck away safely.\n\r")
             else:
                 ch.send("You lost 10 exp.\n\r") 
-                gain_exp( ch, -10 )
+                update.gain_exp( ch, -10 )
 
         stop_fighting( ch, True )
         return
