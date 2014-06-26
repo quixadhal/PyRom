@@ -65,7 +65,7 @@ cmd_table['west'] = None
 cmd_table['up'] = None
 cmd_table['down'] = None
 cmd_table['at'] = None
-cmd_table['buy'] = cmd_type('buy', do_buy, POS_RESTING, 0, LOG_NORMAL, 1)
+cmd_table['buy'] = None
 cmd_table['cast'] = None
 cmd_table['follow'] = None
 cmd_table['goto'] = None
@@ -79,12 +79,12 @@ cmd_table['autolist'] = None
 # * Common other commands.
 # * Placed here so one and two letter abbreviations work.
 
-cmd_table['get'] = cmd_type('get', do_get, POS_RESTING, 0, LOG_NORMAL, 1)
+
 cmd_table['rest'] = cmd_type('rest', do_rest, POS_SLEEPING, 0, LOG_NORMAL, 1)
 cmd_table['sit'] = cmd_type('sit', do_sit, POS_SLEEPING, 0, LOG_NORMAL, 1)
 
 cmd_table['stand'] = cmd_type('stand', do_stand, POS_SLEEPING, 0, LOG_NORMAL, 1)
-cmd_table['wield'] = cmd_type('wield', do_wear, POS_RESTING, 0, LOG_NORMAL, 1)
+
 
 # * Informational commands.
 
@@ -98,31 +98,30 @@ cmd_table['alias'] = cmd_type('alias', do_alias, POS_DEAD, 0, LOG_NORMAL, 1)
 cmd_table['unalias'] = cmd_type('unalias', do_unalias, POS_DEAD, 0, LOG_NORMAL, 1)
 # Communication commands.
 # * Object manipulation commands.
-cmd_table['brandish'] = cmd_type('brandish', do_brandish, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['drink'] = cmd_type('drink', do_drink, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['drop'] = cmd_type('drop', do_drop, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['eat'] = cmd_type('eat', do_eat, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['envenom'] = cmd_type('envenom', do_envenom, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['fill'] = cmd_type('fill', do_fill, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['give'] = cmd_type('give', do_give, POS_RESTING, 0, LOG_NORMAL, 1)
+
+
+
+
+
+
+
 cmd_table['heal'] = cmd_type('heal', do_heal, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['hold'] = cmd_type('hold', do_wear, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['list'] = cmd_type('list', do_list, POS_RESTING, 0, LOG_NORMAL, 1)
+
+
 cmd_table['pick'] = cmd_type('pick', do_pick, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['pour'] = cmd_type('pour', do_pour, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['put'] = cmd_type('put', do_put, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['quaff'] = cmd_type('quaff', do_quaff, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['recite'] = cmd_type('recite', do_recite, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['remove'] = cmd_type('remove', do_remove, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['sell'] = cmd_type('sell', do_sell, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['take'] = cmd_type('take', do_get, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['sacrifice'] = cmd_type('sacrifice', do_sacrifice, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['junk'] = cmd_type('junk', do_sacrifice, POS_RESTING, 0, LOG_NORMAL, 0)
-cmd_table['tap'] = cmd_type('tap', do_sacrifice, POS_RESTING, 0, LOG_NORMAL, 0)
+
+
+
+
+
+
+
+
+
 #cmd_table['unlock'] = cmd_type('unlock', do_unlock, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['value'] = cmd_type('value', do_value, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['wear'] = cmd_type('wear', do_wear, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['zap'] = cmd_type('zap', do_zap, POS_RESTING, 0, LOG_NORMAL, 1)
+
+
+
 # * Combat commands.
 cmd_table['backstab'] = cmd_type('backstab', do_backstab, POS_FIGHTING, 0, LOG_NORMAL, 1)
 cmd_table['bash'] = cmd_type('bash', do_bash, POS_FIGHTING, 0, LOG_NORMAL, 1)
@@ -137,16 +136,16 @@ cmd_table['murder'] = cmd_type('murder', do_murder, POS_FIGHTING, 5, LOG_ALWAYS,
 cmd_table['rescue'] = cmd_type('rescue', do_rescue, POS_FIGHTING, 0, LOG_NORMAL, 0)
 cmd_table['trip'] = cmd_type('trip', do_trip, POS_FIGHTING, 0, LOG_NORMAL, 1)
 # * Miscellaneous commands.
-cmd_table['enter'] = cmd_type('enter', do_enter, POS_STANDING, 0, LOG_NORMAL, 1)
+
 cmd_table['gain'] = cmd_type('gain', do_gain, POS_STANDING, 0, LOG_NORMAL, 1)
-cmd_table['go'] = cmd_type('go', do_enter, POS_STANDING, 0, LOG_NORMAL, 0)
+
 cmd_table['groups'] = cmd_type('groups', do_groups, POS_SLEEPING, 0, LOG_NORMAL, 1)
 cmd_table['hide'] = cmd_type('hide', do_hide, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['recall'] = cmd_type('recall', do_recall, POS_FIGHTING, 0, LOG_NORMAL, 1)
 cmd_table["/"] = cmd_type("/", do_recall,  POS_FIGHTING,    0,  LOG_NORMAL, 0)
 cmd_table['sleep'] = cmd_type('sleep', do_sleep, POS_SLEEPING, 0, LOG_NORMAL, 1)
 cmd_table['sneak'] = cmd_type('sneak', do_sneak, POS_STANDING, 0, LOG_NORMAL, 1)
-cmd_table['steal'] = cmd_type('steal', do_steal, POS_STANDING, 0, LOG_NORMAL, 1)
+
 cmd_table['train'] = cmd_type('train', do_train, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['visible'] = cmd_type('visible', do_visible, POS_SLEEPING, 0, LOG_NORMAL, 1)
 cmd_table['wake'] = cmd_type('wake', do_wake, POS_SLEEPING, 0, LOG_NORMAL, 1)
