@@ -2464,6 +2464,28 @@ def get_cost(keeper, obj, fBuy):
             cost = cost * obj.value[2] / obj.value[1]
     return cost
 
+# does aliasing and other fun stuff */
+def substitute_alias(d, argument):
+    ch = CH(d)
+    MAX_INPUT_LENGTH = 500
+    # check for prefix */
+    if ch.prefix and not "prefix".startswith(argument):
+        if len(ch.prefix) + len(argument) > MAX_INPUT_LENGTH:
+            ch.send("Line to long, prefix not processed.\r\n")
+        else:
+            prefix = "%s %s" % (ch.prefix,argument)
+
+    if IS_NPC(ch) or not ch.pcdata.alias \
+    or "alias".startswith(argument) or "unalias".startswith(argument)  \
+    or "prefix".startswith(argument):
+        interp.interpret(ch,argument)
+        return
+    remains, sub = read_word(argument)
+    if sub not in ch.pcdata.alias:
+        interp.interpret(ch, argument)
+        return
+    buf = "%s %s" % ( ch.pcdata.alias[sub], remains )
+    interp.interpret(ch,buf)
 
 
 #ensureall do_functions become class methods
