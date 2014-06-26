@@ -67,9 +67,9 @@ cmd_table['cast'] = None
 cmd_table['follow'] = None
 cmd_table['goto'] = None
 cmd_table['group'] = None
-cmd_table['hit'] = cmd_type('hit', do_kill, POS_FIGHTING, 0, LOG_NORMAL, 0)
+cmd_table['hit'] = None
 cmd_table['inventory'] = None
-cmd_table['kill'] = cmd_type('kill', do_kill, POS_FIGHTING, 0, LOG_NORMAL, 1)
+cmd_table['kill'] = None
 cmd_table['look'] = None
 cmd_table['who'] = None
 cmd_table['autolist'] = None
@@ -94,29 +94,20 @@ cmd_table['unalias'] = cmd_type('unalias', do_unalias, POS_DEAD, 0, LOG_NORMAL, 
 cmd_table['heal'] = cmd_type('heal', do_heal, POS_RESTING, 0, LOG_NORMAL, 1)
 
 # Combat commands.
-cmd_table['backstab'] = cmd_type('backstab', do_backstab, POS_FIGHTING, 0, LOG_NORMAL, 1)
-cmd_table['bash'] = cmd_type('bash', do_bash, POS_FIGHTING, 0, LOG_NORMAL, 1)
-cmd_table['bs'] = cmd_type('bs', do_backstab, POS_FIGHTING, 0, LOG_NORMAL, 0)
-cmd_table['berserk'] = cmd_type('berserk', do_berserk, POS_FIGHTING, 0, LOG_NORMAL, 1)
-cmd_table['dirt'] = cmd_type('dirt', do_dirt, POS_FIGHTING, 0, LOG_NORMAL, 1)
-cmd_table['disarm'] = cmd_type('disarm', do_disarm, POS_FIGHTING, 0, LOG_NORMAL, 1)
-cmd_table['flee'] = cmd_type('flee', do_flee, POS_FIGHTING, 0, LOG_NORMAL, 1)
-cmd_table['kick'] = cmd_type('kick', do_kick, POS_FIGHTING, 0, LOG_NORMAL, 1)
-cmd_table['murde'] = cmd_type('murde', do_murde, POS_FIGHTING, 0, LOG_NORMAL, 0)
-cmd_table['murder'] = cmd_type('murder', do_murder, POS_FIGHTING, 5, LOG_ALWAYS, 1)
-cmd_table['rescue'] = cmd_type('rescue', do_rescue, POS_FIGHTING, 0, LOG_NORMAL, 0)
-cmd_table['trip'] = cmd_type('trip', do_trip, POS_FIGHTING, 0, LOG_NORMAL, 1)
+
+
+
+
+
+
+
+
+
 
 # Miscellaneous commands.
 
 cmd_table['gain'] = cmd_type('gain', do_gain, POS_STANDING, 0, LOG_NORMAL, 1)
 cmd_table['groups'] = cmd_type('groups', do_groups, POS_SLEEPING, 0, LOG_NORMAL, 1)
-
-#* Immortal commands.
-
-cmd_table['sla'] = cmd_type('sla', do_sla, POS_DEAD, L3, LOG_NORMAL, 0)
-cmd_table['slay'] = cmd_type('slay', do_slay, POS_DEAD, L3, LOG_ALWAYS, 1)
-
 hotfix.init_directory(os.path.join('commands'))
 
 
