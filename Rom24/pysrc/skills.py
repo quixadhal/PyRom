@@ -156,85 +156,8 @@ def do_gain(self, argument):
     act("$N tells you 'I do not understand...'",ch,None,trainer,TO_CHAR)
     return
 
-# RT spells and skills show the players spells (or skills) */
-def do_spells(self, argument):
-    ch = self
-    fAll = False
-    min_lev = 1
-    max_lev = LEVEL_HERO
-    level = 0
-    skill = None
 
-    if IS_NPC(ch):
-      return
-    argument = argument.lower()
-    if argument:
-        fAll = True
 
-        if not "all".startswith(argument):
-            argument, arg = read_word(argument)
-            if not arg.isdigit():
-                ch.send("Arguments must be numerical or all.\n")
-                return
-
-            max_lev = int(arg)
-
-            if max_lev < 1 or max_lev > LEVEL_HERO:
-                ch.send("Levels must be between 1 and %d.\n" % LEVEL_HERO)
-                return
-
-            if argument:
-                argument, arg = read_word(argument)
-                if not arg.isdigit():
-                    ch.send("Arguments must be numerical or all.\n")
-                    return
-                
-                min_lev = max_lev
-                max_lev = int(arg)
-
-                if max_lev < 1 or max_lev > LEVEL_HERO:
-                    ch.send("Levels must be between 1 and %d.\n" % LEVEL_HERO)
-                    return
-
-                if min_lev > max_lev:
-                    ch.send("That would be silly.\n")
-                    return
-
-    found = False
-    spell_list = {} 
-    spell_column = {}
-    for sn, skill in const.skill_table.items():
-        level = skill.skill_level[ch.guild.name]
-        if level < LEVEL_HERO + 1 \
-        and (fAll or level <= ch.level) \
-        and level >= min_lev and level <= max_lev \
-        and skill.spell_fun != magic.spell_null \
-        and sn in ch.pcdata.learned:
-            found = True
-            level = skill.skill_level[ch.guild.name]
-            if ch.level < level:
-                buf = "%-18s  n/a      " % skill.name
-            else:
-                mana = max(skill.min_mana, 100/(2 + ch.level - level))
-                buf = "%-18s  %3d mana  " % (skill.name,mana)
- 
-            if level not in spell_list:
-                spell_list[level] = "\nLevel %2d: %s" % (level,buf)
-                spell_column[level] = 0
-            else: # append */
-                spell_column[level] += 1
-                if spell_column[level] % 2 == 0:
-                    spell_list[level] += "\n          "
-                spell_list[level] += buf
-
-    # return results */
-    if not found:
-        ch.send("No spells found.\n")
-        return
-
-    for level, buf in spell_list.items():
-        ch.send(buf)
-    ch.send("\n")
 
 # recursively adds a group given its number -- uses group_add */
 def gn_add( ch, gn):
@@ -297,83 +220,7 @@ def group_remove(ch, name):
             del ch.pcdata.group_known[gn.name]
             gn_remove(ch,gn) # be sure to call gn_add on all remaining groups */
 
-def do_skills(self, argument):
-    ch = self
-    fAll = False
-    found = False
-    min_lev = 1
-    max_lev = LEVEL_HERO
-    level = 0
-    skill = None
-    if IS_NPC(ch):
-      return
-    argument = argument.lower()
-    if argument:
-        fAll = True
 
-        if not "all".startswith(argument):
-            argument, arg = read_word(argument)
-            if not arg.isdigit():
-                ch.send("Arguments must be numerical or all.\n")
-                return
-
-            max_lev = int(arg)
-
-            if max_lev < 1 or max_lev > LEVEL_HERO:
-                ch.send("Levels must be between 1 and %d.\n" % LEVEL_HERO)
-                return
-
-            if argument:
-                argument, arg = read_word(argument)
-                if not arg.isdigit():
-                    ch.send("Arguments must be numerical or all.\n")
-                    return
-                
-                min_lev = max_lev
-                max_lev = int(arg)
-
-                if max_lev < 1 or max_lev > LEVEL_HERO:
-                    ch.send("Levels must be between 1 and %d.\n" % LEVEL_HERO)
-                    return
-
-                if min_lev > max_lev:
-                    ch.send("That would be silly.\n")
-                    return
-
-    skill_columns = {}
-    skill_list = {}
- 
-    for sn, skill in const.skill_table.items():
-        level = skill.skill_level[ch.guild.name]
-        if level < LEVEL_HERO + 1 \
-        and  (fAll or level <= ch.level) \
-        and  level >= min_lev and level <= max_lev \
-        and  skill.spell_fun == magic.spell_null \
-        and  sn in ch.pcdata.learned:
-            found = True
-            level = skill.skill_level[ch.guild.name]
-            if ch.level < level:
-                buf = "%-18s n/a      " % skill.name
-            else:
-                buf = "%-18s %3d%%      " % (skill.name, ch.pcdata.learned[sn])
- 
-            if level not in skill_list:
-                skill_list[level] =  "\nLevel %2d: %s" % (level,buf)
-                skill_columns[level] = 0
-            else: # append */
-                skill_columns[level] += 1
-                if skill_columns[level] % 2 == 0:
-                    skill_list[level] += "\n          "
-                skill_list[level] += buf
- 
-    # return results */
-    if not found:
-        ch.send("No skills found.\n")
-        return
-
-    for level, buf in skill_list.items():
-        ch.send(buf)
-    ch.send("\n")
 
 
 # shows skills, groups and costs (only if not bought) */
@@ -560,53 +407,6 @@ def parse_gen_groups(ch, argument):
     return False
 
 # shows all groups, or the sub-members of a group */
-def do_groups(self, argument):
-    ch = self
-    if IS_NPC(ch):
-        return
-    col = 0
-
-    if not argument:
-        # show all groups */
-        for gn, group in const.group_table.items():
-            if gn in ch.pcdata.group_known:
-                ch.send("%-20s " % group.name)
-                col += 1
-                if col % 3 == 0:
-                    ch.send("\n")
-        if col % 3 != 0:
-            ch.send( "\n" )
-        ch.send("Creation points: %d\n" % ch.pcdata.points)
-        return
-
-    if "all" == argument.lower():
-        for gn,group in const.group_table.items():
-            ch.send("%-20s " % group.name)
-            col += 1
-            if col % 3 == 0:
-                ch.send("\n")
-        if col % 3 != 0:
-            ch.send( "\n" )
-        return
-     
-    # show the sub-members of a group */
-    if argument.lower() not in const.group_table:
-        ch.send("No group of that name exist.\n")
-        ch.send("Type 'groups all' or 'info all' for a full listing.\n")
-        return
-
-    gn = const.group_table[argument.lower()]
-    for sn in group.spells:
-        if not sn:
-            break
-        ch.send("%-20s " % sn)
-        col += 1
-        if col % 3 == 0:
-            ch.send("\n")
-    if col % 3 != 0:
-        ch.send( "\n" )
-
-
 # checks for skill improvement */
 def check_improve( ch, sn, success, multiplier ):
     if IS_NPC(ch):
