@@ -2036,7 +2036,7 @@ def wiznet( string, ch, obj, flag, flag_skip, min_level):
         and  IS_SET(d.character.wiznet, WIZ_ON) \
         and  (not flag or IS_SET(d.character.wiznet,flag)) \
         and  (not flag_skip or not IS_SET(d.character.wiznet,flag_skip)) \
-        and  get_trust(d.character) >= min_level \
+        and  d.character.get_trust() >= min_level \
         and  d.character != ch:
             if IS_SET(d.character.wiznet,WIZ_PREFIX):
                 d.send("-. ",d.character)
