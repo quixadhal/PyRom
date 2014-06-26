@@ -33,12 +33,8 @@
 """
 import os
 from collections import OrderedDict
-
+from merc import *
 import hotfix
-from alias import *
-from healing import do_heal
-from fight import *
-from skills import do_groups, do_skills, do_spells, do_gain
 from settings import LOGALL
 
 

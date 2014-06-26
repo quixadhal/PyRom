@@ -1,4 +1,9 @@
-from Rom24.pysrc.fight import is_safe, check_killer, multi_hit, damage
+import random
+import merc
+import interp
+import fight
+import skills
+import const
 
 
 def do_backstab(ch, argument):

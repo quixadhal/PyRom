@@ -35,7 +35,7 @@ from handler_room import move_char
 from merc import *
 
 from handler import *
-from save import save_char_obj
+import save
 import db
 import hotfix
 import skills
@@ -90,7 +90,7 @@ def gain_exp( ch, gain ):
         print ("%s gained level %d\r\n" % (ch.name,ch.level))
         wiznet("$N has attained level %d!" % ch.level,ch,None,WIZ_LEVELS,0,0)
         advance_level(ch,False)
-        save_char_obj(ch)
+        save.save_char_obj(ch)
 
 # * Regeneration stuff.
 def hit_gain( ch ):
@@ -441,7 +441,7 @@ def char_update( ):
                     act( "$n disappears into the void.", ch, None, None, TO_ROOM )
                     ch.send("You disappear into the void.\n") 
                     if ch.level > 1:
-                        save_char_obj( ch )
+                        save.save_char_obj( ch )
                     ch.from_room()
                     ch.to_room(room_index_hash[ROOM_VNUM_LIMBO])
 
@@ -521,7 +521,7 @@ def char_update( ):
     # */
     for ch in char_list[:]:
         if ch.desc and save_number == 28:
-            save_char_obj(ch)
+            save.save_char_obj(ch)
     for ch in ch_quit[:]:
         ch.do_quit("")
 

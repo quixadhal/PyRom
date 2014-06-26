@@ -1,6 +1,7 @@
 import random
 import merc
 import const
+import interp
 import skills
 import fight
 
