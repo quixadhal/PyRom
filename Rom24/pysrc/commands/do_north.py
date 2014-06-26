@@ -1,4 +1,4 @@
-from act_move import move_char
+from handler_room import move_char
 import interp
 from merc import DIR_NORTH, POS_STANDING, LOG_NEVER
 

@@ -1,6 +1,6 @@
 import random
-from act_move import find_door
 import const
+from handler_room import find_door
 from interp import cmd_table, cmd_type
 from merc import read_word, WAIT_STATE, IS_NPC, IS_AWAKE, act, TO_CHAR, ITEM_PORTAL, IS_SET, EX_ISDOOR, EX_CLOSED, \
     EX_PICKPROOF, REMOVE_BIT, EX_LOCKED, TO_ROOM, ITEM_CONTAINER, CONT_CLOSED, CONT_LOCKED, CONT_PICKPROOF, IS_IMMORTAL, \

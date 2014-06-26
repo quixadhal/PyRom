@@ -31,11 +31,12 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
+from handler_room import move_char
 from merc import *
 import magic
 import const
 import fight
-from act_move import move_char
+
 
 def spec_troll_member( ch ):
     if not IS_AWAKE(ch) or IS_AFFECTED(ch,AFF_CALM) or ch.in_room == None  \

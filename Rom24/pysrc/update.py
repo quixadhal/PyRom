@@ -31,6 +31,7 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
+from handler_room import move_char
 from merc import *
 
 from handler import *
@@ -40,7 +41,7 @@ import hotfix
 import skills
 import const
 import fight
-import act_move
+
 # * Advancement stuff.
 
 def advance_level( ch, hide ):
@@ -297,7 +298,7 @@ def mobile_update( ):
         and (not IS_SET(ch.act, ACT_OUTDOORS) or not IS_SET(pexit.to_room.room_flags,ROOM_INDOORS)) \
         and (not IS_SET(ch.act, ACT_INDOORS) \
         or IS_SET(pexit.to_room.room_flags,ROOM_INDOORS)):
-            act_move.move_char(ch, door, False)
+            move_char(ch, door, False)
       
 #
 # * Update the weather.
