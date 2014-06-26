@@ -32,13 +32,11 @@
  ************/
 """
 import os
-from collections import OrderedDict
+
 import hotfix
-from merc import *
 from act_wiz import *
 from act_obj import *
 from act_enter import *
-from act_move import *
 from alias import *
 from healing import do_heal
 from magic import do_cast
@@ -88,10 +86,10 @@ cmd_table['clan'] = None  # cmd_type('clan', do_clantalk, POS_SLEEPING, 0, LOG_N
 cmd_table['music'] = None  # cmd_type('music', do_music, POS_SLEEPING, 0, LOG_NORMAL, 1) 
 cmd_table['order'] = None  # cmd_type('order', do_order, POS_RESTING, 0, LOG_NORMAL, 1)
 
-cmd_table['rest'] = cmd_type('rest', do_rest, POS_SLEEPING, 0, LOG_NORMAL, 1)
-cmd_table['sit'] = cmd_type('sit', do_sit, POS_SLEEPING, 0, LOG_NORMAL, 1)
+cmd_table['rest'] = None  # cmd_type('rest', do_rest, POS_SLEEPING, 0, LOG_NORMAL, 1)
+cmd_table['sit'] = None  # cmd_type('sit', do_sit, POS_SLEEPING, 0, LOG_NORMAL, 1)
 cmd_table['sockets'] = cmd_type('sockets', do_sockets, POS_DEAD, L4, LOG_NORMAL, 1)
-cmd_table['stand'] = cmd_type('stand', do_stand, POS_SLEEPING, 0, LOG_NORMAL, 1)
+cmd_table['stand'] = None  # cmd_type('stand', do_stand, POS_SLEEPING, 0, LOG_NORMAL, 1)
 cmd_table['tell'] = None  # cmd_type('tell', do_tell, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['unlock'] = None  # cmd_type('unlock', do_unlock, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['wield'] = cmd_type('wield', do_wear, POS_RESTING, 0, LOG_NORMAL, 1)
@@ -157,7 +155,7 @@ cmd_table['hold'] = cmd_type('hold', do_wear, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['list'] = cmd_type('list', do_list, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['lock'] = None  # cmd_type('lock', do_lock, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['open'] = None  # cmd_type('open', do_open, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['pick'] = cmd_type('pick', do_pick, POS_RESTING, 0, LOG_NORMAL, 1)
+cmd_table['pick'] = None  # cmd_type('pick', do_pick, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['pour'] = cmd_type('pour', do_pour, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['put'] = cmd_type('put', do_put, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['quaff'] = cmd_type('quaff', do_quaff, POS_RESTING, 0, LOG_NORMAL, 1)
@@ -191,22 +189,22 @@ cmd_table['gain'] = cmd_type('gain', do_gain, POS_STANDING, 0, LOG_NORMAL, 1)
 cmd_table['go'] = cmd_type('go', do_enter, POS_STANDING, 0, LOG_NORMAL, 0)
 # cmd_table['group'] = cmd_type('group', do_group, POS_SLEEPING, 0, LOG_NORMAL, 1)
 cmd_table['groups'] = cmd_type('groups', do_groups, POS_SLEEPING, 0, LOG_NORMAL, 1)
-cmd_table['hide'] = cmd_type('hide', do_hide, POS_RESTING, 0, LOG_NORMAL, 1)
+cmd_table['hide'] = None  # cmd_type('hide', do_hide, POS_RESTING, 0, LOG_NORMAL, 1)
 #cmd_table['play'] = cmd_type('play', do_play, POS_RESTING, 0, LOG_NORMAL, 1)
 #cmd_table['practice'] = cmd_type('practice', do_practice, POS_SLEEPING, 0, LOG_NORMAL, 1) */
 cmd_table['qui'] = None  # cmd_type('qui', do_qui, POS_DEAD, 0, LOG_NORMAL, 0)
 cmd_table['quit'] = None  # cmd_type('quit', do_quit, POS_DEAD, 0, LOG_NORMAL, 1)
-cmd_table['recall'] = cmd_type('recall', do_recall, POS_FIGHTING, 0, LOG_NORMAL, 1)
-cmd_table["/"] = cmd_type("/", do_recall,  POS_FIGHTING,    0,  LOG_NORMAL, 0)
+cmd_table['recall'] = None  # cmd_type('recall', do_recall, POS_FIGHTING, 0, LOG_NORMAL, 1)
+cmd_table["/"] = None  # cmd_type("/", do_recall,  POS_FIGHTING,    0,  LOG_NORMAL, 0)
 cmd_table['rent'] = None  # cmd_type('rent', do_rent, POS_DEAD, 0, LOG_NORMAL, 0)
 cmd_table['save'] = None  # cmd_type('save', do_save, POS_DEAD, 0, LOG_NORMAL, 1)
-cmd_table['sleep'] = cmd_type('sleep', do_sleep, POS_SLEEPING, 0, LOG_NORMAL, 1)
-cmd_table['sneak'] = cmd_type('sneak', do_sneak, POS_STANDING, 0, LOG_NORMAL, 1)
+cmd_table['sleep'] = None  # cmd_type('sleep', do_sleep, POS_SLEEPING, 0, LOG_NORMAL, 1)
+cmd_table['sneak'] = None  # cmd_type('sneak', do_sneak, POS_STANDING, 0, LOG_NORMAL, 1)
 cmd_table['split'] = None  # cmd_type('split', do_split, POS_RESTING, 0, LOG_NORMAL, 1)
 cmd_table['steal'] = cmd_type('steal', do_steal, POS_STANDING, 0, LOG_NORMAL, 1)
-cmd_table['train'] = cmd_type('train', do_train, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['visible'] = cmd_type('visible', do_visible, POS_SLEEPING, 0, LOG_NORMAL, 1)
-cmd_table['wake'] = cmd_type('wake', do_wake, POS_SLEEPING, 0, LOG_NORMAL, 1)
+cmd_table['train'] = None  # cmd_type('train', do_train, POS_RESTING, 0, LOG_NORMAL, 1)
+cmd_table['visible'] = None  # cmd_type('visible', do_visible, POS_SLEEPING, 0, LOG_NORMAL, 1)
+cmd_table['wake'] = None  # cmd_type('wake', do_wake, POS_SLEEPING, 0, LOG_NORMAL, 1)
 #* Immortal commands.
 cmd_table['advance'] = cmd_type('advance', do_advance, POS_DEAD,   ML,  LOG_ALWAYS, 1)
 cmd_table['dump'] = cmd_type('dump', do_dump,    POS_DEAD,   ML,  LOG_ALWAYS, 0)
