@@ -33,11 +33,8 @@
 """
 import os
 from collections import OrderedDict
+
 import hotfix
-from merc import *
-from act_obj import *
-from act_enter import *
-from act_move import *
 from alias import *
 from healing import do_heal
 from fight import *
@@ -47,16 +44,16 @@ from settings import LOGALL
 
 class cmd_type:
     def __init__(self, name, do_fun, position, level, log, show, default_arg=None):
-        self.name=name
-        self.do_fun=do_fun
-        self.position=position
-        self.level=level
-        self.log=log
-        self.show=show
+        self.name = name
+        self.do_fun = do_fun
+        self.position = position
+        self.level = level
+        self.log = log
+        self.show = show
         self.default_arg = default_arg
-        setattr(CHAR_DATA, self.do_fun.__name__, self.do_fun )
+        setattr(CHAR_DATA, self.do_fun.__name__, self.do_fun)
 
-#These commands don't need to be here but are, for order. These will always match first with prefixes.
+# These commands don't need to be here but are, for order. These will always match first with prefixes.
 cmd_table = OrderedDict()
 cmd_table['north'] = None
 cmd_table['east'] = None
@@ -76,53 +73,27 @@ cmd_table['kill'] = cmd_type('kill', do_kill, POS_FIGHTING, 0, LOG_NORMAL, 1)
 cmd_table['look'] = None
 cmd_table['who'] = None
 cmd_table['autolist'] = None
-# * Common other commands.
-# * Placed here so one and two letter abbreviations work.
+# Common other commands.
+# Placed here so one and two letter abbreviations work.
 
-
-cmd_table['rest'] = cmd_type('rest', do_rest, POS_SLEEPING, 0, LOG_NORMAL, 1)
-cmd_table['sit'] = cmd_type('sit', do_sit, POS_SLEEPING, 0, LOG_NORMAL, 1)
-
-cmd_table['stand'] = cmd_type('stand', do_stand, POS_SLEEPING, 0, LOG_NORMAL, 1)
-
-
-# * Informational commands.
+# Informational commands.
 
 cmd_table['info'] = cmd_type('info', do_groups, POS_SLEEPING, 0, LOG_NORMAL, 1)
 cmd_table['skills'] = cmd_type('skills', do_skills, POS_DEAD, 0, LOG_NORMAL, 1)
 cmd_table['spells'] = cmd_type('spells', do_spells, POS_DEAD, 0, LOG_NORMAL, 1)
-# * Configuration commands.
+
+# Configuration commands.
 cmd_table['alia'] = cmd_type('alia', do_alia, POS_DEAD, 0, LOG_NORMAL, 0)
 cmd_table['alias'] = cmd_type('alias', do_alias, POS_DEAD, 0, LOG_NORMAL, 1)
-#cmd_table['channels'] = cmd_type('channels', do_channels, POS_DEAD, 0, LOG_NORMAL, 1)
 cmd_table['unalias'] = cmd_type('unalias', do_unalias, POS_DEAD, 0, LOG_NORMAL, 1)
+
 # Communication commands.
-# * Object manipulation commands.
 
-
-
-
-
-
+# Object manipulation commands.
 
 cmd_table['heal'] = cmd_type('heal', do_heal, POS_RESTING, 0, LOG_NORMAL, 1)
 
-
-cmd_table['pick'] = cmd_type('pick', do_pick, POS_RESTING, 0, LOG_NORMAL, 1)
-
-
-
-
-
-
-
-
-
-#cmd_table['unlock'] = cmd_type('unlock', do_unlock, POS_RESTING, 0, LOG_NORMAL, 1)
-
-
-
-# * Combat commands.
+# Combat commands.
 cmd_table['backstab'] = cmd_type('backstab', do_backstab, POS_FIGHTING, 0, LOG_NORMAL, 1)
 cmd_table['bash'] = cmd_type('bash', do_bash, POS_FIGHTING, 0, LOG_NORMAL, 1)
 cmd_table['bs'] = cmd_type('bs', do_backstab, POS_FIGHTING, 0, LOG_NORMAL, 0)
@@ -135,60 +106,54 @@ cmd_table['murde'] = cmd_type('murde', do_murde, POS_FIGHTING, 0, LOG_NORMAL, 0)
 cmd_table['murder'] = cmd_type('murder', do_murder, POS_FIGHTING, 5, LOG_ALWAYS, 1)
 cmd_table['rescue'] = cmd_type('rescue', do_rescue, POS_FIGHTING, 0, LOG_NORMAL, 0)
 cmd_table['trip'] = cmd_type('trip', do_trip, POS_FIGHTING, 0, LOG_NORMAL, 1)
-# * Miscellaneous commands.
+
+# Miscellaneous commands.
 
 cmd_table['gain'] = cmd_type('gain', do_gain, POS_STANDING, 0, LOG_NORMAL, 1)
-
 cmd_table['groups'] = cmd_type('groups', do_groups, POS_SLEEPING, 0, LOG_NORMAL, 1)
-cmd_table['hide'] = cmd_type('hide', do_hide, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['recall'] = cmd_type('recall', do_recall, POS_FIGHTING, 0, LOG_NORMAL, 1)
-cmd_table["/"] = cmd_type("/", do_recall,  POS_FIGHTING,    0,  LOG_NORMAL, 0)
-cmd_table['sleep'] = cmd_type('sleep', do_sleep, POS_SLEEPING, 0, LOG_NORMAL, 1)
-cmd_table['sneak'] = cmd_type('sneak', do_sneak, POS_STANDING, 0, LOG_NORMAL, 1)
 
-cmd_table['train'] = cmd_type('train', do_train, POS_RESTING, 0, LOG_NORMAL, 1)
-cmd_table['visible'] = cmd_type('visible', do_visible, POS_SLEEPING, 0, LOG_NORMAL, 1)
-cmd_table['wake'] = cmd_type('wake', do_wake, POS_SLEEPING, 0, LOG_NORMAL, 1)
 #* Immortal commands.
 
 cmd_table['sla'] = cmd_type('sla', do_sla, POS_DEAD, L3, LOG_NORMAL, 0)
 cmd_table['slay'] = cmd_type('slay', do_slay, POS_DEAD, L3, LOG_ALWAYS, 1)
+
 hotfix.init_directory(os.path.join('commands'))
 
+
 def interpret(ch, argument):
-     # Strip leading spaces.
+    # Strip leading spaces.
     argument = argument.lstrip()
     command = ''
 
     # No hiding.
     REMOVE_BIT(ch.affected_by, AFF_HIDE)
 
-    # * Implement freeze command.
+    # Implement freeze command.
     if not IS_NPC(ch) and IS_SET(ch.act, PLR_FREEZE):
         ch.send("You're totally frozen!\n")
         return
-    # * Grab the command word.
-    # * Special parsing so ' can be a command,
-    # *   also no spaces needed after punctuation.
+    # Grab the command word.
+    # Special parsing so ' can be a command,
+    #   also no spaces needed after punctuation.
     logline = argument
     if not argument[0].isalpha() and not argument[0].isdigit():
         command = argument[0]
         argument = argument[:1].lstrip()
     else:
         argument, command = read_word(argument)
-    #* Look for command in command table.
+    # Look for command in command table.
     trust = ch.get_trust()
     cmd = prefix_lookup(cmd_table, command)
     if cmd != None:
         if cmd.level > trust:
             cmd = None
- 
+
     #* Log and snoop.
     if (not IS_NPC(ch) and IS_SET(ch.act, PLR_LOG)) or LOGALL or (cmd and cmd.log == LOG_ALWAYS):
         if cmd and cmd.log != LOG_NEVER:
             log_buf = "Log %s: %s" % (ch.name, logline)
-            wiznet(log_buf,ch,None,WIZ_SECURE,0,ch.get_trust())
-            print (log_buf + "\n")
+            wiznet(log_buf, ch, None, WIZ_SECURE, 0, ch.get_trust())
+            print(log_buf + "\n")
     if ch.desc and ch.desc.snoop_by:
         ch.desc.snoop_by.send("% ")
         ch.desc.snoop_by.send(logline)
@@ -202,8 +167,8 @@ def interpret(ch, argument):
     if ch.position < cmd.position:
         if ch.position == POS_DEAD:
             ch.send("Lie still; you are DEAD.\n")
-        elif ch.position ==  POS_MORTAL \
-        or ch.position ==  POS_INCAP:
+        elif ch.position == POS_MORTAL \
+                or ch.position == POS_INCAP:
             ch.send("You are hurt far too bad for that.\n")
         elif ch.position == POS_STUNNED:
             ch.send("You are too stunned to do that.\n")
@@ -223,6 +188,7 @@ def interpret(ch, argument):
         return
     cmd.do_fun(ch, argument)
 
+
 def check_social(ch, command, argument):
     cmd = None
     for social in social_list:
@@ -233,7 +199,7 @@ def check_social(ch, command, argument):
     if not IS_NPC(ch) and IS_SET(ch.comm, COMM_NOEMOTE):
         ch.send("You are anti-social!\n")
         return True
-    
+
     if ch.position == POS_DEAD:
         ch.send("Lie still; you are DEAD.\n")
         return True
@@ -244,11 +210,11 @@ def check_social(ch, command, argument):
         ch.send("You are too stunned to do that.\n")
         return True
     if ch.position == POS_SLEEPING:
-        #* I just know this is the path to a 12" 'if' statement.  :(
-        #* But two players asked for it already!  -- Furey
-            if cmd.name != "snore":
-                ch.send("In your dreams, or what?\n")
-                return True
+        # I just know this is the path to a 12" 'if' statement.  :(
+        # But two players asked for it already!  -- Furey
+        if cmd.name != "snore":
+            ch.send("In your dreams, or what?\n")
+            return True
     holder, arg = read_word(argument)
     victim = ch.get_char_room(arg)
     if not arg:
@@ -265,14 +231,14 @@ def check_social(ch, command, argument):
         act(cmd.vict_found, ch, None, victim, TO_VICT)
 
         if not IS_NPC(ch) and IS_NPC(victim) \
-        and not IS_AFFECTED(victim, AFF_CHARM) \
-        and IS_AWAKE(victim) and victim.desc == None:
-            num = random.randit(0,12)
+                and not IS_AFFECTED(victim, AFF_CHARM) \
+                and IS_AWAKE(victim) and victim.desc is None:
+            num = random.randint(0, 12)
             if num in [0, 1, 2, 3, 4, 5, 6, 7, 8]:
                 act(cmd.others_found, victim, None, ch, TO_NOTVICT)
                 act(cmd.char_found, victim, None, ch, TO_CHAR)
                 act(cmd.vict_found, victim, None, ch, TO_VICT)
-                
+
             elif num in [9, 10, 11, 12]:
                 act("$n slaps $N.", victim, None, ch, TO_NOTVICT)
                 act("You slap $N.", victim, None, ch, TO_CHAR)

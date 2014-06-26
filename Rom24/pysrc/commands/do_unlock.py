@@ -1,4 +1,4 @@
-from act_move import has_key, find_door
+from handler_room import find_door, has_key
 from interp import cmd_table, cmd_type
 from merc import read_word, ITEM_PORTAL, IS_SET, EX_ISDOOR, EX_CLOSED, EX_LOCKED, REMOVE_BIT, act, TO_CHAR, TO_ROOM, \
     ITEM_CONTAINER, CONT_CLOSED, CONT_LOCKED, ROOM_INDEX_DATA, EXIT_DATA, rev_dir, POS_RESTING, LOG_NORMAL

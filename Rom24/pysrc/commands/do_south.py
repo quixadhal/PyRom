@@ -1,4 +1,4 @@
-from act_move import move_char
+from handler_room import move_char
 from interp import cmd_table, cmd_type
 from merc import DIR_SOUTH, LOG_NEVER, POS_STANDING
 
