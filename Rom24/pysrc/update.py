@@ -31,9 +31,7 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
-from handler_room import move_char
 from merc import *
-
 from handler import *
 import save
 import db

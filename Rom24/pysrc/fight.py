@@ -495,7 +495,7 @@ def damage(ch,victim,dam,dt,dam_type,show):
 
     immune = False
      # Check for parry, and dodge.
-    if dt >= TYPE_HIT and ch != victim:
+    if type(dt) == int and dt >= TYPE_HIT and ch != victim:
         if check_parry( ch, victim ):
             return False
         if check_dodge( ch, victim ):
@@ -573,6 +573,7 @@ def damage(ch,victim,dam,dt,dam_type,show):
                 REMOVE_BIT(victim.act,PLR_THIEF)
             # RT new auto commands */
         corpse = ch.get_obj_list("corpse", ch.in_room.contents)
+
         if not IS_NPC(ch) and corpse and corpse.item_type == ITEM_CORPSE_NPC and ch.can_see_obj(corpse):
             if IS_SET(ch.act, PLR_AUTOLOOT) and corpse and corpse.contains: # exists and not empty */
                 ch.do_get("all corpse")
@@ -1210,8 +1211,8 @@ def dam_message( ch, victim, dam, dt, immune ):
             buf2 = "You %s $N%c" % ( vs, punct )
             buf3 = "$n %s you%c" % ( vp, punct )
     else:
-        if dt >= 0 and dt < MAX_SKILL:
-            attack  = const.skill_table[dt].noun_damage
+        if type(dt) == const.skill_type:
+            attack  = dt.noun_damage
         elif dt >= TYPE_HIT and dt < TYPE_HIT + len(const.attack_table):
             attack = const.attack_table[dt - TYPE_HIT].noun
         else:

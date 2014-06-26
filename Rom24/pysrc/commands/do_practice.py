@@ -9,7 +9,7 @@ def do_practice(ch, argument):
     if not argument:
         col = 0
         for sn, skill in const.skill_table.items():
-            if ch.level < const.skill.skill_level[ch.guild.name] \
+            if ch.level < skill.skill_level[ch.guild.name] \
             or sn not in ch.pcdata.learned or ch.pcdata.learned[sn] < 1: # skill is not known */)
                 continue
 

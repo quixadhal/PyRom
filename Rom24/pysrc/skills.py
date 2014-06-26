@@ -287,6 +287,8 @@ def parse_gen_groups(ch, argument):
 # shows all groups, or the sub-members of a group */
 # checks for skill improvement */
 def check_improve( ch, sn, success, multiplier ):
+    import const
+    import update
     if IS_NPC(ch):
         return
     if type(sn) == str:
