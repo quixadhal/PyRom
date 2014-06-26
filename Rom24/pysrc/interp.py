@@ -74,40 +74,6 @@ cmd_table['look'] = None
 cmd_table['who'] = None
 cmd_table['autolist'] = None
 # Common other commands.
-# Placed here so one and two letter abbreviations work.
-
-# Informational commands.
-
-cmd_table['info'] = cmd_type('info', do_groups, POS_SLEEPING, 0, LOG_NORMAL, 1)
-cmd_table['skills'] = cmd_type('skills', do_skills, POS_DEAD, 0, LOG_NORMAL, 1)
-cmd_table['spells'] = cmd_type('spells', do_spells, POS_DEAD, 0, LOG_NORMAL, 1)
-
-# Configuration commands.
-cmd_table['alia'] = cmd_type('alia', do_alia, POS_DEAD, 0, LOG_NORMAL, 0)
-cmd_table['alias'] = cmd_type('alias', do_alias, POS_DEAD, 0, LOG_NORMAL, 1)
-cmd_table['unalias'] = cmd_type('unalias', do_unalias, POS_DEAD, 0, LOG_NORMAL, 1)
-
-# Communication commands.
-
-# Object manipulation commands.
-
-cmd_table['heal'] = cmd_type('heal', do_heal, POS_RESTING, 0, LOG_NORMAL, 1)
-
-# Combat commands.
-
-
-
-
-
-
-
-
-
-
-# Miscellaneous commands.
-
-cmd_table['gain'] = cmd_type('gain', do_gain, POS_STANDING, 0, LOG_NORMAL, 1)
-cmd_table['groups'] = cmd_type('groups', do_groups, POS_SLEEPING, 0, LOG_NORMAL, 1)
 hotfix.init_directory(os.path.join('commands'))
 
 
