@@ -8,4 +8,4 @@ def do_bug(ch, argument):
     ch.send("Bug logged.\n")
     return
 
-interp.cmd_table['bug'] = interp.cmd_type('bug', do_bug, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('bug', do_bug, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

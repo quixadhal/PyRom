@@ -14,4 +14,4 @@ def do_remove(self, argument):
     merc.remove_obj(ch, obj.wear_loc, True)
     return
 
-interp.cmd_table['remove'] = interp.cmd_type('remove', do_remove, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('remove', do_remove, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

@@ -19,4 +19,4 @@ def do_equipment(ch, argument):
     if not found:
         ch.send("Nothing.\n")
 
-interp.cmd_table['equipment'] = interp.cmd_type('equipment', do_equipment, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('equipment', do_equipment, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

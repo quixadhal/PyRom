@@ -38,4 +38,4 @@ def do_exits(ch, argument):
     ch.send(buf)
     return
 
-interp.cmd_table['exits'] = interp.cmd_type('exits', do_exits, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('exits', do_exits, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

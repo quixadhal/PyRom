@@ -13,4 +13,4 @@ def do_areas(ch, argument):
         if col % 2 == 0:
             ch.send("\n")
 
-interp.cmd_table['areas'] = interp.cmd_type('areas', do_areas, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('areas', do_areas, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

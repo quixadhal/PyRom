@@ -18,4 +18,4 @@ def do_nosummon(ch, argument):
             ch.send("You are now immune to summoning.\n")
             ch.act = merc.SET_BIT(ch.act, merc.PLR_NOSUMMON)
 
-interp.cmd_table['nosummon'] = interp.cmd_type('nosummon', do_nosummon, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('nosummon', do_nosummon, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

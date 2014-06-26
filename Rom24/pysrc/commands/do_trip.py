@@ -76,4 +76,4 @@ def do_trip(ch, argument):
         skills.check_improve(ch,'trip',False,1)
     fight.check_killer(ch,victim)
 
-interp.cmd_table['trip'] = interp.cmd_type('trip', do_trip, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('trip', do_trip, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)

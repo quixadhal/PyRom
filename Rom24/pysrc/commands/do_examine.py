@@ -35,4 +35,4 @@ def do_examine(ch, argument):
         or obj.item_type == merc.ITEM_CORPSE_PC:
             ch.do_look("in %s" % argument)
 
-interp.cmd_table['examine'] = interp.cmd_type('examine', do_examine, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('examine', do_examine, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

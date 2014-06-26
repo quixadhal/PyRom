@@ -14,5 +14,5 @@ def do_gtell(ch, argument):
             merc.act("$n tells the group '$t'", ch, argument, gch, merc.TO_VICT, merc.POS_SLEEPING)
     return
 
-interp.cmd_table['gtell'] = interp.cmd_type('gtell', do_gtell, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('gtell', do_gtell, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
 interp.cmd_table[';'] = interp.cmd_type(';', do_gtell, merc.POS_DEAD, 0,  merc.LOG_NORMAL, 0)

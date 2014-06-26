@@ -31,4 +31,4 @@ def do_delete(self, argument):
     ch.pcdata.confirm_delete = True
     merc.wiznet("$N is contemplating deletion.",ch,None,0,0,ch.get_trust())
 
-interp.cmd_table['delete'] = interp.cmd_type('delete', do_delete, merc.POS_STANDING, 0, merc.LOG_ALWAYS, 1)
+interp.cmd_type('delete', do_delete, merc.POS_STANDING, 0, merc.LOG_ALWAYS, 1)

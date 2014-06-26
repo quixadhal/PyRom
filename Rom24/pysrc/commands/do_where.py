@@ -38,4 +38,4 @@ def do_where(ch, argument):
             merc.act("You didn't find any $T.", ch, None, arg, merc.TO_CHAR)
     return
 
-interp.cmd_table['where'] = interp.cmd_type('where', do_where, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('where', do_where, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

@@ -32,4 +32,4 @@ def do_fill(ch, argument):
     obj.value[1] = obj.value[0]
     return
 
-interp.cmd_table['fill'] = interp.cmd_type('fill', do_fill, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('fill', do_fill, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

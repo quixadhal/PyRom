@@ -27,4 +27,4 @@ def do_kick(ch, argument):
     fight.check_killer(ch,victim)
     return
 
-interp.cmd_table['kick'] = interp.cmd_type('kick', do_kick, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('kick', do_kick, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)

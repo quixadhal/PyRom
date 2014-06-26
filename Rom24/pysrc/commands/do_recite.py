@@ -40,4 +40,4 @@ def do_recite(ch, argument):
     scroll.extract()
     return
 
-interp.cmd_table['recite'] = interp.cmd_type('recite', do_recite, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('recite', do_recite, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

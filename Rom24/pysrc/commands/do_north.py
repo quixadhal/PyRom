@@ -8,4 +8,4 @@ def do_north(ch, argument):
     return
 
 
-interp.cmd_table['north'] = interp.cmd_type('north', do_north, POS_STANDING, 0, LOG_NEVER, 0)
+interp.cmd_type('north', do_north, POS_STANDING, 0, LOG_NEVER, 0)

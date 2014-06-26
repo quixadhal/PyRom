@@ -66,4 +66,4 @@ def do_pour(ch, argument):
         merc.act("$n pours you some %s." % (const.liq_table[out.value[2]].liq_name), ch, None, vch, merc.TO_VICT)
         merc.act("$n pours some %s for $N." % (const.liq_table[out.value[2]].liq_name),ch, None, vch, merc.TO_NOTVICT)
 
-interp.cmd_table['pour'] = interp.cmd_type('pour', do_pour, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('pour', do_pour, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

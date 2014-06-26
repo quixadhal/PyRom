@@ -166,4 +166,4 @@ def do_cast(ch, argument):
                 break
     return
 # * Spell functions.
-interp.cmd_table['cast'] = interp.cmd_type('cast', do_cast, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('cast', do_cast, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)

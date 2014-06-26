@@ -11,4 +11,4 @@ def do_deaf(ch, argument):
         ch.send("From now on, you won't hear tells.\n")
         merc.SET_BIT(ch.comm, merc.COMM_DEAF)
 
-interp.cmd_table['deaf'] = interp.cmd_type('deaf', do_deaf, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('deaf', do_deaf, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

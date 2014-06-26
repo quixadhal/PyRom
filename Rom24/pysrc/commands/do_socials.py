@@ -12,4 +12,4 @@ def do_socials(ch, argument):
         ch.send("\n")
     return
 
-interp.cmd_table['socials'] = interp.cmd_type('socials', do_socials, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('socials', do_socials, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

@@ -111,4 +111,4 @@ def do_steal(ch, argument):
     ch.send("Got it!\n")
     return
 
-interp.cmd_table['steal'] = interp.cmd_type('steal', do_steal, merc.POS_STANDING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('steal', do_steal, merc.POS_STANDING, 0, merc.LOG_NORMAL, 1)

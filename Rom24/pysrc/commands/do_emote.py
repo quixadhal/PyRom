@@ -13,5 +13,5 @@ def do_emote(ch, argument):
     merc.act("$n $T", ch, None, argument, merc.TO_CHAR)
     return
 
-interp.cmd_table['emote'] = interp.cmd_type('emote', do_emote, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('emote', do_emote, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
 interp.cmd_table[','] = interp.cmd_type(',', do_emote, merc.POS_RESTING, 0, merc.LOG_NORMAL, 0)

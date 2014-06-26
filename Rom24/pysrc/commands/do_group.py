@@ -47,4 +47,4 @@ def do_group(ch, argument):
     merc.act("$N joins your group.", ch, None, victim, merc.TO_CHAR, merc.POS_SLEEPING)
     return
 
-interp.cmd_table['group'] = interp.cmd_type('group', do_group, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('group', do_group, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)

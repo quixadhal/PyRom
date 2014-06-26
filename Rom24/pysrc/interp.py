@@ -48,6 +48,7 @@ class cmd_type:
         self.show = show
         self.default_arg = default_arg
         setattr(CHAR_DATA, self.do_fun.__name__, self.do_fun)
+        cmd_table[name] = self
 
 # These commands don't need to be here but are, for order. These will always match first with prefixes.
 cmd_table = OrderedDict()

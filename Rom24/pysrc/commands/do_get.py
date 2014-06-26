@@ -76,5 +76,5 @@ def do_get(ch, argument):
                 else:
                     merc.act("I see nothing like that in the $T.",ch, None, arg2, merc.TO_CHAR)
 
-interp.cmd_table['get'] = interp.cmd_type('get', do_get, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
-interp.cmd_table['take'] = interp.cmd_type('take', do_get, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('get', do_get, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('take', do_get, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

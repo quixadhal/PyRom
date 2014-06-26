@@ -93,4 +93,4 @@ def do_dirt(ch, argument):
         merc.WAIT_STATE(ch,const.skill_table['dirt kicking'].beats)
     fight.check_killer(ch,victim)
 
-interp.cmd_table['dirt'] = interp.cmd_type('dirt', do_dirt, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('dirt', do_dirt, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)

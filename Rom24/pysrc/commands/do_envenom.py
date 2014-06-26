@@ -76,4 +76,4 @@ def do_envenom(ch, argument):
     merc.act("You can't poison $p.", ch, obj, None, merc.TO_CHAR)
     return
 
-interp.cmd_table['envenom'] = interp.cmd_type('envenom', do_envenom, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('envenom', do_envenom, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

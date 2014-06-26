@@ -91,5 +91,5 @@ def do_enter(ch, argument):
     ch.send("Nope, can't do it.\n")
     return
 
-interp.cmd_table['enter'] = interp.cmd_type('enter', do_enter, merc.POS_STANDING, 0, merc.LOG_NORMAL, 1)
-interp.cmd_table['go'] = interp.cmd_type('go', do_enter, merc.POS_STANDING, 0, merc.LOG_NORMAL, 0)
+interp.cmd_type('enter', do_enter, merc.POS_STANDING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('go', do_enter, merc.POS_STANDING, 0, merc.LOG_NORMAL, 0)

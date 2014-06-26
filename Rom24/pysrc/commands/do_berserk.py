@@ -64,4 +64,4 @@ def do_berserk(ch, argument):
         ch.send("Your pulse speeds up, but nothing happens.\n")
         fight.check_improve(ch, 'berserk', False, 2)
 
-interp.cmd_table['berserk'] = interp.cmd_type('berserk', do_berserk, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('berserk', do_berserk, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)

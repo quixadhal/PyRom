@@ -30,4 +30,4 @@ def do_value(ch, argument):
     ch.reply = keeper
     return
 
-interp.cmd_table['value'] = interp.cmd_type('value', do_value, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('value', do_value, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

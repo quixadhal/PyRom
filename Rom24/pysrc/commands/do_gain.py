@@ -106,4 +106,4 @@ def do_gain(ch, argument):
     merc.act("$N tells you 'I do not understand...'", ch, None, trainer, merc.TO_CHAR)
     return
 
-interp.cmd_table['gain'] = interp.cmd_type('gain', do_gain, merc.POS_STANDING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('gain', do_gain, merc.POS_STANDING, 0, merc.LOG_NORMAL, 1)

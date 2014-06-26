@@ -45,6 +45,6 @@ def do_sacrifice(ch, argument):
     obj.extract()
     return
 
-interp.cmd_table['sacrifice'] = interp.cmd_type('sacrifice', do_sacrifice, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
-interp.cmd_table['junk'] = interp.cmd_type('junk', do_sacrifice, merc.POS_RESTING, 0, merc.LOG_NORMAL, 0)
-interp.cmd_table['tap'] = interp.cmd_type('tap', do_sacrifice, merc.POS_RESTING, 0, merc.LOG_NORMAL, 0)
+interp.cmd_type('sacrifice', do_sacrifice, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('junk', do_sacrifice, merc.POS_RESTING, 0, merc.LOG_NORMAL, 0)
+interp.cmd_type('tap', do_sacrifice, merc.POS_RESTING, 0, merc.LOG_NORMAL, 0)

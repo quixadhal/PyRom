@@ -26,4 +26,4 @@ def do_scroll(ch, argument):
     ch.send("Scroll set to %d lines.\n" % lines)
     ch.lines = lines - 2
 
-interp.cmd_table['scroll'] = interp.cmd_type('scroll', do_scroll, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('scroll', do_scroll, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

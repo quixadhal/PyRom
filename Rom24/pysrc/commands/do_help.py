@@ -29,10 +29,10 @@ POS_DEAD = merc.POS_DEAD
 LOG_NORMAL  = merc.LOG_NORMAL
 IM = merc.IM
 
-interp.cmd_table['help'] = interp.cmd_type('help', do_help, POS_DEAD, 0, LOG_NORMAL, 1)
-interp.cmd_table['motd'] = interp.cmd_type('motd', do_help, POS_DEAD, 0, LOG_NORMAL, 1, 'motd')
-interp.cmd_table['imotd'] = interp.cmd_type('imotd', do_help, POS_DEAD, IM, LOG_NORMAL, 1, 'imotd')
-interp.cmd_table['rules'] = interp.cmd_type('rules', do_help, POS_DEAD, 0, LOG_NORMAL, 1, 'rules')
-interp.cmd_table['story'] = interp.cmd_type('story', do_help, POS_DEAD, 0, LOG_NORMAL, 1, 'story')
-interp.cmd_table['wizlist'] = interp.cmd_type('wizlist', do_help, POS_DEAD, 0, LOG_NORMAL, 1, 'wizlist')
-interp.cmd_table['credits'] = interp.cmd_type('credits', do_help, POS_DEAD, 0, LOG_NORMAL, 1, 'credits')
+interp.cmd_type('help', do_help, POS_DEAD, 0, LOG_NORMAL, 1)
+interp.cmd_type('motd', do_help, POS_DEAD, 0, LOG_NORMAL, 1, 'motd')
+interp.cmd_type('imotd', do_help, POS_DEAD, IM, LOG_NORMAL, 1, 'imotd')
+interp.cmd_type('rules', do_help, POS_DEAD, 0, LOG_NORMAL, 1, 'rules')
+interp.cmd_type('story', do_help, POS_DEAD, 0, LOG_NORMAL, 1, 'story')
+interp.cmd_type('wizlist', do_help, POS_DEAD, 0, LOG_NORMAL, 1, 'wizlist')
+interp.cmd_type('credits', do_help, POS_DEAD, 0, LOG_NORMAL, 1, 'credits')

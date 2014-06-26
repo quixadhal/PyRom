@@ -47,5 +47,5 @@ def do_backstab(ch, argument):
             fight.damage( ch, victim, 0, 'backstab', merc.DAM_NONE,True)
     return
 
-interp.cmd_table['backstab'] = interp.cmd_type('backstab', do_backstab, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)
-interp.cmd_table['bs'] = interp.cmd_type('bs', do_backstab, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 0)
+interp.cmd_type('backstab', do_backstab, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('bs', do_backstab, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 0)

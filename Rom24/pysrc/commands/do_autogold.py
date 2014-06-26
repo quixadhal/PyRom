@@ -13,4 +13,4 @@ def do_autogold(ch, argument):
         ch.send("Automatic gold looting set.\n")
         ch.act = merc.SET_BIT(ch.act, merc.PLR_AUTOGOLD)
 
-interp.cmd_table['autogold'] = interp.cmd_type('autogold', do_autogold, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('autogold', do_autogold, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

@@ -50,4 +50,4 @@ def do_rescue(ch, argument):
     fight.set_fighting(fch, ch)
     return
 
-interp.cmd_table['rescue'] = interp.cmd_type('rescue', do_rescue, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 0)
+interp.cmd_type('rescue', do_rescue, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 0)

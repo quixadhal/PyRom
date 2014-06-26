@@ -27,4 +27,4 @@ def do_clantalk(ch, argument):
         and not merc.IS_SET(d.character.comm, merc.COMM_NOCLAN) and not merc.IS_SET(d.character.comm, merc.COMM_QUIET):
             merc.act("$n clans '$t'", ch, argument, d.character, merc.TO_VICT, merc.POS_DEAD)
 
-interp.cmd_table['clan'] = interp.cmd_type('clan', do_clantalk, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('clan', do_clantalk, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)

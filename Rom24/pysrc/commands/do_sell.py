@@ -60,4 +60,4 @@ def do_sell(ch, argument):
         merc.obj_to_keeper(obj, keeper)
     return
 
-interp.cmd_table['sell'] = interp.cmd_type('sell', do_sell, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('sell', do_sell, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

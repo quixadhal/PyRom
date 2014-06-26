@@ -62,4 +62,4 @@ def do_disarm(ch, argument):
     fight.check_killer(ch,victim)
     return
 
-interp.cmd_table['disarm'] = interp.cmd_type('disarm', do_disarm, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('disarm', do_disarm, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)

@@ -139,4 +139,4 @@ def do_buy(ch, argument):
             if cost < t_obj.cost:
                 t_obj.cost = cost
 
-interp.cmd_table['buy'] = interp.cmd_type('buy', do_buy, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('buy', do_buy, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

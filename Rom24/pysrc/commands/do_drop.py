@@ -91,4 +91,4 @@ def do_drop(ch, argument):
             else:
                 merc.act("You are not carrying any $T.", ch, None, arg[4:], merc.TO_CHAR)
 
-interp.cmd_table['drop'] = interp.cmd_type('drop', do_drop, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('drop', do_drop, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

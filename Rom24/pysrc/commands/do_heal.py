@@ -102,4 +102,4 @@ def do_heal(ch, argument):
         return
     spell(sn,mob.level,mob,ch, merc.TARGET_CHAR)
 
-interp.cmd_table['heal'] = interp.cmd_type('heal', do_heal, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('heal', do_heal, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

@@ -49,4 +49,4 @@ def do_order(ch, argument):
         ch.send("You have no followers here.\n")
     return
 
-interp.cmd_table['order'] = interp.cmd_type('order', do_order, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('order', do_order, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

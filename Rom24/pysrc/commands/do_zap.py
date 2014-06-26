@@ -53,4 +53,4 @@ def do_zap(ch, argument):
         merc.act("Your $p explodes into fragments.", ch, wand, None, merc.TO_CHAR)
         wand.extract()
 
-interp.cmd_table['zap'] = interp.cmd_type('zap', do_zap, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('zap', do_zap, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

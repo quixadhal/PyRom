@@ -24,4 +24,4 @@ def do_unalias(ch, argument):
     ch.send("Alias removed.\n")
     return
 
-interp.cmd_table['unalias'] = interp.cmd_type('unalias', do_unalias, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('unalias', do_unalias, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

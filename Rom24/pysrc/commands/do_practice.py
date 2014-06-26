@@ -57,4 +57,4 @@ def do_practice(ch, argument):
                 merc.act("$n is now learned at $T.", ch, None, skill.name, merc.TO_ROOM)
     return
 
-interp.cmd_table['practice'] = interp.cmd_type('practice', do_practice, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('practice', do_practice, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)

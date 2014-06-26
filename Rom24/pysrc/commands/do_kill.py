@@ -40,5 +40,5 @@ def do_kill(ch, argument):
     fight.multi_hit(ch, victim, merc.TYPE_UNDEFINED)
     return
 
-interp.cmd_table['hit'] = interp.cmd_type('hit', do_kill, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 0)
-interp.cmd_table['kill'] = interp.cmd_type('kill', do_kill, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('hit', do_kill, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 0)
+interp.cmd_type('kill', do_kill, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)

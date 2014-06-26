@@ -39,4 +39,4 @@ def do_reply(ch, argument):
     victim.reply = ch
     return
 
-interp.cmd_table['reply'] = interp.cmd_type('reply', do_reply, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('reply', do_reply, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)

@@ -46,4 +46,4 @@ def do_outfit(ch, argument):
 
     ch.send("You have been equipped by Mota.\n")
 
-interp.cmd_table['outfit'] = interp.cmd_type('outfit', do_outfit, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('outfit', do_outfit, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

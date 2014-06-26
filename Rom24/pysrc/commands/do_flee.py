@@ -40,4 +40,4 @@ def do_flee( ch, argument ):
     ch.send("PANIC! You couldn't escape!\n\r")
     return
 
-interp.cmd_table['flee'] = interp.cmd_type('flee', do_flee, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('flee', do_flee, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)

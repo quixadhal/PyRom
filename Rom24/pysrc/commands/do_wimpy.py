@@ -18,4 +18,4 @@ def do_wimpy(ch, argument):
     ch.send("Wimpy set to %d hit points.\n" % wimpy)
     return
 
-interp.cmd_table['wimpy'] = interp.cmd_type('wimpy', do_wimpy, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('wimpy', do_wimpy, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

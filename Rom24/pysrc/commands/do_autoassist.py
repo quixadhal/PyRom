@@ -13,4 +13,4 @@ def do_autoassist(ch, argument):
         ch.send("You will now assist when needed.\n")
         ch.act = merc.SET_BIT(ch.act, merc.PLR_AUTOASSIST)
 
-interp.cmd_table['autoassist'] = interp.cmd_type('autoassist', do_autoassist, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('autoassist', do_autoassist, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

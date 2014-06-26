@@ -79,4 +79,4 @@ def do_channels(ch, argument):
     if merc.IS_SET(ch.comm, merc.COMM_NOEMOTE):
         ch.send("You cannot show emotions.\n")
 
-interp.cmd_table['channels'] = interp.cmd_type('channels', do_channels, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('channels', do_channels, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

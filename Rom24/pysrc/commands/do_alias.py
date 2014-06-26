@@ -48,4 +48,4 @@ def do_alias(ch, argument):
     ch.send("%s is now aliased to '%s'.\n\r" % (arg,argument) )
     return
 
-interp.cmd_table['alias'] = interp.cmd_type('alias', do_alias, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('alias', do_alias, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

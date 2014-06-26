@@ -81,4 +81,4 @@ def do_put(ch, argument):
                     merc.act( "$n puts $p in $P.", ch, obj, container, merc.TO_ROOM)
                     merc.act( "You put $p in $P.", ch, obj, container, merc.TO_CHAR)
 
-interp.cmd_table['put'] = interp.cmd_type('put', do_put, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('put', do_put, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

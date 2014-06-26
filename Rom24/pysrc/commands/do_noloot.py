@@ -12,4 +12,4 @@ def do_noloot(ch, argument):
         ch.send("Your corpse may now be looted.\n")
         ch.act = merc.SET_BIT(ch.act, merc.PLR_CANLOOT)
 
-interp.cmd_table['noloot'] = interp.cmd_type('noloot', do_noloot, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('noloot', do_noloot, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

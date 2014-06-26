@@ -30,4 +30,4 @@ def do_follow(ch, argument):
     merc.add_follower(ch, victim)
     return
 
-interp.cmd_table['follow'] = interp.cmd_type('follow', do_follow, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('follow', do_follow, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

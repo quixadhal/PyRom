@@ -38,4 +38,4 @@ def do_password(ch, argument):
     ch.send("Ok.\n")
     return
 
-interp.cmd_table['password'] = interp.cmd_type('password', do_password, merc.POS_DEAD, 0, merc.LOG_NEVER, 1)
+interp.cmd_type('password', do_password, merc.POS_DEAD, 0, merc.LOG_NEVER, 1)

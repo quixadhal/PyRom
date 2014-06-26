@@ -50,4 +50,4 @@ def do_brandish(ch, argument):
         merc.act("Your $p blazes bright and is gone.", ch, staff, None, merc.TO_CHAR)
         staff.extract()
 
-interp.cmd_table['brandish'] = interp.cmd_type('brandish', do_brandish, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('brandish', do_brandish, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

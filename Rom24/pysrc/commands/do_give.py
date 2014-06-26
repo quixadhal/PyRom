@@ -89,4 +89,4 @@ def do_give(ch, argument):
     merc.act( "You give $p to $N.", ch, obj, victim, merc.TO_CHAR)
     return
 
-interp.cmd_table['give'] = interp.cmd_type('give', do_give, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('give', do_give, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

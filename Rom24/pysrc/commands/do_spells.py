@@ -80,4 +80,4 @@ def do_spells(ch, argument):
         ch.send(buf)
     ch.send("\n")
 
-interp.cmd_table['spells'] = interp.cmd_type('spells', do_spells, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('spells', do_spells, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

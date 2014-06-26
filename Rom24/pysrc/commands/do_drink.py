@@ -76,4 +76,4 @@ def do_drink(ch, argument):
         obj.value[1] -= amount
     return
 
-interp.cmd_table['drink'] = interp.cmd_type('drink', do_drink, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('drink', do_drink, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

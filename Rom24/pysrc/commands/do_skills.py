@@ -80,4 +80,4 @@ def do_skills(ch, argument):
         ch.send(buf)
     ch.send("\n")
 
-interp.cmd_table['skills'] = interp.cmd_type('skills', do_skills, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('skills', do_skills, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

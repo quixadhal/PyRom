@@ -49,4 +49,4 @@ def do_eat(ch, argument):
     obj.extract()
     return
 
-interp.cmd_table['eat'] = interp.cmd_type('eat', do_eat, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('eat', do_eat, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

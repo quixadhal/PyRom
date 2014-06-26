@@ -27,4 +27,4 @@ def do_quaff(ch, argument):
     obj.extract()
     return
 
-interp.cmd_table['quaff'] = interp.cmd_type('quaff', do_quaff, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('quaff', do_quaff, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

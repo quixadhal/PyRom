@@ -137,5 +137,5 @@ def do_look(ch, argument):
             merc.act("The $d is open.", ch, None, pexit.keyword, merc.TO_CHAR)
     return
 
-interp.cmd_table['look'] = interp.cmd_type('look', do_look, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
-interp.cmd_table['read'] = interp.cmd_type('read', do_look, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('look', do_look, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('read', do_look, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

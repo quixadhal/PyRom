@@ -105,4 +105,4 @@ def do_score(ch, argument):
     if merc.IS_SET(ch.comm, merc.COMM_SHOW_AFFECTS):
         ch.do_affects("")
 
-interp.cmd_table['score'] = interp.cmd_type('score', do_score, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('score', do_score, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

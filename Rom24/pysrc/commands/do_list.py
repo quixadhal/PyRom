@@ -56,4 +56,4 @@ def do_list(self, argument):
                 ch.send("(%d)" % obj.pIndexData.vnum)
             ch.send("\n")
 
-interp.cmd_table['list'] = interp.cmd_type('list', do_list, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('list', do_list, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
