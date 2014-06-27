@@ -2,7 +2,7 @@ import merc
 import interp
 
 
-def do_remove(self, argument):
+def do_remove(ch, argument):
     argument, arg = merc.read_word(argument)
     if not arg:
         ch.send("Remove what?\n")

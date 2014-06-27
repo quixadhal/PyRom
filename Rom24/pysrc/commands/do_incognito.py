@@ -2,7 +2,7 @@ import merc
 import interp
 
 
-def do_incognito(self, argument):
+def do_incognito(ch, argument):
     # RT code for taking a level argument */
     argument, arg = merc.read_word(argument)
     if not arg:
