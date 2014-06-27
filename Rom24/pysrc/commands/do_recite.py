@@ -1,3 +1,8 @@
+import logging
+
+logger = logging.getLogger()
+
+import random
 import merc
 import interp
 import skills
@@ -26,18 +31,19 @@ def do_recite(ch, argument):
         if not victim and not obj:
             ch.send("You can't find it.\n")
             return
-        merc.act( "$n recites $p.", ch, scroll, None, merc.TO_ROOM)
-        merc.act( "You recite $p.", ch, scroll, None, merc.TO_CHAR)
+        merc.act("$n recites $p.", ch, scroll, None, merc.TO_ROOM)
+        merc.act("You recite $p.", ch, scroll, None, merc.TO_CHAR)
 
-    if random.randint(1,99) >= 20 + ch.get_skill("scrolls") * 4 // 5:
+    if random.randint(1, 99) >= 20 + ch.get_skill("scrolls") * 4 // 5:
         ch.send("You mispronounce a syllable.\n")
-        skills.check_improve(ch,"scrolls", False, 2)
+        skills.check_improve(ch, "scrolls", False, 2)
     else:
         merc.obj_cast_spell(scroll.value[1], scroll.value[0], ch, victim, obj)
         merc.obj_cast_spell(scroll.value[2], scroll.value[0], ch, victim, obj)
         merc.obj_cast_spell(scroll.value[3], scroll.value[0], ch, victim, obj)
-        skills.check_improve(ch,"scrolls",True,2)
+        skills.check_improve(ch, "scrolls", True, 2)
     scroll.extract()
     return
 
-interp.cmd_table['recite'] = interp.cmd_type('recite', do_recite, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('recite', do_recite, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

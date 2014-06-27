@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 from handler_room import move_char
 import interp
 from merc import DIR_NORTH, POS_STANDING, LOG_NEVER
@@ -8,4 +12,4 @@ def do_north(ch, argument):
     return
 
 
-interp.cmd_table['north'] = interp.cmd_type('north', do_north, POS_STANDING, 0, LOG_NEVER, 0)
+interp.register_command(interp.cmd_type('north', do_north, POS_STANDING, 0, LOG_NEVER, 0))

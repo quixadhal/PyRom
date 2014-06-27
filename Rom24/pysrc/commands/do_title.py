@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -13,4 +17,5 @@ def do_title(ch, argument):
     merc.set_title(ch, argument)
     ch.send("Ok.\n")
 
-interp.cmd_table['title'] = interp.cmd_type('title', do_title, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('title', do_title, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

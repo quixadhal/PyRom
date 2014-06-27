@@ -1,9 +1,13 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import db
 import interp
 import const
 
-# equips a character */
+# equips a character
 def do_outfit(ch, argument):
     if ch.level > 5 or merc.IS_NPC(ch):
         ch.send("Find it yourself!\n")
@@ -11,7 +15,7 @@ def do_outfit(ch, argument):
 
     obj = ch.get_eq(merc.WEAR_LIGHT)
     if not obj:
-        obj = db.create_object(merc.obj_index_hash[merc.OBJ_VNUM_SCHOOL_BANNER], 0 )
+        obj = db.create_object(merc.obj_index_hash[merc.OBJ_VNUM_SCHOOL_BANNER], 0)
         obj.cost = 0
         obj.to_char(ch)
         ch.equip(obj, merc.WEAR_LIGHT)
@@ -23,16 +27,17 @@ def do_outfit(ch, argument):
         obj.to_char(ch)
         ch.equip(obj, merc.WEAR_BODY)
 
-    # do the weapon thing */
+    # do the weapon thing
     obj = ch.get_eq(merc.WEAR_WIELD)
     if not obj:
         sn = 'dagger'
-        vnum = merc.OBJ_VNUM_SCHOOL_SWORD # just in case! */
-        for k,weapon in const.weapon_table.items():
-            if sn not in ch.pcdata.learned or (weapon.gsn in ch.pcdata.learned and ch.pcdata.learned[sn] < ch.pcdata.learned[weapon.gsn]):
+        vnum = merc.OBJ_VNUM_SCHOOL_SWORD  # just in case!
+        for k, weapon in const.weapon_table.items():
+            if sn not in ch.pcdata.learned or (
+                    weapon.gsn in ch.pcdata.learned and ch.pcdata.learned[sn] < ch.pcdata.learned[weapon.gsn]):
                 sn = weapon.gsn
                 vnum = weapon.vnum
-        obj = db.create_object(merc.obj_index_hash[vnum],0)
+        obj = db.create_object(merc.obj_index_hash[vnum], 0)
         obj.to_char(ch)
         ch.equip(obj, merc.WEAR_WIELD)
 
@@ -46,4 +51,5 @@ def do_outfit(ch, argument):
 
     ch.send("You have been equipped by Mota.\n")
 
-interp.cmd_table['outfit'] = interp.cmd_type('outfit', do_outfit, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('outfit', do_outfit, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

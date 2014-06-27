@@ -175,7 +175,7 @@ def bust_a_prompt( ch ):
             replace['%e'] = "none"
         else:
             replace['%e'] = doors
-    replace['%c'] = '\n\r'
+    replace['%c'] = '\n'
     replace['%h'] = '%s' % ch.hit
     replace['%H'] = "%s" % ch.max_hit
     replace['%m'] = "%d" % ch.mana

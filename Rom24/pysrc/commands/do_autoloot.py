@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -13,4 +17,5 @@ def do_autoloot(ch, argument):
         ch.send("Automatic corpse looting set.\n")
         ch.act = merc.SET_BIT(ch.act, merc.PLR_AUTOLOOT)
 
-interp.cmd_table['autoloot'] = interp.cmd_type('autoloot', do_autoloot, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('autoloot', do_autoloot, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

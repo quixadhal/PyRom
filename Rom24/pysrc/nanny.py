@@ -72,7 +72,7 @@ def con_get_name( self ):
     name = argument.title()
 
     if not check_parse_name(name):
-        self.send("Illegal name, try another.\r\nName:")
+        self.send("Illegal name, try another.\nName:")
 
     found,ch = load_char_obj(self,name)
 
@@ -142,7 +142,7 @@ def con_confirm_new_password(self):
         argument = hashlib.sha512( argument ).hexdigest()
 
     if argument != ch.pcdata.pwd:
-        ch.send("Passwords don't match.\r\nRetype password: ")
+        ch.send("Passwords don't match.\nRetype password: ")
         self.set_connected(con_get_new_password)
         return
 
@@ -162,7 +162,7 @@ def con_get_new_race(self):
             ch.do_help('race help')
         else:
             ch.do_help(argument)
-        ch.send( "\r\nWhat is your race (help for more information)? ")
+        ch.send( "\nWhat is your race (help for more information)? ")
         return
 
     race = prefix_lookup(pc_race_table, argument)
@@ -172,7 +172,7 @@ def con_get_new_race(self):
         ch.send("The following races are available:\n  ")
         for race in pc_race_table:
             ch.send("%s " % race_table[race].name )
-        ch.send("\r\nWhat is your race? (help for more information) ")
+        ch.send("\nWhat is your race? (help for more information) ")
         return
     
     ch.race = race_table[race.name]
@@ -237,7 +237,7 @@ def con_get_new_class(self):
     wiznet("Newbie alert!  $N sighted.",ch,None,WIZ_NEWBIE,0,0)
     wiznet(log_buf,None,None,WIZ_SITES,0,ch.get_trust())
 
-    ch.send("\r\nYou may be good, neutral, or evil.\n")
+    ch.send("\nYou may be good, neutral, or evil.\n")
     ch.send("Which alignment (G/N/E)? ")
     self.set_connected(con_get_alignment)
     return
@@ -267,7 +267,7 @@ def con_default_choice(self):
     argument = self.get_command()[:1].lower()
     ch = self.character
 
-    ch.send("\r\n")
+    ch.send("\n")
     if argument == 'y':
         ch.gen_data = GEN_DATA()
         ch.gen_data.points_chosen = ch.pcdata.points

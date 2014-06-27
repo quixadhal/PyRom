@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -10,5 +14,6 @@ def do_say(ch, argument):
     merc.act("You say '$T'", ch, None, argument, merc.TO_CHAR)
     return
 
-interp.cmd_table['say'] = interp.cmd_type('say', do_say, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
-interp.cmd_table["'"] = interp.cmd_type("'", do_say, merc.POS_RESTING, 0, merc.LOG_NORMAL, 0)
+
+interp.register_command(interp.cmd_type('say', do_say, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(interp.cmd_type("'", do_say, merc.POS_RESTING, 0, merc.LOG_NORMAL, 0))

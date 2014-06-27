@@ -295,7 +295,7 @@ def poison_effect( vo, level, dam, target):
         if not saves_spell(level / 4 + dam / 20,victim,DAM_POISON):
             af = AFFECT_DATA()
 
-            victim.send("You feel poison coursing through your veins.\n\r")
+            victim.send("You feel poison coursing through your veins.\n")
             act("$n looks very ill.",victim,None,None,TO_ROOM)
 
             af.where     = TO_AFFECTS
@@ -350,7 +350,7 @@ def shock_effect( vo, level, dam, target):
         victim = vo
         # daze and confused? */
         if not saves_spell(level/4 + dam/20,victim,DAM_LIGHTNING):
-            victim.send("Your muscles stop responding.\n\r")
+            victim.send("Your muscles stop responding.\n")
             DAZE_STATE(victim,max(12,level/4 + dam/20))
         # toast some gear */
         for obj in victim.carrying[:]:

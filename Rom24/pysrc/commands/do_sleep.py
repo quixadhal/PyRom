@@ -1,4 +1,8 @@
-from interp import cmd_table, cmd_type
+import logging
+
+logger = logging.getLogger()
+
+from interp import cmd_type, register_command
 from merc import POS_SLEEPING, POS_RESTING, POS_SITTING, POS_STANDING, act, TO_ROOM, ITEM_FURNITURE, IS_SET, SLEEP_ON, \
     SLEEP_IN, SLEEP_AT, TO_CHAR, POS_DEAD, POS_FIGHTING, LOG_NORMAL
 
@@ -15,7 +19,7 @@ def do_sleep(ch, argument):
             ch.send("You go to sleep.\n")
             act("$n goes to sleep.", ch, None, None, TO_ROOM)
             ch.position = POS_SLEEPING
-        else:  # find an object and sleep on it */
+        else:  # find an object and sleep on it
             if not argument:
                 obj = ch.on
             else:
@@ -25,8 +29,8 @@ def do_sleep(ch, argument):
                 ch.send("You don't see that here.\n")
                 return
             if obj.item_type != ITEM_FURNITURE or (
-                    not IS_SET(obj.value[2], SLEEP_ON)
-                    and not IS_SET(obj.value[2], SLEEP_IN)
+                            not IS_SET(obj.value[2], SLEEP_ON)
+                        and not IS_SET(obj.value[2], SLEEP_IN)
                     and not IS_SET(obj.value[2], SLEEP_AT)):
                 ch.send("You can't sleep on that!\n")
                 return
@@ -50,4 +54,4 @@ def do_sleep(ch, argument):
         return
 
 
-cmd_table['sleep'] = cmd_type('sleep', do_sleep, POS_SLEEPING, 0, LOG_NORMAL, 1)
+register_command(cmd_type('sleep', do_sleep, POS_SLEEPING, 0, LOG_NORMAL, 1))

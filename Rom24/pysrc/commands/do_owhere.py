@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -21,10 +25,10 @@ def do_owhere(ch, argument):
 
         if in_obj.carried_by and ch.can_see(in_obj.carried_by) and in_obj.carried_by.in_room:
             ch.send("%3d) %s is carried by %s [Room %d]\n" % (
-                        number, obj.short_descr, merc.PERS(in_obj.carried_by, ch), in_obj.carried_by.in_room.vnum ) )
+                number, obj.short_descr, merc.PERS(in_obj.carried_by, ch), in_obj.carried_by.in_room.vnum ))
         elif in_obj.in_room and ch.can_see_room(in_obj.in_room):
             ch.send("%3d) %s is in %s [Room %d]\n" % (
-                        number, obj.short_descr,in_obj.in_room.name, in_obj.in_room.vnum) )
+                number, obj.short_descr, in_obj.in_room.name, in_obj.in_room.vnum))
         else:
             ch.send("%3d) %s is somewhere\n" % (number, obj.short_descr))
 
@@ -33,4 +37,5 @@ def do_owhere(ch, argument):
     if not found:
         ch.send("Nothing like that in heaven or earth.\n")
 
-interp.cmd_table['owhere'] = interp.cmd_type('owhere', do_owhere, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('owhere', do_owhere, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1))

@@ -1,8 +1,12 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
 
-# RT to replace the two load commands */
+# RT to replace the two load commands
 def do_load(ch, argument):
     argument, arg = merc.read_word(argument)
     if not arg:
@@ -16,7 +20,8 @@ def do_load(ch, argument):
     if arg == "obj":
         ch.do_oload(argument)
         return
-    # echo syntax */
+    # echo syntax
     ch.do_load("")
 
-interp.cmd_table['load'] = interp.cmd_type('load', do_load, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)
+
+interp.register_command(interp.cmd_type('load', do_load, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1))

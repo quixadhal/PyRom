@@ -1,8 +1,12 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
 
-# RT quiet blocks out all communication */
+# RT quiet blocks out all communication
 def do_quiet(ch, argument):
     if merc.IS_SET(ch.comm, merc.COMM_QUIET):
         ch.send("Quiet mode removed.\n")
@@ -11,4 +15,5 @@ def do_quiet(ch, argument):
         ch.send("From now on, you will only hear says and emotes.\n")
         ch.comm = merc.SET_BIT(ch.comm, merc.COMM_QUIET)
 
-interp.cmd_table['quiet'] = interp.cmd_type('quiet', do_quiet, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('quiet', do_quiet, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1))

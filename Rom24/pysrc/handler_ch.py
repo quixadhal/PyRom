@@ -85,7 +85,7 @@ class handler_ch:
                 if not magic.saves_spell(plague.level - 2, vch, DAM_DISEASE) \
                         and not IS_IMMORTAL(vch) and not IS_AFFECTED(vch, AFF_PLAGUE) \
                         and random.randint(0, 5) == 0:
-                    vch.send("You feel hot and feverish.\n\r")
+                    vch.send("You feel hot and feverish.\n")
                     act("$n shivers and looks very ill.", vch, None, None, TO_ROOM)
                     vch.affect_join(plague)
         return
@@ -651,7 +651,7 @@ class handler_ch:
                         and not IS_IMMORTAL(vch) \
                         and not IS_AFFECTED(vch, AFF_PLAGUE) \
                         and random.randint(0, 5) == 0:
-                    vch.send("You feel hot and feverish.\n\r")
+                    vch.send("You feel hot and feverish.\n")
                     act("$n shivers and looks very ill.", vch, None, None, TO_ROOM)
                     vch.affect_join(plague)
         return

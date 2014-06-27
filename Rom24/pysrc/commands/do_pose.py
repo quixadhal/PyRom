@@ -1,3 +1,8 @@
+import logging
+
+logger = logging.getLogger()
+
+import random
 import merc
 import interp
 
@@ -161,6 +166,7 @@ pose_table = {
     },
 }
 
+
 def do_pose(ch, argument):
     if merc.IS_NPC(ch):
         return
@@ -172,4 +178,5 @@ def do_pose(ch, argument):
     merc.act(pose_table['to_others'][ch.guild.name][choice], ch, None, None, merc.TO_ROOM)
     return
 
-interp.cmd_table['pose'] = interp.cmd_type('pose', do_pose, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('pose', do_pose, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

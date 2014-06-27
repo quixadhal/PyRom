@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -12,17 +16,17 @@ def do_at(ch, argument):
         ch.send("No such location.\n")
         return
     if not ch.is_room_owner(location) and location.is_private() \
-    and ch.get_trust() < merc.MAX_LEVEL:
+            and ch.get_trust() < merc.MAX_LEVEL:
         ch.send("That room is private right now.\n")
         return
     original = ch.in_room
     on = ch.on
     ch.from_room()
     ch.to_room(location)
-    interp.interpret( ch, argument )
+    interp.interpret(ch, argument)
 
-    # * See if 'ch' still exists before continuing!
-    # * Handles 'at XXXX quit' case.
+    # See if 'ch' still exists before continuing!
+    # Handles 'at XXXX quit' case.
     for wch in merc.char_list:
         if wch == ch:
             ch.from_room()
@@ -30,4 +34,5 @@ def do_at(ch, argument):
             ch.on = on
             break
 
-interp.cmd_table['at'] = interp.cmd_type('at', do_at, merc.POS_DEAD, merc.L6, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('at', do_at, merc.POS_DEAD, merc.L6, merc.LOG_NORMAL, 1))

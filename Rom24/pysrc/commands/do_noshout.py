@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -15,8 +19,8 @@ def do_noshout(ch, argument):
         ch.send("Not on NPC's.\n")
         return
     if victim.get_trust() >= ch.get_trust():
-          ch.send("You failed.\n")
-          return
+        ch.send("You failed.\n")
+        return
     if merc.IS_SET(victim.comm, merc.COMM_NOSHOUT):
         victim.comm = merc.REMOVE_BIT(victim.comm, merc.COMM_NOSHOUT)
         victim.send("You can shout again.\n")
@@ -26,7 +30,8 @@ def do_noshout(ch, argument):
         victim.comm = merc.SET_BIT(victim.comm, merc.COMM_NOSHOUT)
         victim.send("You can't shout!\n")
         ch.send("NOSHOUT set.\n")
-        merc.wiznet("$N revokes %s's shouts." % victim.name,ch,None, merc.WIZ_PENALTIES, merc.WIZ_SECURE, 0)
+        merc.wiznet("$N revokes %s's shouts." % victim.name, ch, None, merc.WIZ_PENALTIES, merc.WIZ_SECURE, 0)
     return
 
-interp.cmd_table['noshout'] = interp.cmd_type('noshout', do_noshout, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1)
+
+interp.register_command(interp.cmd_type('noshout', do_noshout, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1))

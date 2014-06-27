@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -10,4 +14,5 @@ def do_show(ch, argument):
         ch.send("Affects will now be shown in score.\n")
         ch.comm = merc.SET_BIT(ch.comm, merc.COMM_SHOW_AFFECTS)
 
-interp.cmd_table['show'] = interp.cmd_type('show', do_show, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('show', do_show, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

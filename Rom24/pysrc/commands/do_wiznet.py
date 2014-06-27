@@ -1,6 +1,11 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 import const
+
 
 def do_wiznet(ch, argument):
     if not argument:
@@ -21,22 +26,22 @@ def do_wiznet(ch, argument):
         ch.wiznet = merc.REMOVE_BIT(ch.wiznet, merc.WIZ_ON)
         return
     buf = ''
-    # show wiznet status */
+    # show wiznet status
     if "status".startswith(argument):
         if not merc.IS_SET(ch.wiznet, merc.WIZ_ON):
-          buf += "off "
+            buf += "off "
         for name, flag in const.wiznet_table.items():
             if merc.IS_SET(ch.wiznet, flag.flag):
                 buf += name + " "
             ch.send("Wiznet status:\n%s\n" % buf)
             return
     if "show".startswith(argument):
-    # list of all wiznet options */
+        # list of all wiznet options
         buf = ''
         for name, flag in const.wiznet_table.items():
             if flag.level <= ch.get_trust():
                 buf += name + " "
-        ch.send("Wiznet options available to you are:\n%s\n" % buf )
+        ch.send("Wiznet options available to you are:\n%s\n" % buf)
         return
     flag = merc.prefix_lookup(const.wiznet_table, argument)
     if not flag or ch.get_trust() < flag.level:
@@ -51,4 +56,5 @@ def do_wiznet(ch, argument):
         ch.wiznet = merc.SET_BIT(ch.wiznet, flag.flag)
         return
 
-interp.cmd_table['wiznet'] = interp.cmd_type('wiznet', do_wiznet, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('wiznet', do_wiznet, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1))

@@ -1,5 +1,10 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
+import update
 
 
 def do_eat(ch, argument):
@@ -18,7 +23,7 @@ def do_eat(ch, argument):
         if not merc.IS_NPC(ch) and ch.pcdata.condition[merc.COND_FULL] > 40:
             ch.send("You are too full to eat more.\n")
             return
-    merc.act("$n eats $p.",  ch, obj, None, merc.TO_ROOM)
+    merc.act("$n eats $p.", ch, obj, None, merc.TO_ROOM)
     merc.act("You eat $p.", ch, obj, None, merc.TO_CHAR)
     if obj.item_type == merc.ITEM_FOOD:
         if not merc.IS_NPC(ch):
@@ -30,9 +35,9 @@ def do_eat(ch, argument):
             elif ch.pcdata.condition[merc.COND_FULL] > 40:
                 ch.send("You are full.\n")
         if obj.value[3] != 0:
-            # The food was poisoned! */
+            # The food was poisoned!
             af = merc.AFFECT_DATA()
-            act( "$n chokes and gags.", ch, 0, 0, merc.TO_ROOM)
+            merc.act("$n chokes and gags.", ch, 0, 0, merc.TO_ROOM)
             ch.send("You choke and gag.\n")
             af.where = merc.TO_AFFECTS
             af.type = "poison"
@@ -43,10 +48,11 @@ def do_eat(ch, argument):
             af.bitvector = merc.AFF_POISON
             ch.affect_join(af)
     elif obj.item_type == merc.ITEM_PILL:
-        merc.obj_cast_spell( obj.value[1], obj.value[0], ch, ch, None)
-        merc.obj_cast_spell( obj.value[2], obj.value[0], ch, ch, None)
-        merc.obj_cast_spell( obj.value[3], obj.value[0], ch, ch, None)
+        merc.obj_cast_spell(obj.value[1], obj.value[0], ch, ch, None)
+        merc.obj_cast_spell(obj.value[2], obj.value[0], ch, ch, None)
+        merc.obj_cast_spell(obj.value[3], obj.value[0], ch, ch, None)
     obj.extract()
     return
 
-interp.cmd_table['eat'] = interp.cmd_type('eat', do_eat, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('eat', do_eat, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

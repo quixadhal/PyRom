@@ -1,8 +1,12 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
 
-def do_compare(self, argument):
+def do_compare(ch, argument):
     argument, arg1 = merc.read_word(argument)
     argument, arg2 = merc.read_word(argument)
 
@@ -16,8 +20,8 @@ def do_compare(self, argument):
     obj2 = None
     if not arg2:
         for obj2 in ch.carrying:
-            if obj2.wear_loc != merc.WEAR_NONE and  ch.can_see_obj(obj2) and  obj1.item_type == obj2.item_type \
-            and (obj1.wear_flags & obj2.wear_flags & ~merc.ITEM_TAKE) != 0:
+            if obj2.wear_loc != merc.WEAR_NONE and ch.can_see_obj(obj2) and obj1.item_type == obj2.item_type \
+                    and (obj1.wear_flags & obj2.wear_flags & ~merc.ITEM_TAKE) != 0:
                 break
 
         if not obj2:
@@ -29,9 +33,9 @@ def do_compare(self, argument):
             ch.send("You do not have that item.\n")
             return
 
-    msg   = None
-    value1  = 0
-    value2  = 0
+    msg = None
+    value1 = 0
+    value2 = 0
 
     if obj1 is obj2:
         msg = "You compare $p to itself.  It looks about the same."
@@ -50,12 +54,17 @@ def do_compare(self, argument):
                 value2 = (1 + obj2.value[2]) * obj2.value[1]
             else:
                 value2 = obj2.value[1] + obj2.value[2]
-        else: msg = "You can't compare $p and $P."
-    if msg == None:
-        if value1 == value2: msg = "$p and $P look about the same."
-        elif value1 > value2: msg = "$p looks better than $P."
-        else: msg = "$p looks worse than $P."
+        else:
+            msg = "You can't compare $p and $P."
+    if msg is None:
+        if value1 == value2:
+            msg = "$p and $P look about the same."
+        elif value1 > value2:
+            msg = "$p looks better than $P."
+        else:
+            msg = "$p looks worse than $P."
     merc.act(msg, ch, obj1, obj2, merc.TO_CHAR)
     return
 
-interp.cmd_table['compare'] = interp.cmd_type('compare', do_compare, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('compare', do_compare, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

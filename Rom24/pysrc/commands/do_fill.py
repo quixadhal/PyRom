@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import const
 import interp
@@ -26,10 +30,13 @@ def do_fill(ch, argument):
     if obj.value[1] >= obj.value[0]:
         ch.send("Your container is full.\n")
         return
-    merc.act("You fill $p with %s from $P." % (const.liq_table[fountain.value[2]].liq_name), ch, obj, fountain, merc.TO_CHAR )
-    merc.act("$n fills $p with %s from $P." % (const.liq_table[fountain.value[2]].liq_name), ch, obj, fountain, merc.TO_ROOM)
+    merc.act("You fill $p with %s from $P." % const.liq_table[fountain.value[2]].liq_name, ch, obj, fountain,
+             merc.TO_CHAR)
+    merc.act("$n fills $p with %s from $P." % const.liq_table[fountain.value[2]].liq_name, ch, obj, fountain,
+             merc.TO_ROOM)
     obj.value[2] = fountain.value[2]
     obj.value[1] = obj.value[0]
     return
 
-interp.cmd_table['fill'] = interp.cmd_type('fill', do_fill, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('fill', do_fill, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

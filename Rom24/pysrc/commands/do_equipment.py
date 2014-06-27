@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -19,4 +23,5 @@ def do_equipment(ch, argument):
     if not found:
         ch.send("Nothing.\n")
 
-interp.cmd_table['equipment'] = interp.cmd_type('equipment', do_equipment, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('equipment', do_equipment, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

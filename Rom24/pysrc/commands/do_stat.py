@@ -1,8 +1,12 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
 
-# RT to replace the 3 stat commands */
+# RT to replace the 3 stat commands
 def do_stat(ch, argument):
     string, arg = merc.read_word(argument)
     if not arg:
@@ -21,7 +25,7 @@ def do_stat(ch, argument):
     if arg == "char" or arg == "mob":
         ch.do_mstat(string)
         return
-    # do it the old way */
+    # do it the old way
     obj = ch.get_obj_world(argument)
     if obj:
         ch.do_ostat(argument)
@@ -30,10 +34,11 @@ def do_stat(ch, argument):
     if victim:
         ch.do_mstat(argument)
         return
-    location = merc.find_location(ch,argument)
+    location = merc.find_location(ch, argument)
     if location:
         ch.do_rstat(argument)
         return
     ch.send("Nothing by that name found anywhere.\n")
 
-interp.cmd_table['stat'] = interp.cmd_type('stat', do_stat, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('stat', do_stat, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1))

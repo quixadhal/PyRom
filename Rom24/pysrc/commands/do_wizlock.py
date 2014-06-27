@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 import settings
@@ -14,4 +18,5 @@ def do_wizlock(ch, argument):
         settings.WIZLOCK = False
     return
 
-interp.cmd_table['wizlock'] = interp.cmd_type('wizlock', do_wizlock, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1)
+
+interp.register_command(interp.cmd_type('wizlock', do_wizlock, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1))

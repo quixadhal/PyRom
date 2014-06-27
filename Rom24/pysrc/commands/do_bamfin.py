@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -14,4 +18,5 @@ def do_bamfin(ch, argument):
         ch.send("Your poofin is now %s\n" % ch.pcdata.bamfin)
     return
 
-interp.cmd_table['poofin'] = interp.cmd_type('poofin', do_bamfin, merc.POS_DEAD, merc.L8, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('poofin', do_bamfin, merc.POS_DEAD, merc.L8, merc.LOG_NORMAL, 1))

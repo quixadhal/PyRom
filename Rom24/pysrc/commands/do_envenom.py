@@ -1,12 +1,17 @@
+import logging
+
+logger = logging.getLogger()
+
+import random
 import merc
 import interp
 import const
 import skills
 
 
-# for poisoning weapons and food/drink */
+# for poisoning weapons and food/drink
 def do_envenom(ch, argument):
-    # find out what */
+    # find out what
     if not argument:
         ch.send("Envenom what item?\n")
         return
@@ -22,7 +27,7 @@ def do_envenom(ch, argument):
         if merc.IS_OBJ_STAT(obj, merc.ITEM_BLESS) or merc.IS_OBJ_STAT(obj, merc.ITEM_BURN_PROOF):
             merc.act("You fail to poison $p.", ch, obj, None, merc.TO_CHAR)
             return
-        if random.randint(1,99) < skill:  # success! */
+        if random.randint(1, 99) < skill:  # success!
             merc.act("$n treats $p with deadly poison.", ch, obj, None, merc.TO_ROOM)
             merc.act("You treat $p with deadly poison.", ch, obj, None, merc.TO_CHAR)
             if not obj.value[3]:
@@ -37,12 +42,12 @@ def do_envenom(ch, argument):
             return
     if obj.item_type == merc.ITEM_WEAPON:
         if merc.IS_WEAPON_STAT(obj, merc.WEAPON_FLAMING) \
-        or merc.IS_WEAPON_STAT(obj, merc.WEAPON_FROST) \
-        or merc.IS_WEAPON_STAT(obj, merc.WEAPON_VAMPIRIC) \
-        or merc.IS_WEAPON_STAT(obj, merc.WEAPON_SHARP) \
-        or merc.IS_WEAPON_STAT(obj, merc.WEAPON_VORPAL) \
-        or merc.IS_WEAPON_STAT(obj, merc.WEAPON_SHOCKING) \
-        or merc.IS_OBJ_STAT(obj, merc.ITEM_BLESS) or merc.IS_OBJ_STAT(obj, merc.ITEM_BURN_PROOF):
+                or merc.IS_WEAPON_STAT(obj, merc.WEAPON_FROST) \
+                or merc.IS_WEAPON_STAT(obj, merc.WEAPON_VAMPIRIC) \
+                or merc.IS_WEAPON_STAT(obj, merc.WEAPON_SHARP) \
+                or merc.IS_WEAPON_STAT(obj, merc.WEAPON_VORPAL) \
+                or merc.IS_WEAPON_STAT(obj, merc.WEAPON_SHOCKING) \
+                or merc.IS_OBJ_STAT(obj, merc.ITEM_BLESS) or merc.IS_OBJ_STAT(obj, merc.ITEM_BURN_PROOF):
             merc.act("You can't seem to envenom $p.", ch, obj, None, merc.TO_CHAR)
             return
         if obj.value[3] < 0 or const.attack_table[obj.value[3]].damage == merc.DAM_BASH:
@@ -51,7 +56,7 @@ def do_envenom(ch, argument):
         if merc.IS_WEAPON_STAT(obj, merc.WEAPON_POISON):
             merc.act("$p is already envenomed.", ch, obj, None, merc.TO_CHAR)
             return
-        percent = random.randint(1,99)
+        percent = random.randint(1, 99)
         if percent < skill:
             af = merc.AFFECT_DATA()
             af.where = merc.TO_WEAPON
@@ -70,10 +75,11 @@ def do_envenom(ch, argument):
             return
         else:
             merc.act("You fail to envenom $p.", ch, obj, None, merc.TO_CHAR)
-            skills.check_improve(ch,"envenom",False,3)
-            merc.WAIT_STATE(ch,const.skill_table["envenom"].beats)
+            skills.check_improve(ch, "envenom", False, 3)
+            merc.WAIT_STATE(ch, const.skill_table["envenom"].beats)
             return
     merc.act("You can't poison $p.", ch, obj, None, merc.TO_CHAR)
     return
 
-interp.cmd_table['envenom'] = interp.cmd_type('envenom', do_envenom, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('envenom', do_envenom, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

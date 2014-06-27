@@ -1,9 +1,13 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 import settings
 
 
-# RT anti-newbie code */
+# RT anti-newbie code
 def do_newlock(ch, argument):
     if not settings.NEWLOCK:
         merc.wiznet("$N locks out new characters.", ch, None, 0, 0, 0)
@@ -15,4 +19,5 @@ def do_newlock(ch, argument):
         settings.NEWLOCK = False
     return
 
-interp.cmd_table['newlock'] = interp.cmd_type('newlock', do_newlock, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)
+
+interp.register_command(interp.cmd_type('newlock', do_newlock, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1))

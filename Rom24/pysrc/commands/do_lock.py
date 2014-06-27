@@ -1,5 +1,9 @@
+import logging
+
+logger = logging.getLogger()
+
 from handler_room import find_door, has_key
-from interp import cmd_table, cmd_type
+from interp import cmd_type, register_command
 from merc import read_word, ITEM_PORTAL, IS_SET, EX_ISDOOR, EX_NOCLOSE, EX_CLOSED, EX_NOLOCK, EX_LOCKED, SET_BIT, act, \
     TO_CHAR, TO_ROOM, ITEM_CONTAINER, CONT_CLOSED, CONT_LOCKED, rev_dir, POS_RESTING, LOG_NORMAL
 
@@ -11,7 +15,7 @@ def do_lock(ch, argument):
         return
     obj = ch.get_obj_here(arg)
     if obj:
-        # portal stuff */
+        # portal stuff
         if obj.item_type == ITEM_PORTAL:
             if not IS_SET(obj.value[1], EX_ISDOOR) or IS_SET(obj.value[1], EX_NOCLOSE):
                 ch.send("You can't do that.\n")
@@ -32,7 +36,7 @@ def do_lock(ch, argument):
             act("You lock $p.", ch, obj, None, TO_CHAR)
             act("$n locks $p.", ch, obj, None, TO_ROOM)
             return
-        # 'lock object' */
+        # 'lock object'
         if obj.item_type != ITEM_CONTAINER:
             ch.send("That's not a container.\n")
             return
@@ -55,7 +59,7 @@ def do_lock(ch, argument):
         return
     door = find_door(ch, arg)
     if door >= 0:
-        # 'lock door' */
+        # 'lock door'
         pexit = ch.in_room.exit[door]
         if not IS_SET(pexit.exit_info, EX_CLOSED):
             ch.send("It's not closed.\n")
@@ -73,11 +77,11 @@ def do_lock(ch, argument):
         SET_BIT(pexit.exit_info, EX_LOCKED)
         ch.send("*Click*\n")
         act("$n locks the $d.", ch, None, pexit.keyword, TO_ROOM)
-        # lock the other side */
+        # lock the other side
         to_room = pexit.to_room
         if to_room and to_room.exit[rev_dir[door]] != 0 \
                 and to_room.exit[rev_dir[door]].to_room == ch.in_room:
             SET_BIT(to_room.exit[rev_dir[door]].exit_info, EX_LOCKED)
 
 
-cmd_table['lock'] = cmd_type('lock', do_lock, POS_RESTING, 0, LOG_NORMAL, 1)
+register_command(cmd_type('lock', do_lock, POS_RESTING, 0, LOG_NORMAL, 1))

@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -7,13 +11,13 @@ def do_mfind(ch, argument):
     if not arg:
         ch.send("Find whom?\n")
         return
-    fAll  = False # !str_cmp( arg, "all" ) */
+    fAll = False  # !str_cmp( arg, "all" )
     found = False
-    nMatch  = 0
-     #* Yeah, so iterating over all vnum's takes 10,000 loops.
-     #* Get_mob_index is fast, and I don't feel like threading another link.
-     #* Do you?
-     # -- Furey
+    nMatch = 0
+    # Yeah, so iterating over all vnum's takes 10,000 loops.
+    # Get_mob_index is fast, and I don't feel like threading another link.
+    # Do you?
+    # -- Furey
     for pMobIndex in merc.mob_index_hash.values():
         if fAll or merc.is_name(arg, pMobIndex.player_name):
             found = True
@@ -22,4 +26,5 @@ def do_mfind(ch, argument):
         ch.send("No mobiles by that name.\n")
     return
 
-interp.cmd_table['mfind'] = interp.cmd_type('mfind', do_mfind, merc.POS_DEAD, merc.L4, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('mfind', do_mfind, merc.POS_DEAD, merc.L4, merc.LOG_NORMAL, 1))

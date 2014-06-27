@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 import fight
@@ -13,7 +17,7 @@ def do_goto(ch, argument):
         return
     count = len(location.people)
     if not ch.is_room_owner(location) and location.is_private() \
-    and (count > 1 or ch.get_trust() < merc.MAX_LEVEL):
+            and (count > 1 or ch.get_trust() < merc.MAX_LEVEL):
         ch.send("That room is private right now.\n")
         return
     if ch.fighting:
@@ -33,7 +37,8 @@ def do_goto(ch, argument):
                 merc.act("$t", ch, ch.pcdata.bamfin, rch, merc.TO_VICT)
             else:
                 merc.act("$n appears in a swirling mist.", ch, None, rch, merc.TO_VICT)
-    ch.do_look("auto" )
+    ch.do_look("auto")
     return
 
-interp.cmd_table['goto'] = interp.cmd_type('goto', do_goto, merc.POS_DEAD, merc.L8, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('goto', do_goto, merc.POS_DEAD, merc.L8, merc.LOG_NORMAL, 1))

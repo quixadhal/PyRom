@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import const
 import interp
@@ -22,15 +26,17 @@ def do_pour(ch, argument):
             return
         out.value[1] = 0
         out.value[3] = 0
-        merc.act("You invert $p, spilling %s all over the ground." % (const.liq_table[out.value[2]].liq_name), ch, out, None, merc.TO_CHAR)
-        merc.act("$n inverts $p, spilling %s all over the ground." % (const.liq_table[out.value[2]].liq_name), ch, out, None, merc.TO_ROOM)
+        merc.act("You invert $p, spilling %s all over the ground." % const.liq_table[out.value[2]].liq_name, ch, out,
+                 None, merc.TO_CHAR)
+        merc.act("$n inverts $p, spilling %s all over the ground." % const.liq_table[out.value[2]].liq_name, ch, out,
+                 None, merc.TO_ROOM)
         return
     into = ch.get_obj_here(argument)
     vch = None
     if not into:
         vch = ch.get_char_room(argument)
 
-        if vch == None:
+        if vch is None:
             ch.send("Pour into what?\n")
             return
         into = vch.get_eq(merc.WEAR_HOLD)
@@ -52,18 +58,19 @@ def do_pour(ch, argument):
     if into.value[1] >= into.value[0]:
         merc.act("$p is already filled to the top.", ch, into, None, merc.TO_CHAR)
         return
-    amount = min(out.value[1],into.value[0] - into.value[1])
+    amount = min(out.value[1], into.value[0] - into.value[1])
 
     into.value[1] += amount
     out.value[1] -= amount
     into.value[2] = out.value[2]
 
     if not vch:
-        merc.act("You pour %s from $p into $P." % (const.liq_table[out.value[2]].liq_name), ch, out, into, merc.TO_CHAR)
-        merc.act("$n pours %s from $p into $P." % (const.liq_table[out.value[2]].liq_name), ch, out, into, merc.TO_ROOM)
+        merc.act("You pour %s from $p into $P." % const.liq_table[out.value[2]].liq_name, ch, out, into, merc.TO_CHAR)
+        merc.act("$n pours %s from $p into $P." % const.liq_table[out.value[2]].liq_name, ch, out, into, merc.TO_ROOM)
     else:
-        merc.act("You pour some %s for $N." % (const.liq_table[out.value[2]].liq_name), ch, None, vch, merc.TO_CHAR)
-        merc.act("$n pours you some %s." % (const.liq_table[out.value[2]].liq_name), ch, None, vch, merc.TO_VICT)
-        merc.act("$n pours some %s for $N." % (const.liq_table[out.value[2]].liq_name),ch, None, vch, merc.TO_NOTVICT)
+        merc.act("You pour some %s for $N." % const.liq_table[out.value[2]].liq_name, ch, None, vch, merc.TO_CHAR)
+        merc.act("$n pours you some %s." % const.liq_table[out.value[2]].liq_name, ch, None, vch, merc.TO_VICT)
+        merc.act("$n pours some %s for $N." % const.liq_table[out.value[2]].liq_name, ch, None, vch, merc.TO_NOTVICT)
 
-interp.cmd_table['pour'] = interp.cmd_type('pour', do_pour, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('pour', do_pour, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

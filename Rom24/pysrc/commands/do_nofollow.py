@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -13,4 +17,5 @@ def do_nofollow(ch, argument):
         ch.act = merc.SET_BIT(ch.act, merc.PLR_NOFOLLOW)
         merc.die_follower(ch)
 
-interp.cmd_table['nofollow'] = interp.cmd_type('nofollow', do_nofollow, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('nofollow', do_nofollow, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

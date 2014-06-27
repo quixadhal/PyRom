@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -31,4 +35,5 @@ def do_description(ch, argument):
     ch.send(ch.description if ch.description else "(None).\n")
     return
 
-interp.cmd_table['description'] = interp.cmd_type('description', do_description, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('description', do_description, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

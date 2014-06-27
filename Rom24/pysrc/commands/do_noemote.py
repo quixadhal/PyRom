@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -18,12 +22,13 @@ def do_noemote(ch, argument):
         victim.comm = merc.REMOVE_BIT(victim.comm, merc.COMM_NOEMOTE)
         victim.send("You can emote again.\n")
         ch.send("NOEMOTE removed.\n")
-        merc.wiznet("$N restores emotes to %s." % victim.name, ch, None, merc.WIZ_PENALTIES, merc.WIZ_SECURE,0)
+        merc.wiznet("$N restores emotes to %s." % victim.name, ch, None, merc.WIZ_PENALTIES, merc.WIZ_SECURE, 0)
     else:
         victim.comm = merc.SET_BIT(victim.comm, merc.COMM_NOEMOTE)
         victim.send("You can't emote!\n")
         ch.send("NOEMOTE set.\n")
-        merc.wiznet("$N revokes %s's emotes." % victim.name,ch, None, merc.WIZ_PENALTIES, merc.WIZ_SECURE, 0)
+        merc.wiznet("$N revokes %s's emotes." % victim.name, ch, None, merc.WIZ_PENALTIES, merc.WIZ_SECURE, 0)
     return
 
-interp.cmd_table['noemote'] = interp.cmd_type('noemote', do_noemote, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1)
+
+interp.register_command(interp.cmd_type('noemote', do_noemote, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1))

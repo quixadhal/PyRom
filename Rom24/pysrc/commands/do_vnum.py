@@ -1,9 +1,13 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
 
-# ofind and mfind replaced with vnum, vnum skill also added */
-def do_vnum(self, argument):
+# ofind and mfind replaced with vnum, vnum skill also added
+def do_vnum(ch, argument):
     string, arg = merc.read_word(argument)
 
     if not arg:
@@ -23,8 +27,9 @@ def do_vnum(self, argument):
     if arg == "skill" or arg == "spell":
         ch.do_slookup(string)
         return
-    # do both */
+    # do both
     ch.do_mfind(argument)
     ch.do_ofind(argument)
 
-interp.cmd_table['vnum'] = interp.cmd_type('vnum', do_vnum, merc.POS_DEAD, merc.L4, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('vnum', do_vnum, merc.POS_DEAD, merc.L4, merc.LOG_NORMAL, 1))

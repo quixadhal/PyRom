@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import db
 import interp
@@ -15,9 +19,10 @@ def do_mload(ch, argument):
     pMobIndex = merc.mob_index_hash[vnum]
     victim = db.create_mobile(pMobIndex)
     victim.to_room(ch.in_room)
-    merc.act( "$n has created $N!", ch, None, victim, merc.TO_ROOM)
+    merc.act("$n has created $N!", ch, None, victim, merc.TO_ROOM)
     merc.wiznet("$N loads %s." % victim.short_descr, ch, None, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.get_trust())
     ch.send("Ok.\n")
     return
 
-interp.cmd_table['mload'] = interp.cmd_type('mload', do_mload, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)
+
+interp.register_command(interp.cmd_type('mload', do_mload, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1))

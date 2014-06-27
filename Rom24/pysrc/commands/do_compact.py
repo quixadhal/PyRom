@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -10,4 +14,5 @@ def do_compact(ch, argument):
         ch.send("Compact mode set.\n")
         ch.comm = merc.SET_BIT(ch.comm, merc.COMM_COMPACT)
 
-interp.cmd_table['compact'] = interp.cmd_type('compact', do_compact, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('compact', do_compact, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

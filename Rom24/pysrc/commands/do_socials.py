@@ -1,8 +1,12 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
 
-# RT does socials */
+# RT does socials
 def do_socials(ch, argument):
     for col, social in enumerate(merc.social_list):
         ch.send("%-12s" % social.name)
@@ -12,4 +16,5 @@ def do_socials(ch, argument):
         ch.send("\n")
     return
 
-interp.cmd_table['socials'] = interp.cmd_type('socials', do_socials, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('socials', do_socials, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

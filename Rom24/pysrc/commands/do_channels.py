@@ -1,10 +1,14 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
 
-# RT code to display channel status */
+# RT code to display channel status
 def do_channels(ch, argument):
-    # lists all channels and their status */
+    # lists all channels and their status
     ch.send("   channel     status\n")
     ch.send("---------------------\n")
     ch.send("gossip         ")
@@ -65,7 +69,7 @@ def do_channels(ch, argument):
         ch.send("You are immune to snooping.\n")
     if ch.lines != merc.PAGELEN:
         if ch.lines:
-            ch.send("You display %d lines of scroll.\n" % ch.lines+2)
+            ch.send("You display %d lines of scroll.\n" % ch.lines + 2)
         else:
             ch.send("Scroll buffering is off.\n")
     if ch.prompt:
@@ -79,4 +83,5 @@ def do_channels(ch, argument):
     if merc.IS_SET(ch.comm, merc.COMM_NOEMOTE):
         ch.send("You cannot show emotions.\n")
 
-interp.cmd_table['channels'] = interp.cmd_type('channels', do_channels, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('channels', do_channels, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
