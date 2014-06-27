@@ -961,7 +961,6 @@ class handler_ch:
     # for returning weapon information */
     def get_weapon_sn(ch):
         wield = ch.get_eq(WEAR_WIELD)
-
         if not wield or wield.item_type != ITEM_WEAPON:
             sn = "hand to hand"
             return sn
@@ -970,6 +969,7 @@ class handler_ch:
 
     def get_weapon_skill(ch, sn):
         # -1 is exotic */
+        skill = 0
         if IS_NPC(ch):
             if sn == -1:
                 skill = 3 * ch.level

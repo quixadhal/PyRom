@@ -32,9 +32,8 @@
  ************/
 """
 from collections import OrderedDict
-import logging
-logger = logging.getLogger()
 
+import hotfix
 from alias import *
 from healing import do_heal
 from fight import *
@@ -67,9 +66,9 @@ cmd_table['cast'] = None
 cmd_table['follow'] = None
 cmd_table['goto'] = None
 cmd_table['group'] = None
-cmd_table['hit'] = cmd_type('hit', do_kill, POS_FIGHTING, 0, LOG_NORMAL, 0)
+cmd_table['hit'] = None
 cmd_table['inventory'] = None
-cmd_table['kill'] = cmd_type('kill', do_kill, POS_FIGHTING, 0, LOG_NORMAL, 1)
+cmd_table['kill'] = None
 cmd_table['look'] = None
 cmd_table['who'] = None
 cmd_table['autolist'] = None
@@ -112,12 +111,12 @@ cmd_table['trip'] = cmd_type('trip', do_trip, POS_FIGHTING, 0, LOG_NORMAL, 1)
 cmd_table['gain'] = cmd_type('gain', do_gain, POS_STANDING, 0, LOG_NORMAL, 1)
 cmd_table['groups'] = cmd_type('groups', do_groups, POS_SLEEPING, 0, LOG_NORMAL, 1)
 
-# Immortal commands.
+#* Immortal commands.
 
 cmd_table['sla'] = cmd_type('sla', do_sla, POS_DEAD, L3, LOG_NORMAL, 0)
 cmd_table['slay'] = cmd_type('slay', do_slay, POS_DEAD, L3, LOG_ALWAYS, 1)
 
-logger.info('Command table initialized.')
+hotfix.init_directory(os.path.join('commands'))
 
 def register_command(entry:cmd_type):
     cmd_table[entry.name] = entry

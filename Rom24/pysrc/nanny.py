@@ -40,7 +40,6 @@ from save import load_char_obj
 from db import read_word, create_object
 from skills import *
 from handler import wiznet
-from alias import substitute_alias
 import comm
 
 def licheck(c):
