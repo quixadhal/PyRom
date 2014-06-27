@@ -1,7 +1,7 @@
 import merc
 import interp
 
-def do_wear(self, argument):
+def do_wear(ch, argument):
     argument, arg = merc.read_word(argument)
     if not arg:
         ch.send("Wear, wield, or hold what?\n")

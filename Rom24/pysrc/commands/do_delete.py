@@ -4,7 +4,7 @@ import interp
 import settings
 import fight
 
-def do_delete(self, argument):
+def do_delete(ch, argument):
     ch=self
     if IS_NPC(ch):
         return
