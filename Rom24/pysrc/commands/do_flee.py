@@ -1,8 +1,10 @@
 import random
+
 import merc
 import interp
 import fight
 import update
+
 
 def do_flee( ch, argument ):
     victim = ch.fighting

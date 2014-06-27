@@ -33,6 +33,8 @@
 """
 
 #Global MAXes
+import time
+
 MAX_TRADE = 5
 MAX_GUILDROOMS = 2
 MAX_STATS = 5
@@ -898,8 +900,5 @@ where_name = ["<used as light>     ",
               "<floating nearby>   "]
 
 
-#ensureall do_functions become class methods
-import interp
-import handler_ch
-import handler_obj
-import handler_room
+from interp import *
+from handler_ch import *

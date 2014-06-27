@@ -1,10 +1,11 @@
 import merc
 import interp
+import game_utils
 
 
 # ofind and mfind replaced with vnum, vnum skill also added */
 def do_vnum(ch, argument):
-    string, arg = merc.read_word(argument)
+    string, arg = game_utils.read_word(argument)
 
     if not arg:
         ch.send("Syntax:\n")

@@ -1,8 +1,10 @@
 import os
+
 import merc
 import interp
 import settings
 import fight
+
 
 def do_delete(ch, argument):
     ch=self

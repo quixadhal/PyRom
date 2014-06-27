@@ -32,17 +32,14 @@
  ************/
 """
 import random
-from webob.exc import obj
-from handler_room import move_char
+import handler_room
 from merc import *
 import magic
 import const
 import fight
-import handler_ch
 import handler_game
 import state_checks
-import shop_utils
-import game_utils
+
 
 
 def spec_troll_member( ch ):

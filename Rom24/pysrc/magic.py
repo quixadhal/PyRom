@@ -32,16 +32,16 @@
  ************/
 """
 import random
-from webob.exc import obj
 import const
 from db import create_object
 from effects import acid_effect, fire_effect, cold_effect, poison_effect
 from fight import damage, stop_fighting, is_safe_spell, is_safe, update_pos
-from handler_ch import add_follower, stop_follower
-from handler_obj import wear_obj, remove_obj
 
 from merc import *
+
 from handler import *
+import handler_ch
+import handler_obj
 import handler_game
 import handler_magic
 import state_checks
@@ -121,7 +121,7 @@ def spell_bless(sn, level, ch, victim, target):
             handler_game.act("$N already has divine favor.",ch,None,victim,TO_CHAR)
         return
     
-    af = AFFECT_DATA()
+    af = handler_game.AFFECT_DATA()
     af.where     = TO_AFFECTS
     af.type      = sn
     af.level     = level
@@ -408,8 +408,8 @@ def spell_charm_person( sn, level, ch, victim, target ):
         return
   
     if victim.master:
-        stop_follower( victim )
-    add_follower( victim, ch )
+        handler_ch.stop_follower( victim )
+    handler_ch.add_follower( victim, ch )
     victim.leader = ch
     af = handler_game.AFFECT_DATA()
     af.where     = TO_AFFECTS
@@ -1132,7 +1132,7 @@ def spell_enchant_weapon( sn, level, ch, victim, target ):
                 if paf.modifier > 4:
                     state_checks.SET_BIT(obj.extra_flags,ITEM_HUM)
     else: # add a new affect */
-        paf = AFFECT_DATA()
+        paf = handler_game.AFFECT_DATA()
 
         paf.where  = TO_OBJECT
         paf.type   = sn
@@ -1261,8 +1261,8 @@ def spell_faerie_fog( sn, level, ch, victim, target ):
 
 def spell_floating_disc( sn, level, ch, victim, target ):
     floating = ch.get_eq(WEAR_FLOAT)
-    if floating and IS_OBJ_STAT(floating,ITEM_NOREMOVE):
-        act("You can't remove $p.",ch,floating,None,TO_CHAR)
+    if floating and state_checks.IS_OBJ_STAT(floating,ITEM_NOREMOVE):
+        handler_game.act("You can't remove $p.",ch,floating,None,TO_CHAR)
         return
 
     disc = create_object(obj_index_hash[OBJ_VNUM_DISC], 0)
@@ -1273,7 +1273,7 @@ def spell_floating_disc( sn, level, ch, victim, target ):
     handler_game.act("$n has created a floating black disc.",ch,None,None,TO_ROOM)
     ch.send("You create a floating disc.\n")
     disc.to_char(ch)
-    wear_obj(ch,disc,True)
+    handler_obj.wear_obj(ch,disc,True)
 
 def spell_fly( sn, level, ch, victim, target ):
     if state_checks.IS_AFFECTED(victim, AFF_FLYING):
@@ -1367,15 +1367,15 @@ def spell_gate( sn, level, ch, victim, target ):
     ch.from_room()
     ch.to_room(victim.in_room)
 
-    act("$n has arrived through a gate.",ch,None,None,TO_ROOM)
+    handler_game.act("$n has arrived through a gate.",ch,None,None,TO_ROOM)
     ch.do_look("auto")
 
     if gate_pet:
-        act("$n steps through a gate and vanishes.",ch.pet,None,None,TO_ROOM)
-        send_to_char("You step through a gate and vanish.\n",ch.pet)
+        handler_game.act("$n steps through a gate and vanishes.",ch.pet,None,None,TO_ROOM)
+        ch.pet.send("You step through a gate and vanish.\n")
         ch.pet.from_room()
         ch.pet.to_room(victim.in_room)
-        act("$n has arrived through a gate.",ch.pet,None,None,TO_ROOM)
+        handler_game.act("$n has arrived through a gate.",ch.pet,None,None,TO_ROOM)
         ch.pet.do_look("auto")
 
 def spell_giant_strength( sn, level, ch, victim, target ):
@@ -1459,7 +1459,7 @@ def spell_heat_metal( sn, level, ch, victim, target ):
                     if obj_lose.wear_loc != -1: # remove the item */
                         if victim.can_drop_obj(obj_lose) \
                         and  (obj_lose.weight // 10) < random.randint(1,2 * victim.get_curr_stat(STAT_DEX)) \
-                        and  remove_obj( victim, obj_lose.wear_loc, True ):
+                        and  handler_obj.remove_obj( victim, obj_lose.wear_loc, True ):
                             handler_game.act("$n yelps and throws $p to the ground! ", victim,obj_lose,None,TO_ROOM)
                             handler_game.act("You remove and drop $p before it burns you.", victim,obj_lose,None,TO_CHAR)
                             dam += (random.randint(1,obj_lose.level) // 3)
@@ -1487,7 +1487,7 @@ def spell_heat_metal( sn, level, ch, victim, target ):
                     if obj_lose.wear_loc != -1: # try to drop it */
                         if state_checks.IS_WEAPON_STAT(obj_lose,WEAPON_FLAMING):
                             continue
-                        if victim.can_drop_obj(obj_lose) and  remove_obj(victim,obj_lose.wear_loc,True):
+                        if victim.can_drop_obj(obj_lose) and  handler_obj.remove_obj(victim,obj_lose.wear_loc,True):
                             handler_game.act("$n is burned by $p, and throws it to the ground.", victim,obj_lose,None,TO_ROOM)
                             victim.send("You throw your red-hot weapon to the ground! \n")
                             dam += 1
@@ -2404,7 +2404,7 @@ def spell_lightning_breath( sn, level, ch, victim, target ):
  
 def spell_general_purpose( sn, level, ch, victim, target ):
     dam = random.randint( 25, 100 )
-    if saves_spell( level, victim, DAM_PIERCE):
+    if handler_magic.saves_spell( level, victim, DAM_PIERCE):
         dam = dam // 2
     damage( ch, victim, dam, sn, DAM_PIERCE ,True)
     return

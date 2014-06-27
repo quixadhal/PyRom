@@ -32,14 +32,14 @@
  ************/
 """
 import hashlib
-import time
-from game_utils import set_title
-from merc import *
+
 from settings import *
 from const import race_table, pc_race_table, guild_table, weapon_table, title_table
 from save import load_char_obj
-from db import read_word, create_object
 from skills import *
+
+import game_utils
+import db
 import handler_game
 import comm
 import state_checks
@@ -159,7 +159,7 @@ def con_get_new_race(self):
     argument = self.get_command().lower()
     ch = self.character
     if argument.startswith("help"):
-        argument, arg = read_word(argument)
+        argument, arg = game_utils.read_word(argument)
         if not argument:
             ch.do_help('race help')
         else:
@@ -437,10 +437,10 @@ def con_read_motd(self):
         ch.train    = 3
         ch.practice = 5
         buf = "the %s" % title_table[ch.guild.name][ch.level][ch.sex-1]
-        set_title( ch, buf )
+        game_utils.set_title( ch, buf )
 
         ch.do_outfit("")
-        create_object(obj_index_hash[OBJ_VNUM_MAP],0).to_char(ch)
+        db.create_object(obj_index_hash[OBJ_VNUM_MAP],0).to_char(ch)
 
         ch.to_room(room_index_hash[ROOM_VNUM_SCHOOL]) 
         ch.do_help("newbie info")

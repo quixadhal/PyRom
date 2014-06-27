@@ -1,4 +1,5 @@
 import random
+
 from fight import stop_fighting
 from interp import cmd_type
 from merc import IS_NPC, IS_SET, ACT_PET, act, TO_ROOM, room_index_hash, ROOM_VNUM_TEMPLE, ROOM_NO_RECALL, IS_AFFECTED, \

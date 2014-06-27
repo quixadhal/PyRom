@@ -31,9 +31,10 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
+
+import collections
 import os
-from collections import OrderedDict
-import random
+
 from merc import *
 import hotfix
 from settings import LOGALL
@@ -41,8 +42,6 @@ import game_utils
 import handler_game
 import state_checks
 import handler_ch
-
-
 
 class cmd_type:
     def __init__(self, name, do_fun, position, level, log, show, default_arg=None):
@@ -57,7 +56,7 @@ class cmd_type:
         cmd_table[name] = self
 
 # These commands don't need to be here but are, for order. These will always match first with prefixes.
-cmd_table = OrderedDict()
+cmd_table = collections.OrderedDict()
 cmd_table['north'] = None
 cmd_table['east'] = None
 cmd_table['south'] = None

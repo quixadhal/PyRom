@@ -1,4 +1,5 @@
 import random
+
 import const
 from handler_room import find_door
 from interp import cmd_type

@@ -31,15 +31,13 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
-import random
+
 from collections import OrderedDict
 from types import MethodType
 from game_utils import mass_replace
 from handler_game import act, wiznet
-from merc import descriptor_list, greeting_list, POS_RESTING
 from db import boot_db
 from nanny import *
-from alias import *
 import handler_ch
 import state_checks
 

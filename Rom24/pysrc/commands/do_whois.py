@@ -1,12 +1,16 @@
+import game_utils
 import merc
 import const
 import interp
 import nanny
 
 # whois command */
+import state_checks
+
+
 def do_whois(ch, argument):
     found = False
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
 
     if not arg:
         ch.send("You must provide a name.\n")
@@ -47,11 +51,11 @@ def do_whois(ch, argument):
                     ("(Incog) " if wch.incog_level >= merc.LEVEL_HERO else ""),
                     ("(Wizi) " if wch.invis_level >= merc.LEVEL_HERO else ""),
                     wch.clan.who_name,
-                    ("[AFK] " if merc.IS_SET(wch.comm, merc.COMM_AFK) else ""),
-                    ("(KILLER) " if merc.IS_SET(wch.act, merc.PLR_KILLER) else ""),
-                    ("(THIEF) " if merc.IS_SET(wch.act, merc.PLR_THIEF) else ""),
+                    ("[AFK] " if state_checks.IS_SET(wch.comm, merc.COMM_AFK) else ""),
+                    ("(KILLER) " if state_checks.IS_SET(wch.act, merc.PLR_KILLER) else ""),
+                    ("(THIEF) " if state_checks.IS_SET(wch.act, merc.PLR_THIEF) else ""),
                     wch.name,
-                    ("" if merc.IS_NPC(wch) else wch.pcdata.title)))
+                    ("" if state_checks.IS_NPC(wch) else wch.pcdata.title)))
 
     if not found:
         ch.send("No one of that name is playing.\n")

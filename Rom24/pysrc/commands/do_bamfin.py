@@ -1,9 +1,10 @@
 import merc
 import interp
+import state_checks
 
 
 def do_bamfin(ch, argument):
-    if not merc.IS_NPC(ch):
+    if not state_checks.IS_NPC(ch):
         if not argument:
             ch.send("Your poofin is %s\n" % ch.pcdata.bamfin)
             return

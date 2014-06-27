@@ -1,6 +1,8 @@
 from collections import OrderedDict
+
 import merc
 import interp
+
 
 def do_list(ch, argument):
     if merc.IS_SET(ch.in_room.room_flags, merc.ROOM_PET_SHOP):

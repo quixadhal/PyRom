@@ -1,4 +1,5 @@
 import random
+
 import merc
 import const
 import interp

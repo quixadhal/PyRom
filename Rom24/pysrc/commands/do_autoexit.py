@@ -1,16 +1,17 @@
 import merc
 import interp
+import state_checks
 
 
 def do_autoexit(ch, argument):
-    if merc.IS_NPC(ch):
+    if state_checks.IS_NPC(ch):
         return
 
-    if merc.IS_SET(ch.act, merc.PLR_AUTOEXIT):
+    if state_checks.IS_SET(ch.act, merc.PLR_AUTOEXIT):
         ch.send("Exits will no longer be displayed.\n")
-        ch.act = merc.REMOVE_BIT(ch.act, merc.PLR_AUTOEXIT)
+        ch.act = state_checks.REMOVE_BIT(ch.act, merc.PLR_AUTOEXIT)
     else:
         ch.send("Exits will now be displayed.\n")
-        ch.act = merc.SET_BIT(ch.act, merc.PLR_AUTOEXIT)
+        ch.act = state_checks.SET_BIT(ch.act, merc.PLR_AUTOEXIT)
 
 interp.cmd_type('autoexit', do_autoexit, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

@@ -1,9 +1,10 @@
 import merc
 import interp
+import state_checks
 
 
 def do_bamfout(ch, argument):
-    if not merc.IS_NPC(ch):
+    if not state_checks.IS_NPC(ch):
         if not argument:
             ch.send("Your poofout is %s\n" % ch.pcdata.bamfout)
             return

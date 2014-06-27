@@ -1,11 +1,11 @@
-from handler_room import move_char
-from interp import cmd_type
-from merc import DIR_UP, POS_STANDING, LOG_NEVER
+import handler_room
+import interp
+import merc
 
 
 def do_up(ch, argument):
-    move_char(ch, DIR_UP, False)
+    handler_ch.move_char(ch, merc.DIR_UP, False)
     return
 
 
-cmd_type('up', do_up, POS_STANDING, 0, LOG_NEVER, 0)
+interp.cmd_type('up', do_up, merc.POS_STANDING, 0, merc.LOG_NEVER, 0)

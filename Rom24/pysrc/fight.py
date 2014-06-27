@@ -32,14 +32,16 @@
  ************/
 """
 import random
-from db import create_money
+
 from effects import cold_effect, fire_effect, shock_effect
 from handler_magic import saves_spell
-from handler_obj import get_obj
-from merc import *
+
+
 from handler import *
 from save import save_char_obj
 from skills import check_improve
+import handler_obj
+import db
 import update
 import const
 import state_checks
@@ -882,7 +884,7 @@ def make_corpse(ch):
         corpse      = create_object(obj_index_hash[OBJ_VNUM_CORPSE_NPC], 0)
         corpse.timer   = random.randint( 3, 6 )
         if ch.gold > 0:
-            create_money(ch.gold, ch.silver).to_obj(corpse)
+            db.create_money(ch.gold, ch.silver).to_obj(corpse)
             ch.gold = 0
             ch.silver = 0
         corpse.cost = 0
@@ -896,7 +898,7 @@ def make_corpse(ch):
         else:
             corpse.owner = ""
             if ch.gold > 1 or ch.silver > 1:
-                create_money(ch.gold // 2, ch.silver // 2).to_obj(corpse)
+                db.create_money(ch.gold // 2, ch.silver // 2).to_obj(corpse)
                 ch.gold -= ch.gold // 2
                 ch.silver -= ch.silver // 2
         corpse.cost = 0
@@ -1277,6 +1279,6 @@ def disarm( ch, victim ):
     else:
         obj.to_room(victim.in_room)
         if state_checks.IS_NPC(victim) and victim.wait == 0 and victim.can_see_obj(obj):
-            get_obj(victim,obj,None)
+            handler_obj.get_obj(victim,obj,None)
     return
 

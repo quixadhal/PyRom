@@ -31,7 +31,7 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
-from idlelib.PyParse import ch
+
 import random
 from handler_magic import saves_spell
 from merc import *

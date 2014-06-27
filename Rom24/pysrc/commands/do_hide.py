@@ -1,4 +1,5 @@
 import random
+
 from interp import cmd_type
 from merc import IS_AFFECTED, AFF_HIDE, REMOVE_BIT, SET_BIT, POS_RESTING, LOG_NORMAL
 from skills import check_improve

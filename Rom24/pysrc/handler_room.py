@@ -34,10 +34,9 @@
 import random
 
 import const
-from handler_game import weather_info, act
+import handler_game
 from merc import *
 import state_checks
-import game_utils
 
 
 class ROOM_INDEX_DATA:
@@ -97,11 +96,11 @@ def find_door(ch, arg):
             pexit = ch.in_room.exit[door]
             if pexit and state_checks.IS_SET(pexit.exit_info, EX_ISDOOR) and pexit.keyword and arg in pexit.keyword:
                 return door
-        act("I see no $T here.", ch, None, arg, TO_CHAR)
+        handler_game.act("I see no $T here.", ch, None, arg, TO_CHAR)
         return -1
     pexit = ch.in_room.exit[door]
     if not pexit:
-        act("I see no door $T here.", ch, None, arg, TO_CHAR)
+        handler_game.act("I see no door $T here.", ch, None, arg, TO_CHAR)
         return -1
     if not state_checks.IS_SET(pexit.exit_info, EX_ISDOOR):
         ch.send("You can't do that.\n")
@@ -116,7 +115,7 @@ class handler_room:
             return True
         if pRoomIndex.sector_type == SECT_INSIDE or pRoomIndex.sector_type == SECT_CITY:
             return False
-        if weather_info.sunlight == SUN_SET or weather_info.sunlight == SUN_DARK:
+        if handler_game.weather_info.sunlight == SUN_SET or handler_game.weather_info.sunlight == SUN_DARK:
             return True
         return False
     

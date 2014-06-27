@@ -36,13 +36,14 @@ import random
 import sys
 import time
 
-from handler_ch import MOB_INDEX_DATA, CHAR_DATA
-from handler_obj import OBJ_INDEX_DATA, count_obj_list, get_obj_type, OBJ_DATA
+
 from handler_room import ROOM_INDEX_DATA
 from settings import AREA_DIR, AREA_LIST
 from handler import *
 from special import spec_table
 from tables import sex_table, position_table
+import handler_obj
+import handler_ch
 import handler_olc
 import state_checks
 import game_utils
@@ -143,7 +144,7 @@ def load_mobiles(area):
     w = w[1:]  # strip the pound
 
     while w != '0':
-        mob = MOB_INDEX_DATA()
+        mob = handler_ch.MOB_INDEX_DATA()
         mob.vnum = int(w)
         mob_index_hash[mob.vnum] = mob
         area, mob.player_name = game_utils.read_string(area)
@@ -217,7 +218,7 @@ def load_objects(area):
     area, w = game_utils.read_word(area, False)
     w = w[1:]  # strip the pound
     while w != '0':
-        obj = OBJ_INDEX_DATA()
+        obj = handler_obj.OBJ_INDEX_DATA()
         obj.vnum = int(w)
         obj_index_hash[obj.vnum] = obj
         area, obj.name = game_utils.read_string(area)
@@ -615,7 +616,7 @@ def reset_area(pArea):
                 continue
             pRoomIndex = room_index_hash[pReset.arg3]
 
-            if pArea.nplayer > 0 or count_obj_list(pObjIndex, pRoomIndex.contents) > 0:
+            if pArea.nplayer > 0 or handler_obj.count_obj_list(pObjIndex, pRoomIndex.contents) > 0:
                 last = False
                 continue
 
@@ -642,16 +643,16 @@ def reset_area(pArea):
             else:
                 limit = pReset.arg2
 
-            obj_to = get_obj_type(pObjToIndex)
+            obj_to = handler_obj.get_obj_type(pObjToIndex)
 
             if pArea.nplayer > 0 \
                     or not obj_to \
                     or (obj_to.in_room is None and not last) \
                     or ( pObjIndex.count >= limit and random.randint(0, 4) != 0) \
-                    or count_obj_list(pObjIndex, obj_to.contains) > pReset.arg4:
+                    or handler_obj.count_obj_list(pObjIndex, obj_to.contains) > pReset.arg4:
                 last = False
                 break
-            count = count_obj_list(pObjIndex, obj_to.contains)
+            count = handler_obj.count_obj_list(pObjIndex, obj_to.contains)
             while count < pReset.arg4:
                 obj = create_object(pObjIndex, game_utils.number_fuzzy(obj_to.level))
                 obj.to_obj(obj_to)
@@ -775,7 +776,7 @@ def create_mobile(pMobIndex):
         print("Create_mobile: None pMobIndex.")
         sys.exit(1)
 
-    mob = CHAR_DATA()
+    mob = handler_ch.CHAR_DATA()
 
     mob.pIndexData = pMobIndex
 
@@ -1027,7 +1028,7 @@ def create_object(pObjIndex, level):
         print("Create_object: None pObjIndex.")
         sys.exit(1)
 
-    obj = OBJ_DATA()
+    obj = handler_obj.OBJ_DATA()
 
     obj.pIndexData = pObjIndex
     obj.in_room = None

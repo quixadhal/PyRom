@@ -1,3 +1,4 @@
+import random
 import merc
 import interp
 import skills
@@ -47,7 +48,7 @@ def do_zap(ch, argument):
         else:
             merc.obj_cast_spell( wand.value[3], wand.value[0], ch, victim, obj )
             skills.check_improve(ch,"wands",True,2)
-    want.value[2] -= 1
+    wand.value[2] -= 1
     if wand.value[2] <= 0:
         merc.act("$n's $p explodes into fragments.", ch, wand, None, merc.TO_ROOM)
         merc.act("Your $p explodes into fragments.", ch, wand, None, merc.TO_CHAR)

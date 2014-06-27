@@ -32,11 +32,12 @@
  ************/
 """
 import random
-from game_utils import read_word
+
 
 from merc import *
 import const
-from state_checks import IS_NPC
+import game_utils
+import state_checks
 import update
 import magic
 
@@ -61,7 +62,7 @@ def gn_remove( ch, gn):
 
 # use for processing a skill or group for addition  */
 def group_add( ch, name, deduct):
-    if IS_NPC(ch): # NPCs do not have skills */
+    if state_checks.IS_NPC(ch): # NPCs do not have skills */
         return
     
     if name in const.skill_table:
@@ -107,7 +108,7 @@ def group_remove(ch, name):
 
 # shows skills, groups and costs (only if not bought) */
 def list_group_costs(ch):
-    if IS_NPC(ch):
+    if state_checks.IS_NPC(ch):
         return
     col = 0
     ch.send("%-18s %-5s %-18s %-5s %-18s %-5s\n" % ("group","cp","group","cp","group","cp"))
@@ -143,7 +144,7 @@ def list_group_costs(ch):
     return
 
 def list_group_chosen(ch):
-    if IS_NPC(ch):
+    if state_checks.IS_NPC(ch):
         return
     col = 0
     ch.send("%-18s %-5s %-18s %-5s %-18s %-5s" % ("group","cp","group","cp","group","cp\n"))
@@ -181,7 +182,7 @@ def parse_gen_groups(ch, argument):
     if not argument.strip():
         return False
 
-    argument, arg = read_word(argument)
+    argument, arg = game_utils.read_word(argument)
     if "help".startswith(arg):
         if not argument:
             ch.do_help("group help")
@@ -293,7 +294,7 @@ def parse_gen_groups(ch, argument):
 def check_improve( ch, sn, success, multiplier ):
     import const
     import update
-    if IS_NPC(ch):
+    if state_checks.IS_NPC(ch):
         return
     if type(sn) == str:
         sn = const.skill_table[sn]

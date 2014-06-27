@@ -1,9 +1,10 @@
+import game_utils
 import merc
 import interp
 
 # * 'Wimpy' originally by Dionysos.
 def do_wimpy(ch, argument):
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
     if not arg:
         wimpy = ch.max_hit // 5
     else:

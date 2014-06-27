@@ -38,7 +38,7 @@ import time
 from merc import *
 from settings import PLAYER_DIR
 from tables import clan_table
-from db import create_object
+import db
 import handler_olc
 import const
 import handler_ch
@@ -263,7 +263,7 @@ def fread_objs(carrying, objects, contained_by=None):
 
 
 def fread_obj(odict):
-    obj = create_object(obj_index_hash[odict['Vnum']], odict['Lev'])
+    obj = db.create_object(obj_index_hash[odict['Vnum']], odict['Lev'])
     obj.enchanted = odict['Enchanted']
     obj.name = odict['Name']
     obj.short_descr = odict['ShD']

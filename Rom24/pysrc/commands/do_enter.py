@@ -1,6 +1,8 @@
 import random
+
 import merc
 import interp
+
 
 
 # RT Enter portals */
