@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 import fight
@@ -32,7 +36,8 @@ def do_violate(ch, argument):
                 merc.act("$t", ch, ch.pcdata.bamfin, rch, merc.TO_VICT)
             else:
                 merc.act("$n appears in a swirling mist.", ch, None, rch, merc.TO_VICT)
-    ch.do_look("auto" )
+    ch.do_look("auto")
     return
 
-interp.cmd_type('violate', do_violate, merc.POS_DEAD, merc.ML, merc.LOG_ALWAYS, 1)
+
+interp.register_command(interp.cmd_type('violate', do_violate, merc.POS_DEAD, merc.ML, merc.LOG_ALWAYS, 1))

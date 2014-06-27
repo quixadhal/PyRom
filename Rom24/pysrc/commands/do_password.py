@@ -1,16 +1,21 @@
+import logging
+
+logger = logging.getLogger()
+
 import hashlib
 import merc
 import interp
 import save
+import settings
 
 
 def do_password(ch, argument):
     if merc.IS_NPC(ch):
         return
 
-     #* Can't use read_word here because it smashes case.
-     #* So we just steal all its code.  Bleagh.
-     # -- It actually doesn't now because it loads areas too. Davion.
+    # Can't use read_word here because it smashes case.
+    # So we just steal all its code.  Bleagh.
+    # -- It actually doesn't now because it loads areas too. Davion.
     argument, arg1 = merc.read_word(argument, False)
     argument, arg2 = merc.read_word(argument, False)
 
@@ -30,12 +35,13 @@ def do_password(ch, argument):
         ch.send("New password must be at least five characters long.\n")
         return
 
-     #* No tilde allowed because of player file format.
-     # Also now not true. Davion
+        # No tilde allowed because of player file format.
+        # Also now not true. Davion
 
     ch.pcdata.pwd = arg2
     save.save_char_obj(ch)
     ch.send("Ok.\n")
     return
 
-interp.cmd_type('password', do_password, merc.POS_DEAD, 0, merc.LOG_NEVER, 1)
+
+interp.register_command(interp.cmd_type('password', do_password, merc.POS_DEAD, 0, merc.LOG_NEVER, 1))

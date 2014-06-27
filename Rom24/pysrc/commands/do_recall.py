@@ -1,6 +1,10 @@
+import logging
+
+logger = logging.getLogger()
+
 import random
 from fight import stop_fighting
-from interp import cmd_type
+from interp import cmd_type, register_command
 from merc import IS_NPC, IS_SET, ACT_PET, act, TO_ROOM, room_index_hash, ROOM_VNUM_TEMPLE, ROOM_NO_RECALL, IS_AFFECTED, \
     AFF_CURSE, WAIT_STATE, POS_FIGHTING, LOG_NORMAL
 from skills import check_improve
@@ -46,5 +50,5 @@ def do_recall(ch, argument):
     return
 
 
-cmd_type('recall', do_recall, POS_FIGHTING, 0, LOG_NORMAL, 1)
-cmd_type("/", do_recall, POS_FIGHTING, 0, LOG_NORMAL, 0)
+register_command(cmd_type("recall", do_recall, POS_FIGHTING, 0, LOG_NORMAL, 1))
+register_command(cmd_type("/", do_recall, POS_FIGHTING, 0, LOG_NORMAL, 0))

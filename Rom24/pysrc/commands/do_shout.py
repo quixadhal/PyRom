@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 import nanny
@@ -21,7 +25,8 @@ def do_shout(ch, argument):
     for d in merc.descriptor_list:
         victim = merc.CH(d)
         if d.is_connected(nanny.con_playing) and d.character != ch \
-        and not merc.IS_SET(victim.comm, merc.COMM_SHOUTSOFF) and not merc.IS_SET(victim.comm, merc.COMM_QUIET):
+                and not merc.IS_SET(victim.comm, merc.COMM_SHOUTSOFF) and not merc.IS_SET(victim.comm, merc.COMM_QUIET):
             merc.act("$n shouts '$t'", ch, argument, d.character, merc.TO_VICT)
 
-interp.cmd_type('shout', do_shout, merc.POS_RESTING, 3, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('shout', do_shout, merc.POS_RESTING, 3, merc.LOG_NORMAL, 1))

@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -17,11 +21,11 @@ def do_order(ch, argument):
         ch.send("You feel like taking, not giving, orders.\n")
         return
     victim = None
-    if  arg == "all":
-        fAll   = True
+    if arg == "all":
+        fAll = True
         victim = None
     else:
-        fAll   = False
+        fAll = False
         victim = ch.get_char_room(arg)
         if not victim:
             ch.send("They aren't here.\n")
@@ -29,17 +33,17 @@ def do_order(ch, argument):
         if victim == ch:
             ch.send("Aye aye, right away!\n")
             return
-        if not merc.IS_AFFECTED(victim, merc.AFF_CHARM) or victim.master != ch  \
-        or (merc.IS_IMMORTAL(victim) and victim.trust >= ch.trust):
+        if not merc.IS_AFFECTED(victim, merc.AFF_CHARM) or victim.master != ch \
+                or (merc.IS_IMMORTAL(victim) and victim.trust >= ch.trust):
             ch.send("Do it yourself!\n")
             return
     found = False
     for och in ch.in_room.people[:]:
         if merc.IS_AFFECTED(och, merc.AFF_CHARM) \
-        and och.master == ch \
-        and (fAll or och == victim):
+                and och.master == ch \
+                and (fAll or och == victim):
             found = True
-            act("$n orders you to '%s'." % argument, ch, None, och, merc.TO_VICT)
+            merc.act("$n orders you to '%s'." % argument, ch, None, och, merc.TO_VICT)
             interp.interpret(och, argument)
 
     if found:
@@ -49,4 +53,5 @@ def do_order(ch, argument):
         ch.send("You have no followers here.\n")
     return
 
-interp.cmd_type('order', do_order, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('order', do_order, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -23,4 +27,5 @@ def do_prompt(ch, argument):
     ch.send("Prompt set to %s\n" % ch.prompt)
     return
 
-interp.cmd_type('prompt', do_prompt, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('prompt', do_prompt, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

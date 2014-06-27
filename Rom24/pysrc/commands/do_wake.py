@@ -1,4 +1,8 @@
-from interp import cmd_type
+import logging
+
+logger = logging.getLogger()
+
+from interp import cmd_type, register_command
 from merc import read_word, IS_AWAKE, act, TO_CHAR, IS_AFFECTED, AFF_SLEEP, TO_VICT, POS_SLEEPING, LOG_NORMAL
 
 
@@ -26,4 +30,4 @@ def do_wake(ch, argument):
     return
 
 
-cmd_type('wake', do_wake, POS_SLEEPING, 0, LOG_NORMAL, 1)
+register_command(cmd_type('wake', do_wake, POS_SLEEPING, 0, LOG_NORMAL, 1))

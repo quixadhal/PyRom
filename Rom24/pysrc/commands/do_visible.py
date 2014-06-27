@@ -1,4 +1,8 @@
-from interp import cmd_type
+import logging
+
+logger = logging.getLogger()
+
+from interp import cmd_type, register_command
 from merc import REMOVE_BIT, AFF_HIDE, AFF_INVISIBLE, AFF_SNEAK, POS_SLEEPING, LOG_NORMAL
 
 
@@ -13,4 +17,4 @@ def do_visible(ch, argument):
     ch.send("Ok.\n")
 
 
-cmd_type('visible', do_visible, POS_SLEEPING, 0, LOG_NORMAL, 1)
+register_command(cmd_type('visible', do_visible, POS_SLEEPING, 0, LOG_NORMAL, 1))

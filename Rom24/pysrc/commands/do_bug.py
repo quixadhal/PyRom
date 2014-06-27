@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 import settings
@@ -8,4 +12,5 @@ def do_bug(ch, argument):
     ch.send("Bug logged.\n")
     return
 
-interp.cmd_type('bug', do_bug, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('bug', do_bug, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

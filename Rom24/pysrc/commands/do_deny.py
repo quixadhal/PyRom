@@ -1,7 +1,12 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 import fight
 import save
+
 
 def do_deny(ch, argument):
     argument, arg = merc.read_word(argument)
@@ -23,8 +28,9 @@ def do_deny(ch, argument):
     merc.wiznet("$N denies access to %s" % victim.name, ch, None, merc.WIZ_PENALTIES, merc.WIZ_SECURE, 0)
     ch.send("OK.\n")
     save.save_char_obj(victim)
-    fight.stop_fighting(victim,True)
-    victim.do_quit("" )
+    fight.stop_fighting(victim, True)
+    victim.do_quit("")
     return
 
-interp.cmd_type("deny", do_deny, merc.POS_DEAD, merc.L1, merc.LOG_ALWAYS, 1)
+
+interp.register_command(interp.cmd_type("deny", do_deny, merc.POS_DEAD, merc.L1, merc.LOG_ALWAYS, 1))

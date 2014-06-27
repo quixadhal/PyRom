@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -27,4 +31,5 @@ def do_quaff(ch, argument):
     obj.extract()
     return
 
-interp.cmd_type('quaff', do_quaff, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('quaff', do_quaff, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

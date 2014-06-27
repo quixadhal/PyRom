@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 import special
@@ -21,9 +25,9 @@ def do_string(ch, argument):
         if not victim:
             ch.send("They aren't here.\n")
             return
-        # clear zone for mobs */
+        # clear zone for mobs
         victim.zone = None
-        # string something */
+        # string something
         if "name".startswith(arg2):
             if not merc.IS_NPC(victim):
                 ch.send("Not on PC's.\n")
@@ -54,10 +58,10 @@ def do_string(ch, argument):
                 ch.send("No such spec fun.\n")
                 return
             victim.spec_fun = spec
-            ch.send("spec_fun set.\r\n")
+            ch.send("spec_fun set.\n")
             return
     if "object".startswith(type):
-        # string an obj */
+        # string an obj
         obj = ch.get_obj_world(arg1)
         if not obj:
             ch.send("Nothing like that in heaven or earth.\n")
@@ -71,10 +75,10 @@ def do_string(ch, argument):
         if "long".startswith(arg2):
             obj.description = arg3
             return
-        if "extended".startswith(arg2) or  "ed".startswith(arg2):
-            argument, arg3  = merc.read_word(argument)
+        if "extended".startswith(arg2) or "ed".startswith(arg2):
+            argument, arg3 = merc.read_word(argument)
             if argument == None:
-                ch.send( "Syntax: oset <object> ed <keyword> <string>\n")
+                ch.send("Syntax: oset <object> ed <keyword> <string>\n")
                 return
             argument += "\n"
             ed = merc.EXTRA_DESCR_DATA()
@@ -82,7 +86,8 @@ def do_string(ch, argument):
             ed.description = argument
             obj.extra_descr.append(ed)
             return
-    # echo bad use message */
+    # echo bad use message
     ch.do_string("")
 
-interp.cmd_type('string', do_string, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1)
+
+interp.register_command(interp.cmd_type('string', do_string, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1))

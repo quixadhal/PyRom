@@ -45,21 +45,22 @@ MAX_SKILL = 150
 MAX_GROUP = 30
 MAX_LEVEL = 60
 MAX_ALIAS = 10
-LEVEL_HERO = (MAX_LEVEL - 9)
-LEVEL_IMMORTAL = (MAX_LEVEL - 8)
 
-ML = MAX_LEVEL   # implementor */
-L1 = MAX_LEVEL - 1   # creator */
-L2 = MAX_LEVEL - 2   # supreme being */
-L3 = MAX_LEVEL - 3   # deity */
-L4 = MAX_LEVEL - 4   # god */
-L5 = MAX_LEVEL - 5   # immortal */
-L6 = MAX_LEVEL - 6   # demigod */
-L7 = MAX_LEVEL - 7   # angel */
-L8 = MAX_LEVEL - 8   # avatar */
-IM = LEVEL_IMMORTAL  # avatar */
-HE = LEVEL_HERO  # hero */
+LEVEL_HERO = MAX_LEVEL - 9
+LEVEL_IMMORTAL = MAX_LEVEL - 8
 
+ML=MAX_LEVEL       # implementer
+L1=MAX_LEVEL - 1   # creator
+L2=MAX_LEVEL - 2   # supreme being
+L3=MAX_LEVEL - 3   # deity
+L4=MAX_LEVEL - 4   # god
+L5=MAX_LEVEL - 5   # immortal
+L6=MAX_LEVEL - 6   # demigod
+L7=MAX_LEVEL - 7   # angel
+L8=MAX_LEVEL - 8   # avatar
+
+IM=LEVEL_IMMORTAL  # avatar
+HE=LEVEL_HERO  # hero
 
 #Global Classes
 class CHAR_DATA(object):
@@ -145,20 +146,17 @@ class CHAR_DATA(object):
         self.material = ""
     # mobile stuff */
         self.off_flags = 0
-        self.damage = [0, 0, 0]
+        self.damage = [0,0,0]
         self.dam_type = 17
         self.start_pos = 0
         self.default_pos = 0
         self.race = race_table['human']
         self.act = PLR_NOSUMMON
         self.comm = COMM_COMBINE | COMM_PROMPT
-
     def __repr__(self):
         return self.name
-
-    def send(self, cstr):
+    def send(self, str):
         pass
-
 
 class PC_DATA:
     def __init__(self):
@@ -178,13 +176,12 @@ class PC_DATA:
         self.perm_move = 0
         self.true_sex = 0
         self.last_level = 0
-        self.condition = [48, 48, 48, 0]
+        self.condition = [48,48,48,0]
         self.learned = {}
         self.group_known = {}
         self.points = 0
         self.confirm_delete = False
         self.alias = {}
-
 
 class GEN_DATA:
     def __init__(self):    
@@ -211,7 +208,6 @@ class AREA_DATA:
     def __repr__(self):
         return "<%s(%s): %d-%d>" % (self.name, self.file_name, self.min_vnum, self.max_vnum)
 
-
 class HELP_DATA:
     def __init__(self):    
         self.level = 0
@@ -220,7 +216,6 @@ class HELP_DATA:
 
     def __repr__(self):
         return "<%s:%d>" % (self.keyword, self.level)
-
 
 class MOB_INDEX_DATA:
     def __init__(self):    
@@ -258,10 +253,8 @@ class MOB_INDEX_DATA:
         self.parts = 0
         self.size = 0
         self.material = ""
-
     def __repr__(self):
         return "<MobIndex: %s:%s>" % ( self.short_descr, self.vnum )
-
 
 class OBJ_INDEX_DATA:
     def __init__(self):
@@ -283,12 +276,10 @@ class OBJ_INDEX_DATA:
         self.weight = 0
         self.cost = 0
         self.value = [0, 0, 0, 0, 0]
-
     def __repr__(self):
         return "<ObjIndex: %s:%d>" % (self.short_descr, self.vnum)    
 
 # * One object.
-
 
 class OBJ_DATA:
     def __init__(self):    
@@ -318,7 +309,6 @@ class OBJ_DATA:
         self.timer = 0
         self.value = [0 for x in range(5)]
 
-
 class ROOM_INDEX_DATA:
     def __init__(self):    
         self.people = []
@@ -337,25 +327,21 @@ class ROOM_INDEX_DATA:
         self.heal_rate = 0
         self.mana_rate = 0
         self.clan = 0
-
     def __repr__(self):
-        return "<RoomIndex: %d" % self.vnum
-
+        return "<RoomIndex: %d" % (self.vnum)
 
 class EXTRA_DESCR_DATA:
     def __init__(self):    
-        self.keyword = "" # Keyword in look/examine
+        self.keyword = ""# Keyword in look/examine
         self.description = ""
-
 
 class EXIT_DATA:
     def __init__(self):    
-        self.to_room = None
+        self.to_room =None
         self.exit_info = 0
         self.key = 0
         self.keyword = ""
         self.description = ""
-
 
 class RESET_DATA:
     def __init__(self):    
@@ -365,7 +351,6 @@ class RESET_DATA:
         self.arg3 = 0
         self.arg4 = 0
 
-
 class SHOP_DATA:
     def __init__(self):    
         self.keeper = 0
@@ -374,7 +359,6 @@ class SHOP_DATA:
         self.profit_sell = 0
         self.open_hour = 0
         self.close_hour = 0
-
 
 class SOCIAL_DATA:
     def __init__(self):    
@@ -387,7 +371,6 @@ class SOCIAL_DATA:
         self.char_not_found = ""
         self.char_auto = ""
         self.others_auto = ""
-
 
 # An affect.
 class AFFECT_DATA:
@@ -437,7 +420,6 @@ SKY_CLOUDY = 1
 SKY_RAINING = 2
 SKY_LIGHTNING = 3
 
-
 class time_info_data:
     def __init__(self):
         self.hour = 0
@@ -474,7 +456,7 @@ DIR_DOWN = 5
 #Item types
 ITEM_LIGHT = 'light'
 ITEM_SCROLL = 'scroll'
-ITEM_WAND = 'wand'
+ITEM_WAND ='wand'
 ITEM_STAFF = 'staff'
 ITEM_WEAPON = 'weapon'
 ITEM_TREASURE = 'treasure'
@@ -503,6 +485,7 @@ ITEM_JEWELRY = 'jewelry'
 ITEM_JUKEBOX = 'jukebox'
 
 
+
 #Sexes
 SEX_NEUTRAL = 0
 SEX_MALE = 1
@@ -515,7 +498,7 @@ SIZE_MEDIUM = 2
 SIZE_LARGE = 3
 SIZE_HUGE = 4
 SIZE_GIANT = 5
-size_table = ["tiny", "small", "medium", "large", "huge", "giant" ]
+size_table = ["tiny",  "small", "medium", "large", "huge", "giant" ]
 
 # AC types */
 AC_PIERCE = 0
@@ -715,17 +698,12 @@ ROOM_VNUM_HONOR = 4300
 TYPE_UNDEFINED = -1
 TYPE_HIT = 1000
 
-
 def IS_SET(flag, bit):
     return flag & bit
-
-
 def SET_BIT(var, bit):
     return var | bit
-
-
 def REMOVE_BIT(var, bit):
-    return var & ~bit
+    return var & ~(bit)
 
 A = 1
 B = 1 << 1
@@ -785,15 +763,16 @@ zz = 1 << 52
 
 #  ACT bits for mobs.
 #  Used in #MOBILES.
-ACT_IS_NPC = A  # Auto set for mobs
-ACT_SENTINEL = B  # Stays in one room
-ACT_SCAVENGER = C  # Picks up objects
-ACT_AGGRESSIVE = F   # Attacks PC's
-ACT_STAY_AREA = G    # Won't leave area
+
+ACT_IS_NPC = A  # Auto set for mobs    */
+ACT_SENTINEL = B #  Stays in one room    */
+ACT_SCAVENGER = C  # Picks up objects */
+ACT_AGGRESSIVE = F   # Attacks PC's     */
+ACT_STAY_AREA = G    # Won't leave area */
 ACT_WIMPY = H
-ACT_PET = I     # Auto set for pets
-ACT_TRAIN = J     # Can train PC's
-ACT_PRACTICE = K     # Can practice PC's
+ACT_PET = I     # Auto set for pets    */
+ACT_TRAIN = J     # Can train PC's   */
+ACT_PRACTICE = K     # Can practice PC's    */
 ACT_UNDEAD = O 
 ACT_CLERIC = Q
 ACT_MAGE = R
@@ -1029,6 +1008,7 @@ ITEM_NOUNCURSE = Z
 
 # Wear flags.
 # Used in #OBJECTS.
+
 ITEM_TAKE = A
 ITEM_WEAR_FINGER = B
 ITEM_WEAR_NECK = C
@@ -1285,11 +1265,10 @@ def name_lookup(dict, arg, key='name'):
 def prefix_lookup(dict, arg):
     if not arg:
         return None
-    results = [v for k, v in dict.items() if k.startswith(arg)]
+    results = [v for k,v in dict.items() if k.startswith(arg)]
     if results:
         return results[0]
     return None
-
 
 def value_lookup(dict, arg):
     if not arg:
@@ -1299,13 +1278,11 @@ def value_lookup(dict, arg):
             return k
     return None
 
-
 def mass_replace(str, dict):
     for k,v in dict.items():
         if v:
             str = str.replace(k,v)
     return str
-
 
 def PERS(ch, looker):
     if not looker.can_see(ch):
@@ -1315,83 +1292,63 @@ def PERS(ch, looker):
     else:
         return ch.name
 
-
 def OPERS(looker, obj):
     if not looker.can_see_obj(obj):
         return "something"
     return obj.short_descr
 
-
 def IS_NPC(ch):
     return IS_SET(ch.act, ACT_IS_NPC)
-
 
 def IS_IMMORTAL(ch):
     return ch.get_trust() >= LEVEL_IMMORTAL
 
-
 def IS_HERO(ch):
     return ch.get_trust() >= LEVEL_HERO
 
-
 def IS_TRUSTED(ch,level):
     return ch.get_trust() >= level
-
-
 def is_affected( ch, sn ):
     return True if [paf for paf in ch.affected if paf.type == sn ][:1] else False
-
 
 def IS_AFFECTED(ch, bit):
     return IS_SET(ch.affected_by, bit)
 
-
 def GET_AGE(ch):
     return int((17 + (ch.played + time.time() - ch.logon)/72000))
-
 
 def IS_GOOD(ch):
     return ch.alignment >= 350
 
-
 def IS_EVIL(ch):
     return ch.alignment <= -350
-
 
 def IS_NEUTRAL(ch):
     return not IS_GOOD(ch) and not IS_EVIL(ch)
 
-
 def IS_AWAKE(ch):
     return ch.position > POS_SLEEPING
 
-
-def GET_AC(ch, type):
+def GET_AC(ch,type):
     from const import dex_app
-    return ch.armor[type] + (dex_app[ch.get_curr_stat(STAT_DEX)].defensive if IS_AWAKE(ch) else 0)
-
+    return (ch.armor[type] + ( dex_app[ch.get_curr_stat(STAT_DEX)].defensive if IS_AWAKE(ch) else 0 ) )
 
 def GET_HITROLL(ch):
     from const import str_app
-    return ch.hitroll+str_app[ ch.get_curr_stat(STAT_STR)].tohit
-
+    return ( ( ch.hitroll+str_app[ ch.get_curr_stat(STAT_STR)].tohit) )
 
 def GET_DAMROLL(ch):
     from const import str_app
-    return ch.damroll + str_app[ch.get_curr_stat(STAT_STR)].todam
-
+    return ( (ch.damroll+str_app[ch.get_curr_stat(STAT_STR)].todam) )
 
 def IS_OUTSIDE(ch):
-    return not IS_SET(ch.in_room.room_flags, ROOM_INDOORS)
-
+    return not IS_SET( ch.in_room.room_flags, ROOM_INDOORS )
 
 def WAIT_STATE(ch, npulse):
     ch.wait = max(ch.wait, npulse)
 
-
 def DAZE_STATE(ch, npulse):
     ch.daze = max(ch.daze, npulse)
-
 
 def get_carry_weight(ch):
     return ch.carry_weight + (ch.silver/10 + (ch.gold * 2 / 5) )
@@ -1402,26 +1359,18 @@ def get_carry_weight(ch):
 def CAN_WEAR(obj, part):
     return IS_SET( obj.wear_flags,  part)
 
-
 def IS_OBJ_STAT(obj, stat):
     return IS_SET(obj.extra_flags, stat)
-
-
 def IS_WEAPON_STAT(obj,stat):
     return IS_SET(obj.value[4],stat)
-
-
 def WEIGHT_MULT(obj):
     return obj.value[4] if obj.item_type is ITEM_CONTAINER else 100
-
 
 def dice(number, size):
     return sum( [ random.randint(1, size ) for x in range(number) ])
 
-
 def number_fuzzy(number):
     return random.randint(number-1, number+1)
-
 
 def set_title(ch, title):
     if IS_NPC(ch):
@@ -1498,13 +1447,13 @@ def read_flags(str):
 
     for c in w:
         flag = 0
-        if 'A' <= c <= 'Z':
+        if 'A' <= c and c <= 'Z':
             flag = A
             while c != 'A':
                 flag *= 2
                 c = chr( ord(c)-1 )
 
-        elif 'a' <= c <= 'z':
+        elif 'a' <= c and c <= 'z':
             flag = aa
             while c != 'a':
                 flag *= 2
@@ -1546,7 +1495,7 @@ def check_blind( ch ):
         return True
 
     if IS_AFFECTED(ch, AFF_BLIND):
-        ch.send( "You can't see a thing!\n\r") 
+        ch.send( "You can't see a thing!\n")
         return False 
     return True
 
@@ -1689,7 +1638,7 @@ def show_char_to_char_0(victim, ch):
 
     buf += PERS(victim, ch)
     if not IS_NPC(victim) and not IS_SET(ch.comm, COMM_BRIEF) \
-            and victim.position == POS_STANDING and not ch.on:
+    and victim.position == POS_STANDING and not ch.on:
         buf += victim.pcdata.title
 
     if victim.position == POS_DEAD: buf += " is DEAD!!"
@@ -2524,7 +2473,7 @@ def substitute_alias(d, argument):
     # check for prefix */
     if ch.prefix and not "prefix".startswith(argument):
         if len(ch.prefix) + len(argument) > MAX_INPUT_LENGTH:
-            ch.send("Line to long, prefix not processed.\r\n")
+            ch.send("Line to long, prefix not processed.\n")
         else:
             prefix = "%s %s" % (ch.prefix,argument)
 

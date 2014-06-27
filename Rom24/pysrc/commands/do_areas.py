@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -13,4 +17,5 @@ def do_areas(ch, argument):
         if col % 2 == 0:
             ch.send("\n")
 
-interp.cmd_type('areas', do_areas, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('areas', do_areas, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

@@ -1,19 +1,24 @@
+import logging
+
+logger = logging.getLogger()
+
 from collections import OrderedDict
 import merc
 import interp
 
+
 def do_list(ch, argument):
     if merc.IS_SET(ch.in_room.room_flags, merc.ROOM_PET_SHOP):
-        # hack to make new thalos pets work */
+        # hack to make new thalos pets work
         pRoomIndexNext = None
         if ch.in_room.vnum == 9621:
             if 9706 in merc.room_index_hash:
                 pRoomIndexNext = merc.room_index_hash[9706]
         else:
-            if ch.in_room.vnum+1 in merc.room_index_hash:
-                pRoomIndexNext = merc.room_index_hash[ch.in_room.vnum+1]
+            if ch.in_room.vnum + 1 in merc.room_index_hash:
+                pRoomIndexNext = merc.room_index_hash[ch.in_room.vnum + 1]
         if not pRoomIndexNext:
-            print("BUG: Do_list: bad pet shop at vnum %d." % ch.in_room.vnum)
+            logger.warn("BUG: Do_list: bad pet shop at vnum %d.", ch.in_room.vnum)
             ch.send("You can't do that here.\n")
             return
         found = False
@@ -35,7 +40,7 @@ def do_list(ch, argument):
         for obj in keeper.carrying:
             cost = merc.get_cost(keeper, obj, True)
             if obj.wear_loc == merc.WEAR_NONE and ch.can_see_obj(obj) and cost > 0 \
-            and ( not arg or arg in obj.name.lower()):
+                    and ( not arg or arg in obj.name.lower()):
                 if merc.IS_OBJ_STAT(obj, merc.ITEM_INVENTORY):
                     items[(obj.pIndexData, obj.short_descr)] = (obj, -1)
                 else:
@@ -51,9 +56,10 @@ def do_list(ch, argument):
         for k, p in items.items():
             obj, count = p
             cost = merc.get_cost(keeper, obj, True)
-            ch.send("[%2d %5d %2s ] %s" % (obj.level,cost, ("--" if count == -1 else count),obj.short_descr))
+            ch.send("[%2d %5d %2s ] %s" % (obj.level, cost, ("--" if count == -1 else count), obj.short_descr))
             if merc.IS_SET(ch.act, merc.PLR_OMNI):
                 ch.send("(%d)" % obj.pIndexData.vnum)
             ch.send("\n")
 
-interp.cmd_type('list', do_list, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('list', do_list, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

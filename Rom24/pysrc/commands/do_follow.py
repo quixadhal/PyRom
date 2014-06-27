@@ -1,9 +1,13 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
 
 def do_follow(ch, argument):
-# RT changed to allow unlimited following and follow the NOFOLLOW rules */
+    # RT changed to allow unlimited following and follow the NOFOLLOW rules
     argument, arg = merc.read_word(argument)
     if not arg:
         ch.send("Follow whom?\n")
@@ -16,7 +20,7 @@ def do_follow(ch, argument):
         merc.act("But you'd rather follow $N!", ch, None, ch.master, merc.TO_CHAR)
         return
     if victim == ch:
-        if ch.master == None:
+        if ch.master is None:
             ch.send("You already follow yourself.\n")
             return
         merc.stop_follower(ch)
@@ -30,4 +34,5 @@ def do_follow(ch, argument):
     merc.add_follower(ch, victim)
     return
 
-interp.cmd_type('follow', do_follow, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('follow', do_follow, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

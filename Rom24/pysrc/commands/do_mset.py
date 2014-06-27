@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import const
 import interp
@@ -21,39 +25,39 @@ def do_mset(ch, argument):
     if not victim:
         ch.send("They aren't here.\n")
         return
-    # clear zones for mobs */
+    # clear zones for mobs
     victim.zone = None
-    #* Snarf the value (which need not be numeric).
+    # Snarf the value (which need not be numeric).
     value = int(arg3) if arg3.isdigit() else -1
-    #* Set something.
-    if arg2 == "str" :
+    # Set something.
+    if arg2 == "str":
         if value < 3 or value > victim.get_max_train(merc.STAT_STR):
-            ch.send( "Strength range is 3 to %d\n." % victim.get_max_train(merc.STAT_STR))
+            ch.send("Strength range is 3 to %d\n." % victim.get_max_train(merc.STAT_STR))
             return
         victim.perm_stat[merc.STAT_STR] = value
         ch.send("Str set to %d.\n" % value)
         return
-    if arg2 == "int" :
+    if arg2 == "int":
         if value < 3 or value > victim.get_max_train(merc.STAT_INT):
             ch.send("Intelligence range is 3 to %d.\n" % victim.get_max_train(merc.STAT_INT))
             return
         ch.send("Int set to %d.\n" % value)
         victim.perm_stat[merc.STAT_INT] = value
         return
-    if arg2 == "wis" :
+    if arg2 == "wis":
         if value < 3 or value > victim.get_max_train(merc.STAT_WIS):
             ch.send("Wisdom range is 3 to %d.\n" % victim.get_max_train(merc.STAT_WIS))
             return
         victim.perm_stat[merc.STAT_WIS] = value
         return
-    if arg2 == "dex" :
+    if arg2 == "dex":
         if value < 3 or value > victim.get_max_train(merc.STAT_DEX):
             ch.send("Dexterity range is 3 to %d.\n" % victim.get_max_train(merc.STAT_DEX))
             return
         ch.send("Dex set to %d.\n" % value)
         victim.perm_stat[merc.STAT_DEX] = value
         return
-    if arg2 == "con" :
+    if arg2 == "con":
         if value < 3 or value > victim.get_max_train(merc.STAT_CON):
             ch.send("Constitution range is 3 to %d.\n" % victim.get_max_train(merc.STAT_CON))
             return
@@ -75,10 +79,10 @@ def do_mset(ch, argument):
             return
         guild = merc.prefix_lookup(const.guild_table, arg3)
         if not guild:
-            ch.send("Possible classes are: " )
+            ch.send("Possible classes are: ")
             for guild in const.guild_table.keys():
-                ch.send("%s " % guild )
-            ch.send(".\n" )
+                ch.send("%s " % guild)
+            ch.send(".\n")
             return
         ch.send("Guild set to %s\n" % guild.name)
         victim.guild = guild
@@ -206,7 +210,8 @@ def do_mset(ch, argument):
             return
         victim.group = value
         return
-    #* Generate usage message.
-    ch.do_mset("" )
+    # Generate usage message.
+    ch.do_mset("")
 
-interp.cmd_type('mset', do_mset, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1)
+
+interp.register_command(interp.cmd_type('mset', do_mset, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1))

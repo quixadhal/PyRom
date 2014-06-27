@@ -85,7 +85,7 @@ def gain_exp( ch, gain ):
     while ch.level < LEVEL_HERO and ch.exp >= ch.exp_per_level(ch.pcdata.points) * (ch.level+1):
         ch.send("You raise a level!!  ")
         ch.level += 1
-        print ("%s gained level %d\r\n" % (ch.name,ch.level))
+        print ("%s gained level %d\n" % (ch.name,ch.level))
         wiznet("$N has attained level %d!" % ch.level,ch,None,WIZ_LEVELS,0,0)
         advance_level(ch,False)
         save.save_char_obj(ch)

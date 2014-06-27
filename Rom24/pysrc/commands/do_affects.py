@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import handler
 import interp
@@ -26,4 +30,5 @@ def do_affects(ch, argument):
     else:
         ch.send("You are not affected by any spells.\n")
 
-interp.cmd_type('affects', do_affects, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('affects', do_affects, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

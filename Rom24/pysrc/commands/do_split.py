@@ -1,8 +1,12 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
 
-# * 'Split' originally by Gnort, God of Chaos.
+# 'Split' originally by Gnort, God of Chaos.
 def do_split(ch, argument):
     argument, arg1 = merc.read_word(argument)
     argument, arg2 = merc.read_word(argument)
@@ -22,7 +26,7 @@ def do_split(ch, argument):
     if amount_gold == 0 and amount_silver == 0:
         ch.send("You hand out zero coins, but no one notices.\n")
         return
-    if ch.gold <  amount_gold or ch.silver < amount_silver:
+    if ch.gold < amount_gold or ch.silver < amount_silver:
         ch.send("You don't have that much to split.\n")
         return
     members = 0
@@ -44,15 +48,16 @@ def do_split(ch, argument):
     ch.gold -= amount_gold
     ch.gold += share_gold + extra_gold
     if share_silver > 0:
-        ch.send("You split %d silver coins. Your share is %d silver.\n" % (amount_silver,share_silver + extra_silver))
+        ch.send("You split %d silver coins. Your share is %d silver.\n" % (amount_silver, share_silver + extra_silver))
     if share_gold > 0:
-        ch.send("You split %d gold coins. Your share is %d gold.\n" % (amount_gold,share_gold + extra_gold))
+        ch.send("You split %d gold coins. Your share is %d gold.\n" % (amount_gold, share_gold + extra_gold))
     if share_gold == 0:
-        buf = "$n splits %d silver coins. Your share is %d silver." % (amount_silver,share_silver)
+        buf = "$n splits %d silver coins. Your share is %d silver." % (amount_silver, share_silver)
     elif share_silver == 0:
-        buf = "$n splits %d gold coins. Your share is %d gold." % (amount_gold,share_gold)
+        buf = "$n splits %d gold coins. Your share is %d gold." % (amount_gold, share_gold)
     else:
-        buf = '$n splits %d silver and %d gold coins, giving you %d silver and %d gold.\n' % (amount_silver,amount_gold,share_silver,share_gold)
+        buf = '$n splits %d silver and %d gold coins, giving you %d silver and %d gold.\n' % (
+                amount_silver, amount_gold, share_silver, share_gold)
 
     for gch in ch.in_room.people[:]:
         if gch != ch and gch.is_same_group(ch) and not merc.IS_AFFECTED(gch, merc.AFF_CHARM):
@@ -61,4 +66,5 @@ def do_split(ch, argument):
             gch.silver += share_silver
     return
 
-interp.cmd_type('split', do_split, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('split', do_split, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

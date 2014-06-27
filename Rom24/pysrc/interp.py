@@ -31,10 +31,15 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
+import logging
+
+logger = logging.getLogger()
+
 import os
 from collections import OrderedDict
-from merc import *
+
 import hotfix
+from fight import *
 from settings import LOGALL
 
 
@@ -48,10 +53,10 @@ class cmd_type:
         self.show = show
         self.default_arg = default_arg
         setattr(CHAR_DATA, self.do_fun.__name__, self.do_fun)
-        cmd_table[name] = self
 
 # These commands don't need to be here but are, for order. These will always match first with prefixes.
 cmd_table = OrderedDict()
+
 cmd_table['north'] = None
 cmd_table['east'] = None
 cmd_table['south'] = None
@@ -70,13 +75,20 @@ cmd_table['kill'] = None
 cmd_table['look'] = None
 cmd_table['who'] = None
 cmd_table['autolist'] = None
-# Common other commands.
+
+
+def register_command(entry: cmd_type):
+    cmd_table[entry.name] = entry
+    logger.debug('    %s registered in command table.', entry.name)
+
+
 hotfix.init_directory(os.path.join('commands'))
 
 
 def interpret(ch, argument):
     # Strip leading spaces.
     argument = argument.lstrip()
+    command = ''
 
     # No hiding.
     REMOVE_BIT(ch.affected_by, AFF_HIDE)
@@ -87,7 +99,7 @@ def interpret(ch, argument):
         return
     # Grab the command word.
     # Special parsing so ' can be a command,
-    #   also no spaces needed after punctuation.
+    # also no spaces needed after punctuation.
     logline = argument
     if not argument[0].isalpha() and not argument[0].isdigit():
         command = argument[0]
@@ -97,16 +109,16 @@ def interpret(ch, argument):
     # Look for command in command table.
     trust = ch.get_trust()
     cmd = prefix_lookup(cmd_table, command)
-    if cmd is not None:
+    if cmd != None:
         if cmd.level > trust:
             cmd = None
 
-    #* Log and snoop.
+    # * Log and snoop.
     if (not IS_NPC(ch) and IS_SET(ch.act, PLR_LOG)) or LOGALL or (cmd and cmd.log == LOG_ALWAYS):
         if cmd and cmd.log != LOG_NEVER:
             log_buf = "Log %s: %s" % (ch.name, logline)
             wiznet(log_buf, ch, None, WIZ_SECURE, 0, ch.get_trust())
-            print(log_buf + "\n")
+            logger.info(log_buf)
     if ch.desc and ch.desc.snoop_by:
         ch.desc.snoop_by.send("% ")
         ch.desc.snoop_by.send(logline)

@@ -1,10 +1,14 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
 
-# * Thanks to Grodyn for pointing out bugs in this function.
+# Thanks to Grodyn for pointing out bugs in this function.
 def do_force(ch, argument):
-    argument, arg  = merc.read_word(argument)
+    argument, arg = merc.read_word(argument)
 
     if not arg or not argument:
         ch.send("Force whom to do what?\n")
@@ -28,7 +32,7 @@ def do_force(ch, argument):
             return
         for vch in merc.char_list[:]:
             if not merc.IS_NPC(vch) and vch.get_trust() < ch.get_trust() and vch.level < merc.LEVEL_HERO:
-                merc.act( buf, ch, None, vch, merc.TO_VICT )
+                merc.act(buf, ch, None, vch, merc.TO_VICT)
                 interp.interpret(vch, argument)
     elif arg == "gods":
         if ch.get_trust() < merc.MAX_LEVEL - 2:
@@ -46,14 +50,14 @@ def do_force(ch, argument):
         if victim == ch:
             ch.send("Aye aye, right away!\n")
             return
-        if not ch.is_room_owner(victim.in_room) and  ch.in_room != victim.in_room \
-        and victim.in_room.is_private() and not merc.IS_TRUSTED(ch, merc.IMPLEMENTOR):
+        if not ch.is_room_owner(victim.in_room) and ch.in_room != victim.in_room \
+                and victim.in_room.is_private() and not merc.IS_TRUSTED(ch, merc.MAX_LEVEL):
             ch.send("That character is in a private room.\n")
             return
         if victim.get_trust() >= ch.get_trust():
             ch.send("Do it yourself!\n")
             return
-        if not merc.IS_NPC(victim) and ch.get_trust() < merc.MAX_LEVEL -3:
+        if not merc.IS_NPC(victim) and ch.get_trust() < merc.MAX_LEVEL - 3:
             ch.send("Not at your level!\n")
             return
         merc.act(buf, ch, None, victim, merc.TO_VICT)
@@ -61,4 +65,5 @@ def do_force(ch, argument):
     ch.send("Ok.\n")
     return
 
-interp.cmd_type('force', do_force, merc.POS_DEAD, merc.L7, merc.LOG_ALWAYS, 1)
+
+interp.register_command(interp.cmd_type('force', do_force, merc.POS_DEAD, merc.L7, merc.LOG_ALWAYS, 1))

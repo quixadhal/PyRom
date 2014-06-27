@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 import nanny
@@ -14,4 +18,5 @@ def do_echo(ch, argument):
             d.send(argument + "\n")
     return
 
-interp.cmd_type('gecho', do_echo, interp.POS_DEAD, interp.L4, interp.LOG_ALWAYS, 1)
+
+interp.register_command(interp.cmd_type('gecho', do_echo, interp.POS_DEAD, interp.L4, interp.LOG_ALWAYS, 1))

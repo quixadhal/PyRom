@@ -1,7 +1,11 @@
+import logging
+
+logger = logging.getLogger()
+
 import random
 import const
 from handler_room import find_door
-from interp import cmd_type
+from interp import cmd_type, register_command
 from merc import read_word, WAIT_STATE, IS_NPC, IS_AWAKE, act, TO_CHAR, ITEM_PORTAL, IS_SET, EX_ISDOOR, EX_CLOSED, \
     EX_PICKPROOF, REMOVE_BIT, EX_LOCKED, TO_ROOM, ITEM_CONTAINER, CONT_CLOSED, CONT_LOCKED, CONT_PICKPROOF, IS_IMMORTAL, \
     rev_dir, POS_RESTING, LOG_NORMAL
@@ -18,7 +22,7 @@ def do_pick(self, argument):
 
     WAIT_STATE(ch, const.skill_table["pick lock"].beats)
 
-    # look for guards */
+    # look for guards
     for gch in ch.in_room.people:
         if IS_NPC(gch) and IS_AWAKE(gch) and ch.level + 5 < gch.level:
             act("$N is standing too close to the lock.", ch, None, gch, TO_CHAR)
@@ -29,7 +33,7 @@ def do_pick(self, argument):
             return
         obj = ch.get_obj_here(arg)
         if obj:
-            # portal stuff */
+            # portal stuff
             if obj.item_type == ITEM_PORTAL:
                 if not IS_SET(obj.value[1], EX_ISDOOR):
                     ch.send("You can't do that.\n")
@@ -50,7 +54,7 @@ def do_pick(self, argument):
                 return
 
 
-                # 'pick object' */
+                # 'pick object'
             if obj.item_type != ITEM_CONTAINER:
                 ch.send("That's not a container.\n")
                 return
@@ -74,7 +78,7 @@ def do_pick(self, argument):
             return
         door = find_door(ch, arg)
         if door >= 0:
-            # 'pick door' */
+            # 'pick door'
             pexit = ch.in_room.exit[door]
             if not IS_SET(pexit.exit_info, EX_CLOSED) and not IS_IMMORTAL(ch):
                 ch.send("It's not closed.\n")
@@ -93,11 +97,11 @@ def do_pick(self, argument):
             act("$n picks the $d.", ch, None, pexit.keyword, TO_ROOM)
             check_improve(ch, "pick_lock", True, 2)
 
-            # unlock the other side */
+            # unlock the other side
             to_room = pexit.to_room
             if to_room and to_room.exit[rev_dir[door]] != 0 \
                     and to_room.exit[rev_dir[door]].to_room == ch.in_room:
                 REMOVE_BIT(to_room.exit[rev_dir[door]].exit_info, EX_LOCKED)
 
 
-cmd_type('pick', do_pick, POS_RESTING, 0, LOG_NORMAL, 1)
+register_command(cmd_type('pick', do_pick, POS_RESTING, 0, LOG_NORMAL, 1))

@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import db
 import interp
@@ -10,9 +14,9 @@ def do_oload(ch, argument):
     if not arg1 or not arg1.isdigit():
         ch.send("Syntax: load obj <vnum> <level>.\n")
         return
-    level = ch.get_trust() # default */
+    level = ch.get_trust()  # default
 
-    if arg2:  # load with a level */
+    if arg2:  # load with a level
         if not arg2.isdigit():
             ch.send("Syntax: oload <vnum> <level>.\n")
             return
@@ -24,7 +28,7 @@ def do_oload(ch, argument):
     if vnum not in merc.obj_index_hash:
         ch.send("No object has that vnum.\n")
         return
-    obj = db.create_object(obj_index_hash[vnum], level)
+    obj = db.create_object(merc.obj_index_hash[vnum], level)
     if merc.CAN_WEAR(obj, merc.ITEM_TAKE):
         obj.to_char(ch)
     else:
@@ -34,4 +38,5 @@ def do_oload(ch, argument):
     ch.send("Ok.\n")
     return
 
-interp.cmd_type('oload', do_oload, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)
+
+interp.register_command(interp.cmd_type('oload', do_oload, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1))

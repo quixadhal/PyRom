@@ -1,15 +1,20 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
 day_name = ["the Moon", "the Bull", "Deception", "Thunder", "Freedom",
-    "the Great Gods", "the Sun"]
+            "the Great Gods", "the Sun"]
 month_name = ["Winter", "the Winter Wolf", "the Frost Giant", "the Old Forces",
-    "the Grand Struggle", "the Spring", "Nature", "Futility", "the Dragon",
-    "the Sun", "the Heat", "the Battle", "the Dark Shades", "the Shadows",
-    "the Long Shadows", "the Ancient Darkness", "the Great Evil"]
+              "the Grand Struggle", "the Spring", "Nature", "Futility", "the Dragon",
+              "the Sun", "the Heat", "the Battle", "the Dark Shades", "the Shadows",
+              "the Long Shadows", "the Ancient Darkness", "the Great Evil"]
+
 
 def do_time(ch, argument):
-    day = time_info.day + 1
+    day = merc.time_info.day + 1
     suf = ''
     if day > 4 and day < 20:
         suf = "th"
@@ -26,7 +31,8 @@ def do_time(ch, argument):
         12 if (merc.time_info.hour % 12 == 0) else merc.time_info.hour % 12,
         "pm" if merc.time_info.hour >= 12 else "am",
         day_name[day % 7], day, suf, month_name[merc.time_info.month]))
-    #ch.send("ROM started up at %s\nThe system time is %s.\n", str_boot_time, (char *) ctime(&current_time)
+    # ch.send("ROM started up at %s\nThe system time is %s.\n", str_boot_time, (char *) ctime(&current_time)
     return
 
-interp.cmd_type('time', do_time, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('time', do_time, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

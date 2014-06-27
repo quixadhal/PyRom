@@ -1,10 +1,14 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 import comm
 
 
 def do_disconnect(ch, argument):
-    argument, arg = merc.read_word( argument )
+    argument, arg = merc.read_word(argument)
     if not arg:
         ch.send("Disconnect whom?\n")
         return
@@ -19,7 +23,7 @@ def do_disconnect(ch, argument):
     if not victim:
         ch.send("They aren't here.\n")
         return
-    if victim.desc == None:
+    if victim.desc is None:
         merc.act("$N doesn't have a descriptor.", ch, None, merc.victim, merc.TO_CHAR)
         return
     for d in merc.descriptor_list:
@@ -27,8 +31,9 @@ def do_disconnect(ch, argument):
             comm.close_socket(d)
             ch.send("Ok.\n")
             return
-    print("BUG: Do_disconnect: desc not found.")
+    logger.warn("BUG: Do_disconnect: desc not found.")
     ch.send("Descriptor not found!\n")
     return
 
-interp.cmd_type('disconnect', do_disconnect, merc.POS_DEAD, merc.L3, merc.LOG_ALWAYS, 1)
+
+interp.register_command(interp.cmd_type('disconnect', do_disconnect, merc.POS_DEAD, merc.L3, merc.LOG_ALWAYS, 1))

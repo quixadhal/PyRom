@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 import const
@@ -11,7 +15,7 @@ def do_skills(ch, argument):
     level = 0
     skill = None
     if merc.IS_NPC(ch):
-      return
+        return
     argument = argument.lower()
     if argument:
         fAll = True
@@ -51,10 +55,10 @@ def do_skills(ch, argument):
     for sn, skill in const.skill_table.items():
         level = skill.skill_level[ch.guild.name]
         if level < merc.LEVEL_HERO + 1 \
-        and  (fAll or level <= ch.level) \
-        and  level >= min_lev and level <= max_lev \
-        and  skill.spell_fun == None \
-        and  sn in ch.pcdata.learned:
+                and (fAll or level <= ch.level) \
+                and level >= min_lev and level <= max_lev \
+                and skill.spell_fun == None \
+                and sn in ch.pcdata.learned:
             found = True
             level = skill.skill_level[ch.guild.name]
             if ch.level < level:
@@ -63,15 +67,15 @@ def do_skills(ch, argument):
                 buf = "%-18s %3d%%      " % (skill.name, ch.pcdata.learned[sn])
 
             if level not in skill_list:
-                skill_list[level] =  "\nLevel %2d: %s" % (level,buf)
+                skill_list[level] = "\nLevel %2d: %s" % (level, buf)
                 skill_columns[level] = 0
-            else: # append */
+            else:  # append
                 skill_columns[level] += 1
                 if skill_columns[level] % 2 == 0:
                     skill_list[level] += "\n          "
                 skill_list[level] += buf
 
-    # return results */
+    # return results
     if not found:
         ch.send("No skills found.\n")
         return
@@ -80,4 +84,5 @@ def do_skills(ch, argument):
         ch.send(buf)
     ch.send("\n")
 
-interp.cmd_type('skills', do_skills, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('skills', do_skills, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

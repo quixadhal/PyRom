@@ -1,4 +1,8 @@
-from interp import cmd_type
+import logging
+
+logger = logging.getLogger()
+
+from interp import cmd_type, register_command
 from merc import POS_FIGHTING, ITEM_FURNITURE, IS_SET, REST_ON, REST_IN, REST_AT, act, TO_CHAR, POS_DEAD, POS_SLEEPING, \
     IS_AFFECTED, AFF_SLEEP, TO_ROOM, POS_RESTING, POS_STANDING, POS_SITTING, LOG_NORMAL
 
@@ -9,7 +13,7 @@ def do_rest(self, argument):
     if ch.position == POS_FIGHTING:
         ch.send("You are already fighting!\n")
         return
-        # okay, now that we know we can rest, find an object to rest on */
+        # okay, now that we know we can rest, find an object to rest on
     if argument:
         obj = ch.get_obj_list(argument, ch.in_room.contents)
         if not obj:
@@ -20,7 +24,7 @@ def do_rest(self, argument):
 
         if obj:
             if obj.item_type != ITEM_FURNITURE or (
-                    not IS_SET(obj.value[2], REST_ON) and not IS_SET(obj.value[2], REST_IN)
+                            not IS_SET(obj.value[2], REST_ON) and not IS_SET(obj.value[2], REST_IN)
                     and not IS_SET(obj.value[2], REST_AT)):
                 ch.send("You can't rest on that.\n")
                 return
@@ -82,4 +86,4 @@ def do_rest(self, argument):
         return
 
 
-cmd_type('rest', do_rest, POS_SLEEPING, 0, LOG_NORMAL, 1)
+register_command(cmd_type('rest', do_rest, POS_SLEEPING, 0, LOG_NORMAL, 1))

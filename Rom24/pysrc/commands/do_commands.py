@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -5,7 +9,7 @@ import interp
 def do_commands(ch, argument):
     col = 0
     for key, cmd in interp.cmd_table.items():
-        if cmd.level <  merc.LEVEL_HERO and cmd.level <= ch.get_trust() and cmd.show:
+        if cmd.level < merc.LEVEL_HERO and cmd.level <= ch.get_trust() and cmd.show:
             ch.send("%-12s" % key)
             col += 1
             if col % 6 == 0:
@@ -14,4 +18,5 @@ def do_commands(ch, argument):
         ch.send("\n")
     return
 
-interp.cmd_type('commands', do_commands, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('commands', do_commands, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

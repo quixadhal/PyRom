@@ -1,5 +1,9 @@
+import logging
+
+logger = logging.getLogger()
+
 import random
-from interp import cmd_type
+from interp import cmd_type, register_command
 from merc import IS_AFFECTED, AFF_HIDE, REMOVE_BIT, SET_BIT, POS_RESTING, LOG_NORMAL
 from skills import check_improve
 
@@ -18,4 +22,5 @@ def do_hide(ch, argument):
     return
 
 
-cmd_type('hide', do_hide, POS_RESTING, 0, LOG_NORMAL, 1)
+register_command(cmd_type('hide', do_hide, POS_RESTING, 0, LOG_NORMAL, 1))
+
