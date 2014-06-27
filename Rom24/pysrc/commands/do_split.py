@@ -61,4 +61,4 @@ def do_split(ch, argument):
             gch.silver += share_silver
     return
 
-interp.cmd_table['split'] = interp.cmd_type('split', do_split, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('split', do_split, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

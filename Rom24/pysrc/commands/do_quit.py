@@ -33,4 +33,4 @@ def do_quit(ch, argument):
             comm.close_socket(d)
     return
 
-interp.cmd_table['quit'] = interp.cmd_type('quit', do_quit, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('quit', do_quit, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

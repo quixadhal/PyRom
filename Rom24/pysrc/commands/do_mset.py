@@ -209,4 +209,4 @@ def do_mset(ch, argument):
     #* Generate usage message.
     ch.do_mset("" )
 
-interp.cmd_table['mset'] = interp.cmd_type('mset', do_mset, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1)
+interp.cmd_type('mset', do_mset, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1)

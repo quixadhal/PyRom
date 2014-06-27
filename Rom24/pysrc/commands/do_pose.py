@@ -172,4 +172,4 @@ def do_pose(ch, argument):
     merc.act(pose_table['to_others'][ch.guild.name][choice], ch, None, None, merc.TO_ROOM)
     return
 
-interp.cmd_table['pose'] = interp.cmd_type('pose', do_pose, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('pose', do_pose, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

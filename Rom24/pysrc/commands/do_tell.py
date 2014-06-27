@@ -50,4 +50,4 @@ def do_tell(ch, argument):
     victim.reply = ch
     return
 
-interp.cmd_table['tell'] = interp.cmd_type('tell', do_tell, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('tell', do_tell, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

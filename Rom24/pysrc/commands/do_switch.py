@@ -45,4 +45,4 @@ def do_switch(ch, argument):
     victim.send("Ok.\n")
     return
 
-interp.cmd_table['switch'] = interp.cmd_type('switch', do_switch, merc.POS_DEAD, merc.L6, merc.LOG_ALWAYS, 1)
+interp.cmd_type('switch', do_switch, merc.POS_DEAD, merc.L6, merc.LOG_ALWAYS, 1)

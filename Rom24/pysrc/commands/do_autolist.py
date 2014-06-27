@@ -75,4 +75,4 @@ def do_autolist(ch, argument):
     else:
         ch.send("You accept followers.\n")
 
-interp.cmd_table['autolist'] = interp.cmd_type('autolist', do_autolist, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('autolist', do_autolist, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

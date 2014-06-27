@@ -28,4 +28,4 @@ def do_incognito(self, argument):
               ch.send("You cloak your presence.\n")
     return
 
-interp.cmd_table['incognito'] = interp.cmd_type('incognito', do_incognito, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+interp.cmd_type('incognito', do_incognito, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)

@@ -27,5 +27,5 @@ def do_gossip(ch, argument):
             and not merc.IS_SET(victim.comm, merc.COMM_NOGOSSIP) and not merc.IS_SET(victim.comm, merc.COMM_QUIET):
                 merc.act( "$n gossips '$t'", ch, argument, d.character, merc.TO_VICT, merc.POS_SLEEPING)
 
-interp.cmd_table['.'] = interp.cmd_type('.', do_gossip, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 0)
-interp.cmd_table['gossip'] = interp.cmd_type('gossip', do_gossip, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('.', do_gossip, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 0)
+interp.cmd_type('gossip', do_gossip, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)

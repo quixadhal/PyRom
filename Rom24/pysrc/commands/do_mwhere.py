@@ -34,4 +34,4 @@ def do_mwhere(ch, argument):
     if found:
         act("You didn't find any $T.", ch, None, argument, merc.TO_CHAR)
 
-interp.cmd_table['mwhere'] = interp.cmd_type('mwhere', do_mwhere, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+interp.cmd_type('mwhere', do_mwhere, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)

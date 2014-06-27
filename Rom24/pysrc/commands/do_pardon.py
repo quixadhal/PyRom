@@ -30,4 +30,4 @@ def do_pardon(ch, argument):
     ch.send("Syntax: pardon <character> <killer|thief>.\n")
     return
 
-interp.cmd_table['pardon'] = interp.cmd_type('pardon', do_pardon, merc.POS_DEAD, merc.L3, merc.LOG_ALWAYS, 1)
+interp.cmd_type('pardon', do_pardon, merc.POS_DEAD, merc.L3, merc.LOG_ALWAYS, 1)

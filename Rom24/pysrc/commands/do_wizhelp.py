@@ -14,4 +14,4 @@ def do_wizhelp(ch, argument):
         ch.send("\n")
     return
 
-interp.cmd_table['wizhelp'] = interp.cmd_type('wizhelp', do_wizhelp, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+interp.cmd_type('wizhelp', do_wizhelp, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)

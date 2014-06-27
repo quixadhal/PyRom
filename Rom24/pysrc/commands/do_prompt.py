@@ -23,4 +23,4 @@ def do_prompt(ch, argument):
     ch.send("Prompt set to %s\n" % ch.prompt)
     return
 
-interp.cmd_table['prompt'] = interp.cmd_type('prompt', do_prompt, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('prompt', do_prompt, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

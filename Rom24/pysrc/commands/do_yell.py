@@ -19,4 +19,4 @@ def do_yell(ch, argument):
         and not merc.IS_SET(d.character.comm, merc.COMM_QUIET):
             merc.act("$n yells '$t'", ch, argument, d.character, merc.TO_VICT)
 
-interp.cmd_table['yell'] = interp.cmd_type('yell', do_yell, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('yell', do_yell, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

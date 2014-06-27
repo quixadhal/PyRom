@@ -19,4 +19,4 @@ def do_sockets(ch, argument):
     ch.send("%d user%s\n" % (count, "" if count == 1 else "s" ) )
     return
 
-interp.cmd_table['sockets'] = interp.cmd_type('sockets', do_sockets, merc.POS_DEAD, merc.L4, merc.LOG_NORMAL, 1)
+interp.cmd_type('sockets', do_sockets, merc.POS_DEAD, merc.L4, merc.LOG_NORMAL, 1)

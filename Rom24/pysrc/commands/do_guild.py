@@ -33,4 +33,4 @@ def do_guild(ch, argument):
         victim.send("You are now a member of clan %s.\n" % clan.name.capitalize())
     victim.clan = clan
 
-interp.cmd_table['guild'] = interp.cmd_type('guild', do_guild, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)
+interp.cmd_type('guild', do_guild, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)

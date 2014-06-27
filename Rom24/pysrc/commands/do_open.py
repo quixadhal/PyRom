@@ -1,5 +1,5 @@
-from act_move import find_door
-from interp import cmd_table, cmd_type
+from handler_room import find_door
+from interp import cmd_type
 from merc import read_word, ITEM_PORTAL, IS_SET, EX_ISDOOR, EX_CLOSED, EX_LOCKED, REMOVE_BIT, act, TO_CHAR, TO_ROOM, \
     ITEM_CONTAINER, CONT_CLOSED, CONT_CLOSEABLE, CONT_LOCKED, rev_dir, POS_RESTING, LOG_NORMAL
 
@@ -68,4 +68,4 @@ def do_open(ch, argument):
                 act("The $d opens.", rch, None, pexit_rev.keyword, TO_CHAR)
 
 
-cmd_table['open'] = cmd_type('open', do_open, POS_RESTING, 0, LOG_NORMAL, 1)
+cmd_type('open', do_open, POS_RESTING, 0, LOG_NORMAL, 1)

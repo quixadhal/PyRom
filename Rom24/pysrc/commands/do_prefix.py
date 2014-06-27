@@ -17,4 +17,4 @@ def do_prefix(ch, argument):
         ch.send("Prefix set to %s.\r\n" % argument)
     ch.prefix = argument
 
-interp.cmd_table['prefix'] = interp.cmd_type('prefix', do_prefix, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+interp.cmd_type('prefix', do_prefix, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)

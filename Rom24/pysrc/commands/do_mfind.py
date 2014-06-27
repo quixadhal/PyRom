@@ -22,4 +22,4 @@ def do_mfind(ch, argument):
         ch.send("No mobiles by that name.\n")
     return
 
-interp.cmd_table['mfind'] = interp.cmd_type('mfind', do_mfind, merc.POS_DEAD, merc.L4, merc.LOG_NORMAL, 1)
+interp.cmd_type('mfind', do_mfind, merc.POS_DEAD, merc.L4, merc.LOG_NORMAL, 1)

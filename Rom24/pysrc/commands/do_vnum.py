@@ -27,4 +27,4 @@ def do_vnum(self, argument):
     ch.do_mfind(argument)
     ch.do_ofind(argument)
 
-interp.cmd_table['vnum'] = interp.cmd_type('vnum', do_vnum, merc.POS_DEAD, merc.L4, merc.LOG_NORMAL, 1)
+interp.cmd_type('vnum', do_vnum, merc.POS_DEAD, merc.L4, merc.LOG_NORMAL, 1)

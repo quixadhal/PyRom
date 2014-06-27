@@ -24,4 +24,4 @@ def do_smote(ch, argument):
         vch.send(buf + "\n")
     return
 
-interp.cmd_table['smote'] = interp.cmd_type('smote', do_smote, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+interp.cmd_type('smote', do_smote, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)

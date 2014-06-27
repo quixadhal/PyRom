@@ -57,4 +57,4 @@ def do_whois(ch, argument):
         ch.send("No one of that name is playing.\n")
         return
 
-interp.cmd_table['whois'] = interp.cmd_type('whois', do_whois, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('whois', do_whois, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

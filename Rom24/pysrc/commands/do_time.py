@@ -29,4 +29,4 @@ def do_time(ch, argument):
     #ch.send("ROM started up at %s\nThe system time is %s.\n", str_boot_time, (char *) ctime(&current_time)
     return
 
-interp.cmd_table['time'] = interp.cmd_type('time', do_time, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('time', do_time, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

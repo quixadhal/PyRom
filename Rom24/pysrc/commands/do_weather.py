@@ -11,4 +11,4 @@ def do_weather(ch, argument):
         "a warm southerly breeze blows" if merc.weather_info.change >= 0 else "a cold northern gust blows"))
     return
 
-interp.cmd_table['weather'] = interp.cmd_type('weather', do_weather, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('weather', do_weather, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

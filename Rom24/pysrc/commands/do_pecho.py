@@ -20,4 +20,4 @@ def do_pecho(ch, argument):
     ch.send(argument)
     ch.send("\n")
 
-interp.cmd_table['pecho'] = interp.cmd_type('pecho', do_pecho, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)
+interp.cmd_type('pecho', do_pecho, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)

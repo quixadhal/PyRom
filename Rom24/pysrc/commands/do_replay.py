@@ -12,4 +12,4 @@ def do_replay(ch, argument):
     [ch.send(tell) for tell in ch.pcdata.buffer]
     ch.pcdata.buffer = []
 
-interp.cmd_table['replay'] = interp.cmd_type('replay', do_replay, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('replay', do_replay, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)

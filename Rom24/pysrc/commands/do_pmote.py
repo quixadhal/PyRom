@@ -20,4 +20,4 @@ def do_pmote(ch, argument):
         merc.act("$N $t", vch, temp, ch, merc.TO_CHAR)
     return
 
-interp.cmd_table['pmote'] = interp.cmd_type('pmote', do_pmote, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('pmote', do_pmote, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

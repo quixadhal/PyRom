@@ -16,4 +16,4 @@ def do_report(ch, argument):
     merc.act(buf, ch, None, None, merc.TO_ROOM)
     return
 
-interp.cmd_table['report'] = interp.cmd_type('report', do_report, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('report', do_report, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

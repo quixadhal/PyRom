@@ -12,4 +12,4 @@ def do_shutdown(ch, argument):
             save.save_char_obj(vch)
             comm.close_socket(d)
 
-interp.cmd_table['shutdown'] = interp.cmd_type('shutdown', do_shutdown, merc.POS_DEAD, merc.L1, merc.LOG_ALWAYS, 1)
+interp.cmd_type('shutdown', do_shutdown, merc.POS_DEAD, merc.L1, merc.LOG_ALWAYS, 1)

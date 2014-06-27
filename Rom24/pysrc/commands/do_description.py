@@ -31,4 +31,4 @@ def do_description(ch, argument):
     ch.send(ch.description if ch.description else "(None).\n")
     return
 
-interp.cmd_table['description'] = interp.cmd_type('description', do_description, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('description', do_description, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

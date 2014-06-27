@@ -25,4 +25,4 @@ def do_consider(ch, argument):
     merc.act(msg, ch, None, victim, merc.TO_CHAR)
     return
 
-interp.cmd_table['consider'] = interp.cmd_type('consider', do_consider, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('consider', do_consider, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)

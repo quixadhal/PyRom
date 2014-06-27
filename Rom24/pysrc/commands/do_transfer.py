@@ -49,5 +49,5 @@ def do_transfer(ch, argument):
     victim.do_look("auto")
     ch.send("Ok.\n")
 
-interp.cmd_table['teleport'] = interp.cmd_type('teleport', do_transfer, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1)
-interp.cmd_table['transfer'] = interp.cmd_type('transfer', do_transfer, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1)
+interp.cmd_type('teleport', do_transfer, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1)
+interp.cmd_type('transfer', do_transfer, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1)

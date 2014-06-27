@@ -13,4 +13,4 @@ def do_autosplit(ch, argument):
         ch.send("Automatic gold splitting set.\n")
         ch.act = merc.SET_BIT(ch.act, merc.PLR_AUTOSPLIT)
 
-interp.cmd_table['autosplit'] = interp.cmd_type('autosplit', do_autosplit, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('autosplit', do_autosplit, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

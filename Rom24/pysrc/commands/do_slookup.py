@@ -19,4 +19,4 @@ def do_slookup(ch, argument):
 
         ch.send("Sn: %15s  Slot: %3d  Skill/spell: '%s'\n", skill.name, skill.slot, skill.name )
 
-interp.cmd_table['slookup'] = interp.cmd_type('slookup', do_slookup, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+interp.cmd_type('slookup', do_slookup, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)

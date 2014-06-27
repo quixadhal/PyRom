@@ -30,4 +30,4 @@ def do_at(ch, argument):
             ch.on = on
             break
 
-interp.cmd_table['at'] = interp.cmd_type('at', do_at, merc.POS_DEAD, merc.L6, merc.LOG_NORMAL, 1)
+interp.cmd_type('at', do_at, merc.POS_DEAD, merc.L6, merc.LOG_NORMAL, 1)

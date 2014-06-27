@@ -11,4 +11,4 @@ def do_afk(ch, argument):
         ch.send("You are now in AFK mode.\n")
         merc.SET_BIT(ch.comm, merc.COMM_AFK)
 
-interp.cmd_table['afk'] = interp.cmd_type('afk', do_afk, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('afk', do_afk, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)

@@ -1,3 +1,4 @@
+import random
 import merc
 import interp
 import fight
@@ -17,7 +18,7 @@ def do_cast(ch, argument):
         return
     sn = merc.find_spell(ch,arg1)
     if not sn or sn.spell_fun == None \
-    or (not IS_NPC(ch) and (ch.level < sn.skill_level[ch.guild.name] \
+    or (not merc.IS_NPC(ch) and (ch.level < sn.skill_level[ch.guild.name] \
     or ch.pcdata.learned[sn.name] == 0)):
         ch.send("You don't know any spells of that name.\n")
         return
@@ -161,9 +162,9 @@ def do_cast(ch, argument):
     and victim != ch and victim.master != ch:
         for vch in ch.in_room.people[:]:
             if victim == vch and not victim.fighting:
-                check_killer(victim,ch)
-                multi_hit(victim, ch, merc.TYPE_UNDEFINED)
+                fight.check_killer(victim,ch)
+                fight.multi_hit(victim, ch, merc.TYPE_UNDEFINED)
                 break
     return
 # * Spell functions.
-interp.cmd_table['cast'] = interp.cmd_type('cast', do_cast, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('cast', do_cast, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)

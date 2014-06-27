@@ -27,4 +27,4 @@ def do_music(ch, argument):
             and not merc.IS_SET(victim.comm, merc.COMM_NOMUSIC) and not merc.IS_SET(victim.comm, merc.COMM_QUIET):
                 merc.act("$n MUSIC: '$t'", ch, argument, d.character, merc.TO_VICT, merc.POS_SLEEPING)
 
-interp.cmd_table['music'] = interp.cmd_type('music', do_music, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('music', do_music, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)

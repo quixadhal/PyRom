@@ -19,4 +19,4 @@ def do_load(ch, argument):
     # echo syntax */
     ch.do_load("")
 
-interp.cmd_table['load'] = interp.cmd_type('load', do_load, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)
+interp.cmd_type('load', do_load, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)

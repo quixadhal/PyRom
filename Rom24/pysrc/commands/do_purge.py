@@ -41,4 +41,4 @@ def do_purge(ch, argument):
     victim.extract(True)
     return
 
-interp.cmd_table['purge'] = interp.cmd_type('purge', do_purge, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)
+interp.cmd_type('purge', do_purge, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)

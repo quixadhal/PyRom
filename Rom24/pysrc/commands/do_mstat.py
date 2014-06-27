@@ -92,4 +92,4 @@ def do_mstat(ch, argument):
                     handler.affect_bit_name(paf.bitvector),
                     paf.level))
 
-interp.cmd_table['mstat'] = interp.cmd_type('mstat', do_mstat, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+interp.cmd_type('mstat', do_mstat, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)

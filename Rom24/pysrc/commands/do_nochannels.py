@@ -27,4 +27,4 @@ def do_nochannels(ch, argument):
         merc.wiznet("$N revokes %s's channels." % victim.name, ch, None, merc.WIZ_PENALTIES, merc.WIZ_SECURE, 0)
     return
 
-interp.cmd_table['nochannels'] = interp.cmd_type('nochannels', do_nochannels, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1)
+interp.cmd_type('nochannels', do_nochannels, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1)

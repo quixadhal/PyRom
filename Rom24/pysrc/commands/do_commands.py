@@ -14,4 +14,4 @@ def do_commands(ch, argument):
         ch.send("\n")
     return
 
-interp.cmd_table['commands'] = interp.cmd_type('commands', do_commands, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('commands', do_commands, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

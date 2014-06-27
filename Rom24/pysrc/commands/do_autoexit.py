@@ -13,4 +13,4 @@ def do_autoexit(ch, argument):
         ch.send("Exits will now be displayed.\n")
         ch.act = merc.SET_BIT(ch.act, merc.PLR_AUTOEXIT)
 
-interp.cmd_table['autoexit'] = interp.cmd_type('autoexit', do_autoexit, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('autoexit', do_autoexit, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

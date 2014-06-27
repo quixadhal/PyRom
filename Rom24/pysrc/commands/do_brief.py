@@ -10,4 +10,4 @@ def do_brief(ch, argument):
         ch.send("Short descriptions activated.\n")
         ch.comm = merc.SET_BIT(ch.comm, merc.COMM_BRIEF)
 
-interp.cmd_table['brief'] = interp.cmd_type('brief', do_brief, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('brief', do_brief, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

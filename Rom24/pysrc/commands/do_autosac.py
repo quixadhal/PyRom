@@ -12,4 +12,4 @@ def do_autosac(ch, argument):
         ch.send("Automatic corpse sacrificing set.\n")
         ch.act = merc.SET_BIT(ch.act, merc.PLR_AUTOSAC)
 
-interp.cmd_table['autosac'] = interp.cmd_type('autosac', do_autosac, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('autosac', do_autosac, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

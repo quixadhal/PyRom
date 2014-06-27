@@ -62,4 +62,4 @@ def do_oset(ch, argument):
     ch.do_oset("" )
     return
 
-interp.cmd_table['oset'] = interp.cmd_type('oset', do_oset, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1)
+interp.cmd_type('oset', do_oset, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1)

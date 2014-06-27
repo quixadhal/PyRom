@@ -247,6 +247,15 @@ class handler_obj:
         ch.carry_weight -= obj.get_weight()
         return
 
+    # Return the number of players "on" an object.
+    def count_users(obj):
+        total = 0
+        if obj.in_room:
+            for person in obj.in_room.people:
+                if person.on == obj:
+                    total += 1
+        return total
+
 methods = {d:f for d,f in handler_obj.__dict__.items() if not d.startswith('__')}
 for m,f in methods.items():
     setattr(OBJ_DATA, m, f)

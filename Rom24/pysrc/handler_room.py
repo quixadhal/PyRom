@@ -31,9 +31,15 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/ 
  ************/
 """
+import const
 from merc import *
 
 # True if room is dark.
+from merc import IS_SET, EX_CLOSED, IS_AFFECTED, AFF_PASS_DOOR, EX_NOPASS, IS_TRUSTED, L7, act, TO_CHAR, AFF_CHARM, \
+    IS_NPC, SECT_AIR, AFF_FLYING, IS_IMMORTAL, SECT_WATER_NOSWIM, ITEM_BOAT, movement_loss, SECT_MAX, AFF_HASTE, \
+    AFF_SLOW, WAIT_STATE, AFF_SNEAK, LEVEL_HERO, dir_name, TO_ROOM, POS_STANDING, ROOM_LAW, ACT_AGGRESSIVE, EX_ISDOOR
+
+
 class handler_room:
     def is_dark(pRoomIndex):
         if pRoomIndex.light > 0:

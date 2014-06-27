@@ -31,4 +31,4 @@ def do_disconnect(ch, argument):
     ch.send("Descriptor not found!\n")
     return
 
-interp.cmd_table['disconnect'] = interp.cmd_type('disconnect', do_disconnect, merc.POS_DEAD, merc.L3, merc.LOG_ALWAYS, 1)
+interp.cmd_type('disconnect', do_disconnect, merc.POS_DEAD, merc.L3, merc.LOG_ALWAYS, 1)

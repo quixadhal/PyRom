@@ -61,4 +61,4 @@ def do_force(ch, argument):
     ch.send("Ok.\n")
     return
 
-interp.cmd_table['force'] = interp.cmd_type('force', do_force, merc.POS_DEAD, merc.L7, merc.LOG_ALWAYS, 1)
+interp.cmd_type('force', do_force, merc.POS_DEAD, merc.L7, merc.LOG_ALWAYS, 1)

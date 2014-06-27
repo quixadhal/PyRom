@@ -26,4 +26,4 @@ def do_notell(ch, argument):
         merc.wiznet("$N revokes %s's tells." % victim.name, ch, None, merc.WIZ_PENALTIES, merc.WIZ_SECURE, 0)
     return
 
-interp.cmd_table['notell'] = interp.cmd_type('notell', do_notell, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1)
+interp.cmd_type('notell', do_notell, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1)

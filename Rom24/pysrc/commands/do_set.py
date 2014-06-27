@@ -28,4 +28,4 @@ def do_set(ch, argument):
     # echo syntax */
     ch.do_set("")
 
-interp.cmd_table['set'] = interp.cmd_type('set', do_set, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1)
+interp.cmd_type('set', do_set, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1)

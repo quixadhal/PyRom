@@ -1,5 +1,5 @@
-from act_move import has_key, find_door
-from interp import cmd_table, cmd_type
+from handler_room import find_door, has_key
+from interp import cmd_type
 from merc import read_word, ITEM_PORTAL, IS_SET, EX_ISDOOR, EX_NOCLOSE, EX_CLOSED, EX_NOLOCK, EX_LOCKED, SET_BIT, act, \
     TO_CHAR, TO_ROOM, ITEM_CONTAINER, CONT_CLOSED, CONT_LOCKED, rev_dir, POS_RESTING, LOG_NORMAL
 
@@ -80,4 +80,4 @@ def do_lock(ch, argument):
             SET_BIT(to_room.exit[rev_dir[door]].exit_info, EX_LOCKED)
 
 
-cmd_table['lock'] = cmd_type('lock', do_lock, POS_RESTING, 0, LOG_NORMAL, 1)
+cmd_type('lock', do_lock, POS_RESTING, 0, LOG_NORMAL, 1)

@@ -115,4 +115,4 @@ def do_who(ch, argument):
     ch.send("\nPlayers found: %d\n" % nMatch)
     return
 
-interp.cmd_table['who'] = interp.cmd_type('who', do_who, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('who', do_who, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)

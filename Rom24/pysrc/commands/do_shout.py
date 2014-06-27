@@ -24,4 +24,4 @@ def do_shout(ch, argument):
         and not merc.IS_SET(victim.comm, merc.COMM_SHOUTSOFF) and not merc.IS_SET(victim.comm, merc.COMM_QUIET):
             merc.act("$n shouts '$t'", ch, argument, d.character, merc.TO_VICT)
 
-interp.cmd_table['shout'] = interp.cmd_type('shout', do_shout, merc.POS_RESTING, 3, merc.LOG_NORMAL, 1)
+interp.cmd_type('shout', do_shout, merc.POS_RESTING, 3, merc.LOG_NORMAL, 1)

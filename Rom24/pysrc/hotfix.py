@@ -58,11 +58,6 @@ def init_directory(path, silent = False):
 def init_monitoring():
 #Called in main function to begin tracking files.
     print("Monitoring files for modifications.")
-    init_file('act_enter.py', ['act_enter'])
-    init_file('act_wiz.py', ['act_wiz'])
-    init_file('act_move.py', ['act_move'])
-    init_file('act_obj.py', ['act_obj'])
-    init_file('act_comm.py', ['act_comm'])
     init_file('handler_ch.py', ['handler_ch'])
     init_file('handler_obj.py', ['handler_obj'])
     init_file('handler_room.py', ['handler_room'])

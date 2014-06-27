@@ -58,4 +58,4 @@ def do_compare(self, argument):
     merc.act(msg, ch, obj1, obj2, merc.TO_CHAR)
     return
 
-interp.cmd_table['compare'] = interp.cmd_type('compare', do_compare, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.cmd_type('compare', do_compare, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
