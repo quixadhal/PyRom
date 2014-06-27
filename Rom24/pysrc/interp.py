@@ -180,7 +180,7 @@ def interpret(ch, argument):
     #* Look for command in command table.
     trust = ch.get_trust()
     cmd = prefix_lookup(cmd_table, command)
-    if cmd != None:
+    if cmd is not None:
         if cmd.level > trust:
             cmd = None
  
@@ -267,8 +267,8 @@ def check_social(ch, command, argument):
 
         if not IS_NPC(ch) and IS_NPC(victim) \
         and not IS_AFFECTED(victim, AFF_CHARM) \
-        and IS_AWAKE(victim) and victim.desc == None:
-            num = random.randit(0,12)
+        and IS_AWAKE(victim) and victim.desc is None:
+            num = random.randint(0, 12)
             if num in [0, 1, 2, 3, 4, 5, 6, 7, 8]:
                 act(cmd.others_found, victim, None, ch, TO_NOTVICT)
                 act(cmd.char_found, victim, None, ch, TO_CHAR)
