@@ -2,7 +2,7 @@ import merc
 import interp
 
 
-def do_compare(self, argument):
+def do_compare(ch, argument):
     argument, arg1 = merc.read_word(argument)
     argument, arg2 = merc.read_word(argument)
 

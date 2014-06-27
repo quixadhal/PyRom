@@ -4,7 +4,7 @@ import interp
 import handler
 
 
-def do_ostat(self, argument):
+def do_ostat(ch, argument):
     argument, arg = merc.read_word(argument)
     if not arg:
         ch.send("Stat what?\n")

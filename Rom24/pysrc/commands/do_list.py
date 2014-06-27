@@ -2,7 +2,7 @@ from collections import OrderedDict
 import merc
 import interp
 
-def do_list(self, argument):
+def do_list(ch, argument):
     if merc.IS_SET(ch.in_room.room_flags, merc.ROOM_PET_SHOP):
         # hack to make new thalos pets work */
         pRoomIndexNext = None
