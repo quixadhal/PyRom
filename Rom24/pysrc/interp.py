@@ -31,16 +31,15 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
-import os
 from collections import OrderedDict
+import logging
+logger = logging.getLogger()
 
-import hotfix
 from alias import *
 from healing import do_heal
 from fight import *
 from skills import do_groups, do_skills, do_spells, do_gain
 from settings import LOGALL
-
 
 class cmd_type:
     def __init__(self, name, do_fun, position, level, log, show, default_arg=None):
@@ -55,6 +54,7 @@ class cmd_type:
 
 # These commands don't need to be here but are, for order. These will always match first with prefixes.
 cmd_table = OrderedDict()
+
 cmd_table['north'] = None
 cmd_table['east'] = None
 cmd_table['south'] = None
@@ -112,13 +112,16 @@ cmd_table['trip'] = cmd_type('trip', do_trip, POS_FIGHTING, 0, LOG_NORMAL, 1)
 cmd_table['gain'] = cmd_type('gain', do_gain, POS_STANDING, 0, LOG_NORMAL, 1)
 cmd_table['groups'] = cmd_type('groups', do_groups, POS_SLEEPING, 0, LOG_NORMAL, 1)
 
-#* Immortal commands.
+# Immortal commands.
 
 cmd_table['sla'] = cmd_type('sla', do_sla, POS_DEAD, L3, LOG_NORMAL, 0)
 cmd_table['slay'] = cmd_type('slay', do_slay, POS_DEAD, L3, LOG_ALWAYS, 1)
 
-hotfix.init_directory(os.path.join('commands'))
+logger.info('Command table initialized.')
 
+def register_command(entry:cmd_type):
+    cmd_table[entry.name] = entry
+    logger.debug('    %s registered in command table.', entry.name)
 
 def interpret(ch, argument):
     # Strip leading spaces.
@@ -153,7 +156,7 @@ def interpret(ch, argument):
         if cmd and cmd.log != LOG_NEVER:
             log_buf = "Log %s: %s" % (ch.name, logline)
             wiznet(log_buf, ch, None, WIZ_SECURE, 0, ch.get_trust())
-            print(log_buf + "\n")
+            logger.info(log_buf)
     if ch.desc and ch.desc.snoop_by:
         ch.desc.snoop_by.send("% ")
         ch.desc.snoop_by.send(logline)
