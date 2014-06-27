@@ -77,7 +77,6 @@ hotfix.init_directory(os.path.join('commands'))
 def interpret(ch, argument):
     # Strip leading spaces.
     argument = argument.lstrip()
-    command = ''
 
     # No hiding.
     REMOVE_BIT(ch.affected_by, AFF_HIDE)
@@ -98,7 +97,7 @@ def interpret(ch, argument):
     # Look for command in command table.
     trust = ch.get_trust()
     cmd = prefix_lookup(cmd_table, command)
-    if cmd != None:
+    if cmd is not None:
         if cmd.level > trust:
             cmd = None
 
