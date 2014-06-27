@@ -31,11 +31,21 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
+import random
+from db import create_money
+from effects import cold_effect, fire_effect, shock_effect
+from handler_magic import saves_spell
+from handler_obj import get_obj
 from merc import *
 from handler import *
+from save import save_char_obj
 from skills import check_improve
 import update
 import const
+import state_checks
+import handler_ch
+import game_utils
+import handler_game
 
 # * Control the fights going on.
 # * Called periodically by update_handler.
@@ -44,7 +54,7 @@ def violence_update( ):
         if not ch.fighting or not ch.in_room:
             continue
         victim = ch.fighting
-        if IS_AWAKE(ch) and ch.in_room == victim.in_room:
+        if state_checks.IS_AWAKE(ch) and ch.in_room == victim.in_room:
             multi_hit( ch, victim, TYPE_UNDEFINED )
         else:
             stop_fighting( ch, False )
@@ -60,30 +70,30 @@ def violence_update( ):
 # for auto assisting */
 def check_assist( ch, victim):
     for rch in ch.in_room.people[:]:
-        if IS_AWAKE(rch) and rch.fighting == None:
+        if state_checks.IS_AWAKE(rch) and rch.fighting == None:
             # quick check for ASSIST_PLAYER */
-            if not IS_NPC(ch) and IS_NPC(rch) and IS_SET(rch.off_flags,ASSIST_PLAYERS) and rch.level + 6 > victim.level:
+            if not state_checks.IS_NPC(ch) and state_checks.IS_NPC(rch) and state_checks.IS_SET(rch.off_flags,ASSIST_PLAYERS) and rch.level + 6 > victim.level:
                 rch.do_emote("screams and attacks!")
                 multi_hit(rch,victim,TYPE_UNDEFINED)
                 continue
         # PCs next */
-        if not IS_NPC(ch) or IS_AFFECTED(ch,AFF_CHARM):
-            if( (not IS_NPC(rch) and IS_SET(rch.act,PLR_AUTOASSIST)) \
-            or IS_AFFECTED(rch,AFF_CHARM)) \
+        if not state_checks.IS_NPC(ch) or state_checks.IS_AFFECTED(ch,AFF_CHARM):
+            if( (not state_checks.IS_NPC(rch) and state_checks.IS_SET(rch.act,PLR_AUTOASSIST)) \
+            or state_checks.IS_AFFECTED(rch,AFF_CHARM)) \
             and ch.is_same_group(rch) \
             and not is_safe(rch, victim):
                 multi_hit (rch,victim,TYPE_UNDEFINED)
                 continue
    
         # now check the NPC cases */
-        if IS_NPC(ch) and not IS_AFFECTED(ch,AFF_CHARM):
-            if (IS_NPC(rch) and IS_SET(rch.off_flags,ASSIST_ALL)) \
-            or (IS_NPC(rch) and rch.group and rch.group == ch.group) \
-            or (IS_NPC(rch) and rch.race == ch.race and IS_SET(rch.off_flags,ASSIST_RACE)) \
-            or (IS_NPC(rch) and IS_SET(rch.off_flags,ASSIST_ALIGN) \
-                and ((IS_GOOD(rch) and IS_GOOD(ch)) or (IS_EVIL(rch) and IS_EVIL(ch)) \
-                or (IS_NEUTRAL(rch) and IS_NEUTRAL(ch)))) \
-            or (rch.pIndexData == ch.pIndexData and IS_SET(rch.off_flags,ASSIST_VNUM)):
+        if state_checks.IS_NPC(ch) and not state_checks.IS_AFFECTED(ch,AFF_CHARM):
+            if (state_checks.IS_NPC(rch) and state_checks.IS_SET(rch.off_flags,ASSIST_ALL)) \
+            or (state_checks.IS_NPC(rch) and rch.group and rch.group == ch.group) \
+            or (state_checks.IS_NPC(rch) and rch.race == ch.race and state_checks.IS_SET(rch.off_flags,ASSIST_RACE)) \
+            or (state_checks.IS_NPC(rch) and state_checks.IS_SET(rch.off_flags,ASSIST_ALIGN) \
+                and ((state_checks.IS_GOOD(rch) and state_checks.IS_GOOD(ch)) or (state_checks.IS_EVIL(rch) and state_checks.IS_EVIL(ch)) \
+                or (state_checks.IS_NEUTRAL(rch) and state_checks.IS_NEUTRAL(ch)))) \
+            or (rch.pIndexData == ch.pIndexData and state_checks.IS_SET(rch.off_flags,ASSIST_VNUM)):
                 if random.randint(0,1) == 0:
                     continue
         
@@ -112,7 +122,7 @@ def multi_hit( ch, victim, dt ):
     if ch.position < POS_RESTING:
         return
 
-    if IS_NPC(ch):
+    if state_checks.IS_NPC(ch):
         mob_hit(ch,victim,dt)
         return
 
@@ -121,7 +131,7 @@ def multi_hit( ch, victim, dt ):
     if ch.fighting != victim:
         return
 
-    if IS_AFFECTED(ch,AFF_HASTE):
+    if state_checks.IS_AFFECTED(ch,AFF_HASTE):
         one_hit(ch,victim,dt)
 
     if ch.fighting != victim or dt == 'backstab':
@@ -129,7 +139,7 @@ def multi_hit( ch, victim, dt ):
 
     chance = ch.get_skill('second attack') // 2
 
-    if IS_AFFECTED(ch,AFF_SLOW):
+    if state_checks.IS_AFFECTED(ch,AFF_SLOW):
         chance //= 2
 
     if random.randint(1,99) < chance:
@@ -140,7 +150,7 @@ def multi_hit( ch, victim, dt ):
     
     chance = ch.get_skill('third attack') // 4
 
-    if IS_AFFECTED(ch,AFF_SLOW):
+    if state_checks.IS_AFFECTED(ch,AFF_SLOW):
         chance = 0
 
     if random.randint(1,99) < chance:
@@ -155,12 +165,12 @@ def mob_hit (ch, victim, dt):
     if ch.fighting != victim:
         return
     # Area attack -- BALLS nasty! */
-    if IS_SET(ch.off_flags,OFF_AREA_ATTACK):
+    if state_checks.IS_SET(ch.off_flags,OFF_AREA_ATTACK):
         for vch in ch.in_room.people[:]:
             if vch != victim and vch.fighting == ch:
                 one_hit(ch,vch,dt)
 
-    if IS_AFFECTED(ch,AFF_HASTE) or (IS_SET(ch.off_flags,OFF_FAST) and not IS_AFFECTED(ch,AFF_SLOW)):
+    if state_checks.IS_AFFECTED(ch,AFF_HASTE) or (state_checks.IS_SET(ch.off_flags,OFF_FAST) and not state_checks.IS_AFFECTED(ch,AFF_SLOW)):
         one_hit(ch,victim,dt)
 
     if ch.fighting != victim or dt == 'backstab':
@@ -168,7 +178,7 @@ def mob_hit (ch, victim, dt):
 
     chance = ch.get_skill("second attack") // 2
 
-    if IS_AFFECTED(ch,AFF_SLOW) and not IS_SET(ch.off_flags,OFF_FAST):
+    if state_checks.IS_AFFECTED(ch,AFF_SLOW) and not state_checks.IS_SET(ch.off_flags,OFF_FAST):
         chance //= 2
 
     if random.randint(1,99) < chance:
@@ -177,7 +187,7 @@ def mob_hit (ch, victim, dt):
             return
     chance = ch.get_skill('third attack') // 4
 
-    if IS_AFFECTED(ch,AFF_SLOW) and not IS_SET(ch.off_flags,OFF_FAST):
+    if state_checks.IS_AFFECTED(ch,AFF_SLOW) and not state_checks.IS_SET(ch.off_flags,OFF_FAST):
         chance = 0
 
     if random.randint(1,99) < chance:
@@ -191,11 +201,11 @@ def mob_hit (ch, victim, dt):
 
     number = random.randint(0,2)
 
-    if number == 1 and IS_SET(ch.act,ACT_MAGE):
+    if number == 1 and state_checks.IS_SET(ch.act,ACT_MAGE):
         pass
         #  { mob_cast_mage(ch,victim) return } */ 
 
-    if number == 2 and IS_SET(ch.act,ACT_CLERIC):
+    if number == 2 and state_checks.IS_SET(ch.act,ACT_CLERIC):
         pass
         # { mob_cast_cleric(ch,victim) return } */ 
 
@@ -204,34 +214,34 @@ def mob_hit (ch, victim, dt):
     number = random.randint(0,8)
 
     if number == 0:
-       if IS_SET(ch.off_flags,OFF_BASH):
+       if state_checks.IS_SET(ch.off_flags,OFF_BASH):
             ch.do_bash("")
     elif number == 1:
-        if IS_SET(ch.off_flags,OFF_BERSERK) and not IS_AFFECTED(ch,AFF_BERSERK):
+        if state_checks.IS_SET(ch.off_flags,OFF_BERSERK) and not state_checks.IS_AFFECTED(ch,AFF_BERSERK):
             ch.do_berserk("")
     elif number == 2:
-        if IS_SET(ch.off_flags,OFF_DISARM) \
+        if state_checks.IS_SET(ch.off_flags,OFF_DISARM) \
         or (ch.get_weapon_sn() != 'hand_to_hand' \
-        and (IS_SET(ch.act,ACT_WARRIOR) \
-        or  IS_SET(ch.act,ACT_THIEF))):
+        and (state_checks.IS_SET(ch.act,ACT_WARRIOR) \
+        or  state_checks.IS_SET(ch.act,ACT_THIEF))):
             ch.do_disarm("")
     elif number == 3:
-        if IS_SET(ch.off_flags,OFF_KICK):
+        if state_checks.IS_SET(ch.off_flags,OFF_KICK):
             ch.do_kick("")
     elif number == 4:
-        if IS_SET(ch.off_flags,OFF_KICK_DIRT):
+        if state_checks.IS_SET(ch.off_flags,OFF_KICK_DIRT):
             ch.do_dirt("")
     elif number == 5:
-        if IS_SET(ch.off_flags,OFF_TAIL):
+        if state_checks.IS_SET(ch.off_flags,OFF_TAIL):
             pass  # do_function(ch, &do_tail, "") */ 
     elif number == 6:
-        if IS_SET(ch.off_flags,OFF_TRIP):
+        if state_checks.IS_SET(ch.off_flags,OFF_TRIP):
             ch.do_trip("")
     elif number == 7:
-        if IS_SET(ch.off_flags,OFF_CRUSH):
+        if state_checks.IS_SET(ch.off_flags,OFF_CRUSH):
             pass # do_function(ch, &do_crush, "") */ 
     elif number == 8:
-        if IS_SET(ch.off_flags,OFF_BACKSTAB):
+        if state_checks.IS_SET(ch.off_flags,OFF_BACKSTAB):
             ch.do_backstab("")
 
 # * Hit one guy once.
@@ -271,22 +281,22 @@ def one_hit( ch, victim, dt ):
     skill = 20 + ch.get_weapon_skill(sn)
 
     #* Calculate to-hit-armor-guild-0 versus armor.
-    if IS_NPC(ch):
+    if state_checks.IS_NPC(ch):
         thac0_00 = 20
         thac0_32 = -4   # as good as a thief */ 
-        if IS_SET(ch.act,ACT_WARRIOR):
+        if state_checks.IS_SET(ch.act,ACT_WARRIOR):
             thac0_32 = -10
-        elif IS_SET(ch.act,ACT_THIEF):
+        elif state_checks.IS_SET(ch.act,ACT_THIEF):
             thac0_32 = -4
-        elif IS_SET(ch.act,ACT_CLERIC):
+        elif state_checks.IS_SET(ch.act,ACT_CLERIC):
             thac0_32 = 2
-        elif IS_SET(ch.act,ACT_MAGE):
+        elif state_checks.IS_SET(ch.act,ACT_MAGE):
             thac0_32 = 6
     else:
         thac0_00 = ch.guild.thac0_00
         thac0_32 = ch.guild.thac0_32
     
-    thac0  = interpolate( ch.level, thac0_00, thac0_32 )
+    thac0  = game_utils.interpolate( ch.level, thac0_00, thac0_32 )
 
     if thac0 < 0:
         thac0 = thac0 // 2
@@ -294,16 +304,16 @@ def one_hit( ch, victim, dt ):
     if thac0 < -5:
         thac0 = -5 + (thac0 + 5) // 2
 
-    thac0 -= GET_HITROLL(ch) * skill // 100
+    thac0 -= state_checks.GET_HITROLL(ch) * skill // 100
     thac0 += 5 * (100 - skill) // 100
 
     if dt == 'backstab':
         thac0 -= 10 * (100 - ch.get_skill('backstab'))
 
-    if dam_type == DAM_PIERCE: victim_ac = GET_AC(victim,AC_PIERCE) // 10
-    elif dam_type == DAM_BASH: victim_ac = GET_AC(victim,AC_BASH) // 10
-    elif dam_type == DAM_SLASH: victim_ac = GET_AC(victim,AC_SLASH) // 10
-    else: victim_ac = GET_AC(victim,AC_EXOTIC) // 10
+    if dam_type == DAM_PIERCE: victim_ac = state_checks.GET_AC(victim,AC_PIERCE) // 10
+    elif dam_type == DAM_BASH: victim_ac = state_checks.GET_AC(victim,AC_BASH) // 10
+    elif dam_type == DAM_SLASH: victim_ac = state_checks.GET_AC(victim,AC_SLASH) // 10
+    else: victim_ac = state_checks.GET_AC(victim,AC_EXOTIC) // 10
     
     if victim_ac < -15:
         victim_ac = (victim_ac + 15) // 5 - 15
@@ -325,26 +335,26 @@ def one_hit( ch, victim, dt ):
         return
      # Hit.
      # Calc damage.
-    if IS_NPC(ch) and (not ch.pIndexData.new_format or wield == None):
+    if state_checks.IS_NPC(ch) and (not ch.pIndexData.new_format or wield == None):
         if not ch.pIndexData.new_format:
             dam = random.randint( ch.level // 2, ch.level * 3 // 2 )
             if wield != None:
                 dam += dam // 2
         else:
-            dam = dice(ch.damage[DICE_NUMBER],ch.damage[DICE_TYPE])
+            dam = game_utils.dice(ch.damage[DICE_NUMBER],ch.damage[DICE_TYPE])
     else:
         if sn != -1:
             check_improve(ch,sn,True,5)
         if wield:
             if wield.pIndexData.new_format:
-                dam = dice(wield.value[1],wield.value[2]) * skill // 100
+                dam = game_utils.dice(wield.value[1],wield.value[2]) * skill // 100
             else:
                 dam = random.randint( wield.value[1] * skill // 100, wield.value[2] * skill // 100)
 
             if ch.get_eq(WEAR_SHIELD) == None:  # no shield = more */
                 dam = dam * 11 // 10
             # sharpness! */
-            if IS_WEAPON_STAT(wield,WEAPON_SHARP):
+            if state_checks.IS_WEAPON_STAT(wield,WEAPON_SHARP):
                 percent = random.randint(1,99)
                 if percent <= (skill // 8):
                     dam = 2 * dam + (dam * 2 * percent // 100)
@@ -362,7 +372,7 @@ def one_hit( ch, victim, dt ):
         if diceroll <= ch.get_skill('enhanced_damage'):
             check_improve(ch,'enhanced damage',True,6)
             dam += 2 * ( dam * diceroll // 300)
-    if not IS_AWAKE(victim):
+    if not state_checks.IS_AWAKE(victim):
         dam *= 2
     elif victim.position < POS_FIGHTING:
         dam = dam * 3 // 2
@@ -372,7 +382,7 @@ def one_hit( ch, victim, dt ):
             dam *= 2 + (ch.level // 10) 
         else:
             dam *= 2 + (ch.level // 8)
-    dam += GET_DAMROLL(ch) * min(100,skill) // 100
+    dam += state_checks.GET_DAMROLL(ch) * min(100,skill) // 100
 
     if dam <= 0:
         dam = 1
@@ -382,16 +392,16 @@ def one_hit( ch, victim, dt ):
     # but do we have a funky weapon? */
     if result and wield != None:
 
-        if ch.fighting == victim and IS_WEAPON_STAT(wield,WEAPON_POISON):
-            poison = affect_find(wield.affected,'poison')
+        if ch.fighting == victim and state_checks.IS_WEAPON_STAT(wield,WEAPON_POISON):
+            poison = state_checks.affect_find(wield.affected,'poison')
             if poison:
                 level = wield.level
             else:
                 level = poison.level
             if not saves_spell(level // 2,victim,DAM_POISON):
                 victim.send("You feel poison coursing through your veins.")
-                act("$n is poisoned by the venom on $p.", victim,wield,None,TO_ROOM)
-                af = AFFECT_DATA()
+                handler_game.act("$n is poisoned by the venom on $p.", victim,wield,None,TO_ROOM)
+                af = handler_game.AFFECT_DATA()
                 af.where     = TO_AFFECTS
                 af.type      = 'poison'
                 af.level     = level * 3 // 4
@@ -406,32 +416,32 @@ def one_hit( ch, victim, dt ):
                 poison.level = max(0,poison.level - 2)
                 poison.duration = max(0,poison.duration - 1)
                 if poison.level == 0 or poison.duration == 0:
-                    act("The poison on $p has worn off.",ch,wield,None,TO_CHAR)
+                    handler_game.act("The poison on $p has worn off.",ch,wield,None,TO_CHAR)
 
-            if ch.fighting == victim and IS_WEAPON_STAT(wield,WEAPON_VAMPIRIC):
+            if ch.fighting == victim and state_checks.IS_WEAPON_STAT(wield,WEAPON_VAMPIRIC):
                 dam = random.randint(1, wield.level // 5 + 1)
-                act("$p draws life from $n.",victim,wield,None,TO_ROOM)
-                act("You feel $p drawing your life away.", victim,wield,None,TO_CHAR)
+                handler_game.act("$p draws life from $n.",victim,wield,None,TO_ROOM)
+                handler_game.act("You feel $p drawing your life away.", victim,wield,None,TO_CHAR)
                 damage(ch,victim,dam,0,DAM_NEGATIVE,False)
                 ch.alignment = max(-1000,ch.alignment - 1)
                 ch.hit += dam // 2
-            if ch.fighting == victim and IS_WEAPON_STAT(wield,WEAPON_FLAMING):
+            if ch.fighting == victim and state_checks.IS_WEAPON_STAT(wield,WEAPON_FLAMING):
                 dam = random.randint(1,wield.level // 4 + 1)
-                act("$n is burned by $p.",victim,wield,None,TO_ROOM)
-                act("$p sears your flesh.",victim,wield,None,TO_CHAR)
+                handler_game.act("$n is burned by $p.",victim,wield,None,TO_ROOM)
+                handler_game.act("$p sears your flesh.",victim,wield,None,TO_CHAR)
                 fire_effect(victim,wield.level // 2,dam,TARGET_CHAR)
                 damage(ch,victim,dam,0,DAM_FIRE,False)
-            if ch.fighting == victim and IS_WEAPON_STAT(wield,WEAPON_FROST):
+            if ch.fighting == victim and state_checks.IS_WEAPON_STAT(wield,WEAPON_FROST):
                 dam = random.randint(1,wield.level // 6 + 2)
-                act("$p freezes $n.",victim,wield,None,TO_ROOM)
-                act("The cold touch of $p surrounds you with ice.",
+                handler_game.act("$p freezes $n.",victim,wield,None,TO_ROOM)
+                handler_game.act("The cold touch of $p surrounds you with ice.",
                 victim,wield,None,TO_CHAR)
                 cold_effect(victim,wield.level // 2,dam,TARGET_CHAR)
                 damage(ch,victim,dam,0,DAM_COLD,False)
-            if ch.fighting == victim and IS_WEAPON_STAT(wield,WEAPON_SHOCKING):
+            if ch.fighting == victim and state_checks.IS_WEAPON_STAT(wield,WEAPON_SHOCKING):
                 dam = random.randint(1,wield.level // 5 + 2)
-                act("$n is struck by lightning from $p.",victim,wield,None,TO_ROOM)
-                act("You are shocked by $p.",victim,wield,None,TO_CHAR)
+                handler_game.act("$n is struck by lightning from $p.",victim,wield,None,TO_ROOM)
+                handler_game.act("You are shocked by $p.",victim,wield,None,TO_CHAR)
                 shock_effect(victim,wield.level // 2,dam,TARGET_CHAR)
                 damage(ch,victim,dam,0,DAM_LIGHTNING,False)
     return
@@ -445,7 +455,7 @@ def damage(ch,victim,dam,dt,dam_type,show):
     if dam > 1200 and dt >= TYPE_HIT:
         print ("BUG: Damage: %d: more than 1200 points!" % dam)
         dam = 1200
-        if not IS_IMMORTAL(ch):
+        if not state_checks.IS_IMMORTAL(ch):
             obj = ch.get_eq(WEAR_WIELD)
             ch.send("You really shouldn't cheat.\n\r")
             if obj:
@@ -475,22 +485,22 @@ def damage(ch,victim,dam,dt,dam_type,show):
                 set_fighting( ch, victim )
         # More charm stuff.
         if victim.master == ch:
-            stop_follower( victim )
+            handler_ch.stop_follower( victim )
     # * Inviso attacks ... not.
-    if IS_AFFECTED(ch, AFF_INVISIBLE):
+    if state_checks.IS_AFFECTED(ch, AFF_INVISIBLE):
         ch.affect_strip("invis")
         ch.affect_strip("mass invis")
-        REMOVE_BIT( ch.affected_by, AFF_INVISIBLE )
-        act( "$n fades into existence.", ch, None, None, TO_ROOM )
+        state_checks.REMOVE_BIT( ch.affected_by, AFF_INVISIBLE )
+        handler_game.act( "$n fades into existence.", ch, None, None, TO_ROOM )
 
      # Damage modifiers.
-    if dam > 1 and not IS_NPC(victim) and victim.pcdata.condition[COND_DRUNK] > 10:
+    if dam > 1 and not state_checks.IS_NPC(victim) and victim.pcdata.condition[COND_DRUNK] > 10:
         dam = 9 * dam // 10
-    if dam > 1 and IS_AFFECTED(victim, AFF_SANCTUARY):
+    if dam > 1 and state_checks.IS_AFFECTED(victim, AFF_SANCTUARY):
         dam //= 2
 
-    if dam > 1 and ((IS_AFFECTED(victim, AFF_PROTECT_EVIL) and IS_EVIL(ch)) \
-    or (IS_AFFECTED(victim, AFF_PROTECT_GOOD) and IS_GOOD(ch) )):
+    if dam > 1 and ((state_checks.IS_AFFECTED(victim, AFF_PROTECT_EVIL) and state_checks.IS_EVIL(ch)) \
+    or (state_checks.IS_AFFECTED(victim, AFF_PROTECT_GOOD) and state_checks.IS_GOOD(ch) )):
         dam -= dam // 4
 
     immune = False
@@ -520,21 +530,21 @@ def damage(ch,victim,dam,dt,dam_type,show):
      # Hurt the victim.
      # Inform the victim of his new state.
     victim.hit -= dam
-    if not IS_NPC(victim) and victim.level >= LEVEL_IMMORTAL and victim.hit < 1:
+    if not state_checks.IS_NPC(victim) and victim.level >= LEVEL_IMMORTAL and victim.hit < 1:
         victim.hit = 1
     update_pos( victim )
 
     if victim.position == POS_MORTAL:
-        act( "$n is mortally wounded, and will die soon, if not aided.", victim, None, None, TO_ROOM )
+        handler_game.act( "$n is mortally wounded, and will die soon, if not aided.", victim, None, None, TO_ROOM )
         victim.send("You are mortally wounded, and will die soon, if not aided.\n\r")
     elif victim.position == POS_INCAP:
-        act( "$n is incapacitated and will slowly die, if not aided.", victim, None, None, TO_ROOM )
+        handler_game.act( "$n is incapacitated and will slowly die, if not aided.", victim, None, None, TO_ROOM )
         victim.send("You are incapacitated and will slowly die, if not aided.\n\r")
     elif victim.position == POS_STUNNED:
-        act( "$n is stunned, but will probably recover.", victim, None, None, TO_ROOM )
+        handler_game.act( "$n is stunned, but will probably recover.", victim, None, None, TO_ROOM )
         victim.send("You are stunned, but will probably recover.\n\r")
     elif victim.position == POS_DEAD:
-        act( "$n is DEAD!!", victim, 0, 0, TO_ROOM )
+        handler_game.act( "$n is DEAD!!", victim, 0, 0, TO_ROOM )
         victim.send("You have been KILLED!!\n\r\n\r")
     else:
         if dam > victim.max_hit // 4:
@@ -542,48 +552,48 @@ def damage(ch,victim,dam,dt,dam_type,show):
         if victim.hit < victim.max_hit // 4:
             victim.send("You sure are BLEEDING!\n\r")
     # Sleep spells and extremely wounded folks.
-    if not IS_AWAKE(victim):
+    if not state_checks.IS_AWAKE(victim):
         stop_fighting( victim, False )
 
     # Payoff for killing things.
     if victim.position == POS_DEAD:
         group_gain( ch, victim )
 
-        if not IS_NPC(victim):
-            print ("%s killed by %s at %d" % ( victim.name, ch.short_descr if IS_NPC(ch) else ch.name, ch.in_room.vnum ))
+        if not state_checks.IS_NPC(victim):
+            print ("%s killed by %s at %d" % ( victim.name, ch.short_descr if state_checks.IS_NPC(ch) else ch.name, ch.in_room.vnum ))
             # Dying penalty:
             # 2/3 way back to previous level.
             if victim.exp > victim.exp_per_level(victim.pcdata.points) * victim.level:
                 update.gain_exp( victim, (2 * (victim.exp_per_level(victim.pcdata.points) * victim.level - victim.exp) // 3) + 50 )
 
-        log_buf = "%s got toasted by %s at %s [room %d]" % ( victim.short_descr if IS_NPC(victim) else victim.name,
-            ch.short_descr if IS_NPC(ch) else ch.name, ch.in_room.name, ch.in_room.vnum)
+        log_buf = "%s got toasted by %s at %s [room %d]" % ( victim.short_descr if state_checks.IS_NPC(victim) else victim.name,
+            ch.short_descr if state_checks.IS_NPC(ch) else ch.name, ch.in_room.name, ch.in_room.vnum)
  
-        if IS_NPC(victim):
-            wiznet(log_buf,None,None,WIZ_MOBDEATHS,0,0)
+        if state_checks.IS_NPC(victim):
+            handler_game.wiznet(log_buf,None,None,WIZ_MOBDEATHS,0,0)
         else:
-            wiznet(log_buf,None,None,WIZ_DEATHS,0,0)
+            handler_game.wiznet(log_buf,None,None,WIZ_DEATHS,0,0)
 
         raw_kill( victim )
         # dump the flags */
-        if ch != victim and not IS_NPC(ch) and not ch.is_same_clan(victim):
-            if IS_SET(victim.act,PLR_KILLER):
-                REMOVE_BIT(victim.act,PLR_KILLER)
+        if ch != victim and not state_checks.IS_NPC(ch) and not ch.is_same_clan(victim):
+            if state_checks.IS_SET(victim.act,PLR_KILLER):
+                state_checks.REMOVE_BIT(victim.act,PLR_KILLER)
             else:
-                REMOVE_BIT(victim.act,PLR_THIEF)
+                state_checks.REMOVE_BIT(victim.act,PLR_THIEF)
             # RT new auto commands */
         corpse = ch.get_obj_list("corpse", ch.in_room.contents)
 
-        if not IS_NPC(ch) and corpse and corpse.item_type == ITEM_CORPSE_NPC and ch.can_see_obj(corpse):
-            if IS_SET(ch.act, PLR_AUTOLOOT) and corpse and corpse.contains: # exists and not empty */
+        if not state_checks.IS_NPC(ch) and corpse and corpse.item_type == ITEM_CORPSE_NPC and ch.can_see_obj(corpse):
+            if state_checks.IS_SET(ch.act, PLR_AUTOLOOT) and corpse and corpse.contains: # exists and not empty */
                 ch.do_get("all corpse")
             
-            if IS_SET(ch.act,PLR_AUTOGOLD) and corpse and corpse.contains and not IS_SET(ch.act,PLR_AUTOLOOT):
+            if state_checks.IS_SET(ch.act,PLR_AUTOGOLD) and corpse and corpse.contains and not state_checks.IS_SET(ch.act,PLR_AUTOLOOT):
                 coins = ch.get_obj_list("gcash",corpse.contains)
                 if coins: ch.do_get("all.gcash corpse")
             
-            if IS_SET(ch.act, PLR_AUTOSAC):
-                if IS_SET(ch.act,PLR_AUTOLOOT) and corpse and corpse.contains:
+            if state_checks.IS_SET(ch.act, PLR_AUTOSAC):
+                if state_checks.IS_SET(ch.act,PLR_AUTOLOOT) and corpse and corpse.contains:
                     return True  # leave if corpse has treasure */
                 else:
                     ch.do_sacrifice("corpse")
@@ -593,20 +603,20 @@ def damage(ch,victim,dam,dt,dam_type,show):
         return True
 
      #* Take care of link dead people.
-    if not IS_NPC(victim) and victim.desc == None:
+    if not state_checks.IS_NPC(victim) and victim.desc == None:
         if random.randint( 0, victim.wait ) == 0:
             victim.do_recall("")
             return True
 
     # * Wimp out?
-    if IS_NPC(victim) and dam > 0 and victim.wait < PULSE_VIOLENCE // 2:
-        if (IS_SET(victim.act, ACT_WIMPY) and random.randint(0,4) == 0 \
+    if state_checks.IS_NPC(victim) and dam > 0 and victim.wait < PULSE_VIOLENCE // 2:
+        if (state_checks.IS_SET(victim.act, ACT_WIMPY) and random.randint(0,4) == 0 \
         and victim.hit < victim.max_hit // 5) \
-        or ( IS_AFFECTED(victim, AFF_CHARM) and victim.master \
+        or ( state_checks.IS_AFFECTED(victim, AFF_CHARM) and victim.master \
         and victim.master.in_room != victim.in_room ):
             victim.do_flee("")
 
-    if not IS_NPC(victim) and victim.hit > 0 and victim.hit <= victim.wimpy and victim.wait < PULSE_VIOLENCE // 2:
+    if not state_checks.IS_NPC(victim) and victim.hit > 0 and victim.hit <= victim.wimpy and victim.wait < PULSE_VIOLENCE // 2:
         victim.do_flee("")
     return True
 
@@ -615,45 +625,45 @@ def is_safe(ch, victim):
         return True
     if victim.fighting == ch or victim == ch:
         return False
-    if IS_IMMORTAL(ch) and ch.level > LEVEL_IMMORTAL:
+    if state_checks.IS_IMMORTAL(ch) and ch.level > LEVEL_IMMORTAL:
         return False
     # killing mobiles */
-    if IS_NPC(victim):
+    if state_checks.IS_NPC(victim):
         # safe room? */
-        if IS_SET(victim.in_room.room_flags,ROOM_SAFE):
+        if state_checks.IS_SET(victim.in_room.room_flags,ROOM_SAFE):
             ch.send("Not in this room.\n\r")
             return True
         if victim.pIndexData.pShop:
             ch.send("The shopkeeper wouldn't like that.\n\r")
             return True
         # no killing healers, trainers, etc */
-        if IS_SET(victim.act,ACT_TRAIN) \
-        or IS_SET(victim.act,ACT_PRACTICE) \
-        or IS_SET(victim.act,ACT_IS_HEALER) \
-        or IS_SET(victim.act,ACT_IS_CHANGER):
+        if state_checks.IS_SET(victim.act,ACT_TRAIN) \
+        or state_checks.IS_SET(victim.act,ACT_PRACTICE) \
+        or state_checks.IS_SET(victim.act,ACT_IS_HEALER) \
+        or state_checks.IS_SET(victim.act,ACT_IS_CHANGER):
             ch.send("I don't think Mota would approve.\n\r")
             return True
-        if not IS_NPC(ch):
+        if not state_checks.IS_NPC(ch):
             # no pets */
-            if IS_SET(victim.act,ACT_PET):
-                act("But $N looks so cute and cuddly...", ch,None,victim,TO_CHAR)
+            if state_checks.IS_SET(victim.act,ACT_PET):
+                handler_game.act("But $N looks so cute and cuddly...", ch,None,victim,TO_CHAR)
                 return True
 
             # no charmed creatures unless owner */
-            if IS_AFFECTED(victim,AFF_CHARM) and ch != victim.master:
+            if state_checks.IS_AFFECTED(victim,AFF_CHARM) and ch != victim.master:
                 ch.send("You don't own that monster.\n\r")
                 return True
     # killing players */
     else:
         # NPC doing the killing */
-        if IS_NPC(ch):
+        if state_checks.IS_NPC(ch):
             # safe room check */
-            if IS_SET(victim.in_room.room_flags,ROOM_SAFE):
+            if state_checks.IS_SET(victim.in_room.room_flags,ROOM_SAFE):
                 ch.send("Not in this room.\n\r")
                 return True
 
             # charmed mobs and pets cannot attack players while owned */
-            if IS_AFFECTED(ch,AFF_CHARM) and ch.master and  ch.master.fighting != victim:
+            if state_checks.IS_AFFECTED(ch,AFF_CHARM) and ch.master and  ch.master.fighting != victim:
                 ch.send("Players are your friends!\n\r")
                 return True
         # player doing the killing */
@@ -662,7 +672,7 @@ def is_safe(ch, victim):
                 ch.send("Join a clan if you want to kill players.\n\r")
                 return True
 
-            if IS_SET(victim.act,PLR_KILLER) or IS_SET(victim.act,PLR_THIEF):
+            if state_checks.IS_SET(victim.act,PLR_KILLER) or state_checks.IS_SET(victim.act,PLR_THIEF):
                 return False
 
             if not victim.is_clan():
@@ -681,27 +691,27 @@ def is_safe_spell(ch, victim, area ):
         return True
     if victim.fighting == ch or victim == ch:
         return False
-    if IS_IMMORTAL(ch) and ch.level > LEVEL_IMMORTAL and not area:
+    if state_checks.IS_IMMORTAL(ch) and ch.level > LEVEL_IMMORTAL and not area:
         return False
     # killing mobiles */
-    if IS_NPC(victim):
+    if state_checks.IS_NPC(victim):
         # safe room? */
-        if IS_SET(victim.in_room.room_flags,ROOM_SAFE):
+        if state_checks.IS_SET(victim.in_room.room_flags,ROOM_SAFE):
             return True
         if victim.pIndexData.pShop:
             return True
         # no killing healers, trainers, etc */
-        if IS_SET(victim.act,ACT_TRAIN) \
-        or IS_SET(victim.act,ACT_PRACTICE) \
-        or IS_SET(victim.act,ACT_IS_HEALER) \
-        or IS_SET(victim.act,ACT_IS_CHANGER):
+        if state_checks.IS_SET(victim.act,ACT_TRAIN) \
+        or state_checks.IS_SET(victim.act,ACT_PRACTICE) \
+        or state_checks.IS_SET(victim.act,ACT_IS_HEALER) \
+        or state_checks.IS_SET(victim.act,ACT_IS_CHANGER):
             return True
-        if not IS_NPC(ch):
+        if not state_checks.IS_NPC(ch):
             # no pets */
-            if IS_SET(victim.act,ACT_PET):
+            if state_checks.IS_SET(victim.act,ACT_PET):
                 return True
             # no charmed creatures unless owner */
-            if IS_AFFECTED(victim,AFF_CHARM) and (area or ch != victim.master):
+            if state_checks.IS_AFFECTED(victim,AFF_CHARM) and (area or ch != victim.master):
                 return True
             # legal kill? -- cannot hit mob fighting non-group member */
             if victim.fighting != None and not ch.is_same_group(victim.fighting):
@@ -712,16 +722,16 @@ def is_safe_spell(ch, victim, area ):
                 return True
     # killing players */
     else:
-        if area and IS_IMMORTAL(victim) and victim.level > LEVEL_IMMORTAL:
+        if area and state_checks.IS_IMMORTAL(victim) and victim.level > LEVEL_IMMORTAL:
             return True
 
         # NPC doing the killing */
-        if IS_NPC(ch):
+        if state_checks.IS_NPC(ch):
             # charmed mobs and pets cannot attack players while owned */
-            if IS_AFFECTED(ch,AFF_CHARM) and ch.master and ch.master.fighting != victim:
+            if state_checks.IS_AFFECTED(ch,AFF_CHARM) and ch.master and ch.master.fighting != victim:
                 return True
             # safe room? */
-            if IS_SET(victim.in_room.room_flags,ROOM_SAFE):
+            if state_checks.IS_SET(victim.in_room.room_flags,ROOM_SAFE):
                 return True
 
             # legal kill? -- mobs only hit players grouped with opponent*/
@@ -731,7 +741,7 @@ def is_safe_spell(ch, victim, area ):
         else:
             if not ch.is_clan():
                 return True
-            if IS_SET(victim.act,PLR_KILLER) or IS_SET(victim.act,PLR_THIEF):
+            if state_checks.IS_SET(victim.act,PLR_KILLER) or state_checks.IS_SET(victim.act,PLR_THIEF):
                 return False
             if not victim.is_clan():
                 return True
@@ -743,47 +753,47 @@ def is_safe_spell(ch, victim, area ):
 def check_killer( ch, victim ):
 #     * Follow charm thread to responsible character.
 #     * Attacking someone's charmed char is hostile!
-    while IS_AFFECTED(victim, AFF_CHARM) and victim.master != None:
+    while state_checks.IS_AFFECTED(victim, AFF_CHARM) and victim.master != None:
         victim = victim.master
 
      # NPC's are fair game.
      # So are killers and thieves.
-    if IS_NPC(victim) or IS_SET(victim.act, PLR_KILLER) or IS_SET(victim.act, PLR_THIEF):
+    if state_checks.IS_NPC(victim) or state_checks.IS_SET(victim.act, PLR_KILLER) or state_checks.IS_SET(victim.act, PLR_THIEF):
         return
 
      # Charm-o-rama.
-    if IS_SET(ch.affected_by, AFF_CHARM):
+    if state_checks.IS_SET(ch.affected_by, AFF_CHARM):
         if ch.master == None:
-            print ("BUG: Check_killer: %s bad AFF_CHARM" % (ch.short_descr if IS_NPC(ch) else ch.name ))
+            print ("BUG: Check_killer: %s bad AFF_CHARM" % (ch.short_descr if state_checks.IS_NPC(ch) else ch.name ))
             ch.affect_strip('charm person')
-            REMOVE_BIT(ch.affected_by, AFF_CHARM)
+            state_checks.REMOVE_BIT(ch.affected_by, AFF_CHARM)
             return
     #    send_to_char( "*** You are now a KILLER!! ***\n\r", ch.master )
     #    SET_BIT(ch.master.act, PLR_KILLER)
-        stop_follower( ch )
+        handler_ch.stop_follower( ch )
         return
 
      # NPC's are cool of course (as long as not charmed).
      # Hitting yourself is cool too (bleeding).
      # So is being immortal (Alander's idea).
      # And current killers stay as they are.
-    if IS_NPC(ch) or ch == victim or ch.level >= LEVEL_IMMORTAL \
-    or not ch.is_clan() or IS_SET(ch.act, PLR_KILLER) or ch.fighting == victim:
+    if state_checks.IS_NPC(ch) or ch == victim or ch.level >= LEVEL_IMMORTAL \
+    or not ch.is_clan() or state_checks.IS_SET(ch.act, PLR_KILLER) or ch.fighting == victim:
         return
 
     ch.send("*** You are now a KILLER!! ***\n\r")
-    SET_BIT(ch.act, PLR_KILLER)
-    wiznet("$N is attempting to murder %s" % victim.name,ch,None,WIZ_FLAGS,0,0)
+    state_checks.SET_BIT(ch.act, PLR_KILLER)
+    handler_game.wiznet("$N is attempting to murder %s" % victim.name,ch,None,WIZ_FLAGS,0,0)
     save_char_obj( ch )
     return
 # Check for parry.
 def check_parry( ch, victim ):
-    if IS_AWAKE(victim):
+    if state_checks.IS_AWAKE(victim):
         return False
     chance = victim.get_skill('parry') // 2
 
     if victim.get_eq(WEAR_WIELD) == None:
-        if IS_NPC(victim):
+        if state_checks.IS_NPC(victim):
             chance //= 2
         else:
             return False
@@ -793,36 +803,36 @@ def check_parry( ch, victim ):
     if random.randint(1,99) >= chance + victim.level - ch.level:
         return False
 
-    act( "You parry $n's attack.",  ch, None, victim, TO_VICT    )
-    act( "$N parries your attack.", ch, None, victim, TO_CHAR    )
+    handler_game.act( "You parry $n's attack.",  ch, None, victim, TO_VICT    )
+    handler_game.act( "$N parries your attack.", ch, None, victim, TO_CHAR    )
     check_improve(victim,'parry',True,6)
     return True
 
 # Check for shield block.
 def check_shield_block( ch, victim ):
-    if not IS_AWAKE(victim):
+    if not state_checks.IS_AWAKE(victim):
         return False
     chance = victim.get_skill('shield block') // 5 + 3
     if victim.get_eq(WEAR_SHIELD) == None:
         return False
     if random.randint(1,99) >= chance + victim.level - ch.level:
         return False
-    act( "You block $n's attack with your shield.",  ch, None, victim, TO_VICT)
-    act( "$N blocks your attack with a shield.", ch, None, victim, TO_CHAR)
+    handler_game.act( "You block $n's attack with your shield.",  ch, None, victim, TO_VICT)
+    handler_game.act( "$N blocks your attack with a shield.", ch, None, victim, TO_CHAR)
     check_improve(victim,'shield block',True,6)
     return True
 
 # Check for dodge.
 def check_dodge( ch, victim ):
-    if not IS_AWAKE(victim):
+    if not state_checks.IS_AWAKE(victim):
         return False
     chance = victim.get_skill('dodge') // 2
     if not victim.can_see(ch):
         chance //= 2
     if random.randint(1,99) >= chance + victim.level - ch.level:
         return False
-    act( "You dodge $n's attack.", ch, None, victim, TO_VICT    )
-    act( "$N dodges your attack.", ch, None, victim, TO_CHAR    )
+    handler_game.act( "You dodge $n's attack.", ch, None, victim, TO_VICT    )
+    handler_game.act( "$N dodges your attack.", ch, None, victim, TO_CHAR    )
     check_improve(victim,'dodge',True,6)
     return True
 
@@ -832,7 +842,7 @@ def update_pos(victim):
         if victim.position <= POS_STUNNED:
             victim.position = POS_STANDING
         return
-    if IS_NPC(victim) and victim.hit < 1:
+    if state_checks.IS_NPC(victim) and victim.hit < 1:
         victim.position = POS_DEAD
         return
     if victim.hit <= -11:
@@ -849,7 +859,7 @@ def set_fighting( ch, victim ):
         print ("BUG: Set_fighting: already fighting")
         return
 
-    if IS_AFFECTED(ch, AFF_SLEEP):
+    if state_checks.IS_AFFECTED(ch, AFF_SLEEP):
         ch.affect_strip('sleep')
 
     ch.fighting = victim
@@ -860,14 +870,14 @@ def stop_fighting( ch, fBoth ):
     for fch in char_list:
         if fch == ch or ( fBoth and fch.fighting == ch ):
             fch.fighting = None
-            fch.position = fch.default_pos if IS_NPC(fch) else POS_STANDING
+            fch.position = fch.default_pos if state_checks.IS_NPC(fch) else POS_STANDING
             update_pos( fch )
     return
 #
 # * Make a corpse out of a character.
 def make_corpse(ch):
     from db import create_object
-    if IS_NPC(ch):
+    if state_checks.IS_NPC(ch):
         name = ch.short_descr
         corpse      = create_object(obj_index_hash[OBJ_VNUM_CORPSE_NPC], 0)
         corpse.timer   = random.randint( 3, 6 )
@@ -880,7 +890,7 @@ def make_corpse(ch):
         name = ch.name
         corpse = create_object(obj_index_hash[OBJ_VNUM_CORPSE_PC], 0)
         corpse.timer = random.randint(25, 40)
-        REMOVE_BIT(ch.act, PLR_CANLOOT)
+        state_checks.REMOVE_BIT(ch.act, PLR_CANLOOT)
         if not ch.is_clan():
             corpse.owner = ch.name
         else:
@@ -903,25 +913,25 @@ def make_corpse(ch):
             obj.timer = random.randint(500,1000)
         if obj.item_type == ITEM_SCROLL:
             obj.timer = random.randint(1000,2500)
-        if IS_SET(obj.extra_flags,ITEM_ROT_DEATH) and not floating:
+        if state_checks.IS_SET(obj.extra_flags,ITEM_ROT_DEATH) and not floating:
             obj.timer = random.randint(5,10)
-            REMOVE_BIT(obj.extra_flags,ITEM_ROT_DEATH)
-        REMOVE_BIT(obj.extra_flags,ITEM_VIS_DEATH)
+            state_checks.REMOVE_BIT(obj.extra_flags,ITEM_ROT_DEATH)
+        state_checks.REMOVE_BIT(obj.extra_flags,ITEM_VIS_DEATH)
 
-        if IS_SET( obj.extra_flags, ITEM_INVENTORY ):
+        if state_checks.IS_SET( obj.extra_flags, ITEM_INVENTORY ):
             obj.extract()
         elif floating:
-            if IS_OBJ_STAT(obj,ITEM_ROT_DEATH): # get rid of it! */
+            if state_checks.IS_OBJ_STAT(obj,ITEM_ROT_DEATH): # get rid of it! */
                 if obj.contains:
-                    act("$p evaporates,scattering its contents.", ch,obj,None,TO_ROOM)
+                    handler_game.act("$p evaporates,scattering its contents.", ch,obj,None,TO_ROOM)
                     for o in obj.contains[:]:
                         o.from_obj()
                         o.to_room(ch.in_room)
                 else:
-                    act("$p evaporates.", ch,obj,None,TO_ROOM)
+                    handler_game.act("$p evaporates.", ch,obj,None,TO_ROOM)
                 obj.extract()
             else:
-                act("$p falls to the floor.",ch,obj,None,TO_ROOM)
+                handler_game.act("$p falls to the floor.",ch,obj,None,TO_ROOM)
                 obj.to_room(ch.in_room)
         else:
             obj.to_obj(corpse)
@@ -940,45 +950,45 @@ def death_cry( ch ):
         if ch.material == 0:
             msg  = "$n splatters blood on your armor."     
     elif num == 2:                            
-        if IS_SET(ch.parts,PART_GUTS):
+        if state_checks.IS_SET(ch.parts,PART_GUTS):
             msg = "$n spills $s guts all over the floor."
             vnum = OBJ_VNUM_GUTS
     elif num ==  3: 
-        if IS_SET(ch.parts,PART_HEAD):
+        if state_checks.IS_SET(ch.parts,PART_HEAD):
             msg  = "$n's severed head plops on the ground."
             vnum = OBJ_VNUM_SEVERED_HEAD               
     elif num ==  4: 
-        if IS_SET(ch.parts,PART_HEART):
+        if state_checks.IS_SET(ch.parts,PART_HEART):
             msg  = "$n's heart is torn from $s chest."
             vnum = OBJ_VNUM_TORN_HEART             
     elif num ==  5: 
-        if IS_SET(ch.parts,PART_ARMS):
+        if state_checks.IS_SET(ch.parts,PART_ARMS):
             msg  = "$n's arm is sliced from $s dead body."
             vnum = OBJ_VNUM_SLICED_ARM             
     elif num ==  6: 
-        if IS_SET(ch.parts,PART_LEGS):
+        if state_checks.IS_SET(ch.parts,PART_LEGS):
             msg  = "$n's leg is sliced from $s dead body."
             vnum = OBJ_VNUM_SLICED_LEG             
     elif num == 7:
-        if IS_SET(ch.parts,PART_BRAINS):
+        if state_checks.IS_SET(ch.parts,PART_BRAINS):
             msg = "$n's head is shattered, and $s brains splash all over you."
             vnum = OBJ_VNUM_BRAINS
-    act( msg, ch, None, None, TO_ROOM )
+    handler_game.act( msg, ch, None, None, TO_ROOM )
     if vnum != 0:
-        name = ch.short_descr if IS_NPC(ch) else ch.name
+        name = ch.short_descr if state_checks.IS_NPC(ch) else ch.name
         obj = create_object( obj_index_hash[vnum], 0 )
         obj.timer = random.randint( 4, 7 )
 
         obj.short_descr = obj.short_descr % name
         obj.description = obj.description % name
         if obj.item_type == ITEM_FOOD:
-            if IS_SET(ch.form,FORM_POISON):
+            if state_checks.IS_SET(ch.form,FORM_POISON):
                 obj.value[3] = 1
-            elif not IS_SET(ch.form,FORM_EDIBLE):
+            elif not state_checks.IS_SET(ch.form,FORM_EDIBLE):
                 obj.item_type = ITEM_TRASH
             obj.to_room(ch.in_room)
 
-    if IS_NPC(ch):
+    if state_checks.IS_NPC(ch):
         msg = "You hear something's death cry."
     else:
         msg = "You hear someone's death cry."
@@ -987,7 +997,7 @@ def death_cry( ch ):
     for pexit in was_in_room.exit:
         if pexit and pexit.to_room and pexit.to_room != was_in_room:
             ch.in_room = pexit.to_room
-            act( msg, ch, None, None, TO_ROOM )
+            handler_game.act( msg, ch, None, None, TO_ROOM )
     ch.in_room = was_in_room
     return
 
@@ -996,7 +1006,7 @@ def raw_kill( victim ):
     death_cry( victim )
     make_corpse( victim )
 
-    if IS_NPC(victim):
+    if state_checks.IS_NPC(victim):
         victim.pIndexData.killed += 1
         #kill_table[max(0, min(victim.level, MAX_LEVEL-1))].killed += 1
         victim.extract(True)
@@ -1025,7 +1035,7 @@ def group_gain( ch, victim ):
     for gch in ch.in_room.people:
         if gch.is_same_group(ch):
             members += 1
-            group_levels += gch.level // 2 if IS_NPC(gch) else gch.level
+            group_levels += gch.level // 2 if state_checks.IS_NPC(gch) else gch.level
 
     if members == 0:
         print ("BUG: Group_gain: members. %s" % members)
@@ -1035,7 +1045,7 @@ def group_gain( ch, victim ):
     lch = ch.leader if ch.leader else ch
 
     for gch in ch.in_room.people:
-        if not gch.is_same_group(ch) or IS_NPC(gch):
+        if not gch.is_same_group(ch) or state_checks.IS_NPC(gch):
             continue
 
         #Taken out, add it back if you want it
@@ -1053,11 +1063,11 @@ def group_gain( ch, victim ):
         for obj in ch.carrying[:]:
             if obj.wear_loc == WEAR_NONE:
                 continue
-            if (IS_OBJ_STAT(obj, ITEM_ANTI_EVIL) and IS_EVIL(ch) ) \
-            or (IS_OBJ_STAT(obj, ITEM_ANTI_GOOD) and IS_GOOD(ch) ) \
-            or (IS_OBJ_STAT(obj, ITEM_ANTI_NEUTRAL) and IS_NEUTRAL(ch) ):
-                act( "You are zapped by $p.", ch, obj, None, TO_CHAR )
-                act( "$n is zapped by $p.",   ch, obj, None, TO_ROOM )
+            if (state_checks.IS_OBJ_STAT(obj, ITEM_ANTI_EVIL) and state_checks.IS_EVIL(ch) ) \
+            or (state_checks.IS_OBJ_STAT(obj, ITEM_ANTI_GOOD) and state_checks.IS_GOOD(ch) ) \
+            or (state_checks.IS_OBJ_STAT(obj, ITEM_ANTI_NEUTRAL) and state_checks.IS_NEUTRAL(ch) ):
+                handler_game.act( "You are zapped by $p.", ch, obj, None, TO_CHAR )
+                handler_game.act( "$n is zapped by $p.",   ch, obj, None, TO_ROOM )
                 obj.from_char()
                 obj.to_room(ch.in_room)
 
@@ -1087,7 +1097,7 @@ def xp_compute( gch, victim, total_levels ):
         base_exp = 160 + 20 * (level_range - 4)
     # do alignment computations */
     align = victim.alignment - gch.alignment
-    if IS_SET(victim.act,ACT_NOALIGN):
+    if state_checks.IS_SET(victim.act,ACT_NOALIGN):
         pass    # no change */
     elif align > 500: # monster is more good than slayer */
         change = (align - 500) * base_exp // 500 * gch.level // total_levels 
@@ -1101,7 +1111,7 @@ def xp_compute( gch, victim, total_levels ):
         change =  gch.alignment * base_exp // 500 * gch.level // total_levels  
         gch.alignment -= change
     # calculate exp multiplier */
-    if IS_SET(victim.act,ACT_NOALIGN):
+    if state_checks.IS_SET(victim.act,ACT_NOALIGN):
         xp = base_exp
     elif gch.alignment > 500:  # for goodie two shoes */
         if victim.alignment < -750:
@@ -1237,12 +1247,12 @@ def dam_message( ch, victim, dam, dt, immune ):
                 buf3 = "$n's %s %s you%c" % (attack, vp, punct)
 
     if ch == victim:
-        act(buf1,ch,None,None,TO_ROOM)
-        act(buf2,ch,None,None,TO_CHAR)
+        handler_game.act(buf1,ch,None,None,TO_ROOM)
+        handler_game.act(buf2,ch,None,None,TO_CHAR)
     else:
-        act( buf1, ch, None, victim, TO_NOTVICT )
-        act( buf2, ch, None, victim, TO_CHAR )
-        act( buf3, ch, None, victim, TO_VICT )
+        handler_game.act( buf1, ch, None, victim, TO_NOTVICT )
+        handler_game.act( buf2, ch, None, victim, TO_CHAR )
+        handler_game.act( buf3, ch, None, victim, TO_VICT )
     return
 
 # * Disarm a creature.
@@ -1253,20 +1263,20 @@ def disarm( ch, victim ):
         ch.send("I think you're taking disarm a little too literally")
         return
 
-    if IS_OBJ_STAT(obj,ITEM_NOREMOVE):
-        act("$S weapon won't budge!",ch,None,victim,TO_CHAR)
-        act("$n tries to disarm you, but your weapon won't budge!", ch,None,victim,TO_VICT)
-        act("$n tries to disarm $N, but fails.",ch,None,victim,TO_NOTVICT)
+    if state_checks.IS_OBJ_STAT(obj,ITEM_NOREMOVE):
+        handler_game.act("$S weapon won't budge!",ch,None,victim,TO_CHAR)
+        handler_game.act("$n tries to disarm you, but your weapon won't budge!", ch,None,victim,TO_VICT)
+        handler_game.act("$n tries to disarm $N, but fails.",ch,None,victim,TO_NOTVICT)
         return
-    act( "$n DISARMS you and sends your weapon flying!", ch, None, victim, TO_VICT)
-    act( "You disarm $N!",  ch, None, victim, TO_CHAR    )
-    act( "$n disarms $N!",  ch, None, victim, TO_NOTVICT )
+    handler_game.act( "$n DISARMS you and sends your weapon flying!", ch, None, victim, TO_VICT)
+    handler_game.act( "You disarm $N!",  ch, None, victim, TO_CHAR    )
+    handler_game.act( "$n disarms $N!",  ch, None, victim, TO_NOTVICT )
     obj.from_char()
-    if IS_OBJ_STAT(obj,ITEM_NODROP) or IS_OBJ_STAT(obj,ITEM_INVENTORY):
+    if state_checks.IS_OBJ_STAT(obj,ITEM_NODROP) or state_checks.IS_OBJ_STAT(obj,ITEM_INVENTORY):
         obj.to_char(victim)
     else:
         obj.to_room(victim.in_room)
-        if IS_NPC(victim) and victim.wait == 0 and victim.can_see_obj(obj):
+        if state_checks.IS_NPC(victim) and victim.wait == 0 and victim.can_see_obj(obj):
             get_obj(victim,obj,None)
     return
 

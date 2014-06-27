@@ -32,11 +32,21 @@
  ************/
 """
 import os
+import random
 import sys
+import time
+
+from handler_ch import MOB_INDEX_DATA, CHAR_DATA
+from handler_obj import OBJ_INDEX_DATA, count_obj_list, get_obj_type, OBJ_DATA
+from handler_room import ROOM_INDEX_DATA
 from settings import AREA_DIR, AREA_LIST
 from handler import *
 from special import spec_table
 from tables import sex_table, position_table
+import handler_olc
+import state_checks
+import game_utils
+import handler_game
 import const
 
 
@@ -72,16 +82,16 @@ def load_area(area):
     if not area.strip():
         return
 
-    area, w = read_word(area, False)
+    area, w = game_utils.read_word(area, False)
     pArea = None
     while area:
         if w == "#AREA":
-            pArea = AREA_DATA()
-            area, pArea.file_name = read_string(area)
-            area, pArea.name = read_string(area)
-            area, pArea.credits = read_string(area)
-            area, pArea.min_vnum = read_int(area)
-            area, pArea.max_vnum = read_int(area)
+            pArea = handler_olc.AREA_DATA()
+            area, pArea.file_name = game_utils.read_string(area)
+            area, pArea.name = game_utils.read_string(area)
+            area, pArea.credits = game_utils.read_string(area)
+            area, pArea.min_vnum = game_utils.read_int(area)
+            area, pArea.max_vnum = game_utils.read_int(area)
             area_list.append(pArea)
             print("\t...%s" % pArea)
 
@@ -106,20 +116,20 @@ def load_area(area):
         else:
             print("Bad section name: " + w)
 
-        area, w = read_word(area, False)
+        area, w = game_utils.read_word(area, False)
 
 
 def load_helps(area):
     while True:
-        nhelp = HELP_DATA()
-        area, nhelp.level = read_int(area)
-        area, nhelp.keyword = read_string(area)
+        nhelp = handler_game.HELP_DATA()
+        area, nhelp.level = game_utils.read_int(area)
+        area, nhelp.keyword = game_utils.read_string(area)
 
         if nhelp.keyword == '$':
             del nhelp
             break
 
-        area, nhelp.text = read_string(area)
+        area, nhelp.text = game_utils.read_string(area)
 
         if nhelp.keyword == "GREETING":
             greeting_list.append(nhelp)
@@ -129,139 +139,139 @@ def load_helps(area):
 
 
 def load_mobiles(area):
-    area, w = read_word(area, False)
+    area, w = game_utils.read_word(area, False)
     w = w[1:]  # strip the pound
 
     while w != '0':
         mob = MOB_INDEX_DATA()
         mob.vnum = int(w)
         mob_index_hash[mob.vnum] = mob
-        area, mob.player_name = read_string(area)
-        area, mob.short_descr = read_string(area)
-        area, mob.long_descr = read_string(area)
-        area, mob.description = read_string(area)
-        area, mob.race = read_string(area)
+        area, mob.player_name = game_utils.read_string(area)
+        area, mob.short_descr = game_utils.read_string(area)
+        area, mob.long_descr = game_utils.read_string(area)
+        area, mob.description = game_utils.read_string(area)
+        area, mob.race = game_utils.read_string(area)
         mob.race = const.race_table[mob.race]
-        area, mob.act = read_flags(area)
+        area, mob.act = game_utils.read_flags(area)
         mob.act = mob.act | ACT_IS_NPC | mob.race.act
-        area, mob.affected_by = read_flags(area)
+        area, mob.affected_by = game_utils.read_flags(area)
         mob.affected_by = mob.affected_by | mob.race.aff
-        area, mob.alignment = read_int(area)
-        area, mob.group = read_int(area)
-        area, mob.level = read_int(area)
-        area, mob.hitroll = read_int(area)
-        area, mob.hit[0] = read_int(area)
-        area = read_forward(area)
-        area, mob.hit[1] = read_int(area)
-        area = read_forward(area)
-        area, mob.hit[2] = read_int(area)
-        area, mob.mana[0] = read_int(area)
-        area = read_forward(area)
-        area, mob.mana[1] = read_int(area)
-        area = read_forward(area)
-        area, mob.mana[2] = read_int(area)
-        area, mob.damage[0] = read_int(area)
-        area = read_forward(area)
-        area, mob.damage[1] = read_int(area)
-        area = read_forward(area)
-        area, mob.damage[2] = read_int(area)
-        area, mob.dam_type = read_word(area, False)
-        mob.dam_type = name_lookup(const.attack_table, mob.dam_type)
-        area, mob.ac[0] = read_int(area)
-        area, mob.ac[1] = read_int(area)
-        area, mob.ac[2] = read_int(area)
-        area, mob.ac[3] = read_int(area)
-        area, mob.off_flags = read_flags(area)
+        area, mob.alignment = game_utils.read_int(area)
+        area, mob.group = game_utils.read_int(area)
+        area, mob.level = game_utils.read_int(area)
+        area, mob.hitroll = game_utils.read_int(area)
+        area, mob.hit[0] = game_utils.read_int(area)
+        area = game_utils.read_forward(area)
+        area, mob.hit[1] = game_utils.read_int(area)
+        area = game_utils.read_forward(area)
+        area, mob.hit[2] = game_utils.read_int(area)
+        area, mob.mana[0] = game_utils.read_int(area)
+        area = game_utils.read_forward(area)
+        area, mob.mana[1] = game_utils.read_int(area)
+        area = game_utils.read_forward(area)
+        area, mob.mana[2] = game_utils.read_int(area)
+        area, mob.damage[0] = game_utils.read_int(area)
+        area = game_utils.read_forward(area)
+        area, mob.damage[1] = game_utils.read_int(area)
+        area = game_utils.read_forward(area)
+        area, mob.damage[2] = game_utils.read_int(area)
+        area, mob.dam_type = game_utils.read_word(area, False)
+        mob.dam_type = state_checks.name_lookup(const.attack_table, mob.dam_type)
+        area, mob.ac[0] = game_utils.read_int(area)
+        area, mob.ac[1] = game_utils.read_int(area)
+        area, mob.ac[2] = game_utils.read_int(area)
+        area, mob.ac[3] = game_utils.read_int(area)
+        area, mob.off_flags = game_utils.read_flags(area)
         mob.off_flags = mob.off_flags | mob.race.off
-        area, mob.imm_flags = read_flags(area)
+        area, mob.imm_flags = game_utils.read_flags(area)
         mob.imm_flags = mob.imm_flags | mob.race.imm
-        area, mob.res_flags = read_flags(area)
+        area, mob.res_flags = game_utils.read_flags(area)
         mob.res_flags = mob.res_flags | mob.race.res
-        area, mob.vuln_flags = read_flags(area)
+        area, mob.vuln_flags = game_utils.read_flags(area)
         mob.vuln_flags = mob.vuln_flags | mob.race.vuln
-        area, mob.start_pos = read_word(area, False)
-        area, mob.default_pos = read_word(area, False)
-        mob.start_pos = name_lookup(position_table, mob.start_pos, 'short_name')
-        mob.default_pos = name_lookup(position_table, mob.default_pos, 'short_name')
-        area, sex = read_word(area, False)
-        mob.sex = value_lookup(sex_table, sex)
-        area, mob.wealth = read_int(area)
-        area, mob.form = read_flags(area)
+        area, mob.start_pos = game_utils.read_word(area, False)
+        area, mob.default_pos = game_utils.read_word(area, False)
+        mob.start_pos = state_checks.name_lookup(position_table, mob.start_pos, 'short_name')
+        mob.default_pos = state_checks.name_lookup(position_table, mob.default_pos, 'short_name')
+        area, sex = game_utils.read_word(area, False)
+        mob.sex = state_checks.value_lookup(sex_table, sex)
+        area, mob.wealth = game_utils.read_int(area)
+        area, mob.form = game_utils.read_flags(area)
         mob.form = mob.form | mob.race.form
-        area, mob.parts = read_flags(area)
+        area, mob.parts = game_utils.read_flags(area)
         mob.parts = mob.parts | mob.race.parts
-        area, mob.size = read_word(area, False)
-        area, mob.material = read_word(area, False)
-        area, w = read_word(area, False)
+        area, mob.size = game_utils.read_word(area, False)
+        area, mob.material = game_utils.read_word(area, False)
+        area, w = game_utils.read_word(area, False)
         mob.size = size_table.index(mob.size)
         while w == 'F':
-            area, word = read_word(area, False)
-            area, vector = read_flags(area)
-            area, w = read_word(area, False)
+            area, word = game_utils.read_word(area, False)
+            area, vector = game_utils.read_flags(area)
+            area, w = game_utils.read_word(area, False)
 
         w = w[1:]  # strip the pound
     return area
 
 
 def load_objects(area):
-    area, w = read_word(area, False)
+    area, w = game_utils.read_word(area, False)
     w = w[1:]  # strip the pound
     while w != '0':
         obj = OBJ_INDEX_DATA()
         obj.vnum = int(w)
         obj_index_hash[obj.vnum] = obj
-        area, obj.name = read_string(area)
-        area, obj.short_descr = read_string(area)
+        area, obj.name = game_utils.read_string(area)
+        area, obj.short_descr = game_utils.read_string(area)
 
-        area, obj.description = read_string(area)
-        area, obj.material = read_string(area)
-        area, item_type = read_word(area, False)
-        area, obj.extra_flags = read_flags(area)
-        area, obj.wear_flags = read_flags(area)
+        area, obj.description = game_utils.read_string(area)
+        area, obj.material = game_utils.read_string(area)
+        area, item_type = game_utils.read_word(area, False)
+        area, obj.extra_flags = game_utils.read_flags(area)
+        area, obj.wear_flags = game_utils.read_flags(area)
         obj.item_type = item_type
 
         if obj.item_type == ITEM_WEAPON:
-            area, obj.value[0] = read_word(area, False)
-            area, obj.value[1] = read_int(area)
-            area, obj.value[2] = read_int(area)
-            area, obj.value[3] = read_word(area, False)
-            obj.value[3] = name_lookup(const.attack_table, obj.value[3])
-            area, obj.value[4] = read_flags(area)
+            area, obj.value[0] = game_utils.read_word(area, False)
+            area, obj.value[1] = game_utils.read_int(area)
+            area, obj.value[2] = game_utils.read_int(area)
+            area, obj.value[3] = game_utils.read_word(area, False)
+            obj.value[3] = state_checks.name_lookup(const.attack_table, obj.value[3])
+            area, obj.value[4] = game_utils.read_flags(area)
         elif obj.item_type == ITEM_CONTAINER:
-            area, obj.value[0] = read_int(area)
-            area, obj.value[1] = read_flags(area)
-            area, obj.value[2] = read_int(area)
-            area, obj.value[3] = read_int(area)
-            area, obj.value[4] = read_int(area)
+            area, obj.value[0] = game_utils.read_int(area)
+            area, obj.value[1] = game_utils.read_flags(area)
+            area, obj.value[2] = game_utils.read_int(area)
+            area, obj.value[3] = game_utils.read_int(area)
+            area, obj.value[4] = game_utils.read_int(area)
         elif obj.item_type == ITEM_DRINK_CON or obj.item_type == ITEM_FOUNTAIN:
-            area, obj.value[0] = read_int(area)
-            area, obj.value[1] = read_int(area)
-            area, obj.value[2] = read_word(area, False)
-            area, obj.value[3] = read_int(area)
-            area, obj.value[4] = read_int(area)
+            area, obj.value[0] = game_utils.read_int(area)
+            area, obj.value[1] = game_utils.read_int(area)
+            area, obj.value[2] = game_utils.read_word(area, False)
+            area, obj.value[3] = game_utils.read_int(area)
+            area, obj.value[4] = game_utils.read_int(area)
         elif obj.item_type == ITEM_WAND or obj.item_type == ITEM_STAFF:
-            area, obj.value[0] = read_int(area)
-            area, obj.value[1] = read_int(area)
-            area, obj.value[2] = read_int(area)
-            area, obj.value[3] = read_word(area, False)
-            area, obj.value[4] = read_int(area)
+            area, obj.value[0] = game_utils.read_int(area)
+            area, obj.value[1] = game_utils.read_int(area)
+            area, obj.value[2] = game_utils.read_int(area)
+            area, obj.value[3] = game_utils.read_word(area, False)
+            area, obj.value[4] = game_utils.read_int(area)
         elif obj.item_type == ITEM_POTION or obj.item_type == ITEM_POTION or obj.item_type == ITEM_PILL:
-            area, obj.value[0] = read_int(area)
-            area, obj.value[1] = read_word(area, False)
-            area, obj.value[2] = read_word(area, False)
-            area, obj.value[3] = read_word(area, False)
-            area, obj.value[4] = read_word(area, False)
+            area, obj.value[0] = game_utils.read_int(area)
+            area, obj.value[1] = game_utils.read_word(area, False)
+            area, obj.value[2] = game_utils.read_word(area, False)
+            area, obj.value[3] = game_utils.read_word(area, False)
+            area, obj.value[4] = game_utils.read_word(area, False)
         else:
-            area, obj.value[0] = read_flags(area)
-            area, obj.value[1] = read_flags(area)
-            area, obj.value[2] = read_flags(area)
-            area, obj.value[3] = read_flags(area)
-            area, obj.value[4] = read_flags(area)
+            area, obj.value[0] = game_utils.read_flags(area)
+            area, obj.value[1] = game_utils.read_flags(area)
+            area, obj.value[2] = game_utils.read_flags(area)
+            area, obj.value[3] = game_utils.read_flags(area)
+            area, obj.value[4] = game_utils.read_flags(area)
 
-        area, obj.level = read_int(area)
-        area, obj.weight = read_int(area)
-        area, obj.cost = read_int(area)
-        area, obj.condition = read_word(area, False)
+        area, obj.level = game_utils.read_int(area)
+        area, obj.weight = game_utils.read_int(area)
+        area, obj.cost = game_utils.read_int(area)
+        area, obj.condition = game_utils.read_word(area, False)
         if obj.condition == 'P':
             obj.condition = 100
         elif obj.condition == 'G':
@@ -279,24 +289,24 @@ def load_objects(area):
         else:
             obj.condition = 100
 
-        area, w = read_word(area, False)
+        area, w = game_utils.read_word(area, False)
 
         while w == 'F' or w == 'A' or w == 'E':
             if w == 'F':
-                area, word = read_word(area, False)
-                area, number = read_int(area)
-                area, number = read_int(area)
-                area, flags = read_flags(area)
+                area, word = game_utils.read_word(area, False)
+                area, number = game_utils.read_int(area)
+                area, number = game_utils.read_int(area)
+                area, flags = game_utils.read_flags(area)
             elif w == 'A':
-                area, number = read_int(area)
-                area, number = read_int(area)
+                area, number = game_utils.read_int(area)
+                area, number = game_utils.read_int(area)
             elif w == 'E':
-                ed = EXTRA_DESCR_DATA()
-                area, ed.keyword = read_string(area)
-                area, ed.description = read_string(area)
+                ed = handler_olc.EXTRA_DESCR_DATA()
+                area, ed.keyword = game_utils.read_string(area)
+                area, ed.description = game_utils.read_string(area)
                 obj.extra_descr.append(ed)
 
-            area, w = read_word(area, False)
+            area, w = game_utils.read_word(area, False)
 
         w = w[1:]  # strip the pound
     return area
@@ -304,29 +314,29 @@ def load_objects(area):
 
 def load_resets(area, pArea):
     while True:
-        area, letter = read_letter(area)
+        area, letter = game_utils.read_letter(area)
         if letter == 'S':
             break
 
         if letter == '*':
-            area, t = read_to_eol(area)
+            area, t = game_utils.read_to_eol(area)
             continue
 
-        reset = RESET_DATA()
+        reset = handler_olc.RESET_DATA()
         reset.command = letter
-        area, number = read_int(area)  # if_flag
-        area, reset.arg1 = read_int(area)
-        area, reset.arg2 = read_int(area)
-        area, reset.arg3 = (area, 0) if letter == 'G' or letter == 'R' else read_int(area)
-        area, reset.arg4 = read_int(area) if letter == 'P' or letter == 'M' else (area, 0)
-        area, t = read_to_eol(area)
+        area, number = game_utils.read_int(area)  # if_flag
+        area, reset.arg1 = game_utils.read_int(area)
+        area, reset.arg2 = game_utils.read_int(area)
+        area, reset.arg3 = (area, 0) if letter == 'G' or letter == 'R' else game_utils.read_int(area)
+        area, reset.arg4 = game_utils.read_int(area) if letter == 'P' or letter == 'M' else (area, 0)
+        area, t = game_utils.read_to_eol(area)
         pArea.reset_list.append(reset)
         reset_list.append(reset)
     return area
 
 
 def load_rooms(area, pArea):
-    area, w = read_word(area, False)
+    area, w = game_utils.read_word(area, False)
     w = w[1:]  # strip the pound
     while w != '0':
         room = ROOM_INDEX_DATA()
@@ -337,61 +347,61 @@ def load_rooms(area, pArea):
 
         room_index_hash[room.vnum] = room
         room.area = pArea
-        area, room.name = read_string(area)
-        area, room.description = read_string(area)
-        area, number = read_int(area)  # area number
-        area, room.room_flags = read_flags(area)
-        area, room.sector_type = read_int(area)
+        area, room.name = game_utils.read_string(area)
+        area, room.description = game_utils.read_string(area)
+        area, number = game_utils.read_int(area)  # area number
+        area, room.room_flags = game_utils.read_flags(area)
+        area, room.sector_type = game_utils.read_int(area)
         while True:
-            area, letter = read_letter(area)
+            area, letter = game_utils.read_letter(area)
 
             if letter == 'S':
                 break
             elif letter == 'H':  # Healing Room
-                area, room.heal_rate = read_int(area)
+                area, room.heal_rate = game_utils.read_int(area)
             elif letter == 'M':  # Mana Room
-                area, room.mana_rate = read_int(area)
+                area, room.mana_rate = game_utils.read_int(area)
             elif letter == 'C':  # Clan
-                area, room.clan = read_string(area)
+                area, room.clan = game_utils.read_string(area)
             elif letter == 'D':  # exit
-                nexit = EXIT_DATA()
-                area, door = read_int(area)
-                area, nexit.description = read_string(area)
-                area, nexit.keyword = read_string(area)
-                area, locks = read_int(area)
-                area, nexit.key = read_int(area)
-                area, nexit.to_room = read_int(area)
+                nexit = handler_olc.EXIT_DATA()
+                area, door = game_utils.read_int(area)
+                area, nexit.description = game_utils.read_string(area)
+                area, nexit.keyword = game_utils.read_string(area)
+                area, locks = game_utils.read_int(area)
+                area, nexit.key = game_utils.read_int(area)
+                area, nexit.to_room = game_utils.read_int(area)
                 room.exit[door] = nexit
             elif letter == 'E':
-                ed = EXTRA_DESCR_DATA()
-                area, ed.keyword = read_string(area)
-                area, ed.description = read_string(area)
+                ed = handler_olc.EXTRA_DESCR_DATA()
+                area, ed.keyword = game_utils.read_string(area)
+                area, ed.description = game_utils.read_string(area)
                 room.extra_descr.append(ed)
             elif letter == 'O':
-                area, room.owner = read_string(area)
+                area, room.owner = game_utils.read_string(area)
             else:
                 print("RoomIndexData(%d) has flag other than SHMCDEO: %s" % (room.vnum, letter))
                 sys.exit(1)
-        area, w = read_word(area, False)
+        area, w = game_utils.read_word(area, False)
         w = w[1:]  # strip the pound
     return area
 
 
 def load_shops(area):
     while True:
-        area, keeper = read_int(area)
+        area, keeper = game_utils.read_int(area)
 
         if keeper == 0:
             break
-        shop = SHOP_DATA()
+        shop = handler_olc.SHOP_DATA()
         shop.keeper = keeper
         for r in range(MAX_TRADE):
-            area, shop.buy_type[r] = read_int(area)
-        area, shop.profit_buy = read_int(area)
-        area, shop.profit_sell = read_int(area)
-        area, shop.open_hour = read_int(area)
-        area, shop.close_hour = read_int(area)
-        area, t = read_to_eol(area)
+            area, shop.buy_type[r] = game_utils.read_int(area)
+        area, shop.profit_buy = game_utils.read_int(area)
+        area, shop.profit_sell = game_utils.read_int(area)
+        area, shop.open_hour = game_utils.read_int(area)
+        area, shop.close_hour = game_utils.read_int(area)
+        area, t = game_utils.read_to_eol(area)
         mob_index_hash[keeper].pShop = shop
         shop_list.append(shop)
     return area
@@ -399,14 +409,14 @@ def load_shops(area):
 
 def load_socials(area):
     while True:
-        area, word = read_word(area, False)
+        area, word = game_utils.read_word(area, False)
 
         if word == '#0':
             return
-        social = SOCIAL_DATA()
+        social = handler_game.SOCIAL_DATA()
         social.name = word
-        area, throwaway = read_to_eol(area)
-        area, line = read_to_eol(area)
+        area, throwaway = game_utils.read_to_eol(area)
+        area, line = game_utils.read_to_eol(area)
         if line == '$':
             social.char_no_arg = None
         elif line == '#':
@@ -416,7 +426,7 @@ def load_socials(area):
         else:
             social.char_no_arg = line
 
-        area, line = read_to_eol(area)
+        area, line = game_utils.read_to_eol(area)
 
         if line == '$':
             social.others_no_arg = None
@@ -426,7 +436,7 @@ def load_socials(area):
             continue
         else:
             social.others_no_arg = line
-        area, line = read_to_eol(area)
+        area, line = game_utils.read_to_eol(area)
 
         if line == '$':
             social.char_found = None
@@ -436,7 +446,7 @@ def load_socials(area):
             continue
         else:
             social.char_found = line
-        area, line = read_to_eol(area)
+        area, line = game_utils.read_to_eol(area)
 
         if line == '$':
             social.others_found = None
@@ -446,7 +456,7 @@ def load_socials(area):
             continue
         else:
             social.others_found = line
-        area, line = read_to_eol(area)
+        area, line = game_utils.read_to_eol(area)
 
         if line == '$':
             social.vict_found = None
@@ -456,7 +466,7 @@ def load_socials(area):
             continue
         else:
             social.vict_found = line
-        area, line = read_to_eol(area)
+        area, line = game_utils.read_to_eol(area)
 
         if line == '$':
             social.char_not_found = None
@@ -466,7 +476,7 @@ def load_socials(area):
             continue
         else:
             social.char_not_found = line
-        area, line = read_to_eol(area)
+        area, line = game_utils.read_to_eol(area)
 
         if line == '$':
             social.char_auto = None
@@ -476,7 +486,7 @@ def load_socials(area):
             continue
         else:
             social.char_auto = line
-        area, line = read_to_eol(area)
+        area, line = game_utils.read_to_eol(area)
 
         if line == '$':
             social.others_auto = None
@@ -494,16 +504,16 @@ def load_socials(area):
 
 def load_specials(area):
     while True:
-        area, letter = read_letter(area)
+        area, letter = game_utils.read_letter(area)
 
         if letter == '*':
-            area, t = read_to_eol(area)
+            area, t = game_utils.read_to_eol(area)
             continue
         elif letter == 'S':
             return area
         elif letter == 'M':
-            area, vnum = read_int(area)
-            area, mob_index_hash[vnum].spec_fun = read_word(area, False)
+            area, vnum = game_utils.read_int(area)
+            area, mob_index_hash[vnum].spec_fun = game_utils.read_word(area, False)
         else:
             print("Load_specials: letter noth *SM: " + letter)
 
@@ -534,7 +544,7 @@ def area_update():
         #*/
         if (not pArea.empty and (pArea.nplayer == 0 or pArea.age >= 15)) or pArea.age >= 31:
             reset_area(pArea)
-            wiznet("%s has just been reset." % pArea.name, None, None, WIZ_RESETS, 0, 0)
+            handler_game.wiznet("%s has just been reset." % pArea.name, None, None, WIZ_RESETS, 0, 0)
 
         pArea.age = random.randint(0, 3)
         pRoomIndex = room_index_hash[ROOM_VNUM_SCHOOL]
@@ -584,8 +594,8 @@ def reset_area(pArea):
 
             if pRoomIndex.vnum - 1 in room_index_hash:
                 pRoomIndexPrev = room_index_hash[pRoomIndex.vnum - 1]
-                if IS_SET(pRoomIndexPrev.room_flags, ROOM_PET_SHOP):
-                    mob.act = SET_BIT(mob.act, ACT_PET)
+                if state_checks.IS_SET(pRoomIndexPrev.room_flags, ROOM_PET_SHOP):
+                    mob.act = state_checks.SET_BIT(mob.act, ACT_PET)
 
             # set area */
             mob.zone = pRoomIndex.area
@@ -609,7 +619,7 @@ def reset_area(pArea):
                 last = False
                 continue
 
-            obj = create_object(pObjIndex, min(number_fuzzy(level), LEVEL_HERO - 1))
+            obj = create_object(pObjIndex, min(game_utils.number_fuzzy(level), LEVEL_HERO - 1))
             obj.cost = 0
             obj.to_room(pRoomIndex)
             last = True
@@ -643,7 +653,7 @@ def reset_area(pArea):
                 break
             count = count_obj_list(pObjIndex, obj_to.contains)
             while count < pReset.arg4:
-                obj = create_object(pObjIndex, number_fuzzy(obj_to.level))
+                obj = create_object(pObjIndex, game_utils.number_fuzzy(obj_to.level))
                 obj.to_obj(obj_to)
                 count += 1
                 if pObjIndex.count >= limit:
@@ -690,7 +700,7 @@ def reset_area(pArea):
                         olevel = random.randint(10, 20)
 
                 obj = create_object(pObjIndex, olevel)
-                obj.extra_flags = SET_BIT(obj.extra_flags, ITEM_INVENTORY)
+                obj.extra_flags = state_checks.SET_BIT(obj.extra_flags, ITEM_INVENTORY)
             else:
                 if pReset.arg2 > 50:  # old format */
                     limit = 6
@@ -700,7 +710,7 @@ def reset_area(pArea):
                     limit = pReset.arg2
 
                 if pObjIndex.count < limit or random.randint(0, 4) == 0:
-                    obj = create_object(pObjIndex, min(number_fuzzy(level), LEVEL_HERO - 1))
+                    obj = create_object(pObjIndex, min(game_utils.number_fuzzy(level), LEVEL_HERO - 1))
                 # error message if it is too high */
                 if obj.level > mob.level + 3 \
                         or (obj.item_type == ITEM_WEAPON
@@ -728,16 +738,16 @@ def reset_area(pArea):
                 continue
 
             if pReset.arg3 == 0:
-                pexit.exit_info = REMOVE_BIT(pexit.exit_info, EX_CLOSED)
-                pexit.exit_info = REMOVE_BIT(pexit.exit_info, EX_LOCKED)
+                pexit.exit_info = state_checks.REMOVE_BIT(pexit.exit_info, EX_CLOSED)
+                pexit.exit_info = state_checks.REMOVE_BIT(pexit.exit_info, EX_LOCKED)
                 continue
             elif pReset.arg3 == 1:
-                pexit.exit_info = SET_BIT(pexit.exit_info, EX_CLOSED)
-                pexit.exit_info = REMOVE_BIT(pexit.exit_info, EX_LOCKED)
+                pexit.exit_info = state_checks.SET_BIT(pexit.exit_info, EX_CLOSED)
+                pexit.exit_info = state_checks.REMOVE_BIT(pexit.exit_info, EX_LOCKED)
                 continue
             elif pReset.arg3 == 2:
-                pexit.exit_info = SET_BIT(pexit.exit_info, EX_CLOSED)
-                pexit.exit_info = SET_BIT(pexit.exit_info, EX_LOCKED)
+                pexit.exit_info = state_checks.SET_BIT(pexit.exit_info, EX_CLOSED)
+                pexit.exit_info = state_checks.SET_BIT(pexit.exit_info, EX_LOCKED)
                 continue
             last = True
             continue
@@ -770,7 +780,7 @@ def create_mobile(pMobIndex):
     mob.pIndexData = pMobIndex
 
     mob.name = pMobIndex.player_name
-    mob.id = get_mob_id()
+    mob.id = game_utils.get_mob_id()
     mob.short_descr = pMobIndex.short_descr
     mob.long_descr = pMobIndex.long_descr
     mob.description = pMobIndex.description
@@ -797,9 +807,9 @@ def create_mobile(pMobIndex):
         mob.level = pMobIndex.level
         mob.hitroll = pMobIndex.hitroll
         mob.damroll = pMobIndex.damage[DICE_BONUS]
-        mob.max_hit = dice(pMobIndex.hit[DICE_NUMBER], pMobIndex.hit[DICE_TYPE]) + pMobIndex.hit[DICE_BONUS]
+        mob.max_hit = game_utils.dice(pMobIndex.hit[DICE_NUMBER], pMobIndex.hit[DICE_TYPE]) + pMobIndex.hit[DICE_BONUS]
         mob.hit = mob.max_hit
-        mob.max_mana = dice(pMobIndex.mana[DICE_NUMBER], pMobIndex.mana[DICE_TYPE]) + pMobIndex.mana[DICE_BONUS]
+        mob.max_mana = game_utils.dice(pMobIndex.mana[DICE_NUMBER], pMobIndex.mana[DICE_TYPE]) + pMobIndex.mana[DICE_BONUS]
         mob.mana = mob.max_mana
         mob.damage[DICE_NUMBER] = pMobIndex.damage[DICE_NUMBER]
         mob.damage[DICE_TYPE] = pMobIndex.damage[DICE_TYPE]
@@ -833,34 +843,34 @@ def create_mobile(pMobIndex):
         for i in range(MAX_STATS):
             mob.perm_stat[i] = min(25, 11 + mob.level // 4)
 
-        if IS_SET(mob.act, ACT_WARRIOR):
+        if state_checks.IS_SET(mob.act, ACT_WARRIOR):
             mob.perm_stat[STAT_STR] += 3
             mob.perm_stat[STAT_INT] -= 1
             mob.perm_stat[STAT_CON] += 2
 
-        if IS_SET(mob.act, ACT_THIEF):
+        if state_checks.IS_SET(mob.act, ACT_THIEF):
             mob.perm_stat[STAT_DEX] += 3
             mob.perm_stat[STAT_INT] += 1
             mob.perm_stat[STAT_WIS] -= 1
 
-        if IS_SET(mob.act, ACT_CLERIC):
+        if state_checks.IS_SET(mob.act, ACT_CLERIC):
             mob.perm_stat[STAT_WIS] += 3
             mob.perm_stat[STAT_DEX] -= 1
             mob.perm_stat[STAT_STR] += 1
 
-        if IS_SET(mob.act, ACT_MAGE):
+        if state_checks.IS_SET(mob.act, ACT_MAGE):
             mob.perm_stat[STAT_INT] += 3
             mob.perm_stat[STAT_STR] -= 1
             mob.perm_stat[STAT_DEX] += 1
 
-        if IS_SET(mob.off_flags, OFF_FAST):
+        if state_checks.IS_SET(mob.off_flags, OFF_FAST):
             mob.perm_stat[STAT_DEX] += 2
 
         mob.perm_stat[STAT_STR] += mob.size - SIZE_MEDIUM
         mob.perm_stat[STAT_CON] += (mob.size - SIZE_MEDIUM) // 2
-        af = AFFECT_DATA()
+        af = handler_game.AFFECT_DATA()
         # let's get some spell action */
-        if IS_AFFECTED(mob, AFF_SANCTUARY):
+        if state_checks.IS_AFFECTED(mob, AFF_SANCTUARY):
             af.where = TO_AFFECTS
             af.type = "sanctuary"
             af.level = mob.level
@@ -870,7 +880,7 @@ def create_mobile(pMobIndex):
             af.bitvector = AFF_SANCTUARY
             mob.affect_add(af)
 
-        if IS_AFFECTED(mob, AFF_HASTE):
+        if state_checks.IS_AFFECTED(mob, AFF_HASTE):
             af.where = TO_AFFECTS
             af.type = "haste"
             af.level = mob.level
@@ -880,7 +890,7 @@ def create_mobile(pMobIndex):
             af.bitvector = AFF_HASTE
             mob.affect_add(af)
 
-        if IS_AFFECTED(mob, AFF_PROTECT_EVIL):
+        if state_checks.IS_AFFECTED(mob, AFF_PROTECT_EVIL):
             af.where = TO_AFFECTS
             af.type = "protection evil"
             af.level = mob.level
@@ -890,7 +900,7 @@ def create_mobile(pMobIndex):
             af.bitvector = AFF_PROTECT_EVIL
             mob.affect_add(af)
 
-        if IS_AFFECTED(mob, AFF_PROTECT_GOOD):
+        if state_checks.IS_AFFECTED(mob, AFF_PROTECT_GOOD):
             af.where = TO_AFFECTS
             af.type = "protection good"
             af.level = mob.level
@@ -909,7 +919,7 @@ def create_mobile(pMobIndex):
         mob.max_hit = mob.level * 8 + random.randint(mob.level * mob.level // 4, mob.level * mob.level)
         mob.max_hit *= .9
         mob.hit = mob.max_hit
-        mob.max_mana = 100 + dice(mob.level, 10)
+        mob.max_mana = 100 + game_utils.dice(mob.level, 10)
         mob.mana = mob.max_mana
         num = random.randint(1, 3)
         if num == 1:
@@ -919,8 +929,8 @@ def create_mobile(pMobIndex):
         elif num == 3:
             mob.dam_type = 11  # pierce */
         for i in range(3):
-            mob.armor[i] = interpolate(mob.level, 100, -100)
-        mob.armor[3] = interpolate(mob.level, 100, 0)
+            mob.armor[i] = game_utils.interpolate(mob.level, 100, -100)
+        mob.armor[3] = game_utils.interpolate(mob.level, 100, 0)
         mob.race = pMobIndex.race
         mob.off_flags = pMobIndex.off_flags
         mob.imm_flags = pMobIndex.imm_flags
@@ -945,7 +955,7 @@ def create_mobile(pMobIndex):
 
 # duplicate a mobile exactly -- except inventory */
 def clone_mobile(parent, clone):
-    if not parent or not clone or not IS_NPC(parent):
+    if not parent or not clone or not state_checks.IS_NPC(parent):
         return
 
     # start fixing values */ 
@@ -1042,7 +1052,7 @@ def create_object(pObjIndex, level):
     if level == -1 or pObjIndex.new_format:
         obj.cost = pObjIndex.cost
     else:
-        obj.cost = number_fuzzy(10) * number_fuzzy(level) * number_fuzzy(level)
+        obj.cost = game_utils.number_fuzzy(10) * game_utils.number_fuzzy(level) * game_utils.number_fuzzy(level)
 
         # Mess with object properties.
     if obj.item_type == ITEM_LIGHT:
@@ -1073,28 +1083,28 @@ def create_object(pObjIndex, level):
         obj.value = [-1 for i in range(5)]
     elif obj.item_type == ITEM_SCROLL:
         if level != -1 and not pObjIndex.new_format:
-            obj.value[0] = number_fuzzy(obj.value[0])
+            obj.value[0] = game_utils.number_fuzzy(obj.value[0])
     elif obj.item_type == ITEM_WAND \
             or obj.item_type == ITEM_STAFF:
         if level != -1 and not pObjIndex.new_format:
-            obj.value[0] = number_fuzzy(obj.value[0])
-            obj.value[1] = number_fuzzy(obj.value[1])
+            obj.value[0] = game_utils.number_fuzzy(obj.value[0])
+            obj.value[1] = game_utils.number_fuzzy(obj.value[1])
             obj.value[2] = obj.value[1]
         if not pObjIndex.new_format:
             obj.cost *= 2
     elif obj.item_type == ITEM_WEAPON:
         if level != -1 and not pObjIndex.new_format:
-            obj.value[1] = number_fuzzy(number_fuzzy(1 * level // 4 + 2))
-            obj.value[2] = number_fuzzy(number_fuzzy(3 * level // 4 + 6))
+            obj.value[1] = game_utils.number_fuzzy(game_utils.number_fuzzy(1 * level // 4 + 2))
+            obj.value[2] = game_utils.number_fuzzy(game_utils.number_fuzzy(3 * level // 4 + 6))
     elif obj.item_type == ITEM_ARMOR:
         if level != -1 and not pObjIndex.new_format:
-            obj.value[0] = number_fuzzy(level // 5 + 3)
-            obj.value[1] = number_fuzzy(level // 5 + 3)
-            obj.value[2] = number_fuzzy(level // 5 + 3)
+            obj.value[0] = game_utils.number_fuzzy(level // 5 + 3)
+            obj.value[1] = game_utils.number_fuzzy(level // 5 + 3)
+            obj.value[2] = game_utils.number_fuzzy(level // 5 + 3)
     elif obj.item_type == ITEM_POTION \
             or obj.item_type == ITEM_PILL:
         if level != -1 and not pObjIndex.new_format:
-            obj.value[0] = number_fuzzy(number_fuzzy(obj.value[0]))
+            obj.value[0] = game_utils.number_fuzzy(game_utils.number_fuzzy(obj.value[0]))
     elif obj.item_type == ITEM_MONEY:
         if not pObjIndex.new_format:
             obj.value[0] = obj.cost
@@ -1139,7 +1149,7 @@ def clone_object(parent, clone):
 
     # extended desc */
     for ed in parent.extra_descr:
-        ed_new = EXTRA_DESCR_DATA()
+        ed_new = handler_olc.EXTRA_DESCR_DATA()
         ed_new.keyword = ed.keyword
         ed_new.description = ed.description
         clone.extra_descr.append(ed)
@@ -1208,35 +1218,35 @@ def create_money(gold, silver):
 def init_time():
     lhour = (time.time() - 650336715) // (PULSE_TICK // PULSE_PER_SECOND)
     lhour = int(lhour)
-    time_info.hour = lhour % 24
+    handler_game.time_info.hour = lhour % 24
     lday = lhour // 24
-    time_info.day = int(lday % 35)
+    handler_game.time_info.day = int(lday % 35)
     lmonth = lday // 35
-    time_info.month = lmonth % 17
-    time_info.year = lmonth // 17
+    handler_game.time_info.month = lmonth % 17
+    handler_game.time_info.year = lmonth // 17
 
-    if time_info.hour < 5:
-        weather_info.sunlight = SUN_DARK
-    elif time_info.hour < 6:
-        weather_info.sunlight = SUN_RISE
-    elif time_info.hour < 19:
-        weather_info.sunlight = SUN_LIGHT
-    elif time_info.hour < 20:
-        weather_info.sunlight = SUN_SET
+    if handler_game.time_info.hour < 5:
+        handler_game.weather_info.sunlight = SUN_DARK
+    elif handler_game.time_info.hour < 6:
+        handler_game.weather_info.sunlight = SUN_RISE
+    elif handler_game.time_info.hour < 19:
+        handler_game.weather_info.sunlight = SUN_LIGHT
+    elif handler_game.time_info.hour < 20:
+        handler_game.weather_info.sunlight = SUN_SET
     else:
-        weather_info.sunlight = SUN_DARK
-    weather_info.change = 0
-    weather_info.mmhg = 960
-    if 7 <= time_info.month <= 12:
-        weather_info.mmhg += random.randint(1, 50)
+        handler_game.weather_info.sunlight = SUN_DARK
+    handler_game.weather_info.change = 0
+    handler_game.weather_info.mmhg = 960
+    if 7 <= handler_game.time_info.month <= 12:
+        handler_game.weather_info.mmhg += random.randint(1, 50)
     else:
-        weather_info.mmhg += random.randint(1, 80)
+        handler_game.weather_info.mmhg += random.randint(1, 80)
 
-    if weather_info.mmhg <= 980:
-        weather_info.sky = SKY_LIGHTNING
-    elif weather_info.mmhg <= 1000:
-        weather_info.sky = SKY_RAINING
-    elif weather_info.mmhg <= 1020:
-        weather_info.sky = SKY_CLOUDY
+    if handler_game.weather_info.mmhg <= 980:
+        handler_game.weather_info.sky = SKY_LIGHTNING
+    elif handler_game.weather_info.mmhg <= 1000:
+        handler_game.weather_info.sky = SKY_RAINING
+    elif handler_game.weather_info.mmhg <= 1020:
+        handler_game.weather_info.sky = SKY_CLOUDY
     else:
-        weather_info.sky = SKY_CLOUDLESS
+        handler_game.weather_info.sky = SKY_CLOUDLESS

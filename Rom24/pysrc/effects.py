@@ -31,7 +31,14 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/ 
  ************/
 """
+import random
+from const import skill_table
+from handler_game import act, AFFECT_DATA
+from handler_magic import saves_spell
 from merc import *
+import state_checks
+from update import gain_condition
+
 
 def acid_effect(vo, level, dam, target):
     if target == TARGET_ROOM: # nail objects on the floor */
@@ -45,7 +52,7 @@ def acid_effect(vo, level, dam, target):
         return
     if target == TARGET_OBJ: # toast an object */
         obj = vo
-        if IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or IS_OBJ_STAT(obj,ITEM_NOPURGE) or random.randint(0,4) == 0:
+        if state_checks.IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or state_checks.IS_OBJ_STAT(obj,ITEM_NOPURGE) or random.randint(0,4) == 0:
             return
         chance = level / 4 + dam / 10
         if chance > 25:
@@ -53,7 +60,7 @@ def acid_effect(vo, level, dam, target):
         if chance > 50:
             chance = (chance - 50) / 2 + 50
 
-        if IS_OBJ_STAT(obj,ITEM_BLESS):
+        if state_checks.IS_OBJ_STAT(obj,ITEM_BLESS):
             chance -= 5
 
         chance -= obj.level * 2
@@ -147,7 +154,7 @@ def cold_effect( vo, level, dam, target):
             victim.affect_join(af)
 
         # hunger! (warmth sucked out */
-        if not IS_NPC(victim):
+        if not state_checks.IS_NPC(victim):
             gain_condition(victim,COND_HUNGER,dam/20)
 
         # let's toast some gear */
@@ -156,7 +163,7 @@ def cold_effect( vo, level, dam, target):
         return
     if target == TARGET_OBJ: # toast an object */
         obj = vo
-        if IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or IS_OBJ_STAT(obj,ITEM_NOPURGE) or random.randint(0,4) == 0:
+        if state_checks.IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or state_checks.IS_OBJ_STAT(obj,ITEM_NOPURGE) or random.randint(0,4) == 0:
             return
         chance = level / 4 + dam / 10
         if chance > 25:
@@ -164,7 +171,7 @@ def cold_effect( vo, level, dam, target):
         if chance > 50:
             chance = (chance - 50) / 2 + 50
 
-        if IS_OBJ_STAT(obj,ITEM_BLESS):
+        if state_checks.IS_OBJ_STAT(obj,ITEM_BLESS):
             chance -= 5
 
         chance -= obj.level * 2
@@ -199,7 +206,7 @@ def fire_effect(vo, level, dam, target):
     if target == TARGET_CHAR:   # do the effect on a victim */
         victim = vo
         # chance of blindness */
-        if not IS_AFFECTED(victim,AFF_BLIND) and not saves_spell(level / 4 + dam / 20, victim,DAM_FIRE):
+        if not state_checks.IS_AFFECTED(victim,AFF_BLIND) and not saves_spell(level / 4 + dam / 20, victim,DAM_FIRE):
             act("$n is blinded by smoke!",victim,None,None,TO_ROOM)
             act("Your eyes tear up from smoke...you can't see a thing!", victim,None,None,TO_CHAR)
             af = AFFECT_DATA()
@@ -212,7 +219,7 @@ def fire_effect(vo, level, dam, target):
             af.bitvector    = AFF_BLIND
             victim.affect_add(af)
         # getting thirsty */
-        if not IS_NPC(victim):
+        if not state_checks.IS_NPC(victim):
             gain_condition(victim,COND_THIRST,dam/20)
 
         # let's toast some gear! */
@@ -223,7 +230,7 @@ def fire_effect(vo, level, dam, target):
     if target == TARGET_OBJ:  # toast an object */
         obj = vo
 
-        if IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or IS_OBJ_STAT(obj,ITEM_NOPURGE) or random.randint(0,4) == 0:
+        if state_checks.IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or state_checks.IS_OBJ_STAT(obj,ITEM_NOPURGE) or random.randint(0,4) == 0:
             return
  
         chance = level / 4 + dam / 10
@@ -233,7 +240,7 @@ def fire_effect(vo, level, dam, target):
         if chance > 50:
             chance = (chance - 50) / 2 + 50
 
-        if IS_OBJ_STAT(obj,ITEM_BLESS):
+        if state_checks.IS_OBJ_STAT(obj,ITEM_BLESS):
             chance -= 5
         chance -= obj.level * 2
 
@@ -312,7 +319,7 @@ def poison_effect( vo, level, dam, target):
         return
     if target == TARGET_OBJ:  # do some poisoning */
         obj = vo
-        if IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or IS_OBJ_STAT(obj,ITEM_BLESS) or random.randint(0,4) == 0:
+        if state_checks.IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or state_checks.IS_OBJ_STAT(obj,ITEM_BLESS) or random.randint(0,4) == 0:
             return
 
         chance = level / 4 + dam / 10
@@ -351,14 +358,14 @@ def shock_effect( vo, level, dam, target):
         # daze and confused? */
         if not saves_spell(level/4 + dam/20,victim,DAM_LIGHTNING):
             victim.send("Your muscles stop responding.\n\r")
-            DAZE_STATE(victim,max(12,level/4 + dam/20))
+            state_checks.DAZE_STATE(victim,max(12,level/4 + dam/20))
         # toast some gear */
         for obj in victim.carrying[:]:
             shock_effect(obj,level,dam,TARGET_OBJ)
         return
     if target == TARGET_OBJ:
         obj = vo
-        if IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or IS_OBJ_STAT(obj,ITEM_NOPURGE) or random.randint(0,4) == 0:
+        if state_checks.IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or state_checks.IS_OBJ_STAT(obj,ITEM_NOPURGE) or random.randint(0,4) == 0:
             return
 
         chance = level / 4 + dam / 10
@@ -368,7 +375,7 @@ def shock_effect( vo, level, dam, target):
         if chance > 50:
             chance = (chance - 50) /2 + 50
 
-        if IS_OBJ_STAT(obj,ITEM_BLESS):
+        if state_checks.IS_OBJ_STAT(obj,ITEM_BLESS):
             chance -= 5
 
         chance -= obj.level * 2

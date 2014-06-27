@@ -31,11 +31,15 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
+import random
+from game_utils import read_word
 
 from merc import *
 import const
+from state_checks import IS_NPC
 import update
 import magic
+
 
 # recursively adds a group given its number -- uses group_add */
 def gn_add( ch, gn):

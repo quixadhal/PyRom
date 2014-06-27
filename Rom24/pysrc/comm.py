@@ -34,17 +34,21 @@
 import random
 from collections import OrderedDict
 from types import MethodType
+from game_utils import mass_replace
+from handler_game import act, wiznet
 from merc import descriptor_list, greeting_list, POS_RESTING
 from db import boot_db
 from nanny import *
 from alias import *
+import handler_ch
+import state_checks
 
 def process_input():
     for d in descriptor_list:
         if d.active and d.cmd_ready and d.connected:
             d.connected()
             if d.is_connected(con_playing):
-                ch = CH(d)
+                ch = handler_ch.CH(d)
                 if ch:
                     ch.timer = 0
 
@@ -55,7 +59,7 @@ def is_connected(self, state):
     return self.connected == MethodType(state,self)
 
 def process_output(self):
-    ch = CH(self)
+    ch = handler_ch.CH(self)
     if ch and self.is_connected(con_playing) and self.send_buffer:
         #/* battle prompt */
         victim = ch.fighting
@@ -83,7 +87,7 @@ def process_output(self):
                 wound = "is in awful condition."
             else:
                 wound = "is bleeding to death."
-            wound = "%s %s \n" % (PERS(victim, ch), wound)
+            wound = "%s %s \n" % (state_checks.PERS(victim, ch), wound)
             wound = wound.capitalize()
             ch.send(wound)
 
@@ -124,7 +128,7 @@ def check_playing( d, name ):
 #Look for link-dead player to reconnect.
 def check_reconnect( d, name, fConn ):
     for ch in char_list:
-        if not IS_NPC(ch) and ( not fConn or not ch.desc) \
+        if not state_checks.IS_NPC(ch) and ( not fConn or not ch.desc) \
         and d.character.name == ch.name:
             if fConn == False:
                 d.character.pcdata.pwd = ch.pcdata.pwd
@@ -135,7 +139,7 @@ def check_reconnect( d, name, fConn ):
                 ch.desc = d
                 ch.timer = 0
                 ch.send("Reconnecting. Type replay to see missed tells.\n")
-                act( "$n has reconnected.", ch, NULL, NULL, TO_ROOM )
+                act( "$n has reconnected.", ch, None, None, TO_ROOM )
                 print ("%s@%s reconnected." % (ch.name, d.host))
                 wiznet("$N groks the fullness of $S link.",ch,None,WIZ_LINKS,0,0)
                 d.set_connected(con_playing)
@@ -156,7 +160,7 @@ def bust_a_prompt( ch ):
     if not str:
         ch.send("<%dhp %dm %dmv> %s" % (ch.hit,ch.mana,ch.move,ch.prefix))
         return
-    if IS_SET(ch.comm,COMM_AFK):
+    if state_checks.IS_SET(ch.comm,COMM_AFK):
         ch.send("<AFK> ")
         return
     replace = OrderedDict()
@@ -164,9 +168,9 @@ def bust_a_prompt( ch ):
     for door, pexit in enumerate(ch.in_room.exit):
         if pexit \
         and pexit.to_room \
-        and (ch.can_see_room(pexit.to_room) or (IS_AFFECTED(ch,AFF_INFRARED) \
-        and not IS_AFFECTED(ch,AFF_BLIND))) \
-        and not IS_SET(pexit.exit_info,EX_CLOSED):
+        and (ch.can_see_room(pexit.to_room) or (state_checks.IS_AFFECTED(ch,AFF_INFRARED) \
+        and not state_checks.IS_AFFECTED(ch,AFF_BLIND))) \
+        and not state_checks.IS_SET(pexit.exit_info,EX_CLOSED):
             found = True
             doors += dir_name[door]
         if not found:
@@ -181,29 +185,29 @@ def bust_a_prompt( ch ):
     replace['%v'] = "%d" % ch.move
     replace['%V'] = "%d" % ch.max_move
     replace['%x'] = "%d" % ch.exp
-    replace['%X'] = "%d" % (0 if IS_NPC(ch) else (ch.level + 1) * ch.exp_per_level(ch.pcdata.points) - ch.exp)
+    replace['%X'] = "%d" % (0 if state_checks.IS_NPC(ch) else (ch.level + 1) * ch.exp_per_level(ch.pcdata.points) - ch.exp)
     replace['%g'] = "%ld" % ch.gold
     replace['%s'] = "%ld" % ch.silver
     if ch.level > 9:
         replace['%a'] = "%d" % ch.alignment
     else:
-        replace['%a'] = "%s" % "good" if IS_GOOD(ch) else "evil" if IS_EVIL(ch) else "neutral"
+        replace['%a'] = "%s" % "good" if state_checks.IS_GOOD(ch) else "evil" if state_checks.IS_EVIL(ch) else "neutral"
     
     if ch.in_room:
-        if ( not IS_NPC(ch) and IS_SET(ch.act,PLR_HOLYLIGHT)) or \
-        (not IS_AFFECTED(ch,AFF_BLIND) and not ch.in_room.is_dark()):
+        if ( not state_checks.IS_NPC(ch) and state_checks.IS_SET(ch.act,PLR_HOLYLIGHT)) or \
+        (not state_checks.IS_AFFECTED(ch,AFF_BLIND) and not ch.in_room.is_dark()):
             replace['%r'] = ch.in_room.name 
         else: 
             replace['%r'] = "darkness"
     else:
         replace['%r'] = " "
      
-    if IS_IMMORTAL( ch ) and ch.in_room:
+    if state_checks.IS_IMMORTAL( ch ) and ch.in_room:
         replace['%R'] = "%d" % ch.in_room.vnum 
     else:
         replace['%R'] = " "
     
-    if IS_IMMORTAL( ch ) and ch.in_room:
+    if state_checks.IS_IMMORTAL( ch ) and ch.in_room:
         replace['%z'] = "%s" % ch.in_room.area.name
     else:
         replace['%z'] = " "

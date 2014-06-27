@@ -1,6 +1,8 @@
+
 import merc
 import interp
 import nanny
+import handler_ch
 
 # RT auction rewritten in ROM style */
 def do_auction(ch, argument):
@@ -22,7 +24,7 @@ def do_auction(ch, argument):
         ch.comm = merc.REMOVE_BIT(ch.comm, merc.COMM_NOAUCTION)
         ch.send("You auction '%s'\n" % argument )
         for d in merc.descriptor_list:
-            victim = merc.CH(D)
+            victim = handler_ch.CH(D)
             if d.is_connected(nanny.con_playing) and d.character != ch \
             and not merc.IS_SET(victim.comm, merc.COMM_NOAUCTION) \
             and not merc.IS_SET(victim.comm, merc.COMM_QUIET):

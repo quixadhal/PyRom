@@ -34,15 +34,19 @@
 import os
 import json
 from collections import OrderedDict
+import time
 from merc import *
 from settings import PLAYER_DIR
 from tables import clan_table
 from db import create_object
+import handler_olc
 import const
+import handler_ch
+import state_checks
 
 
 def save_char_obj(ch):
-    if IS_NPC(ch):
+    if state_checks.IS_NPC(ch):
         return
 
     if ch.desc and ch.desc.original:
@@ -73,8 +77,8 @@ def save_char_obj(ch):
 
 
 def load_char_obj(d, name):
-    ch = CHAR_DATA()
-    ch.pcdata = PC_DATA()
+    ch = handler_ch.CHAR_DATA()
+    ch.pcdata = handler_ch.PC_DATA()
     ch.name = name
     ch.act = 0
     found = False
@@ -137,7 +141,7 @@ def fwrite_char(ch):
     chdict["Wimp"] = ch.wimpy
     chdict["Attr"] = ch.perm_stat
     chdict["AMod"] = ch.mod_stat
-    if IS_NPC(ch):
+    if state_checks.IS_NPC(ch):
         chdict["Vnum"] = ch.pIndexData.vnum
     else:
         chdict["Pass"] = ch.pcdata.pwd
@@ -226,7 +230,7 @@ def fread_char(chdict, ch):
     ch.wimpy = chdict["Wimp"]
     ch.perm_stat = chdict["Attr"]
     ch.mod_stat = chdict["AMod"]
-    if IS_NPC(ch):
+    if state_checks.IS_NPC(ch):
         ch.pIndexData.vnum = chdict["Vnum"]
     else:
         ch.pcdata.pwd = chdict["Pass"]
@@ -279,7 +283,7 @@ def fread_obj(odict):
     obj.affected = odict['affected']
     extra_descr = []
     for k, v in odict['ExDe'].items():
-        newed = EXTRA_DESCR_DATA()
+        newed = handler_olc.EXTRA_DESCR_DATA()
         newed.keyword = k
         newed.description = v
         extra_descr.append(newed)

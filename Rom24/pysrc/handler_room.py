@@ -31,20 +31,88 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/ 
  ************/
 """
+import random
+
 import const
+from handler_game import weather_info, act
 from merc import *
+import state_checks
+import game_utils
 
-# True if room is dark.
-from merc import IS_SET, EX_CLOSED, IS_AFFECTED, AFF_PASS_DOOR, EX_NOPASS, IS_TRUSTED, L7, act, TO_CHAR, AFF_CHARM, \
-    IS_NPC, SECT_AIR, AFF_FLYING, IS_IMMORTAL, SECT_WATER_NOSWIM, ITEM_BOAT, movement_loss, SECT_MAX, AFF_HASTE, \
-    AFF_SLOW, WAIT_STATE, AFF_SNEAK, LEVEL_HERO, dir_name, TO_ROOM, POS_STANDING, ROOM_LAW, ACT_AGGRESSIVE, EX_ISDOOR
 
+class ROOM_INDEX_DATA:
+    def __init__(self):
+        self.people = []
+        self.contents = []
+        self.extra_descr = []
+        self.area = None
+        self.exit = [None, None, None, None, None, None]
+        self.old_exit = [None, None, None, None, None, None]
+        self.name = ""
+        self.description = ""
+        self.owner = ""
+        self.vnum = 0
+        self.room_flags = 0
+        self.light = 0
+        self.sector_type = 0
+        self.heal_rate = 0
+        self.mana_rate = 0
+        self.clan = 0
+
+    def __repr__(self):
+        return "<RoomIndex: %d" % self.vnum
+
+
+def random_room(ch):
+    room = None
+    while True:
+        room = random.choice(room_index_hash)
+        if ch.can_see_room(room) and not room.is_private() \
+            and not state_checks.IS_SET(room.room_flags, ROOM_PRIVATE) \
+            and not state_checks.IS_SET(room.room_flags, ROOM_SOLITARY) \
+            and not state_checks.IS_SET(room.room_flags, ROOM_SAFE) \
+            and (state_checks.IS_NPC(ch) or state_checks.IS_SET(ch.act, ACT_AGGRESSIVE)
+                 or not state_checks.IS_SET(room.room_flags, ROOM_LAW)):
+            break
+    return room
+
+def random_door(self=None):
+    return random.randint(0, 5)
+
+def find_door(ch, arg):
+    if arg == "n" or arg == "north":
+        door = 0
+    elif arg == "e" or arg == "east":
+        door = 1
+    elif arg == "s" or arg == "south":
+        door = 2
+    elif arg == "w" or arg == "west":
+        door = 3
+    elif arg == "u" or arg == "up":
+        door = 4
+    elif arg == "d" or arg == "down":
+        door = 5
+    else:
+        for door in range(0,5):
+            pexit = ch.in_room.exit[door]
+            if pexit and state_checks.IS_SET(pexit.exit_info, EX_ISDOOR) and pexit.keyword and arg in pexit.keyword:
+                return door
+        act("I see no $T here.", ch, None, arg, TO_CHAR)
+        return -1
+    pexit = ch.in_room.exit[door]
+    if not pexit:
+        act("I see no door $T here.", ch, None, arg, TO_CHAR)
+        return -1
+    if not state_checks.IS_SET(pexit.exit_info, EX_ISDOOR):
+        ch.send("You can't do that.\n")
+        return -1
+    return door
 
 class handler_room:
     def is_dark(pRoomIndex):
         if pRoomIndex.light > 0:
             return False
-        if IS_SET(pRoomIndex.room_flags, ROOM_DARK):
+        if state_checks.IS_SET(pRoomIndex.room_flags, ROOM_DARK):
             return True
         if pRoomIndex.sector_type == SECT_INSIDE or pRoomIndex.sector_type == SECT_CITY:
             return False
@@ -57,11 +125,11 @@ class handler_room:
         if pRoomIndex.owner:
             return True
         count = len(pRoomIndex.people)
-        if IS_SET(pRoomIndex.room_flags, ROOM_PRIVATE) and count >= 2:
+        if state_checks.IS_SET(pRoomIndex.room_flags, ROOM_PRIVATE) and count >= 2:
             return True
-        if IS_SET(pRoomIndex.room_flags, ROOM_SOLITARY) and count >= 1:
+        if state_checks.IS_SET(pRoomIndex.room_flags, ROOM_SOLITARY) and count >= 1:
             return True
-        if IS_SET(pRoomIndex.room_flags, ROOM_IMP_ONLY):
+        if state_checks.IS_SET(pRoomIndex.room_flags, ROOM_IMP_ONLY):
             return True
         return False
 
