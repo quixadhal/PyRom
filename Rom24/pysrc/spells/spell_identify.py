@@ -1,4 +1,4 @@
-from const import SLOT, skill_type, liq_table
+from const import SLOT, register_spell, skill_type, liq_table
 from handler import extra_bit_name, cont_bit_name, weapon_bit_name, affect_loc_name, affect_bit_name, imm_bit_name
 from merc import ITEM_SCROLL, ITEM_POTION, ITEM_PILL, MAX_SKILL, ITEM_WAND, ITEM_STAFF, ITEM_DRINK_CON, ITEM_CONTAINER, \
     ITEM_WEAPON, WEAPON_EXOTIC, WEAPON_SWORD, WEAPON_DAGGER, WEAPON_SPEAR, WEAPON_MACE, WEAPON_AXE, WEAPON_FLAIL, \
@@ -32,7 +32,7 @@ def spell_identify(sn, level, ch, victim, target):
         send_to_char(buf, ch)
     elif obj.item_type == ITEM_CONTAINER:
         ch.send("Capacity: %d#  Maximum weight: %d#  flags: %s\n" % (
-        obj.value[0], obj.value[3], cont_bit_name(obj.value[1])))
+            obj.value[0], obj.value[3], cont_bit_name(obj.value[1])))
         if obj.value[4] != 100:
             ch.send("Weight multiplier: %d%%\n" % obj.value[4])
     elif obj.item_type == ITEM_WEAPON:
@@ -55,10 +55,10 @@ def spell_identify(sn, level, ch, victim, target):
 
         if obj.pIndexData.new_format:
             ch.send("Damage is %dd%d (average %d).\n" % (
-            obj.value[1], obj.value[2], (1 + obj.value[2]) * obj.value[1] // 2))
+                obj.value[1], obj.value[2], (1 + obj.value[2]) * obj.value[1] // 2))
         else:
             ch.send("Damage is %d to %d (average %d).\n" % (
-            obj.value[1], obj.value[2], ( obj.value[1] + obj.value[2] ) // 2 ))
+                obj.value[1], obj.value[2], ( obj.value[1] + obj.value[2] ) // 2 ))
 
         if obj.value[4]:  # weapon flags */
             ch.send("Weapons flags: %s\n" % weapon_bit_name(obj.value[4]))
@@ -89,8 +89,8 @@ def spell_identify(sn, level, ch, victim, target):
                     ch.send("Unknown bit %d: %d\n" % (paf.where, paf.bitvector))
 
 
-skill_type("identify",
-           { 'mage':15, 'cleric':16, 'thief':18, 'warrior':53 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_identify, TAR_OBJ_INV, POS_STANDING, None,
-           SLOT(53), 12, 24, "", "!Identify!", "")
+register_spell(skill_type("identify",
+                          {'mage': 15, 'cleric': 16, 'thief': 18, 'warrior': 53},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_identify, TAR_OBJ_INV, POS_STANDING, None,
+                          SLOT(53), 12, 24, "", "!Identify!", ""))

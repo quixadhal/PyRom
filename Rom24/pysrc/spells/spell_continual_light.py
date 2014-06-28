@@ -1,4 +1,4 @@
-from const import skill_type, SLOT
+from const import register_spell, skill_type, SLOT
 from db import create_object
 from merc import IS_OBJ_STAT, ITEM_GLOW, act, TO_CHAR, SET_BIT, TO_ALL, obj_index_hash, OBJ_VNUM_LIGHT_BALL, TO_ROOM, \
     TAR_IGNORE, POS_STANDING
@@ -26,8 +26,8 @@ def spell_continual_light(sn, level, ch, victim, target):
     act("You twiddle your thumbs and $p appears.", ch, light, None, TO_CHAR)
 
 
-skill_type("continual light",
-           {'mage': 6, 'cleric': 4, 'thief': 6, 'warrior': 9},
-           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-           spell_continual_light, TAR_IGNORE, POS_STANDING, None,
-           SLOT(57), 7, 12, "", "!Continual Light!", "")
+register_spell(skill_type("continual light",
+                          {'mage': 6, 'cleric': 4, 'thief': 6, 'warrior': 9},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_continual_light, TAR_IGNORE, POS_STANDING, None,
+                          SLOT(57), 7, 12, "", "!Continual Light!", ""))

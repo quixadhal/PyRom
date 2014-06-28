@@ -1,6 +1,6 @@
 import random
 
-from const import skill_type, SLOT, skill_table
+from const import register_spell, skill_type, SLOT, skill_table
 from fight import damage
 from merc import saves_spell, DAM_LIGHT, TARGET_CHAR, POS_FIGHTING, TAR_CHAR_OFFENSIVE
 
@@ -24,8 +24,8 @@ def spell_colour_spray(sn, level, ch, victim, target):
     damage(ch, victim, dam, sn, DAM_LIGHT, True)
 
 
-skill_type('colour spray',
-           {'mage': 16, 'cleric': 53, 'thief': 22, 'warrior': 20},
-           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-           spell_colour_spray, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
-           None, SLOT(10), 15, 12, "colour spray", "!Colour Spray!", "")
+register_spell(skill_type('colour spray',
+                          {'mage': 16, 'cleric': 53, 'thief': 22, 'warrior': 20},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_colour_spray, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
+                          None, SLOT(10), 15, 12, "colour spray", "!Colour Spray!", ""))

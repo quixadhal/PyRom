@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from merc import IS_AFFECTED, AFF_DETECT_HIDDEN, act, TO_CHAR, AFFECT_DATA, TO_AFFECTS, APPLY_NONE, TAR_CHAR_SELF, \
     POS_STANDING
 
@@ -23,8 +23,9 @@ def spell_detect_hidden(sn, level, ch, victim, target):
     if ch != victim:
         ch.send("Ok.\n")
 
-skill_type("detect hidden",
-           { 'mage':15, 'cleric':11, 'thief':12, 'warrior':53 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_detect_hidden, TAR_CHAR_SELF, POS_STANDING, None,
-           SLOT(44), 5, 12, "", "You feel less aware of your surroundings.", "")
+
+register_spell(skill_type("detect hidden",
+                          {'mage': 15, 'cleric': 11, 'thief': 12, 'warrior': 53},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_detect_hidden, TAR_CHAR_SELF, POS_STANDING, None,
+                          SLOT(44), 5, 12, "", "You feel less aware of your surroundings.", ""))

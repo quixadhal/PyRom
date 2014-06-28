@@ -1,8 +1,8 @@
 import random
-from const import SLOT, skill_type
+
+from const import SLOT, skill_type, register_spell
 from effects import fire_effect
 from fight import damage, is_safe_spell
-
 from merc import act, TO_NOTVICT, TO_VICT, TO_CHAR, dice, TARGET_ROOM, IS_NPC, saves_spell, DAM_FIRE, TARGET_CHAR, \
     POS_FIGHTING, TAR_CHAR_OFFENSIVE
 
@@ -38,8 +38,9 @@ def spell_fire_breath(sn, level, ch, victim, target):
                 fire_effect(vch, level // 2, dam // 4, TARGET_CHAR)
                 damage(ch, vch, dam // 2, sn, DAM_FIRE, True)
 
-skill_type("fire breath",
-           { 'mage':40, 'cleric':45, 'thief':50, 'warrior':51 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_fire_breath, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
-           None, SLOT(201), 200, 24, "blast of flame", "The smoke leaves your eyes.", "")
+
+register_spell(skill_type("fire breath",
+                          {'mage': 40, 'cleric': 45, 'thief': 50, 'warrior': 51},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_fire_breath, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
+                          None, SLOT(201), 200, 24, "blast of flame", "The smoke leaves your eyes.", ""))

@@ -1,6 +1,6 @@
 import random
 
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from fight import damage
 from merc import saves_spell, DAM_COLD, act, TO_ROOM, TO_AFFECTS, APPLY_STR, \
     POS_FIGHTING, TAR_CHAR_OFFENSIVE, AFFECT_DATA
@@ -33,8 +33,8 @@ def spell_chill_touch(sn, level, ch, victim, target):
     damage(ch, victim, dam, sn, DAM_COLD, True)
 
 
-skill_type("chill touch",
-           {'mage': 4, 'cleric': 53, 'thief': 6, 'warrior': 6},
-           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-           spell_chill_touch, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
-           None, SLOT(8), 15, 12, "chilling touch", "You feel less cold.", "")
+register_spell(skill_type("chill touch",
+                          {'mage': 4, 'cleric': 53, 'thief': 6, 'warrior': 6},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_chill_touch, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
+                          None, SLOT(8), 15, 12, "chilling touch", "You feel less cold.", ""))

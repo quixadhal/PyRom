@@ -1,4 +1,4 @@
-from const import skill_type, SLOT
+from const import register_spell, skill_type, SLOT
 from fight import damage, is_safe_spell
 from merc import act, TO_ROOM, TO_CHAR, TO_VICT, dice, saves_spell, DAM_LIGHTNING, POS_FIGHTING, TAR_CHAR_OFFENSIVE
 
@@ -52,8 +52,8 @@ def spell_chain_lightning(sn, level, ch, victim, target):
                 return
 
 
-skill_type("chain lightning",
-           {'mage': 33, 'cleric': 53, 'thief': 39, 'warrior': 36},
-           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-           spell_chain_lightning, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
-           None, SLOT(500), 25, 12, "lightning", "!Chain Lightning!", "")
+register_spell(skill_type("chain lightning",
+                          {'mage': 33, 'cleric': 53, 'thief': 39, 'warrior': 36},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_chain_lightning, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
+                          None, SLOT(500), 25, 12, "lightning", "!Chain Lightning!", ""))

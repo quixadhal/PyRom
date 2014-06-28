@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from fight import damage, is_safe_spell
 from merc import act, TO_ROOM, char_list, IS_AFFECTED, AFF_FLYING, DAM_BASH, dice, POS_FIGHTING, TAR_IGNORE
 
@@ -21,8 +21,9 @@ def spell_earthquake(sn, level, ch, victim, target):
         if vch.in_room.area == ch.in_room.area:
             vch.send("The earth trembles and shivers.\n")
 
-skill_type("earthquake",
-           { 'mage':53, 'cleric':10, 'thief':53, 'warrior':14 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_earthquake, TAR_IGNORE, POS_FIGHTING,
-           None, SLOT(23), 15, 12, "earthquake", "!Earthquake!", "")
+
+register_spell(skill_type("earthquake",
+                          {'mage': 53, 'cleric': 10, 'thief': 53, 'warrior': 14},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_earthquake, TAR_IGNORE, POS_FIGHTING,
+                          None, SLOT(23), 15, 12, "earthquake", "!Earthquake!", ""))

@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from merc import POS_STANDING, TAR_CHAR_DEFENSIVE
 
 
@@ -12,8 +12,9 @@ def spell_refresh(sn, level, ch, victim, target):
         ch.send("Ok.\n")
     return
 
-skill_type("refresh",
-           { 'mage':8, 'cleric':5, 'thief':12, 'warrior':9 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_refresh, TAR_CHAR_DEFENSIVE, POS_STANDING,
-           None, SLOT(81), 12, 18, "refresh", "!Refresh!", "")
+
+register_spell(skill_type("refresh",
+                          {'mage': 8, 'cleric': 5, 'thief': 12, 'warrior': 9},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_refresh, TAR_CHAR_DEFENSIVE, POS_STANDING,
+                          None, SLOT(81), 12, 18, "refresh", "!Refresh!", ""))

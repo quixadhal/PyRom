@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from merc import act, TO_ROOM, saves_spell, DAM_OTHER, REMOVE_BIT, AFF_HIDE, AFF_INVISIBLE, AFF_SNEAK, POS_STANDING, \
     TAR_IGNORE
 
@@ -23,8 +23,9 @@ def spell_faerie_fog(sn, level, ch, victim, target):
         act("$n is revealed! ", ich, None, None, TO_ROOM)
         ich.send("You are revealed! \n")
 
-skill_type("faerie fog",
-           { 'mage':14, 'cleric':21, 'thief':16, 'warrior':24 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_faerie_fog, TAR_IGNORE, POS_STANDING, None,
-           SLOT(73), 12, 12, "faerie fog", "!Faerie Fog!", "")
+
+register_spell(skill_type("faerie fog",
+                          {'mage': 14, 'cleric': 21, 'thief': 16, 'warrior': 24},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_faerie_fog, TAR_IGNORE, POS_STANDING, None,
+                          SLOT(73), 12, 12, "faerie fog", "!Faerie Fog!", ""))

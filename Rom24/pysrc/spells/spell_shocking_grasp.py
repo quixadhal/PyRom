@@ -1,7 +1,7 @@
 import random
-from const import SLOT, skill_type
-from fight import damage
 
+from const import SLOT, skill_type, register_spell
+from fight import damage
 from merc import saves_spell, DAM_LIGHTNING, POS_FIGHTING, TAR_CHAR_OFFENSIVE
 
 
@@ -20,8 +20,9 @@ def spell_shocking_grasp(sn, level, ch, victim, target):
         dam = dam // 2
     damage(ch, victim, dam, sn, DAM_LIGHTNING, True)
 
-skill_type("shocking grasp",
-           { 'mage':10, 'cleric':53, 'thief':14, 'warrior':13 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_shocking_grasp, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
-           None, SLOT(53), 15, 12, "shocking grasp", "!Shocking Grasp!", "")
+
+register_spell(skill_type("shocking grasp",
+                          {'mage': 10, 'cleric': 53, 'thief': 14, 'warrior': 13},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_shocking_grasp, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
+                          None, SLOT(53), 15, 12, "shocking grasp", "!Shocking Grasp!", ""))

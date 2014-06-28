@@ -1,8 +1,8 @@
 import random
-from const import SLOT, skill_type
+
+from const import SLOT, skill_type, register_spell
 from effects import cold_effect
 from fight import damage, is_safe_spell
-
 from merc import act, TO_NOTVICT, TO_VICT, TO_CHAR, dice, TARGET_ROOM, IS_NPC, saves_spell, DAM_COLD, TARGET_CHAR, \
     POS_FIGHTING, TAR_CHAR_OFFENSIVE
 
@@ -38,8 +38,9 @@ def spell_frost_breath(sn, level, ch, victim, target):
                 cold_effect(vch, level // 2, dam // 4, TARGET_CHAR)
                 damage(ch, vch, dam // 2, sn, DAM_COLD, True)
 
-skill_type("frost breath",
-           { 'mage':34, 'cleric':36, 'thief':38, 'warrior':40 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_frost_breath, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
-           None, SLOT(202), 125, 24, "blast of frost", "!Frost Breath!", "")
+
+register_spell(skill_type("frost breath",
+                          {'mage': 34, 'cleric': 36, 'thief': 38, 'warrior': 40},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_frost_breath, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
+                          None, SLOT(202), 125, 24, "blast of frost", "!Frost Breath!", ""))

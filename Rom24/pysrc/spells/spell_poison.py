@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from merc import TARGET_OBJ, ITEM_FOOD, ITEM_DRINK_CON, IS_OBJ_STAT, ITEM_BLESS, ITEM_BURN_PROOF, act, TO_CHAR, TO_ALL, \
     ITEM_WEAPON, IS_WEAPON_STAT, WEAPON_FLAMING, WEAPON_FROST, WEAPON_VAMPIRIC, WEAPON_SHARP, WEAPON_VORPAL, \
     WEAPON_SHOCKING, WEAPON_POISON, AFFECT_DATA, TO_WEAPON, saves_spell, DAM_POISON, TO_ROOM, TO_AFFECTS, APPLY_STR, \
@@ -61,9 +61,10 @@ def spell_poison(sn, level, ch, victim, target):
     victim.send("You feel very sick.\n")
     act("$n looks very ill.", victim, None, None, TO_ROOM)
 
-skill_type("poison",
-           { 'mage':17, 'cleric':12, 'thief':15, 'warrior':21 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_poison, TAR_OBJ_CHAR_OFF, POS_FIGHTING, None,
-           SLOT(33), 10, 12, "poison", "You feel less sick.",
-           "The poison on $p dries up.")
+
+register_spell(skill_type("poison",
+                          {'mage': 17, 'cleric': 12, 'thief': 15, 'warrior': 21},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_poison, TAR_OBJ_CHAR_OFF, POS_FIGHTING, None,
+                          SLOT(33), 10, 12, "poison", "You feel less sick.",
+                          "The poison on $p dries up."))

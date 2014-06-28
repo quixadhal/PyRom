@@ -1,5 +1,5 @@
 from merc import is_affected, act, TO_CHAR, AFFECT_DATA, TO_AFFECTS, APPLY_AC, TAR_CHAR_DEFENSIVE, POS_STANDING
-from const import skill_type, SLOT
+from const import register_spell, skill_type, SLOT
 
 
 def spell_armor(sn, level, ch, victim, target):
@@ -23,8 +23,8 @@ def spell_armor(sn, level, ch, victim, target):
         act("$N is protected by your magic.", ch, None, victim, TO_CHAR)
 
 
-skill_type("armor",
-           {'mage': 7, 'cleric': 2, 'thief': 10, 'warrior': 5},
-           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-           spell_armor, TAR_CHAR_DEFENSIVE, POS_STANDING,
-           None, SLOT(1), 5, 12, "", "You feel less armored.", "")
+register_spell(skill_type("armor",
+                          {'mage': 7, 'cleric': 2, 'thief': 10, 'warrior': 5},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_armor, TAR_CHAR_DEFENSIVE, POS_STANDING,
+                          None, SLOT(1), 5, 12, "", "You feel less armored.", ""))

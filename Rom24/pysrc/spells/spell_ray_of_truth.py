@@ -1,8 +1,7 @@
-from const import SLOT, skill_type, skill_table
+from const import SLOT, register_spell, skill_type
 from fight import damage
 from merc import IS_EVIL, act, TO_ROOM, IS_GOOD, dice, saves_spell, DAM_HOLY, TARGET_CHAR, TAR_CHAR_OFFENSIVE, \
     POS_FIGHTING
-from spells.spell_blindness import spell_blindness
 
 
 def spell_ray_of_truth(sn, level, ch, victim, target):
@@ -33,8 +32,9 @@ def spell_ray_of_truth(sn, level, ch, victim, target):
     damage(ch, victim, dam, sn, DAM_HOLY, True)
     skill_table['blindness'].spell_fun('blindness', 3 * level // 4, ch, victim, TARGET_CHAR)
 
-skill_type("ray of truth",
-           { 'mage':53, 'cleric':35, 'thief':53, 'warrior':47 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_ray_of_truth, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
-           None, SLOT(518), 20, 12, "ray of truth", "!Ray of Truth!", "")
+
+register_spell(skill_type("ray of truth",
+                          {'mage': 53, 'cleric': 35, 'thief': 53, 'warrior': 47},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_ray_of_truth, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
+                          None, SLOT(518), 20, 12, "ray of truth", "!Ray of Truth!", ""))

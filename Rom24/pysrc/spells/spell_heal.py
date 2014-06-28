@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from fight import update_pos
 from merc import POS_FIGHTING, TAR_CHAR_DEFENSIVE
 
@@ -11,8 +11,9 @@ def spell_heal(sn, level, ch, victim, target):
         ch.send("Ok.\n")
     return
 
-skill_type("heal",
-           { 'mage':53, 'cleric':21, 'thief':33, 'warrior':30 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_heal, TAR_CHAR_DEFENSIVE, POS_FIGHTING, None,
-           SLOT(28), 50, 12, "", "!Heal!", "")
+
+register_spell(skill_type("heal",
+                          {'mage': 53, 'cleric': 21, 'thief': 33, 'warrior': 30},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_heal, TAR_CHAR_DEFENSIVE, POS_FIGHTING, None,
+                          SLOT(28), 50, 12, "", "!Heal!", ""))

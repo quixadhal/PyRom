@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from merc import ITEM_DRINK_CON, weather_info, SKY_RAINING, act, TO_CHAR, POS_STANDING, TAR_OBJ_INV
 
 
@@ -23,8 +23,8 @@ def spell_create_water(sn, level, ch, victim, target):
         act("$p is filled.", ch, obj, None, TO_CHAR)
 
 
-skill_type("create water",
-           {'mage': 8, 'cleric': 3, 'thief': 12, 'warrior': 11},
-           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-           spell_create_water, TAR_OBJ_INV, POS_STANDING, None,
-           SLOT(13), 5, 12, "", "!Create Water!", "")
+register_spell(skill_type("create water",
+                          {'mage': 8, 'cleric': 3, 'thief': 12, 'warrior': 11},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_create_water, TAR_OBJ_INV, POS_STANDING, None,
+                          SLOT(13), 5, 12, "", "!Create Water!", ""))

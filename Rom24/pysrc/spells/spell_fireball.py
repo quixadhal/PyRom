@@ -1,7 +1,7 @@
 import random
-from const import SLOT, skill_type
-from fight import damage
 
+from const import SLOT, skill_type, register_spell
+from fight import damage
 from merc import saves_spell, DAM_FIRE, POS_FIGHTING, TAR_CHAR_OFFENSIVE
 
 
@@ -20,8 +20,9 @@ def spell_fireball(sn, level, ch, victim, target):
         dam = dam // 2
     damage(ch, victim, dam, sn, DAM_FIRE, True)
 
-skill_type("fireball",
-           { 'mage':22, 'cleric':53, 'thief':30, 'warrior':26 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_fireball, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None,
-           SLOT(26), 15, 12, "fireball", "!Fireball!", "")
+
+register_spell(skill_type("fireball",
+                          {'mage': 22, 'cleric': 53, 'thief': 30, 'warrior': 26},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_fireball, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None,
+                          SLOT(26), 15, 12, "fireball", "!Fireball!", ""))

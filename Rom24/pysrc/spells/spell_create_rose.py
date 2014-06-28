@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from db import create_object
 from merc import obj_index_hash, OBJ_VNUM_ROSE, act, TO_ROOM, POS_STANDING, TAR_IGNORE
 
@@ -10,8 +10,8 @@ def spell_create_rose(sn, level, ch, victim, target):
     rose.to_char(ch)
 
 
-skill_type("create rose",
-           {'mage': 16, 'cleric': 11, 'thief': 10, 'warrior': 24},
-           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-           spell_create_rose, TAR_IGNORE, POS_STANDING, None,
-           SLOT(511), 30, 12, "", "!Create Rose!", "")
+register_spell(skill_type("create rose",
+                          {'mage': 16, 'cleric': 11, 'thief': 10, 'warrior': 24},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_create_rose, TAR_IGNORE, POS_STANDING, None,
+                          SLOT(511), 30, 12, "", "!Create Rose!", ""))

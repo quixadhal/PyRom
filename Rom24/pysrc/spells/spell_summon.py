@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from merc import target_name, IS_SET, ROOM_SAFE, ROOM_PRIVATE, ROOM_SOLITARY, ROOM_NO_RECALL, IS_NPC, ACT_AGGRESSIVE, \
     LEVEL_IMMORTAL, IMM_SUMMON, PLR_NOSUMMON, saves_spell, DAM_OTHER, act, TO_ROOM, TO_VICT, POS_STANDING, TAR_IGNORE
 
@@ -31,8 +31,9 @@ def spell_summon(sn, level, ch, victim, target):
     act("$n has summoned you! ", ch, None, victim, TO_VICT)
     victim.do_look("auto")
 
-skill_type("summon",
-           { 'mage':24, 'cleric':12, 'thief':29, 'warrior':22 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_summon, TAR_IGNORE, POS_STANDING, None,
-           SLOT(40), 50, 12, "", "!Summon!", "")
+
+register_spell(skill_type("summon",
+                          {'mage': 24, 'cleric': 12, 'thief': 29, 'warrior': 22},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_summon, TAR_IGNORE, POS_STANDING, None,
+                          SLOT(40), 50, 12, "", "!Summon!", ""))

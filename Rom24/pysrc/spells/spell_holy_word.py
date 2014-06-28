@@ -1,6 +1,7 @@
-from const import SLOT, skill_type, skill_table
+from const import SLOT, register_spell, skill_type
 from fight import damage, is_safe_spell
 from merc import act, TO_ROOM, IS_GOOD, IS_EVIL, IS_NEUTRAL, TARGET_CHAR, dice, DAM_ENERGY, POS_FIGHTING, TAR_IGNORE
+
 
 def spell_holy_word(sn, level, ch, victim, target):
     # RT really nasty high-level attack spell */
@@ -28,8 +29,9 @@ def spell_holy_word(sn, level, ch, victim, target):
     ch.move = 0
     ch.hit = hit // 2
 
-skill_type("holy word",
-           { 'mage':53, 'cleric':36, 'thief':53, 'warrior':42 },
-           { 'mage':2, 'cleric':2, 'thief':4, 'warrior':4 },
-           spell_holy_word, TAR_IGNORE, POS_FIGHTING, None,
-           SLOT(506), 200, 24, "divine wrath", "!Holy Word!", "")
+
+register_spell(skill_type("holy word",
+                          {'mage': 53, 'cleric': 36, 'thief': 53, 'warrior': 42},
+                          {'mage': 2, 'cleric': 2, 'thief': 4, 'warrior': 4},
+                          spell_holy_word, TAR_IGNORE, POS_FIGHTING, None,
+                          SLOT(506), 200, 24, "divine wrath", "!Holy Word!", ""))

@@ -1,7 +1,7 @@
 import random
-from const import SLOT, skill_type
-from fight import damage
 
+from const import SLOT, skill_type, register_spell
+from fight import damage
 from merc import saves_spell, DAM_PIERCE, TAR_CHAR_OFFENSIVE, POS_FIGHTING
 
 
@@ -12,8 +12,9 @@ def spell_general_purpose(sn, level, ch, victim, target):
     damage(ch, victim, dam, sn, DAM_PIERCE, True)
     return
 
-skill_type("general purpose",
-           { 'mage':53, 'cleric':53, 'thief':53, 'warrior':53 },
-           { 'mage':0, 'cleric':0, 'thief':0, 'warrior':0 },
-           spell_general_purpose, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
-           None, SLOT(401), 0, 12, "general purpose ammo", "!General Purpose Ammo!", "")
+
+register_spell(skill_type("general purpose",
+                          {'mage': 53, 'cleric': 53, 'thief': 53, 'warrior': 53},
+                          {'mage': 0, 'cleric': 0, 'thief': 0, 'warrior': 0},
+                          spell_general_purpose, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
+                          None, SLOT(401), 0, 12, "general purpose ammo", "!General Purpose Ammo!", ""))

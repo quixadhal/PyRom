@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from db import create_object
 from merc import target_name, IS_SET, ROOM_SAFE, ROOM_PRIVATE, ROOM_SOLITARY, ROOM_NO_RECALL, IS_NPC, LEVEL_HERO, \
     IMM_SUMMON, saves_spell, DAM_NONE, WEAR_HOLD, IS_IMMORTAL, ITEM_WARP_STONE, act, TO_CHAR, obj_index_hash, \
@@ -44,8 +44,9 @@ def spell_portal(sn, level, ch, victim, target):
     act("$p rises up from the ground.", ch, portal, None, TO_ROOM)
     act("$p rises up before you.", ch, portal, None, TO_CHAR)
 
-skill_type("portal",
-           { 'mage':35, 'cleric':30, 'thief':45, 'warrior':40 },
-           { 'mage':2, 'cleric':2, 'thief':4, 'warrior':4 },
-           spell_portal, TAR_IGNORE, POS_STANDING, None, SLOT(519),
-           100, 24, "", "!Portal!", "")
+
+register_spell(skill_type("portal",
+                          {'mage': 35, 'cleric': 30, 'thief': 45, 'warrior': 40},
+                          {'mage': 2, 'cleric': 2, 'thief': 4, 'warrior': 4},
+                          spell_portal, TAR_IGNORE, POS_STANDING, None, SLOT(519),
+                          100, 24, "", "!Portal!", ""))

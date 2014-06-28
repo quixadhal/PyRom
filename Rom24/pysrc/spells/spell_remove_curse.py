@@ -1,4 +1,4 @@
-from const import SLOT, skill_type, skill_table
+from const import SLOT, register_spell, skill_type
 from merc import TARGET_OBJ, IS_OBJ_STAT, ITEM_NODROP, ITEM_NOREMOVE, ITEM_NOUNCURSE, saves_dispel, REMOVE_BIT, act, \
     TO_ALL, TO_CHAR, check_dispel, TO_ROOM, POS_STANDING, TAR_OBJ_CHAR_DEF
 
@@ -36,8 +36,9 @@ def spell_remove_curse(sn, level, ch, victim, target):
                 act("$n's $p glows blue.", victim, obj, None, TO_ROOM)
                 break
 
-skill_type("remove curse",
-           { 'mage':53, 'cleric':18, 'thief':53, 'warrior':22 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_remove_curse, TAR_OBJ_CHAR_DEF, POS_STANDING,
-           None, SLOT(35), 5, 12, "", "!Remove Curse!", "")
+
+register_spell(skill_type("remove curse",
+                          {'mage': 53, 'cleric': 18, 'thief': 53, 'warrior': 22},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_remove_curse, TAR_OBJ_CHAR_DEF, POS_STANDING,
+                          None, SLOT(35), 5, 12, "", "!Remove Curse!", ""))

@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 import const
 from merc import is_affected, act, TO_CHAR, check_dispel, TO_ROOM, POS_FIGHTING, TAR_CHAR_DEFENSIVE
 
@@ -18,8 +18,8 @@ def spell_cure_blindness(sn, level, ch, victim, target):
         ch.send("Spell failed.\n")
 
 
-skill_type("cure blindness",
-           {'mage': 53, 'cleric': 6, 'thief': 53, 'warrior': 8},
-           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-           spell_cure_blindness, TAR_CHAR_DEFENSIVE, POS_FIGHTING,
-           None, SLOT(14), 5, 12, "", "!Cure Blindness!", "")
+register_spell(skill_type("cure blindness",
+                          {'mage': 53, 'cleric': 6, 'thief': 53, 'warrior': 8},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_cure_blindness, TAR_CHAR_DEFENSIVE, POS_FIGHTING,
+                          None, SLOT(14), 5, 12, "", "!Cure Blindness!", ""))

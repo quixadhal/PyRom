@@ -4,7 +4,7 @@ from merc import (IS_SET, IMM_MAGIC, ACT_UNDEAD, IS_AFFECTED,
                   AFF_CALM, AFF_BERSERK, is_affected, POS_FIGHTING, TO_AFFECTS,
                   APPLY_HITROLL, IS_NPC, APPLY_DAMROLL, TAR_IGNORE, IS_IMMORTAL)
 from fight import stop_fighting
-from const import skill_type, skill_table, SLOT
+from const import register_spell, skill_type, skill_table, SLOT
 
 
 
@@ -60,8 +60,8 @@ def spell_calm(sn, level, ch, victim, target):
             vch.affect_add(af)
 
 
-skill_type("calm",
-           {'mage': 48, 'cleric': 16, 'thief': 50, 'warrior': 20},
-           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-           spell_calm, TAR_IGNORE, POS_FIGHTING, None, SLOT(509),
-           30, 12, "", "You have lost your peace of mind.", "")
+register_spell(skill_type("calm",
+                          {'mage': 48, 'cleric': 16, 'thief': 50, 'warrior': 20},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_calm, TAR_IGNORE, POS_FIGHTING, None, SLOT(509),
+                          30, 12, "", "You have lost your peace of mind.", ""))

@@ -33,9 +33,11 @@
 """
 import os
 from collections import OrderedDict
+import logging
+
+logger = logging.getLogger()
+
 from merc import *
-from magic import *
-import hotfix
 
 
 class race_type:
@@ -117,7 +119,7 @@ class skill_type:
         self.noun_damage = noun_damage
         self.msg_off = msg_off
         self.msg_obj = msg_obj
-        skill_table[name] = self
+
 skill_table =  OrderedDict()
 spell_null = None
 skill_table["reserved"] = skill_type("reserved", { 'mage':99, 'cleric':99, 'thief':99, 'warrior':99 }, { 'mage':99, 'cleric':99, 'thief':99, 'warrior':99 }, spell_null, TAR_IGNORE, POS_STANDING, None, SLOT( 0), 0, 0, "", "", "")
@@ -159,6 +161,10 @@ skill_table["staves"] = skill_type("staves", { 'mage':1, 'cleric':1, 'thief':1, 
 skill_table["wands"] = skill_type("wands", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':2, 'cleric':3, 'thief':5, 'warrior':8 }, spell_null, TAR_IGNORE, POS_STANDING, None, SLOT( 0), 0, 12, "", "!Wands!", "")
 skill_table["recall"] = skill_type("recall", { 'mage':1, 'cleric':1, 'thief':1, 'warrior':1 }, { 'mage':2, 'cleric':2, 'thief':2, 'warrior':2 }, spell_null, TAR_IGNORE, POS_STANDING, None, SLOT( 0), 0, 12, "", "!Recall!", "")
 
+def register_spell(entry: skill_type):
+    skill_table[entry.name] = entry
+    logger.debug('    %s registered in skill table.', entry.name)
+
 class group_type:
     def __init__(self, name, rating, spells):
         self.name=name;
@@ -193,7 +199,7 @@ group_table["maladictions"] = group_type("maladictions", { 'mage':5, 'cleric':5,
 group_table["protective"] = group_type("protective", { 'mage':4, 'cleric':4, 'thief':7, 'warrior':8 }, ["armor", "cancellation", "dispel magic", "fireproof", "protection evil", "protection good", "sanctuary", "shield", "stone skin"])
 group_table["transportation"] = group_type("transportation", { 'mage':4, 'cleric':4, 'thief':8, 'warrior':9 }, ["fly", "gate", "nexus", "pass door", "portal", "summon", "teleport", "word of recall"])
 group_table["weather"] = group_type("weather", { 'mage':4, 'cleric':4, 'thief':8, 'warrior':8 }, ["call lightning", "control weather", "faerie fire", "faerie fog", "lightning bolt"])
-    
+
 class guild_type:
     def __init__(self, name, who_name, attr_prime, weapon, guild_rooms, skill_adept, thac0_00, thac0_32, hp_min, hp_max, fMana, base_group, default_group):
         self.name=name      # the full name of the class */
@@ -334,7 +340,7 @@ title_table  = {  "mage": [ [ "Man", "Woman" ],
                             [ "Master Cleric", "Master Cleric" ],
                             [ "Master Cleric", "Master Cleric" ],
                             [ "Master Cleric", "Master Cleric" ],
-                            [ "Master Cleric", "Master Cleric" ],  
+                            [ "Master Cleric", "Master Cleric" ],
                             [ "Master Cleric", "Master Cleric" ],
                             [ "Master Cleric", "Master Cleric" ],
                             [ "Master Cleric", "Master Cleric" ],
@@ -500,7 +506,7 @@ title_table  = {  "mage": [ [ "Man", "Woman" ],
                             [ "Supreme Master of War", "Supreme Mistress of War" ],
                             [ "Creator", "Creator" ],
                             [ "Implementor", "Implementress" ] ] }
-        
+
 # * Attribute bonus structures.
 class str_app_type:
     def __init__(self, toh, tod, c, w):
@@ -676,7 +682,7 @@ class attack_type:
 
 attack_table = OrderedDict()
 attack_table[0] = attack_type("none", "hit", -1)  #  0 */
-attack_table[1] = attack_type("slice", "slice", DAM_SLASH)  
+attack_table[1] = attack_type("slice", "slice", DAM_SLASH)
 attack_table[2] = attack_type("stab", "stab", DAM_PIERCE)
 attack_table[3] = attack_type("slash", "slash", DAM_SLASH)
 attack_table[4] = attack_type("whip", "whip", DAM_SLASH)

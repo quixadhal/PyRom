@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from merc import IS_AFFECTED, AFF_DETECT_INVIS, act, TO_CHAR, AFFECT_DATA, TO_AFFECTS, APPLY_NONE, POS_STANDING, \
     TAR_CHAR_SELF
 
@@ -23,8 +23,9 @@ def spell_detect_invis(sn, level, ch, victim, target):
     if ch != victim:
         ch.send("Ok.\n")
 
-skill_type("detect invis",
-           { 'mage':3, 'cleric':8, 'thief':6, 'warrior':53 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_detect_invis, TAR_CHAR_SELF, POS_STANDING,
-           None, SLOT(19), 5, 12, "", "You no longer see invisible objects.", "")
+
+register_spell(skill_type("detect invis",
+                          {'mage': 3, 'cleric': 8, 'thief': 6, 'warrior': 53},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_detect_invis, TAR_CHAR_SELF, POS_STANDING,
+                          None, SLOT(19), 5, 12, "", "You no longer see invisible objects.", ""))

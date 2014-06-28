@@ -1,5 +1,5 @@
 from merc import IS_NPC, IS_AFFECTED, AFF_CHARM, check_dispel, act, TO_ROOM, TAR_CHAR_DEFENSIVE, POS_FIGHTING
-from const import skill_type, SLOT, skill_table
+from const import register_spell, skill_type, SLOT, skill_table
 
 
 def spell_cancellation(sn, level, ch, victim, target):
@@ -54,8 +54,9 @@ def spell_cancellation(sn, level, ch, victim, target):
         ch.send("Spell failed.\n")
 
 
-skill_type("cancellation",
-           {'mage': 18, 'cleric': 26, 'thief': 34, 'warrior': 34},
-           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-           spell_cancellation, TAR_CHAR_DEFENSIVE, POS_FIGHTING,
-           None, SLOT(507), 20, 12, "", "!cancellation!", "")
+register_spell(skill_type("cancellation",
+                          {'mage': 18, 'cleric': 26, 'thief': 34, 'warrior': 34},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_cancellation, TAR_CHAR_DEFENSIVE, POS_FIGHTING,
+                          None, SLOT(507), 20, 12, "", "!cancellation!", "")
+)

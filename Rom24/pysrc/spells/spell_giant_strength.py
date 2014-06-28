@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from merc import is_affected, act, TO_CHAR, AFFECT_DATA, TO_AFFECTS, APPLY_STR, TO_ROOM, POS_STANDING, \
     TAR_CHAR_DEFENSIVE
 
@@ -22,8 +22,9 @@ def spell_giant_strength(sn, level, ch, victim, target):
     victim.send("Your muscles surge with heightened power! \n")
     act("$n's muscles surge with heightened power.", victim, None, None, TO_ROOM)
 
-skill_type("giant strength",
-           { 'mage':11, 'cleric':53, 'thief':22, 'warrior':20 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_giant_strength, TAR_CHAR_DEFENSIVE, POS_STANDING,
-           None, SLOT(39), 20, 12, "", "You feel weaker.", "")
+
+register_spell(skill_type("giant strength",
+                          {'mage': 11, 'cleric': 53, 'thief': 22, 'warrior': 20},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_giant_strength, TAR_CHAR_DEFENSIVE, POS_STANDING,
+                          None, SLOT(39), 20, 12, "", "You feel weaker.", ""))

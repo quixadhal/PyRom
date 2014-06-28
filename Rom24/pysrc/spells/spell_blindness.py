@@ -1,7 +1,7 @@
 from merc import (IS_AFFECTED, saves_spell, DAM_OTHER, AFFECT_DATA,
                   TO_AFFECTS, APPLY_HITROLL, AFF_BLIND, act, TO_ROOM, TAR_CHAR_OFFENSIVE,
                   POS_FIGHTING)
-from const import skill_type, SLOT
+from const import register_spell, skill_type, SLOT
 
 
 def spell_blindness(sn, level, ch, victim, target):
@@ -21,8 +21,8 @@ def spell_blindness(sn, level, ch, victim, target):
     act("$n appears to be blinded.", victim, target=TO_ROOM)
 
 
-skill_type("blindness",
-           {'mage': 12, 'cleric': 8, 'thief': 17, 'warrior': 15},
-           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-           spell_blindness, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
-           None, SLOT(4), 5, 12, "", "You can see again.", "")
+register_spell(skill_type("blindness",
+                          {'mage': 12, 'cleric': 8, 'thief': 17, 'warrior': 15},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_blindness, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
+                          None, SLOT(4), 5, 12, "", "You can see again.", ""))

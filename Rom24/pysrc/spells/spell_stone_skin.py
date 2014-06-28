@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from merc import is_affected, act, TO_CHAR, AFFECT_DATA, TO_AFFECTS, APPLY_AC, TO_ROOM, POS_STANDING, TAR_CHAR_SELF
 
 
@@ -21,8 +21,9 @@ def spell_stone_skin(sn, level, ch, victim, target):
     act("$n's skin turns to stone.", victim, None, None, TO_ROOM)
     victim.send("Your skin turns to stone.\n")
 
-skill_type("stone skin",
-           { 'mage':25, 'cleric':40, 'thief':40, 'warrior':45 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_stone_skin, TAR_CHAR_SELF, POS_STANDING, None,
-           SLOT(66), 12, 18, "", "Your skin feels soft again.", "")
+
+register_spell(skill_type("stone skin",
+                          {'mage': 25, 'cleric': 40, 'thief': 40, 'warrior': 45},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_stone_skin, TAR_CHAR_SELF, POS_STANDING, None,
+                          SLOT(66), 12, 18, "", "Your skin feels soft again.", ""))

@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from db import create_object
 from merc import target_name, IS_SET, ROOM_SAFE, ROOM_PRIVATE, ROOM_SOLITARY, ROOM_NO_RECALL, IS_NPC, LEVEL_HERO, \
     IMM_SUMMON, saves_spell, DAM_NONE, WEAR_HOLD, IS_IMMORTAL, ITEM_WARP_STONE, act, TO_CHAR, obj_index_hash, \
@@ -63,8 +63,9 @@ def spell_nexus(sn, level, ch, victim, target):
         act("$p rises up from the ground.", to_room.people[0], portal, None, TO_ROOM)
         act("$p rises up from the ground.", to_room.people[0], portal, None, TO_CHAR)
 
-skill_type("nexus",
-           { 'mage':40, 'cleric':35, 'thief':50, 'warrior':45 },
-           { 'mage':2, 'cleric':2, 'thief':4, 'warrior':4 },
-           spell_nexus, TAR_IGNORE, POS_STANDING, None, SLOT(520),
-           150, 36, "", "!Nexus!", "")
+
+register_spell(skill_type("nexus",
+                          {'mage': 40, 'cleric': 35, 'thief': 50, 'warrior': 45},
+                          {'mage': 2, 'cleric': 2, 'thief': 4, 'warrior': 4},
+                          spell_nexus, TAR_IGNORE, POS_STANDING, None, SLOT(520),
+                          150, 36, "", "!Nexus!", ""))
