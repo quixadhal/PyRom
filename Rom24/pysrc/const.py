@@ -74,9 +74,9 @@ race_table["centipede"] = race_type("centipede", False, 0, AFF_DARK_VISION, 0, 0
                                     A | B | G | O, A | C | K)
 race_table["dog"] = race_type("dog", False, 0, 0, OFF_FAST, 0, 0, 0, A | G | V, A | C | D | E | F | H | J | K | U | V)
 race_table["doll"] = race_type("doll", False, 0, 0, 0,
-                               IMM_COLD | IMM_POISON | IMM_HOLY | IMM_NEGATIVE | IMM_MENTAL | IMM_DISEASE | IMM_DROWNING,
-                               RES_BASH | RES_LIGHT, VULN_SLASH | VULN_FIRE | VULN_ACID | VULN_LIGHTNING | VULN_ENERGY,
-                               E | J | M | cc, A | B | C | G | H | K)
+                               IMM_COLD | IMM_POISON | IMM_HOLY | IMM_NEGATIVE | IMM_MENTAL | IMM_DISEASE |
+                               IMM_DROWNING, RES_BASH | RES_LIGHT, VULN_SLASH | VULN_FIRE | VULN_ACID | VULN_LIGHTNING |
+                               VULN_ENERGY, E | J | M | cc, A | B | C | G | H | K)
 race_table["dragon"] = race_type("dragon", False, 0, AFF_INFRARED | AFF_FLYING, 0, 0, RES_FIRE | RES_BASH | RES_CHARM,
                                  VULN_PIERCE | VULN_COLD, A | H | Z,
                                  A | C | D | E | F | G | H | I | J | K | P | Q | U | V | X)
