@@ -32,7 +32,7 @@
  ************/
 """
 import os
-from collections import OrderedDict
+from collections import OrderedDict, namedtuple
 import logging
 
 logger = logging.getLogger()
@@ -40,19 +40,7 @@ logger = logging.getLogger()
 from merc import *
 
 
-class race_type:
-    def __init__(self, name, pc_race, act, aff, off, imm, res, vuln, form, parts):
-        self.name = name
-        self.pc_race = pc_race
-        self.act=act
-        self.aff=aff
-        self.off=off
-        self.imm=imm
-        self.res=res
-        self.vuln=vuln
-        self.form=form
-        self.parts=parts
-
+race_type = namedtuple('race_type', 'name, pc_race, act, aff, off, imm, res, vuln, form, parts')
 race_table = OrderedDict()
 race_table["unique"] = race_type("unique", False, 0, 0, 0, 0, 0, 0, 0, 0)
 race_table["human"] = race_type("human", True, 0, 0, 0, 0, 0, 0, A|H|M|V, A|B|C|D|E|F|G|H|I|J|K)
@@ -84,17 +72,7 @@ race_table["water fowl"] = race_type("water fowl", False, 0, AFF_SWIM|AFF_FLYING
 race_table["wolf"] = race_type("wolf", False, 0, AFF_DARK_VISION, OFF_FAST|OFF_DODGE, 0, 0, 0, A|G|V, A|C|D|E|F|J|K|Q|V) 
 race_table["wyvern"] = race_type("wyvern", False, 0, AFF_FLYING|AFF_DETECT_INVIS|AFF_DETECT_HIDDEN, OFF_BASH|OFF_FAST|OFF_DODGE, IMM_POISON, 0, VULN_LIGHT, A|B|G|Z, A|C|D|E|F|H|J|K|Q|V|X) 
 
-class pc_race_type:
-    def __init__(self, name, who_name, points, class_mult, skills, stats, max_stats, size):
-        self.name = name
-        self.who_name = who_name
-        self.points = points
-        self.class_mult = class_mult
-        self.skills = skills
-        self.stats = stats
-        self.max_stats = max_stats
-        self.size = size
-
+pc_race_type = namedtuple('pc_race_type', 'name, who_name, points, class_mult, skills, stats, max_stats, size')
 pc_race_table= OrderedDict()
 pc_race_table['human'] = pc_race_type("human", "Human", 0, { 'mage':100, 'cleric':100, 'thief':100, 'warrior':100 }, [ "" ], [13, 13, 13, 13, 13], [18, 18, 18, 18, 18 ], SIZE_MEDIUM)
 pc_race_table['elf'] = pc_race_type("elf", " Elf ", 5, { 'mage':100, 'cleric':125, 'thief':100, 'warrior':120 }, ["sneak", "hide"], [12, 14, 13, 15, 11], [16, 20, 18, 21, 15], SIZE_SMALL)
@@ -104,22 +82,7 @@ pc_race_table['giant'] = pc_race_type("giant", "Giant", 6, { 'mage':200, 'cleric
 def SLOT(i):
     return i
 
-class skill_type:
-    def __init__(self, name, skill_level, rating, spell_fun, target, minimum_position, pgsn, slot, min_mana, beats, noun_damage, msg_off, msg_obj ):
-        self.name = name
-        self.skill_level = skill_level
-        self.rating = rating
-        self.spell_fun = spell_fun
-        self.target = target
-        self.minimum_position = minimum_position
-        self.pgsn = pgsn
-        self.slot = slot
-        self.min_mana = min_mana
-        self.beats = beats
-        self.noun_damage = noun_damage
-        self.msg_off = msg_off
-        self.msg_obj = msg_obj
-
+skill_type = namedtuple('skilltype', 'name, skill_level, rating, spell_fun, target, minimum_position, pgsn, slot, min_mana, beats, noun_damage, msg_off, msg_obj')
 skill_table =  OrderedDict()
 spell_null = None
 skill_table["reserved"] = skill_type("reserved", { 'mage':99, 'cleric':99, 'thief':99, 'warrior':99 }, { 'mage':99, 'cleric':99, 'thief':99, 'warrior':99 }, spell_null, TAR_IGNORE, POS_STANDING, None, SLOT( 0), 0, 0, "", "", "")
@@ -165,12 +128,7 @@ def register_spell(entry: skill_type):
     skill_table[entry.name] = entry
     logger.debug('    %s registered in skill table.', entry.name)
 
-class group_type:
-    def __init__(self, name, rating, spells):
-        self.name=name;
-        self.rating=rating
-        self.spells=spells
-
+group_type = namedtuple('group_type', 'name, rating, spells')
 group_table =  OrderedDict()
 group_table["rom basics"] = group_type("rom basics", { 'mage':0, 'cleric':0, 'thief':0, 'warrior':0 }, ["scrolls", "staves", "wands", "recall"])
 group_table["mage basics"] = group_type("mage basics", { 'mage':0, 'cleric':-1, 'thief':-1, 'warrior':-1 }, ["dagger"])
@@ -200,35 +158,14 @@ group_table["protective"] = group_type("protective", { 'mage':4, 'cleric':4, 'th
 group_table["transportation"] = group_type("transportation", { 'mage':4, 'cleric':4, 'thief':8, 'warrior':9 }, ["fly", "gate", "nexus", "pass door", "portal", "summon", "teleport", "word of recall"])
 group_table["weather"] = group_type("weather", { 'mage':4, 'cleric':4, 'thief':8, 'warrior':8 }, ["call lightning", "control weather", "faerie fire", "faerie fog", "lightning bolt"])
 
-class guild_type:
-    def __init__(self, name, who_name, attr_prime, weapon, guild_rooms, skill_adept, thac0_00, thac0_32, hp_min, hp_max, fMana, base_group, default_group):
-        self.name=name      # the full name of the class */
-        self.who_name=who_name      # Three-letter name for 'who'  */
-        self.attr_prime=attr_prime      # Prime attribute      */
-        self.weapon=weapon      # First weapon         */
-        self.guild_rooms = guild_rooms
-        self.skill_adept=skill_adept      # Maximum skill level      */
-        self.thac0_00=thac0_00      # Thac0 for level  0       */
-        self.thac0_32=thac0_32      # Thac0 for level 32       */
-        self.hp_min=hp_min      # Min hp gained on leveling    */
-        self.hp_max=hp_max      # Max hp gained on leveling    */
-        self.fMana=fMana      # Class gains mana on level    */
-        self.base_group=base_group      # base skills gained       */
-        self.default_group=default_group      # default skills gained    */
-
+guild_type = namedtuple('guild_type', 'name, who_name, attr_prime, weapon, guild_rooms, skill_adept, thac0_00, thac0_32, hp_min, hp_max, fMana, base_group, default_group')
 guild_table= OrderedDict()
 guild_table["mage"] = guild_type("mage", "Mag", STAT_INT, OBJ_VNUM_SCHOOL_DAGGER, [3018,9618], 75, 20, 6, 6, 8, True, "mage basics", "mage default" )
 guild_table["cleric"] = guild_type("cleric", "Cle", STAT_WIS, OBJ_VNUM_SCHOOL_MACE, [3003,9619], 75, 20, 2, 7, 10, True, "cleric basics", "cleric default")
 guild_table["thief"] = guild_type("thief", "Thi", STAT_DEX, OBJ_VNUM_SCHOOL_DAGGER, [3028,9639], 75, 20, -4, 8, 13, False, "thief basics", "thief default")
 guild_table["warrior"] = guild_type("warrior", "War", STAT_STR, OBJ_VNUM_SCHOOL_SWORD, [3022,9633], 75, 20, -10, 11, 15, False, "warrior basics", "warrior default")
 
-class weapon_type:
-    def __init__(self, name, vnum, type, gsn):
-        self.name=name
-        self.vnum=vnum
-        self.type=type
-        self.gsn=gsn
-
+weapon_type = namedtuple('weapon_type', 'name, vnum, type, gsn')
 weapon_table =  OrderedDict()
 weapon_table['sword'] = weapon_type('sword',   OBJ_VNUM_SCHOOL_SWORD,  WEAPON_SWORD, 'sword'  )
 weapon_table['mace'] = weapon_type('mace',    OBJ_VNUM_SCHOOL_MACE,   WEAPON_MACE,   'mace'   )
@@ -508,13 +445,7 @@ title_table  = {  "mage": [ [ "Man", "Woman" ],
                             [ "Implementor", "Implementress" ] ] }
 
 # * Attribute bonus structures.
-class str_app_type:
-    def __init__(self, toh, tod, c, w):
-        self.tohit = toh
-        self.todam = tod
-        self.carry = c
-        self.wield = w
-
+str_app_type = namedtuple('str_app_type', 'tohit, todam, carry, wield')
 str_app = OrderedDict()
 str_app[0] = str_app_type(-5, -4,   0,  0)
 str_app[1] = str_app_type(-5, -4,   3,  1)
@@ -543,10 +474,7 @@ str_app[23] = str_app_type(5,  7, 400, 50)
 str_app[24] = str_app_type(5,  8, 450, 55)
 str_app[25] = str_app_type(6,  9, 500, 60)
 
-class int_app_type:
-    def __init__(self, l):
-        self.learn = l
-
+int_app_type = namedtuple('int_app_type', 'learn')
 int_app = OrderedDict()
 int_app[0] = int_app_type(3)
 int_app[1] = int_app_type(5)
@@ -575,10 +503,7 @@ int_app[23] = int_app_type(70)
 int_app[24] = int_app_type(80)
 int_app[25] = int_app_type(85)
 
-class wis_app_type:
-    def __init__(self, p):
-        self.practice = p
-
+wis_app_type = namedtuple('wis_app_type', 'practice')
 wis_app = OrderedDict()
 wis_app[0] = wis_app_type(0) #/*  0 */
 wis_app[1] = wis_app_type(0) #/*  1 */
@@ -607,10 +532,7 @@ wis_app[23] = wis_app_type(4)
 wis_app[24] = wis_app_type(4)
 wis_app[25] = wis_app_type(5)   #/* 25 */
 
-class dex_app_type:
-    def __init__(self, d):
-        self.defensive = d
-
+dex_app_type = namedtuple('dex_app_type', 'defensive')
 dex_app = OrderedDict()
 dex_app[0] = dex_app_type(60)   #/* 0 */
 dex_app[1] = dex_app_type(50)   #/* 1 */
@@ -639,11 +561,7 @@ dex_app[23] = dex_app_type(-90)
 dex_app[24] = dex_app_type(-105)
 dex_app[25] = dex_app_type(-120)    #/* 25 */
 
-class con_app_type:
-    def __init__(self, h, s):
-        self.hitp = h
-        self.shock = s
-
+con_app_type = namedtuple('con_app_type', 'hitp, shock')
 con_app = OrderedDict()
 con_app[0] = con_app_type(-4, 20)   #/*  0 */
 con_app[1] = con_app_type(-3, 25)   #/*  1 */
@@ -674,12 +592,7 @@ con_app[25] = con_app_type(8, 99)    #/* 25 */
 
 
 #/* attack table  -- not very organized :( */
-class attack_type:
-    def __init__(self, name, noun, damage):
-        self.name = name
-        self.noun = noun
-        self.damage = damage
-
+attack_type = namedtuple('attack_type', 'name, noun, damage')
 attack_table = OrderedDict()
 attack_table[0] = attack_type("none", "hit", -1)  #  0 */
 attack_table[1] = attack_type("slice", "slice", DAM_SLASH)
@@ -723,11 +636,7 @@ attack_table[38] = attack_type("flame", "flame", DAM_FIRE)
 attack_table[39] = attack_type("chill", "chill", DAM_COLD)
 
 
-class wiznet_type:
-    def __init__(self, n, f, l):
-        self.name = n
-        self.flag = f
-        self.level = l
+wiznet_type = namedtuple('wiznet_type', 'name flag level')
 wiznet_table = OrderedDict()
 wiznet_table["on"] = wiznet_type("on", WIZ_ON, IM)
 wiznet_table["prefix"] = wiznet_type("prefix", WIZ_PREFIX, IM)
@@ -750,23 +659,7 @@ wiznet_table["snoops"] = wiznet_type("snoops", WIZ_SNOOPS, L2)
 wiznet_table["switches"] = wiznet_type("switches", WIZ_SWITCHES, L2)
 wiznet_table["secure"] = wiznet_type("secure", WIZ_SECURE, L1)
 
-class liq_type:
-    def __init__(self, name: str, color: str, proof: int, full: int, thirst: int, food: int, ssize: int):
-        assert isinstance(name, str)
-        assert isinstance(color, str)
-        assert isinstance(proof, int)
-        assert isinstance(full, int)
-        assert isinstance(thirst, int)
-        assert isinstance(food, int)
-        assert isinstance(ssize, int)
-        self.name = name
-        self.color = color
-        self.proof = proof
-        self.full = full
-        self.thirst = thirst
-        self.food = food
-        self.ssize = ssize
-
+liq_type = namedtuple('liq_type', 'name color proof full thirst food ssize')
 liq_table = OrderedDict()
 liq_table["water"] = liq_type("water", "clear", 0, 1, 10, 0, 16)
 liq_table["beer"] = liq_type("beer", "amber", 12, 1, 8, 1, 12)

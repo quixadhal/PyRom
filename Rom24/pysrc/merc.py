@@ -152,7 +152,6 @@ SIZE_MEDIUM = 2
 SIZE_LARGE = 3
 SIZE_HUGE = 4
 SIZE_GIANT = 5
-size_table = ["tiny", "small", "medium", "large", "huge", "giant"]
 
 # AC types */
 AC_PIERCE = 0

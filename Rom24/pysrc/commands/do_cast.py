@@ -17,7 +17,7 @@ def do_cast(ch, argument):
     if state_checks.IS_NPC(ch) and not ch.desc:
         return
 
-    merc.target_name, arg1 = game_utils.read_word(argument)
+    handler_magic.target_name, arg1 = game_utils.read_word(argument)
     holder, arg2 = game_utils.read_word(handler_magic.target_name)
 
     if not arg1:

@@ -59,13 +59,7 @@ sex_table[SEX_NEUTRAL] = "either"
 
 
 # for sizes */
-size_table = OrderedDict()
-size_table[SIZE_TINY] = ("tiny")
-size_table[SIZE_SMALL] = ("small")
-size_table[SIZE_MEDIUM] = ("medium")
-size_table[SIZE_LARGE] = ("large")
-size_table[SIZE_HUGE] = ("huge")
-size_table[SIZE_GIANT] = ("giant")
+size_table = ["tiny", "small", "medium", "large", "huge", "giant"]
 
 
 # various flag tables */
