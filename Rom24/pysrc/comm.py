@@ -141,7 +141,7 @@ def check_reconnect( d, name, fConn ):
                 ch.desc = d
                 ch.timer = 0
                 ch.send("Reconnecting. Type replay to see missed tells.\n")
-                handler_game.act( "$n has reconnected.", ch, NULL, NULL, TO_ROOM )
+                handler_game.act( "$n has reconnected.", ch, None, None, TO_ROOM )
                 logger.info ("%s@%s reconnected.", ch.name, d.host)
                 wiznet("$N groks the fullness of $S link.",ch,None,WIZ_LINKS,0,0)
                 d.set_connected(con_playing)

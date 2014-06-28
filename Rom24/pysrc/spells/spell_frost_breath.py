@@ -1,46 +1,48 @@
 import random
-
-from const import SLOT, skill_type, register_spell
-from effects import cold_effect
-from fight import damage, is_safe_spell
-from merc import act, TO_NOTVICT, TO_VICT, TO_CHAR, dice, TARGET_ROOM, IS_NPC, saves_spell, DAM_COLD, TARGET_CHAR, \
-    POS_FIGHTING, TAR_CHAR_OFFENSIVE
+import const
+import effects
+import fight
+import game_utils
+import handler_game
+import handler_magic
+import merc
+import state_checks
 
 
 def spell_frost_breath(sn, level, ch, victim, target):
-    act("$n breathes out a freezing cone of frost! ", ch, None, victim, TO_NOTVICT)
-    act("$n breathes a freezing cone of frost over you! ", ch, None, victim, TO_VICT)
-    act("You breath out a cone of frost.", ch, None, None, TO_CHAR)
+    handler_game.act("$n breathes out a freezing cone of frost! ", ch, None, victim, merc.TO_NOTVICT)
+    handler_game.act("$n breathes a freezing cone of frost over you! ", ch, None, victim, merc.TO_VICT)
+    handler_game.act("You breath out a cone of frost.", ch, None, None, merc.TO_CHAR)
 
     hpch = max(12, ch.hit)
     hp_dam = random.randint(hpch // 11 + 1, hpch // 6)
-    dice_dam = dice(level, 16)
+    dice_dam = game_utils.dice(level, 16)
 
     dam = max(hp_dam + dice_dam // 10, dice_dam + hp_dam // 10)
-    cold_effect(victim.in_room, level, dam // 2, TARGET_ROOM)
+    effects.cold_effect(victim.in_room, level, dam // 2, merc.TARGET_ROOM)
 
     for vch in victim.in_room.people[:]:
-        if is_safe_spell(ch, vch, True) or (IS_NPC(vch) and IS_NPC(ch) and (ch.fighting != vch or vch.fighting != ch)):
+        if fight.is_safe_spell(ch, vch, True) or (state_checks.IS_NPC(vch) and state_checks.IS_NPC(ch) and (ch.fighting != vch or vch.fighting != ch)):
             continue
 
         if vch == victim:  # full damage */
-            if saves_spell(level, vch, DAM_COLD):
-                cold_effect(vch, level // 2, dam // 4, TARGET_CHAR)
-                damage(ch, vch, dam // 2, sn, DAM_COLD, True)
+            if handler_magic.saves_spell(level, vch, merc.DAM_COLD):
+                effects.cold_effect(vch, level // 2, dam // 4, merc.TARGET_CHAR)
+                fight.damage(ch, vch, dam // 2, sn, merc.DAM_COLD, True)
             else:
-                cold_effect(vch, level, dam, TARGET_CHAR)
-                damage(ch, vch, dam, sn, DAM_COLD, True)
+                effects.cold_effect(vch, level, dam, merc.TARGET_CHAR)
+                fight.damage(ch, vch, dam, sn, merc.DAM_COLD, True)
         else:
-            if saves_spell(level - 2, vch, DAM_COLD):
-                cold_effect(vch, level // 4, dam // 8, TARGET_CHAR)
-                damage(ch, vch, dam // 4, sn, DAM_COLD, True)
+            if handler_magic.saves_spell(level - 2, vch, merc.DAM_COLD):
+                effects.cold_effect(vch, level // 4, dam // 8, merc.TARGET_CHAR)
+                fight.damage(ch, vch, dam // 4, sn, merc.DAM_COLD, True)
             else:
-                cold_effect(vch, level // 2, dam // 4, TARGET_CHAR)
-                damage(ch, vch, dam // 2, sn, DAM_COLD, True)
+                effects.cold_effect(vch, level // 2, dam // 4, merc.TARGET_CHAR)
+                fight.damage(ch, vch, dam // 2, sn, merc.DAM_COLD, True)
 
 
-register_spell(skill_type("frost breath",
+const.register_spell(const.skill_type("frost breath",
                           {'mage': 34, 'cleric': 36, 'thief': 38, 'warrior': 40},
                           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_frost_breath, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
-                          None, SLOT(202), 125, 24, "blast of frost", "!Frost Breath!", ""))
+                          spell_frost_breath, merc.TAR_CHAR_OFFENSIVE, merc.POS_FIGHTING,
+                          None, const.SLOT(202), 125, 24, "blast of frost", "!Frost Breath!", ""))

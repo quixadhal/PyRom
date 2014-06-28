@@ -33,6 +33,8 @@
 """
 import random
 
+import handler_ch
+
 import handler_room
 from merc import *
 import magic
@@ -128,8 +130,8 @@ def spec_patrolman(ch):
     neck1 = ch.get_eq(WEAR_NECK_1)
     neck2 = ch.get_eq(WEAR_NECK_2)
     if (neck1 and neck1.pIndexData.vnum == OBJ_VNUM_WHISTLE) or ( neck2 and neck2.pIndexData.vnum == OBJ_VNUM_WHISTLE):
-        handler_game.act("You blow down hard on $p.",ch,obj,None,TO_CHAR)
-        handler_game.act("$n blows on $p, ***WHEEEEEEEEEEEET***",ch,obj,None,TO_ROOM)
+        handler_game.act("You blow down hard on $p.",ch, obj,None,TO_CHAR)
+        handler_game.act("$n blows on $p, ***WHEEEEEEEEEEEET***",ch, obj,None,TO_ROOM)
 
         for vch in char_list:
             if vch.in_room == None:
@@ -247,31 +249,31 @@ def spec_cast_adept( ch ):
     
     num = random.randint(1,15)
     if num ==  0:
-        act( "$n utters the word 'abrazak'.", ch, None, None, TO_ROOM )
+        handler_game.act( "$n utters the word 'abrazak'.", ch, None, None, TO_ROOM )
         const.skill_table["armor"].spell_fun('armor', ch.level,ch,victim,TARGET_CHAR)
         return True
     elif num ==   1:
-        act( "$n utters the word 'fido'.", ch, None, None, TO_ROOM )
+        handler_game.act( "$n utters the word 'fido'.", ch, None, None, TO_ROOM )
         const.skill_table["bless"].spell_fun('bless', ch.level,ch,victim,TARGET_CHAR)
         return True
     elif num == 2:
-        act("$n utters the words 'judicandus noselacri'.",ch,None,None,TO_ROOM)
+        handler_game.act("$n utters the words 'judicandus noselacri'.",ch,None,None,TO_ROOM)
         const.skill_table["cure blindness"].spell_fun('cure blindness', ch.level, ch, victim,TARGET_CHAR)
         return True
     elif num == 3:
-        act("$n utters the words 'judicandus dies'.", ch,None, None, TO_ROOM )
+        handler_game.act("$n utters the words 'judicandus dies'.", ch,None, None, TO_ROOM )
         const.skill_table["cure light"].spell_fun('cure light', ch.level, ch, victim,TARGET_CHAR)
         return True
     elif num == 4:
-        act( "$n utters the words 'judicandus sausabru'.",ch,None,None,TO_ROOM)
+        handler_game.act( "$n utters the words 'judicandus sausabru'.",ch,None,None,TO_ROOM)
         const.skill_table["cure poison"].spell_fun('cure poison', ch.level, ch, victim,TARGET_CHAR)
         return True
     elif num == 5:
-        act("$n utters the word 'candusima'.", ch, None, None, TO_ROOM )
+        handler_game.act("$n utters the word 'candusima'.", ch, None, None, TO_ROOM )
         const.skill_table["refresh"].spell_fun('refresh', ch.level,ch,victim,TARGET_CHAR)
         return True
     elif num == 6:
-        act("$n utters the words 'judicandus eugzagz'.",ch,None,None,TO_ROOM)
+        handler_game.act("$n utters the words 'judicandus eugzagz'.",ch,None,None,TO_ROOM)
         const.skill_table["cure disease"].spell_fun('cure disease', ch.level,ch,victim,TARGET_CHAR)
         return False
 
@@ -571,7 +573,7 @@ def spec_mayor( ch ):
         return False
 
     if path[pos] == '0' or path[pos] =='1' or path[pos] =='2' or path[pos] =='3':
-        move_char( ch, int(path[pos]), False )
+        handler_ch.move_char( ch, int(path[pos]), False )
     elif path[pos] == 'W':
         ch.position = POS_STANDING
         handler_game.act( "$n awakens and groans loudly.", ch, None, None, TO_ROOM )
@@ -605,9 +607,9 @@ def spec_poison( ch ):
     if ch.position != POS_FIGHTING or not ch.fighting or random.randint(1,99) > 2 * ch.level:
         return False
     victim = ch.fighting
-    act( "You bite $N!",  ch, None, victim, TO_CHAR    )
-    act( "$n bites $N!",  ch, None, victim, TO_NOTVICT )
-    act( "$n bites you!", ch, None, victim, TO_VICT    )
+    handler_game.act( "You bite $N!",  ch, None, victim, TO_CHAR    )
+    handler_game.act( "$n bites $N!",  ch, None, victim, TO_NOTVICT )
+    handler_game.act( "$n bites you!", ch, None, victim, TO_VICT    )
     const.skill_table['poison'].spell_fun('poison', ch.level, ch, victim,TARGET_CHAR)
     return True
 

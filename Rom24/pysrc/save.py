@@ -263,8 +263,7 @@ def fread_objs(carrying, objects, contained_by=None):
         if 'contains' in odict:
             fread_objs(carrying, odict['contains'], obj)
 
-
-def fread_obj(odict):
+def fread_obj(carrying, odict):
     obj = db.create_object(obj_index_hash[odict['Vnum']], odict['Lev'])
     obj.enchanted = odict['Enchanted']
     obj.name = odict['Name']
@@ -275,7 +274,7 @@ def fread_obj(odict):
     obj.item_type = odict['Ityp']
     obj.weight = odict['Wt']
     obj.condition = odict['Cond']
-    
+
     obj.wear_loc = odict['Wear']
     obj.level = odict['Lev']
     obj.timer = odict['timer']
@@ -284,7 +283,7 @@ def fread_obj(odict):
 
     obj.affected = odict['affected']
     extra_descr = []
-    for k, v in odict['ExDe'].items():
+    for k,v in odict['ExDe'].items():
         newed = handler_olc.EXTRA_DESCR_DATA()
         newed.keyword = k
         newed.description = v

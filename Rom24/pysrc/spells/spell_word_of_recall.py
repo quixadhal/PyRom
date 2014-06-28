@@ -1,37 +1,39 @@
-from const import SLOT, skill_type, register_spell
-from fight import stop_fighting
-from merc import IS_NPC, ROOM_VNUM_TEMPLE, room_index_hash, IS_SET, ROOM_NO_RECALL, IS_AFFECTED, AFF_CURSE, act, \
-    TO_ROOM, \
-    POS_RESTING, TAR_CHAR_SELF
+import const
+import fight
+import handler_game
+import merc
+import special
+import state_checks
 
 
 def spell_word_of_recall(sn, level, ch, victim, target):
     # RT recall spell is back */
-    if IS_NPC(victim):
+    if state_checks.IS_NPC(victim):
         return
 
-    if ROOM_VNUM_TEMPLE not in room_index_hash:
+    if merc.ROOM_VNUM_TEMPLE not in merc.room_index_hash:
         victim.send("You are completely lost.\n")
         return
-    location = room_index_hash[ROOM_VNUM_TEMPLE]
+    location = merc.room_index_hash[merc.ROOM_VNUM_TEMPLE]
 
-    if IS_SET(victim.in_room.room_flags, ROOM_NO_RECALL) or IS_AFFECTED(victim, AFF_CURSE):
+    if state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_NO_RECALL) or state_checks.IS_AFFECTED(victim,
+                                                                                                       merc.AFF_CURSE):
         victim.send("Spell failed.\n")
         return
 
     if victim.fighting:
-        stop_fighting(victim, True)
+        fight.stop_fighting(victim, True)
 
-    ch.move = move // 2
-    act("$n disappears.", victim, None, None, TO_ROOM)
+    ch.move //= 2
+    handler_game.act("$n disappears.", victim, None, None, merc.TO_ROOM)
     victim.from_room()
     victim.to_room(location)
-    act("$n appears in the room.", victim, None, None, TO_ROOM)
+    handler_game.act("$n appears in the room.", victim, None, None, merc.TO_ROOM)
     victim.do_look("auto")
 
 
-register_spell(skill_type("word of recall",
+const.register_spell(const.skill_type("word of recall",
                           {'mage': 32, 'cleric': 28, 'thief': 40, 'warrior': 30},
                           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_word_of_recall, TAR_CHAR_SELF, POS_RESTING, None,
-                          SLOT(42), 5, 12, "", "!Word of Recall!", ""))  # * Dragon breath */)
+                          spell_word_of_recall, merc.TAR_CHAR_SELF, merc.POS_RESTING, None,
+                          const.SLOT(42), 5, 12, "", "!Word of Recall!", ""))  # * Dragon breath */)

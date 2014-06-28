@@ -1,31 +1,33 @@
-from const import SLOT, skill_type, register_spell
-from merc import IS_AFFECTED, AFF_PASS_DOOR, act, TO_CHAR, AFFECT_DATA, TO_AFFECTS, number_fuzzy, APPLY_NONE, TO_ROOM, \
-    POS_STANDING, TAR_CHAR_SELF
+import const
+import game_utils
+import handler_game
+import merc
+import state_checks
 
 
 def spell_pass_door(sn, level, ch, victim, target):
-    if IS_AFFECTED(victim, AFF_PASS_DOOR):
+    if state_checks.IS_AFFECTED(victim, merc.AFF_PASS_DOOR):
         if victim == ch:
             ch.send("You are already out of phase.\n")
         else:
-            act("$N is already shifted out of phase.", ch, None, victim, TO_CHAR)
+            handler_game.act("$N is already shifted out of phase.", ch, None, victim, merc.TO_CHAR)
         return
 
-    af = AFFECT_DATA()
-    af.where = TO_AFFECTS
+    af = handler_game.AFFECT_DATA()
+    af.where = merc.TO_AFFECTS
     af.type = sn
     af.level = level
-    af.duration = number_fuzzy(level // 4)
-    af.location = APPLY_NONE
+    af.duration = game_utils.number_fuzzy(level // 4)
+    af.location = merc.APPLY_NONE
     af.modifier = 0
-    af.bitvector = AFF_PASS_DOOR
+    af.bitvector = merc.AFF_PASS_DOOR
     victim.affect_add(af)
-    act("$n turns translucent.", victim, None, None, TO_ROOM)
+    handler_game.act("$n turns translucent.", victim, None, None, merc.TO_ROOM)
     victim.send("You turn translucent.\n")
 
 
-register_spell(skill_type("pass door",
+const.register_spell(const.skill_type("pass door",
                           {'mage': 24, 'cleric': 32, 'thief': 25, 'warrior': 37},
                           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_pass_door, TAR_CHAR_SELF, POS_STANDING, None,
-                          SLOT(74), 20, 12, "", "You feel solid again.", ""))
+                          spell_pass_door, merc.TAR_CHAR_SELF, merc.POS_STANDING, None,
+                          const.SLOT(74), 20, 12, "", "You feel solid again.", ""))

@@ -1,12 +1,10 @@
-from handler_ch import CHAR_DATA, CH
-from handler_obj import OBJ_DATA
+import handler_ch
+import handler_obj
 from merc import *
+import interp
 import state_checks
 import game_utils
-
 __author__ = 'venom'
-
-
 
 
 class GEN_DATA:
@@ -15,8 +13,6 @@ class GEN_DATA:
         self.skill_chosen = {}
         self.group_chosen = {}
         self.points_chosen = 0
-
-
 
 
 class SOCIAL_DATA:
@@ -120,14 +116,14 @@ def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
             act_trans['$e'] = he_she[ch.sex]
             act_trans['$m'] = him_her[ch.sex]
             act_trans['$s'] = his_her[ch.sex]
-        if vch and type(vch) == CHAR_DATA:
+        if vch and type(vch) == handler_ch.CHAR_DATA:
             act_trans['$N'] = state_checks.PERS(vch, to)
             act_trans['$E'] = he_she[vch.sex]
             act_trans['$M'] = him_her[vch.sex]
             act_trans['$S'] = his_her[vch.sex]
-        if obj1 and obj1.__class__ == OBJ_DATA:
+        if obj1 and obj1.__class__ == handler_obj.OBJ_DATA:
             act_trans['$p'] = state_checks.OPERS(to, obj1)
-        if obj2 and obj2.__class__ == OBJ_DATA:
+        if obj2 and obj2.__class__ == handler_obj.OBJ_DATA:
             act_trans['$P'] = state_checks.OPERS(to, obj2)
         act_trans['$d'] = arg2 if not arg2 else "door"
 
@@ -153,7 +149,7 @@ def wiznet( string, ch, obj, flag, flag_skip, min_level):
 
 # does aliasing and other fun stuff */
 def substitute_alias(d, argument):
-    ch = CH(d)
+    ch = handler_ch.CH(d)
     MAX_INPUT_LENGTH = 500
     # check for prefix */
     if ch.prefix and not "prefix".startswith(argument):

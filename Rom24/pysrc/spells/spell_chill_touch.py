@@ -1,9 +1,9 @@
 import random
-
-from const import SLOT, skill_type, register_spell
-from fight import damage
-from merc import saves_spell, DAM_COLD, act, TO_ROOM, TO_AFFECTS, APPLY_STR, \
-    POS_FIGHTING, TAR_CHAR_OFFENSIVE, AFFECT_DATA
+import const
+import fight
+import handler_game
+import handler_magic
+import merc
 
 
 def spell_chill_touch(sn, level, ch, victim, target):
@@ -17,24 +17,24 @@ def spell_chill_touch(sn, level, ch, victim, target):
     level = min(level, len(dam_each) - 1)
     level = max(0, level)
     dam = random.randint(dam_each[level] // 2, dam_each[level] * 2)
-    if not saves_spell(level, victim, DAM_COLD):
-        act("$n turns blue and shivers.", victim, None, None, TO_ROOM)
-        af = AFFECT_DATA()
-        af.where = TO_AFFECTS
+    if not handler_magic.saves_spell(level, victim, merc.DAM_COLD):
+        handler_game.act("$n turns blue and shivers.", victim, None, None, merc.TO_ROOM)
+        af = handler_game.AFFECT_DATA()
+        af.where = merc.TO_AFFECTS
         af.type = sn
         af.level = level
         af.duration = 6
-        af.location = APPLY_STR
+        af.location = merc.APPLY_STR
         af.modifier = -1
         af.bitvector = 0
         victim.affect_join(af)
     else:
         dam = dam // 2
-    damage(ch, victim, dam, sn, DAM_COLD, True)
+    fight.damage(ch, victim, dam, sn, merc.DAM_COLD, True)
 
 
-register_spell(skill_type("chill touch",
+const.register_spell(const.skill_type("chill touch",
                           {'mage': 4, 'cleric': 53, 'thief': 6, 'warrior': 6},
                           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_chill_touch, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
-                          None, SLOT(8), 15, 12, "chilling touch", "You feel less cold.", ""))
+                          spell_chill_touch, merc.TAR_CHAR_OFFENSIVE, merc.POS_FIGHTING,
+                          None, const.SLOT(8), 15, 12, "chilling touch", "You feel less cold.", ""))

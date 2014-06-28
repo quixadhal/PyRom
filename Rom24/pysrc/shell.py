@@ -36,6 +36,7 @@
 
 
 import code
+import handler_ch
 from merc import *
 from db import *
 from const import *
@@ -45,7 +46,7 @@ boot_db()
 def send(txt):
     print (txt)
 
-CHAR_DATA.send = send
+handler_ch.CHAR_DATA.send = send
 
 vars = globals().copy()
 vars.update(locals())

@@ -1,5 +1,6 @@
-from const import SLOT, skill_type, register_spell
-from merc import act, TO_CHAR, POS_FIGHTING, TAR_CHAR_DEFENSIVE
+import const
+import handler_game
+import merc
 
 
 def spell_know_alignment(sn, level, ch, victim, target):
@@ -20,12 +21,12 @@ def spell_know_alignment(sn, level, ch, victim, target):
     else:
         msg = "$N is the embodiment of pure evil! ."
 
-    act(msg, ch, None, victim, TO_CHAR)
+    handler_game.act(msg, ch, None, victim, merc.TO_CHAR)
     return
 
 
-register_spell(skill_type("know alignment",
+const.register_spell(const.skill_type("know alignment",
                           {'mage': 12, 'cleric': 9, 'thief': 20, 'warrior': 53},
                           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_know_alignment, TAR_CHAR_DEFENSIVE, POS_FIGHTING,
-                          None, SLOT(58), 9, 12, "", "!Know Alignment!", ""))
+                          spell_know_alignment, merc.TAR_CHAR_DEFENSIVE, merc.POS_FIGHTING,
+                          None, const.SLOT(58), 9, 12, "", "!Know Alignment!", ""))

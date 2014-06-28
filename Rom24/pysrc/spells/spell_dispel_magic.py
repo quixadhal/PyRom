@@ -1,12 +1,13 @@
-from const import SLOT, skill_type, register_spell
 import const
-from merc import saves_spell, DAM_OTHER, check_dispel, act, TO_ROOM, IS_AFFECTED, AFF_SANCTUARY, saves_dispel, \
-    is_affected, REMOVE_BIT, POS_FIGHTING, TAR_CHAR_OFFENSIVE
+import handler_game
+import handler_magic
+import merc
+import state_checks
 
 
 def spell_dispel_magic(sn, level, ch, victim, target):
     # modified for enhanced use */
-    if saves_spell(level, victim, DAM_OTHER):
+    if handler_magic.saves_spell(level, victim, merc.DAM_OTHER):
         victim.send("You feel a brief tingling sensation.\n")
         ch.send("You failed.\n")
         return
@@ -43,16 +44,17 @@ def spell_dispel_magic(sn, level, ch, victim, target):
               'weaken': "$n looks stronger."}
 
     for k, v in spells.items():
-        if check_dispel(level, victim, const.skill_table[k]):
+        if handler_magic.check_dispel(level, victim, const.skill_table[k]):
             if v:
-                act(v, victim, None, None, TO_ROOM)
+                handler_game.act(v, victim, None, None, merc.TO_ROOM)
             found = True
 
-    if IS_AFFECTED(victim, AFF_SANCTUARY) and not saves_dispel(level, victim.level, -1) and not is_affected(victim,
+    if state_checks.IS_AFFECTED(victim,
+                                merc.AFF_SANCTUARY) and not handler_magic.saves_dispel(level, victim.level, -1) and not state_checks.is_affected(victim,
                                                                                                             const.skill_table[
                                                                                                                 "sanctuary"]):
-        REMOVE_BIT(victim.affected_by, AFF_SANCTUARY)
-        act("The white aura around $n's body vanishes.", victim, None, None, TO_ROOM)
+        state_checks.REMOVE_BIT(victim.affected_by, merc.AFF_SANCTUARY)
+        handler_game.act("The white aura around $n's body vanishes.", victim, None, None, merc.TO_ROOM)
         found = True
 
     if found:
@@ -61,8 +63,8 @@ def spell_dispel_magic(sn, level, ch, victim, target):
         ch.send("Spell failed.\n")
 
 
-register_spell(skill_type("dispel magic",
+const.register_spell(const.skill_type("dispel magic",
                           {'mage': 16, 'cleric': 24, 'thief': 30, 'warrior': 30},
                           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_dispel_magic, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
-                          None, SLOT(59), 15, 12, "", "!Dispel Magic!", ""))
+                          spell_dispel_magic, merc.TAR_CHAR_OFFENSIVE, merc.POS_FIGHTING,
+                          None, const.SLOT(59), 15, 12, "", "!Dispel Magic!", ""))

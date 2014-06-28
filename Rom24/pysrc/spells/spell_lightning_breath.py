@@ -1,37 +1,38 @@
 import random
-
-from const import SLOT, skill_type, register_spell
-from effects import shock_effect
-from fight import damage
-from merc import act, TO_NOTVICT, TO_VICT, TO_CHAR, dice, saves_spell, DAM_LIGHTNING, TARGET_CHAR, POS_FIGHTING, \
-    TAR_CHAR_OFFENSIVE
+import const
+import effects
+import fight
+import game_utils
+import handler_game
+import handler_magic
+import merc
 
 
 def spell_lightning_breath(sn, level, ch, victim, target):
-    act("$n breathes a bolt of lightning at $N.", ch, None, victim, TO_NOTVICT)
-    act("$n breathes a bolt of lightning at you! ", ch, None, victim, TO_VICT)
-    act("You breathe a bolt of lightning at $N.", ch, None, victim, TO_CHAR)
+    handler_game.act("$n breathes a bolt of lightning at $N.", ch, None, victim, merc.TO_NOTVICT)
+    handler_game.act("$n breathes a bolt of lightning at you! ", ch, None, victim, merc.TO_VICT)
+    handler_game.act("You breathe a bolt of lightning at $N.", ch, None, victim, merc.TO_CHAR)
 
     hpch = max(10, ch.hit)
     hp_dam = random.randint(hpch // 9 + 1, hpch // 5)
-    dice_dam = dice(level, 20)
+    dice_dam = game_utils.dice(level, 20)
 
     dam = max(hp_dam + dice_dam // 10, dice_dam + hp_dam // 10)
 
-    if saves_spell(level, victim, DAM_LIGHTNING):
-        shock_effect(victim, level // 2, dam // 4, TARGET_CHAR)
-        damage(ch, victim, dam // 2, sn, DAM_LIGHTNING, True)
+    if handler_magic.saves_spell(level, victim, merc.DAM_LIGHTNING):
+        effects.shock_effect(victim, level // 2, dam // 4, merc.TARGET_CHAR)
+        fight.damage(ch, victim, dam // 2, sn, merc.DAM_LIGHTNING, True)
     else:
-        shock_effect(victim, level, dam, TARGET_CHAR)
-        damage(ch, victim, dam, sn, DAM_LIGHTNING, True)
+        effects.shock_effect(victim, level, dam, merc.TARGET_CHAR)
+        fight.damage(ch, victim, dam, sn, merc.DAM_LIGHTNING, True)
 
         #
         # * Spells for mega1.are from Glop//Erkenbrand.
 
 
-register_spell(skill_type("lightning breath",
+const.register_spell(const.skill_type("lightning breath",
                           {'mage': 37, 'cleric': 40, 'thief': 43, 'warrior': 46},
                           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_lightning_breath, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None,
-                          SLOT(204), 150, 24, "blast of lightning", "!Lightning Breath!", ""))
+                          spell_lightning_breath, merc.TAR_CHAR_OFFENSIVE, merc.POS_FIGHTING, None,
+                          const.SLOT(204), 150, 24, "blast of lightning", "!Lightning Breath!", ""))
 # * Spells for mega1.are from Glop/Erkenbrand. */)

@@ -1,32 +1,33 @@
-from const import SLOT, skill_type, register_spell
-from merc import IS_AFFECTED, AFF_INFRARED, act, TO_CHAR, TO_ROOM, AFFECT_DATA, TO_AFFECTS, APPLY_NONE, POS_STANDING, \
-    TAR_CHAR_DEFENSIVE
+import const
+import handler_game
+import merc
+import state_checks
 
 
 def spell_infravision(sn, level, ch, victim, target):
-    if IS_AFFECTED(victim, AFF_INFRARED):
+    if state_checks.IS_AFFECTED(victim, merc.AFF_INFRARED):
         if victim == ch:
             ch.send("You can already see in the dark.\n")
         else:
-            act("$N already has infravision.\n", ch, None, victim, TO_CHAR)
+            handler_game.act("$N already has infravision.\n", ch, None, victim, merc.TO_CHAR)
         return
 
-    act("$n's eyes glow red.\n", ch, None, None, TO_ROOM)
-    af = AFFECT_DATA()
-    af.where = TO_AFFECTS
+    handler_game.act("$n's eyes glow red.\n", ch, None, None, merc.TO_ROOM)
+    af = handler_game.AFFECT_DATA()
+    af.where = merc.TO_AFFECTS
     af.type = sn
     af.level = level
     af.duration = 2 * level
-    af.location = APPLY_NONE
+    af.location = merc.APPLY_NONE
     af.modifier = 0
-    af.bitvector = AFF_INFRARED
+    af.bitvector = merc.AFF_INFRARED
     victim.affect_add(af)
     victim.send("Your eyes glow red.\n")
     return
 
 
-register_spell(skill_type("infravision",
+const.register_spell(const.skill_type("infravision",
                           {'mage': 9, 'cleric': 13, 'thief': 10, 'warrior': 16},
                           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_infravision, TAR_CHAR_DEFENSIVE, POS_STANDING,
-                          None, SLOT(77), 5, 18, "", "You no longer see in the dark.", ""))
+                          spell_infravision, merc.TAR_CHAR_DEFENSIVE, merc.POS_STANDING,
+                          None, const.SLOT(77), 5, 18, "", "You no longer see in the dark.", ""))

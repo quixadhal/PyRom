@@ -147,10 +147,10 @@ def WEIGHT_MULT(pobj):
     return pobj.value[4] if pobj.item_type is merc.ITEM_CONTAINER else 100
 
 def check_blind(ch):
-    if not IS_NPC(ch) and IS_SET(ch.act, PLR_HOLYLIGHT):
+    if not IS_NPC(ch) and IS_SET(ch.act, merc.PLR_HOLYLIGHT):
         return True
 
-    if IS_AFFECTED(ch, AFF_BLIND):
+    if IS_AFFECTED(ch, merc.AFF_BLIND):
         ch.send("You can't see a thing!\n\r")
         return False
     return True

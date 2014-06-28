@@ -31,6 +31,7 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
+import idlelib.PyParse
 
 import random
 from handler_magic import saves_spell
@@ -381,7 +382,7 @@ def weather_update( ):
     if buf:
         for d in descriptor_list:
             if d.is_connected(con_playing) and state_checks.IS_OUTSIDE(d.character) and state_checks.IS_AWAKE(d.character):
-                ch.send(buf)
+                idlelib.PyParse.ch.send(buf)
     return
 
 save_number = 0

@@ -1,5 +1,5 @@
-from const import SLOT, skill_type, register_spell
-from merc import POS_STANDING, TAR_CHAR_DEFENSIVE
+import const
+import merc
 
 
 def spell_refresh(sn, level, ch, victim, target):
@@ -13,8 +13,8 @@ def spell_refresh(sn, level, ch, victim, target):
     return
 
 
-register_spell(skill_type("refresh",
+const.register_spell(const.skill_type("refresh",
                           {'mage': 8, 'cleric': 5, 'thief': 12, 'warrior': 9},
                           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_refresh, TAR_CHAR_DEFENSIVE, POS_STANDING,
-                          None, SLOT(81), 12, 18, "refresh", "!Refresh!", ""))
+                          spell_refresh, merc.TAR_CHAR_DEFENSIVE, merc.POS_STANDING,
+                          None, const.SLOT(81), 12, 18, "refresh", "!Refresh!", ""))

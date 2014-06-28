@@ -261,7 +261,7 @@ class handler_ch:
                         and not state_checks.IS_IMMORTAL(vch) and not state_checks.IS_AFFECTED(vch, AFF_PLAGUE) \
                         and random.randint(0, 5) == 0:
                     vch.send("You feel hot and feverish.\n\r")
-                    act("$n shivers and looks very ill.", vch, None, None, TO_ROOM)
+                    handler_game.act("$n shivers and looks very ill.", vch, None, None, TO_ROOM)
                     vch.affect_join(plague)
         return
 
@@ -827,7 +827,7 @@ class handler_ch:
                         and not state_checks.IS_AFFECTED(vch, AFF_PLAGUE) \
                         and random.randint(0, 5) == 0:
                     vch.send("You feel hot and feverish.\n\r")
-                    act("$n shivers and looks very ill.", vch, None, None, TO_ROOM)
+                    handler_game.act("$n shivers and looks very ill.", vch, None, None, TO_ROOM)
                     vch.affect_join(plague)
         return
 

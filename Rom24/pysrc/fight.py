@@ -33,6 +33,10 @@
 """
 
 import logging
+import game_utils
+import handler_game
+import save
+import state_checks
 
 logger = logging.getLogger()
 
@@ -561,7 +565,7 @@ def damage(ch,victim,dam,dt,dam_type,show):
         group_gain( ch, victim )
 
         if not state_checks.IS_NPC(victim):
-            logger.warn ("%s killed by %s at %d", victim.name, ch.short_descr if IS_NPC(ch) else ch.name, ch.in_room.vnum )
+            logger.warn ("%s killed by %s at %d", victim.name, ch.short_descr if state_checks.IS_NPC(ch) else ch.name, ch.in_room.vnum )
             # Dying penalty:
             # 2/3 way back to previous level.
             if victim.exp > victim.exp_per_level(victim.pcdata.points) * victim.level:
@@ -659,12 +663,12 @@ def is_safe(ch, victim):
         # NPC doing the killing */
         if state_checks.IS_NPC(ch):
             # safe room check */
-            if IS_SET(victim.in_room.room_flags,ROOM_SAFE):
+            if state_checks.IS_SET(victim.in_room.room_flags,ROOM_SAFE):
                 ch.send("Not in this room.\n")
                 return True
 
             # charmed mobs and pets cannot attack players while owned */
-            if IS_AFFECTED(ch,AFF_CHARM) and ch.master and  ch.master.fighting != victim:
+            if state_checks.IS_AFFECTED(ch,AFF_CHARM) and ch.master and  ch.master.fighting != victim:
                 ch.send("Players are your friends!\n")
                 return True
         # player doing the killing */
@@ -765,7 +769,7 @@ def check_killer( ch, victim ):
      # Charm-o-rama.
     if state_checks.IS_SET(ch.affected_by, AFF_CHARM):
         if ch.master == None:
-            logger.warn ("BUG: Check_killer: %s bad AFF_CHARM", ch.short_descr if IS_NPC(ch) else ch.name )
+            logger.warn ("BUG: Check_killer: %s bad AFF_CHARM", ch.short_descr if state_checks.IS_NPC(ch) else ch.name )
             ch.affect_strip('charm person')
             state_checks.REMOVE_BIT(ch.affected_by, AFF_CHARM)
             return
@@ -785,7 +789,7 @@ def check_killer( ch, victim ):
     ch.send("*** You are now a KILLER!! ***\n")
     state_checks.SET_BIT(ch.act, PLR_KILLER)
     handler_game.wiznet("$N is attempting to murder %s" % victim.name,ch,None,WIZ_FLAGS,0,0)
-    save_char_obj( ch )
+    save.save_char_obj( ch )
     return
 # Check for parry.
 def check_parry( ch, victim ):

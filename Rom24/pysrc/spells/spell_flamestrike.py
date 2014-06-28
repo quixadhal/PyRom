@@ -1,17 +1,19 @@
-from const import SLOT, skill_type, register_spell
-from fight import damage
-from merc import dice, saves_spell, DAM_FIRE, POS_FIGHTING, TAR_CHAR_OFFENSIVE
+import const
+import fight
+import game_utils
+import handler_magic
+import merc
 
 
 def spell_flamestrike(sn, level, ch, victim, target):
-    dam = dice(6 + level // 2, 8)
-    if saves_spell(level, victim, DAM_FIRE):
+    dam = game_utils.dice(6 + level // 2, 8)
+    if handler_magic.saves_spell(level, victim, merc.DAM_FIRE):
         dam = dam // 2
-    damage(ch, victim, dam, sn, DAM_FIRE, True)
+    fight.damage(ch, victim, dam, sn, merc.DAM_FIRE, True)
 
 
-register_spell(skill_type("flamestrike",
+const.register_spell(const.skill_type("flamestrike",
                           {'mage': 53, 'cleric': 20, 'thief': 53, 'warrior': 27},
                           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_flamestrike, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
-                          None, SLOT(65), 20, 12, "flamestrike", "!Flamestrike!", ""))
+                          spell_flamestrike, merc.TAR_CHAR_OFFENSIVE, merc.POS_FIGHTING,
+                          None, const.SLOT(65), 20, 12, "flamestrike", "!Flamestrike!", ""))

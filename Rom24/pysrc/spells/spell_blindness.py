@@ -1,28 +1,29 @@
-from merc import (IS_AFFECTED, saves_spell, DAM_OTHER, AFFECT_DATA,
-                  TO_AFFECTS, APPLY_HITROLL, AFF_BLIND, act, TO_ROOM, TAR_CHAR_OFFENSIVE,
-                  POS_FIGHTING)
-from const import register_spell, skill_type, SLOT
+import const
+import handler_game
+import handler_magic
+import merc
+import state_checks
 
 
 def spell_blindness(sn, level, ch, victim, target):
-    if IS_AFFECTED(victim, AFF_BLIND) or saves_spell(level, victim, DAM_OTHER):
+    if state_checks.IS_AFFECTED(victim, merc.AFF_BLIND) or handler_magic.saves_spell(level, victim, merc.DAM_OTHER):
         return
 
-    af = AFFECT_DATA()
-    af.where = TO_AFFECTS
+    af = handler_game.AFFECT_DATA()
+    af.where = merc.TO_AFFECTS
     af.type = sn
     af.level = level
-    af.location = APPLY_HITROLL
+    af.location = merc.APPLY_HITROLL
     af.modifier = -4
     af.duration = 1 + level
-    af.bitvector = AFF_BLIND
+    af.bitvector = merc.AFF_BLIND
     victim.affect_add(af)
     victim.send("You are blinded! \n")
-    act("$n appears to be blinded.", victim, target=TO_ROOM)
+    handler_game.act("$n appears to be blinded.", victim, target=merc.TO_ROOM)
 
 
-register_spell(skill_type("blindness",
+const.register_spell(const.skill_type("blindness",
                           {'mage': 12, 'cleric': 8, 'thief': 17, 'warrior': 15},
                           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_blindness, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
-                          None, SLOT(4), 5, 12, "", "You can see again.", ""))
+                          spell_blindness, merc.TAR_CHAR_OFFENSIVE, merc.POS_FIGHTING,
+                          None, const.SLOT(4), 5, 12, "", "You can see again.", ""))
