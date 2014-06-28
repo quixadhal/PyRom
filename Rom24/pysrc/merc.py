@@ -1400,6 +1400,7 @@ def read_word(str, lower = True):
         word = word.lower()
     str = str.lstrip()
     str = str[len(word)+1:]
+    word = word.replace("'", '')
     return (str, word.strip())
 
 def read_int(str):
@@ -1922,16 +1923,16 @@ def mana_cost (ch, min_mana, level):
 
 def find_spell(ch, name):
     #* finds a spell the character can cast if possible */
-    from const import skill_table
-    found = -1
+    import const
+    found = None
     if IS_NPC(ch):
         return prefix_lookup(skill_table,name)
-    for key, sn in skill_table.items():
-        if sn.name.lower().startswith(name.lower()):
+    for key, sn in const.skill_table.items():
+        if key.startswith(name.lower()):
             if found == -1:
                 found = sn
-        if ch.level >= sn.skill_level[ch.guild.name] and key in ch.pcdata.learned:
-            return sn
+            if ch.level >= sn.skill_level[ch.guild.name] and key in ch.pcdata.learned:
+                return sn
     return found
 
 # trust levels for load and clone */

@@ -82,7 +82,7 @@ def register_command(entry: cmd_type):
     logger.debug('    %s registered in command table.', entry.name)
 
 
-hotfix.init_directory(os.path.join('commands'))
+#hotfix.init_directory(os.path.join('commands'))
 
 
 def interpret(ch, argument):

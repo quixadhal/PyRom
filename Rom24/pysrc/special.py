@@ -244,31 +244,31 @@ def spec_cast_adept( ch ):
     num = random.randint(1,15)
     if num ==  0:
         act( "$n utters the word 'abrazak'.", ch, None, None, TO_ROOM )
-        magic.spell_armor( const.skill_table["armor"], ch.level,ch,victim,TARGET_CHAR)
+        const.skill_table["armor"].spell_fun('armor', ch.level,ch,victim,TARGET_CHAR)
         return True
     elif num ==   1:
         act( "$n utters the word 'fido'.", ch, None, None, TO_ROOM )
-        magic.spell_bless( const.skill_table["bless"], ch.level,ch,victim,TARGET_CHAR)
+        const.skill_table["bless"].spell_fun('bless', ch.level,ch,victim,TARGET_CHAR)
         return True
     elif num == 2:
         act("$n utters the words 'judicandus noselacri'.",ch,None,None,TO_ROOM)
-        magic.spell_cure_blindness( const.skill_table["cure blindness"], ch.level, ch, victim,TARGET_CHAR)
+        const.skill_table["cure blindness"].spell_fun('cure blindness', ch.level, ch, victim,TARGET_CHAR)
         return True
     elif num == 3:
         act("$n utters the words 'judicandus dies'.", ch,None, None, TO_ROOM )
-        magic.spell_cure_light( const.skill_table["cure light"], ch.level, ch, victim,TARGET_CHAR)
+        const.skill_table["cure light"].spell_fun('cure light', ch.level, ch, victim,TARGET_CHAR)
         return True
     elif num == 4:
         act( "$n utters the words 'judicandus sausabru'.",ch,None,None,TO_ROOM)
-        magic.spell_cure_poison( const.skill_table["cure poison"], ch.level, ch, victim,TARGET_CHAR)
+        const.skill_table["cure poison"].spell_fun('cure poison', ch.level, ch, victim,TARGET_CHAR)
         return True
     elif num == 5:
         act("$n utters the word 'candusima'.", ch, None, None, TO_ROOM )
-        magic.spell_refresh( const.skill_table["refresh"],ch.level,ch,victim,TARGET_CHAR)
+        const.skill_table["refresh"].spell_fun('refresh', ch.level,ch,victim,TARGET_CHAR)
         return True
     elif num == 6:
         act("$n utters the words 'judicandus eugzagz'.",ch,None,None,TO_ROOM)
-        magic.spell_cure_disease( const.skill_table["cure disease"], ch.level,ch,victim,TARGET_CHAR)
+        const.skill_table["cure disease"].spell_fun('cure disease', ch.level,ch,victim,TARGET_CHAR)
         return False
 
 def spec_cast_cleric( ch ):
@@ -604,7 +604,7 @@ def spec_poison( ch ):
     act( "You bite $N!",  ch, None, victim, TO_CHAR    )
     act( "$n bites $N!",  ch, None, victim, TO_NOTVICT )
     act( "$n bites you!", ch, None, victim, TO_VICT    )
-    spell_poison( const.skill_table['poison'], ch.level, ch, victim,TARGET_CHAR)
+    const.skill_table['poison'].spell_fun('poison', ch.level, ch, victim,TARGET_CHAR)
     return True
 
 def spec_thief( ch ):
