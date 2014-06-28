@@ -34,23 +34,26 @@
 # * Move a char into a room.
 import collections
 import random
-from handler_obj import format_obj_to_char
+import handler_obj
+
 from merc import *
 import const
 import magic
 import fight
-from skills import check_improve
+import skills
 import state_checks
 import game_utils
 import handler_game
 
 depth = 0
 
-#Global Classes
+
+# Global Classes
 class CHAR_DATA(object):
     def __init__(self):
         from const import race_table
         from tables import clan_table
+
         self.master = None
         self.leader = None
         self.fighting = None
@@ -98,7 +101,7 @@ class CHAR_DATA(object):
         self.move = 100
         self.max_move = 100
         self.gold = 0
-        self.silver =0
+        self.silver = 0
         self.exp = 0
         self.act = 0
         self.comm = 0
@@ -120,15 +123,15 @@ class CHAR_DATA(object):
         self.damroll = 0
         self.armor = [100, 100, 100, 100]
         self.wimpy = 0
-    # stats */
+        # stats */
         self.perm_stat = [13 for x in range(MAX_STATS)]
         self.mod_stat = [0 for x in range(MAX_STATS)]
-    # parts stuff */
+        # parts stuff */
         self.form = 0
         self.parts = 0
         self.size = 0
         self.material = ""
-    # mobile stuff */
+        # mobile stuff */
         self.off_flags = 0
         self.damage = [0, 0, 0]
         self.dam_type = 17
@@ -210,6 +213,7 @@ class MOB_INDEX_DATA:
 
     def __repr__(self):
         return "<MobIndex: %s:%s>" % ( self.short_descr, self.vnum )
+
 
 def CH(d):
     return d.original if d.original else d.character
@@ -358,7 +362,8 @@ class handler_ch:
         # * Check for weapon wielding.
         # * Guard against recursion (for weapons with affects).
         wield = ch.get_eq(WEAR_WIELD)
-        if not state_checks.IS_NPC(ch) and wield and wield.get_weight() > (const.str_app[ch.get_curr_stat(STAT_STR)].wield * 10):
+        if not state_checks.IS_NPC(ch) and wield and wield.get_weight() > (
+            const.str_app[ch.get_curr_stat(STAT_STR)].wield * 10):
             global depth
 
             if depth == 0:
@@ -1007,7 +1012,8 @@ class handler_ch:
             return False
         if state_checks.IS_SET(pRoomIndex.room_flags, ROOM_HEROES_ONLY) and not state_checks.IS_IMMORTAL(ch):
             return False
-        if state_checks.IS_SET(pRoomIndex.room_flags, ROOM_NEWBIES_ONLY) and ch.level > 5 and not state_checks.IS_IMMORTAL(ch):
+        if state_checks.IS_SET(pRoomIndex.room_flags,
+                               ROOM_NEWBIES_ONLY) and ch.level > 5 and not state_checks.IS_IMMORTAL(ch):
             return False
         if not state_checks.IS_IMMORTAL(ch) and pRoomIndex.clan and ch.clan != pRoomIndex.clan:
             return False
@@ -1022,7 +1028,8 @@ class handler_ch:
             return False
         if ch.get_trust() < victim.incog_level and ch.in_room != victim.in_room:
             return False
-        if (not state_checks.IS_NPC(ch) and state_checks.IS_SET(ch.act, PLR_HOLYLIGHT)) or (state_checks.IS_NPC(ch) and state_checks.IS_IMMORTAL(ch)):
+        if (not state_checks.IS_NPC(ch) and state_checks.IS_SET(ch.act, PLR_HOLYLIGHT)) or (
+            state_checks.IS_NPC(ch) and state_checks.IS_IMMORTAL(ch)):
             return True
         if state_checks.IS_AFFECTED(ch, AFF_BLIND):
             return False
@@ -1032,7 +1039,8 @@ class handler_ch:
             return False
         # sneaking */
 
-        if state_checks.IS_AFFECTED(victim, AFF_SNEAK) and not state_checks.IS_AFFECTED(ch, AFF_DETECT_HIDDEN) and victim.fighting is None:
+        if state_checks.IS_AFFECTED(victim, AFF_SNEAK) and not state_checks.IS_AFFECTED(ch,
+                                                                                        AFF_DETECT_HIDDEN) and victim.fighting is None:
             chance = victim.get_skill("sneak")
             chance += victim.get_curr_stat(STAT_DEX) * 3 // 2
             chance -= ch.get_curr_stat(STAT_INT) * 2
@@ -1041,7 +1049,8 @@ class handler_ch:
             if random.randint(1, 99) < chance:
                 return False
 
-        if state_checks.IS_AFFECTED(victim, AFF_HIDE) and not state_checks.IS_AFFECTED(ch, AFF_DETECT_HIDDEN) and victim.fighting is None:
+        if state_checks.IS_AFFECTED(victim, AFF_HIDE) and not state_checks.IS_AFFECTED(ch,
+                                                                                       AFF_DETECT_HIDDEN) and victim.fighting is None:
             return False
 
         return True
@@ -1107,7 +1116,8 @@ class handler_ch:
             elif sn == "bash" and state_checks.IS_SET(ch.off_flags, OFF_BASH):
                 skill = 10 + 3 * ch.level
             elif sn == "disarm" and (state_checks.IS_SET(ch.off_flags, OFF_DISARM) \
-                                             or state_checks.IS_SET(ch.act, ACT_WARRIOR) or state_checks.IS_SET(ch.act, ACT_THIEF)):
+                                             or state_checks.IS_SET(ch.act, ACT_WARRIOR) or state_checks.IS_SET(ch.act,
+                                                                                                                ACT_THIEF)):
                 skill = 20 + 3 * ch.level
             elif sn == "berserk" and state_checks.IS_SET(ch.off_flags, OFF_BERSERK):
                 skill = 3 * ch.level
@@ -1241,7 +1251,7 @@ class handler_ch:
 
         if points < 40:
             return 1000 * const.pc_race_table[ch.race.name].class_mult[ch.guild.name] / 100 if \
-            const.pc_race_table[ch.race.name].class_mult[ch.guild.name] else 1
+                const.pc_race_table[ch.race.name].class_mult[ch.guild.name] else 1
 
         # processing */
         points -= 40
@@ -1282,11 +1292,13 @@ methods = {d: f for d, f in handler_ch.__dict__.items() if not d.startswith('__'
 for m, f in methods.items():
     setattr(CHAR_DATA, m, f)
 
+
 def has_key(ch, key):
     for obj in ch.carrying:
         if obj.pIndexData.vnum == key:
             return True
     return False
+
 
 def move_char(ch, door, follow):
     if door < 0 or door > 5:
@@ -1354,7 +1366,8 @@ def move_char(ch, door, follow):
             fch.do_stand("")
 
         if fch.master == ch and fch.position == POS_STANDING and fch.can_see_room(to_room):
-            if state_checks.IS_SET(ch.in_room.room_flags, ROOM_LAW) and (state_checks.IS_NPC(fch) and state_checks.IS_SET(fch.act, ACT_AGGRESSIVE)):
+            if state_checks.IS_SET(ch.in_room.room_flags, ROOM_LAW) and (
+                state_checks.IS_NPC(fch) and state_checks.IS_SET(fch.act, ACT_AGGRESSIVE)):
                 handler_game.act("You can't bring $N into the city.", ch, None, fch, TO_CHAR)
                 handler_game.act("You aren't allowed in the city.", fch, None, None, TO_CHAR)
                 continue
@@ -1362,53 +1375,57 @@ def move_char(ch, door, follow):
             handler_game.act("You follow $N.", fch, None, ch, TO_CHAR)
             move_char(fch, door, True)
 
-def add_follower( ch, master ):
+
+def add_follower(ch, master):
     if ch.master:
-        print ("BUG: Add_follower: non-null master.")
+        print("BUG: Add_follower: non-null master.")
         return
-    ch.master        = master
-    ch.leader        = None
+    ch.master = master
+    ch.leader = None
     if master.can_see(ch):
-        handler_game.act( "$n now follows you.", ch, None, master, TO_VICT )
-    handler_game.act( "You now follow $N.",  ch, None, master, TO_CHAR )
+        handler_game.act("$n now follows you.", ch, None, master, TO_VICT)
+    handler_game.act("You now follow $N.", ch, None, master, TO_CHAR)
     return
 
+
 # nukes charmed monsters and pets */
-def nuke_pets( ch ):
+def nuke_pets(ch):
     if ch.pet:
         stop_follower(ch.pet)
         if ch.pet.in_room:
-            handler_game.act("$N slowly fades away.",ch,None,ch.pet,TO_NOTVICT)
+            handler_game.act("$N slowly fades away.", ch, None, ch.pet, TO_NOTVICT)
         ch.pet.extract(True)
     ch.pet = None
     return
+
 
 def die_follower(ch):
     if ch.master:
         if ch.master.pet == ch:
             ch.master.pet = None
-        stop_follower( ch )
+        stop_follower(ch)
     ch.leader = None
 
     for fch in char_list[:]:
         if fch.master == ch:
-            stop_follower( fch )
+            stop_follower(fch)
         if fch.leader == ch:
             fch.leader = fch
     return
 
-def stop_follower( ch ):
+
+def stop_follower(ch):
     if not ch.master:
-        print ("BUG: Stop_follower: null master.")
+        print("BUG: Stop_follower: null master.")
         return
 
     if state_checks.IS_AFFECTED(ch, AFF_CHARM):
-        state_checks.REMOVE_BIT( ch.affected_by, AFF_CHARM )
+        state_checks.REMOVE_BIT(ch.affected_by, AFF_CHARM)
         ch.affect_strip('charm person')
 
     if ch.master.can_see(ch) and ch.in_room:
-        handler_game.act( "$n stops following you.", ch, None, ch.master, TO_VICT)
-        handler_game.act( "You stop following $N.", ch, None, ch.master, TO_CHAR)
+        handler_game.act("$n stops following you.", ch, None, ch.master, TO_VICT)
+        handler_game.act("You stop following $N.", ch, None, ch.master, TO_CHAR)
     if ch.master.pet == ch:
         ch.master.pet = None
     ch.master = None
@@ -1416,6 +1433,8 @@ def stop_follower( ch ):
     return
 
     # * Show a list to a character.
+
+
 # * Can coalesce duplicated items.
 def show_list_to_char(clist, ch, fShort, fShowNothing):
     if not ch.desc:
@@ -1423,25 +1442,25 @@ def show_list_to_char(clist, ch, fShort, fShowNothing):
     objects = collections.OrderedDict()
     for obj in clist:
         if obj.wear_loc == WEAR_NONE and ch.can_see_obj(obj):
-            frmt = format_obj_to_char(obj, ch, fShort)
+            frmt = handler_obj.format_obj_to_char(obj, ch, fShort)
             if frmt not in objects:
                 objects[frmt] = 1
             else:
                 objects[frmt] += 1
-
 
     if not objects and fShowNothing:
         if state_checks.IS_NPC(ch) or state_checks.IS_SET(ch.comm, COMM_COMBINE):
             ch.send("     ")
         ch.send("Nothing.\n")
 
-     #* Output the formatted list.
+        #* Output the formatted list.
     for desc, count in objects.items():
         if state_checks.IS_NPC(ch) or state_checks.IS_SET(ch.comm, COMM_COMBINE) and count > 1:
             ch.send("(%2d) %s\n" % (count, desc))
         else:
             for i in range(count):
                 ch.send("     %s\n" % desc)
+
 
 def show_char_to_char_0(victim, ch):
     buf = ''
@@ -1482,18 +1501,22 @@ def show_char_to_char_0(victim, ch):
             and victim.position == POS_STANDING and not ch.on:
         buf += victim.pcdata.title
 
-    if victim.position == POS_DEAD: buf += " is DEAD!!"
-    elif victim.position == POS_MORTAL: buf += " is mortally wounded."
-    elif victim.position == POS_INCAP: buf += " is incapacitated."
-    elif victim.position == POS_STUNNED: buf += " is lying here stunned."
+    if victim.position == POS_DEAD:
+        buf += " is DEAD!!"
+    elif victim.position == POS_MORTAL:
+        buf += " is mortally wounded."
+    elif victim.position == POS_INCAP:
+        buf += " is incapacitated."
+    elif victim.position == POS_STUNNED:
+        buf += " is lying here stunned."
     elif victim.position == POS_SLEEPING:
         if victim.on:
             if state_checks.IS_SET(victim.on.value[2], SLEEP_AT):
-                buf += " is sleeping at %s." % (victim.on.short_descr)
+                buf += " is sleeping at %s." % victim.on.short_descr
             elif state_checks.IS_SET(victim.on.value[2], SLEEP_ON):
-                buf += " is sleeping on %s." % (victim.on.short_descr)
+                buf += " is sleeping on %s." % victim.on.short_descr
             else:
-                buf += " is sleeping in %s." % (victim.on.short_descr)
+                buf += " is sleeping in %s." % victim.on.short_descr
         else:
             buf += " is sleeping here."
     elif victim.position == POS_RESTING:
@@ -1542,6 +1565,7 @@ def show_char_to_char_0(victim, ch):
     ch.send(buf)
     return
 
+
 def show_char_to_char_1(victim, ch):
     if victim.can_see(ch):
         if ch == victim:
@@ -1586,17 +1610,18 @@ def show_char_to_char_1(victim, ch):
                 handler_game.act("$N is using:", ch, None, victim, TO_CHAR)
                 found = True
             ch.send(where_name[iWear])
-            ch.send(format_obj_to_char(obj, ch, True) + "\n")
+            ch.send(handler_obj.format_obj_to_char(obj, ch, True) + "\n")
 
     if victim != ch and not state_checks.IS_NPC(ch) \
-    and random.randint(1, 99) < ch.get_skill("peek"):
+            and random.randint(1, 99) < ch.get_skill("peek"):
         ch.send("\nYou peek at the inventory:\n")
-        check_improve(ch, 'peek', True, 4)
+        skills.check_improve(ch, 'peek', True, 4)
         show_list_to_char(victim.carrying, ch, True, True)
     return
 
-def show_char_to_char(list, ch):
-    for rch in list:
+
+def show_char_to_char(plist, ch):
+    for rch in plist:
         if rch == ch:
             continue
 
