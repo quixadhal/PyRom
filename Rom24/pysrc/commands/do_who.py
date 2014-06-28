@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import game_utils
 import merc
 import const
@@ -6,21 +10,21 @@ import nanny
 import state_checks
 import tables
 
-# * New 'who' command originally by Alander of Rivers of Mud.
+# New 'who' command originally by Alander of Rivers of Mud.
 def do_who(ch, argument):
     fClassRestrict = False
     fClanRestrict = False
     fClan = False
     fRaceRestrict = False
     fImmortalOnly = False
-     #* Set default arguments.
+    # Set default arguments.
     iLevelLower = 0
     iLevelUpper = merc.MAX_LEVEL
-    rgfClass = {k:False for k, g in const.guild_table.items()}
-    rgfRace = {k:False for k, r in const.pc_race_table.items()}
-    rgfClan = {k:False for k, r in tables.clan_table.items()}
+    rgfClass = {k: False for k, g in const.guild_table.items()}
+    rgfRace = {k: False for k, r in const.pc_race_table.items()}
+    rgfClan = {k: False for k, r in tables.clan_table.items()}
 
-     #* Parse arguments.
+    # Parse arguments.
     nNumber = 0
     while True:
         argument, arg = game_utils.read_word(argument)
@@ -61,8 +65,8 @@ def do_who(ch, argument):
     # Now show matching chars.
     nMatch = 0
     for d in merc.descriptor_list:
-        #* Check for match against restrictions.
-        #* Don't use trust as that exposes trusted mortals.
+        # Check for match against restrictions.
+        # Don't use trust as that exposes trusted mortals.
         if not d.is_connected(nanny.con_playing) or not ch.can_see(d.character):
             continue
 
@@ -72,15 +76,14 @@ def do_who(ch, argument):
             continue
 
         if wch.level < iLevelLower or wch.level > iLevelUpper \
-        or (fImmortalOnly  and wch.level < merc.LEVEL_IMMORTAL) \
-        or (fClassRestrict and not rgfClass[wch.guild.name]) \
-        or (fRaceRestrict and not rgfRace[wch.race.name]) \
-        or (fClan and not wch.is_clan()) or (fClanRestrict and not rgfClan[wch.clan.name]):
+                or (fImmortalOnly and wch.level < merc.LEVEL_IMMORTAL) \
+                or (fClassRestrict and not rgfClass[wch.guild.name]) \
+                or (fRaceRestrict and not rgfRace[wch.race.name]) \
+                or (fClan and not wch.is_clan()) or (fClanRestrict and not rgfClan[wch.clan.name]):
             continue
 
         nMatch += 1
 
-        #
         # Figure out what to print for class.
         guild = wch.guild.who_name
         if wch.level == merc.MAX_LEVEL - 0:
@@ -101,7 +104,7 @@ def do_who(ch, argument):
             guild = "ANG"
         elif wch.level == merc.MAX_LEVEL - 8:
             guild = "AVA"
-        # a little formatting */
+        # a little formatting
         ch.send("[%2d %6s %s] %s%s%s%s%s%s%s%s\n" % (
                 wch.level,
                 const.pc_race_table[wch.race.name].who_name if wch.race.name in const.pc_race_table else "     ",
@@ -117,4 +120,5 @@ def do_who(ch, argument):
     ch.send("\nPlayers found: %d\n" % nMatch)
     return
 
-interp.cmd_type('who', do_who, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('who', do_who, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

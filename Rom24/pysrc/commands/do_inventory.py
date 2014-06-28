@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -7,4 +11,5 @@ def do_inventory(ch, argument):
     merc.show_list_to_char(ch.carrying, ch, True, True)
     return
 
-interp.cmd_type('inventory', do_inventory, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('inventory', do_inventory, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

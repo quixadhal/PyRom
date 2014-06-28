@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -7,7 +11,7 @@ def do_log(ch, argument):
     if not arg:
         ch.send("Log whom?\n")
         return
-    if arg == "all" :
+    if arg == "all":
         if merc.fLogAll:
             merc.fLogAll = False
             ch.send("Log ALL off.\n")
@@ -22,7 +26,7 @@ def do_log(ch, argument):
     if merc.IS_NPC(victim):
         ch.send("Not on NPC's.\n")
         return
-    # * No level check, gods can log anyone.
+    # No level check, gods can log anyone.
     if merc.IS_SET(victim.act, merc.PLR_LOG):
         victim.act = merc.REMOVE_BIT(victim.act, merc.PLR_LOG)
         ch.send("LOG removed.\n")
@@ -31,4 +35,5 @@ def do_log(ch, argument):
         ch.send("LOG set.\n")
     return
 
-interp.cmd_type('log', do_log, merc.POS_DEAD, merc.L1, merc.LOG_ALWAYS, 1)
+
+interp.register_command(interp.cmd_type('log', do_log, merc.POS_DEAD, merc.L1, merc.LOG_ALWAYS, 1))

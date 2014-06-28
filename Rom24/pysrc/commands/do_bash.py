@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import random
 import game_utils
 import handler_game
@@ -21,18 +25,18 @@ def do_bash(ch, argument):
     if not arg:
         victim = ch.fighting
         if not victim:
-            ch.send("But you aren't fighting anyone!\n\r")
+            ch.send("But you aren't fighting anyone!\n")
             return
     else:
         victim = ch.get_char_room(arg)
         if not victim:
-            ch.send("They aren't here.\n\r")
+            ch.send("They aren't here.\n")
             return
     if victim.position < merc.POS_FIGHTING:
         handler_game.act("You'll have to let $M get back up first.",ch,None,victim, merc.TO_CHAR)
         return
     if victim == ch:
-        ch.send("You try to bash your brains out, but fail.\n\r")
+        ch.send("You try to bash your brains out, but fail.\n")
         return
     if fight.is_safe(ch,victim):
         return
@@ -43,15 +47,15 @@ def do_bash(ch, argument):
         handler_game.act("But $N is your friend!", ch, None, victim, merc.TO_CHAR)
         return
 
-    # modifiers */
-    # size  and weight */
+    # modifiers
+    # size and weight
     chance += ch.carry_weight // 250
     chance -= victim.carry_weight // 200
     if ch.size < victim.size:
         chance += (ch.size - victim.size) * 15
     else:
         chance += (ch.size - victim.size) * 10
-    # stats */
+    # stats
     chance += ch.get_curr_stat(merc.STAT_STR)
     chance -= (victim.get_curr_stat(merc.STAT_DEX) * 4) // 3
     chance -= state_checks.GET_AC(victim, merc.AC_BASH) // 25
@@ -60,14 +64,14 @@ def do_bash(ch, argument):
         chance += 10
     if state_checks.IS_SET(victim.off_flags, merc.OFF_FAST) or state_checks.IS_AFFECTED(victim, merc.AFF_HASTE):
         chance -= 30
-    # level */
+    # level
     chance += (ch.level - victim.level)
     if not state_checks.IS_NPC(victim) and chance < victim.get_skill('dodge'):
         pass
-        #act("$n tries to bash you, but you dodge it.",ch,None,victim,TO_VICT)
-        #act("$N dodges your bash, you fall flat on your face.",ch,None,victim,TO_CHAR)
-        #WAIT_STATE(ch,const.skill_table['bash'].beats)
-        #return*/
+        # act("$n tries to bash you, but you dodge it.",ch,None,victim,TO_VICT)
+        # act("$N dodges your bash, you fall flat on your face.",ch,None,victim,TO_CHAR)
+        # WAIT_STATE(ch,const.skill_table['bash'].beats)
+        # return
         chance -= 3 * (victim.get_skill('dodge') - chance)
     # now the attack */
     if random.randint(1,99) < chance:
@@ -89,4 +93,5 @@ def do_bash(ch, argument):
         state_checks.WAIT_STATE(ch, const.skill_table['bash'].beats * 3 // 2)
     fight.check_killer(ch,victim)
 
-interp.cmd_type('bash', do_bash, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('bash', do_bash, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1))

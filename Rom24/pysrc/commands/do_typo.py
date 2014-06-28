@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 import settings
@@ -9,4 +13,5 @@ def do_typo(ch, argument):
     ch.send("Typo logged.\n")
     return
 
-interp.cmd_type('typo', do_typo, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('typo', do_typo, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

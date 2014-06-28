@@ -34,42 +34,53 @@
 import os
 import importlib
 import traceback
+import logging
 
-#dictionary of files to track. will be key'd by file name and the value will be modified unix timestamp
+logger = logging.getLogger()
+
+# dictionary of files to track. will be key'd by file name and the value will be modified unix timestamp
 tracked_files = {}
 modified_files = {}
 
-def init_file(path, modules, silent = False):
-#called by init_monitoring to begin tracking a file.
+
+def init_file(path, modules, silent=False):
+    #called by init_monitoring to begin tracking a file.
     modules = [importlib.import_module(m) for m in modules]
     tracked_files[path] = [os.path.getmtime(path), modules]
     if not silent:
-        print("\t...Tracking %s" % path)
+        logger.info('    Tracking %s', path)
+    else:
+        logger.debug('    Tracking %s', path)
 
-def init_directory(path, silent = False):
+
+def init_directory(path, silent=False):
     dir = os.listdir(path)
     files = [f for f in dir if not f.startswith('__')]
 
+    logger.info('Tracking %d files in %s', len(files), path)
     for file in files:
         full_path = os.path.join(path, file)
         module = full_path.split('.')[0].replace(os.sep, '.')
         init_file(full_path, [module], silent)
 
+
 def init_monitoring():
-#Called in main function to begin tracking files.
-    print("Monitoring files for modifications.")
+    #Called in main function to begin tracking files.
+    logger.info('Monitoring system initializing...')
     init_file('handler_ch.py', ['handler_ch'])
     init_file('handler_obj.py', ['handler_obj'])
     init_file('handler_room.py', ['handler_room'])
+    init_directory(os.path.join('commands'))
+    logger.info('done. (Monitoring system)')
 
 
 def poll_files():
-#Called in game_loop of program to check if files have been modified.
+    #Called in game_loop of program to check if files have been modified.
     for fp, pair in tracked_files.items():
         mod, modules = pair
         if mod != os.path.getmtime(fp):
             #File has been modified.
-            print("%s has been modified" % fp)
+            logger.warn('%s has been modified', fp)
             tracked_files[fp][0] = os.path.getmtime(fp)
             modified_files[fp] = [os.path.getmtime(fp), modules]
 
@@ -77,12 +88,12 @@ def poll_files():
 def reload_files(ch):
     for fp, pair in modified_files.copy().items():
         mod, modules = pair
-        print("Reloading %s" % fp)
+        logger.warn('Reloading %s', fp)
         for m in modules:
             try:
                 importlib.reload(m)
             except:
                 ch.send(traceback.format_exc())
-                print("Failed to reload %s" % fp)
+                logger.exception('Failed to reload %s', fp)
 
         del modified_files[fp]

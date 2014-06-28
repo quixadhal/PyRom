@@ -1,11 +1,20 @@
+import logging
 import random
+
+
+logger = logging.getLogger()
+
+import game_utils
+import handler_game
+import handler_magic
+import state_checks
 import merc
 import interp
 import skills
 
 
 def do_zap(ch, argument):
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
     if not arg and not ch.fighting:
         ch.send("Zap whom or what?\n")
         return
@@ -30,28 +39,29 @@ def do_zap(ch, argument):
         if not victim or not obj:
             ch.send("You can't find it.\n")
             return
-        merc.WAIT_STATE(ch, 2 * merc.PULSE_VIOLENCE)
+        state_checks.WAIT_STATE(ch, 2 * merc.PULSE_VIOLENCE)
 
     if wand.value[2] > 0:
         if victim:
-            merc.act("$n zaps $N with $p.", ch, wand, victim, merc.TO_NOTVICT)
-            merc.act("You zap $N with $p.", ch, wand, victim, merc.TO_CHAR)
-            merc.act("$n zaps you with $p.",ch, wand, victim, merc.TO_VICT)
+            handler_game.act("$n zaps $N with $p.", ch, wand, victim, merc.TO_NOTVICT)
+            handler_game.act("You zap $N with $p.", ch, wand, victim, merc.TO_CHAR)
+            handler_game.act("$n zaps you with $p.", ch, wand, victim, merc.TO_VICT)
         else:
-            merc.act("$n zaps $P with $p.", ch, wand, obj, merc.TO_ROOM)
-            merc.act("You zap $P with $p.", ch, wand, obj, merc.TO_CHAR)
+            handler_game.act("$n zaps $P with $p.", ch, wand, obj, merc.TO_ROOM)
+            handler_game.act("You zap $P with $p.", ch, wand, obj, merc.TO_CHAR)
         if ch.level < wand.level \
-        or random.randint(1,99) >= 20 + ch.get_skill("wands") * 4 // 5:
-            merc.act( "Your efforts with $p produce only smoke and sparks.", ch, wand, None, merc.TO_CHAR)
-            merc.act( "$n's efforts with $p produce only smoke and sparks.", ch, wand, None, merc.TO_ROOM)
-            skills.check_improve(ch,"wands",False,2)
+                or random.randint(1, 99) >= 20 + ch.get_skill("wands") * 4 // 5:
+            handler_game.act("Your efforts with $p produce only smoke and sparks.", ch, wand, None, merc.TO_CHAR)
+            handler_game.act("$n's efforts with $p produce only smoke and sparks.", ch, wand, None, merc.TO_ROOM)
+            skills.check_improve(ch, "wands", False, 2)
         else:
-            merc.obj_cast_spell( wand.value[3], wand.value[0], ch, victim, obj )
-            skills.check_improve(ch,"wands",True,2)
+            handler_magic.obj_cast_spell(wand.value[3], wand.value[0], ch, victim, obj)
+            skills.check_improve(ch, "wands", True, 2)
     wand.value[2] -= 1
     if wand.value[2] <= 0:
-        merc.act("$n's $p explodes into fragments.", ch, wand, None, merc.TO_ROOM)
-        merc.act("Your $p explodes into fragments.", ch, wand, None, merc.TO_CHAR)
+        handler_game.act("$n's $p explodes into fragments.", ch, wand, None, merc.TO_ROOM)
+        handler_game.act("Your $p explodes into fragments.", ch, wand, None, merc.TO_CHAR)
         wand.extract()
 
-interp.cmd_type('zap', do_zap, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('zap', do_zap, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

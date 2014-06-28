@@ -1,6 +1,11 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import fight
 import interp
+
 
 def do_peace(ch, argument):
     for rch in ch.in_room.people:
@@ -11,4 +16,5 @@ def do_peace(ch, argument):
     ch.send("Ok.\n")
     return
 
-interp.cmd_type('peace', do_peace, merc.POS_DEAD, merc.L5, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('peace', do_peace, merc.POS_DEAD, merc.L5, merc.LOG_NORMAL, 1))

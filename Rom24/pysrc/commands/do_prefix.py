@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -5,16 +9,17 @@ import interp
 def do_prefix(ch, argument):
     if not argument:
         if not ch.prefix:
-            ch.send("You have no prefix to clear.\r\n")
+            ch.send("You have no prefix to clear.\n")
             return
-        ch.send("Prefix removed.\r\n")
+        ch.send("Prefix removed.\n")
         ch.prefix = ""
         return
     if ch.prefix:
-        ch.send("Prefix changed to %s.\r\n" % argument)
+        ch.send("Prefix changed to %s.\n" % argument)
         ch.prefix = ""
     else:
-        ch.send("Prefix set to %s.\r\n" % argument)
+        ch.send("Prefix set to %s.\n" % argument)
     ch.prefix = argument
 
-interp.cmd_type('prefix', do_prefix, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('prefix', do_prefix, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1))

@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 import game_utils
@@ -33,4 +37,5 @@ def do_value(ch, argument):
     ch.reply = keeper
     return
 
-interp.cmd_type('value', do_value, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('value', do_value, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

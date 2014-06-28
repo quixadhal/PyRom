@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import game_utils
 import merc
 import interp
@@ -19,4 +23,5 @@ def do_wimpy(ch, argument):
     ch.send("Wimpy set to %d hit points.\n" % wimpy)
     return
 
-interp.cmd_type('wimpy', do_wimpy, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('wimpy', do_wimpy, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

@@ -31,6 +31,12 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
+
+import logging
+
+logger = logging.getLogger()
+
+from merc import *
 import random
 
 from effects import cold_effect, fire_effect, shock_effect
@@ -38,16 +44,9 @@ from handler_magic import saves_spell
 
 
 from handler import *
-from save import save_char_obj
 from skills import check_improve
-import handler_obj
-import db
 import update
 import const
-import state_checks
-import handler_ch
-import game_utils
-import handler_game
 
 # * Control the fights going on.
 # * Called periodically by update_handler.
@@ -455,11 +454,11 @@ def damage(ch,victim,dam,dt,dam_type,show):
 
     #Stop up any residual loopholes.
     if dam > 1200 and dt >= TYPE_HIT:
-        print ("BUG: Damage: %d: more than 1200 points!" % dam)
+        logger.warn ("BUG: Damage: %d: more than 1200 points!", dam)
         dam = 1200
         if not state_checks.IS_IMMORTAL(ch):
             obj = ch.get_eq(WEAR_WIELD)
-            ch.send("You really shouldn't cheat.\n\r")
+            ch.send("You really shouldn't cheat.\n")
             if obj:
                 obj.extract()
     
@@ -550,9 +549,9 @@ def damage(ch,victim,dam,dt,dam_type,show):
         victim.send("You have been KILLED!!\n\r\n\r")
     else:
         if dam > victim.max_hit // 4:
-            victim.send("That really did HURT!\n\r")
+            victim.send("That really did HURT!\n")
         if victim.hit < victim.max_hit // 4:
-            victim.send("You sure are BLEEDING!\n\r")
+            victim.send("You sure are BLEEDING!\n")
     # Sleep spells and extremely wounded folks.
     if not state_checks.IS_AWAKE(victim):
         stop_fighting( victim, False )
@@ -562,7 +561,7 @@ def damage(ch,victim,dam,dt,dam_type,show):
         group_gain( ch, victim )
 
         if not state_checks.IS_NPC(victim):
-            print ("%s killed by %s at %d" % ( victim.name, ch.short_descr if state_checks.IS_NPC(ch) else ch.name, ch.in_room.vnum ))
+            logger.warn ("%s killed by %s at %d", victim.name, ch.short_descr if IS_NPC(ch) else ch.name, ch.in_room.vnum )
             # Dying penalty:
             # 2/3 way back to previous level.
             if victim.exp > victim.exp_per_level(victim.pcdata.points) * victim.level:
@@ -633,17 +632,17 @@ def is_safe(ch, victim):
     if state_checks.IS_NPC(victim):
         # safe room? */
         if state_checks.IS_SET(victim.in_room.room_flags,ROOM_SAFE):
-            ch.send("Not in this room.\n\r")
+            ch.send("Not in this room.\n")
             return True
         if victim.pIndexData.pShop:
-            ch.send("The shopkeeper wouldn't like that.\n\r")
+            ch.send("The shopkeeper wouldn't like that.\n")
             return True
         # no killing healers, trainers, etc */
         if state_checks.IS_SET(victim.act,ACT_TRAIN) \
         or state_checks.IS_SET(victim.act,ACT_PRACTICE) \
         or state_checks.IS_SET(victim.act,ACT_IS_HEALER) \
         or state_checks.IS_SET(victim.act,ACT_IS_CHANGER):
-            ch.send("I don't think Mota would approve.\n\r")
+            ch.send("I don't think Mota would approve.\n")
             return True
         if not state_checks.IS_NPC(ch):
             # no pets */
@@ -653,36 +652,36 @@ def is_safe(ch, victim):
 
             # no charmed creatures unless owner */
             if state_checks.IS_AFFECTED(victim,AFF_CHARM) and ch != victim.master:
-                ch.send("You don't own that monster.\n\r")
+                ch.send("You don't own that monster.\n")
                 return True
     # killing players */
     else:
         # NPC doing the killing */
         if state_checks.IS_NPC(ch):
             # safe room check */
-            if state_checks.IS_SET(victim.in_room.room_flags,ROOM_SAFE):
-                ch.send("Not in this room.\n\r")
+            if IS_SET(victim.in_room.room_flags,ROOM_SAFE):
+                ch.send("Not in this room.\n")
                 return True
 
             # charmed mobs and pets cannot attack players while owned */
-            if state_checks.IS_AFFECTED(ch,AFF_CHARM) and ch.master and  ch.master.fighting != victim:
-                ch.send("Players are your friends!\n\r")
+            if IS_AFFECTED(ch,AFF_CHARM) and ch.master and  ch.master.fighting != victim:
+                ch.send("Players are your friends!\n")
                 return True
         # player doing the killing */
         else:
             if not ch.is_clan():
-                ch.send("Join a clan if you want to kill players.\n\r")
+                ch.send("Join a clan if you want to kill players.\n")
                 return True
 
             if state_checks.IS_SET(victim.act,PLR_KILLER) or state_checks.IS_SET(victim.act,PLR_THIEF):
                 return False
 
             if not victim.is_clan():
-                ch.send("They aren't in a clan, leave them alone.\n\r")
+                ch.send("They aren't in a clan, leave them alone.\n")
                 return True
 
             if ch.level > victim.level + 8:
-                ch.send("Pick on someone your own size.\n\r")
+                ch.send("Pick on someone your own size.\n")
                 return True
     return False
  
@@ -766,11 +765,11 @@ def check_killer( ch, victim ):
      # Charm-o-rama.
     if state_checks.IS_SET(ch.affected_by, AFF_CHARM):
         if ch.master == None:
-            print ("BUG: Check_killer: %s bad AFF_CHARM" % (ch.short_descr if state_checks.IS_NPC(ch) else ch.name ))
+            logger.warn ("BUG: Check_killer: %s bad AFF_CHARM", ch.short_descr if IS_NPC(ch) else ch.name )
             ch.affect_strip('charm person')
             state_checks.REMOVE_BIT(ch.affected_by, AFF_CHARM)
             return
-    #    send_to_char( "*** You are now a KILLER!! ***\n\r", ch.master )
+    #    send_to_char( "*** You are now a KILLER!! ***\n", ch.master )
     #    SET_BIT(ch.master.act, PLR_KILLER)
         handler_ch.stop_follower( ch )
         return
@@ -783,7 +782,7 @@ def check_killer( ch, victim ):
     or not ch.is_clan() or state_checks.IS_SET(ch.act, PLR_KILLER) or ch.fighting == victim:
         return
 
-    ch.send("*** You are now a KILLER!! ***\n\r")
+    ch.send("*** You are now a KILLER!! ***\n")
     state_checks.SET_BIT(ch.act, PLR_KILLER)
     handler_game.wiznet("$N is attempting to murder %s" % victim.name,ch,None,WIZ_FLAGS,0,0)
     save_char_obj( ch )
@@ -858,7 +857,7 @@ def update_pos(victim):
 # Start fights.
 def set_fighting( ch, victim ):
     if ch.fighting != None:
-        print ("BUG: Set_fighting: already fighting")
+        logger.warn ("BUG: Set_fighting: already fighting")
         return
 
     if state_checks.IS_AFFECTED(ch, AFF_SLEEP):
@@ -1040,7 +1039,7 @@ def group_gain( ch, victim ):
             group_levels += gch.level // 2 if state_checks.IS_NPC(gch) else gch.level
 
     if members == 0:
-        print ("BUG: Group_gain: members. %s" % members)
+        logger.warn ("BUG: Group_gain: members. %s" , members)
         members = 1
         group_levels = ch.level 
 
@@ -1052,15 +1051,15 @@ def group_gain( ch, victim ):
 
         #Taken out, add it back if you want it
         if gch.level - lch.level >= 5:
-            gch.send("You are too high for this group.\n\r")
+            gch.send("You are too high for this group.\n")
             continue
         if gch.level - lch.level <= -5:
-            gch.send("You are too low for this group.\n\r")
+            gch.send("You are too low for this group.\n")
             continue
         #*/
 
         xp = xp_compute( gch, victim, group_levels )  
-        gch.send("You receive %d experience points.\n\r" % xp)
+        gch.send("You receive %d experience points.\n" % xp)
         update.gain_exp( gch, xp )
         for obj in ch.carrying[:]:
             if obj.wear_loc == WEAR_NONE:
@@ -1228,7 +1227,7 @@ def dam_message( ch, victim, dam, dt, immune ):
         elif dt >= TYPE_HIT and dt < TYPE_HIT + len(const.attack_table):
             attack = const.attack_table[dt - TYPE_HIT].noun
         else:
-            print ("BUG: Dam_message: bad dt %d.")
+            logger.warn ("BUG: Dam_message: bad dt %d.")
             dt = TYPE_HIT
             attack  = const.attack_table[0].name
         if immune:

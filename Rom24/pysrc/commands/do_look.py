@@ -1,5 +1,11 @@
+import logging
+
+logger = logging.getLogger()
+
+from const import liq_table
 import merc
 import interp
+
 
 def do_look(ch, argument):
     if not ch.desc:
@@ -13,7 +19,7 @@ def do_look(ch, argument):
     if not merc.check_blind(ch):
         return
     if not merc.IS_NPC(ch) and not merc.IS_SET(ch.act, merc.PLR_HOLYLIGHT) \
-    and ch.in_room.is_dark():
+            and ch.in_room.is_dark():
         ch.send("It is pitch black ... \n")
         merc.show_char_to_char(ch.in_room.people, ch)
         return
@@ -22,10 +28,11 @@ def do_look(ch, argument):
     number, arg3 = merc.number_argument(arg1)
     count = 0
     if not arg1 or arg1 == "auto":
-        # 'look' or 'look auto' */
+        # 'look' or 'look auto'
         ch.send(ch.in_room.name)
         if merc.IS_IMMORTAL(ch) and (merc.IS_NPC(ch) \
-        or (merc.IS_SET(ch.act, merc.PLR_HOLYLIGHT) or merc.IS_SET(ch.act, merc.PLR_OMNI))):
+                                             or (
+                        merc.IS_SET(ch.act, merc.PLR_HOLYLIGHT) or merc.IS_SET(ch.act, merc.PLR_OMNI))):
             ch.send(" [Room %d]" % ch.in_room.vnum)
         ch.send("\n")
         if not arg1 or (not merc.IS_NPC(ch) and not merc.IS_SET(ch.comm, merc.COMM_BRIEF)):
@@ -37,7 +44,7 @@ def do_look(ch, argument):
         merc.show_char_to_char(ch.in_room.people, ch)
         return
     if arg1 == "i" or arg1 == "in" or arg1 == "on":
-        # 'look in' */
+        # 'look in'
         if not arg2:
             ch.send("Look in what?\n")
             return
@@ -46,7 +53,7 @@ def do_look(ch, argument):
             ch.send("You do not see that here.\n")
             return
         item_type = obj.item_type
-        if item_type == ITEM_DRINK_CON:
+        if item_type == merc.ITEM_DRINK_CON:
             if obj.value[1] <= 0:
                 ch.send("It is empty.\n")
                 return
@@ -57,10 +64,10 @@ def do_look(ch, argument):
             else:
                 amnt = "more than half-"
             ch.send("It's %sfilled with a %s liquid.\n" % (
-                amnt, const.liq_table[obj.value[2]].liq_color))
+                amnt, liq_table[obj.value[2]].liq_color))
         elif item_type == merc.ITEM_CONTAINER or item_type == merc.ITEM_CORPSE_NPC \
-        or item_type == merc.ITEM_CORPSE_PC:
-            if IS_SET(obj.value[1], merc.CONT_CLOSED):
+                or item_type == merc.ITEM_CORPSE_PC:
+            if merc.IS_SET(obj.value[1], merc.CONT_CLOSED):
                 ch.send("It is closed.\n")
                 return
             merc.act("$p holds:", ch, obj, None, merc.TO_CHAR)
@@ -77,7 +84,7 @@ def do_look(ch, argument):
     obj_list.extend(ch.in_room.contents)
     for obj in obj_list:
         if ch.can_see_obj(obj):
-            #player can see object */
+            # player can see object
             pdesc = merc.get_extra_descr(arg3, obj.extra_descr)
             if pdesc:
                 count += 1
@@ -111,16 +118,22 @@ def do_look(ch, argument):
         else:
             ch.send("You only see %d of those here.\n" % count)
         return
-    if "north".startswith(arg1): door = 0
-    elif "east".startswith(arg1): door = 1
-    elif "south".startswith(arg1): door = 2
-    elif "west".startswith(arg1): door = 3
-    elif "up".startswith(arg1): door = 4
-    elif "down".startswith(arg1): door = 5
+    if "north".startswith(arg1):
+        door = 0
+    elif "east".startswith(arg1):
+        door = 1
+    elif "south".startswith(arg1):
+        door = 2
+    elif "west".startswith(arg1):
+        door = 3
+    elif "up".startswith(arg1):
+        door = 4
+    elif "down".startswith(arg1):
+        door = 5
     else:
         ch.send("You do not see that here.\n")
         return
-    # 'look direction' */
+    # 'look direction'
     if door not in ch.in_room.exit or not ch.in_room.exit[door]:
         ch.send("Nothing special there.\n")
         return
@@ -137,5 +150,6 @@ def do_look(ch, argument):
             merc.act("The $d is open.", ch, None, pexit.keyword, merc.TO_CHAR)
     return
 
-interp.cmd_type('look', do_look, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
-interp.cmd_type('read', do_look, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('look', do_look, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(interp.cmd_type('read', do_look, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

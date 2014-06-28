@@ -1,7 +1,11 @@
-import game_utils
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 import state_checks
+import game_utils
 
 
 def do_alias(ch, argument):
@@ -16,38 +20,39 @@ def do_alias(ch, argument):
     argument, arg = game_utils.read_word(argument)
     if not arg:
         if not rch.pcdata.alias:
-            ch.send("You have no aliases defined.\n\r")
+            ch.send("You have no aliases defined.\n")
             return
-        ch.send("Your current aliases are:\n\r")
+        ch.send("Your current aliases are:\n")
 
-        for alias,sub in rch.pcdata.alias.iteritems():
-            ch.send("    %s:  %s\n\r" % (alias, sub) )
+        for alias, sub in rch.pcdata.alias.iteritems():
+            ch.send("    %s:  %s\n" % (alias, sub))
         return
 
-    if "unalias" ==  arg or "alias" == arg:
-        ch.send("Sorry, that word is reserved.\n\r")
+    if "unalias" == arg or "alias" == arg:
+        ch.send("Sorry, that word is reserved.\n")
         return
 
     if not argument:
         if arg not in rch.pcdata.alias:
-            ch.send("That alias is not defined.\n\r")
+            ch.send("That alias is not defined.\n")
             return
-        ch.send("%s aliases to '%s'.\n\r" % (arg, rch.pcdata.alias[arg]) )
+        ch.send("%s aliases to '%s'.\n" % (arg, rch.pcdata.alias[arg]))
         return
 
     if argument.startswith("delete") or argument.startswith("prefix"):
-        ch.send("That shall not be done!\n\r")
+        ch.send("That shall not be done!\n")
         return
 
     if arg in rch.pcdata.alias:
         rch.pcdata.alias[arg] = argument
-        ch.send("%s is now realiased to '%s'.\n\r" % (arg,argument) )
+        ch.send("%s is now realiased to '%s'.\n" % (arg, argument))
         return
     elif len(rch.pcdata.alias) > merc.MAX_ALIAS:
-        ch.send("Sorry, you have reached the alias limit.\r\n")
+        ch.send("Sorry, you have reached the alias limit.\n")
         return
     rch.pcdata.alias[arg] = argument
-    ch.send("%s is now aliased to '%s'.\n\r" % (arg,argument) )
+    ch.send("%s is now aliased to '%s'.\n" % (arg, argument))
     return
 
-interp.cmd_type('alias', do_alias, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('alias', do_alias, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

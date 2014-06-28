@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -8,14 +12,14 @@ def do_ofind(ch, argument):
         ch.send("Find what?\n")
         return
 
-    fAll  = False # !str_cmp( arg, "all" ) */
+    fAll = False  # !str_cmp( arg, "all" )
     found = False
-    nMatch  = 0
+    nMatch = 0
 
-    # * Yeah, so iterating over all vnum's takes 10,000 loops.
-    # * Get_obj_index is fast, and I don't feel like threading another link.
-    # * Do you?
-    # * -- Furey
+    # Yeah, so iterating over all vnum's takes 10,000 loops.
+    # Get_obj_index is fast, and I don't feel like threading another link.
+    # Do you?
+    # -- Furey
     for pObjIndex in merc.obj_index_hash.values():
         if fAll or merc.is_name(arg, pObjIndex.name):
             found = True
@@ -24,4 +28,5 @@ def do_ofind(ch, argument):
         ch.send("No objects by that name.\n")
     return
 
-interp.cmd_type('ofind', do_ofind, merc.POS_DEAD, merc.L4, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('ofind', do_ofind, merc.POS_DEAD, merc.L4, merc.LOG_NORMAL, 1))

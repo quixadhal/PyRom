@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -14,4 +18,5 @@ def do_wizhelp(ch, argument):
         ch.send("\n")
     return
 
-interp.cmd_type('wizhelp', do_wizhelp, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('wizhelp', do_wizhelp, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1))

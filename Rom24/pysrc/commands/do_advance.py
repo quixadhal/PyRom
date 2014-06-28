@@ -1,10 +1,14 @@
-import game_utils
+import logging
+
+
+logger = logging.getLogger()
+
 import merc
-import interp
+import game_utils
 import save
 import state_checks
 import update
-
+import interp
 
 def do_advance(ch, argument):
     argument, arg1  = game_utils.read_word(argument)
@@ -28,11 +32,11 @@ def do_advance(ch, argument):
         ch.send("Limited to your trust level.\n")
         return
 
-     #* Lower level:
-     #*   Reset to level 1.
-     #*   Then raise again.
-     #*   Currently, an imp can lower another imp.
-     #*   -- Swiftest
+        # Lower level:
+        # Reset to level 1.
+        # Then raise again.
+        #   Currently, an imp can lower another imp.
+        #   -- Swiftest
 
     if level <= victim.level:
         ch.send("Lowering a player's level!\n")
@@ -40,7 +44,7 @@ def do_advance(ch, argument):
         temp_prac = victim.practice
         victim.level = 1
         victim.exp = victim.exp_per_level(victim.pcdata.points)
-        victim.max_hit  = 10
+        victim.max_hit = 10
         victim.max_mana = 100
         victim.max_move = 100
         victim.practice = 0
@@ -56,9 +60,10 @@ def do_advance(ch, argument):
         victim.level += 1
         update.advance_level(victim, True)
     victim.send("You are now level %d.\n" % victim.level)
-    victim.exp = victim.exp_per_level(victim.pcdata.points) * max( 1, victim.level)
+    victim.exp = victim.exp_per_level(victim.pcdata.points) * max(1, victim.level)
     victim.trust = 0
     save.save_char_obj(victim)
     return
 
-interp.cmd_type('advance', do_advance, merc.POS_DEAD, merc.ML, merc.LOG_ALWAYS, 1)
+
+interp.register_command(interp.cmd_type('advance', do_advance, merc.POS_DEAD, merc.ML, merc.LOG_ALWAYS, 1))

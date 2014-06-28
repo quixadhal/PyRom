@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import game_utils
 import merc
 import const
@@ -23,7 +27,7 @@ def do_whois(ch, argument):
             continue
         if wch.name.lower().startswith(arg):
             found = True
-        # work out the printing */
+            # work out the printing
             guild = wch.guild.who_name
             if wch.level == merc.MAX_LEVEL - 0:
                 guild = "IMP"
@@ -61,4 +65,5 @@ def do_whois(ch, argument):
         ch.send("No one of that name is playing.\n")
         return
 
-interp.cmd_type('whois', do_whois, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('whois', do_whois, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

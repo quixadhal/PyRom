@@ -1,3 +1,8 @@
+import logging
+
+logger = logging.getLogger()
+
+import random
 import merc
 import interp
 import skills
@@ -13,15 +18,15 @@ def do_buy(ch, argument):
             return
         argument, arg = merc.read_word(argument)
         pRoomIndexNext = None
-  # hack to make new thalos pets work */
+        # hack to make new thalos pets work
         if ch.in_room.vnum == 9621:
             if 9706 in merc.room_index_hash:
                 pRoomIndexNext = merc.room_index_hash[9706]
         else:
-            if ch.in_room.vnum+1 in merc.room_index_hash:
-                pRoomIndexNext = merc.room_index_hash[ch.in_room.vnum+1]
+            if ch.in_room.vnum + 1 in merc.room_index_hash:
+                pRoomIndexNext = merc.room_index_hash[ch.in_room.vnum + 1]
         if not pRoomIndexNext:
-            print("BUG: Do_buy: bad pet shop at vnum %d." % ch.in_room.vnum)
+            logger.warn("BUG: Do_buy: bad pet shop at vnum %d.", ch.in_room.vnum)
             ch.send("Sorry, you can't buy that here.\n")
             return
         in_room = ch.in_room
@@ -43,17 +48,17 @@ def do_buy(ch, argument):
         if ch.level < pet.level:
             ch.send("You're not powerful enough to master this pet.\n")
             return
-        # haggle */
-        roll = random.randint(1,99)
+        # haggle
+        roll = random.randint(1, 99)
         if roll < ch.get_skill("haggle"):
             cost -= cost // 2 * roll // 100
             ch.send("You haggle the price down to %d coins.\n" % cost)
-            skills.check_improve(ch,"haggle",True,4)
+            skills.check_improve(ch, "haggle", True, 4)
         ch.deduct_cost(cost)
         pet = db.create_mobile(pet.pIndexData)
         pet.act = merc.SET_BIT(pet.act, merc.ACT_PET)
         pet.affected_by = merc.SET_BIT(pet.affected_by, merc.AFF_CHARM)
-        pet.comm = merc.COMM_NOTELL|merc.COMM_NOSHOUT|merc.COMM_NOCHANNELS
+        pet.comm = merc.COMM_NOTELL | merc.COMM_NOSHOUT | merc.COMM_NOCHANNELS
 
         argument, arg = merc.read_word(argument)
         if arg:
@@ -82,7 +87,8 @@ def do_buy(ch, argument):
             return
         items = None
         if not merc.IS_OBJ_STAT(obj, merc.ITEM_INVENTORY):
-            items = [t_obj for t_obj in keeper.carrying if t_obj.pIndexData == obj.pIndexData and t_obj.short_descr == obj.short_descr][:number]
+            items = [t_obj for t_obj in keeper.carrying if
+                     t_obj.pIndexData == obj.pIndexData and t_obj.short_descr == obj.short_descr][:number]
             count = len(items)
             if count < number:
                 merc.act("$n tells you 'I don't have that many in stock.", keeper, None, ch, merc.TO_VICT)
@@ -96,32 +102,32 @@ def do_buy(ch, argument):
             ch.reply = keeper
             return
         if obj.level > ch.level:
-            merc.act( "$n tells you 'You can't use $p yet'.", keeper, obj, ch, merc.TO_VICT)
+            merc.act("$n tells you 'You can't use $p yet'.", keeper, obj, ch, merc.TO_VICT)
             ch.reply = keeper
             return
-        if ch.carry_number +  number * obj.get_number() > ch.can_carry_n():
+        if ch.carry_number + number * obj.get_number() > ch.can_carry_n():
             ch.send("You can't carry that many items.\n")
             return
         if ch.carry_weight + number * obj.get_weight() > ch.can_carry_w():
             ch.send("You can't carry that much weight.\n")
             return
-        # haggle */
-        roll = random.randint(1,99)
+        # haggle
+        roll = random.randint(1, 99)
         if not merc.IS_OBJ_STAT(obj, merc.ITEM_SELL_EXTRACT) and roll < ch.get_skill("haggle"):
             cost -= obj.cost // 2 * roll // 100
-            merc.act("You haggle with $N.",ch,None,keeper, merc.TO_CHAR)
+            merc.act("You haggle with $N.", ch, None, keeper, merc.TO_CHAR)
             skills.check_improve(ch, "haggle", True, 4)
 
         if number > 1:
-            merc.act("$n buys $p[%d]." % number,ch,obj,None, merc.TO_ROOM)
-            merc.act("You buy $p[%d] for %d silver." % (number,cost * number),ch,obj,None, merc.TO_CHAR)
+            merc.act("$n buys $p[%d]." % number, ch, obj, None, merc.TO_ROOM)
+            merc.act("You buy $p[%d] for %d silver." % (number, cost * number), ch, obj, None, merc.TO_CHAR)
         else:
-            merc.act("$n buys $p.", ch, obj, None, merc.TO_ROOM )
+            merc.act("$n buys $p.", ch, obj, None, merc.TO_ROOM)
             merc.act("You buy $p for %d silver." % cost, ch, obj, None, merc.TO_CHAR)
 
         ch.deduct_cost(cost * number)
-        keeper.gold += cost * number/100
-        keeper.silver += cost * number - (cost * number/100) * 100
+        keeper.gold += cost * number / 100
+        keeper.silver += cost * number - (cost * number / 100) * 100
         t_obj = None
         if merc.IS_SET(obj.extra_flags, merc.ITEM_INVENTORY):
             items = []
@@ -139,4 +145,5 @@ def do_buy(ch, argument):
             if cost < t_obj.cost:
                 t_obj.cost = cost
 
-interp.cmd_type('buy', do_buy, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('buy', do_buy, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

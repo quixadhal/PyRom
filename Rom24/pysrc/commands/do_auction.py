@@ -1,10 +1,12 @@
+import logging
+
+logger = logging.getLogger()
+
 import handler_game
 import merc
 import interp
 import nanny
 import handler_ch
-
-# RT auction rewritten in ROM style */
 import state_checks
 
 
@@ -27,10 +29,11 @@ def do_auction(ch, argument):
         ch.comm = state_checks.REMOVE_BIT(ch.comm, merc.COMM_NOAUCTION)
         ch.send("You auction '%s'\n" % argument )
         for d in merc.descriptor_list:
-            victim = handler_ch.CH(D)
+            victim = handler_ch.CH(d)
             if d.is_connected(nanny.con_playing) and d.character != ch \
             and not state_checks.IS_SET(victim.comm, merc.COMM_NOAUCTION) \
             and not state_checks.IS_SET(victim.comm, merc.COMM_QUIET):
                 handler_game.act("$n auctions '$t'", ch, argument, d.character, merc.TO_VICT, merc.POS_DEAD)
 
-interp.cmd_type('auction', do_auction, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('auction', do_auction, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1))

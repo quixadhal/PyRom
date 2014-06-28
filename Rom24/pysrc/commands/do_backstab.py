@@ -1,41 +1,45 @@
+import logging
+
+logger = logging.getLogger()
+
 import random
+
 import game_utils
 import handler_game
-
 import merc
-import interp
 import fight
 import skills
 import const
 import state_checks
+import interp
 
 
 def do_backstab(ch, argument):
     argument, arg = game_utils.read_word(argument)
 
     if not arg:
-        ch.send("Backstab whom?\n\r")
+        ch.send("Backstab whom?\n")
         return
     victim = None
     if ch.fighting:
-        ch.send("You're facing the wrong end.\n\r")
+        ch.send("You're facing the wrong end.\n")
         return
     else:
         victim = ch.get_char_room(arg)
         if not victim:
-            ch.send("They aren't here.\n\r")
+            ch.send("They aren't here.\n")
             return
         if victim == ch:
-            ch.send("How can you sneak up on yourself?\n\r")
+            ch.send("How can you sneak up on yourself?\n")
             return
         if fight.is_safe(ch, victim):
             return
         if state_checks.IS_NPC(victim) and victim.fighting and not ch.is_same_group(victim.fighting):
-            ch.send("Kill stealing is not permitted.\n\r")
+            ch.send("Kill stealing is not permitted.\n")
             return
         obj = ch.get_eq(merc.WEAR_WIELD)
         if obj:
-            ch.send("You need to wield a weapon to backstab.\n\r")
+            ch.send("You need to wield a weapon to backstab.\n")
             return
         if victim.hit < victim.max_hit // 3:
             handler_game.act("$N is hurt and suspicious ... you can't sneak up.", ch, None, victim, merc.TO_CHAR)
@@ -47,9 +51,9 @@ def do_backstab(ch, argument):
             skills.check_improve(ch,'backstab',True,1)
             fight.multi_hit( ch, victim, 'backstab' )
         else:
-            skills.check_improve(ch,'backstab',False,1)
-            fight.damage( ch, victim, 0, 'backstab', merc.DAM_NONE,True)
+            skills.check_improve(ch, 'backstab', False, 1)
+            fight.damage(ch, victim, 0, 'backstab', merc.DAM_NONE, True)
     return
 
-interp.cmd_type('backstab', do_backstab, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)
-interp.cmd_type('bs', do_backstab, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 0)
+interp.register_command(interp.cmd_type('backstab', do_backstab, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(interp.cmd_type('bs', do_backstab, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 0))

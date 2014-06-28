@@ -410,15 +410,16 @@ zz = 1 << 51
 
 #  ACT bits for mobs.
 #  Used in #MOBILES.
-ACT_IS_NPC = A  # Auto set for mobs
-ACT_SENTINEL = B  # Stays in one room
-ACT_SCAVENGER = C  # Picks up objects
-ACT_AGGRESSIVE = F   # Attacks PC's
-ACT_STAY_AREA = G    # Won't leave area
+
+ACT_IS_NPC = A  # Auto set for mobs    */
+ACT_SENTINEL = B #  Stays in one room    */
+ACT_SCAVENGER = C  # Picks up objects */
+ACT_AGGRESSIVE = F   # Attacks PC's     */
+ACT_STAY_AREA = G    # Won't leave area */
 ACT_WIMPY = H
-ACT_PET = I     # Auto set for pets
-ACT_TRAIN = J     # Can train PC's
-ACT_PRACTICE = K     # Can practice PC's
+ACT_PET = I     # Auto set for pets    */
+ACT_TRAIN = J     # Can train PC's   */
+ACT_PRACTICE = K     # Can practice PC's    */
 ACT_UNDEAD = O 
 ACT_CLERIC = Q
 ACT_MAGE = R
@@ -900,5 +901,7 @@ where_name = ["<used as light>     ",
               "<floating nearby>   "]
 
 
-from interp import *
-from handler_ch import *
+import interp
+import handler_ch
+import handler_obj
+import handler_room

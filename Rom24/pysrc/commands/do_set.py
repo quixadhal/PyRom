@@ -1,8 +1,12 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
 
-# RT set replaces sset, mset, oset, and rset */
+# RT set replaces sset, mset, oset, and rset
 def do_set(ch, argument):
     argument, arg = merc.read_word(argument)
 
@@ -25,7 +29,8 @@ def do_set(ch, argument):
     if "room".startswith(arg):
         ch.do_rset(argument)
         return
-    # echo syntax */
+    # echo syntax
     ch.do_set("")
 
-interp.cmd_type('set', do_set, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1)
+
+interp.register_command(interp.cmd_type('set', do_set, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1))

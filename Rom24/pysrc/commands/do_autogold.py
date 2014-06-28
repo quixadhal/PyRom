@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 import state_checks
@@ -14,4 +18,5 @@ def do_autogold(ch, argument):
         ch.send("Automatic gold looting set.\n")
         ch.act = state_checks.SET_BIT(ch.act, merc.PLR_AUTOGOLD)
 
-interp.cmd_type('autogold', do_autogold, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('autogold', do_autogold, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

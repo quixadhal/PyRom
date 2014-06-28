@@ -1,3 +1,8 @@
+import logging
+import handler_ch
+
+logger = logging.getLogger()
+
 import handler_game
 import merc
 import interp
@@ -26,9 +31,10 @@ def do_answer(ch, argument):
         ch.comm = state_checks.REMOVE_BIT(ch.comm, merc.COMM_NOQUESTION)
         ch.send("You answer '%s'\n" % argument )
         for d in merc.descriptor_list:
-            victim = merc.CH(d)
+            victim = handler_ch.CH(d)
             if d.is_connected(nanny.con_playing) and d.character != ch \
             and not state_checks.IS_SET(victim.comm, merc.COMM_NOQUESTION) and not state_checks.IS_SET(victim.comm, merc.COMM_QUIET):
                 handler_game.act("$n answers '$t'", ch, argument, d.character, merc.TO_VICT, merc.POS_SLEEPING)
 
-interp.cmd_type('answer', do_answer, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('answer', do_answer, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1))

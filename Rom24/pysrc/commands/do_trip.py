@@ -1,5 +1,4 @@
 import random
-
 import merc
 import const
 import interp
@@ -77,4 +76,4 @@ def do_trip(ch, argument):
         skills.check_improve(ch,'trip',False,1)
     fight.check_killer(ch,victim)
 
-interp.cmd_type('trip', do_trip, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)
+interp.register_command(interp.cmd_type('trip', do_trip, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1))

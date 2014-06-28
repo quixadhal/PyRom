@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 import state_checks
@@ -14,4 +18,5 @@ def do_autosplit(ch, argument):
         ch.send("Automatic gold splitting set.\n")
         ch.act = state_checks.SET_BIT(ch.act, merc.PLR_AUTOSPLIT)
 
-interp.cmd_type('autosplit', do_autosplit, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('autosplit', do_autosplit, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

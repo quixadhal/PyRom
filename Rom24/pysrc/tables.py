@@ -34,24 +34,22 @@
 from collections import OrderedDict
 from merc import *
 
-
 class clan_type:
     def __init__(self, name, who_name, hall, independent):
-        self.name = name
-        self.who_name = who_name
-        self.hall = hall  # Death Transfer Room
-        self.independent = independent  # true for loners
+        self.name=name
+        self.who_name=who_name
+        self.hall=hall #Death Transfer Room
+        self.independent=independent # true for loners */
 
 clan_table = OrderedDict()
 clan_table[""] = clan_type("", "", ROOM_VNUM_ALTAR, True)
 clan_table["loner"] = clan_type("loner", "[ Loner ] ", ROOM_VNUM_ALTAR, True)
 clan_table["rom"] = clan_type("rom", "[  ROM  ] ", ROOM_VNUM_ALTAR, False)
 
-
 class position_type:
     def __init__(self, name, short_name):
-        self.name = name
-        self.short_name = short_name
+        self.name=name
+        self.short_name=short_name
 
 position_table = OrderedDict()
 position_table[POS_DEAD] = position_type("dead", "dead")
@@ -70,23 +68,22 @@ sex_table[SEX_FEMALE] = "female"
 sex_table[SEX_NEUTRAL] = "either"
 
 
-# for sizes
+# for sizes */
 size_table = OrderedDict()
-size_table[SIZE_TINY] = "tiny"
-size_table[SIZE_SMALL] = "small"
-size_table[SIZE_MEDIUM] = "medium"
-size_table[SIZE_LARGE] = "large"
-size_table[SIZE_HUGE] = "huge"
-size_table[SIZE_GIANT] = "giant"
-
+size_table[SIZE_TINY] = ("tiny")
+size_table[SIZE_SMALL] = ("small")
+size_table[SIZE_MEDIUM] = ("medium")
+size_table[SIZE_LARGE] = ("large")
+size_table[SIZE_HUGE] = ("huge")
+size_table[SIZE_GIANT] = ("giant")
 
 class flag_type:
     def __init__(self, name, bit, settable):
-        self.name = name
-        self.bit = bit
-        self.settable = settable
+        self.name=name
+        self.bit=bit
+        self.settable=settable
 
-# various flag tables
+# various flag tables */
 act_flags = OrderedDict()
 act_flags["npc"] = flag_type("npc", A, False)
 act_flags["sentinel"] = flag_type("sentinel", B, True)

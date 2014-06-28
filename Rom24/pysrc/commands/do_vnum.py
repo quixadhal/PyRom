@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 import game_utils
@@ -28,4 +32,5 @@ def do_vnum(ch, argument):
     ch.do_mfind(argument)
     ch.do_ofind(argument)
 
-interp.cmd_type('vnum', do_vnum, merc.POS_DEAD, merc.L4, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('vnum', do_vnum, merc.POS_DEAD, merc.L4, merc.LOG_NORMAL, 1))

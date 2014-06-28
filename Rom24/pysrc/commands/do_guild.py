@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 import tables
@@ -33,4 +37,5 @@ def do_guild(ch, argument):
         victim.send("You are now a member of clan %s.\n" % clan.name.capitalize())
     victim.clan = clan
 
-interp.cmd_type('guild', do_guild, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)
+
+interp.register_command(interp.cmd_type('guild', do_guild, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1))

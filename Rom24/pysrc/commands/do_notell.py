@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -14,7 +18,7 @@ def do_notell(ch, argument):
     if victim.get_trust() >= ch.get_trust():
         ch.send("You failed.\n")
         return
-    if IS_SET(victim.comm, COMM_NOTELL):
+    if merc.IS_SET(victim.comm, merc.COMM_NOTELL):
         victim.comm = merc.REMOVE_BIT(victim.comm, merc.COMM_NOTELL)
         victim.send("You can tell again.\n")
         ch.send("NOTELL removed.\n")
@@ -26,4 +30,5 @@ def do_notell(ch, argument):
         merc.wiznet("$N revokes %s's tells." % victim.name, ch, None, merc.WIZ_PENALTIES, merc.WIZ_SECURE, 0)
     return
 
-interp.cmd_type('notell', do_notell, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1)
+
+interp.register_command(interp.cmd_type('notell', do_notell, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1))

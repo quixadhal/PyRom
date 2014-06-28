@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import handler_ch
 import handler_game
 import handler_room
@@ -36,8 +40,8 @@ def do_unlock(ch, argument):
             handler_game.act("You unlock $p.", ch, obj, None, merc.TO_CHAR)
             handler_game.act("$n unlocks $p.", ch, obj, None, merc.TO_ROOM)
             return
-            # 'unlock object' */
-        if obj.item_type != merc.ITEM_CONTAINER:
+            # 'unlock object'
+        if obj.item_type != ITEM_CONTAINER:
             ch.send("That's not a container.\n")
             return
         if not state_checks.IS_SET(obj.value[1], merc.CONT_CLOSED):
@@ -85,4 +89,4 @@ def do_unlock(ch, argument):
             state_checks.REMOVE_BIT(to_room.exit[merc.rev_dir[door]].exit_info, merc.EX_LOCKED)
 
 
-interp.cmd_type('unlock', do_unlock, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+interp.register_command(interp.cmd_type('unlock', do_unlock, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 import state_checks
@@ -15,4 +19,5 @@ def do_bamfout(ch, argument):
         ch.send("Your poofout is now %s\n" % ch.pcdata.bamfout)
     return
 
-interp.cmd_type('poofout', do_bamfout, merc.POS_DEAD, merc.L8, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('poofout', do_bamfout, merc.POS_DEAD, merc.L8, merc.LOG_NORMAL, 1))

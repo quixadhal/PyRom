@@ -1,22 +1,28 @@
+import logging
+import skills
+
+logger = logging.getLogger()
+
 import random
 
-from interp import cmd_type
-from merc import IS_AFFECTED, AFF_HIDE, REMOVE_BIT, SET_BIT, POS_RESTING, LOG_NORMAL
-from skills import check_improve
+import merc
+import state_checks
+import interp
 
 
 def do_hide(ch, argument):
     ch.send("You attempt to hide.\n")
 
-    if IS_AFFECTED(ch, AFF_HIDE):
-        REMOVE_BIT(ch.affected_by, AFF_HIDE)
+    if state_checks.IS_AFFECTED(ch, merc.AFF_HIDE):
+        state_checks.REMOVE_BIT(ch.affected_by, merc.AFF_HIDE)
 
     if random.randint(1, 99) < ch.get_skill("hide"):
-        SET_BIT(ch.affected_by, AFF_HIDE)
-        check_improve(ch, "hide", True, 3)
+        state_checks.SET_BIT(ch.affected_by, merc.AFF_HIDE)
+        skills.check_improve(ch, "hide", True, 3)
     else:
-        check_improve(ch, "hide", False, 3)
+        skills.check_improve(ch, "hide", False, 3)
     return
 
 
-cmd_type('hide', do_hide, POS_RESTING, 0, LOG_NORMAL, 1)
+interp.register_command(interp.cmd_type('hide', do_hide, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+

@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import handler_ch
 import interp
 import merc
@@ -7,4 +11,4 @@ def do_down(ch, argument):
     return
 
 
-interp.cmd_type('down', do_down, merc.POS_STANDING, 0, merc.LOG_NEVER, 0)
+interp.register_command(interp.cmd_type('down', do_down, merc.POS_STANDING, 0, merc.LOG_NEVER, 0))

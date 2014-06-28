@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import game_utils
 import handler_game
 import merc
@@ -29,4 +33,4 @@ def do_wake(ch, argument):
     return
 
 
-interp.cmd_type('wake', do_wake, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)
+interp.register_command(interp.cmd_type('wake', do_wake, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1))

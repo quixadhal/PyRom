@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 import state_checks
@@ -26,4 +30,5 @@ def do_unalias(ch, argument):
     ch.send("Alias removed.\n")
     return
 
-interp.cmd_type('unalias', do_unalias, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('unalias', do_unalias, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

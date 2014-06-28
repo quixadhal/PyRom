@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import comm
 import interp
@@ -8,12 +12,13 @@ def do_purge(ch, argument):
     argument, arg = merc.read_word(argument)
     if not arg:
         for victim in ch.in_room.people[:]:
-            if IS_NPC(victim) and not merc.IS_SET(victim.act, merc.ACT_NOPURGE) and victim != ch: # safety precaution */ )
+            if merc.IS_NPC(victim) and not merc.IS_SET(victim.act,
+                                                       merc.ACT_NOPURGE) and victim != ch:  # safety precaution
                 victim.extract(True)
         for obj in ch.in_room.contents[:]:
             if not merc.IS_OBJ_STAT(obj, merc.ITEM_NOPURGE):
                 obj.extract()
-        merc.act( "$n purges the room!", ch, None, None, merc.TO_ROOM)
+        merc.act("$n purges the room!", ch, None, None, merc.TO_ROOM)
         ch.send("Ok.\n")
         return
     victim = ch.get_char_world(arg)
@@ -41,4 +46,5 @@ def do_purge(ch, argument):
     victim.extract(True)
     return
 
-interp.cmd_type('purge', do_purge, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)
+
+interp.register_command(interp.cmd_type('purge', do_purge, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1))

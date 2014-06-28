@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 import fight
@@ -27,7 +31,7 @@ def do_steal(ch, argument):
         ch.send("Kill stealing is not permitted.\nYou'd better not -- you might get hit.\n")
         return
     merc.WAIT_STATE(ch, const.skill_table["steal"].beats)
-    percent = random.randint(1,99)
+    percent = random.randint(1, 99)
 
     if not merc.IS_AWAKE(victim):
         percent -= 10
@@ -36,17 +40,17 @@ def do_steal(ch, argument):
     else:
         percent += 50
 
-    if ((ch.level + 7 < victim.level or ch.level -7 > victim.level) \
-    and not merc.IS_NPC(victim) and not merc.IS_NPC(ch) ) \
-    or (not merc.IS_NPC(ch) and percent > ch.get_skill("steal")) \
-    or (not merc.IS_NPC(ch) and not ch.is_clan()):
+    if ((ch.level + 7 < victim.level or ch.level - 7 > victim.level) \
+                and not merc.IS_NPC(victim) and not merc.IS_NPC(ch) ) \
+            or (not merc.IS_NPC(ch) and percent > ch.get_skill("steal")) \
+            or (not merc.IS_NPC(ch) and not ch.is_clan()):
         # Failure.
         ch.send("Oops.\n")
         ch.affect_strip("sneak")
         ch.affected_by = merc.REMOVE_BIT(ch.affected_by, merc.AFF_SNEAK)
-        merc.act( "$n tried to steal from you.\n", ch, None, victim, merc.TO_VICT)
-        merc.act( "$n tried to steal from $N.\n",  ch, None, victim, merc.TO_NOTVICT)
-        outcome = random.randint(0,3)
+        merc.act("$n tried to steal from you.\n", ch, None, victim, merc.TO_VICT)
+        merc.act("$n tried to steal from $N.\n", ch, None, victim, merc.TO_NOTVICT)
+        outcome = random.randint(0, 3)
         buf = ''
         if outcome == 0:
             buf = "%s is a lousy thief!" % ch.name
@@ -69,12 +73,12 @@ def do_steal(ch, argument):
                 if not merc.IS_SET(ch.act, merc.PLR_THIEF):
                     ch.act = merc.SET_BIT(ch.act, merc.PLR_THIEF)
                     ch.send("*** You are now a THIEF!! ***\n")
-                    save.save_char_obj( ch )
+                    save.save_char_obj(ch)
         return
     currency = ['coins', 'coin', 'gold', 'silver']
     if arg1 in currency:
         gold = victim.gold * random.randint(1, ch.level) // merc.MAX_LEVEL
-        silver = victim.silver * random.randint(1,ch.level) // merc.MAX_LEVEL
+        silver = victim.silver * random.randint(1, ch.level) // merc.MAX_LEVEL
         if gold <= 0 and silver <= 0:
             ch.send("You couldn't get any coins.\n")
             return
@@ -111,4 +115,5 @@ def do_steal(ch, argument):
     ch.send("Got it!\n")
     return
 
-interp.cmd_type('steal', do_steal, merc.POS_STANDING, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('steal', do_steal, merc.POS_STANDING, 0, merc.LOG_NORMAL, 1))

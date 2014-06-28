@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import handler_ch
 import interp
 import merc
@@ -8,4 +12,4 @@ def do_west(ch, argument):
     return
 
 
-interp.cmd_type('west', do_west, merc.POS_STANDING, 0, merc.LOG_NEVER, 0)
+interp.register_command(interp.cmd_type('west', do_west, merc.POS_STANDING, 0, merc.LOG_NEVER, 0))

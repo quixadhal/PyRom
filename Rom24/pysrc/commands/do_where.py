@@ -1,3 +1,6 @@
+import logging
+
+logger = logging.getLogger()
 import game_utils
 import handler_game
 import merc
@@ -42,4 +45,5 @@ def do_where(ch, argument):
             handler_game.act("You didn't find any $T.", ch, None, arg, merc.TO_CHAR)
     return
 
-interp.cmd_type('where', do_where, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('where', do_where, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

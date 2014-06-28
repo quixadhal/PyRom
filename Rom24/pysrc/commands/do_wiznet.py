@@ -1,7 +1,12 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 import const
 import state_checks
+
 
 def do_wiznet(ch, argument):
     if not argument:
@@ -22,7 +27,7 @@ def do_wiznet(ch, argument):
         ch.wiznet = state_checks.REMOVE_BIT(ch.wiznet, merc.WIZ_ON)
         return
     buf = ''
-    # show wiznet status */
+    # show wiznet status
     if "status".startswith(argument):
         if not state_checks.IS_SET(ch.wiznet, merc.WIZ_ON):
           buf += "off "
@@ -32,12 +37,12 @@ def do_wiznet(ch, argument):
             ch.send("Wiznet status:\n%s\n" % buf)
             return
     if "show".startswith(argument):
-    # list of all wiznet options */
+        # list of all wiznet options
         buf = ''
         for name, flag in const.wiznet_table.items():
             if flag.level <= ch.get_trust():
                 buf += name + " "
-        ch.send("Wiznet options available to you are:\n%s\n" % buf )
+        ch.send("Wiznet options available to you are:\n%s\n" % buf)
         return
     flag = state_checks.prefix_lookup(const.wiznet_table, argument)
     if not flag or ch.get_trust() < flag.level:
@@ -52,4 +57,5 @@ def do_wiznet(ch, argument):
         ch.wiznet = state_checks.SET_BIT(ch.wiznet, flag.flag)
         return
 
-interp.cmd_type('wiznet', do_wiznet, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('wiznet', do_wiznet, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1))

@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 import game_utils
@@ -24,4 +28,5 @@ def do_trust(ch, argument):
     victim.trust = level
     return
 
-interp.cmd_type('trust', do_trust, merc.POS_DEAD, merc.ML, merc.LOG_ALWAYS, 1)
+
+interp.register_command(interp.cmd_type('trust', do_trust, merc.POS_DEAD, merc.ML, merc.LOG_ALWAYS, 1))

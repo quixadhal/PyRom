@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -5,4 +9,5 @@ import interp
 def do_memory(ch, argument):
     pass
 
-interp.cmd_type('memory', do_memory, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('memory', do_memory, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1))

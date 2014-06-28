@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -15,13 +19,13 @@ def do_pardon(ch, argument):
     if merc.IS_NPC(victim):
         ch.send("Not on NPC's.\n")
         return
-    if arg2 == "killer" :
+    if arg2 == "killer":
         if merc.IS_SET(victim.act, merc.PLR_KILLER):
             victim.act = merc.REMOVE_BIT(victim.act, merc.PLR_KILLER)
             ch.send("Killer flag removed.\n")
             victim.send("You are no longer a KILLER.\n")
         return
-    if arg2 == "thief" :
+    if arg2 == "thief":
         if merc.IS_SET(victim.act, merc.PLR_THIEF):
             victim.act = merc.REMOVE_BIT(victim.act, merc.PLR_THIEF)
             ch.send("Thief flag removed.\n")
@@ -30,4 +34,5 @@ def do_pardon(ch, argument):
     ch.send("Syntax: pardon <character> <killer|thief>.\n")
     return
 
-interp.cmd_type('pardon', do_pardon, merc.POS_DEAD, merc.L3, merc.LOG_ALWAYS, 1)
+
+interp.register_command(interp.cmd_type('pardon', do_pardon, merc.POS_DEAD, merc.L3, merc.LOG_ALWAYS, 1))

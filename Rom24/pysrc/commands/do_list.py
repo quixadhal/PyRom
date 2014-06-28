@@ -1,26 +1,32 @@
-from collections import OrderedDict
+import logging
 
+logger = logging.getLogger()
+
+import game_utils
+import shop_utils
+import state_checks
+import collections
 import merc
 import interp
 
 
 def do_list(ch, argument):
-    if merc.IS_SET(ch.in_room.room_flags, merc.ROOM_PET_SHOP):
-        # hack to make new thalos pets work */
+    if state_checks.IS_SET(ch.in_room.room_flags, merc.ROOM_PET_SHOP):
+        # hack to make new thalos pets work
         pRoomIndexNext = None
         if ch.in_room.vnum == 9621:
             if 9706 in merc.room_index_hash:
                 pRoomIndexNext = merc.room_index_hash[9706]
         else:
-            if ch.in_room.vnum+1 in merc.room_index_hash:
-                pRoomIndexNext = merc.room_index_hash[ch.in_room.vnum+1]
+            if ch.in_room.vnum + 1 in merc.room_index_hash:
+                pRoomIndexNext = merc.room_index_hash[ch.in_room.vnum + 1]
         if not pRoomIndexNext:
-            print("BUG: Do_list: bad pet shop at vnum %d." % ch.in_room.vnum)
+            logger.warn("BUG: Do_list: bad pet shop at vnum %d.", ch.in_room.vnum)
             ch.send("You can't do that here.\n")
             return
         found = False
         for pet in pRoomIndexNext.people:
-            if merc.IS_SET(pet.act, merc.ACT_PET):
+            if state_checks.IS_SET(pet.act, merc.ACT_PET):
                 if not found:
                     found = True
                     ch.send("Pets for sale:\n")
@@ -29,16 +35,16 @@ def do_list(ch, argument):
             ch.send("Sorry, we're out of pets right now.\n")
         return
     else:
-        keeper = merc.find_keeper(ch)
+        keeper = shop_utils.find_keeper(ch)
         if not keeper:
             return
-        argument, arg = merc.read_word(argument)
-        items = OrderedDict()
+        argument, arg = game_utils.read_word(argument)
+        items = collections.OrderedDict()
         for obj in keeper.carrying:
-            cost = merc.get_cost(keeper, obj, True)
+            cost = shop_utils.get_cost(keeper, obj, True)
             if obj.wear_loc == merc.WEAR_NONE and ch.can_see_obj(obj) and cost > 0 \
-            and ( not arg or arg in obj.name.lower()):
-                if merc.IS_OBJ_STAT(obj, merc.ITEM_INVENTORY):
+                    and ( not arg or arg in obj.name.lower()):
+                if state_checks.IS_OBJ_STAT(obj, merc.ITEM_INVENTORY):
                     items[(obj.pIndexData, obj.short_descr)] = (obj, -1)
                 else:
                     k = (obj.pIndexData, obj.short_descr)
@@ -52,10 +58,11 @@ def do_list(ch, argument):
         ch.send("[Lv Price Qty] Item\n")
         for k, p in items.items():
             obj, count = p
-            cost = merc.get_cost(keeper, obj, True)
-            ch.send("[%2d %5d %2s ] %s" % (obj.level,cost, ("--" if count == -1 else count),obj.short_descr))
-            if merc.IS_SET(ch.act, merc.PLR_OMNI):
+            cost = shop_utils.get_cost(keeper, obj, True)
+            ch.send("[%2d %5d %2s ] %s" % (obj.level, cost, ("--" if count == -1 else count), obj.short_descr))
+            if state_checks.IS_SET(ch.act, merc.PLR_OMNI):
                 ch.send("(%d)" % obj.pIndexData.vnum)
             ch.send("\n")
 
-interp.cmd_type('list', do_list, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('list', do_list, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

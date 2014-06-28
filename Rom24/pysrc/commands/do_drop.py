@@ -1,5 +1,10 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
+import db
 
 
 def do_drop(ch, argument):
@@ -10,11 +15,11 @@ def do_drop(ch, argument):
         ch.send("Drop what?\n")
         return
     if arg.isdigit():
-        # 'drop NNNN coins' */
+        # 'drop NNNN coins'
         gold = 0
         silver = 0
-        amount   = int(arg)
-        argument, arg  = merc.read_word(argument)
+        amount = int(arg)
+        argument, arg = merc.read_word(argument)
         if amount <= 0 or ( arg != "coins" and arg != "coin" and arg != "gold" and arg != "silver"):
             ch.send("Sorry, you can't do that.\n")
             return
@@ -48,11 +53,11 @@ def do_drop(ch, argument):
                 gold += obj.value[1]
                 obj.extract()
         db.create_money(gold, silver).to_room(ch.in_room)
-        merc.act( "$n drops some coins.", ch, None, None, merc.TO_ROOM )
+        merc.act("$n drops some coins.", ch, None, None, merc.TO_ROOM)
         ch.send("OK.\n")
         return
     if not arg.startswith("all"):
-        # 'drop obj' */
+        # 'drop obj'
         obj = ch.get_obj_carry(arg, ch)
         if not obj:
             ch.send("You do not have that item.\n")
@@ -69,13 +74,13 @@ def do_drop(ch, argument):
             merc.act("$p dissolves into smoke.", ch, obj, None, merc.TO_CHAR)
             obj.extract()
     else:
-        # 'drop all' or 'drop all.obj' */
+        # 'drop all' or 'drop all.obj'
         found = False
         for obj in ch.carrying[:]:
             if (len(arg) == 3 or arg[4:] in obj.name) \
-            and ch.can_see_obj(obj) \
-            and obj.wear_loc == merc.WEAR_NONE \
-            and ch.can_drop_obj(obj):
+                    and ch.can_see_obj(obj) \
+                    and obj.wear_loc == merc.WEAR_NONE \
+                    and ch.can_drop_obj(obj):
                 found = True
                 obj.from_char()
                 obj.to_room(ch.in_room)
@@ -91,4 +96,5 @@ def do_drop(ch, argument):
             else:
                 merc.act("You are not carrying any $T.", ch, None, arg[4:], merc.TO_CHAR)
 
-interp.cmd_type('drop', do_drop, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+
+interp.register_command(interp.cmd_type('drop', do_drop, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

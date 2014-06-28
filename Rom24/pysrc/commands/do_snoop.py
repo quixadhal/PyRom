@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import merc
 import interp
 
@@ -16,7 +20,7 @@ def do_snoop(ch, argument):
         return
     if victim == ch:
         ch.send("Cancelling all snoops.\n")
-        merc.wiznet("$N stops being such a snoop.", ch,None, merc.WIZ_SNOOPS, merc.WIZ_SECURE, ch.get_trust())
+        merc.wiznet("$N stops being such a snoop.", ch, None, merc.WIZ_SNOOPS, merc.WIZ_SECURE, ch.get_trust())
         for d in merc.descriptor_list:
             if d.snoop_by == ch.desc:
                 d.snoop_by = None
@@ -25,10 +29,10 @@ def do_snoop(ch, argument):
         ch.send("Busy already.\n")
         return
     if not ch.is_room_owner(victim.in_room) and ch.in_room != victim.in_room \
-    and victim.in_room.is_private() and not merc.IS_TRUSTED(ch,merc.MAX_LEVEL):
+            and victim.in_room.is_private() and not merc.IS_TRUSTED(ch, merc.MAX_LEVEL):
         ch.send("That character is in a private room.\n")
         return
-    if victim.get_trust() >= ch.get_trust() or merc.IS_SET(merc.victim.comm, merc.COMM_SNOOP_PROOF):
+    if victim.get_trust() >= ch.get_trust() or merc.IS_SET(victim.comm, merc.COMM_SNOOP_PROOF):
         ch.send("You failed.\n")
         return
     if ch.desc:
@@ -44,4 +48,5 @@ def do_snoop(ch, argument):
     ch.send("Ok.\n")
     return
 
-interp.cmd_type('snoop', do_snoop, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1)
+
+interp.register_command(interp.cmd_type('snoop', do_snoop, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1))
