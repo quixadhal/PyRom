@@ -1,0 +1,50 @@
+{
+    "sword": [
+        "sword",
+        3702,
+        1,
+        "sword"
+    ],
+    "mace": [
+        "mace",
+        3700,
+        4,
+        "mace"
+    ],
+    "dagger": [
+        "dagger",
+        3701,
+        2,
+        "dagger"
+    ],
+    "axe": [
+        "axe",
+        3719,
+        5,
+        "axe"
+    ],
+    "staff": [
+        "staff",
+        3718,
+        3,
+        "spear"
+    ],
+    "flail": [
+        "flail",
+        3720,
+        6,
+        "flail"
+    ],
+    "whip": [
+        "whip",
+        3721,
+        7,
+        "whip"
+    ],
+    "polearm": [
+        "polearm",
+        3722,
+        8,
+        "polearm"
+    ]
+}

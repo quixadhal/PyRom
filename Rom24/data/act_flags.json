@@ -1,0 +1,112 @@
+{
+    "npc": [
+        "npc",
+        1,
+        false
+    ],
+    "sentinel": [
+        "sentinel",
+        2,
+        true
+    ],
+    "scavenger": [
+        "scavenger",
+        4,
+        true
+    ],
+    "aggressive": [
+        "aggressive",
+        32,
+        true
+    ],
+    "stay_area": [
+        "stay_area",
+        64,
+        true
+    ],
+    "wimpy": [
+        "wimpy",
+        128,
+        true
+    ],
+    "pet": [
+        "pet",
+        256,
+        true
+    ],
+    "train": [
+        "train",
+        512,
+        true
+    ],
+    "practice": [
+        "practice",
+        1024,
+        true
+    ],
+    "undead": [
+        "undead",
+        16384,
+        true
+    ],
+    "cleric": [
+        "cleric",
+        65536,
+        true
+    ],
+    "mage": [
+        "mage",
+        131072,
+        true
+    ],
+    "thief": [
+        "thief",
+        262144,
+        true
+    ],
+    "warrior": [
+        "warrior",
+        524288,
+        true
+    ],
+    "noalign": [
+        "noalign",
+        1048576,
+        true
+    ],
+    "nopurge": [
+        "nopurge",
+        2097152,
+        true
+    ],
+    "outdoors": [
+        "outdoors",
+        4194304,
+        true
+    ],
+    "indoors": [
+        "indoors",
+        16777216,
+        true
+    ],
+    "healer": [
+        "healer",
+        67108864,
+        true
+    ],
+    "gain": [
+        "gain",
+        134217728,
+        true
+    ],
+    "update_always": [
+        "update_always",
+        268435456,
+        true
+    ],
+    "changer": [
+        "changer",
+        536870912,
+        true
+    ]
+}

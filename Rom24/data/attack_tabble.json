@@ -1,0 +1,202 @@
+{
+    "0": [
+        "none",
+        "hit",
+        -1
+    ],
+    "1": [
+        "slice",
+        "slice",
+        3
+    ],
+    "2": [
+        "stab",
+        "stab",
+        2
+    ],
+    "3": [
+        "slash",
+        "slash",
+        3
+    ],
+    "4": [
+        "whip",
+        "whip",
+        3
+    ],
+    "5": [
+        "claw",
+        "claw",
+        3
+    ],
+    "6": [
+        "blast",
+        "blast",
+        1
+    ],
+    "7": [
+        "pound",
+        "pound",
+        1
+    ],
+    "8": [
+        "crush",
+        "crush",
+        1
+    ],
+    "9": [
+        "grep",
+        "grep",
+        3
+    ],
+    "10": [
+        "bite",
+        "bite",
+        2
+    ],
+    "11": [
+        "pierce",
+        "pierce",
+        2
+    ],
+    "12": [
+        "suction",
+        "suction",
+        1
+    ],
+    "13": [
+        "beating",
+        "beating",
+        1
+    ],
+    "14": [
+        "digestion",
+        "digestion",
+        7
+    ],
+    "15": [
+        "charge",
+        "charge",
+        1
+    ],
+    "16": [
+        "slap",
+        "slap",
+        1
+    ],
+    "17": [
+        "punch",
+        "punch",
+        1
+    ],
+    "18": [
+        "wrath",
+        "wrath",
+        11
+    ],
+    "19": [
+        "magic",
+        "magic",
+        11
+    ],
+    "20": [
+        "divine",
+        "divine power",
+        10
+    ],
+    "21": [
+        "cleave",
+        "cleave",
+        3
+    ],
+    "22": [
+        "scratch",
+        "scratch",
+        2
+    ],
+    "23": [
+        "peck",
+        "peck",
+        2
+    ],
+    "24": [
+        "peckb",
+        "peck",
+        1
+    ],
+    "25": [
+        "chop",
+        "chop",
+        3
+    ],
+    "26": [
+        "sting",
+        "sting",
+        2
+    ],
+    "27": [
+        "smash",
+        "smash",
+        1
+    ],
+    "28": [
+        "shbite",
+        "shocking bite",
+        6
+    ],
+    "29": [
+        "flbite",
+        "flaming bite",
+        4
+    ],
+    "30": [
+        "frbite",
+        "freezing bite",
+        5
+    ],
+    "31": [
+        "acbite",
+        "acidic bite",
+        7
+    ],
+    "32": [
+        "chomp",
+        "chomp",
+        2
+    ],
+    "33": [
+        "drain",
+        "life drain",
+        9
+    ],
+    "34": [
+        "thrust",
+        "thrust",
+        2
+    ],
+    "35": [
+        "slime",
+        "slime",
+        7
+    ],
+    "36": [
+        "shock",
+        "shock",
+        6
+    ],
+    "37": [
+        "thwack",
+        "thwack",
+        1
+    ],
+    "38": [
+        "flame",
+        "flame",
+        4
+    ],
+    "39": [
+        "chill",
+        "chill",
+        5
+    ]
+}

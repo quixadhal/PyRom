@@ -33,6 +33,7 @@
 """
 import logging
 
+
 logger = logging.getLogger()
 
 import os
@@ -52,10 +53,12 @@ import game_utils
 import handler_game
 import handler_olc
 import const
+import database.read.read_tables as read
 
 
 def boot_db():
     init_time()
+    read.read_tables()
     load_areas()
     fix_exits()
     area_update()

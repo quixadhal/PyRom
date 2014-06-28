@@ -1,0 +1,457 @@
+{
+    "rom basics": [
+        "rom basics",
+        {
+            "cleric": 0,
+            "thief": 0,
+            "mage": 0,
+            "warrior": 0
+        },
+        [
+            "scrolls",
+            "staves",
+            "wands",
+            "recall"
+        ]
+    ],
+    "mage basics": [
+        "mage basics",
+        {
+            "cleric": -1,
+            "thief": -1,
+            "mage": 0,
+            "warrior": -1
+        },
+        [
+            "dagger"
+        ]
+    ],
+    "cleric basics": [
+        "cleric basics",
+        {
+            "cleric": 0,
+            "thief": -1,
+            "mage": -1,
+            "warrior": -1
+        },
+        [
+            "mace"
+        ]
+    ],
+    "thief basics": [
+        "thief basics",
+        {
+            "cleric": -1,
+            "thief": 0,
+            "mage": -1,
+            "warrior": -1
+        },
+        [
+            "dagger",
+            "steal"
+        ]
+    ],
+    "warrior basics": [
+        "warrior basics",
+        {
+            "cleric": -1,
+            "thief": -1,
+            "mage": -1,
+            "warrior": 0
+        },
+        [
+            "sword",
+            "second attack"
+        ]
+    ],
+    "mage default": [
+        "mage default",
+        {
+            "cleric": -1,
+            "thief": -1,
+            "mage": 40,
+            "warrior": -1
+        },
+        [
+            "lore",
+            "beguiling",
+            "combat",
+            "detection",
+            "enhancement",
+            "illusion",
+            "maladictions",
+            "protective",
+            "transportation",
+            "weather"
+        ]
+    ],
+    "cleric default": [
+        "cleric default",
+        {
+            "cleric": 40,
+            "thief": -1,
+            "mage": -1,
+            "warrior": -1
+        },
+        [
+            "flail",
+            "attack",
+            "creation",
+            "curative",
+            "benedictions",
+            "detection",
+            "healing",
+            "maladictions",
+            "protective",
+            "shield block",
+            "transportation",
+            "weather"
+        ]
+    ],
+    "thief default": [
+        "thief default",
+        {
+            "cleric": -1,
+            "thief": 40,
+            "mage": -1,
+            "warrior": -1
+        },
+        [
+            "mace",
+            "sword",
+            "backstab",
+            "disarm",
+            "dodge",
+            "second attack",
+            "trip",
+            "hide",
+            "peek",
+            "pick lock",
+            "sneak"
+        ]
+    ],
+    "warrior default": [
+        "warrior default",
+        {
+            "cleric": -1,
+            "thief": -1,
+            "mage": -1,
+            "warrior": 40
+        },
+        [
+            "weaponsmaster",
+            "shield block",
+            "bash",
+            "disarm",
+            "enhanced damage",
+            "parry",
+            "rescue",
+            "third attack"
+        ]
+    ],
+    "weaponsmaster": [
+        "weaponsmaster",
+        {
+            "cleric": 40,
+            "thief": 40,
+            "mage": 40,
+            "warrior": 20
+        },
+        [
+            "axe",
+            "dagger",
+            "flail",
+            "mace",
+            "polearm",
+            "spear",
+            "sword",
+            "whip"
+        ]
+    ],
+    "attack": [
+        "attack",
+        {
+            "cleric": 5,
+            "thief": -1,
+            "mage": -1,
+            "warrior": 8
+        },
+        [
+            "demonfire",
+            "dispel evil",
+            "dispel good",
+            "earthquake",
+            "flamestrike",
+            "heat metal",
+            "ray of truth"
+        ]
+    ],
+    "beguiling": [
+        "beguiling",
+        {
+            "cleric": -1,
+            "thief": 6,
+            "mage": 4,
+            "warrior": -1
+        },
+        [
+            "calm",
+            "charm person",
+            "sleep"
+        ]
+    ],
+    "benedictions": [
+        "benedictions",
+        {
+            "cleric": 4,
+            "thief": -1,
+            "mage": -1,
+            "warrior": 8
+        },
+        [
+            "bless",
+            "calm",
+            "frenzy",
+            "holy word",
+            "remove curse"
+        ]
+    ],
+    "combat": [
+        "combat",
+        {
+            "cleric": -1,
+            "thief": 10,
+            "mage": 6,
+            "warrior": 9
+        },
+        [
+            "acid blast",
+            "burning hands",
+            "chain lightning",
+            "chill touch",
+            "colour spray",
+            "fireball",
+            "lightning bolt",
+            "magic missile",
+            "shocking grasp"
+        ]
+    ],
+    "creation": [
+        "creation",
+        {
+            "cleric": 4,
+            "thief": 8,
+            "mage": 4,
+            "warrior": 8
+        },
+        [
+            "continual light",
+            "create food",
+            "create spring",
+            "create water",
+            "create rose",
+            "floating disc"
+        ]
+    ],
+    "curative": [
+        "curative",
+        {
+            "cleric": 4,
+            "thief": -1,
+            "mage": -1,
+            "warrior": 8
+        },
+        [
+            "cure blindness",
+            "cure disease",
+            "cure poison"
+        ]
+    ],
+    "detection": [
+        "detection",
+        {
+            "cleric": 3,
+            "thief": 6,
+            "mage": 4,
+            "warrior": -1
+        },
+        [
+            "detect evil",
+            "detect good",
+            "detect hidden",
+            "detect invis",
+            "detect magic",
+            "detect poison",
+            "farsight",
+            "identify",
+            "know alignment",
+            "locate object"
+        ]
+    ],
+    "draconian": [
+        "draconian",
+        {
+            "cleric": -1,
+            "thief": -1,
+            "mage": 8,
+            "warrior": -1
+        },
+        [
+            "acid breath",
+            "fire breath",
+            "frost breath",
+            "gas breath",
+            "lightning breath"
+        ]
+    ],
+    "enchantment": [
+        "enchantment",
+        {
+            "cleric": -1,
+            "thief": -1,
+            "mage": 6,
+            "warrior": -1
+        },
+        [
+            "enchant armor",
+            "enchant weapon",
+            "fireproof",
+            "recharge"
+        ]
+    ],
+    "enhancement": [
+        "enhancement",
+        {
+            "cleric": -1,
+            "thief": 9,
+            "mage": 5,
+            "warrior": 9
+        },
+        [
+            "giant strength",
+            "haste",
+            "infravision",
+            "refresh"
+        ]
+    ],
+    "harmful": [
+        "harmful",
+        {
+            "cleric": 3,
+            "thief": -1,
+            "mage": -1,
+            "warrior": 6
+        },
+        [
+            "cause critical",
+            "cause light",
+            "cause serious",
+            "harm"
+        ]
+    ],
+    "healing": [
+        "healing",
+        {
+            "cleric": 3,
+            "thief": -1,
+            "mage": -1,
+            "warrior": 6
+        },
+        [
+            "cure critical",
+            "cure light",
+            "cure serious",
+            "heal",
+            "mass healing",
+            "refresh"
+        ]
+    ],
+    "illusion": [
+        "illusion",
+        {
+            "cleric": -1,
+            "thief": 7,
+            "mage": 4,
+            "warrior": -1
+        },
+        [
+            "invis",
+            "mass invis",
+            "ventriloquate"
+        ]
+    ],
+    "maladictions": [
+        "maladictions",
+        {
+            "cleric": 5,
+            "thief": 9,
+            "mage": 5,
+            "warrior": 9
+        },
+        [
+            "blindness",
+            "change sex",
+            "curse",
+            "energy drain",
+            "plague",
+            "poison",
+            "slow",
+            "weaken"
+        ]
+    ],
+    "protective": [
+        "protective",
+        {
+            "cleric": 4,
+            "thief": 7,
+            "mage": 4,
+            "warrior": 8
+        },
+        [
+            "armor",
+            "cancellation",
+            "dispel magic",
+            "fireproof",
+            "protection evil",
+            "protection good",
+            "sanctuary",
+            "shield",
+            "stone skin"
+        ]
+    ],
+    "transportation": [
+        "transportation",
+        {
+            "cleric": 4,
+            "thief": 8,
+            "mage": 4,
+            "warrior": 9
+        },
+        [
+            "fly",
+            "gate",
+            "nexus",
+            "pass door",
+            "portal",
+            "summon",
+            "teleport",
+            "word of recall"
+        ]
+    ],
+    "weather": [
+        "weather",
+        {
+            "cleric": 4,
+            "thief": 8,
+            "mage": 4,
+            "warrior": 8
+        },
+        [
+            "call lightning",
+            "control weather",
+            "faerie fire",
+            "faerie fog",
+            "lightning bolt"
+        ]
+    ]
+}

@@ -1,0 +1,102 @@
+{
+    "on": [
+        "on",
+        1,
+        52
+    ],
+    "prefix": [
+        "prefix",
+        262144,
+        52
+    ],
+    "ticks": [
+        "ticks",
+        2,
+        52
+    ],
+    "logins": [
+        "logins",
+        4,
+        52
+    ],
+    "sites": [
+        "sites",
+        8,
+        56
+    ],
+    "links": [
+        "links",
+        16,
+        53
+    ],
+    "newbies": [
+        "newbies",
+        131072,
+        52
+    ],
+    "spam": [
+        "spam",
+        524288,
+        55
+    ],
+    "deaths": [
+        "deaths",
+        32,
+        52
+    ],
+    "resets": [
+        "resets",
+        64,
+        56
+    ],
+    "mobdeaths": [
+        "mobdeaths",
+        128,
+        56
+    ],
+    "flags": [
+        "flags",
+        256,
+        55
+    ],
+    "penalties": [
+        "penalties",
+        512,
+        55
+    ],
+    "saccing": [
+        "saccing",
+        1024,
+        55
+    ],
+    "levels": [
+        "levels",
+        2048,
+        52
+    ],
+    "load": [
+        "load",
+        65536,
+        58
+    ],
+    "restore": [
+        "restore",
+        32768,
+        58
+    ],
+    "snoops": [
+        "snoops",
+        16384,
+        58
+    ],
+    "switches": [
+        "switches",
+        8192,
+        58
+    ],
+    "secure": [
+        "secure",
+        4096,
+        59
+    ]
+}
