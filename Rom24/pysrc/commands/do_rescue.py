@@ -1,7 +1,4 @@
 import logging
-import game_utils
-import handler_game
-import state_checks
 
 logger = logging.getLogger()
 
@@ -12,6 +9,9 @@ import const
 import skills
 import fight
 import interp
+import game_utils
+import handler_game
+import state_checks
 
 
 def do_rescue(ch, argument):

@@ -5,10 +5,11 @@ logger = logging.getLogger()
 # changes your scroll
 import merc
 import interp
+import game_utils
 
 
 def do_scroll(ch, argument):
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
     if not arg:
         if ch.lines == 0:
             ch.send("You do not page long messages.\n")

@@ -24,7 +24,7 @@ def do_cast(ch, argument):
         ch.send("Cast which what where?\n")
         return
     sn = handler_magic.find_spell(ch, arg1)
-    if not sn or sn.spell_fun == None \
+    if not sn or sn.spell_fun is None \
             or (not state_checks.IS_NPC(ch)
                 and (ch.level < sn.skill_level[ch.guild.name]
                      or ch.pcdata.learned[sn.name] == 0)):

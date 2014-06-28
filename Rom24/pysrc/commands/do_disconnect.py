@@ -5,10 +5,11 @@ logger = logging.getLogger()
 import merc
 import interp
 import comm
-
+import game_utils
+import handler_game
 
 def do_disconnect(ch, argument):
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
     if not arg:
         ch.send("Disconnect whom?\n")
         return
@@ -24,7 +25,7 @@ def do_disconnect(ch, argument):
         ch.send("They aren't here.\n")
         return
     if victim.desc is None:
-        merc.act("$N doesn't have a descriptor.", ch, None, merc.victim, merc.TO_CHAR)
+        handler_game.act("$N doesn't have a descriptor.", ch, None, victim, merc.TO_CHAR)
         return
     for d in merc.descriptor_list:
         if d == victim.desc:

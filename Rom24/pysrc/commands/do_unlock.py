@@ -41,7 +41,7 @@ def do_unlock(ch, argument):
             handler_game.act("$n unlocks $p.", ch, obj, None, merc.TO_ROOM)
             return
             # 'unlock object'
-        if obj.item_type != ITEM_CONTAINER:
+        if obj.item_type != merc.ITEM_CONTAINER:
             ch.send("That's not a container.\n")
             return
         if not state_checks.IS_SET(obj.value[1], merc.CONT_CLOSED):

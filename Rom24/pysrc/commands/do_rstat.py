@@ -1,20 +1,22 @@
 import logging
 
+
 logger = logging.getLogger()
 
 import merc
 import interp
-
+import game_utils
+import state_checks
 
 def do_rstat(ch, argument):
-    argument, arg = merc.read_word(argument)
-    location = ch.in_room if not arg else merc.find_location(ch, arg)
+    argument, arg = game_utils.read_word(argument)
+    location = ch.in_room if not arg else game_utils.find_location(ch, arg)
     if not location:
         ch.send("No such location.\n")
         return
 
     if not ch.is_room_owner(location) and ch.in_room != location \
-            and location.is_private() and not merc.IS_TRUSTED(ch, merc.MAX_LEVEL):
+            and location.is_private() and not state_checks.IS_TRUSTED(ch, merc.MAX_LEVEL):
         ch.send("That room is private right now.\n")
         return
     ch.send("Name: '%s'\nArea: '%s'\n" % (location.name, location.area.name))
@@ -33,7 +35,7 @@ def do_rstat(ch, argument):
     ch.send("Characters:")
     for rch in location.people:
         if ch.can_see(rch):
-            ch.send("%s " % rch.name if not merc.IS_NPC(rch) else rch.short_descr)
+            ch.send("%s " % rch.name if not state_checks.IS_NPC(rch) else rch.short_descr)
     ch.send(".\nObjects:   ")
     for obj in location.contents:
         ch.send("'%s' " % obj.name)

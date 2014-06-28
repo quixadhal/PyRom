@@ -4,11 +4,11 @@ logger = logging.getLogger()
 
 import merc
 import interp
-
+import game_utils
 
 def do_oset(ch, argument):
-    argument, arg1 = interp.read_word(argument)
-    argument, arg2 = interp.read_word(argument)
+    argument, arg1 = game_utils.read_word(argument)
+    argument, arg2 = game_utils.read_word(argument)
     arg3 = argument
 
     if not arg1 or not arg2 or not arg3:

@@ -1,4 +1,8 @@
 import logging
+import game_utils
+import handler_game
+import handler_obj
+import state_checks
 
 logger = logging.getLogger()
 
@@ -9,7 +13,7 @@ import interp
 
 # command that is similar to load
 def do_clone(ch, argument):
-    rest, arg = merc.read_word(argument)
+    rest, arg = game_utils.read_word(argument)
     mob = None
     obj = None
     if not arg:
@@ -35,7 +39,7 @@ def do_clone(ch, argument):
             return
             # clone an object
     if obj:
-        if not merc.obj_check(ch, obj):
+        if not handler_obj.obj_check(ch, obj):
             ch.send("Your powers are not great enough for such a task.\n")
             return
         clone = db.create_object(obj.pIndexData, 0)
@@ -44,37 +48,37 @@ def do_clone(ch, argument):
             clone.to_char(ch)
         else:
             clone.to_room(ch.in_room)
-        merc.recursive_clone(ch, obj, clone)
+        handler_obj.recursive_clone(ch, obj, clone)
 
-        merc.act("$n has created $p.", ch, clone, None, merc.TO_ROOM)
-        merc.act("You clone $p.", ch, clone, None, merc.TO_CHAR)
-        merc.wiznet("$N clones $p.", ch, clone, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.get_trust())
+        handler_game.act("$n has created $p.", ch, clone, None, merc.TO_ROOM)
+        handler_game.act("You clone $p.", ch, clone, None, merc.TO_CHAR)
+        handler_game.wiznet("$N clones $p.", ch, clone, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.get_trust())
         return
     elif mob:
-        if not merc.IS_NPC(mob):
+        if not state_checks.IS_NPC(mob):
             ch.send("You can only clone mobiles.\n")
             return
-        if (mob.level > 20 and not merc.IS_TRUSTED(ch, merc.L4)) \
-                or (mob.level > 10 and not merc.IS_TRUSTED(ch, merc.L5)) \
-                or (mob.level > 5 and not merc.IS_TRUSTED(ch, merc.L6)) \
-                or (mob.level > 0 and not merc.IS_TRUSTED(ch, merc.L7)) \
-                or not merc.IS_TRUSTED(ch, merc.L8):
+        if (mob.level > 20 and not state_checks.IS_TRUSTED(ch, merc.L4)) \
+                or (mob.level > 10 and not state_checks.IS_TRUSTED(ch, merc.L5)) \
+                or (mob.level > 5 and not state_checks.IS_TRUSTED(ch, merc.L6)) \
+                or (mob.level > 0 and not state_checks.IS_TRUSTED(ch, merc.L7)) \
+                or not state_checks.IS_TRUSTED(ch, merc.L8):
             ch.send("Your powers are not great enough for such a task.\n")
             return
         clone = db.create_mobile(mob.pIndexData)
         db.clone_mobile(mob, clone)
 
         for obj in mob.carrying:
-            if merc.obj_check(ch, obj):
+            if handler_obj.obj_check(ch, obj):
                 new_obj = db.create_object(obj.pIndexData, 0)
                 db.clone_object(obj, new_obj)
-                merc.recursive_clone(ch, obj, new_obj)
+                handler_obj.recursive_clone(ch, obj, new_obj)
                 new_obj.to_char(clone)
                 new_obj.wear_loc = obj.wear_loc
         clone.to_room(ch.in_room)
-        merc.act("$n has created $N.", ch, None, clone, merc.TO_ROOM)
-        merc.act("You clone $N.", ch, None, clone, merc.TO_CHAR)
-        merc.wiznet("$N clones %s." % clone.short_descr, ch, None, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.get_trust())
+        handler_game.act("$n has created $N.", ch, None, clone, merc.TO_ROOM)
+        handler_game.act("You clone $N.", ch, None, clone, merc.TO_CHAR)
+        handler_game.wiznet("$N clones %s." % clone.short_descr, ch, None, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.get_trust())
         return
 
 

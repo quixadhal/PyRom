@@ -5,11 +5,14 @@ logger = logging.getLogger()
 import merc
 import interp
 import db
+import game_utils
+import handler_game
+import state_checks
 
 
 def do_drop(ch, argument):
     found = False
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
 
     if not arg:
         ch.send("Drop what?\n")
@@ -19,7 +22,7 @@ def do_drop(ch, argument):
         gold = 0
         silver = 0
         amount = int(arg)
-        argument, arg = merc.read_word(argument)
+        argument, arg = game_utils.read_word(argument)
         if amount <= 0 or ( arg != "coins" and arg != "coin" and arg != "gold" and arg != "silver"):
             ch.send("Sorry, you can't do that.\n")
             return
@@ -53,7 +56,7 @@ def do_drop(ch, argument):
                 gold += obj.value[1]
                 obj.extract()
         db.create_money(gold, silver).to_room(ch.in_room)
-        merc.act("$n drops some coins.", ch, None, None, merc.TO_ROOM)
+        handler_game.act("$n drops some coins.", ch, None, None, merc.TO_ROOM)
         ch.send("OK.\n")
         return
     if not arg.startswith("all"):
@@ -67,11 +70,11 @@ def do_drop(ch, argument):
             return
         obj.from_char()
         obj.to_room(ch.in_room)
-        merc.act("$n drops $p.", ch, obj, None, merc.TO_ROOM)
-        merc.act("You drop $p.", ch, obj, None, merc.TO_CHAR)
-        if merc.IS_OBJ_STAT(obj, merc.ITEM_MELT_DROP):
-            merc.act("$p dissolves into smoke.", ch, obj, None, merc.TO_ROOM)
-            merc.act("$p dissolves into smoke.", ch, obj, None, merc.TO_CHAR)
+        handler_game.act("$n drops $p.", ch, obj, None, merc.TO_ROOM)
+        handler_game.act("You drop $p.", ch, obj, None, merc.TO_CHAR)
+        if state_checks.IS_OBJ_STAT(obj, merc.ITEM_MELT_DROP):
+            handler_game.act("$p dissolves into smoke.", ch, obj, None, merc.TO_ROOM)
+            handler_game.act("$p dissolves into smoke.", ch, obj, None, merc.TO_CHAR)
             obj.extract()
     else:
         # 'drop all' or 'drop all.obj'
@@ -84,17 +87,17 @@ def do_drop(ch, argument):
                 found = True
                 obj.from_char()
                 obj.to_room(ch.in_room)
-                merc.act("$n drops $p.", ch, obj, None, merc.TO_ROOM)
-                merc.act("You drop $p.", ch, obj, None, merc.TO_CHAR)
-                if merc.IS_OBJ_STAT(obj, merc.ITEM_MELT_DROP):
-                    merc.act("$p dissolves into smoke.", ch, obj, None, merc.TO_ROOM)
-                    merc.act("$p dissolves into smoke.", ch, obj, None, merc.TO_CHAR)
+                handler_game.act("$n drops $p.", ch, obj, None, merc.TO_ROOM)
+                handler_game.act("You drop $p.", ch, obj, None, merc.TO_CHAR)
+                if state_checks.IS_OBJ_STAT(obj, merc.ITEM_MELT_DROP):
+                    handler_game.act("$p dissolves into smoke.", ch, obj, None, merc.TO_ROOM)
+                    handler_game.act("$p dissolves into smoke.", ch, obj, None, merc.TO_CHAR)
                     obj.extract()
         if not found:
             if arg == 'all':
-                merc.act("You are not carrying anything.", ch, None, arg, merc.TO_CHAR)
+                handler_game.act("You are not carrying anything.", ch, None, arg, merc.TO_CHAR)
             else:
-                merc.act("You are not carrying any $T.", ch, None, arg[4:], merc.TO_CHAR)
+                handler_game.act("You are not carrying any $T.", ch, None, arg[4:], merc.TO_CHAR)
 
 
 interp.register_command(interp.cmd_type('drop', do_drop, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

@@ -1,12 +1,14 @@
 import logging
 
 logger = logging.getLogger()
+
 import game_utils
 import handler_game
 import merc
 import interp
 import nanny
 import state_checks
+import handler_ch
 
 
 def do_where(ch, argument):
@@ -15,12 +17,12 @@ def do_where(ch, argument):
         ch.send("Players near you:\n")
         found = False
         for d in merc.descriptor_list:
-            victim = merc.CH(d)
+            victim = handler_ch.CH(d)
             if d.is_connected(nanny.con_playing) \
             and victim \
             and not state_checks.IS_NPC(victim) \
             and victim.in_room \
-            and not state_checks.IS_SET(victim.in_room.room_flags,merc.ROOM_NOWHERE) \
+            and not state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_NOWHERE) \
             and (ch.is_room_owner(victim.in_room) or not victim.in_room.is_private()) \
             and victim.in_room.area == ch.in_room.area \
             and ch.can_see(victim):

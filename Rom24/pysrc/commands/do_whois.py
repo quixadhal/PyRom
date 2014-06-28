@@ -7,7 +7,7 @@ import merc
 import const
 import interp
 import nanny
-
+import handler_ch
 # whois command */
 import state_checks
 
@@ -22,7 +22,7 @@ def do_whois(ch, argument):
     for d in merc.descriptor_list[:]:
         if not d.is_connected(nanny.con_playing) or not ch.can_see(d.character):
             continue
-        wch = merc.CH(d)
+        wch = handler_ch.CH(d)
         if not ch.can_see(wch):
             continue
         if wch.name.lower().startswith(arg):

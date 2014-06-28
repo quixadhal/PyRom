@@ -6,10 +6,13 @@ import merc
 import const
 import interp
 import update
+import game_utils
+import handler_game
+import state_checks
 
 
 def do_drink(ch, argument):
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
     obj = None
     if not arg:
         obj = [f for f in ch.in_room.contents if f.item_type == merc.ITEM_FOUNTAIN][:1]
@@ -24,7 +27,7 @@ def do_drink(ch, argument):
             ch.send("You can't find it.\n")
             return
 
-    if not merc.IS_NPC(ch) and ch.pcdata.condition[merc.COND_DRUNK] > 10:
+    if not state_checks.IS_NPC(ch) and ch.pcdata.condition[merc.COND_DRUNK] > 10:
         ch.send("You fail to reach your mouth.  *Hic*\n")
         return
     amount = 0
@@ -48,29 +51,29 @@ def do_drink(ch, argument):
     else:
         ch.send("You can't drink from that.\n")
         return
-    if not merc.IS_NPC(ch) and not merc.IS_IMMORTAL(ch) and ch.pcdata.condition[merc.COND_FULL] > 45:
+    if not state_checks.IS_NPC(ch) and not state_checks.IS_IMMORTAL(ch) and ch.pcdata.condition[merc.COND_FULL] > 45:
         ch.send("You're too full to drink more.\n")
         return
-    merc.act("$n drinks $T from $p.", ch, obj, const.liq_table[liquid].liq_name, merc.TO_ROOM)
-    merc.act("You drink $T from $p.", ch, obj, const.liq_table[liquid].liq_name, merc.TO_CHAR)
+    handler_game.act("$n drinks $T from $p.", ch, obj, const.liq_table[liquid].liq_name, merc.TO_ROOM)
+    handler_game.act("You drink $T from $p.", ch, obj, const.liq_table[liquid].liq_name, merc.TO_CHAR)
     update.gain_condition(ch, merc.COND_DRUNK, amount * const.liq_table[liquid].liq_affect[merc.COND_DRUNK] / 36)
     update.gain_condition(ch, merc.COND_FULL, amount * const.liq_table[liquid].liq_affect[merc.COND_FULL] / 4)
     update.gain_condition(ch, merc.COND_THIRST, amount * const.liq_table[liquid].liq_affect[merc.COND_THIRST] / 10)
     update.gain_condition(ch, merc.COND_HUNGER, amount * const.liq_table[liquid].liq_affect[merc.COND_HUNGER] / 2)
-    if not merc.IS_NPC(ch) and ch.pcdata.condition[merc.COND_DRUNK] > 10:
+    if not state_checks.IS_NPC(ch) and ch.pcdata.condition[merc.COND_DRUNK] > 10:
         ch.send("You feel drunk.\n")
-    if not merc.IS_NPC(ch) and ch.pcdata.condition[merc.COND_FULL] > 40:
+    if not state_checks.IS_NPC(ch) and ch.pcdata.condition[merc.COND_FULL] > 40:
         ch.send("You are full.\n")
-    if not merc.IS_NPC(ch) and ch.pcdata.condition[merc.COND_THIRST] > 40:
+    if not state_checks.IS_NPC(ch) and ch.pcdata.condition[merc.COND_THIRST] > 40:
         ch.send("Your thirst is quenched.\n")
     if obj.value[3] != 0:
         # The drink was poisoned !
-        af = merc.AFFECT_DATA()
-        merc.act("$n chokes and gags.", ch, None, None, merc.TO_ROOM)
+        af = handler_game.AFFECT_DATA()
+        handler_game.act("$n chokes and gags.", ch, None, None, merc.TO_ROOM)
         ch.send("You choke and gag.\n")
         af.where = merc.TO_AFFECTS
         af.type = "poison"
-        af.level = merc.number_fuzzy(amount)
+        af.level = game_utils.number_fuzzy(amount)
         af.duration = 3 * amount
         af.location = merc.APPLY_NONE
         af.modifier = 0

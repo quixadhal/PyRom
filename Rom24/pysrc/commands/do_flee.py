@@ -1,11 +1,11 @@
 import random
 import logging
+import handler_room
 
 logger = logging.getLogger()
 
 
 import handler_ch
-import handler_game
 import state_checks
 import merc
 import interp
@@ -24,10 +24,14 @@ def do_flee( ch, argument ):
 
     was_in = ch.in_room
     for attempt in range(6):
-        door = number_door()
+        door = handler_room.number_door()
         pexit = was_in.exit[door]
-        if not pexit or not pexit.to_room or state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED) or random.randint(0, ch.daze) != 0 \
-                or (state_checks.IS_NPC(ch) and state_checks.IS_SET(pexit.u1.to_room.room_flags, merc.ROOM_NO_MOB)):
+        if not pexit \
+                or not pexit.to_room \
+                or state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED) \
+                or random.randint(0, ch.daze) != 0 \
+                or (state_checks.IS_NPC(ch)
+                    and state_checks.IS_SET(pexit.u1.to_room.room_flags, merc.ROOM_NO_MOB)):
             continue
 
         handler_ch.move_char(ch, door, False)

@@ -9,6 +9,7 @@ import interp
 import nanny
 import state_checks
 import tables
+import handler_ch
 
 # New 'who' command originally by Alander of Rivers of Mud.
 def do_who(ch, argument):
@@ -70,7 +71,7 @@ def do_who(ch, argument):
         if not d.is_connected(nanny.con_playing) or not ch.can_see(d.character):
             continue
 
-        wch = merc.CH(d)
+        wch = handler_ch.CH(d)
 
         if not ch.can_see(wch):
             continue

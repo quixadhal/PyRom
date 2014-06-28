@@ -1,13 +1,16 @@
 import logging
 
+
 logger = logging.getLogger()
 
 import merc
 import interp
-
+import game_utils
+import handler_game
+import handler_magic
 
 def do_quaff(ch, argument):
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
     if not arg:
         ch.send("Quaff what?\n")
         return
@@ -21,12 +24,12 @@ def do_quaff(ch, argument):
     if ch.level < obj.level:
         ch.send("This liquid is too powerful for you to drink.\n")
         return
-    merc.act("$n quaffs $p.", ch, obj, None, merc.TO_ROOM)
-    merc.act("You quaff $p.", ch, obj, None, merc.TO_CHAR)
+    handler_game.act("$n quaffs $p.", ch, obj, None, merc.TO_ROOM)
+    handler_game.act("You quaff $p.", ch, obj, None, merc.TO_CHAR)
 
-    merc.obj_cast_spell(obj.value[1], obj.value[0], ch, ch, None)
-    merc.obj_cast_spell(obj.value[2], obj.value[0], ch, ch, None)
-    merc.obj_cast_spell(obj.value[3], obj.value[0], ch, ch, None)
+    handler_magic.obj_cast_spell(obj.value[1], obj.value[0], ch, ch, None)
+    handler_magic.obj_cast_spell(obj.value[2], obj.value[0], ch, ch, None)
+    handler_magic.obj_cast_spell(obj.value[3], obj.value[0], ch, ch, None)
 
     obj.extract()
     return

@@ -1,6 +1,4 @@
 import logging
-import handler_game
-import state_checks
 
 logger = logging.getLogger()
 
@@ -8,6 +6,9 @@ import random
 
 import merc
 import interp
+import handler_game
+import handler_room
+import state_checks
 
 
 # RT Enter portals
@@ -31,10 +32,10 @@ def do_enter(ch, argument):
             return
         location = None
         if state_checks.IS_SET(portal.value[2], merc.GATE_RANDOM) or portal.value[3] == -1:
-            location = get_random_room(ch)
+            location = handler_room.get_random_room(ch)
             portal.value[3] = location.vnum  # for record keeping :)
         elif state_checks.IS_SET(portal.value[2], merc.GATE_BUGGY) and (random.randint(1, 99) < 5):
-            location = get_random_room(ch)
+            location = handler_room.get_random_room(ch)
         else:
             location = merc.room_index_hash[portal.value[3]]
         if not location or location == old_room \

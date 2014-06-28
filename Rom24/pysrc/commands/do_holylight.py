@@ -4,16 +4,17 @@ logger = logging.getLogger()
 
 import merc
 import interp
+import state_checks
 
 
 def do_holylight(ch, argument):
-    if merc.IS_NPC(ch):
+    if state_checks.IS_NPC(ch):
         return
-    if merc.IS_SET(ch.act, merc.PLR_HOLYLIGHT):
-        ch.act = merc.REMOVE_BIT(ch.act, merc.PLR_HOLYLIGHT)
+    if state_checks.IS_SET(ch.act, merc.PLR_HOLYLIGHT):
+        ch.act = state_checks.REMOVE_BIT(ch.act, merc.PLR_HOLYLIGHT)
         ch.send("Holy light mode off.\n")
     else:
-        ch.act = merc.SET_BIT(ch.act, merc.PLR_HOLYLIGHT)
+        ch.act = state_checks.SET_BIT(ch.act, merc.PLR_HOLYLIGHT)
         ch.send("Holy light mode on.\n")
     return
 

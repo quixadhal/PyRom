@@ -4,10 +4,11 @@ logger = logging.getLogger()
 
 import merc
 import interp
+import state_checks
 
 
 def do_replay(ch, argument):
-    if merc.IS_NPC(ch):
+    if state_checks.IS_NPC(ch):
         ch.send("You can't replay.\n")
         return
     if not ch.pcdata.buffer:

@@ -35,4 +35,4 @@ def do_sneak(ch, argument):
     return
 
 
-register_command(interp.cmd_type('sneak', do_sneak, merc.POS_STANDING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(interp.cmd_type('sneak', do_sneak, merc.POS_STANDING, 0, merc.LOG_NORMAL, 1))

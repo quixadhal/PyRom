@@ -5,10 +5,13 @@ logger = logging.getLogger()
 import merc
 import fight
 import interp
+import game_utils
+import handler_game
+import state_checks
 
 
 def do_kill(ch, argument):
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
 
     if not arg:
         ch.send("Kill whom?\n")
@@ -31,14 +34,14 @@ def do_kill(ch, argument):
     if victim.fighting and not ch.is_same_group(victim.fighting):
         ch.send("Kill stealing is not permitted.\n")
         return
-    if merc.IS_AFFECTED(ch, merc.AFF_CHARM) and ch.master == victim:
-        merc.act("$N is your beloved master.", ch, None, victim, merc.TO_CHAR)
+    if state_checks.IS_AFFECTED(ch, merc.AFF_CHARM) and ch.master == victim:
+        handler_game.act("$N is your beloved master.", ch, None, victim, merc.TO_CHAR)
         return
     if ch.position == merc.POS_FIGHTING:
         ch.send("You do the best you can!\n")
         return
 
-    merc.WAIT_STATE(ch, 1 * merc.PULSE_VIOLENCE)
+    state_checks.WAIT_STATE(ch, 1 * merc.PULSE_VIOLENCE)
     fight.check_killer(ch, victim)
     fight.multi_hit(ch, victim, merc.TYPE_UNDEFINED)
     return

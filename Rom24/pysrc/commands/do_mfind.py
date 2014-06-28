@@ -4,10 +4,11 @@ logger = logging.getLogger()
 
 import merc
 import interp
+import game_utils
 
 
 def do_mfind(ch, argument):
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
     if not arg:
         ch.send("Find whom?\n")
         return
@@ -19,7 +20,7 @@ def do_mfind(ch, argument):
     # Do you?
     # -- Furey
     for pMobIndex in merc.mob_index_hash.values():
-        if fAll or merc.is_name(arg, pMobIndex.player_name):
+        if fAll or game_utils.is_name(arg, pMobIndex.player_name):
             found = True
             ch.send("[%5d] %s\n" % (pMobIndex.vnum, pMobIndex.short_descr))
     if not found:

@@ -1,4 +1,7 @@
 import logging
+import game_utils
+import handler_game
+import state_checks
 
 logger = logging.getLogger()
 
@@ -9,15 +12,15 @@ import interp
 
 def do_heal(ch, argument):
     # check for healer
-    mob = [mob for mob in ch.in_room.people if merc.IS_NPC(mob) and merc.IS_SET(mob.act, merc.ACT_IS_HEALER)][:1]
+    mob = [mob for mob in ch.in_room.people if state_checks.IS_NPC(mob) and state_checks.IS_SET(mob.act, merc.ACT_IS_HEALER)][:1]
     if not mob:
         ch.send("You can't do that here.\n")
         return
     mob = mob[0]
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
     if not arg:
         # display price list
-        merc.act("$N says 'I offer the following spells:'", ch, None, mob, merc.TO_CHAR)
+        handler_game.act("$N says 'I offer the following spells:'", ch, None, mob, merc.TO_CHAR)
         ch.send("  light: cure light wounds      10 gold\n")
         ch.send("  serious: cure serious wounds  15 gold\n")
         ch.send("  critic: cure critical wounds  25 gold\n")
@@ -85,20 +88,20 @@ def do_heal(ch, argument):
         words = "candusima"
         cost = 500
     else:
-        merc.act("$N says 'Type 'heal' for a list of spells.'", ch, None, mob, merc.TO_CHAR)
+        handler_game.act("$N says 'Type 'heal' for a list of spells.'", ch, None, mob, merc.TO_CHAR)
         return
     if cost > (ch.gold * 100 + ch.silver):
-        merc.act("$N says 'You do not have enough gold for my services.'", ch, None, mob, merc.TO_CHAR)
+        handler_game.act("$N says 'You do not have enough gold for my services.'", ch, None, mob, merc.TO_CHAR)
         return
-    merc.WAIT_STATE(ch, merc.PULSE_VIOLENCE)
+    state_checks.WAIT_STATE(ch, merc.PULSE_VIOLENCE)
 
     ch.deduct_cost(cost)
     mob.gold += cost // 100
     mob.silver += cost % 100
-    merc.act("$n utters the words '$T'.", mob, None, words, merc.TO_ROOM)
+    handler_game.act("$n utters the words '$T'.", mob, None, words, merc.TO_ROOM)
 
     if spell == None:  # restore mana trap... kinda hackish... kinda?
-        ch.mana += merc.dice(2, 8) + mob.level // 3
+        ch.mana += game_utils.dice(2, 8) + mob.level // 3
         ch.mana = min(ch.mana, ch.max_mana)
         ch.send("A warm glow passes through you.\n")
         return

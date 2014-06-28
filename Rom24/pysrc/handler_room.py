@@ -62,7 +62,7 @@ class ROOM_INDEX_DATA:
         return "<RoomIndex: %d" % self.vnum
 
 
-def random_room(ch):
+def get_random_room(ch):
     room = None
     while True:
         room = random.choice(room_index_hash)
@@ -75,7 +75,7 @@ def random_room(ch):
             break
     return room
 
-def random_door(self=None):
+def number_door(self=None):
     return random.randint(0, 5)
 
 def find_door(ch, arg):

@@ -5,6 +5,8 @@ logger = logging.getLogger()
 import merc
 import const
 import interp
+import game_utils
+import state_checks
 
 # RT spells and skills show the players spells (or skills)
 def do_spells(ch, argument):
@@ -14,14 +16,14 @@ def do_spells(ch, argument):
     level = 0
     skill = None
 
-    if merc.IS_NPC(ch):
+    if state_checks.IS_NPC(ch):
         return
     argument = argument.lower()
     if argument:
         fAll = True
 
         if not "all".startswith(argument):
-            argument, arg = merc.read_word(argument)
+            argument, arg = game_utils.read_word(argument)
             if not arg.isdigit():
                 ch.send("Arguments must be numerical or all.\n")
                 return
@@ -33,7 +35,7 @@ def do_spells(ch, argument):
                 return
 
             if argument:
-                argument, arg = merc.read_word(argument)
+                argument, arg = game_utils.read_word(argument)
                 if not arg.isdigit():
                     ch.send("Arguments must be numerical or all.\n")
                     return

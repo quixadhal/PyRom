@@ -1,20 +1,23 @@
 import logging
 
+
 logger = logging.getLogger()
 
 import merc
 import interp
+import handler_game
+import state_checks
 
 
 def do_emote(ch, argument):
-    if not merc.IS_NPC(ch) and merc.IS_SET(ch.comm, merc.COMM_NOEMOTE):
+    if not state_checks.IS_NPC(ch) and state_checks.IS_SET(ch.comm, merc.COMM_NOEMOTE):
         ch.send("You can't show your emotions.\n")
         return
     if not argument:
         ch.send("Emote what?\n")
         return
-    merc.act("$n $T", ch, None, argument, merc.TO_ROOM)
-    merc.act("$n $T", ch, None, argument, merc.TO_CHAR)
+    handler_game.act("$n $T", ch, None, argument, merc.TO_ROOM)
+    handler_game.act("$n $T", ch, None, argument, merc.TO_CHAR)
     return
 
 

@@ -5,10 +5,12 @@ logger = logging.getLogger()
 import merc
 import const
 import interp
+import game_utils
+import handler_game
 
 
 def do_fill(ch, argument):
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
     if not arg:
         ch.send("Fill what?\n")
         return
@@ -30,10 +32,10 @@ def do_fill(ch, argument):
     if obj.value[1] >= obj.value[0]:
         ch.send("Your container is full.\n")
         return
-    merc.act("You fill $p with %s from $P." % const.liq_table[fountain.value[2]].liq_name, ch, obj, fountain,
-             merc.TO_CHAR)
-    merc.act("$n fills $p with %s from $P." % const.liq_table[fountain.value[2]].liq_name, ch, obj, fountain,
-             merc.TO_ROOM)
+    handler_game.act("You fill $p with %s from $P." % const.liq_table[fountain.value[2]].liq_name, ch, obj, fountain,
+                     merc.TO_CHAR)
+    handler_game.act("$n fills $p with %s from $P." % const.liq_table[fountain.value[2]].liq_name, ch, obj, fountain,
+                     merc.TO_ROOM)
     obj.value[2] = fountain.value[2]
     obj.value[1] = obj.value[0]
     return

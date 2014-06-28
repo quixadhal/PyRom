@@ -1,16 +1,19 @@
 import logging
 
+
 logger = logging.getLogger()
 
 import merc
 import interp
-
+import game_utils
+import handler_game
+import state_checks
 
 def do_sacrifice(ch, argument):
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
 
     if not arg or arg == ch.name.lower():
-        merc.act("$n offers $mself to Mota, who graciously declines.", ch, None, None, merc.TO_ROOM)
+        handler_game.act("$n offers $mself to Mota, who graciously declines.", ch, None, None, merc.TO_ROOM)
         ch.send("Mota appreciates your offer and may accept it later.\n")
         return
     obj = ch.get_obj_list(arg, ch.in_room.contents)
@@ -21,13 +24,13 @@ def do_sacrifice(ch, argument):
         if obj.contains:
             ch.send("Mota wouldn't like that.\n")
             return
-    if not merc.CAN_WEAR(obj, merc.ITEM_TAKE) or merc.CAN_WEAR(obj, merc.ITEM_NO_SAC):
-        merc.act("$p is not an acceptable sacrifice.", ch, obj, 0, merc.TO_CHAR)
+    if not state_checks.CAN_WEAR(obj, merc.ITEM_TAKE) or state_checks.CAN_WEAR(obj, merc.ITEM_NO_SAC):
+        handler_game.act("$p is not an acceptable sacrifice.", ch, obj, 0, merc.TO_CHAR)
         return
     if obj.in_room:
         for gch in obj.in_room.people:
             if gch.on == obj:
-                merc.act("$N appears to be using $p.", ch, obj, gch, merc.TO_CHAR)
+                handler_game.act("$N appears to be using $p.", ch, obj, gch, merc.TO_CHAR)
                 return
 
     silver = max(1, obj.level * 3)
@@ -39,13 +42,13 @@ def do_sacrifice(ch, argument):
     else:
         ch.send("Mota gives you %d silver coins for your sacrifice.\n" % silver)
     ch.silver += silver
-    if merc.IS_SET(ch.act, merc.PLR_AUTOSPLIT):
+    if state_checks.IS_SET(ch.act, merc.PLR_AUTOSPLIT):
         # AUTOSPLIT code
         members = len([gch for gch in ch.in_room.people if gch.is_same_group(ch)])
         if members > 1 and silver > 1:
             ch.do_split("%d" % silver)
-    merc.act("$n sacrifices $p to Mota.", ch, obj, None, merc.TO_ROOM)
-    merc.wiznet("$N sends up $p as a burnt offering.", ch, obj, merc.WIZ_SACCING, 0, 0)
+    handler_game.act("$n sacrifices $p to Mota.", ch, obj, None, merc.TO_ROOM)
+    handler_game.wiznet("$N sends up $p as a burnt offering.", ch, obj, merc.WIZ_SACCING, 0, 0)
     obj.extract()
     return
 

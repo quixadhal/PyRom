@@ -4,11 +4,11 @@ logger = logging.getLogger()
 
 import merc
 import interp
-
+import game_utils
 
 # RT to replace the two load commands
 def do_load(ch, argument):
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
     if not arg:
         ch.send("Syntax:\n")
         ch.send("  load mob <vnum>\n")

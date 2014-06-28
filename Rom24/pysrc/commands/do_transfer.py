@@ -6,11 +6,12 @@ import merc
 import fight
 import interp
 import nanny
-
+import game_utils
+import handler_game
 
 def do_transfer(ch, argument):
-    argument, arg1 = merc.read_word(argument)
-    argument, arg2 = merc.read_word(argument)
+    argument, arg1 = game_utils.read_word(argument)
+    argument, arg2 = game_utils.read_word(argument)
     if not arg1:
         ch.send("Transfer whom (and where)?\n")
         return
@@ -26,7 +27,7 @@ def do_transfer(ch, argument):
     if not arg2:
         location = ch.in_room
     else:
-        location = merc.find_location(ch, arg2)
+        location = game_utils.find_location(ch, arg2)
         if not location:
             ch.send("No such location.\n")
             return
@@ -44,12 +45,12 @@ def do_transfer(ch, argument):
 
     if victim.fighting:
         fight.stop_fighting(victim, True)
-    merc.act("$n disappears in a mushroom cloud.", victim, None, None, merc.TO_ROOM)
+    handler_game.act("$n disappears in a mushroom cloud.", victim, None, None, merc.TO_ROOM)
     victim.from_room()
     victim.to_room(location)
-    merc.act("$n arrives from a puff of smoke.", victim, None, None, merc.TO_ROOM)
+    handler_game.act("$n arrives from a puff of smoke.", victim, None, None, merc.TO_ROOM)
     if ch != victim:
-        merc.act("$n has transferred you.", ch, None, victim, merc.TO_VICT)
+        handler_game.act("$n has transferred you.", ch, None, victim, merc.TO_VICT)
     victim.do_look("auto")
     ch.send("Ok.\n")
 
