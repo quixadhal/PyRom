@@ -1,4 +1,4 @@
-from const import SLOT, skill_type, skill_table
+from const import SLOT, register_spell, skill_type
 from merc import is_affected, IS_AFFECTED, AFF_HASTE, IS_SET, OFF_FAST, act, TO_CHAR, AFF_SLOW, check_dispel, TO_ROOM, \
     TO_AFFECTS, APPLY_DEX, POS_FIGHTING, TAR_CHAR_DEFENSIVE
 
@@ -36,8 +36,9 @@ def spell_haste(sn, level, ch, victim, target):
     if ch != victim:
         ch.send("Ok.\n")
 
-skill_type("haste",
-           { 'mage':21, 'cleric':53, 'thief':26, 'warrior':29 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_haste, TAR_CHAR_DEFENSIVE, POS_FIGHTING,
-           None, SLOT(502), 30, 12, "", "You feel yourself slow down.", "")
+
+register_spell(skill_type("haste",
+                          {'mage': 21, 'cleric': 53, 'thief': 26, 'warrior': 29},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_haste, TAR_CHAR_DEFENSIVE, POS_FIGHTING,
+                          None, SLOT(502), 30, 12, "", "You feel yourself slow down.", ""))

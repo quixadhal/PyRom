@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from merc import weather_info, dice, POS_STANDING, TAR_IGNORE
 
 
@@ -14,8 +14,8 @@ def spell_control_weather(sn, level, ch, victim, target):
     return
 
 
-skill_type("control weather",
-           {'mage': 15, 'cleric': 19, 'thief': 28, 'warrior': 22},
-           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-           spell_control_weather, TAR_IGNORE, POS_STANDING,
-           None, SLOT(11), 25, 12, "", "!Control Weather!", "")
+register_spell(skill_type("control weather",
+                          {'mage': 15, 'cleric': 19, 'thief': 28, 'warrior': 22},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_control_weather, TAR_IGNORE, POS_STANDING,
+                          None, SLOT(11), 25, 12, "", "!Control Weather!", ""))

@@ -1,7 +1,7 @@
 import random
-from const import SLOT, skill_type
-from fight import damage
 
+from const import SLOT, skill_type, register_spell
+from fight import damage
 from merc import saves_spell, DAM_FIRE, IS_SET, IMM_FIRE, IS_OBJ_STAT, ITEM_NONMETAL, ITEM_BURN_PROOF, ITEM_ARMOR, \
     STAT_DEX, remove_obj, act, TO_ROOM, TO_CHAR, ITEM_WEAPON, IS_WEAPON_STAT, WEAPON_FLAMING, TAR_CHAR_OFFENSIVE, \
     POS_FIGHTING
@@ -79,8 +79,9 @@ def spell_heat_metal(sn, level, ch, victim, target):
             dam = 2 * dam // 3
         damage(ch, victim, dam, sn, DAM_FIRE, True)
 
-skill_type("heat metal",
-           { 'mage':53, 'cleric':16, 'thief':53, 'warrior':23 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_heat_metal, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
-           None, SLOT(516), 25, 18, "spell", "!Heat Metal!", "")
+
+register_spell(skill_type("heat metal",
+                          {'mage': 53, 'cleric': 16, 'thief': 53, 'warrior': 23},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_heat_metal, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
+                          None, SLOT(516), 25, 18, "spell", "!Heat Metal!", ""))

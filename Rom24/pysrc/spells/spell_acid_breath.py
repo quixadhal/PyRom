@@ -1,8 +1,8 @@
 import random
-from const import SLOT, skill_type
+
+from const import SLOT, skill_type, register_spell
 from effects import acid_effect
 from fight import damage
-
 from merc import act, TO_NOTVICT, TO_VICT, TO_CHAR, dice, saves_spell, DAM_ACID, TARGET_CHAR, TAR_CHAR_OFFENSIVE, \
     POS_FIGHTING
 
@@ -27,8 +27,8 @@ def spell_acid_breath(sn, level, ch, victim, target):
         damage(ch, victim, dam, sn, DAM_ACID, True)
 
 
-skill_type("acid breath",
-           { 'mage':31, 'cleric':32, 'thief':33, 'warrior':34 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_acid_breath, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None,
-           SLOT(200), 100, 24, "blast of acid", "!Acid Breath!", "")
+register_spell(skill_type("acid breath",
+                          {'mage': 31, 'cleric': 32, 'thief': 33, 'warrior': 34},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_acid_breath, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None,
+                          SLOT(200), 100, 24, "blast of acid", "!Acid Breath!", ""))

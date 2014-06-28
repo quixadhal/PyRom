@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from merc import saves_spell, DAM_DISEASE, IS_NPC, IS_SET, ACT_UNDEAD, act, TO_CHAR, AFFECT_DATA, TO_AFFECTS, APPLY_STR, \
     AFF_PLAGUE, TO_ROOM, POS_FIGHTING, TAR_CHAR_OFFENSIVE
 
@@ -25,8 +25,9 @@ def spell_plague(sn, level, ch, victim, target):
     victim.send("You scream in agony as plague sores erupt from your skin.\n")
     act("$n screams in agony as plague sores erupt from $s skin.", victim, None, None, TO_ROOM)
 
-skill_type("plague",
-           { 'mage':23, 'cleric':17, 'thief':36, 'warrior':26 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_plague, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None,
-           SLOT(503), 20, 12, "sickness", "Your sores vanish.", "")
+
+register_spell(skill_type("plague",
+                          {'mage': 23, 'cleric': 17, 'thief': 36, 'warrior': 26},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_plague, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None,
+                          SLOT(503), 20, 12, "sickness", "Your sores vanish.", ""))

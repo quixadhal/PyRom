@@ -1,4 +1,4 @@
-from const import SLOT, skill_type, skill_table
+from const import SLOT, register_spell, skill_type
 from merc import TARGET_OBJ, IS_OBJ_STAT, ITEM_EVIL, act, TO_CHAR, ITEM_BLESS, affect_find, saves_dispel, TO_ALL, \
     REMOVE_BIT, AFFECT_DATA, TO_OBJECT, APPLY_SAVES, WEAR_NONE, IS_AFFECTED, AFF_CURSE, saves_spell, DAM_NEGATIVE, \
     TO_AFFECTS, APPLY_HITROLL, APPLY_SAVING_SPELL, POS_FIGHTING, TAR_OBJ_CHAR_OFF
@@ -61,8 +61,8 @@ def spell_curse(sn, level, ch, victim, target):
         act("$N looks very uncomfortable.", ch, None, victim, TO_CHAR)
 
 
-skill_type("curse",
-           {'mage': 18, 'cleric': 18, 'thief': 26, 'warrior': 22},
-           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-           spell_curse, TAR_OBJ_CHAR_OFF, POS_FIGHTING, None,
-           SLOT(17), 20, 12, "curse", "The curse wears off.", "$p is no longer impure.")
+register_spell(skill_type("curse",
+                          {'mage': 18, 'cleric': 18, 'thief': 26, 'warrior': 22},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_curse, TAR_OBJ_CHAR_OFF, POS_FIGHTING, None,
+                          SLOT(17), 20, 12, "curse", "The curse wears off.", "$p is no longer impure."))

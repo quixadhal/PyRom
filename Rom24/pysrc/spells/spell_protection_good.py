@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from merc import IS_AFFECTED, AFF_PROTECT_GOOD, AFF_PROTECT_EVIL, act, TO_CHAR, AFFECT_DATA, TO_AFFECTS, \
     APPLY_SAVING_SPELL, POS_STANDING, TAR_CHAR_SELF
 
@@ -23,8 +23,9 @@ def spell_protection_good(sn, level, ch, victim, target):
     if ch != victim:
         act("$N is protected from good.", ch, None, victim, TO_CHAR)
 
-skill_type("protection good",
-           { 'mage':12, 'cleric':9, 'thief':17, 'warrior':11 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_protection_good, TAR_CHAR_SELF, POS_STANDING,
-           None, SLOT(514), 5, 12, "", "You feel less protected.", "")
+
+register_spell(skill_type("protection good",
+                          {'mage': 12, 'cleric': 9, 'thief': 17, 'warrior': 11},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_protection_good, TAR_CHAR_SELF, POS_STANDING,
+                          None, SLOT(514), 5, 12, "", "You feel less protected.", ""))

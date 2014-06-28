@@ -1,6 +1,6 @@
 import random
-from const import SLOT, skill_type
 
+from const import SLOT, skill_type, register_spell
 from merc import ITEM_ARMOR, APPLY_AC, IS_OBJ_STAT, ITEM_BLESS, ITEM_GLOW, act, TO_CHAR, TO_ROOM, AFFECT_DATA, SET_BIT, \
     ITEM_MAGIC, LEVEL_HERO, TO_OBJECT, POS_STANDING, TAR_OBJ_INV
 
@@ -117,8 +117,8 @@ def spell_enchant_armor(sn, level, ch, victim, target):
         obj.affected.append(paf)
 
 
-skill_type("enchant armor",
-           { 'mage':16, 'cleric':53, 'thief':53, 'warrior':53 },
-           { 'mage':2, 'cleric':2, 'thief':4, 'warrior':4 },
-           spell_enchant_armor, TAR_OBJ_INV, POS_STANDING, None,
-           SLOT(510), 100, 24, "", "!Enchant Armor!", "")
+register_spell(skill_type("enchant armor",
+                          {'mage': 16, 'cleric': 53, 'thief': 53, 'warrior': 53},
+                          {'mage': 2, 'cleric': 2, 'thief': 4, 'warrior': 4},
+                          spell_enchant_armor, TAR_OBJ_INV, POS_STANDING, None,
+                          SLOT(510), 100, 24, "", "!Enchant Armor!", ""))

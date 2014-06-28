@@ -2,7 +2,7 @@ import random
 
 from merc import DAM_FIRE, saves_spell, TAR_CHAR_OFFENSIVE, POS_FIGHTING
 from fight import damage
-from const import skill_type, SLOT
+from const import register_spell, skill_type, SLOT
 
 
 def spell_burning_hands(sn, level, ch, victim, target):
@@ -21,8 +21,8 @@ def spell_burning_hands(sn, level, ch, victim, target):
     damage(ch, victim, dam, sn, DAM_FIRE, True)
 
 
-skill_type("burning hands",
-           {'mage': 7, 'cleric': 53, 'thief': 10, 'warrior': 9},
-           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-           spell_burning_hands, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
-           None, SLOT(5), 15, 12, "burning hands", "!Burning Hands!", "")
+register_spell(skill_type("burning hands",
+                          {'mage': 7, 'cleric': 53, 'thief': 10, 'warrior': 9},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_burning_hands, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
+                          None, SLOT(5), 15, 12, "burning hands", "!Burning Hands!", ""))

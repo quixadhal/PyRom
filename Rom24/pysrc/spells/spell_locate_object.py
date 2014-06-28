@@ -1,6 +1,6 @@
 import random
-from const import SLOT, skill_type
 
+from const import SLOT, skill_type, register_spell
 from merc import IS_IMMORTAL, object_list, is_name, target_name, IS_OBJ_STAT, ITEM_NOLOCATE, PERS, POS_STANDING, \
     TAR_IGNORE
 
@@ -36,8 +36,9 @@ def spell_locate_object(sn, level, ch, victim, target):
     if not found:
         ch.send("Nothing like that in heaven or earth.\n")
 
-skill_type("locate object",
-           { 'mage':9, 'cleric':15, 'thief':11, 'warrior':53 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_locate_object, TAR_IGNORE, POS_STANDING, None,
-           SLOT(31), 20, 18, "", "!Locate Object!", "")
+
+register_spell(skill_type("locate object",
+                          {'mage': 9, 'cleric': 15, 'thief': 11, 'warrior': 53},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_locate_object, TAR_IGNORE, POS_STANDING, None,
+                          SLOT(31), 20, 18, "", "!Locate Object!", ""))

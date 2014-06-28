@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from merc import IS_AFFECTED, AFF_PASS_DOOR, act, TO_CHAR, AFFECT_DATA, TO_AFFECTS, number_fuzzy, APPLY_NONE, TO_ROOM, \
     POS_STANDING, TAR_CHAR_SELF
 
@@ -23,8 +23,9 @@ def spell_pass_door(sn, level, ch, victim, target):
     act("$n turns translucent.", victim, None, None, TO_ROOM)
     victim.send("You turn translucent.\n")
 
-skill_type("pass door",
-           { 'mage':24, 'cleric':32, 'thief':25, 'warrior':37 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_pass_door, TAR_CHAR_SELF, POS_STANDING, None,
-           SLOT(74), 20, 12, "", "You feel solid again.", "")
+
+register_spell(skill_type("pass door",
+                          {'mage': 24, 'cleric': 32, 'thief': 25, 'warrior': 37},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_pass_door, TAR_CHAR_SELF, POS_STANDING, None,
+                          SLOT(74), 20, 12, "", "You feel solid again.", ""))

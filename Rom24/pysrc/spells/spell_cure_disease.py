@@ -1,4 +1,4 @@
-from const import SLOT, skill_type, skill_table
+from const import SLOT, register_spell, skill_type
 from merc import is_affected, act, TO_CHAR, check_dispel, TO_ROOM, POS_STANDING, TAR_CHAR_DEFENSIVE
 
 
@@ -18,8 +18,8 @@ def spell_cure_disease(sn, level, ch, victim, target):
     ch.send("Spell failed.\n")
 
 
-skill_type("cure disease",
-           {'mage': 53, 'cleric': 13, 'thief': 53, 'warrior': 14},
-           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-           spell_cure_disease, TAR_CHAR_DEFENSIVE, POS_STANDING,
-           None, SLOT(501), 20, 12, "", "!Cure Disease!", "")
+register_spell(skill_type("cure disease",
+                          {'mage': 53, 'cleric': 13, 'thief': 53, 'warrior': 14},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_cure_disease, TAR_CHAR_DEFENSIVE, POS_STANDING,
+                          None, SLOT(501), 20, 12, "", "!Cure Disease!", ""))

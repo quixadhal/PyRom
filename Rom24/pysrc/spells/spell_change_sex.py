@@ -1,6 +1,6 @@
 import random
 
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from merc import is_affected, act, TO_CHAR, saves_spell, DAM_OTHER, AFFECT_DATA, TO_AFFECTS, APPLY_SEX, TO_ROOM, \
     TAR_CHAR_DEFENSIVE, POS_FIGHTING
 
@@ -31,8 +31,8 @@ def spell_change_sex(sn, level, ch, victim, target):
     act("$n doesn't look like $mself anymore...", victim, None, None, TO_ROOM)
 
 
-skill_type("change sex",
-           {'mage': 53, 'cleric': 53, 'thief': 53, 'warrior': 53},
-           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-           spell_change_sex, TAR_CHAR_DEFENSIVE, POS_FIGHTING,
-           None, SLOT(82), 15, 12, "", "Your body feels familiar again.", "")
+register_spell(skill_type("change sex",
+                          {'mage': 53, 'cleric': 53, 'thief': 53, 'warrior': 53},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_change_sex, TAR_CHAR_DEFENSIVE, POS_FIGHTING,
+                          None, SLOT(82), 15, 12, "", "Your body feels familiar again.", ""))

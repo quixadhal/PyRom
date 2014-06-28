@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 import const
 from merc import saves_spell, DAM_OTHER, check_dispel, act, TO_ROOM, IS_AFFECTED, AFF_SANCTUARY, saves_dispel, \
     is_affected, REMOVE_BIT, POS_FIGHTING, TAR_CHAR_OFFENSIVE
@@ -61,8 +61,8 @@ def spell_dispel_magic(sn, level, ch, victim, target):
         ch.send("Spell failed.\n")
 
 
-skill_type("dispel magic",
-           { 'mage':16, 'cleric':24, 'thief':30, 'warrior':30 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_dispel_magic, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
-           None, SLOT(59), 15, 12, "", "!Dispel Magic!", "")
+register_spell(skill_type("dispel magic",
+                          {'mage': 16, 'cleric': 24, 'thief': 30, 'warrior': 30},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_dispel_magic, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
+                          None, SLOT(59), 15, 12, "", "!Dispel Magic!", ""))

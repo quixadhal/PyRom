@@ -1,8 +1,8 @@
 import random
-from const import SLOT, skill_type
+
+from const import SLOT, skill_type, register_spell
 from effects import poison_effect
 from fight import damage, is_safe_spell
-
 from merc import act, TO_ROOM, TO_CHAR, dice, TARGET_ROOM, IS_NPC, saves_spell, DAM_POISON, TARGET_CHAR, POS_FIGHTING, \
     TAR_IGNORE
 
@@ -29,8 +29,9 @@ def spell_gas_breath(sn, level, ch, victim, target):
             poison_effect(vch, level, dam, TARGET_CHAR)
             damage(ch, vch, dam, sn, DAM_POISON, True)
 
-skill_type("gas breath",
-           { 'mage':39, 'cleric':43, 'thief':47, 'warrior':50 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_gas_breath, TAR_IGNORE, POS_FIGHTING, None,
-           SLOT(203), 175, 24, "blast of gas", "!Gas Breath!", "")
+
+register_spell(skill_type("gas breath",
+                          {'mage': 39, 'cleric': 43, 'thief': 47, 'warrior': 50},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_gas_breath, TAR_IGNORE, POS_FIGHTING, None,
+                          SLOT(203), 175, 24, "blast of gas", "!Gas Breath!", ""))

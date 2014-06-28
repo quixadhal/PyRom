@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from merc import IS_AFFECTED, AFF_BLIND, target_name, POS_STANDING, TAR_IGNORE
 
 
@@ -9,8 +9,9 @@ def spell_farsight(sn, level, ch, victim, target):
 
     ch.do_scan(target_name)
 
-skill_type("farsight",
-           { 'mage':14, 'cleric':16, 'thief':16, 'warrior':53 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_farsight, TAR_IGNORE, POS_STANDING, None,
-           SLOT(521), 36, 20, "farsight", "!Farsight!", "")
+
+register_spell(skill_type("farsight",
+                          {'mage': 14, 'cleric': 16, 'thief': 16, 'warrior': 53},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_farsight, TAR_IGNORE, POS_STANDING, None,
+                          SLOT(521), 36, 20, "farsight", "!Farsight!", ""))

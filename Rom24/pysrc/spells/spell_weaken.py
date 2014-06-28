@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from merc import is_affected, saves_spell, DAM_OTHER, AFFECT_DATA, TO_AFFECTS, APPLY_STR, AFF_WEAKEN, act, TO_ROOM, \
     TAR_CHAR_OFFENSIVE, POS_FIGHTING
 
@@ -19,8 +19,8 @@ def spell_weaken(sn, level, ch, victim, target):
     act("$n looks tired and weak.", victim, None, None, TO_ROOM)
 
 
-skill_type("weaken",
-           { 'mage':11, 'cleric':14, 'thief':16, 'warrior':17 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_weaken, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None,
-           SLOT(68), 20, 12, "spell", "You feel stronger.", "")
+register_spell(skill_type("weaken",
+                          {'mage': 11, 'cleric': 14, 'thief': 16, 'warrior': 17},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_weaken, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None,
+                          SLOT(68), 20, 12, "spell", "You feel stronger.", ""))

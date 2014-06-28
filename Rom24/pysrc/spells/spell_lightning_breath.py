@@ -1,8 +1,8 @@
 import random
-from const import SLOT, skill_type
+
+from const import SLOT, skill_type, register_spell
 from effects import shock_effect
 from fight import damage
-
 from merc import act, TO_NOTVICT, TO_VICT, TO_CHAR, dice, saves_spell, DAM_LIGHTNING, TARGET_CHAR, POS_FIGHTING, \
     TAR_CHAR_OFFENSIVE
 
@@ -28,9 +28,10 @@ def spell_lightning_breath(sn, level, ch, victim, target):
         #
         # * Spells for mega1.are from Glop//Erkenbrand.
 
-skill_type("lightning breath",
-           { 'mage':37, 'cleric':40, 'thief':43, 'warrior':46 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_lightning_breath, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None,
-           SLOT(204), 150, 24, "blast of lightning", "!Lightning Breath!", "")
-# * Spells for mega1.are from Glop/Erkenbrand. */
+
+register_spell(skill_type("lightning breath",
+                          {'mage': 37, 'cleric': 40, 'thief': 43, 'warrior': 46},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_lightning_breath, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None,
+                          SLOT(204), 150, 24, "blast of lightning", "!Lightning Breath!", ""))
+# * Spells for mega1.are from Glop/Erkenbrand. */)

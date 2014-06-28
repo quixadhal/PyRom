@@ -1,6 +1,6 @@
 from merc import (weather_info, SKY_RAINING, dice, act, TO_ROOM, char_list, IS_NPC,
                   saves_spell, DAM_LIGHTNING, IS_OUTSIDE, IS_AWAKE, TAR_IGNORE, POS_FIGHTING)
-from const import skill_type, SLOT
+from const import register_spell, skill_type, SLOT
 
 
 def spell_call_lightning(sn, level, ch, victim, target):
@@ -29,8 +29,8 @@ def spell_call_lightning(sn, level, ch, victim, target):
             vch.send("Lightning flashes in the sky.\n")
 
 
-skill_type("call lightning",
-           {'mage': 26, 'cleric': 18, 'thief': 31, 'warrior': 22},
-           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-           spell_call_lightning, TAR_IGNORE, POS_FIGHTING, None,
-           SLOT(6), 15, 12, "lightning bolt", "!Call Lightning!", "")
+register_spell(skill_type("call lightning",
+                          {'mage': 26, 'cleric': 18, 'thief': 31, 'warrior': 22},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_call_lightning, TAR_IGNORE, POS_FIGHTING, None,
+                          SLOT(6), 15, 12, "lightning bolt", "!Call Lightning!", ""))

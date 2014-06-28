@@ -1,7 +1,7 @@
 import random
-from const import SLOT, skill_type
-from fight import damage
 
+from const import SLOT, skill_type, register_spell
+from fight import damage
 from merc import saves_spell, DAM_NEGATIVE, dice, POS_FIGHTING, TAR_CHAR_OFFENSIVE
 from update import gain_exp
 
@@ -28,8 +28,9 @@ def spell_energy_drain(sn, level, ch, victim, target):
     ch.send("Wow....what a rush! \n")
     damage(ch, victim, dam, sn, DAM_NEGATIVE, True)
 
-skill_type("energy drain",
-           { 'mage':19, 'cleric':22, 'thief':26, 'warrior':23 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_energy_drain, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
-           None, SLOT(25), 35, 12, "energy drain", "!Energy Drain!", "")
+
+register_spell(skill_type("energy drain",
+                          {'mage': 19, 'cleric': 22, 'thief': 26, 'warrior': 23},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_energy_drain, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
+                          None, SLOT(25), 35, 12, "energy drain", "!Energy Drain!", ""))

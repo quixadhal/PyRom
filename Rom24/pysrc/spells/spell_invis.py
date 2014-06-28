@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from merc import TARGET_OBJ, IS_OBJ_STAT, ITEM_INVIS, act, TO_CHAR, AFFECT_DATA, TO_OBJECT, APPLY_NONE, TO_ALL, \
     IS_AFFECTED, AFF_INVISIBLE, TO_ROOM, TO_AFFECTS, POS_STANDING, TAR_OBJ_CHAR_DEF
 
@@ -39,8 +39,9 @@ def spell_invis(sn, level, ch, victim, target):
     victim.send("You fade out of existence.\n")
     return
 
-skill_type("invisibility",
-           { 'mage':5, 'cleric':53, 'thief':9, 'warrior':53 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_invis, TAR_OBJ_CHAR_DEF, POS_STANDING, None,
-           SLOT(29), 5, 12, "", "You are no longer invisible.", "$p fades into view.")
+
+register_spell(skill_type("invisibility",
+                          {'mage': 5, 'cleric': 53, 'thief': 9, 'warrior': 53},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_invis, TAR_OBJ_CHAR_DEF, POS_STANDING, None,
+                          SLOT(29), 5, 12, "", "You are no longer invisible.", "$p fades into view."))

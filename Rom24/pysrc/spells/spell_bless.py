@@ -1,8 +1,8 @@
-from merc import (TARGET_OBJ, IS_OBJ_STAT, ITEM_BLESS, ITEM_EVIL, affect_find,
+from merc import (TARGET_OBJ, IS_OBJ_STAT, ITEM_EVIL, affect_find,
                   saves_dispel, REMOVE_BIT, act, TO_CHAR, AFFECT_DATA, TO_OBJECT,
                   APPLY_SAVES, ITEM_BLESS, TO_ALL, WEAR_NONE, POS_FIGHTING, APPLY_HITROLL,
                   APPLY_SAVING_SPELL, TAR_OBJ_CHAR_DEF, POS_STANDING)
-from const import skill_type, SLOT
+from const import register_spell, skill_type, SLOT
 
 
 def spell_bless(sn, level, ch, victim, target):
@@ -67,8 +67,8 @@ def spell_bless(sn, level, ch, victim, target):
         act("You grant $N the favor of your god.", ch, None, victim, TO_CHAR)
 
 
-skill_type("bless",
-           {'mage': 53, 'cleric': 7, 'thief': 53, 'warrior': 8},
-           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-           spell_bless, TAR_OBJ_CHAR_DEF, POS_STANDING, None,
-           SLOT(3), 5, 12, "", "You feel less righteous.", "$p's holy aura fades.")
+register_spell(skill_type("bless",
+                          {'mage': 53, 'cleric': 7, 'thief': 53, 'warrior': 8},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_bless, TAR_OBJ_CHAR_DEF, POS_STANDING, None,
+                          SLOT(3), 5, 12, "", "You feel less righteous.", "$p's holy aura fades."))

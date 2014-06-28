@@ -1,4 +1,4 @@
-from const import SLOT, skill_table, skill_type
+from const import SLOT, skill_table, skill_type, register_spell
 from fight import damage
 from merc import IS_NPC, IS_EVIL, act, TO_ROOM, TO_VICT, dice, saves_spell, DAM_NEGATIVE, TARGET_CHAR, \
     TAR_CHAR_OFFENSIVE, POS_FIGHTING
@@ -23,8 +23,8 @@ def spell_demonfire(sn, level, ch, victim, target):
     skill_table['curse'].spell_fun('curse', 3 * level // 4, ch, victim, TARGET_CHAR)
 
 
-skill_type("demonfire",
-           {'mage': 53, 'cleric': 34, 'thief': 53, 'warrior': 45},
-           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-           spell_demonfire, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
-           None, SLOT(505), 20, 12, "torments", "!Demonfire!", "")
+register_spell(skill_type("demonfire",
+                          {'mage': 53, 'cleric': 34, 'thief': 53, 'warrior': 45},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_demonfire, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
+                          None, SLOT(505), 20, 12, "torments", "!Demonfire!", ""))

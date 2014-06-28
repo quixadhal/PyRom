@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from merc import IS_AFFECTED, AFF_INVISIBLE, act, TO_ROOM, AFFECT_DATA, TO_AFFECTS, APPLY_NONE, POS_STANDING, TAR_IGNORE
 
 
@@ -19,8 +19,9 @@ def spell_mass_invis(sn, level, ch, victim, target):
         gch.affect_add(af)
     ch.send("Ok.\n")
 
-skill_type("mass invis",
-           { 'mage':22, 'cleric':25, 'thief':31, 'warrior':53 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_mass_invis, TAR_IGNORE, POS_STANDING, None,
-           SLOT(69), 20, 24, "", "You are no longer invisible.", "")
+
+register_spell(skill_type("mass invis",
+                          {'mage': 22, 'cleric': 25, 'thief': 31, 'warrior': 53},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_mass_invis, TAR_IGNORE, POS_STANDING, None,
+                          SLOT(69), 20, 24, "", "You are no longer invisible.", ""))

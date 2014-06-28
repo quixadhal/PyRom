@@ -1,4 +1,4 @@
-from const import skill_type, SLOT
+from const import register_spell, skill_type, SLOT
 from fight import is_safe
 from merc import IS_AFFECTED, AFF_CHARM, IS_SET, IMM_CHARM, saves_spell, DAM_CHARM, ROOM_LAW, stop_follower, \
     add_follower, AFFECT_DATA, TO_AFFECTS, number_fuzzy, act, TO_VICT, TO_CHAR, TAR_CHAR_OFFENSIVE, POS_STANDING
@@ -41,8 +41,9 @@ def spell_charm_person(sn, level, ch, victim, target):
         act("$N looks at you with adoring eyes.", ch, None, victim, TO_CHAR)
 
 
-skill_type("charm person",
-           {'mage': 20, 'cleric': 53, 'thief': 25, 'warrior': 53},
-           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-           spell_charm_person, TAR_CHAR_OFFENSIVE, POS_STANDING,
-           None, SLOT(7), 5, 12, "", "You feel more self-confident.", "")
+register_spell(skill_type("charm person",
+                          {'mage': 20, 'cleric': 53, 'thief': 25, 'warrior': 53},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_charm_person, TAR_CHAR_OFFENSIVE, POS_STANDING,
+                          None, SLOT(7), 5, 12, "", "You feel more self-confident.", "")
+)

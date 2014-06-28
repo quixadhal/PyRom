@@ -1,7 +1,7 @@
 import random
-from const import SLOT, skill_type
-from fight import damage
 
+from const import SLOT, skill_type, register_spell
+from fight import damage
 from merc import saves_spell, DAM_LIGHTNING, POS_FIGHTING, TAR_CHAR_OFFENSIVE
 
 
@@ -20,8 +20,9 @@ def spell_lightning_bolt(sn, level, ch, victim, target):
         dam = dam // 2
     damage(ch, victim, dam, sn, DAM_LIGHTNING, True)
 
-skill_type("lightning bolt",
-           { 'mage':13, 'cleric':23, 'thief':18, 'warrior':16 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_lightning_bolt, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
-           None, SLOT(30), 15, 12, "lightning bolt", "!Lightning Bolt!", "")
+
+register_spell(skill_type("lightning bolt",
+                          {'mage': 13, 'cleric': 23, 'thief': 18, 'warrior': 16},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_lightning_bolt, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
+                          None, SLOT(30), 15, 12, "lightning bolt", "!Lightning Bolt!", ""))

@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from merc import target_name, IS_SET, ROOM_SAFE, ROOM_PRIVATE, ROOM_SOLITARY, ROOM_NO_RECALL, IS_NPC, LEVEL_HERO, \
     IMM_SUMMON, saves_spell, DAM_OTHER, act, TO_ROOM, TAR_IGNORE, POS_FIGHTING
 
@@ -44,8 +44,9 @@ def spell_gate(sn, level, ch, victim, target):
         act("$n has arrived through a gate.", ch.pet, None, None, TO_ROOM)
         ch.pet.do_look("auto")
 
-skill_type("gate",
-           { 'mage':27, 'cleric':17, 'thief':32, 'warrior':28 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_gate, TAR_IGNORE, POS_FIGHTING, None, SLOT(83),
-           80, 12, "", "!Gate!", "")
+
+register_spell(skill_type("gate",
+                          {'mage': 27, 'cleric': 17, 'thief': 32, 'warrior': 28},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_gate, TAR_IGNORE, POS_FIGHTING, None, SLOT(83),
+                          80, 12, "", "!Gate!", ""))

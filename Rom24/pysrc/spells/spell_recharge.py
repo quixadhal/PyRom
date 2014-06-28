@@ -1,6 +1,6 @@
 import random
-from const import SLOT, skill_type
 
+from const import SLOT, skill_type, register_spell
 from merc import ITEM_WAND, ITEM_STAFF, act, TO_CHAR, TO_ROOM, POS_STANDING, TAR_OBJ_INV
 
 
@@ -53,8 +53,9 @@ def spell_recharge(sn, level, ch, victim, target):
         act("$p glows brightly and explodes! ", ch, obj, None, TO_ROOM)
         obj.extract()
 
-skill_type("recharge",
-           { 'mage':9, 'cleric':53, 'thief':53, 'warrior':53 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_recharge, TAR_OBJ_INV, POS_STANDING, None,
-           SLOT(517), 60, 24, "", "!Recharge!", "")
+
+register_spell(skill_type("recharge",
+                          {'mage': 9, 'cleric': 53, 'thief': 53, 'warrior': 53},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_recharge, TAR_OBJ_INV, POS_STANDING, None,
+                          SLOT(517), 60, 24, "", "!Recharge!", ""))

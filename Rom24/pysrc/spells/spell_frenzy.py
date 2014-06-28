@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 import const
 from merc import is_affected, IS_AFFECTED, AFF_BERSERK, act, TO_CHAR, IS_GOOD, IS_NEUTRAL, IS_EVIL, AFFECT_DATA, \
     TO_AFFECTS, APPLY_HITROLL, APPLY_DAMROLL, APPLY_AC, TO_ROOM, TAR_CHAR_DEFENSIVE, POS_STANDING
@@ -46,8 +46,9 @@ def spell_frenzy(sn, level, ch, victim, target):
     victim.send("You are filled with holy wrath! \n")
     act("$n gets a wild look in $s eyes! ", victim, None, None, TO_ROOM)
 
-skill_type("frenzy",
-           { 'mage':53, 'cleric':24, 'thief':53, 'warrior':26 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_frenzy, TAR_CHAR_DEFENSIVE, POS_STANDING, None,
-           SLOT(504), 30, 24, "", "Your rage ebbs.", "")
+
+register_spell(skill_type("frenzy",
+                          {'mage': 53, 'cleric': 24, 'thief': 53, 'warrior': 26},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_frenzy, TAR_CHAR_DEFENSIVE, POS_STANDING, None,
+                          SLOT(504), 30, 24, "", "Your rage ebbs.", ""))

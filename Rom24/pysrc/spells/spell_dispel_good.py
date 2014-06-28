@@ -1,4 +1,4 @@
-from const import SLOT, skill_type
+from const import SLOT, skill_type, register_spell
 from fight import damage
 from merc import IS_NPC, IS_GOOD, IS_EVIL, act, TO_ROOM, IS_NEUTRAL, TO_CHAR, dice, saves_spell, DAM_NEGATIVE, \
     POS_FIGHTING, TAR_CHAR_OFFENSIVE
@@ -24,8 +24,9 @@ def spell_dispel_good(sn, level, ch, victim, target):
         dam = dam // 2
     damage(ch, victim, dam, sn, DAM_NEGATIVE, True)
 
-skill_type("dispel good",
-           { 'mage':53, 'cleric':15, 'thief':53, 'warrior':21 },
-           { 'mage':1, 'cleric':1, 'thief':2, 'warrior':2 },
-           spell_dispel_good, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
-           None, SLOT(512), 15, 12, "dispel good", "!Dispel Good!", "")
+
+register_spell(skill_type("dispel good",
+                          {'mage': 53, 'cleric': 15, 'thief': 53, 'warrior': 21},
+                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                          spell_dispel_good, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
+                          None, SLOT(512), 15, 12, "dispel good", "!Dispel Good!", ""))
