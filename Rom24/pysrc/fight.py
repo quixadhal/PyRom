@@ -146,7 +146,7 @@ def multi_hit( ch, victim, dt ):
 
     if random.randint(1,99) < chance:
         one_hit( ch, victim, dt )
-        skills.check_improve(ch,'second_attack',True,5)
+        skills.check_improve(ch,'second attack',True,5)
         if ch.fighting != victim:
             return
     
@@ -371,7 +371,7 @@ def one_hit( ch, victim, dt ):
     # * Bonuses.
     if ch.get_skill('enhanced damage') > 0:
         diceroll = random.randint(1,99)
-        if diceroll <= ch.get_skill('enhanced_damage'):
+        if diceroll <= ch.get_skill('enhanced damage'):
             skills.check_improve(ch,'enhanced damage',True,6)
             dam += 2 * ( dam * diceroll // 300)
     if not state_checks.IS_AWAKE(victim):

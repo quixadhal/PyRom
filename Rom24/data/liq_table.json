@@ -1,0 +1,326 @@
+{
+    "water": [
+        "water",
+        "clear",
+        0,
+        1,
+        10,
+        0,
+        16
+    ],
+    "beer": [
+        "beer",
+        "amber",
+        12,
+        1,
+        8,
+        1,
+        12
+    ],
+    "red wine": [
+        "red wine",
+        "burgundy",
+        30,
+        1,
+        8,
+        1,
+        5
+    ],
+    "ale": [
+        "ale",
+        "brown",
+        15,
+        1,
+        8,
+        1,
+        12
+    ],
+    "dark ale": [
+        "dark ale",
+        "dark",
+        16,
+        1,
+        8,
+        1,
+        12
+    ],
+    "whisky": [
+        "whisky",
+        "golden",
+        120,
+        1,
+        5,
+        0,
+        2
+    ],
+    "lemonade": [
+        "lemonade",
+        "pink",
+        0,
+        1,
+        9,
+        2,
+        12
+    ],
+    "firebreather": [
+        "firebreather",
+        "boiling",
+        190,
+        0,
+        4,
+        0,
+        2
+    ],
+    "local specialty": [
+        "local specialty",
+        "clear",
+        151,
+        1,
+        3,
+        0,
+        2
+    ],
+    "slime mold juice": [
+        "slime mold juice",
+        "green",
+        0,
+        2,
+        -8,
+        1,
+        2
+    ],
+    "milk": [
+        "milk",
+        "white",
+        0,
+        2,
+        9,
+        3,
+        12
+    ],
+    "tea": [
+        "tea",
+        "tan",
+        0,
+        1,
+        8,
+        0,
+        6
+    ],
+    "coffee": [
+        "coffee",
+        "black",
+        0,
+        1,
+        8,
+        0,
+        6
+    ],
+    "blood": [
+        "blood",
+        "red",
+        0,
+        2,
+        -1,
+        2,
+        6
+    ],
+    "salt water": [
+        "salt water",
+        "clear",
+        0,
+        1,
+        -2,
+        0,
+        1
+    ],
+    "coke": [
+        "coke",
+        "brown",
+        0,
+        2,
+        9,
+        2,
+        12
+    ],
+    "root beer": [
+        "root beer",
+        "brown",
+        0,
+        2,
+        9,
+        2,
+        12
+    ],
+    "elvish wine": [
+        "elvish wine",
+        "green",
+        35,
+        2,
+        8,
+        1,
+        5
+    ],
+    "white wine": [
+        "white wine",
+        "golden",
+        28,
+        1,
+        8,
+        1,
+        5
+    ],
+    "champagne": [
+        "champagne",
+        "golden",
+        32,
+        1,
+        8,
+        1,
+        5
+    ],
+    "mead": [
+        "mead",
+        "honey-colored",
+        34,
+        2,
+        8,
+        2,
+        12
+    ],
+    "rose wine": [
+        "rose wine",
+        "pink",
+        26,
+        1,
+        8,
+        1,
+        5
+    ],
+    "benedictine wine": [
+        "benedictine wine",
+        "burgundy",
+        40,
+        1,
+        8,
+        1,
+        5
+    ],
+    "vodka": [
+        "vodka",
+        "clear",
+        130,
+        1,
+        5,
+        0,
+        2
+    ],
+    "cranberry juice": [
+        "cranberry juice",
+        "red",
+        0,
+        1,
+        9,
+        2,
+        12
+    ],
+    "orange juice": [
+        "orange juice",
+        "orange",
+        0,
+        2,
+        9,
+        3,
+        12
+    ],
+    "absinthe": [
+        "absinthe",
+        "green",
+        200,
+        1,
+        4,
+        0,
+        2
+    ],
+    "brandy": [
+        "brandy",
+        "golden",
+        80,
+        1,
+        5,
+        0,
+        4
+    ],
+    "aquavit": [
+        "aquavit",
+        "clear",
+        140,
+        1,
+        5,
+        0,
+        2
+    ],
+    "schnapps": [
+        "schnapps",
+        "clear",
+        90,
+        1,
+        5,
+        0,
+        2
+    ],
+    "icewine": [
+        "icewine",
+        "purple",
+        50,
+        2,
+        6,
+        1,
+        5
+    ],
+    "amontillado": [
+        "amontillado",
+        "burgundy",
+        35,
+        2,
+        8,
+        1,
+        5
+    ],
+    "sherry": [
+        "sherry",
+        "red",
+        38,
+        2,
+        7,
+        1,
+        5
+    ],
+    "framboise": [
+        "framboise",
+        "red",
+        50,
+        1,
+        7,
+        1,
+        5
+    ],
+    "rum": [
+        "rum",
+        "amber",
+        151,
+        1,
+        4,
+        0,
+        2
+    ],
+    "cordial": [
+        "cordial",
+        "clear",
+        100,
+        1,
+        5,
+        0,
+        2
+    ]
+}

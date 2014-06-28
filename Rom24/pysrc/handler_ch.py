@@ -87,7 +87,7 @@ class CHAR_DATA(object):
         self.group = 0
         self.clan = clan_table[""]
         self.sex = 0
-        self.guild = 0
+        self._guild = 0
         self.race = 0
         self.level = 0
         self.trust = 0
@@ -149,6 +149,11 @@ class CHAR_DATA(object):
 
     def send(self, cstr):
         pass
+
+    @property
+    def guild(self):
+        from const import guild_table
+        return guild_table.get(self._guild, None)
 
 
 class PC_DATA:

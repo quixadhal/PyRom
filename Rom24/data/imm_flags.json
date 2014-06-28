@@ -1,0 +1,117 @@
+{
+    "summon": [
+        "summon",
+        1,
+        true
+    ],
+    "charm": [
+        "charm",
+        2,
+        true
+    ],
+    "magic": [
+        "magic",
+        4,
+        true
+    ],
+    "weapon": [
+        "weapon",
+        8,
+        true
+    ],
+    "bash": [
+        "bash",
+        16,
+        true
+    ],
+    "pierce": [
+        "pierce",
+        32,
+        true
+    ],
+    "slash": [
+        "slash",
+        64,
+        true
+    ],
+    "fire": [
+        "fire",
+        128,
+        true
+    ],
+    "cold": [
+        "cold",
+        256,
+        true
+    ],
+    "lightning": [
+        "lightning",
+        512,
+        true
+    ],
+    "acid": [
+        "acid",
+        1024,
+        true
+    ],
+    "poison": [
+        "poison",
+        2048,
+        true
+    ],
+    "negative": [
+        "negative",
+        4096,
+        true
+    ],
+    "holy": [
+        "holy",
+        8192,
+        true
+    ],
+    "energy": [
+        "energy",
+        16384,
+        true
+    ],
+    "mental": [
+        "mental",
+        32768,
+        true
+    ],
+    "disease": [
+        "disease",
+        65536,
+        true
+    ],
+    "drowning": [
+        "drowning",
+        131072,
+        true
+    ],
+    "light": [
+        "light",
+        262144,
+        true
+    ],
+    "sound": [
+        "sound",
+        524288,
+        true
+    ],
+    "wood": [
+        "wood",
+        8388608,
+        true
+    ],
+    "silver": [
+        "silver",
+        16777216,
+        true
+    ],
+    "iron": [
+        "iron",
+        33554432,
+        true
+    ]
+}

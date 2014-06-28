@@ -1,0 +1,112 @@
+{
+    "head": [
+        "head",
+        1,
+        true
+    ],
+    "arms": [
+        "arms",
+        2,
+        true
+    ],
+    "legs": [
+        "legs",
+        4,
+        true
+    ],
+    "heart": [
+        "heart",
+        8,
+        true
+    ],
+    "brains": [
+        "brains",
+        16,
+        true
+    ],
+    "guts": [
+        "guts",
+        32,
+        true
+    ],
+    "hands": [
+        "hands",
+        64,
+        true
+    ],
+    "feet": [
+        "feet",
+        128,
+        true
+    ],
+    "fingers": [
+        "fingers",
+        256,
+        true
+    ],
+    "ear": [
+        "ear",
+        512,
+        true
+    ],
+    "eye": [
+        "eye",
+        1024,
+        true
+    ],
+    "long_tongue": [
+        "long_tongue",
+        2048,
+        true
+    ],
+    "eyestalks": [
+        "eyestalks",
+        4096,
+        true
+    ],
+    "tentacles": [
+        "tentacles",
+        8192,
+        true
+    ],
+    "fins": [
+        "fins",
+        16384,
+        true
+    ],
+    "wings": [
+        "wings",
+        32768,
+        true
+    ],
+    "tail": [
+        "tail",
+        65536,
+        true
+    ],
+    "claws": [
+        "claws",
+        1048576,
+        true
+    ],
+    "fangs": [
+        "fangs",
+        2097152,
+        true
+    ],
+    "horns": [
+        "horns",
+        4194304,
+        true
+    ],
+    "scales": [
+        "scales",
+        8388608,
+        true
+    ],
+    "tusks": [
+        "tusks",
+        16777216,
+        true
+    ]
+}
