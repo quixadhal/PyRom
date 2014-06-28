@@ -27,6 +27,7 @@ def read_word(pstr, lower=True):
         word = word.lower()
     pstr = pstr.lstrip()
     pstr = pstr[len(word)+1:]
+    word = word.replace("'", '')
     return pstr, word.strip()
 
 
