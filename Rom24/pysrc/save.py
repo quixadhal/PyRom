@@ -33,18 +33,17 @@
 """
 import os
 import json
-import errno
-
 from collections import OrderedDict
-import time
+
 from merc import *
-from settings import PLAYER_DIR
-from tables import clan_table
+
 import db
 import handler_olc
 import const
 import handler_ch
+import settings
 import state_checks
+import tables
 
 
 def save_char_obj(ch):
@@ -54,9 +53,9 @@ def save_char_obj(ch):
     if ch.desc and ch.desc.original:
         ch = ch.desc.original
 
-    pfile = os.path.join(PLAYER_DIR, ch.name+'.json')
+    pfile = os.path.join(settings.PLAYER_DIR, ch.name + '.json')
     #A Quick Quix fix!
-    os.makedirs(PLAYER_DIR, 0o755, True)
+    os.makedirs(settings.PLAYER_DIR, 0o755, True)
 
     fwrite = fwrite_char(ch)
     if ch.carrying:
@@ -84,9 +83,9 @@ def load_char_obj(d, name):
     ch.name = name
     ch.act = 0
     found = False
-    pfile = os.path.join(PLAYER_DIR, name+'.json')
+    pfile = os.path.join(settings.PLAYER_DIR, name + '.json')
     if os.path.isfile(pfile):
-        chdict = json.load(open(pfile,'r'))
+        chdict = json.load(open(pfile, 'r'))
         ch = fread_char(chdict, ch)
         found = True
 
@@ -135,7 +134,7 @@ def fwrite_char(ch):
     chdict["Pos"] = POS_STANDING if ch.position == POS_FIGHTING else ch.position
     chdict["Prac"] = ch.practice
     chdict["Trai"] = ch.train
-    chdict["Save"]  = ch.saving_throw
+    chdict["Save"] = ch.saving_throw
     chdict["Alig"] = ch.alignment
     chdict["Hit"] = ch.hitroll
     chdict["Dam"] = ch.damroll
@@ -203,7 +202,7 @@ def fread_char(chdict, ch):
     ch.description = chdict["Desc"]
     ch.prompt = chdict["Prom"]
     ch.race = const.race_table[chdict["Race"]]
-    ch.clan = clan_table[chdict["Clan"]]
+    ch.clan = tables.clan_table[chdict["Clan"]]
     ch.sex = int(chdict["Sex"])
     ch.guild = const.guild_table[chdict["Cla"]]
     ch.level = chdict["Levl"]
@@ -263,6 +262,7 @@ def fread_objs(carrying, objects, contained_by=None):
         if 'contains' in odict:
             fread_objs(carrying, odict['contains'], obj)
 
+
 def fread_obj(carrying, odict):
     obj = db.create_object(obj_index_hash[odict['Vnum']], odict['Lev'])
     obj.enchanted = odict['Enchanted']
@@ -283,7 +283,7 @@ def fread_obj(carrying, odict):
 
     obj.affected = odict['affected']
     extra_descr = []
-    for k,v in odict['ExDe'].items():
+    for k, v in odict['ExDe'].items():
         newed = handler_olc.EXTRA_DESCR_DATA()
         newed.keyword = k
         newed.description = v
