@@ -55,22 +55,22 @@ import const
 
 
 def boot_db():
-    print("Loading Areas...")
     init_time()
     load_areas()
     fix_exits()
     area_update()
-    print("\t...Loaded %d Helpfiles" % len(merc.help_list))
-    print("\t...Loaded %d Areas" % len(merc.area_list))
-    print("\t...Loaded %d Mobile Indexes" % len(merc.mob_index_hash))
-    print("\t...Loaded %d Object Indexes" % len(merc.obj_index_hash))
-    print("\t...Loaded %d Room Indexes" % len(merc.room_index_hash))
-    print("\t...Loaded %d Resets" % len(merc.reset_list))
-    print("\t...Loaded %d Shops" % len(merc.shop_list))
-    print("\t...Loaded %d Socials" % len(merc.social_list))
+    logger.info('    Loaded %d Help files', len(merc.help_list))
+    logger.info('    Loaded %d Areas', len(merc.area_list))
+    logger.info('    Loaded %d Mobile Indexes', len(merc.mob_index_hash))
+    logger.info('    Loaded %d Object Indexes', len(merc.obj_index_hash))
+    logger.info('    Loaded %d Room Indexes', len(merc.room_index_hash))
+    logger.info('    Loaded %d Resets', len(merc.reset_list))
+    logger.info('    Loaded %d Shops', len(merc.shop_list))
+    logger.info('    Loaded %d Socials', len(merc.social_list))
 
 
 def load_areas():
+    logger.info('Loading Areas...')
     narea_list = os.path.join(settings.AREA_DIR, settings.AREA_LIST)
     fp = open(narea_list, 'r')
     area = fp.readline().strip()
@@ -80,6 +80,7 @@ def load_areas():
         area = fp.readline().strip()
         afp.close()
     fp.close()
+    logger.info('Done. (loading areas)')
 
 
 def load_area(area):
@@ -97,7 +98,7 @@ def load_area(area):
             area, pArea.min_vnum = game_utils.read_int(area)
             area, pArea.max_vnum = game_utils.read_int(area)
             merc.area_list.append(pArea)
-            print("\t...%s" % pArea)
+            logger.info("    Loading %s", pArea)
 
         elif w == "#HELPS":
             area = load_helps(area)
@@ -118,7 +119,7 @@ def load_area(area):
         elif w == '#$':
             break
         else:
-            print("Bad section name: " + w)
+            logger.error('Bad section name: %s', w)
 
         area, w = game_utils.read_word(area, False)
 
@@ -346,7 +347,7 @@ def load_rooms(area, pArea):
         room = handler_room.ROOM_INDEX_DATA()
         room.vnum = int(w)
         if room.vnum in merc.room_index_hash:
-            print("Dupicate room Vnum: %d" % room.vnum)
+            logger.critical('Dupicate room Vnum: %d', room.vnum)
             sys.exit(1)
 
         merc.room_index_hash[room.vnum] = room
@@ -384,7 +385,7 @@ def load_rooms(area, pArea):
             elif letter == 'O':
                 area, room.owner = game_utils.read_string(area)
             else:
-                print("RoomIndexData(%d) has flag other than SHMCDEO: %s" % (room.vnum, letter))
+                logger.critical("RoomIndexData(%d) has flag other than SHMCDEO: %s", (room.vnum, letter))
                 sys.exit(1)
         area, w = game_utils.read_word(area, False)
         w = w[1:]  # strip the pound
@@ -519,7 +520,7 @@ def load_specials(area):
             area, vnum = game_utils.read_int(area)
             area, merc.mob_index_hash[vnum].spec_fun = game_utils.read_word(area, False)
         else:
-            print("Load_specials: letter noth *SM: " + letter)
+            logger.error("Load_specials: letter noth *SM: %s", letter)
 
     return area
 
@@ -529,7 +530,7 @@ def fix_exits():
         for e in r.exit[:]:
             if e and type(e.to_room) == int:
                 if e.to_room not in merc.room_index_hash:
-                    print("Fix_exits: Failed to find to_room for %d: %d" % (r.vnum, e.to_room))
+                    logger.error("Fix_exits: Failed to find to_room for %d: %d", r.vnum, e.to_room)
                     e.to_room = None
                     r.exit.remove(e)
                 else:
@@ -567,12 +568,12 @@ def reset_area(pArea):
     for pReset in pArea.reset_list:
         if pReset.command == 'M':
             if pReset.arg1 not in merc.mob_index_hash:
-                print("Reset_area: 'M': bad vnum %d." % pReset.arg1)
+                logger.error("Reset_area: 'M': bad vnum %d.", pReset.arg1)
                 continue
             pMobIndex = merc.mob_index_hash[pReset.arg1]
 
             if pReset.arg3 not in merc.room_index_hash:
-                print("Reset_area: 'R': bad vnum %d." % pReset.arg3)
+                logger.error("Reset_area: 'R': bad vnum %d.", pReset.arg3)
                 continue
             pRoomIndex = merc.room_index_hash[pReset.arg3]
 
@@ -610,12 +611,12 @@ def reset_area(pArea):
 
         elif pReset.command == 'O':
             if pReset.arg1 not in merc.obj_index_hash:
-                print("Reset_area: 'O': bad vnum %d." % pReset.arg1)
+                logger.error("Reset_area: 'O': bad vnum %d.", pReset.arg1)
                 continue
             pObjIndex = merc.obj_index_hash[pReset.arg1]
 
             if pReset.arg3 not in merc.room_index_hash:
-                print("Reset_area: 'R': bad vnum %d." % pReset.arg3)
+                logger.error("Reset_area: 'R': bad vnum %d.", pReset.arg3)
                 continue
             pRoomIndex = merc.room_index_hash[pReset.arg3]
 
@@ -631,12 +632,12 @@ def reset_area(pArea):
 
         elif pReset.command == 'P':
             if pReset.arg1 not in merc.obj_index_hash:
-                print("Reset_area: 'P': bad vnum %d." % pReset.arg1)
+                logger.error("Reset_area: 'P': bad vnum %d.", pReset.arg1)
                 continue
             pObjIndex = merc.obj_index_hash[pReset.arg1]
 
             if pReset.arg3 not in merc.obj_index_hash:
-                print("Reset_area: 'P': bad vnum %d." % pReset.arg3)
+                logger.error("Reset_area: 'P': bad vnum %d.", pReset.arg3)
                 continue
             pObjToIndex = merc.obj_index_hash[pReset.arg3]
             if pReset.arg2 > 50:  # old format */
@@ -668,14 +669,14 @@ def reset_area(pArea):
             last = True
         elif pReset.command == 'G' or pReset.command == 'E':
             if pReset.arg1 not in merc.obj_index_hash:
-                print("Reset_area: 'E' or 'G': bad vnum %d." % pReset.arg1)
+                logger.error("Reset_area: 'E' or 'G': bad vnum %d.", pReset.arg1)
                 continue
             pObjIndex = merc.obj_index_hash[pReset.arg1]
             if not last:
                 continue
 
             if not mob:
-                print("Reset_area: 'E' or 'G': None mob for vnum %d." % pReset.arg1)
+                logger.error("Reset_area: 'E' or 'G': None mob for vnum %d.", pReset.arg1)
                 last = False
                 continue
             olevel = 0
@@ -721,9 +722,9 @@ def reset_area(pArea):
                             and pReset.command == 'E'
                             and obj.level < mob.level - 5
                             and obj.level < 45):
-                    print("Err: obj %s (%d) -- %d, mob %s (%d) -- %d\n" % (
+                    logger.error("Err: obj %s (%d) -- %d, mob %s (%d) -- %d",
                         obj.short_descr, obj.pIndexData.vnum, obj.level,
-                        mob.short_descr, mob.pIndexData.vnum, mob.level))
+                        mob.short_descr, mob.pIndexData.vnum, mob.level)
                 else:
                     continue
             obj.to_char(mob)
@@ -734,7 +735,7 @@ def reset_area(pArea):
 
         elif pReset.command == 'D':
             if pReset.arg1 not in merc.room_index_hash:
-                print("Reset_area: 'D': bad vnum %d." % pReset.arg1)
+                logger.error("Reset_area: 'D': bad vnum %d.", pReset.arg1)
                 continue
             pRoomIndex = merc.room_index_hash[pReset.arg1]
             pexit = pRoomIndex.exit[pReset.arg2]
@@ -758,7 +759,7 @@ def reset_area(pArea):
 
         elif pReset.command == 'R':
             if pReset.arg1 not in merc.room_index_hash:
-                print("Reset_area: 'R': bad vnum %d." % pReset.arg1)
+                logger.error("Reset_area: 'R': bad vnum %d.", pReset.arg1)
                 continue
             pRoomIndex = merc.room_index_hash[pReset.arg1]
             for d0 in range(pReset.arg2 - 1):
@@ -768,7 +769,7 @@ def reset_area(pArea):
                 pRoomIndex.exit[d1] = pexit
                 break
         else:
-            print("Reset_area: bad command %c." % pReset.command)
+            logger.error("Reset_area: bad command %c.", pReset.command)
 
 
 #
@@ -776,7 +777,7 @@ def reset_area(pArea):
 
 def create_mobile(pMobIndex):
     if pMobIndex is None:
-        print("Create_mobile: None pMobIndex.")
+        logger.critical("Create_mobile: None pMobIndex.")
         sys.exit(1)
 
     mob = handler_ch.CHAR_DATA()
@@ -964,7 +965,7 @@ def clone_mobile(parent, clone):
     if not parent or not clone or not state_checks.IS_NPC(parent):
         return
 
-    # start fixing values */ 
+    # start fixing values */
     clone.name = parent.name
     clone.version = parent.version
     clone.short_descr = parent.short_descr
@@ -1030,7 +1031,7 @@ def clone_mobile(parent, clone):
 # * Create an instance of an object.
 def create_object(pObjIndex, level):
     if not pObjIndex:
-        print("Create_object: None pObjIndex.")
+        logger.critical("Create_object: None pObjIndex.")
         sys.exit(1)
 
     obj = handler_obj.OBJ_DATA()
@@ -1115,7 +1116,7 @@ def create_object(pObjIndex, level):
         if not pObjIndex.new_format:
             obj.value[0] = obj.cost
     else:
-        print("Bad item_type pObjIndex vnum: %s(%s)" % (pObjIndex.vnum, obj.item_type ))
+        logger.error("Bad item_type pObjIndex vnum: %s(%s)" % (pObjIndex.vnum, obj.item_type ))
 
     for paf in pObjIndex.affected:
         if paf.location == merc.APPLY_SPELL_AFFECT:
@@ -1191,7 +1192,7 @@ def clear_char(ch):
 # * Create a 'money' obj.
 def create_money(gold, silver):
     if gold < 0 or silver < 0 or (gold == 0 and silver == 0):
-        print("BUG: Create_money: zero or negative money. %d " % min(gold, silver))
+        logger.warn("BUG: Create_money: zero or negative money. %d ", min(gold, silver))
         gold = max(1, gold)
         silver = max(1, silver)
 
