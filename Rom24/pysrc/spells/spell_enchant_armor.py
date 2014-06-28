@@ -1,13 +1,13 @@
 import random
-
-from const import SLOT, skill_type, register_spell
-from merc import ITEM_ARMOR, APPLY_AC, IS_OBJ_STAT, ITEM_BLESS, ITEM_GLOW, act, TO_CHAR, TO_ROOM, AFFECT_DATA, SET_BIT, \
-    ITEM_MAGIC, LEVEL_HERO, TO_OBJECT, POS_STANDING, TAR_OBJ_INV
+import const
+import handler_game
+import merc
+import state_checks
 
 
 def spell_enchant_armor(sn, level, ch, victim, target):
     obj = victim
-    if obj.item_type != ITEM_ARMOR:
+    if obj.item_type != merc.ITEM_ARMOR:
         ch.send("That isn't an armor.\n")
         return
 
@@ -25,7 +25,7 @@ def spell_enchant_armor(sn, level, ch, victim, target):
         affected = obj.pIndexData.affected
 
     for paf in affected:
-        if paf.location == APPLY_AC:
+        if paf.location == merc.APPLY_AC:
             ac_bonus = paf.modifier
             ac_found = True
             fail += 5 * (ac_bonus * ac_bonus)
@@ -36,9 +36,9 @@ def spell_enchant_armor(sn, level, ch, victim, target):
     # apply other modifiers */
     fail -= level
 
-    if IS_OBJ_STAT(obj, ITEM_BLESS):
+    if state_checks.IS_OBJ_STAT(obj, merc.ITEM_BLESS):
         fail -= 15
-    if IS_OBJ_STAT(obj, ITEM_GLOW):
+    if state_checks.IS_OBJ_STAT(obj, merc.ITEM_GLOW):
         fail -= 5
 
     fail = max(5, min(fail, 85))
@@ -47,13 +47,13 @@ def spell_enchant_armor(sn, level, ch, victim, target):
 
     # the moment of truth */
     if result < (fail // 5):  # item destroyed */
-        act("$p flares blindingly... and evaporates! ", ch, obj, None, TO_CHAR)
-        act("$p flares blindingly... and evaporates! ", ch, obj, None, TO_ROOM)
+        handler_game.act("$p flares blindingly... and evaporates! ", ch, obj, None, merc.TO_CHAR)
+        handler_game.act("$p flares blindingly... and evaporates! ", ch, obj, None, merc.TO_ROOM)
         obj.extract()
 
     if result < (fail // 3):  # item disenchanted */
-        act("$p glows brightly, then fades...oops.", ch, obj, None, TO_CHAR)
-        act("$p glows brightly, then fades.", ch, obj, None, TO_ROOM)
+        handler_game.act("$p glows brightly, then fades...oops.", ch, obj, None, merc.TO_CHAR)
+        handler_game.act("$p glows brightly, then fades.", ch, obj, None, merc.TO_ROOM)
         obj.enchanted = True
 
         # remove all affects */
@@ -72,7 +72,7 @@ def spell_enchant_armor(sn, level, ch, victim, target):
     if not obj.enchanted:
         obj.enchanted = True
         for paf in obj.pIndexData.affected:
-            af_new = AFFECT_DATA()
+            af_new = handler_game.AFFECT_DATA()
             af_new.where = paf.where
             af_new.type = max(0, paf.type)
             af_new.level = paf.level
@@ -83,42 +83,42 @@ def spell_enchant_armor(sn, level, ch, victim, target):
             obj.affected.append(af_new)
 
     if result <= (90 - level // 5):  # success!  */
-        act("$p shimmers with a gold aura.", ch, obj, None, TO_CHAR)
-        act("$p shimmers with a gold aura.", ch, obj, None, TO_ROOM)
-        SET_BIT(obj.extra_flags, ITEM_MAGIC)
+        handler_game.act("$p shimmers with a gold aura.", ch, obj, None, merc.TO_CHAR)
+        handler_game.act("$p shimmers with a gold aura.", ch, obj, None, merc.TO_ROOM)
+        state_checks.SET_BIT(obj.extra_flags, merc.ITEM_MAGIC)
         added = -1
     else:  # exceptional enchant */
-        act("$p glows a brillant gold! ", ch, obj, None, TO_CHAR)
-        act("$p glows a brillant gold! ", ch, obj, None, TO_ROOM)
-        SET_BIT(obj.extra_flags, ITEM_MAGIC)
-        SET_BIT(obj.extra_flags, ITEM_GLOW)
+        handler_game.act("$p glows a brillant gold! ", ch, obj, None, merc.TO_CHAR)
+        handler_game.act("$p glows a brillant gold! ", ch, obj, None, merc.TO_ROOM)
+        state_checks.SET_BIT(obj.extra_flags, merc.ITEM_MAGIC)
+        state_checks.SET_BIT(obj.extra_flags, merc.ITEM_GLOW)
         added = -2
 
     # now add the enchantments */
-    if obj.level < LEVEL_HERO:
-        obj.level = min(LEVEL_HERO - 1, obj.level + 1)
+    if obj.level < merc.LEVEL_HERO:
+        obj.level = min(merc.LEVEL_HERO - 1, obj.level + 1)
 
     if ac_found:
         for paf in obj.affected:
-            if paf.location == APPLY_AC:
+            if paf.location == merc.APPLY_AC:
                 paf.type = sn
                 paf.modifier += added
                 paf.level = max(paf.level, level)
     else:  # add a new affect */
-        paf = AFFECT_DATA()
+        paf = handler_game.AFFECT_DATA()
 
-        paf.where = TO_OBJECT
+        paf.where = merc.TO_OBJECT
         paf.type = sn
         paf.level = level
         paf.duration = -1
-        paf.location = APPLY_AC
+        paf.location = merc.APPLY_AC
         paf.modifier = added
         paf.bitvector = 0
         obj.affected.append(paf)
 
 
-register_spell(skill_type("enchant armor",
+const.register_spell(const.skill_type("enchant armor",
                           {'mage': 16, 'cleric': 53, 'thief': 53, 'warrior': 53},
                           {'mage': 2, 'cleric': 2, 'thief': 4, 'warrior': 4},
-                          spell_enchant_armor, TAR_OBJ_INV, POS_STANDING, None,
-                          SLOT(510), 100, 24, "", "!Enchant Armor!", ""))
+                          spell_enchant_armor, merc.TAR_OBJ_INV, merc.POS_STANDING, None,
+                          const.SLOT(510), 100, 24, "", "!Enchant Armor!", ""))

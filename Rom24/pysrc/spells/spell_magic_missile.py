@@ -1,8 +1,7 @@
-import random
-
-from const import SLOT, skill_type, register_spell
-from fight import damage
-from merc import saves_spell, DAM_ENERGY, POS_FIGHTING, TAR_CHAR_OFFENSIVE
+import const
+import fight
+import handler_magic
+import merc
 
 
 def spell_magic_missile(sn, level, ch, victim, target):
@@ -16,13 +15,13 @@ def spell_magic_missile(sn, level, ch, victim, target):
     level = min(level, len(dam_each) - 1)
     level = max(0, level)
     dam = random.randint(dam_each[level] // 2, dam_each[level] * 2)
-    if saves_spell(level, victim, DAM_ENERGY):
+    if handler_magic.saves_spell(level, victim, merc.DAM_ENERGY):
         dam = dam // 2
-    damage(ch, victim, dam, sn, DAM_ENERGY, True)
+    fight.damage(ch, victim, dam, sn, merc.DAM_ENERGY, True)
 
 
-register_spell(skill_type("magic missile",
+const.register_spell(const.skill_type("magic missile",
                           {'mage': 1, 'cleric': 53, 'thief': 2, 'warrior': 2},
                           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_magic_missile, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
-                          None, SLOT(32), 15, 12, "magic missile", "!Magic Missile!", ""))
+                          spell_magic_missile, merc.TAR_CHAR_OFFENSIVE, merc.POS_FIGHTING,
+                          None, const.SLOT(32), 15, 12, "magic missile", "!Magic Missile!", ""))

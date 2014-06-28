@@ -2,14 +2,14 @@ import logging
 
 logger = logging.getLogger()
 
-from handler_room import move_char
-from interp import cmd_type, register_command
-from merc import DIR_EAST, POS_STANDING, LOG_NEVER
+import handler_ch
+import interp
+import merc
 
 
 def do_east(ch, argument):
-    move_char(ch, DIR_EAST, False)
+    handler_ch.move_char(ch, merc.DIR_EAST, False)
     return
 
 
-register_command(cmd_type('east', do_east, POS_STANDING, 0, LOG_NEVER, 0))
+interp.register_command(interp.cmd_type('east', do_east, merc.POS_STANDING, 0, merc.LOG_NEVER, 0))

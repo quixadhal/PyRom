@@ -5,14 +5,15 @@ logger = logging.getLogger()
 import merc
 import interp
 import save
+import state_checks
 
 
 def do_save(ch, argument):
-    if merc.IS_NPC(ch):
+    if state_checks.IS_NPC(ch):
         return
     save.save_char_obj(ch)
     ch.send("Saving. Remember that ROM has automatic saving now.\n")
-    merc.WAIT_STATE(ch, 4 * merc.PULSE_VIOLENCE)
+    state_checks.WAIT_STATE(ch, 4 * merc.PULSE_VIOLENCE)
     return
 
 

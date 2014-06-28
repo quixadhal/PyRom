@@ -1,12 +1,16 @@
-from merc import IS_NPC, IS_AFFECTED, AFF_CHARM, check_dispel, act, TO_ROOM, TAR_CHAR_DEFENSIVE, POS_FIGHTING
-from const import register_spell, skill_type, SLOT, skill_table
+import const
+import handler_game
+import handler_magic
+import merc
+import state_checks
 
 
 def spell_cancellation(sn, level, ch, victim, target):
     found = False
     level += 2
-    if (not IS_NPC(ch) and IS_NPC(victim) and not (IS_AFFECTED(ch, AFF_CHARM) and ch.master == victim)) \
-            or (IS_NPC(ch) and not IS_NPC(victim)):
+    if (not state_checks.IS_NPC(ch) and state_checks.IS_NPC(victim) and not (
+        state_checks.IS_AFFECTED(ch, merc.AFF_CHARM) and ch.master == victim)) \
+            or (state_checks.IS_NPC(ch) and not state_checks.IS_NPC(victim)):
         ch.send("You failed, try dispel magic.\n")
         return
     # unlike dispel magic, the victim gets NO save */
@@ -43,9 +47,9 @@ def spell_cancellation(sn, level, ch, victim, target):
               'weaken': "$n looks stronger."}
 
     for k, v in spells.items():
-        if check_dispel(level, victim, skill_table[k]):
+        if handler_magic.check_dispel(level, victim, const.skill_table[k]):
             if v:
-                act(v, victim, None, None, TO_ROOM)
+                handler_game.act(v, victim, None, None, merc.TO_ROOM)
             found = True
 
     if found:
@@ -54,9 +58,9 @@ def spell_cancellation(sn, level, ch, victim, target):
         ch.send("Spell failed.\n")
 
 
-register_spell(skill_type("cancellation",
+const.register_spell(const.skill_type("cancellation",
                           {'mage': 18, 'cleric': 26, 'thief': 34, 'warrior': 34},
                           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_cancellation, TAR_CHAR_DEFENSIVE, POS_FIGHTING,
-                          None, SLOT(507), 20, 12, "", "!cancellation!", "")
+                          spell_cancellation, merc.TAR_CHAR_DEFENSIVE, merc.POS_FIGHTING,
+                          None, const.SLOT(507), 20, 12, "", "!cancellation!", "")
 )

@@ -4,6 +4,7 @@ logger = logging.getLogger()
 
 import merc
 import interp
+import handler_obj
 
 
 def do_equipment(ch, argument):
@@ -16,7 +17,7 @@ def do_equipment(ch, argument):
 
         ch.send(merc.where_name[iWear])
         if ch.can_see_obj(obj):
-            ch.send(merc.format_obj_to_char(obj, ch, True) + "\n")
+            ch.send(handler_obj.format_obj_to_char(obj, ch, True) + "\n")
         else:
             ch.send("something.\n")
         found = True

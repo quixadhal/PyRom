@@ -2,16 +2,17 @@ import logging
 
 logger = logging.getLogger()
 
+import game_utils
 import merc
 import interp
 
 
 def do_at(ch, argument):
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
     if not arg or not argument:
         ch.send("At where what?\n")
         return
-    location = merc.find_location(ch, arg)
+    location = game_utils.find_location(ch, arg)
     if not location:
         ch.send("No such location.\n")
         return

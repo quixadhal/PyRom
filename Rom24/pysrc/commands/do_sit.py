@@ -2,14 +2,14 @@ import logging
 
 logger = logging.getLogger()
 
-from interp import cmd_type, register_command
-from merc import POS_FIGHTING, ITEM_FURNITURE, IS_SET, SIT_ON, SIT_IN, SIT_AT, act, TO_CHAR, POS_DEAD, POS_SLEEPING, \
-    IS_AFFECTED, AFF_SLEEP, TO_ROOM, POS_SITTING, POS_RESTING, POS_STANDING, LOG_NORMAL
-
+import handler_game
+import interp
+import merc
+import state_checks
 
 def do_sit(ch, argument):
     obj = None
-    if ch.position == POS_FIGHTING:
+    if ch.position == merc.POS_FIGHTING:
         ch.send("Maybe you should finish this fight first?\n")
         return
     # okay, now that we know we can sit, find an object to sit on
@@ -22,64 +22,64 @@ def do_sit(ch, argument):
             obj = ch.on
 
         if obj:
-            if obj.item_type != ITEM_FURNITURE or (
-                    not IS_SET(obj.value[2], SIT_ON)
-                    and not IS_SET(obj.value[2], SIT_IN)
-                    and not IS_SET(obj.value[2], SIT_AT)):
+            if obj.item_type != merc.ITEM_FURNITURE or (
+                    not state_checks.IS_SET(obj.value[2], merc.SIT_ON)
+                    and not state_checks.IS_SET(obj.value[2], merc.SIT_IN)
+                    and not state_checks.IS_SET(obj.value[2], merc.SIT_AT)):
                 ch.send("You can't sit on that.\n")
                 return
             if ch.on != obj and obj.count_users() >= obj.value[0]:
-                act("There's no more room on $p.", ch, obj, None, TO_CHAR, POS_DEAD)
+                handler_game.act("There's no more room on $p.", ch, obj, None, merc.TO_CHAR, merc.POS_DEAD)
                 return
             ch.on = obj
 
-    if ch.position == POS_SLEEPING:
-        if IS_AFFECTED(ch, AFF_SLEEP):
+    if ch.position == merc.POS_SLEEPING:
+        if state_checks.IS_AFFECTED(ch, merc.AFF_SLEEP):
             ch.send("You can't wake up!\n")
             return
 
         if obj is None:
             ch.send("You wake and sit up.\n")
-            act("$n wakes and sits up.", ch, None, None, TO_ROOM)
-        elif IS_SET(obj.value[2], SIT_AT):
-            act("You wake and sit at $p.", ch, obj, None, TO_CHAR, POS_DEAD)
-            act("$n wakes and sits at $p.", ch, obj, None, TO_ROOM)
-        elif IS_SET(obj.value[2], SIT_ON):
-            act("You wake and sit on $p.", ch, obj, None, TO_CHAR, POS_DEAD)
-            act("$n wakes and sits at $p.", ch, obj, None, TO_ROOM)
+            handler_game.act("$n wakes and sits up.", ch, None, None, merc.TO_ROOM)
+        elif state_checks.IS_SET(obj.value[2], merc.SIT_AT):
+            handler_game.act("You wake and sit at $p.", ch, obj, None, merc.TO_CHAR, merc.POS_DEAD)
+            handler_game.act("$n wakes and sits at $p.", ch, obj, None, merc.TO_ROOM)
+        elif state_checks.IS_SET(obj.value[2], merc.SIT_ON):
+            handler_game.act("You wake and sit on $p.", ch, obj, None, merc.TO_CHAR, merc.POS_DEAD)
+            handler_game.act("$n wakes and sits at $p.", ch, obj, None, merc.TO_ROOM)
         else:
-            act("You wake and sit in $p.", ch, obj, None, TO_CHAR, POS_DEAD)
-            act("$n wakes and sits in $p.", ch, obj, None, TO_ROOM)
-        ch.position = POS_SITTING
+            handler_game.act("You wake and sit in $p.", ch, obj, None, merc.TO_CHAR, merc.POS_DEAD)
+            handler_game.act("$n wakes and sits in $p.", ch, obj, None, merc.TO_ROOM)
+        ch.position = merc.POS_SITTING
         return
-    elif ch.position == POS_RESTING:
+    elif ch.position == merc.POS_RESTING:
         if obj is None:
             ch.send("You stop resting.\n")
-        elif IS_SET(obj.value[2], SIT_AT):
-            act("You sit at $p.", ch, obj, None, TO_CHAR)
-            act("$n sits at $p.", ch, obj, None, TO_ROOM)
-        elif IS_SET(obj.value[2], SIT_ON):
-            act("You sit on $p.", ch, obj, None, TO_CHAR)
-            act("$n sits on $p.", ch, obj, None, TO_ROOM)
-        ch.position = POS_SITTING
+        elif state_checks.IS_SET(obj.value[2], merc.SIT_AT):
+            handler_game.act("You sit at $p.", ch, obj, None, merc.TO_CHAR)
+            handler_game.act("$n sits at $p.", ch, obj, None, merc.TO_ROOM)
+        elif state_checks.IS_SET(obj.value[2], merc.SIT_ON):
+            handler_game.act("You sit on $p.", ch, obj, None, merc.TO_CHAR)
+            handler_game.act("$n sits on $p.", ch, obj, None, merc.TO_ROOM)
+        ch.position = merc.POS_SITTING
         return
-    elif ch.position == POS_SITTING:
+    elif ch.position == merc.POS_SITTING:
         ch.send("You are already sitting down.\n")
         return
-    elif ch.position == POS_STANDING:
+    elif ch.position == merc.POS_STANDING:
         if obj is None:
             ch.send("You sit down.\n")
-            act("$n sits down on the ground.", ch, None, None, TO_ROOM)
-        elif IS_SET(obj.value[2], SIT_AT):
-            act("You sit down at $p.", ch, obj, None, TO_CHAR)
-            act("$n sits down at $p.", ch, obj, None, TO_ROOM)
-        elif IS_SET(obj.value[2], SIT_ON):
-            act("You sit on $p.", ch, obj, None, TO_CHAR)
-            act("$n sits on $p.", ch, obj, None, TO_ROOM)
+            handler_game.act("$n sits down on the ground.", ch, None, None, merc.TO_ROOM)
+        elif state_checks.IS_SET(obj.value[2], merc.SIT_AT):
+            handler_game.act("You sit down at $p.", ch, obj, None, merc.TO_CHAR)
+            handler_game.act("$n sits down at $p.", ch, obj, None, merc.TO_ROOM)
+        elif state_checks.IS_SET(obj.value[2], merc.SIT_ON):
+            handler_game.act("You sit on $p.", ch, obj, None, merc.TO_CHAR)
+            handler_game.act("$n sits on $p.", ch, obj, None, merc.TO_ROOM)
         else:
-            act("You sit down in $p.", ch, obj, None, TO_CHAR)
-            act("$n sits down in $p.", ch, obj, None, TO_ROOM)
-        ch.position = POS_SITTING
+            handler_game.act("You sit down in $p.", ch, obj, None, merc.TO_CHAR)
+            handler_game.act("$n sits down in $p.", ch, obj, None, merc.TO_ROOM)
+        ch.position = merc.POS_SITTING
 
 
-register_command(cmd_type('sit', do_sit, POS_SLEEPING, 0, LOG_NORMAL, 1))
+interp.register_command(interp.cmd_type('sit', do_sit, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1))

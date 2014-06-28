@@ -2,6 +2,9 @@ import logging
 
 logger = logging.getLogger()
 
+import game_utils
+import handler_game
+import state_checks
 import random
 import merc
 import const
@@ -11,10 +14,10 @@ import fight
 
 
 def do_dirt(ch, argument):
-    arghold, arg = merc.read_word(argument)
+    arghold, arg = game_utils.read_word(argument)
     chance = ch.get_skill('dirt kicking')
-    if chance == 0 or (merc.IS_NPC(ch) and not merc.IS_SET(ch.off_flags, merc.OFF_KICK_DIRT)) \
-            or ( not merc.IS_NPC(ch) and ch.level < const.skill_table['dirt kicking'].skill_level[ch.guild.name]):
+    if chance == 0 or (state_checks.IS_NPC(ch) and not state_checks.IS_SET(ch.off_flags, merc.OFF_KICK_DIRT)) \
+            or ( not state_checks.IS_NPC(ch) and ch.level < const.skill_table['dirt kicking'].skill_level[ch.guild.name]):
         ch.send("You get your feet dirty.\n")
         return
     if not arg:
@@ -27,19 +30,19 @@ def do_dirt(ch, argument):
         if victim is None:
             ch.send("They aren't here.\n")
             return
-    if merc.IS_AFFECTED(victim, merc.AFF_BLIND):
-        merc.act("$E's already been blinded.", ch, None, victim, merc.TO_CHAR)
+    if state_checks.IS_AFFECTED(victim, merc.AFF_BLIND):
+        handler_game.act("$E's already been blinded.", ch, None, victim, merc.TO_CHAR)
         return
     if victim == ch:
         ch.send("Very funny.\n")
         return
     if fight.is_safe(ch, victim):
         return
-    if merc.IS_NPC(victim) and victim.fighting is not None and not ch.is_same_group(victim.fighting):
+    if state_checks.IS_NPC(victim) and victim.fighting is not None and not ch.is_same_group(victim.fighting):
         ch.send("Kill stealing is not permitted.\n")
         return
-    if merc.IS_AFFECTED(ch, merc.AFF_CHARM) and ch.master == victim:
-        merc.act("But $N is such a good friend!", ch, None, victim, merc.TO_CHAR)
+    if state_checks.IS_AFFECTED(ch, merc.AFF_CHARM) and ch.master == victim:
+        handler_game.act("But $N is such a good friend!", ch, None, victim, merc.TO_CHAR)
         return
 
     # modifiers
@@ -48,9 +51,9 @@ def do_dirt(ch, argument):
     chance -= 2 * victim.get_curr_stat(merc.STAT_DEX)
 
     # speed
-    if merc.IS_SET(ch.off_flags, merc.OFF_FAST) or merc.IS_AFFECTED(ch, merc.AFF_HASTE):
+    if state_checks.IS_SET(ch.off_flags, merc.OFF_FAST) or state_checks.IS_AFFECTED(ch, merc.AFF_HASTE):
         chance += 10
-    if merc.IS_SET(victim.off_flags, merc.OFF_FAST) or merc.IS_AFFECTED(victim, merc.AFF_HASTE):
+    if state_checks.IS_SET(victim.off_flags, merc.OFF_FAST) or state_checks.IS_AFFECTED(victim, merc.AFF_HASTE):
         chance -= 25
     # level
     chance += (ch.level - victim.level) * 2
@@ -76,13 +79,13 @@ def do_dirt(ch, argument):
         return
     # now the attack
     if random.randint(1, 99) < chance:
-        merc.act("$n is blinded by the dirt in $s eyes!", victim, None, None, merc.TO_ROOM)
-        merc.act("$n kicks dirt in your eyes!", ch, None, victim, merc.TO_VICT)
+        handler_game.act("$n is blinded by the dirt in $s eyes!", victim, None, None, merc.TO_ROOM)
+        handler_game.act("$n kicks dirt in your eyes!", ch, None, victim, merc.TO_VICT)
         fight.damage(ch, victim, random.randint(2, 5), 'dirt kicking', merc.DAM_NONE, False)
         victim.send("You can't see a thing!\n")
         skills.check_improve(ch, 'dirt kicking', True, 2)
-        merc.WAIT_STATE(ch, const.skill_table['dirt kicking'].beats)
-        af = merc.AFFECT_DATA()
+        state_checks.WAIT_STATE(ch, const.skill_table['dirt kicking'].beats)
+        af = handler_game.AFFECT_DATA()
         af.where = merc.TO_AFFECTS
         af.type = 'dirt kicking'
         af.level = ch.level
@@ -94,7 +97,7 @@ def do_dirt(ch, argument):
     else:
         fight.damage(ch, victim, 0, 'dirt kicking', merc.DAM_NONE, True)
         skills.check_improve(ch, 'dirt kicking', False, 2)
-        merc.WAIT_STATE(ch, const.skill_table['dirt kicking'].beats)
+        state_checks.WAIT_STATE(ch, const.skill_table['dirt kicking'].beats)
     fight.check_killer(ch, victim)
 
 

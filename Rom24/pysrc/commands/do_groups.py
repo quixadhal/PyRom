@@ -5,10 +5,10 @@ logger = logging.getLogger()
 import merc
 import const
 import interp
-
+import state_checks
 
 def do_groups(ch, argument):
-    if merc.IS_NPC(ch):
+    if state_checks.IS_NPC(ch):
         return
     col = 0
 

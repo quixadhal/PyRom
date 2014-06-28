@@ -31,7 +31,15 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/ 
  ************/
 """
+import random
+
 from merc import *
+from update import gain_condition
+import handler_game
+import handler_magic
+import state_checks
+import const
+
 
 def acid_effect(vo, level, dam, target):
     if target == TARGET_ROOM: # nail objects on the floor */
@@ -45,7 +53,7 @@ def acid_effect(vo, level, dam, target):
         return
     if target == TARGET_OBJ: # toast an object */
         obj = vo
-        if IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or IS_OBJ_STAT(obj,ITEM_NOPURGE) or random.randint(0,4) == 0:
+        if state_checks.IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or state_checks.IS_OBJ_STAT(obj,ITEM_NOPURGE) or random.randint(0,4) == 0:
             return
         chance = level / 4 + dam / 10
         if chance > 25:
@@ -53,7 +61,7 @@ def acid_effect(vo, level, dam, target):
         if chance > 50:
             chance = (chance - 50) / 2 + 50
 
-        if IS_OBJ_STAT(obj,ITEM_BLESS):
+        if state_checks.IS_OBJ_STAT(obj,ITEM_BLESS):
             chance -= 5
 
         chance -= obj.level * 2
@@ -81,9 +89,9 @@ def acid_effect(vo, level, dam, target):
         if random.randint(1,99) > chance:
             return
         if obj.carried_by != None:
-            act(msg,obj.carried_by,obj,None,TO_ALL)
+            handler_game.act(msg,obj.carried_by,obj,None,TO_ALL)
         elif obj.in_room and obj.in_room.people != None:
-            act(msg,obj.in_room.people,obj,None,TO_ALL)
+            handler_game.act(msg,obj.in_room.people,obj,None,TO_ALL)
         if obj.item_type == ITEM_ARMOR:  # etch it */
             af_found = False
             obj.affect_enchant()
@@ -97,7 +105,7 @@ def acid_effect(vo, level, dam, target):
      
             if not af_found:
                 # needs a new affect */
-                paf = AFFECT_DATA()
+                paf = handler_game.AFFECT_DATA()
                 paf.type = -1
                 paf.level = level
                 paf.duration = -1
@@ -133,12 +141,12 @@ def cold_effect( vo, level, dam, target):
     if target == TARGET_CHAR: # whack a character */
         victim = vo
         # chill touch effect */
-        if not saves_spell(level/4 + dam / 20, victim, DAM_COLD):
-            af = AFFECT_DATA()
-            act("$n turns blue and shivers.",victim,None,None,TO_ROOM)
-            act("A chill sinks deep into your bones.",victim,None,None,TO_CHAR)
+        if not handler_magic.saves_spell(level/4 + dam / 20, victim, DAM_COLD):
+            af = handler_game.AFFECT_DATA()
+            handler_game.act("$n turns blue and shivers.",victim,None,None,TO_ROOM)
+            handler_game.act("A chill sinks deep into your bones.",victim,None,None,TO_CHAR)
             af.where     = TO_AFFECTS
-            af.type      = skill_table["chill touch"]
+            af.type      = const.skill_table["chill touch"]
             af.level     = level
             af.duration  = 6
             af.location  = APPLY_STR
@@ -147,7 +155,7 @@ def cold_effect( vo, level, dam, target):
             victim.affect_join(af)
 
         # hunger! (warmth sucked out */
-        if not IS_NPC(victim):
+        if not state_checks.IS_NPC(victim):
             gain_condition(victim,COND_HUNGER,dam/20)
 
         # let's toast some gear */
@@ -156,7 +164,7 @@ def cold_effect( vo, level, dam, target):
         return
     if target == TARGET_OBJ: # toast an object */
         obj = vo
-        if IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or IS_OBJ_STAT(obj,ITEM_NOPURGE) or random.randint(0,4) == 0:
+        if state_checks.IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or state_checks.IS_OBJ_STAT(obj,ITEM_NOPURGE) or random.randint(0,4) == 0:
             return
         chance = level / 4 + dam / 10
         if chance > 25:
@@ -164,7 +172,7 @@ def cold_effect( vo, level, dam, target):
         if chance > 50:
             chance = (chance - 50) / 2 + 50
 
-        if IS_OBJ_STAT(obj,ITEM_BLESS):
+        if state_checks.IS_OBJ_STAT(obj,ITEM_BLESS):
             chance -= 5
 
         chance -= obj.level * 2
@@ -184,9 +192,9 @@ def cold_effect( vo, level, dam, target):
             return
 
         if obj.carried_by != None:
-            act(msg,obj.carried_by,obj,None,TO_ALL)
+            handler_game.act(msg,obj.carried_by,obj,None,TO_ALL)
         elif obj.in_room and obj.in_room.people:
-            act(msg,obj.in_room.people,obj,None,TO_ALL)
+            handler_game.act(msg,obj.in_room.people,obj,None,TO_ALL)
         obj.extract()
         return
 
@@ -199,12 +207,12 @@ def fire_effect(vo, level, dam, target):
     if target == TARGET_CHAR:   # do the effect on a victim */
         victim = vo
         # chance of blindness */
-        if not IS_AFFECTED(victim,AFF_BLIND) and not saves_spell(level / 4 + dam / 20, victim,DAM_FIRE):
-            act("$n is blinded by smoke!",victim,None,None,TO_ROOM)
-            act("Your eyes tear up from smoke...you can't see a thing!", victim,None,None,TO_CHAR)
-            af = AFFECT_DATA()
+        if not state_checks.IS_AFFECTED(victim,AFF_BLIND) and not handler_magic.saves_spell(level / 4 + dam / 20, victim,DAM_FIRE):
+            handler_game.act("$n is blinded by smoke!",victim,None,None,TO_ROOM)
+            handler_game.act("Your eyes tear up from smoke...you can't see a thing!", victim,None,None,TO_CHAR)
+            af = handler_game.AFFECT_DATA()
             af.where        = TO_AFFECTS
-            af.type         = skill_table["fire breath"]
+            af.type         = const.skill_table["fire breath"]
             af.level        = level
             af.duration     = random.randint(0,level/10)
             af.location     = APPLY_HITROLL
@@ -212,7 +220,7 @@ def fire_effect(vo, level, dam, target):
             af.bitvector    = AFF_BLIND
             victim.affect_add(af)
         # getting thirsty */
-        if not IS_NPC(victim):
+        if not state_checks.IS_NPC(victim):
             gain_condition(victim,COND_THIRST,dam/20)
 
         # let's toast some gear! */
@@ -223,7 +231,7 @@ def fire_effect(vo, level, dam, target):
     if target == TARGET_OBJ:  # toast an object */
         obj = vo
 
-        if IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or IS_OBJ_STAT(obj,ITEM_NOPURGE) or random.randint(0,4) == 0:
+        if state_checks.IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or state_checks.IS_OBJ_STAT(obj,ITEM_NOPURGE) or random.randint(0,4) == 0:
             return
  
         chance = level / 4 + dam / 10
@@ -233,7 +241,7 @@ def fire_effect(vo, level, dam, target):
         if chance > 50:
             chance = (chance - 50) / 2 + 50
 
-        if IS_OBJ_STAT(obj,ITEM_BLESS):
+        if state_checks.IS_OBJ_STAT(obj,ITEM_BLESS):
             chance -= 5
         chance -= obj.level * 2
 
@@ -262,9 +270,9 @@ def fire_effect(vo, level, dam, target):
             return
  
         if obj.carried_by:
-            act( msg, obj.carried_by, obj, None, TO_ALL )
+            handler_game.act( msg, obj.carried_by, obj, None, TO_ALL )
         elif obj.in_room and obj.in_room.people:
-            act(msg,obj.in_room.people,obj,None,TO_ALL)
+            handler_game.act(msg,obj.in_room.people,obj,None,TO_ALL)
 
         if obj.contains:
             # dump the contents */
@@ -292,11 +300,11 @@ def poison_effect( vo, level, dam, target):
     if target == TARGET_CHAR:   # do the effect on a victim */
         victim = vo
         # chance of poisoning */
-        if not saves_spell(level / 4 + dam / 20,victim,DAM_POISON):
-            af = AFFECT_DATA()
+        if not handler_magic.saves_spell(level / 4 + dam / 20,victim,DAM_POISON):
+            af = handler_game.AFFECT_DATA()
 
-            victim.send("You feel poison coursing through your veins.\n")
-            act("$n looks very ill.",victim,None,None,TO_ROOM)
+            victim.send("You feel poison coursing through your veins.\n\r")
+            handler_game.act("$n looks very ill.",victim,None,None,TO_ROOM)
 
             af.where     = TO_AFFECTS
             af.type      = gsn_poison
@@ -312,7 +320,7 @@ def poison_effect( vo, level, dam, target):
         return
     if target == TARGET_OBJ:  # do some poisoning */
         obj = vo
-        if IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or IS_OBJ_STAT(obj,ITEM_BLESS) or random.randint(0,4) == 0:
+        if state_checks.IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or state_checks.IS_OBJ_STAT(obj,ITEM_BLESS) or random.randint(0,4) == 0:
             return
 
         chance = level / 4 + dam / 10
@@ -349,16 +357,16 @@ def shock_effect( vo, level, dam, target):
     if target == TARGET_CHAR:
         victim = vo
         # daze and confused? */
-        if not saves_spell(level/4 + dam/20,victim,DAM_LIGHTNING):
-            victim.send("Your muscles stop responding.\n")
-            DAZE_STATE(victim,max(12,level/4 + dam/20))
+        if not handler_magic.saves_spell(level/4 + dam/20,victim,DAM_LIGHTNING):
+            victim.send("Your muscles stop responding.\n\r")
+            state_checks.DAZE_STATE(victim,max(12,level/4 + dam/20))
         # toast some gear */
         for obj in victim.carrying[:]:
             shock_effect(obj,level,dam,TARGET_OBJ)
         return
     if target == TARGET_OBJ:
         obj = vo
-        if IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or IS_OBJ_STAT(obj,ITEM_NOPURGE) or random.randint(0,4) == 0:
+        if state_checks.IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or state_checks.IS_OBJ_STAT(obj,ITEM_NOPURGE) or random.randint(0,4) == 0:
             return
 
         chance = level / 4 + dam / 10
@@ -368,7 +376,7 @@ def shock_effect( vo, level, dam, target):
         if chance > 50:
             chance = (chance - 50) /2 + 50
 
-        if IS_OBJ_STAT(obj,ITEM_BLESS):
+        if state_checks.IS_OBJ_STAT(obj,ITEM_BLESS):
             chance -= 5
 
         chance -= obj.level * 2
@@ -388,9 +396,9 @@ def shock_effect( vo, level, dam, target):
             return
 
         if obj.carried_by:
-            act(msg,obj.carried_by,obj,None,TO_ALL)
+            handler_game.act(msg,obj.carried_by,obj,None,TO_ALL)
         elif obj.in_room and obj.in_room.people:
-            act(msg,obj.in_room.people,obj,None,TO_ALL)
+            handler_game.act(msg,obj.in_room.people,obj,None,TO_ALL)
 
         obj.extract()
         return

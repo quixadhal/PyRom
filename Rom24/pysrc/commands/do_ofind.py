@@ -4,10 +4,10 @@ logger = logging.getLogger()
 
 import merc
 import interp
-
+import game_utils
 
 def do_ofind(ch, argument):
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
     if not arg:
         ch.send("Find what?\n")
         return
@@ -21,7 +21,7 @@ def do_ofind(ch, argument):
     # Do you?
     # -- Furey
     for pObjIndex in merc.obj_index_hash.values():
-        if fAll or merc.is_name(arg, pObjIndex.name):
+        if fAll or game_utils.is_name(arg, pObjIndex.name):
             found = True
             ch.send("[%5d] %s(%s)\n" % (pObjIndex.vnum, pObjIndex.short_descr, pObjIndex.name))
     if not found:

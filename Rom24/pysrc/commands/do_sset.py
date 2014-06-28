@@ -5,12 +5,14 @@ logger = logging.getLogger()
 import merc
 import interp
 import const
+import game_utils
+import state_checks
 
 
 def do_sset(ch, argument):
-    argument, arg1 = merc.read_word(argument)
-    argument, arg2 = merc.read_word(argument)
-    argument, arg3 = merc.read_word(argument)
+    argument, arg1 = game_utils.read_word(argument)
+    argument, arg2 = game_utils.read_word(argument)
+    argument, arg3 = game_utils.read_word(argument)
 
     if not arg1 or not arg2 or not arg3:
         ch.send("Syntax:\n")
@@ -22,11 +24,11 @@ def do_sset(ch, argument):
     if not victim:
         ch.send("They aren't here.\n")
         return
-    if merc.IS_NPC(victim):
+    if state_checks.IS_NPC(victim):
         ch.send("Not on NPC's.\n")
         return
     fAll = arg2 == "all"
-    sn = merc.prefix_lookup(const.skill_table, arg2)
+    sn = state_checks.prefix_lookup(const.skill_table, arg2)
     if not fAll and not sn:
         ch.send("No such skill or spell.\n")
         return

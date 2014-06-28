@@ -1,17 +1,19 @@
-from const import SLOT, skill_type, register_spell
-from merc import IS_AFFECTED, AFF_BLIND, target_name, POS_STANDING, TAR_IGNORE
+import const
+import handler_magic
+import merc
+import state_checks
 
 
 def spell_farsight(sn, level, ch, victim, target):
-    if IS_AFFECTED(ch, AFF_BLIND):
+    if state_checks.IS_AFFECTED(ch, merc.AFF_BLIND):
         ch.send("Maybe it would help if you could see?\n")
         return
 
-    ch.do_scan(target_name)
+    ch.do_scan(handler_magic.target_name)
 
 
-register_spell(skill_type("farsight",
+const.register_spell(const.skill_type("farsight",
                           {'mage': 14, 'cleric': 16, 'thief': 16, 'warrior': 53},
                           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_farsight, TAR_IGNORE, POS_STANDING, None,
-                          SLOT(521), 36, 20, "farsight", "!Farsight!", ""))
+                          spell_farsight, merc.TAR_IGNORE, merc.POS_STANDING, None,
+                          const.SLOT(521), 36, 20, "farsight", "!Farsight!", ""))

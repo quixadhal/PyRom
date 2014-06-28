@@ -1,37 +1,39 @@
 import random
-
-from const import SLOT, skill_type, register_spell
-from effects import poison_effect
-from fight import damage, is_safe_spell
-from merc import act, TO_ROOM, TO_CHAR, dice, TARGET_ROOM, IS_NPC, saves_spell, DAM_POISON, TARGET_CHAR, POS_FIGHTING, \
-    TAR_IGNORE
+import const
+import effects
+import fight
+import game_utils
+import handler_game
+import handler_magic
+import merc
+import state_checks
 
 
 def spell_gas_breath(sn, level, ch, victim, target):
-    act("$n breathes out a cloud of poisonous gas! ", ch, None, None, TO_ROOM)
-    act("You breath out a cloud of poisonous gas.", ch, None, None, TO_CHAR)
+    handler_game.act("$n breathes out a cloud of poisonous gas! ", ch, None, None, merc.TO_ROOM)
+    handler_game.act("You breath out a cloud of poisonous gas.", ch, None, None, merc.TO_CHAR)
 
     hpch = max(16, ch.hit)
     hp_dam = random.randint(hpch // 15 + 1, 8)
-    dice_dam = dice(level, 12)
+    dice_dam = game_utils.dice(level, 12)
 
     dam = max(hp_dam + dice_dam // 10, dice_dam + hp_dam // 10)
-    poison_effect(ch.in_room, level, dam, TARGET_ROOM)
+    effects.poison_effect(ch.in_room, level, dam, merc.TARGET_ROOM)
 
     for vch in ch.in_room.people[:]:
-        if is_safe_spell(ch, vch, True) or (IS_NPC(ch) and IS_NPC(vch) and (ch.fighting == vch or vch.fighting == ch)):
+        if fight.is_safe_spell(ch, vch, True) or (state_checks.IS_NPC(ch) and state_checks.IS_NPC(vch) and (ch.fighting == vch or vch.fighting == ch)):
             continue
 
-        if saves_spell(level, vch, DAM_POISON):
-            poison_effect(vch, level // 2, dam // 4, TARGET_CHAR)
-            damage(ch, vch, dam // 2, sn, DAM_POISON, True)
+        if handler_magic.saves_spell(level, vch, merc.DAM_POISON):
+            effects.poison_effect(vch, level // 2, dam // 4, merc.TARGET_CHAR)
+            fight.damage(ch, vch, dam // 2, sn, merc.DAM_POISON, True)
         else:
-            poison_effect(vch, level, dam, TARGET_CHAR)
-            damage(ch, vch, dam, sn, DAM_POISON, True)
+            effects.poison_effect(vch, level, dam, merc.TARGET_CHAR)
+            fight.damage(ch, vch, dam, sn, merc.DAM_POISON, True)
 
 
-register_spell(skill_type("gas breath",
+const.register_spell(const.skill_type("gas breath",
                           {'mage': 39, 'cleric': 43, 'thief': 47, 'warrior': 50},
                           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_gas_breath, TAR_IGNORE, POS_FIGHTING, None,
-                          SLOT(203), 175, 24, "blast of gas", "!Gas Breath!", ""))
+                          spell_gas_breath, merc.TAR_IGNORE, merc.POS_FIGHTING, None,
+                          const.SLOT(203), 175, 24, "blast of gas", "!Gas Breath!", ""))

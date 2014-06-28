@@ -4,11 +4,12 @@ logger = logging.getLogger()
 
 import merc
 import interp
+import game_utils
 
 
 def do_trust(ch, argument):
-    argument, arg1 = merc.read_word(argument)
-    argument, arg2 = merc.read_word(argument)
+    argument, arg1 = game_utils.read_word(argument)
+    argument, arg2 = game_utils.read_word(argument)
 
     if not arg1 or not arg2 or not arg2.isdigit():
         ch.send("Syntax: trust <char> <level>.\n")

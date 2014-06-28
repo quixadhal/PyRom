@@ -5,16 +5,21 @@ logger = logging.getLogger()
 import merc
 import interp
 import fight
+import game_utils
+import handler_game
+import state_checks
 
 
 def do_murder(ch, argument):
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
 
     if not arg:
         ch.send("Murder whom?\n")
         return
 
-    if merc.IS_AFFECTED(ch, merc.AFF_CHARM) or (merc.IS_NPC(ch) and merc.IS_SET(ch.act, merc.ACT_PET)):
+    if state_checks.IS_AFFECTED(ch, merc.AFF_CHARM) \
+            or (state_checks.IS_NPC(ch)
+                and state_checks.IS_SET(ch.act, merc.ACT_PET)):
         return
     victim = ch.get_char_room(arg)
     if victim is None:
@@ -25,18 +30,18 @@ def do_murder(ch, argument):
         return
     if fight.is_safe(ch, victim):
         return
-    if merc.IS_NPC(victim) and victim.fighting and not ch.is_same_group(victim.fighting):
+    if state_checks.IS_NPC(victim) and victim.fighting and not ch.is_same_group(victim.fighting):
         ch.send("Kill stealing is not permitted.\n")
         return
-    if merc.IS_AFFECTED(ch, merc.AFF_CHARM) and ch.master == victim:
-        merc.act("$N is your beloved master.", ch, None, victim, merc.TO_CHAR)
+    if state_checks.IS_AFFECTED(ch, merc.AFF_CHARM) and ch.master == victim:
+        handler_game.act("$N is your beloved master.", ch, None, victim, merc.TO_CHAR)
         return
     if ch.position == merc.POS_FIGHTING:
         ch.send("You do the best you can!\n")
         return
 
-    merc.WAIT_STATE(ch, 1 * merc.PULSE_VIOLENCE)
-    if merc.IS_NPC(ch):
+    state_checks.WAIT_STATE(ch, 1 * merc.PULSE_VIOLENCE)
+    if state_checks.IS_NPC(ch):
         buf = "Help! I am being attacked by %s!" % ch.short_descr
     else:
         buf = "Help!  I am being attacked by %s!" % ch.name

@@ -4,13 +4,16 @@ logger = logging.getLogger()
 
 import merc
 import interp
+import game_utils
+import handler_olc
+import state_checks
 import special
 
 
 def do_string(ch, argument):
-    argument, type = merc.read_word(argument)
-    argument, arg1 = merc.read_word(argument)
-    argument, arg2 = merc.read_word(argument)
+    argument, type = game_utils.read_word(argument)
+    argument, arg1 = game_utils.read_word(argument)
+    argument, arg2 = game_utils.read_word(argument)
     arg3 = argument
 
     if not type or not arg1 or not arg2 or not arg3:
@@ -29,7 +32,7 @@ def do_string(ch, argument):
         victim.zone = None
         # string something
         if "name".startswith(arg2):
-            if not merc.IS_NPC(victim):
+            if not state_checks.IS_NPC(victim):
                 ch.send("Not on PC's.\n")
                 return
             victim.name = arg3
@@ -44,16 +47,16 @@ def do_string(ch, argument):
             victim.long_descr = arg3 + "\n"
             return
         if "title".startswith(arg2):
-            if merc.IS_NPC(victim):
+            if state_checks.IS_NPC(victim):
                 ch.send("Not on NPC's.\n")
                 return
-            merc.set_title(victim, arg3)
+            game_utils.set_title(victim, arg3)
             return
         if "spec".startswith(arg2):
-            if not merc.IS_NPC(victim):
+            if not state_checks.IS_NPC(victim):
                 ch.send("Not on PC's.\n")
                 return
-            spec = merc.prefix_lookup(special.spec_table, arg3)
+            spec = state_checks.prefix_lookup(special.spec_table, arg3)
             if not spec:
                 ch.send("No such spec fun.\n")
                 return
@@ -76,12 +79,12 @@ def do_string(ch, argument):
             obj.description = arg3
             return
         if "extended".startswith(arg2) or "ed".startswith(arg2):
-            argument, arg3 = merc.read_word(argument)
+            argument, arg3 = game_utils.read_word(argument)
             if argument == None:
                 ch.send("Syntax: oset <object> ed <keyword> <string>\n")
                 return
             argument += "\n"
-            ed = merc.EXTRA_DESCR_DATA()
+            ed = handler_olc.EXTRA_DESCR_DATA()
             ed.keyword = arg3
             ed.description = argument
             obj.extra_descr.append(ed)

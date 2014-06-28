@@ -1,10 +1,12 @@
 import logging
 
+
 logger = logging.getLogger()
 
 import merc
 import interp
-
+import game_utils
+import state_checks
 
 def do_owhere(ch, argument):
     found = False
@@ -15,7 +17,7 @@ def do_owhere(ch, argument):
         ch.send("Find what?\n")
         return
     for obj in merc.object_list:
-        if not ch.can_see_obj(obj) or not merc.is_name(argument, obj.name) or ch.level < obj.level:
+        if not ch.can_see_obj(obj) or not game_utils.is_name(argument, obj.name) or ch.level < obj.level:
             continue
         found = True
         number += 1
@@ -25,7 +27,7 @@ def do_owhere(ch, argument):
 
         if in_obj.carried_by and ch.can_see(in_obj.carried_by) and in_obj.carried_by.in_room:
             ch.send("%3d) %s is carried by %s [Room %d]\n" % (
-                number, obj.short_descr, merc.PERS(in_obj.carried_by, ch), in_obj.carried_by.in_room.vnum ))
+                number, obj.short_descr, state_checks.PERS(in_obj.carried_by, ch), in_obj.carried_by.in_room.vnum ))
         elif in_obj.in_room and ch.can_see_room(in_obj.in_room):
             ch.send("%3d) %s is in %s [Room %d]\n" % (
                 number, obj.short_descr, in_obj.in_room.name, in_obj.in_room.vnum))

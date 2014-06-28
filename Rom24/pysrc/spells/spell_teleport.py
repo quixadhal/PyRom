@@ -1,32 +1,35 @@
-from const import SLOT, skill_type, register_spell
-from merc import IS_SET, ROOM_NO_RECALL, IMM_SUMMON, IS_NPC, saves_spell, DAM_OTHER, get_random_room, act, TO_ROOM, \
-    POS_FIGHTING, TAR_CHAR_SELF
+import const
+import handler_game
+import handler_magic
+import handler_room
+import merc
+import state_checks
 
 
 def spell_teleport(sn, level, ch, victim, target):
     if victim.in_room == None \
-            or IS_SET(victim.in_room.room_flags, ROOM_NO_RECALL) \
-            or ( victim != ch and IS_SET(victim.imm_flags, IMM_SUMMON)) \
-            or ( not IS_NPC(ch) and victim.fighting != None ) \
+            or state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_NO_RECALL) \
+            or ( victim != ch and state_checks.IS_SET(victim.imm_flags, merc.IMM_SUMMON)) \
+            or ( not state_checks.IS_NPC(ch) and victim.fighting != None ) \
             or ( victim != ch \
-                         and ( saves_spell(level - 5, victim, DAM_OTHER))):
+                         and ( handler_magic.saves_spell(level - 5, victim, merc.DAM_OTHER))):
         ch.send("You failed.\n")
         return
 
-    pRoomIndex = get_random_room(victim)
+    pRoomIndex = handler_room.get_random_room(victim)
 
     if victim != ch:
         victim.send("You have been teleported! \n")
 
-    act("$n vanishes! ", victim, None, None, TO_ROOM)
+    handler_game.act("$n vanishes! ", victim, None, None, merc.TO_ROOM)
     victim.from_room()
     victim.to_room(pRoomIndex)
-    act("$n slowly fades into existence.", victim, None, None, TO_ROOM)
+    handler_game.act("$n slowly fades into existence.", victim, None, None, merc.TO_ROOM)
     victim.do_look("auto")
 
 
-register_spell(skill_type("teleport",
+const.register_spell(const.skill_type("teleport",
                           {'mage': 13, 'cleric': 22, 'thief': 25, 'warrior': 36},
                           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_teleport, TAR_CHAR_SELF, POS_FIGHTING, None,
-                          SLOT(2), 35, 12, "", "!Teleport!", ""))
+                          spell_teleport, merc.TAR_CHAR_SELF, merc.POS_FIGHTING, None,
+                          const.SLOT(2), 35, 12, "", "!Teleport!", ""))

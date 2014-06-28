@@ -1,39 +1,41 @@
-from const import SLOT, skill_type, register_spell
-from merc import target_name, IS_SET, ROOM_SAFE, ROOM_PRIVATE, ROOM_SOLITARY, ROOM_NO_RECALL, IS_NPC, ACT_AGGRESSIVE, \
-    LEVEL_IMMORTAL, IMM_SUMMON, PLR_NOSUMMON, saves_spell, DAM_OTHER, act, TO_ROOM, TO_VICT, POS_STANDING, TAR_IGNORE
+import const
+import handler_game
+import handler_magic
+import merc
+import state_checks
 
 
 def spell_summon(sn, level, ch, victim, target):
-    victim = ch.get_char_world(target_name)
+    victim = ch.get_char_world(handler_magic.target_name)
     if not victim \
             or victim == ch \
             or victim.in_room == None \
-            or IS_SET(ch.in_room.room_flags, ROOM_SAFE) \
-            or IS_SET(victim.in_room.room_flags, ROOM_SAFE) \
-            or IS_SET(victim.in_room.room_flags, ROOM_PRIVATE) \
-            or IS_SET(victim.in_room.room_flags, ROOM_SOLITARY) \
-            or IS_SET(victim.in_room.room_flags, ROOM_NO_RECALL) \
-            or (IS_NPC(victim) and IS_SET(victim.act, ACT_AGGRESSIVE)) \
+            or state_checks.IS_SET(ch.in_room.room_flags, merc.ROOM_SAFE) \
+            or state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_SAFE) \
+            or state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_PRIVATE) \
+            or state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_SOLITARY) \
+            or state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_NO_RECALL) \
+            or (state_checks.IS_NPC(victim) and state_checks.IS_SET(victim.act, merc.ACT_AGGRESSIVE)) \
             or victim.level >= level + 3 \
-            or (not IS_NPC(victim) and victim.level >= LEVEL_IMMORTAL) \
+            or (not state_checks.IS_NPC(victim) and victim.level >= merc.LEVEL_IMMORTAL) \
             or victim.fighting != None \
-            or (IS_NPC(victim) and IS_SET(victim.imm_flags, IMM_SUMMON)) \
-            or (IS_NPC(victim) and victim.pIndexData.pShop != None) \
-            or (not IS_NPC(victim) and IS_SET(victim.act, PLR_NOSUMMON)) \
-            or (IS_NPC(victim) and saves_spell(level, victim, DAM_OTHER)):
+            or (state_checks.IS_NPC(victim) and state_checks.IS_SET(victim.imm_flags, merc.IMM_SUMMON)) \
+            or (state_checks.IS_NPC(victim) and victim.pIndexData.pShop != None) \
+            or (not state_checks.IS_NPC(victim) and state_checks.IS_SET(victim.act, merc.PLR_NOSUMMON)) \
+            or (state_checks.IS_NPC(victim) and handler_magic.saves_spell(level, victim, merc.DAM_OTHER)):
         ch.send("You failed.\n")
         return
 
-    act("$n disappears suddenly.", victim, None, None, TO_ROOM)
+    handler_game.act("$n disappears suddenly.", victim, None, None, merc.TO_ROOM)
     victim.from_room()
     victim.to_room(ch.in_room)
-    act("$n arrives suddenly.", victim, None, None, TO_ROOM)
-    act("$n has summoned you! ", ch, None, victim, TO_VICT)
+    handler_game.act("$n arrives suddenly.", victim, None, None, merc.TO_ROOM)
+    handler_game.act("$n has summoned you! ", ch, None, victim, merc.TO_VICT)
     victim.do_look("auto")
 
 
-register_spell(skill_type("summon",
+const.register_spell(const.skill_type("summon",
                           {'mage': 24, 'cleric': 12, 'thief': 29, 'warrior': 22},
                           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_summon, TAR_IGNORE, POS_STANDING, None,
-                          SLOT(40), 50, 12, "", "!Summon!", ""))
+                          spell_summon, merc.TAR_IGNORE, merc.POS_STANDING, None,
+                          const.SLOT(40), 50, 12, "", "!Summon!", ""))

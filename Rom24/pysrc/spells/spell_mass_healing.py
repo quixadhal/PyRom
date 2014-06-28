@@ -1,16 +1,18 @@
-from const import skill_table, SLOT, skill_type, register_spell
-from merc import IS_NPC, TARGET_CHAR, POS_STANDING, TAR_IGNORE
+import const
+import merc
+import state_checks
 
 
 def spell_mass_healing(sn, level, ch, victim, target):
     for gch in ch.in_room.people:
-        if (IS_NPC(ch) and IS_NPC(gch) ) or ( not IS_NPC(ch) and not IS_NPC(gch)):
-            skill_table['heal'].spell_fun('heal', level, ch, gch, TARGET_CHAR)
-            skill_table['refresh'].spell_fun('refresh', level, ch, gch, TARGET_CHAR)
+        if (
+            state_checks.IS_NPC(ch) and state_checks.IS_NPC(gch) ) or ( not state_checks.IS_NPC(ch) and not state_checks.IS_NPC(gch)):
+            const.skill_table['heal'].spell_fun('heal', level, ch, gch, merc.TARGET_CHAR)
+            const.skill_table['refresh'].spell_fun('refresh', level, ch, gch, merc.TARGET_CHAR)
 
 
-register_spell(skill_type("mass healing",
+const.register_spell(const.skill_type("mass healing",
                           {'mage': 53, 'cleric': 38, 'thief': 53, 'warrior': 46},
                           {'mage': 2, 'cleric': 2, 'thief': 4, 'warrior': 4},
-                          spell_mass_healing, TAR_IGNORE, POS_STANDING, None,
-                          SLOT(508), 100, 36, "", "!Mass Healing!", ""))
+                          spell_mass_healing, merc.TAR_IGNORE, merc.POS_STANDING, None,
+                          const.SLOT(508), 100, 36, "", "!Mass Healing!", ""))

@@ -4,10 +4,11 @@ logger = logging.getLogger()
 
 import merc
 import interp
+import game_utils
 
 
 def do_examine(ch, argument):
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
     if not arg:
         ch.send("Examine what?\n")
         return

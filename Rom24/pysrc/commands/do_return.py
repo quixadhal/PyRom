@@ -4,6 +4,7 @@ logger = logging.getLogger()
 
 import merc
 import interp
+import handler_game
 
 
 def do_return(ch, argument):
@@ -15,7 +16,7 @@ def do_return(ch, argument):
     ch.send("You return to your original body. Type replay to see any missed tells.\n")
     if ch.prompt:
         ch.prompt = ''
-    merc.wiznet("$N returns from %s." % ch.short_descr, ch.desc.original, 0, merc.WIZ_SWITCHES, merc.WIZ_SECURE,
+    handler_game.wiznet("$N returns from %s." % ch.short_descr, ch.desc.original, 0, merc.WIZ_SWITCHES, merc.WIZ_SECURE,
                 ch.get_trust())
     ch.desc.character = ch.desc.original
     ch.desc.original = None

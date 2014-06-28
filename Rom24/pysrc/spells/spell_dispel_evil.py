@@ -1,32 +1,35 @@
-from const import SLOT, skill_type, register_spell
-from fight import damage
-from merc import IS_NPC, IS_EVIL, IS_GOOD, act, TO_ROOM, IS_NEUTRAL, TO_CHAR, dice, saves_spell, DAM_HOLY, POS_FIGHTING, \
-    TAR_CHAR_OFFENSIVE
+import const
+import fight
+import game_utils
+import handler_game
+import handler_magic
+import merc
+import state_checks
 
 
 def spell_dispel_evil(sn, level, ch, victim, target):
-    if not IS_NPC(ch) and IS_EVIL(ch):
+    if not state_checks.IS_NPC(ch) and state_checks.IS_EVIL(ch):
         victim = ch
 
-    if IS_GOOD(victim):
-        act("Mota protects $N.", ch, None, victim, TO_ROOM)
+    if state_checks.IS_GOOD(victim):
+        handler_game.act("Mota protects $N.", ch, None, victim, merc.TO_ROOM)
         return
 
-    if IS_NEUTRAL(victim):
-        act("$N does not seem to be affected.", ch, None, victim, TO_CHAR)
+    if state_checks.IS_NEUTRAL(victim):
+        handler_game.act("$N does not seem to be affected.", ch, None, victim, merc.TO_CHAR)
         return
 
     if victim.hit > (ch.level * 4):
-        dam = dice(level, 4)
+        dam = game_utils.dice(level, 4)
     else:
-        dam = max(victim.hit, dice(level, 4))
-    if saves_spell(level, victim, DAM_HOLY):
+        dam = max(victim.hit, game_utils.dice(level, 4))
+    if handler_magic.saves_spell(level, victim, merc.DAM_HOLY):
         dam = dam // 2
-    damage(ch, victim, dam, sn, DAM_HOLY, True)
+    fight.damage(ch, victim, dam, sn, merc.DAM_HOLY, True)
 
 
-register_spell(skill_type("dispel evil",
+const.register_spell(const.skill_type("dispel evil",
                           {'mage': 53, 'cleric': 15, 'thief': 53, 'warrior': 21},
                           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_dispel_evil, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
-                          None, SLOT(22), 15, 12, "dispel evil", "!Dispel Evil!", ""))
+                          spell_dispel_evil, merc.TAR_CHAR_OFFENSIVE, merc.POS_FIGHTING,
+                          None, const.SLOT(22), 15, 12, "dispel evil", "!Dispel Evil!", ""))

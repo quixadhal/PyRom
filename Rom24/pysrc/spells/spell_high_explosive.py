@@ -1,20 +1,20 @@
 import random
-
-from const import SLOT, skill_type, register_spell
-from fight import damage
-from merc import saves_spell, DAM_PIERCE, POS_FIGHTING, TAR_CHAR_OFFENSIVE
+import const
+import fight
+import handler_magic
+import merc
 
 
 def spell_high_explosive(sn, level, ch, victim, target):
     dam = random.randint(30, 120)
-    if saves_spell(level, victim, DAM_PIERCE):
+    if handler_magic.saves_spell(level, victim, merc.DAM_PIERCE):
         dam = dam // 2
-    damage(ch, victim, dam, sn, DAM_PIERCE, True)
+    fight.damage(ch, victim, dam, sn, merc.DAM_PIERCE, True)
 
 
-register_spell(skill_type("high explosive",
+const.register_spell(const.skill_type("high explosive",
                           {'mage': 53, 'cleric': 53, 'thief': 53, 'warrior': 53},
                           {'mage': 0, 'cleric': 0, 'thief': 0, 'warrior': 0},
-                          spell_high_explosive, TAR_CHAR_OFFENSIVE, POS_FIGHTING,
-                          None, SLOT(402), 0, 12, "high explosive ammo", "!High Explosive Ammo!",
+                          spell_high_explosive, merc.TAR_CHAR_OFFENSIVE, merc.POS_FIGHTING,
+                          None, const.SLOT(402), 0, 12, "high explosive ammo", "!High Explosive Ammo!",
                           ""))  # combat and weapons skills */)

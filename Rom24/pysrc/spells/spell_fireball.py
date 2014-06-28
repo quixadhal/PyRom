@@ -1,8 +1,8 @@
 import random
-
-from const import SLOT, skill_type, register_spell
-from fight import damage
-from merc import saves_spell, DAM_FIRE, POS_FIGHTING, TAR_CHAR_OFFENSIVE
+import const
+import fight
+import handler_magic
+import merc
 
 
 def spell_fireball(sn, level, ch, victim, target):
@@ -16,13 +16,13 @@ def spell_fireball(sn, level, ch, victim, target):
     level = min(level, len(dam_each) - 1)
     level = max(0, level)
     dam = random.randint(dam_each[level] // 2, dam_each[level] * 2)
-    if saves_spell(level, victim, DAM_FIRE):
+    if handler_magic.saves_spell(level, victim, merc.DAM_FIRE):
         dam = dam // 2
-    damage(ch, victim, dam, sn, DAM_FIRE, True)
+    fight.damage(ch, victim, dam, sn, merc.DAM_FIRE, True)
 
 
-register_spell(skill_type("fireball",
+const.register_spell(const.skill_type("fireball",
                           {'mage': 22, 'cleric': 53, 'thief': 30, 'warrior': 26},
                           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_fireball, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None,
-                          SLOT(26), 15, 12, "fireball", "!Fireball!", ""))
+                          spell_fireball, merc.TAR_CHAR_OFFENSIVE, merc.POS_FIGHTING, None,
+                          const.SLOT(26), 15, 12, "fireball", "!Fireball!", ""))

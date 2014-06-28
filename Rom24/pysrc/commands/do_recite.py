@@ -6,11 +6,14 @@ import random
 import merc
 import interp
 import skills
+import game_utils
+import handler_game
+import handler_magic
 
 
 def do_recite(ch, argument):
-    argument, arg1 = merc.read_word(argument)
-    argument, arg2 = merc.read_word(argument)
+    argument, arg1 = game_utils.read_word(argument)
+    argument, arg2 = game_utils.read_word(argument)
     scroll = ch.get_obj_carry(arg1, ch)
     if not scroll:
         ch.send("You do not have that scroll.\n")
@@ -31,16 +34,16 @@ def do_recite(ch, argument):
         if not victim and not obj:
             ch.send("You can't find it.\n")
             return
-        merc.act("$n recites $p.", ch, scroll, None, merc.TO_ROOM)
-        merc.act("You recite $p.", ch, scroll, None, merc.TO_CHAR)
+        handler_game.act("$n recites $p.", ch, scroll, None, merc.TO_ROOM)
+        handler_game.act("You recite $p.", ch, scroll, None, merc.TO_CHAR)
 
     if random.randint(1, 99) >= 20 + ch.get_skill("scrolls") * 4 // 5:
         ch.send("You mispronounce a syllable.\n")
         skills.check_improve(ch, "scrolls", False, 2)
     else:
-        merc.obj_cast_spell(scroll.value[1], scroll.value[0], ch, victim, obj)
-        merc.obj_cast_spell(scroll.value[2], scroll.value[0], ch, victim, obj)
-        merc.obj_cast_spell(scroll.value[3], scroll.value[0], ch, victim, obj)
+        handler_magic.obj_cast_spell(scroll.value[1], scroll.value[0], ch, victim, obj)
+        handler_magic.obj_cast_spell(scroll.value[2], scroll.value[0], ch, victim, obj)
+        handler_magic.obj_cast_spell(scroll.value[3], scroll.value[0], ch, victim, obj)
         skills.check_improve(ch, "scrolls", True, 2)
     scroll.extract()
     return

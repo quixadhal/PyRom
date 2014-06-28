@@ -3,6 +3,9 @@ import logging
 logger = logging.getLogger()
 
 import random
+
+import handler_game
+import state_checks
 import merc
 import const
 import interp
@@ -18,7 +21,7 @@ def do_disarm(ch, argument):
         return
     hth = ch.get_skill('hand to hand')
     if not ch.get_eq(merc.WEAR_WIELD) \
-            and hth == 0 or (merc.IS_NPC(ch) and not merc.IS_SET(ch.off_flags, merc.OFF_DISARM)):
+            and hth == 0 or (state_checks.IS_NPC(ch) and not state_checks.IS_SET(ch.off_flags, merc.OFF_DISARM)):
         ch.send("You must wield a weapon to disarm.\n")
         return
     victim = ch.fighting
@@ -38,7 +41,7 @@ def do_disarm(ch, argument):
     # modifiers
 
     # skill
-    if ch.get_eq(merc.WEAR_WIELD) == None:
+    if ch.get_eq(merc.WEAR_WIELD) is None:
         chance = chance * hth // 150
     else:
         chance = chance * ch_weapon // 100
@@ -54,14 +57,14 @@ def do_disarm(ch, argument):
 
     # and now the attack
     if random.randint(1, 99) < chance:
-        merc.WAIT_STATE(ch, const.skill_table['disarm'].beats)
+        state_checks.WAIT_STATE(ch, const.skill_table['disarm'].beats)
         fight.disarm(ch, victim)
         skills.check_improve(ch, 'disarm', True, 1)
     else:
-        merc.WAIT_STATE(ch, const.skill_table['disarm'].beats)
-        merc.act("You fail to disarm $N.", ch, None, victim, merc.TO_CHAR)
-        merc.act("$n tries to disarm you, but fails.", ch, None, victim, merc.TO_VICT)
-        merc.act("$n tries to disarm $N, but fails.", ch, None, victim, merc.TO_NOTVICT)
+        state_checks.WAIT_STATE(ch, const.skill_table['disarm'].beats)
+        handler_game.act("You fail to disarm $N.", ch, None, victim, merc.TO_CHAR)
+        handler_game.act("$n tries to disarm you, but fails.", ch, None, victim, merc.TO_VICT)
+        handler_game.act("$n tries to disarm $N, but fails.", ch, None, victim, merc.TO_NOTVICT)
         skills.check_improve(ch, 'disarm', False, 1)
     fight.check_killer(ch, victim)
     return

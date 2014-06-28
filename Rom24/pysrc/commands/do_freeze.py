@@ -5,10 +5,13 @@ logger = logging.getLogger()
 import merc
 import interp
 import save
+import game_utils
+import handler_game
+import state_checks
 
 
 def do_freeze(ch, argument):
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
     if not arg:
         ch.send("Freeze whom?\n")
         return
@@ -16,22 +19,23 @@ def do_freeze(ch, argument):
     if not victim:
         ch.send("They aren't here.\n")
         return
-    if merc.IS_NPC(victim):
+    if state_checks.IS_NPC(victim):
         ch.send("Not on NPC's.\n")
         return
     if victim.get_trust() >= ch.get_trust():
         ch.send("You failed.\n")
         return
-    if merc.IS_SET(victim.act, merc.PLR_FREEZE):
-        victim.act = merc.REMOVE_BIT(victim.act, merc.PLR_FREEZE)
+    if state_checks.IS_SET(victim.act, merc.PLR_FREEZE):
+        victim.act = state_checks.REMOVE_BIT(victim.act, merc.PLR_FREEZE)
         victim.send("You can play again.\n")
         ch.send("FREEZE removed.\n")
-        merc.wiznet("$N thaws %s." % victim.name, ch, None, merc.WIZ_PENALTIES, merc.WIZ_SECURE, 0)
+        handler_game.wiznet("$N thaws %s." % victim.name, ch, None, merc.WIZ_PENALTIES, merc.WIZ_SECURE, 0)
     else:
-        victim.act = merc.SET_BIT(victim.act, merc.PLR_FREEZE)
+        victim.act = state_checks.SET_BIT(victim.act, merc.PLR_FREEZE)
         victim.send("You can't do ANYthing!\n")
         ch.send("FREEZE set.\n")
-        merc.wiznet("$N puts %s in the deep freeze." % victim.name, ch, None, merc.WIZ_PENALTIES, merc.WIZ_SECURE, 0)
+        handler_game.wiznet("$N puts %s in the deep freeze." % victim.name, ch, None, merc.WIZ_PENALTIES,
+                            merc.WIZ_SECURE, 0)
 
     save.save_char_obj(victim)
     return

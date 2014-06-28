@@ -5,10 +5,11 @@ logger = logging.getLogger()
 import merc
 import interp
 import settings
+import game_utils
 
 
 def do_typo(ch, argument):
-    merc.append_file(ch, settings.TYPO_FILE, argument)
+    game_utils.append_file(ch, settings.TYPO_FILE, argument)
     ch.send("Typo logged.\n")
     return
 

@@ -2,32 +2,35 @@ import logging
 
 logger = logging.getLogger()
 
-from interp import cmd_type, register_command
-from merc import read_word, IS_AWAKE, act, TO_CHAR, IS_AFFECTED, AFF_SLEEP, TO_VICT, POS_SLEEPING, LOG_NORMAL
+import game_utils
+import handler_game
+import merc
+import interp
+import state_checks
 
 
 def do_wake(ch, argument):
-    argument, arg = read_word(argument)
+    argument, arg = game_utils.read_word(argument)
     if not arg:
         ch.do_stand("")
         return
 
-    if not IS_AWAKE(ch):
+    if not state_checks.IS_AWAKE(ch):
         ch.send("You are asleep yourself!\n")
         return
     victim = ch.get_char_room(arg)
     if not victim:
         ch.send("They aren't here.\n")
         return
-    if IS_AWAKE(victim):
-        act("$N is already awake.", ch, None, victim, TO_CHAR)
+    if state_checks.IS_AWAKE(victim):
+        handler_game.act("$N is already awake.", ch, None, victim, merc.TO_CHAR)
         return
-    if IS_AFFECTED(victim, AFF_SLEEP):
-        act("You can't wake $M!", ch, None, victim, TO_CHAR)
+    if state_checks.IS_AFFECTED(victim, merc.AFF_SLEEP):
+        handler_game.act("You can't wake $M!", ch, None, victim, merc.TO_CHAR)
         return
-    act("$n wakes you.", ch, None, victim, TO_VICT, POS_SLEEPING)
+    handler_game.act("$n wakes you.", ch, None, victim, merc.TO_VICT, merc.POS_SLEEPING)
     victim.do_stand("")
     return
 
 
-register_command(cmd_type('wake', do_wake, POS_SLEEPING, 0, LOG_NORMAL, 1))
+interp.register_command(interp.cmd_type('wake', do_wake, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1))

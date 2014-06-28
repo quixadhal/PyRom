@@ -1,19 +1,19 @@
-from const import SLOT, skill_type, register_spell
-from fight import update_pos
-from merc import POS_FIGHTING, TAR_CHAR_DEFENSIVE
+import const
+import fight
+import merc
 
 
 def spell_heal(sn, level, ch, victim, target):
     victim.hit = min(victim.hit + 100, victim.max_hit)
-    update_pos(victim)
+    fight.update_pos(victim)
     victim.send("A warm feeling fills your body.\n")
     if ch != victim:
         ch.send("Ok.\n")
     return
 
 
-register_spell(skill_type("heal",
+const.register_spell(const.skill_type("heal",
                           {'mage': 53, 'cleric': 21, 'thief': 33, 'warrior': 30},
                           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_heal, TAR_CHAR_DEFENSIVE, POS_FIGHTING, None,
-                          SLOT(28), 50, 12, "", "!Heal!", ""))
+                          spell_heal, merc.TAR_CHAR_DEFENSIVE, merc.POS_FIGHTING, None,
+                          const.SLOT(28), 50, 12, "", "!Heal!", ""))

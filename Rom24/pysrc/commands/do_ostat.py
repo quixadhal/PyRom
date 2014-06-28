@@ -1,18 +1,17 @@
 import logging
+import game_utils
+import merc
 
 logger = logging.getLogger()
 
-from merc import read_word, ITEM_SCROLL, ITEM_POTION, ITEM_PILL, ITEM_WAND, ITEM_STAFF, ITEM_DRINK_CON, ITEM_WEAPON, \
-    WEAPON_EXOTIC, WEAPON_POLEARM, WEAPON_FLAIL, WEAPON_WHIP, WEAPON_MACE, WEAPON_DAGGER, WEAPON_SPEAR, WEAPON_SWORD, \
-    WEAPON_AXE, ITEM_ARMOR, ITEM_CONTAINER, TO_AFFECTS, TO_WEAPON, TO_OBJECT, TO_IMMUNE, TO_RESIST, TO_VULN, IM, \
-    POS_DEAD, LOG_NORMAL
+
 import const
 import interp
 import handler
 
 
 def do_ostat(ch, argument):
-    argument, arg = read_word(argument)
+    argument, arg = game_utils.read_word(argument)
     if not arg:
         ch.send("Stat what?\n")
         return
@@ -40,32 +39,32 @@ def do_ostat(ch, argument):
     ch.send("Values: %s\n" % [v for v in obj.value])
     # now give out vital statistics as per identify
 
-    if obj.item_type == ITEM_SCROLL \
-            or obj.item_type == ITEM_POTION \
-            or obj.item_type == ITEM_PILL:
+    if obj.item_type == merc.ITEM_SCROLL \
+            or obj.item_type == merc.ITEM_POTION \
+            or obj.item_type == merc.ITEM_PILL:
         ch.send("Level %d spells of:", obj.value[0])
         for value in obj.value:
             if value and value in const.skill_table:
                 ch.send(" '%s'" % const.skill_table[value].name)
 
         ch.send(".\n")
-    elif obj.item_type == ITEM_WAND \
-            or obj.item_type == ITEM_STAFF:
+    elif obj.item_type == merc.ITEM_WAND \
+            or obj.item_type == merc.ITEM_STAFF:
         ch.send("Has %d(%d) charges of level %d" % (obj.value[1], obj.value[2], obj.value[0] ))
 
         if obj.value[3] and obj.value[3] in const.skill_table:
             ch.send(" '%s'" % const.skill_table[obj.value[3]].name)
         ch.send(".\n")
-    elif obj.item_type == ITEM_DRINK_CON:
+    elif obj.item_type == merc.ITEM_DRINK_CON:
         ch.send("It holds %s-colored %s.\n" % (const.liq_table[obj.value[2]].liq_color,
                                                const.liq_table[obj.value[2]].liq_name))
-    elif obj.item_type == ITEM_WEAPON:
+    elif obj.item_type == merc.ITEM_WEAPON:
         ch.send("Weapon type is ")
-        weapon_type = {WEAPON_EXOTIC: "exotic", WEAPON_SWORD: "sword",
-                       WEAPON_DAGGER: "dagger", WEAPON_SPEAR: "spear/staff",
-                       WEAPON_MACE: "mace/club", WEAPON_AXE: "axe",
-                       WEAPON_FLAIL: "flail", WEAPON_WHIP: "whip",
-                       WEAPON_POLEARM: "polearm"}
+        weapon_type = {merc.WEAPON_EXOTIC: "exotic", merc.WEAPON_SWORD: "sword",
+                       merc.WEAPON_DAGGER: "dagger", merc.WEAPON_SPEAR: "spear/staff",
+                       merc.WEAPON_MACE: "mace/club", merc.WEAPON_AXE: "axe",
+                       merc.WEAPON_FLAIL: "flail", merc.WEAPON_WHIP: "whip",
+                       merc.WEAPON_POLEARM: "polearm"}
         if obj.value[0] not in weapon_type:
             ch.send("unknown\n")
         else:
@@ -80,10 +79,10 @@ def do_ostat(ch, argument):
         const.attack_table[obj.value[3]].noun if obj.value[3] in const.attack_table else "undefined"))
         if obj.value[4] > 0:  # weapon flags
             ch.send("Weapons flags: %s\n" % handler.weapon_bit_name(obj.value[4]))
-    elif obj.item_type == ITEM_ARMOR:
+    elif obj.item_type == merc.ITEM_ARMOR:
         ch.send("Armor class is %d pierce, %d bash, %d slash, and %d vs. magic\n" % (
             obj.value[0], obj.value[1], obj.value[2], obj.value[3] ))
-    elif obj.item_type == ITEM_CONTAINER:
+    elif obj.item_type == merc.ITEM_CONTAINER:
         ch.send("Capacity: %d#  Maximum weight: %d#  flags: %s\n" % (
         obj.value[0], obj.value[3], handler.cont_bit_name(obj.value[1])))
         if obj.value[4] != 100:
@@ -106,20 +105,20 @@ def do_ostat(ch, argument):
         else:
             ch.send(".\n")
         if paf.bitvector:
-            if paf.where == TO_AFFECTS:
+            if paf.where == merc.TO_AFFECTS:
                 ch.send("Adds %s affect.\n" % handler.affect_bit_name(paf.bitvector))
-            elif paf.where == TO_WEAPON:
+            elif paf.where == merc.TO_WEAPON:
                 ch.send("Adds %s weapon flags.\n" % handler.weapon_bit_name(paf.bitvector))
-            elif paf.where == TO_OBJECT:
+            elif paf.where == merc.TO_OBJECT:
                 ch.send("Adds %s object flag.\n" % handler.extra_bit_name(paf.bitvector))
-            elif paf.where == TO_IMMUNE:
+            elif paf.where == merc.TO_IMMUNE:
                 ch.send("Adds immunity to %s.\n" % handler.imm_bit_name(paf.bitvector))
-            elif paf.where == TO_RESIST:
+            elif paf.where == merc.TO_RESIST:
                 ch.send("Adds resistance to %s.\n" % handler.imm_bit_name(paf.bitvector))
-            elif paf.where == TO_VULN:
+            elif paf.where == merc.TO_VULN:
                 ch.send("Adds vulnerability to %s.\n" % handler.imm_bit_name(paf.bitvector))
             else:
                 ch.send("Unknown bit %d: %d\n" % paf.where, paf.bitvector)
 
 
-interp.register_command(interp.cmd_type('ostat', do_ostat, POS_DEAD, IM, LOG_NORMAL, 1))
+interp.register_command(interp.cmd_type('ostat', do_ostat, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1))

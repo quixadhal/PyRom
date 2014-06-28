@@ -4,17 +4,18 @@ logger = logging.getLogger()
 
 import merc
 import interp
-
+import game_utils
+import state_checks
 
 def do_title(ch, argument):
-    if merc.IS_NPC(ch):
+    if state_checks.IS_NPC(ch):
         return
     if not argument:
         ch.send("Change your title to what?\n")
         return
     if len(argument) > 45:
         argument = argument[:45]
-    merc.set_title(ch, argument)
+    game_utils.set_title(ch, argument)
     ch.send("Ok.\n")
 
 

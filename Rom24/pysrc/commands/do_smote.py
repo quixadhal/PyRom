@@ -4,11 +4,12 @@ logger = logging.getLogger()
 
 import merc
 import interp
-
+import game_utils
+import state_checks
 
 def do_smote(ch, argument):
     matches = 0
-    if not merc.IS_NPC(ch) and merc.IS_SET(ch.comm, merc.COMM_NOEMOTE):
+    if not state_checks.IS_NPC(ch) and state_checks.IS_SET(ch.comm, merc.COMM_NOEMOTE):
         ch.send("You can't show your emotions.\n")
         return
     if not argument:
@@ -24,7 +25,7 @@ def do_smote(ch, argument):
         if vch.name not in argument:
             vch.send(argument + "\n")
             continue
-        buf = merc.mass_replace({"%s's" % vch.name: 'your', vch.name: 'you'})
+        buf = game_utils.mass_replace({"%s's" % vch.name: 'your', vch.name: 'you'})
         vch.send(buf + "\n")
     return
 

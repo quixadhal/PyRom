@@ -32,15 +32,17 @@
  ************/
 """
 import hashlib
-import time
-from merc import *
+
 from settings import *
 from const import race_table, pc_race_table, guild_table, weapon_table, title_table
 from save import load_char_obj
-from db import read_word, create_object
 from skills import *
-from handler import wiznet
+
+import game_utils
+import db
+import handler_game
 import comm
+import state_checks
 
 def licheck(c):
     if c.lower() == 'l':
@@ -76,7 +78,7 @@ def con_get_name( self ):
 
     found,ch = load_char_obj(self,name)
 
-    if IS_SET( ch.act, PLR_DENY ):
+    if state_checks.IS_SET( ch.act, PLR_DENY ):
         print ("Denying access to %s@%s" % (ch.name, self.addrport()))
         self.send("You have been denied access.")
         self.deactivate()
@@ -85,7 +87,7 @@ def con_get_name( self ):
     if comm.is_reconnecting(self, name):
         found = True
     
-    if WIZLOCK and not IS_IMMORTAL(ch):
+    if WIZLOCK and not state_checks.IS_IMMORTAL(ch):
         ch.send("Game is wizlocked")
         self.deactivate()
         return
@@ -157,7 +159,7 @@ def con_get_new_race(self):
     argument = self.get_command().lower()
     ch = self.character
     if argument.startswith("help"):
-        argument, arg = read_word(argument)
+        argument, arg = game_utils.read_word(argument)
         if not argument:
             ch.do_help('race help')
         else:
@@ -165,7 +167,7 @@ def con_get_new_race(self):
         ch.send( "\nWhat is your race (help for more information)? ")
         return
 
-    race = prefix_lookup(pc_race_table, argument)
+    race = state_checks.prefix_lookup(pc_race_table, argument)
 
     if not race:
         ch.send("That is not a valid race.\n")
@@ -224,7 +226,7 @@ def con_get_new_class(self):
     argument = self.get_command()
     ch = self.character
 
-    guild = prefix_lookup(guild_table, argument)
+    guild = state_checks.prefix_lookup(guild_table, argument)
 
     if not guild:
         ch.send("That's not a class.\nWhat IS your class? ")
@@ -234,8 +236,8 @@ def con_get_new_class(self):
 
     log_buf = "%s@%s new player." % ( ch.name, self.addrport() )
     print (log_buf)
-    wiznet("Newbie alert!  $N sighted.",ch,None,WIZ_NEWBIE,0,0)
-    wiznet(log_buf,None,None,WIZ_SITES,0,ch.get_trust())
+    handler_game.wiznet("Newbie alert!  $N sighted.",ch,None,WIZ_NEWBIE,0,0)
+    handler_game.wiznet(log_buf,None,None,WIZ_SITES,0,ch.get_trust())
 
     ch.send("\nYou may be good, neutral, or evil.\n")
     ch.send("Which alignment (G/N/E)? ")
@@ -269,7 +271,7 @@ def con_default_choice(self):
 
     ch.send("\n")
     if argument == 'y':
-        ch.gen_data = GEN_DATA()
+        ch.gen_data = handler_game.GEN_DATA()
         ch.gen_data.points_chosen = ch.pcdata.points
         ch.do_help("group header")
         list_group_costs(ch)
@@ -294,7 +296,7 @@ def con_default_choice(self):
 def con_pick_weapon(self):
     argument = self.get_command()
     ch = self.character
-    weapon = prefix_lookup(weapon_table, argument )
+    weapon = state_checks.prefix_lookup(weapon_table, argument )
     if not weapon or ch.pcdata.learned[weapon.gsn] <= 0:
         ch.send("That's not a valid selection. Choices are:\n")
         for k,weapon in weapon_table.items():
@@ -365,8 +367,8 @@ def con_get_old_password(self):
 
     log_buf = "%s@%s has connected." % (ch.name, self.addrport())
     print (log_buf)
-    wiznet(log_buf,None,None,WIZ_SITES,0,ch.get_trust())
-    if IS_IMMORTAL(ch):
+    handler_game.wiznet(log_buf,None,None,WIZ_SITES,0,ch.get_trust())
+    if state_checks.IS_IMMORTAL(ch):
         ch.do_help("imotd")
         self.set_connected(con_read_imotd)
     else:
@@ -386,7 +388,7 @@ def con_break_connect(self):
             chname = d_old.original if d_old.original else d_old.character
             if ch.name != chname:
                 continue
-            close_socket(d_old)
+            comm.close_socket(d_old)
         if comm.check_reconnect(self, ch.name, True):
             return
         self.send("Reconnect attempt failed.\nName: ")
@@ -435,32 +437,31 @@ def con_read_motd(self):
         ch.train    = 3
         ch.practice = 5
         buf = "the %s" % title_table[ch.guild.name][ch.level][ch.sex-1]
-        set_title( ch, buf )
+        game_utils.set_title( ch, buf )
 
         ch.do_outfit("")
-        create_object(obj_index_hash[OBJ_VNUM_MAP],0).to_char(ch)
+        db.create_object(obj_index_hash[OBJ_VNUM_MAP],0).to_char(ch)
 
         ch.to_room(room_index_hash[ROOM_VNUM_SCHOOL]) 
         ch.do_help("newbie info")
     elif ch.in_room:
         ch.to_room(ch.in_room)
-    elif IS_IMMORTAL(ch):
+    elif state_checks.IS_IMMORTAL(ch):
         ch.to_room(room_index_hash[ROOM_VNUM_CHAT])
     else:
         ch.to_room(ch, room_index_hash[ROOM_VNUM_TEMPLE])
 
-    act( "$n has entered the game.", ch, None, None, TO_ROOM )
+    handler_game.act( "$n has entered the game.", ch, None, None, TO_ROOM )
     ch.do_look("auto")
 
-    wiznet("$N has left real life behind.",ch,None, WIZ_LOGINS,WIZ_SITES,ch.get_trust())
+    handler_game.wiznet("$N has left real life behind.",ch,None, WIZ_LOGINS,WIZ_SITES,ch.get_trust())
     if ch.pet:
         ch.pet.to_room(ch.in_room)
-        act("$n has entered the game.",ch.pet,None,None,TO_ROOM)
+        handler_game.act("$n has entered the game.",ch.pet,None,None,TO_ROOM)
 
 def con_playing(self):
     command = self.get_command()
     if not command.strip():
         return
-    substitute_alias(self, command)
+    handler_game.substitute_alias(self, command)
 
-    

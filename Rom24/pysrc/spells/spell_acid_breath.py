@@ -1,34 +1,35 @@
 import random
-
-from const import SLOT, skill_type, register_spell
-from effects import acid_effect
-from fight import damage
-from merc import act, TO_NOTVICT, TO_VICT, TO_CHAR, dice, saves_spell, DAM_ACID, TARGET_CHAR, TAR_CHAR_OFFENSIVE, \
-    POS_FIGHTING
+import const
+import effects
+import fight
+import game_utils
+import handler_game
+import handler_magic
+import merc
 
 
 def spell_acid_breath(sn, level, ch, victim, target):
     # NPC spells.
-    act("$n spits acid at $N.", ch, None, victim, TO_NOTVICT)
-    act("$n spits a stream of corrosive acid at you.", ch, None, victim, TO_VICT)
-    act("You spit acid at $N.", ch, None, victim, TO_CHAR)
+    handler_game.act("$n spits acid at $N.", ch, None, victim, merc.TO_NOTVICT)
+    handler_game.act("$n spits a stream of corrosive acid at you.", ch, None, victim, merc.TO_VICT)
+    handler_game.act("You spit acid at $N.", ch, None, victim, merc.TO_CHAR)
 
     hpch = max(12, ch.hit)
     hp_dam = random.randint(hpch // 11 + 1, hpch // 6)
-    dice_dam = dice(level, 16)
+    dice_dam = game_utils.dice(level, 16)
 
     dam = max(hp_dam + dice_dam // 10, dice_dam + hp_dam // 10)
 
-    if saves_spell(level, victim, DAM_ACID):
-        acid_effect(victim, level // 2, dam // 4, TARGET_CHAR)
-        damage(ch, victim, dam // 2, sn, DAM_ACID, True)
+    if handler_magic.saves_spell(level, victim, merc.DAM_ACID):
+        effects.acid_effect(victim, level // 2, dam // 4, merc.TARGET_CHAR)
+        fight.damage(ch, victim, dam // 2, sn, merc.DAM_ACID, True)
     else:
-        acid_effect(victim, level, dam, TARGET_CHAR)
-        damage(ch, victim, dam, sn, DAM_ACID, True)
+        effects.acid_effect(victim, level, dam, merc.TARGET_CHAR)
+        fight.damage(ch, victim, dam, sn, merc.DAM_ACID, True)
 
 
-register_spell(skill_type("acid breath",
+const.register_spell(const.skill_type("acid breath",
                           {'mage': 31, 'cleric': 32, 'thief': 33, 'warrior': 34},
                           {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_acid_breath, TAR_CHAR_OFFENSIVE, POS_FIGHTING, None,
-                          SLOT(200), 100, 24, "blast of acid", "!Acid Breath!", ""))
+                          spell_acid_breath, merc.TAR_CHAR_OFFENSIVE, merc.POS_FIGHTING, None,
+                          const.SLOT(200), 100, 24, "blast of acid", "!Acid Breath!", ""))
