@@ -21,7 +21,7 @@ def read_tables(listener=None, loc=DUMP_DIR, extn=DATA_EXTN):
                 for k,v in tok.table.copy().items():
                     if k in affected:
                         del(tok.table[k])
-            print(clan_table)
+
 
         listener.send("Tables cleared. Rebuilding...\n")
     logger.info("    Loading Tables.")
@@ -44,8 +44,6 @@ def read_tables(listener=None, loc=DUMP_DIR, extn=DATA_EXTN):
                     tok.table[k] = tok.tupletype._make(v)
                 else:
                     tok.table[k] = v
-            if tok.name == 'skill_table':
-                print(tok.table)
         except (AttributeError): #Its a list
             for v in data:
                 tok.table.append(v)
