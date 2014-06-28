@@ -77,15 +77,15 @@ def mana_cost (ch, min_mana, level):
 def find_spell(ch, name):
     #* finds a spell the character can cast if possible */
     from const import skill_table
-    found = -1
+    found = None
     if state_checks.IS_NPC(ch):
         return state_checks.prefix_lookup(skill_table,name)
     for key, sn in skill_table.items():
-        if sn.name.lower().startswith(name.lower()):
-            if found == -1:
+        if key.startswith(name.lower()):
+            if found == None:
                 found = sn
-        if ch.level >= sn.skill_level[ch.guild.name] and key in ch.pcdata.learned:
-            return sn
+            if ch.level >= sn.skill_level[ch.guild.name] and key in ch.pcdata.learned:
+                return sn
     return found
 
 #Cast spells at targets using a magical object.

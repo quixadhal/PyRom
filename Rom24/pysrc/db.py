@@ -208,7 +208,7 @@ def load_mobiles(area):
         area, mob.size = game_utils.read_word(area, False)
         area, mob.material = game_utils.read_word(area, False)
         area, w = game_utils.read_word(area, False)
-        mob.size = merc.size_table.index(mob.size)
+        mob.size = tables.size_table.index(mob.size)
         while w == 'F':
             area, word = game_utils.read_word(area, False)
             area, vector = game_utils.read_flags(area)

@@ -1,4 +1,5 @@
 import logging
+from handler_ch import show_list_to_char
 
 logger = logging.getLogger()
 
@@ -8,7 +9,7 @@ import interp
 
 def do_inventory(ch, argument):
     ch.send("You are carrying:\n")
-    merc.show_list_to_char(ch.carrying, ch, True, True)
+    show_list_to_char(ch.carrying, ch, True, True)
     return
 
 

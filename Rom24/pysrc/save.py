@@ -56,7 +56,7 @@ def save_char_obj(ch):
 
     pfile = os.path.join(PLAYER_DIR, ch.name+'.json')
     #A Quick Quix fix!
-    os.makedirs(PLAYER_DIR, 0o755, exist_ok=True)
+    os.makedirs(PLAYER_DIR, 0o755, True)
 
     fwrite = fwrite_char(ch)
     if ch.carrying:
