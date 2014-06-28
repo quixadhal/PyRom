@@ -33,24 +33,21 @@
 """
 
 import logging
-import game_utils
-import handler_game
-import save
-import state_checks
 
 logger = logging.getLogger()
 
 from merc import *
+import db
+import game_utils
+import handler_game
+import save
 import random
-
-from effects import cold_effect, fire_effect, shock_effect
-from handler_magic import saves_spell
-
-
-from handler import *
-from skills import check_improve
 import update
 import const
+import effects
+import handler_magic
+import skills
+import state_checks
 
 # * Control the fights going on.
 # * Called periodically by update_handler.
@@ -149,7 +146,7 @@ def multi_hit( ch, victim, dt ):
 
     if random.randint(1,99) < chance:
         one_hit( ch, victim, dt )
-        check_improve(ch,'second_attack',True,5)
+        skills.check_improve(ch,'second_attack',True,5)
         if ch.fighting != victim:
             return
     
@@ -160,7 +157,7 @@ def multi_hit( ch, victim, dt ):
 
     if random.randint(1,99) < chance:
         one_hit( ch, victim, dt )
-        check_improve(ch,'third attack',True,6)
+        skills.check_improve(ch,'third attack',True,6)
         if ch.fighting != victim:
             return
     return
@@ -349,7 +346,7 @@ def one_hit( ch, victim, dt ):
             dam = game_utils.dice(ch.damage[DICE_NUMBER],ch.damage[DICE_TYPE])
     else:
         if sn != -1:
-            check_improve(ch,sn,True,5)
+            skills.check_improve(ch,sn,True,5)
         if wield:
             if wield.pIndexData.new_format:
                 dam = game_utils.dice(wield.value[1],wield.value[2]) * skill // 100
@@ -375,7 +372,7 @@ def one_hit( ch, victim, dt ):
     if ch.get_skill('enhanced damage') > 0:
         diceroll = random.randint(1,99)
         if diceroll <= ch.get_skill('enhanced_damage'):
-            check_improve(ch,'enhanced damage',True,6)
+            skills.check_improve(ch,'enhanced damage',True,6)
             dam += 2 * ( dam * diceroll // 300)
     if not state_checks.IS_AWAKE(victim):
         dam *= 2
@@ -403,7 +400,7 @@ def one_hit( ch, victim, dt ):
                 level = wield.level
             else:
                 level = poison.level
-            if not saves_spell(level // 2,victim,DAM_POISON):
+            if not handler_magic.saves_spell(level // 2,victim,DAM_POISON):
                 victim.send("You feel poison coursing through your veins.")
                 handler_game.act("$n is poisoned by the venom on $p.", victim,wield,None,TO_ROOM)
                 af = handler_game.AFFECT_DATA()
@@ -434,20 +431,20 @@ def one_hit( ch, victim, dt ):
                 dam = random.randint(1,wield.level // 4 + 1)
                 handler_game.act("$n is burned by $p.",victim,wield,None,TO_ROOM)
                 handler_game.act("$p sears your flesh.",victim,wield,None,TO_CHAR)
-                fire_effect(victim,wield.level // 2,dam,TARGET_CHAR)
+                effects.fire_effect(victim,wield.level // 2,dam,TARGET_CHAR)
                 damage(ch,victim,dam,0,DAM_FIRE,False)
             if ch.fighting == victim and state_checks.IS_WEAPON_STAT(wield,WEAPON_FROST):
                 dam = random.randint(1,wield.level // 6 + 2)
                 handler_game.act("$p freezes $n.",victim,wield,None,TO_ROOM)
                 handler_game.act("The cold touch of $p surrounds you with ice.",
                 victim,wield,None,TO_CHAR)
-                cold_effect(victim,wield.level // 2,dam,TARGET_CHAR)
+                effects.cold_effect(victim,wield.level // 2,dam,TARGET_CHAR)
                 damage(ch,victim,dam,0,DAM_COLD,False)
             if ch.fighting == victim and state_checks.IS_WEAPON_STAT(wield,WEAPON_SHOCKING):
                 dam = random.randint(1,wield.level // 5 + 2)
                 handler_game.act("$n is struck by lightning from $p.",victim,wield,None,TO_ROOM)
                 handler_game.act("You are shocked by $p.",victim,wield,None,TO_CHAR)
-                shock_effect(victim,wield.level // 2,dam,TARGET_CHAR)
+                effects.shock_effect(victim,wield.level // 2,dam,TARGET_CHAR)
                 damage(ch,victim,dam,0,DAM_LIGHTNING,False)
     return
 
@@ -810,7 +807,7 @@ def check_parry( ch, victim ):
 
     handler_game.act( "You parry $n's attack.",  ch, None, victim, TO_VICT    )
     handler_game.act( "$N parries your attack.", ch, None, victim, TO_CHAR    )
-    check_improve(victim,'parry',True,6)
+    skills.check_improve(victim,'parry',True,6)
     return True
 
 # Check for shield block.
@@ -824,7 +821,7 @@ def check_shield_block( ch, victim ):
         return False
     handler_game.act( "You block $n's attack with your shield.",  ch, None, victim, TO_VICT)
     handler_game.act( "$N blocks your attack with a shield.", ch, None, victim, TO_CHAR)
-    check_improve(victim,'shield block',True,6)
+    skills.check_improve(victim,'shield block',True,6)
     return True
 
 # Check for dodge.
@@ -838,7 +835,7 @@ def check_dodge( ch, victim ):
         return False
     handler_game.act( "You dodge $n's attack.", ch, None, victim, TO_VICT    )
     handler_game.act( "$N dodges your attack.", ch, None, victim, TO_CHAR    )
-    check_improve(victim,'dodge',True,6)
+    skills.check_improve(victim,'dodge',True,6)
     return True
 
 # Set position of a victim.
