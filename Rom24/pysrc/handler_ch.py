@@ -1086,7 +1086,7 @@ class handler_ch:
             else:
                 skill = ch.pcdata.learned[sn]
         else:  # mobiles */
-            if const.skill_table[sn].spell_fun != magic.spell_null:
+            if const.skill_table[sn].spell_fun != None:
                 skill = 40 + 2 * ch.level
             elif sn == 'sneak' or sn == 'hide':
                 skill = ch.level * 2 + 20
@@ -1124,7 +1124,7 @@ class handler_ch:
             else:
                 skill = 0
         if ch.daze > 0:
-            if const.skill_table[sn].spell_fun != magic.spell_null:
+            if const.skill_table[sn].spell_fun != None:
                 skill /= 2
             else:
                 skill = 2 * skill / 3

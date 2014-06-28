@@ -31,12 +31,13 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
-import os
 import logging
 
 logger = logging.getLogger()
 
+import os
 from collections import OrderedDict
+
 from merc import *
 import hotfix
 from fight import *
@@ -75,8 +76,14 @@ cmd_table['kill'] = None
 cmd_table['look'] = None
 cmd_table['who'] = None
 cmd_table['autolist'] = None
-# Common other commands.
-hotfix.init_directory(os.path.join('commands'))
+
+
+def register_command(entry: cmd_type):
+    cmd_table[entry.name] = entry
+    logger.debug('    %s registered in command table.', entry.name)
+
+
+#hotfix.init_directory(os.path.join('commands'))
 
 
 def interpret(ch, argument):

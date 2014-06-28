@@ -31,4 +31,3 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
-

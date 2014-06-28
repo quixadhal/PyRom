@@ -32,7 +32,6 @@
  ************/
 """
 
-#Global MAXes
 import time
 
 MAX_TRADE = 5
@@ -602,7 +601,7 @@ AFF_SANCTUARY = H
 AFF_FAERIE_FIRE = I
 AFF_INFRARED = J
 AFF_CURSE = K
-AFF_UNUSED_FLAG = L  # unused */
+AFF_UNUSED_FLAG = L  # unused
 AFF_POISON = M
 AFF_PROTECT_EVIL = N
 AFF_PROTECT_GOOD = O
