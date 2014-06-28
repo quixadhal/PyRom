@@ -1,14 +1,16 @@
 import logging
 
+
 logger = logging.getLogger()
 
 import merc
 import const
 import interp
-
+import game_utils
+import handler_game
 
 def do_pour(ch, argument):
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
 
     if not arg or not argument:
         ch.send("Pour what into what?\n")
@@ -26,9 +28,9 @@ def do_pour(ch, argument):
             return
         out.value[1] = 0
         out.value[3] = 0
-        merc.act("You invert $p, spilling %s all over the ground." % const.liq_table[out.value[2]].liq_name, ch, out,
+        handler_game.act("You invert $p, spilling %s all over the ground." % const.liq_table[out.value[2]].liq_name, ch, out,
                  None, merc.TO_CHAR)
-        merc.act("$n inverts $p, spilling %s all over the ground." % const.liq_table[out.value[2]].liq_name, ch, out,
+        handler_game.act("$n inverts $p, spilling %s all over the ground." % const.liq_table[out.value[2]].liq_name, ch, out,
                  None, merc.TO_ROOM)
         return
     into = ch.get_obj_here(argument)
@@ -53,10 +55,10 @@ def do_pour(ch, argument):
         ch.send("They don't hold the same liquid.\n")
         return
     if out.value[1] == 0:
-        merc.act("There's nothing in $p to pour.", ch, out, None, merc.TO_CHAR)
+        handler_game.act("There's nothing in $p to pour.", ch, out, None, merc.TO_CHAR)
         return
     if into.value[1] >= into.value[0]:
-        merc.act("$p is already filled to the top.", ch, into, None, merc.TO_CHAR)
+        handler_game.act("$p is already filled to the top.", ch, into, None, merc.TO_CHAR)
         return
     amount = min(out.value[1], into.value[0] - into.value[1])
 
@@ -65,12 +67,16 @@ def do_pour(ch, argument):
     into.value[2] = out.value[2]
 
     if not vch:
-        merc.act("You pour %s from $p into $P." % const.liq_table[out.value[2]].liq_name, ch, out, into, merc.TO_CHAR)
-        merc.act("$n pours %s from $p into $P." % const.liq_table[out.value[2]].liq_name, ch, out, into, merc.TO_ROOM)
+        handler_game.act("You pour %s from $p into $P." % const.liq_table[out.value[2]].liq_name, ch, out, into,
+                         merc.TO_CHAR)
+        handler_game.act("$n pours %s from $p into $P." % const.liq_table[out.value[2]].liq_name, ch, out, into,
+                         merc.TO_ROOM)
     else:
-        merc.act("You pour some %s for $N." % const.liq_table[out.value[2]].liq_name, ch, None, vch, merc.TO_CHAR)
-        merc.act("$n pours you some %s." % const.liq_table[out.value[2]].liq_name, ch, None, vch, merc.TO_VICT)
-        merc.act("$n pours some %s for $N." % const.liq_table[out.value[2]].liq_name, ch, None, vch, merc.TO_NOTVICT)
+        handler_game.act("You pour some %s for $N." % const.liq_table[out.value[2]].liq_name, ch, None, vch,
+                         merc.TO_CHAR)
+        handler_game.act("$n pours you some %s." % const.liq_table[out.value[2]].liq_name, ch, None, vch, merc.TO_VICT)
+        handler_game.act("$n pours some %s for $N." % const.liq_table[out.value[2]].liq_name, ch, None, vch,
+                         merc.TO_NOTVICT)
 
 
 interp.register_command(interp.cmd_type('pour', do_pour, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

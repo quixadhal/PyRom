@@ -1,11 +1,13 @@
 import logging
 
+
 logger = logging.getLogger()
 
 import merc
 import interp
 import const
-
+import game_utils
+import state_checks
 
 def do_skills(ch, argument):
     fAll = False
@@ -14,14 +16,14 @@ def do_skills(ch, argument):
     max_lev = merc.LEVEL_HERO
     level = 0
     skill = None
-    if merc.IS_NPC(ch):
+    if state_checks.IS_NPC(ch):
         return
     argument = argument.lower()
     if argument:
         fAll = True
 
         if not "all".startswith(argument):
-            argument, arg = merc.read_word(argument)
+            argument, arg = game_utils.read_word(argument)
             if not arg.isdigit():
                 ch.send("Arguments must be numerical or all.\n")
                 return
@@ -33,7 +35,7 @@ def do_skills(ch, argument):
                 return
 
             if argument:
-                argument, arg = merc.read_word(argument)
+                argument, arg = game_utils.read_word(argument)
                 if not arg.isdigit():
                     ch.send("Arguments must be numerical or all.\n")
                     return

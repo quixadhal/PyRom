@@ -2,11 +2,14 @@ import logging
 
 logger = logging.getLogger()
 
+import game_utils
 import merc
 import const
 import interp
 import nanny
+import state_checks
 import tables
+import handler_ch
 
 # New 'who' command originally by Alander of Rivers of Mud.
 def do_who(ch, argument):
@@ -25,7 +28,7 @@ def do_who(ch, argument):
     # Parse arguments.
     nNumber = 0
     while True:
-        argument, arg = merc.read_word(argument)
+        argument, arg = game_utils.read_word(argument)
         if not arg:
             break
         if arg.isdigit():
@@ -68,7 +71,7 @@ def do_who(ch, argument):
         if not d.is_connected(nanny.con_playing) or not ch.can_see(d.character):
             continue
 
-        wch = merc.CH(d)
+        wch = handler_ch.CH(d)
 
         if not ch.can_see(wch):
             continue
@@ -104,17 +107,17 @@ def do_who(ch, argument):
             guild = "AVA"
         # a little formatting
         ch.send("[%2d %6s %s] %s%s%s%s%s%s%s%s\n" % (
-            wch.level,
-            const.pc_race_table[wch.race.name].who_name if wch.race.name in const.pc_race_table else "     ",
-            guild,
-            "(Incog) " if wch.incog_level >= merc.LEVEL_HERO else "",
-            "(Wizi) " if wch.invis_level >= merc.LEVEL_HERO else "",
-            wch.clan.who_name,
-            "[AFK] " if merc.IS_SET(wch.comm, merc.COMM_AFK) else "",
-            "(KILLER) " if merc.IS_SET(wch.act, merc.PLR_KILLER) else "",
-            "(THIEF) " if merc.IS_SET(wch.act, merc.PLR_THIEF) else "",
-            wch.name,
-            "" if merc.IS_NPC(wch) else wch.pcdata.title))
+                wch.level,
+                const.pc_race_table[wch.race.name].who_name if wch.race.name in const.pc_race_table else "     ",
+                guild,
+                "(Incog) " if wch.incog_level >= merc.LEVEL_HERO else "",
+                "(Wizi) " if wch.invis_level >= merc.LEVEL_HERO else "",
+                wch.clan.who_name,
+                "[AFK] " if state_checks.IS_SET(wch.comm, merc.COMM_AFK) else "",
+                "(KILLER) " if state_checks.IS_SET(wch.act, merc.PLR_KILLER) else "",
+                "(THIEF) " if state_checks.IS_SET(wch.act, merc.PLR_THIEF) else "",
+                wch.name,
+                "" if state_checks.IS_NPC(wch) else wch.pcdata.title))
     ch.send("\nPlayers found: %d\n" % nMatch)
     return
 

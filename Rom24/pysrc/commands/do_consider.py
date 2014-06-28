@@ -1,4 +1,6 @@
 import logging
+import game_utils
+import handler_game
 
 logger = logging.getLogger()
 
@@ -8,7 +10,7 @@ import fight
 
 
 def do_consider(ch, argument):
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
     if not arg:
         ch.send("Consider killing whom?\n")
         return
@@ -34,7 +36,7 @@ def do_consider(ch, argument):
         msg = "$N laughs at you mercilessly."
     else:
         msg = "Death will thank you for your gift."
-    merc.act(msg, ch, None, victim, merc.TO_CHAR)
+    handler_game.act(msg, ch, None, victim, merc.TO_CHAR)
     return
 
 

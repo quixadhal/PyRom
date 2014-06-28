@@ -4,10 +4,12 @@ logger = logging.getLogger()
 
 import merc
 import interp
+import game_utils
+import handler_obj
 
 
 def do_remove(ch, argument):
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
     if not arg:
         ch.send("Remove what?\n")
         return
@@ -15,7 +17,7 @@ def do_remove(ch, argument):
     if not obj:
         ch.send("You do not have that item.\n")
         return
-    merc.remove_obj(ch, obj.wear_loc, True)
+    handler_obj.remove_obj(ch, obj.wear_loc, True)
     return
 
 

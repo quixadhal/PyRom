@@ -4,6 +4,8 @@ logger = logging.getLogger()
 
 import merc
 import interp
+import state_checks
+import game_utils
 
 
 def do_alias(ch, argument):
@@ -12,10 +14,10 @@ def do_alias(ch, argument):
     else:
         rch = ch.desc.original if ch.desc.original else ch
 
-    if merc.IS_NPC(rch):
+    if state_checks.IS_NPC(rch):
         return
 
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
     if not arg:
         if not rch.pcdata.alias:
             ch.send("You have no aliases defined.\n")

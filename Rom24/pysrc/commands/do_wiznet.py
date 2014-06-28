@@ -5,33 +5,34 @@ logger = logging.getLogger()
 import merc
 import interp
 import const
+import state_checks
 
 
 def do_wiznet(ch, argument):
     if not argument:
-        if merc.IS_SET(ch.wiznet, merc.WIZ_ON):
+        if state_checks.IS_SET(ch.wiznet, merc.WIZ_ON):
             ch.send("Signing off of Wiznet.\n")
-            ch.wiznet = merc.REMOVE_BIT(ch.wiznet, merc.WIZ_ON)
+            ch.wiznet = state_checks.REMOVE_BIT(ch.wiznet, merc.WIZ_ON)
         else:
             ch.send("Welcome to Wiznet!\n")
-            ch.wiznet = merc.SET_BIT(ch.wiznet, merc.WIZ_ON)
+            ch.wiznet = state_checks.SET_BIT(ch.wiznet, merc.WIZ_ON)
         return
 
     if "on".startswith(argument):
         ch.send("Welcome to Wiznet!\n")
-        ch.wiznet = merc.SET_BIT(ch.wiznet, merc.WIZ_ON)
+        ch.wiznet = state_checks.SET_BIT(ch.wiznet, merc.WIZ_ON)
         return
     if "off".startswith(argument):
         ch.send("Signing off of Wiznet.\n")
-        ch.wiznet = merc.REMOVE_BIT(ch.wiznet, merc.WIZ_ON)
+        ch.wiznet = state_checks.REMOVE_BIT(ch.wiznet, merc.WIZ_ON)
         return
     buf = ''
     # show wiznet status
     if "status".startswith(argument):
-        if not merc.IS_SET(ch.wiznet, merc.WIZ_ON):
-            buf += "off "
+        if not state_checks.IS_SET(ch.wiznet, merc.WIZ_ON):
+          buf += "off "
         for name, flag in const.wiznet_table.items():
-            if merc.IS_SET(ch.wiznet, flag.flag):
+            if state_checks.IS_SET(ch.wiznet, flag.flag):
                 buf += name + " "
             ch.send("Wiznet status:\n%s\n" % buf)
             return
@@ -43,17 +44,17 @@ def do_wiznet(ch, argument):
                 buf += name + " "
         ch.send("Wiznet options available to you are:\n%s\n" % buf)
         return
-    flag = merc.prefix_lookup(const.wiznet_table, argument)
+    flag = state_checks.prefix_lookup(const.wiznet_table, argument)
     if not flag or ch.get_trust() < flag.level:
         ch.send("No such option.\n")
         return
-    if merc.IS_SET(ch.wiznet, flag.flag):
+    if state_checks.IS_SET(ch.wiznet, flag.flag):
         ch.send("You will no longer see %s on wiznet.\n" % flag.name)
-        ch.wiznet = merc.REMOVE_BIT(ch.wiznet, flag.flag)
+        ch.wiznet = state_checks.REMOVE_BIT(ch.wiznet, flag.flag)
         return
     else:
         ch.send("You will now see %s on wiznet.\n" % flag.name)
-        ch.wiznet = merc.SET_BIT(ch.wiznet, flag.flag)
+        ch.wiznet = state_checks.SET_BIT(ch.wiznet, flag.flag)
         return
 
 

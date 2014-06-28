@@ -5,10 +5,12 @@ logger = logging.getLogger()
 import merc
 import const
 import interp
+import game_utils
+import state_checks
 
 
 def do_slookup(ch, argument):
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
     if not arg:
         ch.send("Lookup which skill or spell?\n")
         return
@@ -16,7 +18,7 @@ def do_slookup(ch, argument):
         for sn, skill in const.skill_table.items():
             ch.send("Sn: %15s  Slot: %3d  Skill/spell: '%s'\n", sn, skill.slot, skill.name)
     else:
-        skill = merc.prefix_lookup(const.skill_table, arg)
+        skill = state_checks.prefix_lookup(const.skill_table, arg)
         if not skill:
             ch.send("No such skill or spell.\n")
             return

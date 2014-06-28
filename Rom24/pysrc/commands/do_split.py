@@ -4,12 +4,14 @@ logger = logging.getLogger()
 
 import merc
 import interp
-
+import game_utils
+import handler_game
+import state_checks
 
 # 'Split' originally by Gnort, God of Chaos.
 def do_split(ch, argument):
-    argument, arg1 = merc.read_word(argument)
-    argument, arg2 = merc.read_word(argument)
+    argument, arg1 = game_utils.read_word(argument)
+    argument, arg2 = game_utils.read_word(argument)
     if not arg1:
         ch.send("Split how much?\n")
         return
@@ -31,7 +33,7 @@ def do_split(ch, argument):
         return
     members = 0
     for gch in ch.in_room.people[:]:
-        if gch.is_same_group(ch) and not merc.IS_AFFECTED(gch, merc.AFF_CHARM):
+        if gch.is_same_group(ch) and not state_checks.IS_AFFECTED(gch, merc.AFF_CHARM):
             members += 1
     if members < 2:
         ch.send("Just keep it all.\n")
@@ -60,8 +62,8 @@ def do_split(ch, argument):
                 amount_silver, amount_gold, share_silver, share_gold)
 
     for gch in ch.in_room.people[:]:
-        if gch != ch and gch.is_same_group(ch) and not merc.IS_AFFECTED(gch, merc.AFF_CHARM):
-            merc.act(buf, ch, None, gch, merc.TO_VICT)
+        if gch != ch and gch.is_same_group(ch) and not state_checks.IS_AFFECTED(gch, merc.AFF_CHARM):
+            handler_game.act(buf, ch, None, gch, merc.TO_VICT)
             gch.gold += share_gold
             gch.silver += share_silver
     return

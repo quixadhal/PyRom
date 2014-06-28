@@ -35,10 +35,11 @@ import logging
 
 logger = logging.getLogger()
 
-import os
 from collections import OrderedDict
 
-import hotfix
+import game_utils
+import handler_game
+import handler_ch
 from fight import *
 from settings import LOGALL
 
@@ -52,7 +53,7 @@ class cmd_type:
         self.log = log
         self.show = show
         self.default_arg = default_arg
-        setattr(CHAR_DATA, self.do_fun.__name__, self.do_fun)
+        setattr(handler_ch.CHAR_DATA, self.do_fun.__name__, self.do_fun)
 
 # These commands don't need to be here but are, for order. These will always match first with prefixes.
 cmd_table = OrderedDict()
@@ -82,42 +83,41 @@ def register_command(entry: cmd_type):
     logger.debug('    %s registered in command table.', entry.name)
 
 
-hotfix.init_directory(os.path.join('commands'))
+#hotfix.init_directory(os.path.join('commands'))
 
 
 def interpret(ch, argument):
     # Strip leading spaces.
     argument = argument.lstrip()
-    command = ''
 
     # No hiding.
-    REMOVE_BIT(ch.affected_by, AFF_HIDE)
+    state_checks.REMOVE_BIT(ch.affected_by, AFF_HIDE)
 
     # Implement freeze command.
-    if not IS_NPC(ch) and IS_SET(ch.act, PLR_FREEZE):
+    if not state_checks.IS_NPC(ch) and state_checks.IS_SET(ch.act, PLR_FREEZE):
         ch.send("You're totally frozen!\n")
         return
     # Grab the command word.
     # Special parsing so ' can be a command,
-    # also no spaces needed after punctuation.
+    #   also no spaces needed after punctuation.
     logline = argument
     if not argument[0].isalpha() and not argument[0].isdigit():
         command = argument[0]
         argument = argument[:1].lstrip()
     else:
-        argument, command = read_word(argument)
+        argument, command = game_utils.read_word(argument)
     # Look for command in command table.
     trust = ch.get_trust()
-    cmd = prefix_lookup(cmd_table, command)
-    if cmd != None:
+    cmd = state_checks.prefix_lookup(cmd_table, command)
+    if cmd is not None:
         if cmd.level > trust:
             cmd = None
 
-    # * Log and snoop.
-    if (not IS_NPC(ch) and IS_SET(ch.act, PLR_LOG)) or LOGALL or (cmd and cmd.log == LOG_ALWAYS):
+    #* Log and snoop.
+    if (not state_checks.IS_NPC(ch) and state_checks.IS_SET(ch.act, PLR_LOG)) or LOGALL or (cmd and cmd.log == LOG_ALWAYS):
         if cmd and cmd.log != LOG_NEVER:
             log_buf = "Log %s: %s" % (ch.name, logline)
-            wiznet(log_buf, ch, None, WIZ_SECURE, 0, ch.get_trust())
+            handler_game.wiznet(log_buf, ch, None, WIZ_SECURE, 0, ch.get_trust())
             logger.info(log_buf)
     if ch.desc and ch.desc.snoop_by:
         ch.desc.snoop_by.send("% ")
@@ -161,7 +161,7 @@ def check_social(ch, command, argument):
             cmd = social
     if not cmd:
         return False
-    if not IS_NPC(ch) and IS_SET(ch.comm, COMM_NOEMOTE):
+    if not state_checks.IS_NPC(ch) and state_checks.IS_SET(ch.comm, COMM_NOEMOTE):
         ch.send("You are anti-social!\n")
         return True
 
@@ -180,32 +180,32 @@ def check_social(ch, command, argument):
         if cmd.name != "snore":
             ch.send("In your dreams, or what?\n")
             return True
-    holder, arg = read_word(argument)
+    holder, arg = game_utils.read_word(argument)
     victim = ch.get_char_room(arg)
     if not arg:
-        act(cmd.others_no_arg, ch, None, victim, TO_ROOM)
-        act(cmd.char_no_arg, ch, None, victim, TO_CHAR)
+        handler_game.act(cmd.others_no_arg, ch, None, victim, TO_ROOM)
+        handler_game.act(cmd.char_no_arg, ch, None, victim, TO_CHAR)
     elif not victim:
         ch.send("They aren't here.\n")
     elif victim == ch:
-        act(cmd.others_auto, ch, None, victim, TO_ROOM)
-        act(cmd.char_auto, ch, None, victim, TO_CHAR)
+        handler_game.act(cmd.others_auto, ch, None, victim, TO_ROOM)
+        handler_game.act(cmd.char_auto, ch, None, victim, TO_CHAR)
     else:
-        act(cmd.others_found, ch, None, victim, TO_NOTVICT)
-        act(cmd.char_found, ch, None, victim, TO_CHAR)
-        act(cmd.vict_found, ch, None, victim, TO_VICT)
+        handler_game.act(cmd.others_found, ch, None, victim, TO_NOTVICT)
+        handler_game.act(cmd.char_found, ch, None, victim, TO_CHAR)
+        handler_game.act(cmd.vict_found, ch, None, victim, TO_VICT)
 
-        if not IS_NPC(ch) and IS_NPC(victim) \
-                and not IS_AFFECTED(victim, AFF_CHARM) \
-                and IS_AWAKE(victim) and victim.desc is None:
+        if not state_checks.IS_NPC(ch) and state_checks.IS_NPC(victim) \
+                and not state_checks.IS_AFFECTED(victim, AFF_CHARM) \
+                and state_checks.IS_AWAKE(victim) and victim.desc is None:
             num = random.randint(0, 12)
             if num in [0, 1, 2, 3, 4, 5, 6, 7, 8]:
-                act(cmd.others_found, victim, None, ch, TO_NOTVICT)
-                act(cmd.char_found, victim, None, ch, TO_CHAR)
-                act(cmd.vict_found, victim, None, ch, TO_VICT)
+                handler_game.act(cmd.others_found, victim, None, ch, TO_NOTVICT)
+                handler_game.act(cmd.char_found, victim, None, ch, TO_CHAR)
+                handler_game.act(cmd.vict_found, victim, None, ch, TO_VICT)
 
             elif num in [9, 10, 11, 12]:
-                act("$n slaps $N.", victim, None, ch, TO_NOTVICT)
-                act("You slap $N.", victim, None, ch, TO_CHAR)
-                act("$n slaps you.", victim, None, ch, TO_VICT)
+                handler_game.act("$n slaps $N.", victim, None, ch, TO_NOTVICT)
+                handler_game.act("You slap $N.", victim, None, ch, TO_CHAR)
+                handler_game.act("$n slaps you.", victim, None, ch, TO_VICT)
     return True

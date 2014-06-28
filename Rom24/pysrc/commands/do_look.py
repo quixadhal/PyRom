@@ -1,4 +1,8 @@
 import logging
+import game_utils
+import handler_ch
+import handler_game
+import state_checks
 
 logger = logging.getLogger()
 
@@ -16,32 +20,35 @@ def do_look(ch, argument):
     if ch.position == merc.POS_SLEEPING:
         ch.send("You can't see anything, you're sleeping!\n")
         return
-    if not merc.check_blind(ch):
+    if not state_checks.check_blind(ch):
         return
-    if not merc.IS_NPC(ch) and not merc.IS_SET(ch.act, merc.PLR_HOLYLIGHT) \
+    if not state_checks.IS_NPC(ch) and not state_checks.IS_SET(ch.act, merc.PLR_HOLYLIGHT) \
             and ch.in_room.is_dark():
         ch.send("It is pitch black ... \n")
-        merc.show_char_to_char(ch.in_room.people, ch)
+        handler_ch.show_char_to_char(ch.in_room.people, ch)
         return
-    argument, arg1 = merc.read_word(argument)
-    argument, arg2 = merc.read_word(argument)
-    number, arg3 = merc.number_argument(arg1)
+    argument, arg1 = game_utils.read_word(argument)
+    argument, arg2 = game_utils.read_word(argument)
+    number, arg3 = game_utils.number_argument(arg1)
     count = 0
     if not arg1 or arg1 == "auto":
         # 'look' or 'look auto'
         ch.send(ch.in_room.name)
-        if merc.IS_IMMORTAL(ch) and (merc.IS_NPC(ch) \
-                                             or (
-                        merc.IS_SET(ch.act, merc.PLR_HOLYLIGHT) or merc.IS_SET(ch.act, merc.PLR_OMNI))):
+        if state_checks.IS_IMMORTAL(ch) \
+                and (state_checks.IS_NPC(ch)
+                     or (state_checks.IS_SET(ch.act, merc.PLR_HOLYLIGHT)
+                         or state_checks.IS_SET(ch.act, merc.PLR_OMNI))):
             ch.send(" [Room %d]" % ch.in_room.vnum)
         ch.send("\n")
-        if not arg1 or (not merc.IS_NPC(ch) and not merc.IS_SET(ch.comm, merc.COMM_BRIEF)):
+        if not arg1 or (not state_checks.IS_NPC(ch)
+                        and not state_checks.IS_SET(ch.comm, merc.COMM_BRIEF)):
             ch.send("  %s" % ch.in_room.description)
-        if not merc.IS_NPC(ch) and merc.IS_SET(ch.act, merc.PLR_AUTOEXIT):
+        if not state_checks.IS_NPC(ch) \
+                and state_checks.IS_SET(ch.act, merc.PLR_AUTOEXIT):
             ch.send("\n")
             ch.do_exits("auto")
-        merc.show_list_to_char(ch.in_room.contents, ch, False, False)
-        merc.show_char_to_char(ch.in_room.people, ch)
+        handler_ch.show_list_to_char(ch.in_room.contents, ch, False, False)
+        handler_ch.show_char_to_char(ch.in_room.people, ch)
         return
     if arg1 == "i" or arg1 == "in" or arg1 == "on":
         # 'look in'
@@ -67,25 +74,25 @@ def do_look(ch, argument):
                 amnt, liq_table[obj.value[2]].liq_color))
         elif item_type == merc.ITEM_CONTAINER or item_type == merc.ITEM_CORPSE_NPC \
                 or item_type == merc.ITEM_CORPSE_PC:
-            if merc.IS_SET(obj.value[1], merc.CONT_CLOSED):
+            if state_checks.IS_SET(obj.value[1], merc.CONT_CLOSED):
                 ch.send("It is closed.\n")
                 return
-            merc.act("$p holds:", ch, obj, None, merc.TO_CHAR)
-            merc.show_list_to_char(obj.contains, ch, True, True)
+            handler_game.act("$p holds:", ch, obj, None, merc.TO_CHAR)
+            handler_ch.show_list_to_char(obj.contains, ch, True, True)
             return
         else:
             ch.send("That is not a container.\n")
             return
     victim = ch.get_char_room(arg1)
     if victim:
-        merc.show_char_to_char_1(victim, ch)
+        handler_ch.show_char_to_char_1(victim, ch)
         return
     obj_list = ch.carrying
     obj_list.extend(ch.in_room.contents)
     for obj in obj_list:
         if ch.can_see_obj(obj):
             # player can see object
-            pdesc = merc.get_extra_descr(arg3, obj.extra_descr)
+            pdesc = game_utils.get_extra_descr(arg3, obj.extra_descr)
             if pdesc:
                 count += 1
                 if count == number:
@@ -93,7 +100,7 @@ def do_look(ch, argument):
                     return
             else:
                 continue
-            pdesc = merc.get_extra_descr(arg3, obj.pIndexData.extra_descr)
+            pdesc = game_utils.get_extra_descr(arg3, obj.pIndexData.extra_descr)
             if pdesc:
                 count += 1
                 if count == number:
@@ -106,7 +113,7 @@ def do_look(ch, argument):
                 if count == number:
                     ch.send("%s\n" % obj.description)
                     return
-    pdesc = merc.get_extra_descr(arg3, ch.in_room.extra_descr)
+    pdesc = game_utils.get_extra_descr(arg3, ch.in_room.extra_descr)
     if pdesc:
         count += 1
         if count == number:
@@ -144,10 +151,10 @@ def do_look(ch, argument):
     else:
         ch.send("Nothing special there.\n")
     if pexit.keyword and pexit.keyword.strip():
-        if merc.IS_SET(pexit.exit_info, merc.EX_CLOSED):
-            merc.act("The $d is closed.", ch, None, pexit.keyword, merc.TO_CHAR)
-        elif merc.IS_SET(pexit.exit_info, merc.EX_ISDOOR):
-            merc.act("The $d is open.", ch, None, pexit.keyword, merc.TO_CHAR)
+        if state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED):
+            handler_game.act("The $d is closed.", ch, None, pexit.keyword, merc.TO_CHAR)
+        elif state_checks.IS_SET(pexit.exit_info, merc.EX_ISDOOR):
+            handler_game.act("The $d is open.", ch, None, pexit.keyword, merc.TO_CHAR)
     return
 
 

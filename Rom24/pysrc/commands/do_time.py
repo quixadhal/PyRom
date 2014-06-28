@@ -4,6 +4,8 @@ logger = logging.getLogger()
 
 import merc
 import interp
+import handler_game
+
 
 day_name = ["the Moon", "the Bull", "Deception", "Thunder", "Freedom",
             "the Great Gods", "the Sun"]
@@ -14,7 +16,7 @@ month_name = ["Winter", "the Winter Wolf", "the Frost Giant", "the Old Forces",
 
 
 def do_time(ch, argument):
-    day = merc.time_info.day + 1
+    day = handler_game.time_info.day + 1
     suf = ''
     if day > 4 and day < 20:
         suf = "th"
@@ -28,9 +30,9 @@ def do_time(ch, argument):
         suf = "th"
 
     ch.send("It is %d o'clock %s, Day of %s, %d%s the Month of %s.\n" % (
-        12 if (merc.time_info.hour % 12 == 0) else merc.time_info.hour % 12,
-        "pm" if merc.time_info.hour >= 12 else "am",
-        day_name[day % 7], day, suf, month_name[merc.time_info.month]))
+        12 if (handler_game.time_info.hour % 12 == 0) else handler_game.time_info.hour % 12,
+        "pm" if handler_game.time_info.hour >= 12 else "am",
+        day_name[day % 7], day, suf, month_name[handler_game.time_info.month]))
     # ch.send("ROM started up at %s\nThe system time is %s.\n", str_boot_time, (char *) ctime(&current_time)
     return
 

@@ -1,4 +1,5 @@
 import logging
+import state_checks
 
 logger = logging.getLogger()
 
@@ -11,17 +12,17 @@ import interp
 
 
 def do_kick(ch, argument):
-    if not merc.IS_NPC(ch) and ch.level < const.skill_table['kick'].skill_level[ch.guild.name]:
+    if not state_checks.IS_NPC(ch) and ch.level < const.skill_table['kick'].skill_level[ch.guild.name]:
         ch.send("You better leave the martial arts to fighters.\n")
         return
-    if merc.IS_NPC(ch) and not merc.IS_SET(ch.off_flags, merc.OFF_KICK):
+    if state_checks.IS_NPC(ch) and not state_checks.IS_SET(ch.off_flags, merc.OFF_KICK):
         return
     victim = ch.fighting
     if not victim:
         ch.send("You aren't fighting anyone.\n")
         return
 
-    merc.WAIT_STATE(ch, const.skill_table['kick'].beats)
+    state_checks.WAIT_STATE(ch, const.skill_table['kick'].beats)
     if ch.get_skill('kick') > random.randint(1, 99):
         fight.damage(ch, victim, random.randint(1, ch.level), 'kick', merc.DAM_BASH, True)
         skills.check_improve(ch, 'kick', True, 1)

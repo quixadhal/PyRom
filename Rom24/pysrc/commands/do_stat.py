@@ -4,11 +4,11 @@ logger = logging.getLogger()
 
 import merc
 import interp
-
+import game_utils
 
 # RT to replace the 3 stat commands
 def do_stat(ch, argument):
-    string, arg = merc.read_word(argument)
+    string, arg = game_utils.read_word(argument)
     if not arg:
         ch.send("Syntax:\n")
         ch.send("  stat <name>\n")
@@ -34,7 +34,7 @@ def do_stat(ch, argument):
     if victim:
         ch.do_mstat(argument)
         return
-    location = merc.find_location(ch, argument)
+    location = game_utils.find_location(ch, argument)
     if location:
         ch.do_rstat(argument)
         return

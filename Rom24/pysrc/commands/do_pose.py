@@ -1,10 +1,14 @@
 import logging
 
+
 logger = logging.getLogger()
 
 import random
 import merc
 import interp
+import handler_game
+import state_checks
+
 
 # All the posing stuff.
 pose_table = {
@@ -168,14 +172,14 @@ pose_table = {
 
 
 def do_pose(ch, argument):
-    if merc.IS_NPC(ch):
+    if state_checks.IS_NPC(ch):
         return
     band = merc.LEVEL_HERO // len(pose_table['to_ch'][ch.guild.name])
     level = min(ch.level, merc.LEVEL_HERO) // band
     choice = random.randint(0, level)
 
-    merc.act(pose_table['to_ch'][ch.guild.name][choice], ch, None, None, merc.TO_CHAR)
-    merc.act(pose_table['to_others'][ch.guild.name][choice], ch, None, None, merc.TO_ROOM)
+    handler_game.act(pose_table['to_ch'][ch.guild.name][choice], ch, None, None, merc.TO_CHAR)
+    handler_game.act(pose_table['to_others'][ch.guild.name][choice], ch, None, None, merc.TO_ROOM)
     return
 
 

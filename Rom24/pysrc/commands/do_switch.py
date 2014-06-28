@@ -4,10 +4,13 @@ logger = logging.getLogger()
 
 import merc
 import interp
+import game_utils
+import handler_game
+import state_checks
 
 
 def do_switch(ch, argument):
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
 
     if not arg:
         ch.send("Switch into whom?\n")
@@ -24,18 +27,18 @@ def do_switch(ch, argument):
     if victim == ch:
         ch.send("Ok.\n")
         return
-    if not merc.IS_NPC(victim):
+    if not state_checks.IS_NPC(victim):
         ch.send("You can only switch into mobiles.\n")
         return
     if not ch.is_room_owner(victim.in_room) and ch.in_room != victim.in_room \
-            and victim.in_room.is_private() and not merc.IS_TRUSTED(ch, merc.MAX_LEVEL):
+            and victim.in_room.is_private() and not state_checks.IS_TRUSTED(ch, merc.MAX_LEVEL):
         ch.send("That character is in a private room.\n")
         return
     if victim.desc:
         ch.send("Character in use.\n")
         return
 
-    merc.wiznet("$N switches into %s" % victim.short_descr, ch, None, merc.WIZ_SWITCHES, merc.WIZ_SECURE,
+    handler_game.wiznet("$N switches into %s" % victim.short_descr, ch, None, merc.WIZ_SWITCHES, merc.WIZ_SECURE,
                 ch.get_trust())
 
     ch.desc.character = victim

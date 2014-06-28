@@ -6,10 +6,12 @@ import merc
 import db
 import interp
 import const
+import state_checks
+
 
 # equips a character
 def do_outfit(ch, argument):
-    if ch.level > 5 or merc.IS_NPC(ch):
+    if ch.level > 5 or state_checks.IS_NPC(ch):
         ch.send("Find it yourself!\n")
         return
 
@@ -43,7 +45,7 @@ def do_outfit(ch, argument):
 
     obj = ch.get_eq(merc.WEAR_WIELD)
     shield = ch.get_eq(merc.WEAR_SHIELD)
-    if (not obj or not merc.IS_WEAPON_STAT(obj, merc.WEAPON_TWO_HANDS)) and not shield:
+    if (not obj or not state_checks.IS_WEAPON_STAT(obj, merc.WEAPON_TWO_HANDS)) and not shield:
         obj = db.create_object(merc.obj_index_hash[merc.OBJ_VNUM_SCHOOL_SHIELD], 0)
         obj.cost = 0
         obj.to_char(ch)

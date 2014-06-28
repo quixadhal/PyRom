@@ -4,15 +4,15 @@ logger = logging.getLogger()
 
 import merc
 import interp
-
+import game_utils
 
 def do_sockets(ch, argument):
     count = 0
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
     for d in merc.descriptor_list:
         if d.character and ch.can_see(d.character) \
                 and (not arg or arg not in d.character.name) \
-                or (d.original and merc.is_name(arg, d.original.name)):
+                or (d.original and game_utils.is_name(arg, d.original.name)):
             count += 1
             ch.send("%s@%s\n" % (
                 d.original.name if d.original else d.character.name if d.character else "(none)",

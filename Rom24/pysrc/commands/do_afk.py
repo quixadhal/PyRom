@@ -4,16 +4,17 @@ logger = logging.getLogger()
 
 import merc
 import interp
+import state_checks
 
 
 # afk command
 def do_afk(ch, argument):
-    if merc.IS_SET(ch.comm, merc.COMM_AFK):
+    if state_checks.IS_SET(ch.comm, merc.COMM_AFK):
         ch.send("AFK mode removed. Type 'replay' to see tells.\n")
-        merc.REMOVE_BIT(ch.comm, merc.COMM_AFK)
+        state_checks.REMOVE_BIT(ch.comm, merc.COMM_AFK)
     else:
         ch.send("You are now in AFK mode.\n")
-        merc.SET_BIT(ch.comm, merc.COMM_AFK)
+        state_checks.SET_BIT(ch.comm, merc.COMM_AFK)
 
 
 interp.register_command(interp.cmd_type('afk', do_afk, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1))

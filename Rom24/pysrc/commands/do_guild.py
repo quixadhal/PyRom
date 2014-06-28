@@ -5,11 +5,13 @@ logger = logging.getLogger()
 import merc
 import interp
 import tables
+import game_utils
+import state_checks
 
 
 def do_guild(ch, argument):
-    argument, arg1 = merc.read_word(argument)
-    argument, arg2 = merc.read_word(argument)
+    argument, arg1 = game_utils.read_word(argument)
+    argument, arg2 = game_utils.read_word(argument)
 
     if not arg1 or not arg2:
         ch.send("Syntax: guild <char> <cln name>\n")
@@ -25,7 +27,7 @@ def do_guild(ch, argument):
         victim.send("You are now a member of no clan!\n")
         victim.clan = 0
         return
-    clan = merc.prefix_lookup(tables.clan_table, arg2)
+    clan = state_checks.prefix_lookup(tables.clan_table, arg2)
     if not clan:
         ch.send("No such clan exists.\n")
         return

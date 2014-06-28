@@ -1,14 +1,16 @@
 import logging
 
+
 logger = logging.getLogger()
 
 import merc
 import interp
 import const
-
+import handler_game
+import state_checks
 
 def do_practice(ch, argument):
-    if merc.IS_NPC(ch):
+    if state_checks.IS_NPC(ch):
         return
     if not argument:
         col = 0
@@ -26,12 +28,12 @@ def do_practice(ch, argument):
 
         ch.send("You have %d practice sessions left.\n" % ch.practice)
     else:
-        if not merc.IS_AWAKE(ch):
+        if not state_checks.IS_AWAKE(ch):
             ch.send("In your dreams, or what?\n")
             return
         mob = None
-        prac_mobs = [mob for mob in ch.in_room.people if merc.IS_NPC(mob) and \
-                     merc.IS_SET(mob.act, merc.ACT_PRACTICE)][:1]
+        prac_mobs = [mob for mob in ch.in_room.people if state_checks.IS_NPC(mob) and \
+                     state_checks.IS_SET(mob.act, merc.ACT_PRACTICE)][:1]
         if not prac_mobs:
             ch.send("You can't do that here.\n")
             return
@@ -40,13 +42,13 @@ def do_practice(ch, argument):
         if ch.practice <= 0:
             ch.send("You have no practice sessions left.\n")
             return
-        skill = merc.prefix_lookup(const.skill_table, argument)
-        if not skill or not merc.IS_NPC(ch) \
+        skill = state_checks.prefix_lookup(const.skill_table, argument)
+        if not skill or not state_checks.IS_NPC(ch) \
                 and (ch.level < skill.skill_level[ch.guild.name] or ch.pcdata.learned[skill.name] < 1 \
                              or skill.rating[ch.guild.name] == 0):
             ch.send("You can't practice that.\n")
             return
-        adept = 100 if merc.IS_NPC(ch) else ch.guild.skill_adept
+        adept = 100 if state_checks.IS_NPC(ch) else ch.guild.skill_adept
 
         if ch.pcdata.learned[skill.name] >= adept:
             ch.send("You are already learned at %s.\n" % skill.name)
@@ -55,12 +57,12 @@ def do_practice(ch, argument):
             ch.pcdata.learned[skill.name] += const.int_app[ch.get_curr_stat(merc.STAT_INT)].learn // skill.rating[
                 ch.guild.name]
             if ch.pcdata.learned[skill.name] < adept:
-                merc.act("You practice $T.", ch, None, skill.name, merc.TO_CHAR)
-                merc.act("$n practices $T.", ch, None, skill.name, merc.TO_ROOM)
+                handler_game.act("You practice $T.", ch, None, skill.name, merc.TO_CHAR)
+                handler_game.act("$n practices $T.", ch, None, skill.name, merc.TO_ROOM)
             else:
                 ch.pcdata.learned[skill.name] = adept
-                merc.act("You are now learned at $T.", ch, None, skill.name, merc.TO_CHAR)
-                merc.act("$n is now learned at $T.", ch, None, skill.name, merc.TO_ROOM)
+                handler_game.act("You are now learned at $T.", ch, None, skill.name, merc.TO_CHAR)
+                handler_game.act("$n is now learned at $T.", ch, None, skill.name, merc.TO_ROOM)
     return
 
 

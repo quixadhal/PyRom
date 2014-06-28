@@ -1,13 +1,14 @@
 import logging
 
+
 logger = logging.getLogger()
 
 import merc
 import interp
-
+import game_utils
 
 def do_pecho(ch, argument):
-    argument, arg = merc.read_word(argument)
+    argument, arg = game_utils.read_word(argument)
     if not argument or not arg:
         ch.send("Personal echo what?\n")
         return
@@ -15,7 +16,7 @@ def do_pecho(ch, argument):
     if not victim:
         ch.send("Target not found.\n")
         return
-    if victim.get_trust() >= ch.get_trust() and ch.get_trust() != merc.MAX_LEVEL:
+    if victim.get_trust() >= ch.get_trust() != merc.MAX_LEVEL:
         victim.send("personal> ")
 
     victim.send(argument)

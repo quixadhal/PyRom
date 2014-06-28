@@ -1,15 +1,18 @@
 import logging
 
+
 logger = logging.getLogger()
 
 import merc
+import game_utils
 import save
+import state_checks
 import update
 import interp
 
 def do_advance(ch, argument):
-    argument, arg1 = merc.read_word(argument)
-    argument, arg2 = merc.read_word(argument)
+    argument, arg1  = game_utils.read_word(argument)
+    argument, arg2  = game_utils.read_word(argument)
 
     if not arg1 or not arg2 or not arg2.isdigit():
         ch.send("Syntax: advance <char> <level>.\n")
@@ -18,7 +21,7 @@ def do_advance(ch, argument):
     if not victim:
         ch.send("That player is not here.\n")
         return
-    if merc.IS_NPC(victim):
+    if state_checks.IS_NPC(victim):
         ch.send("Not on NPC's.\n")
         return
     level = int(arg2)

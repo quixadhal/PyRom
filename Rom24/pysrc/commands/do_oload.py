@@ -5,11 +5,14 @@ logger = logging.getLogger()
 import merc
 import db
 import interp
+import game_utils
+import handler_game
+import state_checks
 
 
 def do_oload(ch, argument):
-    argument, arg1 = merc.read_word(argument)
-    argument, arg2 = merc.read_word(argument)
+    argument, arg1 = game_utils.read_word(argument)
+    argument, arg2 = game_utils.read_word(argument)
 
     if not arg1 or not arg1.isdigit():
         ch.send("Syntax: load obj <vnum> <level>.\n")
@@ -29,12 +32,12 @@ def do_oload(ch, argument):
         ch.send("No object has that vnum.\n")
         return
     obj = db.create_object(merc.obj_index_hash[vnum], level)
-    if merc.CAN_WEAR(obj, merc.ITEM_TAKE):
+    if state_checks.CAN_WEAR(obj, merc.ITEM_TAKE):
         obj.to_char(ch)
     else:
         obj.to_room(ch.in_room)
-    merc.act("$n has created $p!", ch, obj, None, merc.TO_ROOM)
-    merc.wiznet("$N loads $p.", ch, obj, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.get_trust())
+    handler_game.act("$n has created $p!", ch, obj, None, merc.TO_ROOM)
+    handler_game.wiznet("$N loads $p.", ch, obj, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.get_trust())
     ch.send("Ok.\n")
     return
 

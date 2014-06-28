@@ -1,4 +1,6 @@
 import logging
+import game_utils
+import handler_game
 
 logger = logging.getLogger()
 
@@ -7,8 +9,8 @@ import interp
 
 
 def do_compare(ch, argument):
-    argument, arg1 = merc.read_word(argument)
-    argument, arg2 = merc.read_word(argument)
+    argument, arg1 = game_utils.read_word(argument)
+    argument, arg2 = game_utils.read_word(argument)
 
     if not arg1:
         ch.send("Compare what to what?\n")
@@ -63,7 +65,7 @@ def do_compare(ch, argument):
             msg = "$p looks better than $P."
         else:
             msg = "$p looks worse than $P."
-    merc.act(msg, ch, obj1, obj2, merc.TO_CHAR)
+    handler_game.act(msg, ch, obj1, obj2, merc.TO_CHAR)
     return
 
 

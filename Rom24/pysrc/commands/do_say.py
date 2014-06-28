@@ -4,14 +4,15 @@ logger = logging.getLogger()
 
 import merc
 import interp
+import handler_game
 
 
 def do_say(ch, argument):
     if not argument:
         ch.send("Say what?\n")
         return
-    merc.act("$n says '$T'", ch, None, argument, merc.TO_ROOM)
-    merc.act("You say '$T'", ch, None, argument, merc.TO_CHAR)
+    handler_game.act("$n says '$T'", ch, None, argument, merc.TO_ROOM)
+    handler_game.act("You say '$T'", ch, None, argument, merc.TO_CHAR)
     return
 
 

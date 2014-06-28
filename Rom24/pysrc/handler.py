@@ -35,6 +35,9 @@ from merc import *
 
 
 # * Return ascii name of an affect location.
+import state_checks
+
+
 def affect_loc_name(location):
     if location == APPLY_NONE:
         return "none"
@@ -201,7 +204,7 @@ def extra_bit_name(extra_flags):
 def act_bit_name(act_flags):
     buf = ""
 
-    if IS_SET(act_flags, ACT_IS_NPC):
+    if state_checks.IS_SET(act_flags, ACT_IS_NPC):
         buf += " npc"
         if act_flags & ACT_SENTINEL:
             buf += " sentinel"
