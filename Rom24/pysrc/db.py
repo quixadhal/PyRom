@@ -264,7 +264,7 @@ def load_objects(area):
             area, obj.value[2] = game_utils.read_int(area)
             area, obj.value[3] = game_utils.read_word(area, False)
             area, obj.value[4] = game_utils.read_int(area)
-        elif obj.item_type == merc.ITEM_POTION or obj.item_type == merc.ITEM_POTION or obj.item_type == merc.ITEM_PILL:
+        elif obj.item_type == merc.ITEM_POTION or obj.item_type == merc.ITEM_SCROLL or obj.item_type == merc.ITEM_PILL:
             area, obj.value[0] = game_utils.read_int(area)
             area, obj.value[1] = game_utils.read_word(area, False)
             area, obj.value[2] = game_utils.read_word(area, False)
