@@ -48,7 +48,7 @@ def acid_effect(vo, level, dam, target):
         return
     if target == TARGET_CHAR:  # do the effect on a victim */
         # let's toast some gear */
-        for obj in vo.carrying[:]:
+        for obj in vo.contents[:]:
             acid_effect(obj,level,dam,TARGET_OBJ)
         return
     if target == TARGET_OBJ: # toast an object */
@@ -161,7 +161,7 @@ def cold_effect( vo, level, dam, target):
             gain_condition(victim,COND_HUNGER,dam/20)
 
         # let's toast some gear */
-        for obj in victim.carrying[:]:
+        for obj in victim.contents[:]:
             cold_effect(obj,level,dam,TARGET_OBJ)
         return
     if target == TARGET_OBJ: # toast an object */
@@ -228,7 +228,7 @@ def fire_effect(vo, level, dam, target):
             gain_condition(victim,COND_THIRST,dam/20)
 
         # let's toast some gear! */
-        for obj in victim.carrying[:]:
+        for obj in victim.contents[:]:
             fire_effect(obj,level,dam,TARGET_OBJ)
         return
     
@@ -319,7 +319,7 @@ def poison_effect( vo, level, dam, target):
             af.bitvector = AFF_POISON
             victim.affect_join(af)
     # equipment */
-        for obj in victim.carrying[:]:
+        for obj in victim.contents[:]:
             poison_effect(obj,level,dam,TARGET_OBJ)
         return
     if target == TARGET_OBJ:  # do some poisoning */
@@ -365,7 +365,7 @@ def shock_effect( vo, level, dam, target):
             victim.send("Your muscles stop responding.\n\r")
             state_checks.DAZE_STATE(victim,max(12,level // 4 + dam/20))
         # toast some gear */
-        for obj in victim.carrying[:]:
+        for obj in victim.contents[:]:
             shock_effect(obj,level,dam,TARGET_OBJ)
         return
     if target == TARGET_OBJ:

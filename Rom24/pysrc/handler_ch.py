@@ -1609,7 +1609,7 @@ def show_char_to_char_1(victim, ch):
             and random.randint(1, 99) < ch.get_skill("peek"):
         ch.send("\nYou peek at the inventory:\n")
         ch.check_improve( 'peek', True, 4)
-        show_list_to_char(victim.carrying, ch, True, True)
+        show_list_to_char(victim.contents, ch, True, True)
     return
 
 

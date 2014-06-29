@@ -940,7 +940,7 @@ def make_corpse(ch):
     corpse.short_descr = corpse.short_descr % name
     corpse.description = corpse.description % name
 
-    for obj in ch.carrying[:]:
+    for obj in ch.contents[:]:
         floating = False
         if obj.wear_loc == WEAR_FLOAT:
             floating = True
@@ -1101,7 +1101,7 @@ def group_gain(ch, victim):
         xp = xp_compute(gch, victim, group_levels)
         gch.send("You receive %d experience points.\n" % xp)
         update.gain_exp(gch, xp)
-        for obj in ch.carrying[:]:
+        for obj in ch.contents[:]:
             if obj.wear_loc == WEAR_NONE:
                 continue
             if (state_checks.IS_OBJ_STAT(obj, ITEM_ANTI_EVIL) and state_checks.IS_EVIL(ch) ) \

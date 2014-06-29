@@ -52,7 +52,8 @@ class Bit:
         buf = ""
         if not self.flags:
             return
-        for fl in self.flags:
+        print(self.flags)
+        for k,fl in self.flags.items():
             if self.is_set(fl.bit):
                 buf += " %s" % fl.name
         return buf

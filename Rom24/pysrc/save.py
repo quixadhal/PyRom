@@ -58,8 +58,8 @@ def save_char_obj(ch):
     os.makedirs(settings.PLAYER_DIR, 0o755, True)
 
     fwrite = fwrite_char(ch)
-    if ch.carrying:
-        fwrite['carrying'] = [fwrite_obj(ch, o) for o in ch.carrying]
+    if ch.contents:
+        fwrite['contents'] = [fwrite_obj(ch, o) for o in ch.contents]
 
     to_write = json.dumps(fwrite, indent=4)
     with open(pfile, 'w') as pf:
@@ -247,23 +247,23 @@ def fread_char(chdict, ch):
     ch.pcdata.learned = chdict['skills']
     ch.pcdata.group_known = chdict['groups']
     ch.affected = chdict['affected']
-    if 'carrying' in chdict:
-        fread_objs(ch, chdict['carrying'])
+    if 'contents' in chdict:
+        fread_objs(ch, chdict['contents'])
     return ch
 
 
-def fread_objs(carrying, objects, contained_by=None):
+def fread_objs(contents, objects, contained_by=None):
     for odict in objects:
-        obj = fread_obj(carrying, odict)
+        obj = fread_obj(contents, odict)
         if not contained_by:
-            obj.to_char(carrying)
+            obj.to_char(contents)
         else:
             obj.to_obj(contained_by)
         if 'contains' in odict:
-            fread_objs(carrying, odict['contains'], obj)
+            fread_objs(contents, odict['contains'], obj)
 
 
-def fread_obj(carrying, odict):
+def fread_obj(contents, odict):
     obj = db.create_object(obj_index_hash[odict['Vnum']], odict['Lev'])
     obj.enchanted = odict['Enchanted']
     obj.name = odict['Name']
