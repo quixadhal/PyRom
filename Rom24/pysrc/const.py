@@ -55,7 +55,7 @@ skill_table = OrderedDict()
 
 def register_spell(entry: skill_type):
     skill_table[entry.name] = entry
-    global spell_lookup_dict = {entry.name: }
+    global spell_lookup_dict = {entry.name: on}
     logger.debug('    %s registered in skill table.', entry.name)
 
 group_type = namedtuple('group_type', 'name, rating, spells')
