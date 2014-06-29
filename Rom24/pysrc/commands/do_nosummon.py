@@ -15,12 +15,12 @@ def do_nosummon(ch, argument):
             ch.send("You are now immune to summoning.\n")
             ch.imm_flags = state_checks.SET_BIT(ch.imm_flags, merc.IMM_SUMMON)
     else:
-        if state_checks.IS_SET(ch.act, merc.PLR_NOSUMMON):
+        if ch.act.is_set(merc.PLR_NOSUMMON):
             ch.send("You are no longer immune to summon.\n")
-            ch.act = state_checks.REMOVE_BIT(ch.act, merc.PLR_NOSUMMON)
+            ch.act.rem_bit(merc.PLR_NOSUMMON)
         else:
             ch.send("You are now immune to summoning.\n")
-            ch.act = state_checks.SET_BIT(ch.act, merc.PLR_NOSUMMON)
+            ch.act.set_bit(merc.PLR_NOSUMMON)
 
 
 interp.register_command(interp.cmd_type('nosummon', do_nosummon, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

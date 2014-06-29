@@ -70,7 +70,7 @@ def get_random_room(ch):
             and not state_checks.IS_SET(room.room_flags, ROOM_PRIVATE) \
             and not state_checks.IS_SET(room.room_flags, ROOM_SOLITARY) \
             and not state_checks.IS_SET(room.room_flags, ROOM_SAFE) \
-            and (ch.is_npc() or state_checks.IS_SET(ch.act, ACT_AGGRESSIVE)
+            and (ch.is_npc() or ch.act.is_set(ACT_AGGRESSIVE)
                  or not state_checks.IS_SET(room.room_flags, ROOM_LAW)):
             break
     return room

@@ -43,7 +43,7 @@ def do_enter(ch, argument):
                 or (location.is_private() and not state_checks.IS_TRUSTED(ch, merc.MAX_LEVEL)):
             handler_game.act("$p doesn't seem to go anywhere.", ch, portal, None, merc.TO_CHAR)
             return
-        if ch.is_npc() and state_checks.IS_SET(ch.act, merc.ACT_AGGRESSIVE) \
+        if ch.is_npc() and ch.act.is_set(merc.ACT_AGGRESSIVE) \
                 and state_checks.IS_SET(location.room_flags, merc.ROOM_LAW):
             ch.send("Something prevents you from leaving...\n")
             return

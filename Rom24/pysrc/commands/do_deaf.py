@@ -9,7 +9,7 @@ import interp
 
 # RT deaf blocks out all shouts
 def do_deaf(ch, argument):
-    if state_checks.IS_SET(ch.comm, merc.COMM_DEAF):
+    if ch.comm.is_set(merc.COMM_DEAF):
         ch.send("You can now hear tells again.\n")
         state_checks.REMOVE_BIT(ch.comm, merc.COMM_DEAF)
     else:

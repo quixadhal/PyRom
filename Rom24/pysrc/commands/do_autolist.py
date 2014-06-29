@@ -17,67 +17,67 @@ def do_autolist(ch, argument):
     ch.send("   action     status\n")
     ch.send("---------------------\n")
     ch.send("autoassist     ")
-    if state_checks.IS_SET(ch.act, merc.PLR_AUTOASSIST):
+    if ch.act.is_set(merc.PLR_AUTOASSIST):
         ch.send("ON\n")
     else:
         ch.send("OFF\n")
 
     ch.send("autoexit       ")
-    if state_checks.IS_SET(ch.act, merc.PLR_AUTOEXIT):
+    if ch.act.is_set(merc.PLR_AUTOEXIT):
         ch.send("ON\n")
     else:
         ch.send("OFF\n")
 
     ch.send("autogold       ")
-    if state_checks.IS_SET(ch.act, merc.PLR_AUTOGOLD):
+    if ch.act.is_set(merc.PLR_AUTOGOLD):
         ch.send("ON\n")
     else:
         ch.send("OFF\n")
 
     ch.send("autoloot       ")
-    if state_checks.IS_SET(ch.act, merc.PLR_AUTOLOOT):
+    if ch.act.is_set(merc.PLR_AUTOLOOT):
         ch.send("ON\n")
     else:
         ch.send("OFF\n")
 
     ch.send("autosac        ")
-    if state_checks.IS_SET(ch.act, merc.PLR_AUTOSAC):
+    if ch.act.is_set(merc.PLR_AUTOSAC):
         ch.send("ON\n")
     else:
         ch.send("OFF\n")
 
     ch.send("autosplit      ")
-    if state_checks.IS_SET(ch.act, merc.PLR_AUTOSPLIT):
+    if ch.act.is_set(merc.PLR_AUTOSPLIT):
         ch.send("ON\n")
     else:
         ch.send("OFF\n")
 
     ch.send("compact mode   ")
-    if state_checks.IS_SET(ch.comm, merc.COMM_COMPACT):
+    if ch.comm.is_set(merc.COMM_COMPACT):
         ch.send("ON\n")
     else:
         ch.send("OFF\n")
 
     ch.send("prompt         ")
-    if state_checks.IS_SET(ch.comm, merc.COMM_PROMPT):
+    if ch.comm.is_set(merc.COMM_PROMPT):
         ch.send("ON\n")
     else:
         ch.send("OFF\n")
 
     ch.send("combine items  ")
-    if state_checks.IS_SET(ch.comm, merc.COMM_COMBINE):
+    if ch.comm.is_set(merc.COMM_COMBINE):
         ch.send("ON\n")
     else:
         ch.send("OFF\n")
-    if not state_checks.IS_SET(ch.act, merc.PLR_CANLOOT):
+    if not ch.act.is_set(merc.PLR_CANLOOT):
         ch.send("Your corpse is safe from thieves.\n")
     else:
         ch.send("Your corpse may be looted.\n")
-    if state_checks.IS_SET(ch.act, merc.PLR_NOSUMMON):
+    if ch.act.is_set(merc.PLR_NOSUMMON):
         ch.send("You cannot be summoned.\n")
     else:
         ch.send("You can be summoned.\n")
-    if state_checks.IS_SET(ch.act, merc.PLR_NOFOLLOW):
+    if ch.act.is_set(merc.PLR_NOFOLLOW):
         ch.send("You do not welcome followers.\n")
     else:
         ch.send("You accept followers.\n")

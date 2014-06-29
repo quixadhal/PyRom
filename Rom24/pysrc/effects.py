@@ -238,12 +238,12 @@ def fire_effect(vo, level, dam, target):
         if state_checks.IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or state_checks.IS_OBJ_STAT(obj,ITEM_NOPURGE) or random.randint(0,4) == 0:
             return
  
-        chance = level / 4 + dam / 10
+        chance = level // 4 + dam // 10
  
         if chance > 25:
-            chance = (chance - 25) / 2 + 25
+            chance = (chance - 25) // 2 + 25
         if chance > 50:
-            chance = (chance - 50) / 2 + 50
+            chance = (chance - 50) // 2 + 50
 
         if state_checks.IS_OBJ_STAT(obj,ITEM_BLESS):
             chance -= 5
@@ -304,7 +304,7 @@ def poison_effect( vo, level, dam, target):
     if target == TARGET_CHAR:   # do the effect on a victim */
         victim = vo
         # chance of poisoning */
-        if not handler_magic.saves_spell(level / 4 + dam / 20,victim,DAM_POISON):
+        if not handler_magic.saves_spell(level // 4 + dam // 20,victim,DAM_POISON):
             af = handler_game.AFFECT_DATA()
 
             victim.send("You feel poison coursing through your veins.\n\r")
@@ -313,7 +313,7 @@ def poison_effect( vo, level, dam, target):
             af.where     = TO_AFFECTS
             af.type      = gsn_poison
             af.level     = level
-            af.duration  = level / 2
+            af.duration  = level // 2
             af.location  = APPLY_STR
             af.modifier  = -1
             af.bitvector = AFF_POISON
@@ -327,11 +327,11 @@ def poison_effect( vo, level, dam, target):
         if state_checks.IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or state_checks.IS_OBJ_STAT(obj,ITEM_BLESS) or random.randint(0,4) == 0:
             return
 
-        chance = level / 4 + dam / 10
+        chance = level // 4 + dam // 10
         if chance > 25:
-            chance = (chance - 25) / 2 + 25
+            chance = (chance - 25) // 2 + 25
         if chance > 50:
-            chance = (chance - 50) / 2 + 50
+            chance = (chance - 50) // 2 + 50
 
         chance -= obj.level * 2
 
@@ -361,24 +361,26 @@ def shock_effect( vo, level, dam, target):
     if target == TARGET_CHAR:
         victim = vo
         # daze and confused? */
-        if not handler_magic.saves_spell(level/4 + dam/20,victim,DAM_LIGHTNING):
+        if not handler_magic.saves_spell(level // 4 + dam // 20,victim,DAM_LIGHTNING):
             victim.send("Your muscles stop responding.\n\r")
-            state_checks.DAZE_STATE(victim,max(12,level/4 + dam/20))
+            state_checks.DAZE_STATE(victim,max(12,level // 4 + dam/20))
         # toast some gear */
         for obj in victim.carrying[:]:
             shock_effect(obj,level,dam,TARGET_OBJ)
         return
     if target == TARGET_OBJ:
         obj = vo
-        if state_checks.IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or state_checks.IS_OBJ_STAT(obj,ITEM_NOPURGE) or random.randint(0,4) == 0:
+        if state_checks.IS_OBJ_STAT(obj,ITEM_BURN_PROOF) \
+                or state_checks.IS_OBJ_STAT(obj,ITEM_NOPURGE) \
+                or random.randint(0,4) == 0:
             return
 
-        chance = level / 4 + dam / 10
+        chance = level // 4 + dam // 10
 
         if chance > 25:
-            chance = (chance - 25) / 2 + 25
+            chance = (chance - 25) // 2 + 25
         if chance > 50:
-            chance = (chance - 50) /2 + 50
+            chance = (chance - 50) // 2 + 50
 
         if state_checks.IS_OBJ_STAT(obj,ITEM_BLESS):
             chance -= 5

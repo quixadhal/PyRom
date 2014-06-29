@@ -8,7 +8,7 @@ import interp
 
 
 def do_brief(ch, argument):
-    if state_checks.IS_SET(ch.comm, merc.COMM_BRIEF):
+    if ch.comm.is_set(merc.COMM_BRIEF):
         ch.send("Full descriptions activated.\n")
         ch.comm = state_checks.REMOVE_BIT(ch.comm, merc.COMM_BRIEF)
     else:

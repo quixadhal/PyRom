@@ -17,7 +17,7 @@ import state_checks
 def do_bash(ch, argument):
     arghold, arg = game_utils.read_word(argument)
     chance = ch.get_skill('bash')
-    if chance == 0 or (ch.is_npc() and not state_checks.IS_SET(ch.off_flags, merc.OFF_BASH)) \
+    if chance == 0 or (ch.is_npc() and not ch.off_flags.is_set(merc.OFF_BASH)) \
     or (not ch.is_npc() and ch.level < const.skill_table['bash'].skill_level[ch.guild.name] ):
         ch.send("Bashing? What's that?\n\r")
         return
@@ -56,13 +56,13 @@ def do_bash(ch, argument):
     else:
         chance += (ch.size - victim.size) * 10
     # stats
-    chance += ch.get_curr_stat(merc.STAT_STR)
-    chance -= (victim.get_curr_stat(merc.STAT_DEX) * 4) // 3
+    chance += ch.stat(merc.STAT_STR)
+    chance -= (victim.stat(merc.STAT_DEX) * 4) // 3
     chance -= state_checks.GET_AC(victim, merc.AC_BASH) // 25
     # speed */
-    if state_checks.IS_SET(ch.off_flags, merc.OFF_FAST) or ch.is_affected(merc.AFF_HASTE):
+    if ch.off_flags.is_set(merc.OFF_FAST) or ch.is_affected(merc.AFF_HASTE):
         chance += 10
-    if state_checks.IS_SET(victim.off_flags, merc.OFF_FAST) or victim.is_affected( merc.AFF_HASTE):
+    if victim.off_flags.is_set(merc.OFF_FAST) or victim.is_affected(merc.AFF_HASTE):
         chance -= 30
     # level
     chance += (ch.level - victim.level)
@@ -78,7 +78,7 @@ def do_bash(ch, argument):
         handler_game.act("$n sends you sprawling with a powerful bash!", ch,None,victim, merc.TO_VICT)
         handler_game.act("You slam into $N, and send $M flying!",ch,None,victim, merc.TO_CHAR)
         handler_game.act("$n sends $N sprawling with a powerful bash.", ch,None,victim, merc.TO_NOTVICT)
-        skills.check_improve(ch,'bash',True,1)
+        ch.check_improve('bash',True,1)
         state_checks.DAZE_STATE(victim, 3 * merc.PULSE_VIOLENCE)
         state_checks.WAIT_STATE(ch,const.skill_table['bash'].beats)
         victim.position = merc.POS_RESTING
@@ -88,7 +88,7 @@ def do_bash(ch, argument):
         handler_game.act("You fall flat on your face!", ch, None, victim, merc.TO_CHAR)
         handler_game.act("$n falls flat on $s face.", ch, None, victim, merc.TO_NOTVICT)
         handler_game.act("You evade $n's bash, causing $m to fall flat on $s face.", ch, None, victim, merc.TO_VICT)
-        skills.check_improve(ch,'bash',False,1)
+        ch.check_improve('bash',False,1)
         ch.position = merc.POS_RESTING
         state_checks.WAIT_STATE(ch, const.skill_table['bash'].beats * 3 // 2)
     fight.check_killer(ch,victim)

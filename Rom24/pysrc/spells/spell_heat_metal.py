@@ -21,7 +21,7 @@ def spell_heat_metal(sn, level, ch, victim, target):
                 if obj_lose.item_type == merc.ITEM_ARMOR:
                     if obj_lose.wear_loc != -1:  # remove the item */
                         if victim.can_drop_obj(obj_lose) \
-                                and (obj_lose.weight // 10) < random.randint(1, 2 * victim.get_curr_stat(merc.STAT_DEX)) \
+                                and (obj_lose.weight // 10) < random.randint(1, 2 * victim.stat(merc.STAT_DEX)) \
                                 and handler_obj.remove_obj(victim, obj_lose.wear_loc, True):
                             handler_game.act("$n yelps and throws $p to the ground! ", victim, obj_lose, None,
                                              merc.TO_ROOM)

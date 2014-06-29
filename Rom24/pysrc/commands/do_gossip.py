@@ -13,17 +13,17 @@ import state_checks
 # RT chat replaced with ROM gossip
 def do_gossip(ch, argument):
     if not argument:
-        if state_checks.IS_SET(ch.comm, merc.COMM_NOGOSSIP):
+        if ch.comm.is_set(merc.COMM_NOGOSSIP):
             ch.send("Gossip channel is now ON.\n")
             ch.comm = state_checks.REMOVE_BIT(ch.comm, merc.COMM_NOGOSSIP)
         else:
             ch.send("Gossip channel is now OFF.\n")
             ch.comm = state_checks.SET_BIT(ch.comm, merc.COMM_NOGOSSIP)
     else:  # gossip message sent, turn gossip on if it isn't already
-        if state_checks.IS_SET(ch.comm, merc.COMM_QUIET):
+        if ch.comm.is_set(merc.COMM_QUIET):
             ch.send("You must turn off quiet mode first.\n")
             return
-        if state_checks.IS_SET(ch.comm, merc.COMM_NOCHANNELS):
+        if ch.comm.is_set(merc.COMM_NOCHANNELS):
             ch.send("The gods have revoked your channel privileges.\n")
             return
         ch.comm = state_checks.REMOVE_BIT(ch.comm, merc.COMM_NOGOSSIP)

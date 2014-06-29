@@ -54,7 +54,7 @@ def do_practice(ch, argument):
             ch.send("You are already learned at %s.\n" % skill.name)
         else:
             ch.practice -= 1
-            ch.pcdata.learned[skill.name] += const.int_app[ch.get_curr_stat(merc.STAT_INT)].learn // skill.rating[
+            ch.pcdata.learned[skill.name] += const.int_app[ch.stat(merc.STAT_INT)].learn // skill.rating[
                 ch.guild.name]
             if ch.pcdata.learned[skill.name] < adept:
                 handler_game.act("You practice $T.", ch, None, skill.name, merc.TO_CHAR)

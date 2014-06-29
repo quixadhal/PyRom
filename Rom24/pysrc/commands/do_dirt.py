@@ -16,7 +16,7 @@ import fight
 def do_dirt(ch, argument):
     arghold, arg = game_utils.read_word(argument)
     chance = ch.get_skill('dirt kicking')
-    if chance == 0 or (ch.is_npc() and not state_checks.IS_SET(ch.off_flags, merc.OFF_KICK_DIRT)) \
+    if chance == 0 or (ch.is_npc() and not ch.off_flags.is_set(merc.OFF_KICK_DIRT)) \
             or ( not ch.is_npc() and ch.level < const.skill_table['dirt kicking'].skill_level[ch.guild.name]):
         ch.send("You get your feet dirty.\n")
         return
@@ -47,13 +47,13 @@ def do_dirt(ch, argument):
 
     # modifiers
     # dexterity
-    chance += ch.get_curr_stat(merc.STAT_DEX)
-    chance -= 2 * victim.get_curr_stat(merc.STAT_DEX)
+    chance += ch.stat(merc.STAT_DEX)
+    chance -= 2 * victim.stat(merc.STAT_DEX)
 
     # speed
-    if state_checks.IS_SET(ch.off_flags, merc.OFF_FAST) or ch.is_affected(merc.AFF_HASTE):
+    if ch.off_flags.is_set(merc.OFF_FAST) or ch.is_affected(merc.AFF_HASTE):
         chance += 10
-    if state_checks.IS_SET(victim.off_flags, merc.OFF_FAST) or victim.is_affected( merc.AFF_HASTE):
+    if victim.off_flags.is_set(merc.OFF_FAST) or victim.is_affected( merc.AFF_HASTE):
         chance -= 25
     # level
     chance += (ch.level - victim.level) * 2
@@ -83,7 +83,7 @@ def do_dirt(ch, argument):
         handler_game.act("$n kicks dirt in your eyes!", ch, None, victim, merc.TO_VICT)
         fight.damage(ch, victim, random.randint(2, 5), 'dirt kicking', merc.DAM_NONE, False)
         victim.send("You can't see a thing!\n")
-        skills.check_improve(ch, 'dirt kicking', True, 2)
+        ch.check_improve( 'dirt kicking', True, 2)
         state_checks.WAIT_STATE(ch, const.skill_table['dirt kicking'].beats)
         af = handler_game.AFFECT_DATA()
         af.where = merc.TO_AFFECTS
@@ -96,7 +96,7 @@ def do_dirt(ch, argument):
         victim.affect_add(af)
     else:
         fight.damage(ch, victim, 0, 'dirt kicking', merc.DAM_NONE, True)
-        skills.check_improve(ch, 'dirt kicking', False, 2)
+        ch.check_improve( 'dirt kicking', False, 2)
         state_checks.WAIT_STATE(ch, const.skill_table['dirt kicking'].beats)
     fight.check_killer(ch, victim)
 

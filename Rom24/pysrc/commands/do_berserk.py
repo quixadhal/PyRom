@@ -15,7 +15,7 @@ import state_checks
 
 def do_berserk(ch, argument):
     chance = ch.get_skill('berserk')
-    if chance == 0 or (ch.is_npc() and not state_checks.IS_SET(ch.off_flags, merc.OFF_BERSERK)) \
+    if chance == 0 or (ch.is_npc() and not ch.off_flags.is_set(merc.OFF_BERSERK)) \
             or (not ch.is_npc() and ch.level < const.skill_table['berserk'].skill_level[ch.guild.name]):
         ch.send("You turn red in the face, but nothing happens.\n")
         return
@@ -47,7 +47,7 @@ def do_berserk(ch, argument):
         ch.hit = min(ch.hit, ch.max_hit)
         ch.send("Your pulse races as you are consumed by rage!\n")
         handler_game.act("$n gets a wild look in $s eyes.", ch, None, None, merc.TO_ROOM)
-        skills.check_improve(ch, 'berserk', True, 2)
+        ch.check_improve( 'berserk', True, 2)
         af = handler_game.AFFECT_DATA()
         af.where = merc.TO_AFFECTS
         af.type = 'berserk'

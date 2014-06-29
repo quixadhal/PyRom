@@ -306,7 +306,7 @@ def check_improve( ch, sn, success, multiplier ):
         return  # skill is not known */ 
 
     # check to see if the character has a chance to learn */
-    chance = 10 * const.int_app[ch.get_curr_stat(STAT_INT)].learn
+    chance = 10 * const.int_app[ch.stat(STAT_INT)].learn
     chance /= (multiplier * sn.rating[ch.guild.name] * 4)
     chance += ch.level
 

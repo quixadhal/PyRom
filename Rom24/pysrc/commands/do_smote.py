@@ -9,7 +9,7 @@ import state_checks
 
 def do_smote(ch, argument):
     matches = 0
-    if not ch.is_npc() and state_checks.IS_SET(ch.comm, merc.COMM_NOEMOTE):
+    if not ch.is_npc() and ch.comm.is_set(merc.COMM_NOEMOTE):
         ch.send("You can't show your emotions.\n")
         return
     if not argument:

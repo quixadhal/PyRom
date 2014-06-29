@@ -9,7 +9,7 @@ import state_checks
 
 # RT quiet blocks out all communication
 def do_quiet(ch, argument):
-    if state_checks.IS_SET(ch.comm, merc.COMM_QUIET):
+    if ch.comm.is_set(merc.COMM_QUIET):
         ch.send("Quiet mode removed.\n")
         ch.comm = state_checks.REMOVE_BIT(ch.comm, merc.COMM_QUIET)
     else:

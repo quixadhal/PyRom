@@ -10,13 +10,13 @@ import state_checks
 
 
 def do_tell(ch, argument):
-    if state_checks.IS_SET(ch.comm, merc.COMM_NOTELL) or state_checks.IS_SET(ch.comm, merc.COMM_DEAF):
+    if ch.comm.is_set(merc.COMM_NOTELL) or ch.comm.is_set(merc.COMM_DEAF):
         ch.send("Your message didn't get through.\n")
         return
-    if state_checks.IS_SET(ch.comm, merc.COMM_QUIET):
+    if ch.comm.is_set(merc.COMM_QUIET):
         ch.send("You must turn off quiet mode first.\n")
         return
-    if state_checks.IS_SET(ch.comm, merc.COMM_DEAF):
+    if ch.comm.is_set(merc.COMM_DEAF):
         ch.send("You must turn off deaf mode first.\n")
         return
     argument, arg = game_utils.read_word(argument)

@@ -8,7 +8,7 @@ import interp
 
 
 def do_combine(ch, argument):
-    if state_checks.IS_SET(ch.comm, merc.COMM_COMBINE):
+    if ch.comm.is_set(merc.COMM_COMBINE):
         ch.send("Long inventory selected.\n")
         ch.comm = state_checks.REMOVE_BIT(ch.comm, merc.COMM_COMBINE)
     else:

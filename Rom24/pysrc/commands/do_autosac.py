@@ -10,12 +10,12 @@ import state_checks
 def do_autosac(ch, argument):
     if ch.is_npc():
         return
-    if state_checks.IS_SET(ch.act, merc.PLR_AUTOSAC):
+    if ch.act.is_set(merc.PLR_AUTOSAC):
         ch.send("Autosacrificing removed.\n")
-        ch.act = state_checks.REMOVE_BIT(ch.act, merc.PLR_AUTOSAC)
+        ch.act.rem_bit(merc.PLR_AUTOSAC)
     else:
         ch.send("Automatic corpse sacrificing set.\n")
-        ch.act = state_checks.SET_BIT(ch.act, merc.PLR_AUTOSAC)
+        ch.act.set_bit(merc.PLR_AUTOSAC)
 
 
 interp.register_command(interp.cmd_type('autosac', do_autosac, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))

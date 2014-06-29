@@ -365,7 +365,7 @@ class handler_ch:
         # * Guard against recursion (for weapons with affects).
         wield = ch.get_eq(WEAR_WIELD)
         if not ch.is_npc() and wield \
-                and wield.get_weight() > (const.str_app[ch.get_curr_stat(STAT_STR)].wield * 10):
+                and wield.get_weight() > (const.str_app[ch.stat(STAT_STR)].wield * 10):
             global depth
 
             if depth == 0:
@@ -873,9 +873,9 @@ class handler_ch:
         for rch in ch.in_room.people:
             if not ch.can_see(rch):
                 continue
-            if not state_checks.IS_NPC(rch) and not rch.name.lower().startswith(arg):
+            if not rch.is_npc() and not rch.name.lower().startswith(arg):
                 continue
-            if state_checks.IS_NPC(rch) and not game_utils.is_name(arg, rch.name):
+            if rch.is_npc() and not game_utils.is_name(arg, rch.name):
                 continue
             count += 1
             if count == number:
@@ -893,9 +893,9 @@ class handler_ch:
         for wch in char_list:
             if wch.in_room is None or not ch.can_see(wch):
                 continue
-            if not state_checks.IS_NPC(wch) and not game_utils.is_name(arg, wch.name.lower()):
+            if not wch.is_npc() and not game_utils.is_name(arg, wch.name.lower()):
                 continue
-            if state_checks.IS_NPC(wch) and arg not in wch.name:
+            if wch.is_npc() and arg not in wch.name:
                 continue
             count += 1
             if count == number:
@@ -1011,7 +1011,7 @@ class handler_ch:
         if ch.trust < victim.incog_level and ch.in_room != victim.in_room:
             return False
         if (not ch.is_npc()
-            and state_checks.IS_SET(ch.act, PLR_HOLYLIGHT)) \
+            and ch.act.is_set(PLR_HOLYLIGHT)) \
                 or (ch.is_npc()
                     and state_checks.IS_IMMORTAL(ch)):
             return True
@@ -1028,8 +1028,8 @@ class handler_ch:
                 and not ch.is_affected(AFF_DETECT_HIDDEN) \
                 and victim.fighting is None:
             chance = victim.get_skill("sneak")
-            chance += victim.get_curr_stat(STAT_DEX) * 3 // 2
-            chance -= ch.get_curr_stat(STAT_INT) * 2
+            chance += victim.stat(STAT_DEX) * 3 // 2
+            chance -= ch.stat(STAT_INT) * 2
             chance -= ch.level - victim.level * 3 // 2
 
             if random.randint(1, 99) < chance:
@@ -1045,7 +1045,7 @@ class handler_ch:
     # * True if char can see obj.
     def can_see_obj(ch, obj):
         if not ch.is_npc() \
-                and state_checks.IS_SET(ch.act, PLR_HOLYLIGHT):
+                and ch.act.is_set(PLR_HOLYLIGHT):
             return True
         if state_checks.IS_SET(obj.extra_flags, ITEM_VIS_DEATH):
             return False
@@ -1093,32 +1093,32 @@ class handler_ch:
                 skill = 40 + 2 * ch.level
             elif sn == 'sneak' or sn == 'hide':
                 skill = ch.level * 2 + 20
-            elif (sn == 'dodge' and state_checks.IS_SET(ch.off_flags, OFF_DODGE)) \
-                    or (sn == 'parry' and state_checks.IS_SET(ch.off_flags, OFF_PARRY)):
+            elif (sn == 'dodge' and ch.off_flags.is_set(OFF_DODGE)) \
+                    or (sn == 'parry' and ch.off_flags.is_set(OFF_PARRY)):
                 skill = ch.level * 2
             elif sn == 'shield block':
                 skill = 10 + 2 * ch.level
             elif sn == 'second attack' \
-                    and (state_checks.IS_SET(ch.act, ACT_WARRIOR)
-                         or state_checks.IS_SET(ch.act, ACT_THIEF)):
+                    and (ch.act.is_set(ACT_WARRIOR)
+                         or ch.act.is_set(ACT_THIEF)):
                 skill = 10 + 3 * ch.level
-            elif sn == 'third_attack' and state_checks.IS_SET(ch.act, ACT_WARRIOR):
+            elif sn == 'third_attack' and ch.act.is_set(ACT_WARRIOR):
                 skill = 4 * ch.level - 40
             elif sn == 'hand to hand':
                 skill = 40 + 2 * ch.level
-            elif sn == "trip" and state_checks.IS_SET(ch.off_flags, OFF_TRIP):
+            elif sn == "trip" and ch.off_flags.is_set(OFF_TRIP):
                 skill = 10 + 3 * ch.level
-            elif sn == "bash" and state_checks.IS_SET(ch.off_flags, OFF_BASH):
+            elif sn == "bash" and ch.off_flags.is_set(OFF_BASH):
                 skill = 10 + 3 * ch.level
-            elif sn == "disarm" and (state_checks.IS_SET(ch.off_flags, OFF_DISARM)
-                                     or state_checks.IS_SET(ch.act, ACT_WARRIOR)
-                                     or state_checks.IS_SET(ch.act, ACT_THIEF)):
+            elif sn == "disarm" and (ch.off_flags.is_set(OFF_DISARM)
+                                     or ch.act.is_set(ACT_WARRIOR)
+                                     or ch.act.is_set(ACT_THIEF)):
                 skill = 20 + 3 * ch.level
-            elif sn == "berserk" and state_checks.IS_SET(ch.off_flags, OFF_BERSERK):
+            elif sn == "berserk" and ch.off_flags.is_set(OFF_BERSERK):
                 skill = 3 * ch.level
             elif sn == "kick":
                 skill = 10 + 3 * ch.level
-            elif sn == "backstab" and state_checks.IS_SET(ch.act, ACT_THIEF):
+            elif sn == "backstab" and ch.act.is_set(ACT_THIEF):
                 skill = 20 + 2 * ch.level
             elif sn == "rescue":
                 skill = 40 + ch.level
@@ -1173,17 +1173,17 @@ class handler_ch:
     def can_carry_n(ch):
         if not ch.is_npc() and ch.level >= LEVEL_IMMORTAL:
             return 1000
-        if ch.is_npc() and state_checks.IS_SET(ch.act, ACT_PET):
+        if ch.is_npc() and ch.act.is_set(ACT_PET):
             return 0
-        return MAX_WEAR + 2 * ch.get_curr_stat(STAT_DEX) + ch.level
+        return MAX_WEAR + 2 * ch.stat(STAT_DEX) + ch.level
 
     # * Retrieve a character's carry capacity.
     def can_carry_w(ch):
         if not ch.is_npc() and ch.level >= LEVEL_IMMORTAL:
             return 10000000
-        if ch.is_npc() and state_checks.IS_SET(ch.act, ACT_PET):
+        if ch.is_npc() and ch.act.is_set(ACT_PET):
             return 0
-        return const.str_app[ch.get_curr_stat(STAT_STR)].carry * 10 + ch.level * 25
+        return const.str_app[ch.stat(STAT_STR)].carry * 10 + ch.level * 25
 
     #/* command for retrieving stats */
     def get_curr_stat(ch, stat):
@@ -1445,13 +1445,13 @@ def show_list_to_char(clist, ch, fShort, fShowNothing):
                 objects[frmt] += 1
 
     if not objects and fShowNothing:
-        if ch.is_npc() or state_checks.IS_SET(ch.comm, COMM_COMBINE):
+        if ch.is_npc() or ch.comm.is_set(COMM_COMBINE):
             ch.send("     ")
         ch.send("Nothing.\n")
 
         #* Output the formatted list.
     for desc, count in objects.items():
-        if ch.is_npc() or state_checks.IS_SET(ch.comm, COMM_COMBINE) and count > 1:
+        if ch.is_npc() or ch.comm.is_set(COMM_COMBINE) and count > 1:
             ch.send("(%2d) %s\n" % (count, desc))
         else:
             for i in range(count):
@@ -1488,12 +1488,12 @@ def show_char_to_char_0(victim, ch):
     if victim.is_npc() and victim.position == victim.start_pos and victim.long_descr:
         buf += victim.long_descr
         ch.send(buf)
-        if state_checks.IS_SET(ch.act, PLR_OMNI):
+        if ch.act.is_set(PLR_OMNI):
             ch.send("(%d)" % victim.pIndexData.vnum)
         return
 
     buf += state_checks.PERS(victim, ch)
-    if not victim.is_npc() and not state_checks.IS_SET(ch.comm, COMM_BRIEF) \
+    if not victim.is_npc() and not ch.comm.is_set(COMM_BRIEF) \
             and victim.position == POS_STANDING and not ch.on:
         buf += victim.pcdata.title
 
@@ -1556,7 +1556,7 @@ def show_char_to_char_0(victim, ch):
         else:
             buf += "someone who left??"
     buf = buf.capitalize()
-    if victim.is_npc() and state_checks.IS_SET(ch.act, PLR_OMNI):
+    if victim.is_npc() and ch.act.is_set(PLR_OMNI):
         buf += "(%s)" % victim.pIndexData.vnum
     ch.send(buf)
     return
@@ -1608,7 +1608,7 @@ def show_char_to_char_1(victim, ch):
     if victim != ch and not ch.is_npc() \
             and random.randint(1, 99) < ch.get_skill("peek"):
         ch.send("\nYou peek at the inventory:\n")
-        skills.check_improve(ch, 'peek', True, 4)
+        ch.check_improve( 'peek', True, 4)
         show_list_to_char(victim.carrying, ch, True, True)
     return
 

@@ -10,7 +10,7 @@ import state_checks
 
 
 def do_yell(ch, argument):
-    if state_checks.IS_SET(ch.comm, merc.COMM_NOSHOUT):
+    if ch.comm.is_set(merc.COMM_NOSHOUT):
         ch.send("You can't yell.\n")
         return
     if not argument:
