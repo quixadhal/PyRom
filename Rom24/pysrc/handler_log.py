@@ -74,7 +74,7 @@ def parse_exception(error_object, *args):
             print("%s : %s " % (k, value_to_str(v)))
 
 
-class logger(object):
+class logged(object):
     def __init__(self, log_type):
         """Init the logger, log_type"""
         self.log_type = log_type

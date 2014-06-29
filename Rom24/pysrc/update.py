@@ -49,6 +49,7 @@ import handler_ch
 import handler_obj
 import handler_olc
 import handler_room
+import handler_log
 import game_utils
 
 # * Advancement stuff.
@@ -277,6 +278,7 @@ def gain_condition(ch, iCond, value):
 # * Mob autonomous action.
 # * This function takes 25% to 35% of ALL Merc cpu time.
 # * -- Furey
+@handler_log.logged("Debug")
 def mobile_update():
     # Examine all mobs. */
     for ch in char_list[:]:
@@ -302,7 +304,7 @@ def mobile_update():
             continue
 
         # Scavenge */
-        if state_checks.IS_SET(ch.act, ACT_SCAVENGER) and ch.in_room.contents != None and random.randint(0, 6) == 0:
+        if state_checks.IS_SET(ch.act, ACT_SCAVENGER) and ch.in_room.contents is not None and random.randint(0, 6) == 0:
             top = 1
             obj_best = 0
             for obj in ch.in_room.contents:
