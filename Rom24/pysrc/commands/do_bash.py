@@ -40,7 +40,7 @@ def do_bash(ch, argument):
         return
     if fight.is_safe(ch,victim):
         return
-    if state_checks.IS_NPC(victim) and victim.fighting and not ch.is_same_group(victim.fighting):
+    if victim.is_npc() and victim.fighting and not ch.is_same_group(victim.fighting):
         ch.send("Kill stealing is not permitted.\n\r")
         return
     if ch.is_affected(merc.AFF_CHARM) and ch.master == victim:
@@ -66,7 +66,7 @@ def do_bash(ch, argument):
         chance -= 30
     # level
     chance += (ch.level - victim.level)
-    if not state_checks.IS_NPC(victim) and chance < victim.get_skill('dodge'):
+    if not victim.is_npc() and chance < victim.get_skill('dodge'):
         pass
         # act("$n tries to bash you, but you dodge it.",ch,None,victim,TO_VICT)
         # act("$N dodges your bash, you fall flat on your face.",ch,None,victim,TO_CHAR)

@@ -13,7 +13,7 @@ def do_echo(ch, argument):
         return
     for d in merc.descriptor_list:
         if d.is_connected(nanny.con_playing):
-            if d.character.get_trust() >= ch.get_trust():
+            if d.character.get_trust() >= ch.trust:
                 d.send("global> ")
             d.send(argument + "\n")
     return

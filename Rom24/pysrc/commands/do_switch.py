@@ -27,7 +27,7 @@ def do_switch(ch, argument):
     if victim == ch:
         ch.send("Ok.\n")
         return
-    if not state_checks.IS_NPC(victim):
+    if not victim.is_npc():
         ch.send("You can only switch into mobiles.\n")
         return
     if not ch.is_room_owner(victim.in_room) and ch.in_room != victim.in_room \
@@ -39,7 +39,7 @@ def do_switch(ch, argument):
         return
 
     handler_game.wiznet("$N switches into %s" % victim.short_descr, ch, None, merc.WIZ_SWITCHES, merc.WIZ_SECURE,
-                ch.get_trust())
+                ch.trust)
 
     ch.desc.character = victim
     ch.desc.original = ch

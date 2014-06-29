@@ -18,7 +18,7 @@ def do_pardon(ch, argument):
     if not victim:
         ch.send("They aren't here.\n")
         return
-    if state_checks.IS_NPC(victim):
+    if victim.is_npc():
         ch.send("Not on NPC's.\n")
         return
     if arg2 == "killer":

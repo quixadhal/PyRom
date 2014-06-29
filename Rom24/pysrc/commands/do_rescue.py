@@ -27,7 +27,7 @@ def do_rescue(ch, argument):
     if victim == ch:
         ch.send("What about fleeing instead?\n")
         return
-    if not ch.is_npc() and state_checks.IS_NPC(victim):
+    if not ch.is_npc() and victim.is_npc():
         ch.send("Doesn't need your help!\n")
         return
     if ch.fighting == victim:

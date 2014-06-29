@@ -22,7 +22,7 @@ def do_trust(ch, argument):
     if level < 0 or level > merc.MAX_LEVEL:
         ch.send("Level must be 0 (reset) or 1 to %d.\n" % merc.MAX_LEVEL)
         return
-    if level > ch.get_trust():
+    if level > ch.trust:
         ch.send("Limited to your trust.\n")
         return
     victim.trust = level

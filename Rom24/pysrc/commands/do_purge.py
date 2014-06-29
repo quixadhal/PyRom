@@ -14,7 +14,7 @@ def do_purge(ch, argument):
     argument, arg = game_utils.read_word(argument)
     if not arg:
         for victim in ch.in_room.people[:]:
-            if state_checks.IS_NPC(victim) and not state_checks.IS_SET(victim.act,
+            if victim.is_npc() and not state_checks.IS_SET(victim.act,
                                                                        merc.ACT_NOPURGE) and victim != ch:  # safety precaution
                 victim.extract(True)
         for obj in ch.in_room.contents[:]:
@@ -27,11 +27,11 @@ def do_purge(ch, argument):
     if not victim:
         ch.send("They aren't here.\n")
         return
-    if not state_checks.IS_NPC(victim):
+    if not victim.is_npc():
         if ch == victim:
             ch.send("Ho ho ho.\n")
             return
-        if ch.get_trust() <= victim.get_trust():
+        if ch.trust <= victim.get_trust():
             ch.send("Maybe that wasn't a good idea...\n")
             victim.send("%s tried to purge you!\n" % ch.name)
             return

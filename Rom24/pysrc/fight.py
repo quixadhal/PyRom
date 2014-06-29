@@ -496,7 +496,7 @@ def damage(ch,victim,dam,dt,dam_type,show):
         handler_game.act( "$n fades into existence.", ch, None, None, TO_ROOM )
 
      # Damage modifiers.
-    if dam > 1 and not state_checks.IS_NPC(victim) and victim.pcdata.condition[COND_DRUNK] > 10:
+    if dam > 1 and not victim.is_npc() and victim.pcdata.condition[COND_DRUNK] > 10:
         dam = 9 * dam // 10
     if dam > 1 and victim.is_affected( AFF_SANCTUARY):
         dam //= 2
@@ -532,7 +532,7 @@ def damage(ch,victim,dam,dt,dam_type,show):
      # Hurt the victim.
      # Inform the victim of his new state.
     victim.hit -= dam
-    if not state_checks.IS_NPC(victim) and victim.level >= LEVEL_IMMORTAL and victim.hit < 1:
+    if not victim.is_npc() and victim.level >= LEVEL_IMMORTAL and victim.hit < 1:
         victim.hit = 1
     update_pos( victim )
 
@@ -561,17 +561,17 @@ def damage(ch,victim,dam,dt,dam_type,show):
     if victim.position == POS_DEAD:
         group_gain( ch, victim )
 
-        if not state_checks.IS_NPC(victim):
+        if not victim.is_npc():
             logger.warn ("%s killed by %s at %d", victim.name, ch.short_descr if ch.is_npc() else ch.name, ch.in_room.vnum )
             # Dying penalty:
             # 2/3 way back to previous level.
             if victim.exp > victim.exp_per_level(victim.pcdata.points) * victim.level:
                 update.gain_exp( victim, (2 * (victim.exp_per_level(victim.pcdata.points) * victim.level - victim.exp) // 3) + 50 )
 
-        log_buf = "%s got toasted by %s at %s [room %d]" % ( victim.short_descr if state_checks.IS_NPC(victim) else victim.name,
+        log_buf = "%s got toasted by %s at %s [room %d]" % ( victim.short_descr if victim.is_npc() else victim.name,
             ch.short_descr if ch.is_npc() else ch.name, ch.in_room.name, ch.in_room.vnum)
  
-        if state_checks.IS_NPC(victim):
+        if victim.is_npc():
             handler_game.wiznet(log_buf,None,None,WIZ_MOBDEATHS,0,0)
         else:
             handler_game.wiznet(log_buf,None,None,WIZ_DEATHS,0,0)
@@ -605,20 +605,20 @@ def damage(ch,victim,dam,dt,dam_type,show):
         return True
 
      #* Take care of link dead people.
-    if not state_checks.IS_NPC(victim) and victim.desc == None:
+    if not victim.is_npc() and victim.desc == None:
         if random.randint( 0, victim.wait ) == 0:
             victim.do_recall("")
             return True
 
     # * Wimp out?
-    if state_checks.IS_NPC(victim) and dam > 0 and victim.wait < PULSE_VIOLENCE // 2:
+    if victim.is_npc() and dam > 0 and victim.wait < PULSE_VIOLENCE // 2:
         if (state_checks.IS_SET(victim.act, ACT_WIMPY) and random.randint(0,4) == 0 \
         and victim.hit < victim.max_hit // 5) \
         or ( victim.is_affected( AFF_CHARM) and victim.master \
         and victim.master.in_room != victim.in_room ):
             victim.do_flee("")
 
-    if not state_checks.IS_NPC(victim) and victim.hit > 0 and victim.hit <= victim.wimpy and victim.wait < PULSE_VIOLENCE // 2:
+    if not victim.is_npc() and victim.hit > 0 and victim.hit <= victim.wimpy and victim.wait < PULSE_VIOLENCE // 2:
         victim.do_flee("")
     return True
 
@@ -630,7 +630,7 @@ def is_safe(ch, victim):
     if state_checks.IS_IMMORTAL(ch) and ch.level > LEVEL_IMMORTAL:
         return False
     # killing mobiles */
-    if state_checks.IS_NPC(victim):
+    if victim.is_npc():
         # safe room? */
         if state_checks.IS_SET(victim.in_room.room_flags,ROOM_SAFE):
             ch.send("Not in this room.\n")
@@ -696,7 +696,7 @@ def is_safe_spell(ch, victim, area ):
     if state_checks.IS_IMMORTAL(ch) and ch.level > LEVEL_IMMORTAL and not area:
         return False
     # killing mobiles */
-    if state_checks.IS_NPC(victim):
+    if victim.is_npc():
         # safe room? */
         if state_checks.IS_SET(victim.in_room.room_flags,ROOM_SAFE):
             return True
@@ -760,7 +760,7 @@ def check_killer( ch, victim ):
 
      # NPC's are fair game.
      # So are killers and thieves.
-    if state_checks.IS_NPC(victim) or state_checks.IS_SET(victim.act, PLR_KILLER) or state_checks.IS_SET(victim.act, PLR_THIEF):
+    if victim.is_npc() or state_checks.IS_SET(victim.act, PLR_KILLER) or state_checks.IS_SET(victim.act, PLR_THIEF):
         return
 
      # Charm-o-rama.
@@ -795,7 +795,7 @@ def check_parry( ch, victim ):
     chance = victim.get_skill('parry') // 2
 
     if victim.get_eq(WEAR_WIELD) == None:
-        if state_checks.IS_NPC(victim):
+        if victim.is_npc():
             chance //= 2
         else:
             return False
@@ -844,7 +844,7 @@ def update_pos(victim):
         if victim.position <= POS_STUNNED:
             victim.position = POS_STANDING
         return
-    if state_checks.IS_NPC(victim) and victim.hit < 1:
+    if victim.is_npc() and victim.hit < 1:
         victim.position = POS_DEAD
         return
     if victim.hit <= -11:
@@ -1008,7 +1008,7 @@ def raw_kill( victim ):
     death_cry( victim )
     make_corpse( victim )
 
-    if state_checks.IS_NPC(victim):
+    if victim.is_npc():
         victim.pIndexData.killed += 1
         #kill_table[max(0, min(victim.level, MAX_LEVEL-1))].killed += 1
         victim.extract(True)
@@ -1278,7 +1278,7 @@ def disarm( ch, victim ):
         obj.to_char(victim)
     else:
         obj.to_room(victim.in_room)
-        if state_checks.IS_NPC(victim) and victim.wait == 0 and victim.can_see_obj(obj):
+        if victim.is_npc() and victim.wait == 0 and victim.can_see_obj(obj):
             handler_obj.get_obj(victim,obj,None)
     return
 

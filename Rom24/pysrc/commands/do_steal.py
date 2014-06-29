@@ -33,7 +33,7 @@ def do_steal(ch, argument):
     if fight.is_safe(ch, victim):
         return
 
-    if state_checks.IS_NPC(victim) and victim.position == merc.POS_FIGHTING:
+    if victim.is_npc() and victim.position == merc.POS_FIGHTING:
         ch.send("Kill stealing is not permitted.\nYou'd better not -- you might get hit.\n")
         return
     state_checks.WAIT_STATE(ch, const.skill_table["steal"].beats)
@@ -47,7 +47,7 @@ def do_steal(ch, argument):
         percent += 50
 
     if ((ch.level + 7 < victim.level or ch.level - 7 > victim.level)
-        and not state_checks.IS_NPC(victim) and not ch.is_npc() ) \
+        and not victim.is_npc() and not ch.is_npc() ) \
             or (not ch.is_npc() and percent > ch.get_skill("steal")) \
             or (not ch.is_npc() and not ch.is_clan()):
         # Failure.
@@ -71,7 +71,7 @@ def do_steal(ch, argument):
         if state_checks.IS_AWAKE(victim):
             victim.do_yell(buf)
         if not ch.is_npc():
-            if state_checks.IS_NPC(victim):
+            if victim.is_npc():
                 skills.check_improve(ch, "steal", False, 2)
                 fight.multi_hit(victim, ch, merc.TYPE_UNDEFINED)
             else:

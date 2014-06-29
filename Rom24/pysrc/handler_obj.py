@@ -315,7 +315,7 @@ def get_obj(ch, obj, container):
                 handler_game.act("$N appears to be using $p.", ch,obj,gch, merc.TO_CHAR)
                 return
     if container:
-        if container.pIndexData.vnum == merc.OBJ_VNUM_PIT and ch.get_trust() < obj.level:
+        if container.pIndexData.vnum == merc.OBJ_VNUM_PIT and ch.trust < obj.level:
             ch.send("You are not powerful enough to use it.\n")
             return
     if container.pIndexData.vnum == merc.OBJ_VNUM_PIT \

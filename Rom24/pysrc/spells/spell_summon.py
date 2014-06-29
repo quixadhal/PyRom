@@ -15,14 +15,14 @@ def spell_summon(sn, level, ch, victim, target):
             or state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_PRIVATE) \
             or state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_SOLITARY) \
             or state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_NO_RECALL) \
-            or (state_checks.IS_NPC(victim) and state_checks.IS_SET(victim.act, merc.ACT_AGGRESSIVE)) \
+            or (victim.is_npc() and state_checks.IS_SET(victim.act, merc.ACT_AGGRESSIVE)) \
             or victim.level >= level + 3 \
-            or (not state_checks.IS_NPC(victim) and victim.level >= merc.LEVEL_IMMORTAL) \
+            or (not victim.is_npc() and victim.level >= merc.LEVEL_IMMORTAL) \
             or victim.fighting != None \
-            or (state_checks.IS_NPC(victim) and state_checks.IS_SET(victim.imm_flags, merc.IMM_SUMMON)) \
-            or (state_checks.IS_NPC(victim) and victim.pIndexData.pShop != None) \
-            or (not state_checks.IS_NPC(victim) and state_checks.IS_SET(victim.act, merc.PLR_NOSUMMON)) \
-            or (state_checks.IS_NPC(victim) and handler_magic.saves_spell(level, victim, merc.DAM_OTHER)):
+            or (victim.is_npc() and state_checks.IS_SET(victim.imm_flags, merc.IMM_SUMMON)) \
+            or (victim.is_npc() and victim.pIndexData.pShop != None) \
+            or (not victim.is_npc() and state_checks.IS_SET(victim.act, merc.PLR_NOSUMMON)) \
+            or (victim.is_npc() and handler_magic.saves_spell(level, victim, merc.DAM_OTHER)):
         ch.send("You failed.\n")
         return
 

@@ -24,7 +24,7 @@ def do_violate(ch, argument):
         fight.stop_fighting(ch, True)
 
     for rch in ch.in_room.people:
-        if rch.get_trust() >= ch.invis_level:
+        if rch.trust >= ch.invis_level:
             if ch.pcdata and ch.pcdata.bamfout:
                 handler_game.act("$t", ch, ch.pcdata.bamfout, rch, merc.TO_VICT)
             else:
@@ -33,7 +33,7 @@ def do_violate(ch, argument):
     ch.to_room(location)
 
     for rch in ch.in_room.people:
-        if rch.get_trust() >= ch.invis_level:
+        if rch.trust >= ch.invis_level:
             if ch.pcdata and ch.pcdata.bamfin:
                 handler_game.act("$t", ch, ch.pcdata.bamfin, rch, merc.TO_VICT)
             else:

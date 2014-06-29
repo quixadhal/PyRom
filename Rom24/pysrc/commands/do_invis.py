@@ -18,13 +18,13 @@ def do_invis(ch, argument):
             handler_game.act("$n slowly fades into existence.", ch, None, None, merc.TO_ROOM)
             ch.send("You slowly fade back into existence.\n")
         else:
-            ch.invis_level = ch.get_trust()
+            ch.invis_level = ch.trust
             handler_game.act("$n slowly fades into thin air.", ch, None, None, merc.TO_ROOM)
             ch.send("You slowly vanish into thin air.\n")
     else:
         # do the level thing
         level = int(arg) if arg.isdigit() else -1
-        if level < 2 or level > ch.get_trust():
+        if level < 2 or level > ch.trust:
             ch.send("Invis level must be between 2 and your level.\n")
             return
         else:

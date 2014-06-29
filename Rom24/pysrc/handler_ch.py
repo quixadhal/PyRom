@@ -988,7 +988,7 @@ class handler_ch:
 
     # visibility on a room -- for entering and exits */
     def can_see_room(ch, pRoomIndex):
-        if state_checks.IS_SET(pRoomIndex.room_flags, ROOM_IMP_ONLY) and ch.get_trust() < MAX_LEVEL:
+        if state_checks.IS_SET(pRoomIndex.room_flags, ROOM_IMP_ONLY) and ch.trust < MAX_LEVEL:
             return False
         if state_checks.IS_SET(pRoomIndex.room_flags, ROOM_GODS_ONLY) and not state_checks.IS_IMMORTAL(ch):
             return False
@@ -1006,9 +1006,9 @@ class handler_ch:
         # RT changed so that WIZ_INVIS has levels */
         if ch == victim:
             return True
-        if ch.get_trust() < victim.invis_level:
+        if ch.trust < victim.invis_level:
             return False
-        if ch.get_trust() < victim.incog_level and ch.in_room != victim.in_room:
+        if ch.trust < victim.incog_level and ch.in_room != victim.in_room:
             return False
         if (not ch.is_npc()
             and state_checks.IS_SET(ch.act, PLR_HOLYLIGHT)) \
@@ -1480,12 +1480,12 @@ def show_char_to_char_0(victim, ch):
         buf += "(Golden Aura) "
     if victim.is_affected( AFF_SANCTUARY):
         buf += "(White Aura) "
-    if not state_checks.IS_NPC(victim) and state_checks.IS_SET(victim.act, PLR_KILLER):
+    if not victim.is_npc() and state_checks.IS_SET(victim.act, PLR_KILLER):
         buf += "(KILLER) "
-    if not state_checks.IS_NPC(victim) and state_checks.IS_SET(victim.act, PLR_THIEF):
+    if not victim.is_npc() and state_checks.IS_SET(victim.act, PLR_THIEF):
         buf += "(THIEF) "
 
-    if state_checks.IS_NPC(victim) and victim.position == victim.start_pos and victim.long_descr:
+    if victim.is_npc() and victim.position == victim.start_pos and victim.long_descr:
         buf += victim.long_descr
         ch.send(buf)
         if state_checks.IS_SET(ch.act, PLR_OMNI):
@@ -1493,7 +1493,7 @@ def show_char_to_char_0(victim, ch):
         return
 
     buf += state_checks.PERS(victim, ch)
-    if not state_checks.IS_NPC(victim) and not state_checks.IS_SET(ch.comm, COMM_BRIEF) \
+    if not victim.is_npc() and not state_checks.IS_SET(ch.comm, COMM_BRIEF) \
             and victim.position == POS_STANDING and not ch.on:
         buf += victim.pcdata.title
 
@@ -1556,7 +1556,7 @@ def show_char_to_char_0(victim, ch):
         else:
             buf += "someone who left??"
     buf = buf.capitalize()
-    if state_checks.IS_NPC(victim) and state_checks.IS_SET(ch.act, PLR_OMNI):
+    if victim.is_npc() and state_checks.IS_SET(ch.act, PLR_OMNI):
         buf += "(%s)" % victim.pIndexData.vnum
     ch.send(buf)
     return
@@ -1617,7 +1617,7 @@ def show_char_to_char(plist, ch):
     for rch in plist:
         if rch == ch:
             continue
-        if ch.get_trust() < rch.invis_level:
+        if ch.trust < rch.invis_level:
             continue
         if ch.can_see(rch):
             show_char_to_char_0(rch, ch)

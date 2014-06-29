@@ -26,14 +26,14 @@ def do_restore(ch, argument):
             fight.update_pos(vch)
             handler_game.act("$n has restored you.", ch, None, vch, merc.TO_VICT)
         handler_game.wiznet("$N restored room %d." % ch.in_room.vnum, ch, None, merc.WIZ_RESTORE, merc.WIZ_SECURE,
-                    ch.get_trust())
+                    ch.trust)
         ch.send("Room restored.\n")
         return
-    if ch.get_trust() >= merc.MAX_LEVEL - 1 and arg == "all":
+    if ch.trust >= merc.MAX_LEVEL - 1 and arg == "all":
         # cure all
         for d in merc.descriptor_list:
             victim = d.character
-            if victim == None or state_checks.IS_NPC(victim):
+            if victim == None or victim.is_npc():
                 continue
             victim.affect_strip("plague")
             victim.affect_strip("poison")
@@ -62,8 +62,8 @@ def do_restore(ch, argument):
     victim.move = victim.max_move
     fight.update_pos(victim)
     handler_game.act("$n has restored you.", ch, None, victim, merc.TO_VICT)
-    buf = "$N restored %s", (victim.short_descr if state_checks.IS_NPC(victim) else victim.name)
-    handler_game.wiznet(buf, ch, None, merc.WIZ_RESTORE, merc.WIZ_SECURE, ch.get_trust())
+    buf = "$N restored %s", (victim.short_descr if victim.is_npc() else victim.name)
+    handler_game.wiznet(buf, ch, None, merc.WIZ_RESTORE, merc.WIZ_SECURE, ch.trust)
     ch.send("Ok.\n")
     return
 

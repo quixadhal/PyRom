@@ -59,15 +59,15 @@ def IS_NPC(ch):
 
 
 def IS_IMMORTAL(ch):
-    return ch.get_trust() >= merc.LEVEL_IMMORTAL
+    return ch.trust >= merc.LEVEL_IMMORTAL
 
 
 def IS_HERO(ch):
-    return ch.get_trust() >= merc.LEVEL_HERO
+    return ch.trust >= merc.LEVEL_HERO
 
 
 def IS_TRUSTED(ch, level):
-    return ch.get_trust() >= level
+    return ch.trust >= level
 
 
 def is_affected(ch, sn):

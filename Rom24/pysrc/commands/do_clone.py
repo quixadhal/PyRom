@@ -52,7 +52,7 @@ def do_clone(ch, argument):
 
         handler_game.act("$n has created $p.", ch, clone, None, merc.TO_ROOM)
         handler_game.act("You clone $p.", ch, clone, None, merc.TO_CHAR)
-        handler_game.wiznet("$N clones $p.", ch, clone, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.get_trust())
+        handler_game.wiznet("$N clones $p.", ch, clone, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.trust)
         return
     elif mob:
         if not state_checks.IS_NPC(mob):
@@ -78,7 +78,7 @@ def do_clone(ch, argument):
         clone.to_room(ch.in_room)
         handler_game.act("$n has created $N.", ch, None, clone, merc.TO_ROOM)
         handler_game.act("You clone $N.", ch, None, clone, merc.TO_CHAR)
-        handler_game.wiznet("$N clones %s." % clone.short_descr, ch, None, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.get_trust())
+        handler_game.wiznet("$N clones %s." % clone.short_descr, ch, None, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.trust)
         return
 
 

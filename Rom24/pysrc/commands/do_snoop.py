@@ -23,7 +23,7 @@ def do_snoop(ch, argument):
         return
     if victim == ch:
         ch.send("Cancelling all snoops.\n")
-        handler_game.wiznet("$N stops being such a snoop.", ch, None, merc.WIZ_SNOOPS, merc.WIZ_SECURE, ch.get_trust())
+        handler_game.wiznet("$N stops being such a snoop.", ch, None, merc.WIZ_SNOOPS, merc.WIZ_SECURE, ch.trust)
         for d in merc.descriptor_list:
             if d.snoop_by == ch.desc:
                 d.snoop_by = None
@@ -35,7 +35,7 @@ def do_snoop(ch, argument):
             and victim.in_room.is_private() and not state_checks.IS_TRUSTED(ch, merc.MAX_LEVEL):
         ch.send("That character is in a private room.\n")
         return
-    if victim.get_trust() >= ch.get_trust() or state_checks.IS_SET(victim.comm, merc.COMM_SNOOP_PROOF):
+    if victim.get_trust() >= ch.trust or state_checks.IS_SET(victim.comm, merc.COMM_SNOOP_PROOF):
         ch.send("You failed.\n")
         return
     if ch.desc:
@@ -47,7 +47,7 @@ def do_snoop(ch, argument):
             d = d.snoop_by
     victim.desc.snoop_by = ch.desc
     buf = "$N starts snooping on %s" % (victim.short_descr if ch.is_npc() else victim.name)
-    handler_game.wiznet(buf, ch, None, merc.WIZ_SNOOPS, merc.WIZ_SECURE, ch.get_trust())
+    handler_game.wiznet(buf, ch, None, merc.WIZ_SNOOPS, merc.WIZ_SECURE, ch.trust)
     ch.send("Ok.\n")
     return
 

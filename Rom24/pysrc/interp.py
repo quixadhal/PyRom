@@ -197,7 +197,7 @@ def check_social(ch, command, argument):
         handler_game.act(cmd.char_found, ch, None, victim, TO_CHAR)
         handler_game.act(cmd.vict_found, ch, None, victim, TO_VICT)
 
-        if not ch.is_npc() and state_checks.IS_NPC(victim) \
+        if not ch.is_npc() and victim.is_npc() \
                 and not victim.is_affected( AFF_CHARM) \
                 and state_checks.IS_AWAKE(victim) and victim.desc is None:
             num = random.randint(0, 12)

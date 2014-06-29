@@ -21,14 +21,14 @@ def do_advance(ch, argument):
     if not victim:
         ch.send("That player is not here.\n")
         return
-    if state_checks.IS_NPC(victim):
+    if victim.is_npc():
         ch.send("Not on NPC's.\n")
         return
     level = int(arg2)
     if level < 1 or level > merc.MAX_LEVEL:
         ch.send("Level must be 1 to %d.\n" % merc.MAX_LEVEL)
         return
-    if level > ch.get_trust():
+    if level > ch.trust:
         ch.send("Limited to your trust level.\n")
         return
 

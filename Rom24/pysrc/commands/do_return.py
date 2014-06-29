@@ -17,7 +17,7 @@ def do_return(ch, argument):
     if ch.prompt:
         ch.prompt = ''
     handler_game.wiznet("$N returns from %s." % ch.short_descr, ch.desc.original, 0, merc.WIZ_SWITCHES, merc.WIZ_SECURE,
-                ch.get_trust())
+                ch.trust)
     ch.desc.character = ch.desc.original
     ch.desc.original = None
     ch.desc.character.desc = ch.desc
