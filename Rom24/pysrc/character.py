@@ -30,26 +30,32 @@ class Bit:
         self.flags = flags
 
     def set_bit(self, bit):
-        bit = self.from_name(bit)
-        if bit:
-            self.bits = self.bits | bit
+        self.bits = self.bits | self.from_name(bit)
 
     def rem_bit(self, bit):
-        bit = self.from_name(bit)
-        if bit:
-            self.bits = self.bits & ~bit
+        self.bits = self.bits & ~self.from_name(bit)
 
     def is_set(self, bit):
-        bit = self.from_name(bit)
-        return self.bits & bit
+        return self.bits & self.from_name(bit)
 
     def from_name(self, name):
         if type(name) == int:
             return name
+        name = name.strip()
+        bitstring = name.split(' ')
+        bits = 0
         for tok in self.flags.values():
-            if tok.name == name:
-                return tok.bit
-        return None
+            if tok.name in bitstring:
+                bits += tok.bit
+        return bits
+    def __repr__(self):
+        buf = ""
+        if not self.flags:
+            return
+        for fl in self.flags:
+            if self.is_set(fl.bit):
+                buf += " %s" % fl.name
+        return buf
 
 
 class Immortal:
