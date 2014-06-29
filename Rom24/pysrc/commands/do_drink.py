@@ -51,7 +51,7 @@ def do_drink(ch, argument):
     else:
         ch.send("You can't drink from that.\n")
         return
-    if not ch.is_npc() and not state_checks.IS_IMMORTAL(ch) and ch.pcdata.condition[merc.COND_FULL] > 45:
+    if not ch.is_npc() and not ch.is_immortal() and ch.pcdata.condition[merc.COND_FULL] > 45:
         ch.send("You're too full to drink more.\n")
         return
     handler_game.act("$n drinks $T from $p.", ch, obj, const.liq_table[liquid].liq_name, merc.TO_ROOM)

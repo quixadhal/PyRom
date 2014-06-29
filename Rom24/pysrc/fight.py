@@ -470,7 +470,7 @@ def damage(ch, victim, dam, dt, dam_type, show):
     if dam > 1200 and dt >= TYPE_HIT:
         logger.warn("BUG: Damage: %d: more than 1200 points!", dam)
         dam = 1200
-        if not state_checks.IS_IMMORTAL(ch):
+        if not ch.is_immortal():
             obj = ch.get_eq(WEAR_WIELD)
             ch.send("You really shouldn't cheat.\n")
             if obj:
@@ -645,7 +645,7 @@ def is_safe(ch, victim):
         return True
     if victim.fighting == ch or victim == ch:
         return False
-    if state_checks.IS_IMMORTAL(ch) and ch.level > LEVEL_IMMORTAL:
+    if ch.is_immortal() and ch.level > LEVEL_IMMORTAL:
         return False
     # killing mobiles */
     if victim.is_npc():
@@ -712,7 +712,7 @@ def is_safe_spell(ch, victim, area):
         return True
     if victim.fighting == ch or victim == ch:
         return False
-    if state_checks.IS_IMMORTAL(ch) and ch.level > LEVEL_IMMORTAL and not area:
+    if ch.is_immortal() and ch.level > LEVEL_IMMORTAL and not area:
         return False
     # killing mobiles */
     if victim.is_npc():
@@ -940,7 +940,7 @@ def make_corpse(ch):
     corpse.short_descr = corpse.short_descr % name
     corpse.description = corpse.description % name
 
-    for obj in ch.carrying[:]:
+    for obj in ch.contents[:]:
         floating = False
         if obj.wear_loc == WEAR_FLOAT:
             floating = True
@@ -1101,7 +1101,7 @@ def group_gain(ch, victim):
         xp = xp_compute(gch, victim, group_levels)
         gch.send("You receive %d experience points.\n" % xp)
         update.gain_exp(gch, xp)
-        for obj in ch.carrying[:]:
+        for obj in ch.contents[:]:
             if obj.wear_loc == WEAR_NONE:
                 continue
             if (state_checks.IS_OBJ_STAT(obj, ITEM_ANTI_EVIL) and state_checks.IS_EVIL(ch) ) \

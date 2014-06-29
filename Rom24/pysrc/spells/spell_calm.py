@@ -28,7 +28,7 @@ def spell_calm(sn, level, ch, victim, target):
     # compute chance of stopping combat */
     chance = 4 * level - high_level + 2 * count
 
-    if state_checks.IS_IMMORTAL(ch):  # always works */
+    if ch.is_immortal():  # always works */
         mlevel = 0
 
     if random.randint(0, chance) >= mlevel:  # hard to stop large fights */

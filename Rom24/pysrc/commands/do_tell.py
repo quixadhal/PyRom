@@ -36,7 +36,7 @@ def do_tell(ch, argument):
         victim.pcdata.buffer.append(buf)
         return
 
-    if not (state_checks.IS_IMMORTAL(ch) and ch.level > merc.LEVEL_IMMORTAL) and not state_checks.IS_AWAKE(victim):
+    if not (ch.is_immortal() and ch.level > merc.LEVEL_IMMORTAL) and not state_checks.IS_AWAKE(victim):
         handler_game.act("$E can't hear you.", ch, 0, victim, merc.TO_CHAR)
         return
 

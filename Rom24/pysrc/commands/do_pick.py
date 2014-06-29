@@ -83,16 +83,16 @@ def do_pick(self, argument):
         if door >= 0:
             # 'pick door'
             pexit = ch.in_room.exit[door]
-            if not state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED) and not state_checks.IS_IMMORTAL(ch):
+            if not state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED) and not ch.is_immortal():
                 ch.send("It's not closed.\n")
                 return
-            if pexit.key < 0 and not state_checks.IS_IMMORTAL(ch):
+            if pexit.key < 0 and not ch.is_immortal():
                 ch.send("It can't be picked.\n")
                 return
             if not state_checks.IS_SET(pexit.exit_info, merc.EX_LOCKED):
                 ch.send("It's already unlocked.\n")
                 return
-            if state_checks.IS_SET(pexit.exit_info, merc.EX_PICKPROOF) and not state_checks.IS_IMMORTAL(ch):
+            if state_checks.IS_SET(pexit.exit_info, merc.EX_PICKPROOF) and not ch.is_immortal():
                 ch.send("You failed.\n")
                 return
             state_checks.REMOVE_BIT(pexit.exit_info, merc.EX_LOCKED)

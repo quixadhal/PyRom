@@ -27,7 +27,7 @@ def spell_portal(sn, level, ch, victim, target):
         return
 
     stone = ch.get_eq(merc.WEAR_HOLD)
-    if not state_checks.IS_IMMORTAL(ch) and (stone == None or stone.item_type != merc.ITEM_WARP_STONE):
+    if not ch.is_immortal() and (stone == None or stone.item_type != merc.ITEM_WARP_STONE):
         ch.send("You lack the proper component for this spell.\n")
         return
 

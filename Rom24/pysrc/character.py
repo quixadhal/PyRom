@@ -30,26 +30,33 @@ class Bit:
         self.flags = flags
 
     def set_bit(self, bit):
-        bit = self.from_name(bit)
-        if bit:
-            self.bits = self.bits | bit
+        self.bits = self.bits | self.from_name(bit)
 
     def rem_bit(self, bit):
-        bit = self.from_name(bit)
-        if bit:
-            self.bits = self.bits & ~bit
+        self.bits = self.bits & ~self.from_name(bit)
 
     def is_set(self, bit):
-        bit = self.from_name(bit)
-        return self.bits & bit
+        return self.bits & self.from_name(bit)
 
     def from_name(self, name):
         if type(name) == int:
             return name
+        name = name.strip()
+        bitstring = name.split(' ')
+        bits = 0
         for tok in self.flags.values():
-            if tok.name == name:
-                return tok.bit
-        return None
+            if tok.name in bitstring:
+                bits += tok.bit
+        return bits
+    def __repr__(self):
+        buf = ""
+        if not self.flags:
+            return
+        print(self.flags)
+        for k,fl in self.flags.items():
+            if self.is_set(fl.bit):
+                buf += " %s" % fl.name
+        return buf
 
 
 class Immortal:
@@ -447,6 +454,8 @@ class Living(Immortal, Fight, CharInteract, Physical,
         self.exp = 0
         self.position = 0
         self.alignment = 0
+        self.desc = None
+
     def is_npc(self):
         return self.act.is_set(ACT_IS_NPC)
     def is_good(self):
@@ -866,7 +875,6 @@ class Character(Living):
         self.points = 0
         self.confirm_delete = False
         self.alias = {}
-        self.desc = None
         self.gen_data = None
         self.prompt = "<%hhp %mm %vmv>"
         self.prefix = ""

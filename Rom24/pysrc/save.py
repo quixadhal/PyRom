@@ -62,7 +62,7 @@ def save_char_obj(ch):
 
     fwrite = fwrite_char(ch)
     if ch.contents:
-        fwrite['carrying'] = [fwrite_obj(ch, o) for o in ch.contents]
+        fwrite['contents'] = [fwrite_obj(ch, o) for o in ch.contents]
 
     to_write = json.dumps(fwrite, indent=4)
     with open(pfile, 'w') as pf:
@@ -128,10 +128,10 @@ def fwrite_char(ch):
     chdict["Gold"] = min(0, ch.gold)
     chdict["Silv"] = min(0, ch.silver)
     chdict["Exp"] = ch.exp
-    chdict["Act"] = ch.act
-    chdict["AfBy"] = ch.affected_by
-    chdict["Comm"] = ch.comm
-    chdict["Wizn"] = ch.wiznet
+    chdict["Act"] = repr(ch.act)
+    chdict["AfBy"] = repr(ch.affected_by)
+    chdict["Comm"] = repr(ch.comm)
+    chdict["Wizn"] = repr(ch.wiznet)
     chdict["Invi"] = ch.invis_level
     chdict["Inco"] = ch.incog_level
     chdict["Pos"] = POS_STANDING if ch.position == POS_FIGHTING else ch.position
@@ -217,10 +217,10 @@ def fread_char(chdict, ch):
     ch.gold = chdict["Gold"]
     ch.silver = chdict["Silv"]
     ch.exp = chdict["Exp"]
-    ch.act = chdict["Act"]
-    ch.affected_by = chdict["AfBy"]
-    ch.comm = chdict["Comm"]
-    ch.wiznet = chdict["Wizn"]
+    ch.act.set_bit(chdict["Act"])
+    ch.affected_by.set_bit(chdict["AfBy"])
+    ch.comm.set_bit(chdict["Comm"])
+    ch.wiznet.set_bit(chdict["Wizn"])
     ch.invis_level = chdict["Invi"]
     ch.incog_level = chdict["Inco"]
     ch.position = chdict["Pos"]
@@ -250,23 +250,23 @@ def fread_char(chdict, ch):
     ch.pcdata.learned = chdict['skills']
     ch.pcdata.group_known = chdict['groups']
     ch.affected = chdict['affected']
-    if 'carrying' in chdict:
-        fread_objs(ch, chdict['carrying'])
+    if 'contents' in chdict:
+        fread_objs(ch, chdict['contents'])
     return ch
 
 
-def fread_objs(carrying, objects, contained_by=None):
+def fread_objs(contents, objects, contained_by=None):
     for odict in objects:
-        obj = fread_obj(carrying, odict)
+        obj = fread_obj(contents, odict)
         if not contained_by:
-            obj.to_char(carrying)
+            obj.to_char(contents)
         else:
             obj.to_obj(contained_by)
         if 'contains' in odict:
-            fread_objs(carrying, odict['contains'], obj)
+            fread_objs(contents, odict['contains'], obj)
 
 
-def fread_obj(carrying, odict):
+def fread_obj(contents, odict):
     obj = db.create_object(obj_index_hash[odict['Vnum']], odict['Lev'])
     obj.enchanted = odict['Enchanted']
     obj.name = odict['Name']

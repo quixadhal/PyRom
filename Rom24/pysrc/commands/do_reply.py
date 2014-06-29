@@ -21,12 +21,12 @@ def do_reply(ch, argument):
         buf = "%s tells you '%s'\n" % (state_checks.PERS(ch, victim), argument)
         victim.pcdata.buffer.append(buf)
         return
-    if not state_checks.IS_IMMORTAL(ch) and not state_checks.IS_AWAKE(victim):
+    if not ch.is_immortal() and not state_checks.IS_AWAKE(victim):
         handler_game.act("$E can't hear you.", ch, 0, victim, merc.TO_CHAR)
         return
 
     if (state_checks.IS_SET(victim.comm, merc.COMM_QUIET) or state_checks.IS_SET(victim.comm, merc.COMM_DEAF)) \
-            and not state_checks.IS_IMMORTAL(ch) and not state_checks.IS_IMMORTAL(victim):
+            and not ch.is_immortal() and not state_checks.IS_IMMORTAL(victim):
         handler_game.act("$E is not receiving tells.", ch, None, victim, merc.TO_CHAR, merc.POS_DEAD)
         return
     if not state_checks.IS_IMMORTAL(victim) and not ch.is_awake():
