@@ -1,5 +1,8 @@
+from collections import OrderedDict
 import random
 import logging
+import time
+import fight
 
 import game_utils
 from handler_magic import saves_spell
@@ -19,9 +22,11 @@ from merc import MAX_STATS, PLR_NOSUMMON, COMM_PROMPT, COMM_COMBINE, ACT_IS_NPC,
     LEVEL_IMMORTAL, MAX_WEAR, ITEM_ANTI_EVIL, ITEM_ANTI_GOOD, WEAR_NONE, ITEM_ANTI_NEUTRAL, PLR_HOLYLIGHT, \
     AFF_DARK_VISION, ITEM_GLOW, AFF_DETECT_INVIS, ITEM_INVIS, ITEM_POTION, AFF_BLIND, ITEM_VIS_DEATH, AFF_DETECT_HIDDEN, \
     AFF_HIDE, AFF_SNEAK, AFF_INVISIBLE, AFF_INFRARED, ROOM_NEWBIES_ONLY, ROOM_HEROES_ONLY, ROOM_GODS_ONLY, MAX_LEVEL, \
-    ROOM_IMP_ONLY, POS_SLEEPING
+    ROOM_IMP_ONLY, POS_SLEEPING, object_list, char_list, player_list, ACT_PET, COND_DRUNK, ACT_THIEF, OFF_BERSERK, \
+    ACT_WARRIOR, OFF_DISARM, OFF_BASH, OFF_TRIP, OFF_PARRY, OFF_DODGE
 import state_checks
-from tables import off_flags, form_flags, act_flags, comm_flags, part_flags, affect_flags, imm_flags
+from tables import off_flags, form_flags, act_flags, comm_flags, part_flags, affect_flags, imm_flags, clan_table, \
+    plr_flags
 from update import gain_exp
 
 class Bit:
@@ -44,7 +49,15 @@ class Bit:
         name = name.strip()
         bitstring = name.split(' ')
         bits = 0
-        for tok in self.flags.values():
+        flags = OrderedDict()
+        if type(self.flags) == list:
+            for d in self.flags:
+                for k, v in d.items():
+                    flags[k] = v
+        else:
+            flags = self.flags
+
+        for tok in flags.values():
             if tok.name in bitstring:
                 bits += tok.bit
         return bits
@@ -52,8 +65,15 @@ class Bit:
         buf = ""
         if not self.flags:
             return
-        print(self.flags)
-        for k,fl in self.flags.items():
+        flags = OrderedDict()
+        if type(self.flags) == list:
+            for d in self.flags:
+                for k, v in d.items():
+                    flags[k] = v
+        else:
+            flags = self.flags
+
+        for k,fl in flags.items():
             if self.is_set(fl.bit):
                 buf += " %s" % fl.name
         return buf
@@ -98,7 +118,7 @@ class CharInteract:
         self.leader = None
         self.pet = None
         self.group = 0
-        self.clan = None
+        self._clan = ""
     # * It is very important that this be an equivalence relation:
     # * (1) A ~ A
     # * (2) if A ~ B then B ~ A
@@ -112,6 +132,17 @@ class CharInteract:
         if bch.leader is not None:
             bch = bch.leader
         return self == bch
+    @property
+    def clan(self):
+        try:
+            return clan_table[self._clan]
+        except KeyError as e:
+            return clan_table[""]
+    @clan.setter
+    def clan(self, value):
+        if value not in clan_table:
+            return
+        self._clan = value
 
 class Physical:
     def __init__(self):
@@ -430,6 +461,21 @@ class Container:
         self.carry_weight = 0
         self.carry_number = 0
 
+    def can_carry_n(self):
+        if not self.is_npc() and self.level >= LEVEL_IMMORTAL:
+            return 1000
+        if self.is_npc() and self.act.is_set(ACT_PET):
+            return 0
+        return MAX_WEAR + 2 * self.stat(STAT_DEX) + self.level
+
+    # * Retrieve a character's carry capacity.
+    def can_carry_w(self):
+        if not self.is_npc() and self.level >= LEVEL_IMMORTAL:
+            return 10000000
+        if self.is_npc() and self.act.is_set(ACT_PET):
+            return 0
+        return str_app[self.stat(STAT_STR)].carry * 10 + self.level * 25
+
 class Living(Immortal, Fight, CharInteract, Physical,
                 Location, Effects, Communication, Container):
     def __init__(self):
@@ -437,7 +483,7 @@ class Living(Immortal, Fight, CharInteract, Physical,
         self.id = 0
         self.version = 5
         self.level = 0
-        self.act = Bit(PLR_NOSUMMON, act_flags)
+        self.act = Bit(PLR_NOSUMMON, [act_flags, plr_flags])
         self._race = 'human'
         self._guild = None
         self.sex = 0
@@ -455,7 +501,8 @@ class Living(Immortal, Fight, CharInteract, Physical,
         self.position = 0
         self.alignment = 0
         self.desc = None
-
+    def send(self, str):
+        pass
     def is_npc(self):
         return self.act.is_set(ACT_IS_NPC)
     def is_good(self):
@@ -836,6 +883,215 @@ class Living(Immortal, Fight, CharInteract, Physical,
             return False
         return True
 
+    # * Extract a char from the world.
+    def extract(self, fPull):
+        # doesn't seem to be necessary
+        #if not ch.in_room:
+        #    print "Extract_char: None."
+        #    return
+
+        #    nuke_pets(ch)
+        self.pet = None  # just in case */
+
+        #if fPull:
+        #    die_follower( ch )
+        fight.stop_fighting(self, True)
+
+        for obj in self.contents[:]:
+            obj.extract()
+
+        if self.in_room:
+            self.from_room()
+
+        # Death room is set in the clan tabe now */
+        if not fPull:
+            self.to_room(room_index_hash[self.clan.hall])
+            return
+
+        if self.desc and self.desc.original:
+            self.do_return("")
+            self.desc = None
+
+        for wch in player_list:
+            if wch.reply == self:
+                wch.reply = None
+
+        if self not in char_list:
+            logger.error("Extract_char: char not found.")
+            return
+
+        char_list.remove(self)
+        if self in player_list:
+            player_list.remove(self)
+
+        if self.desc:
+            self.desc.character = None
+        return
+
+    # * Find a char in the room.
+    def get_char_room(ch, argument):
+        number, arg = game_utils.number_argument(argument)
+        count = 0
+        arg = arg.lower()
+        if arg == "self":
+            return ch
+        for rch in ch.in_room.people:
+            if not ch.can_see(rch):
+                continue
+            if not rch.is_npc() and not rch.name.lower().startswith(arg):
+                continue
+            if rch.is_npc() and not game_utils.is_name(arg, rch.name):
+                continue
+            count += 1
+            if count == number:
+                return rch
+        return None
+
+    # * Find a char in the world.
+    def get_char_world(ch, argument):
+        wch = ch.get_char_room(argument)
+        if wch:
+            return wch
+
+        number, arg = game_utils.number_argument(argument)
+        count = 0
+        for wch in char_list:
+            if wch.in_room is None or not ch.can_see(wch):
+                continue
+            if not wch.is_npc() and not game_utils.is_name(arg, wch.name.lower()):
+                continue
+            if wch.is_npc() and arg not in wch.name:
+                continue
+            count += 1
+            if count == number:
+                return wch
+        return None
+
+    # * Find an obj in a list.
+    def get_obj_list(ch, argument, contents):
+        number, arg = game_utils.number_argument(argument)
+        count = 0
+        for obj in contents:
+            if ch.can_see_obj(obj) and game_utils.is_name(arg, obj.name.lower()):
+                count += 1
+                if count == number:
+                    return obj
+        return None
+
+    # * Find an obj in player's inventory.
+    def get_obj_carry(ch, argument, viewer):
+        number, arg = game_utils.number_argument(argument)
+        count = 0
+        for obj in ch.contents:
+            if obj.wear_loc == WEAR_NONE and viewer.can_see_obj(obj) and game_utils.is_name(arg, obj.name.lower()):
+                count += 1
+                if count == number:
+                    return obj
+        return None
+
+    # * Find an obj in player's equipment.
+    def get_obj_wear(ch, argument):
+        number, arg = game_utils.number_argument(argument)
+        count = 0
+        for obj in ch.contents:
+            if obj.wear_loc != WEAR_NONE and ch.can_see_obj(obj) and game_utils.is_name(arg, obj.name.lower()):
+                count += 1
+                if count == number:
+                    return obj
+        return None
+
+    # * Find an obj in the room or in inventory.
+    def get_obj_here(ch, argument):
+        obj = ch.get_obj_list(argument, ch.in_room.contents)
+        if obj:
+            return obj
+        obj = ch.get_obj_carry(argument, ch)
+        if obj:
+            return obj
+        obj = ch.get_obj_wear(argument)
+        if obj:
+            return obj
+        return None
+
+    # * Find an obj in the world.
+    def get_obj_world(ch, argument):
+        obj = ch.get_obj_here(argument)
+        if obj:
+            return obj
+
+        number, arg = game_utils.number_argument(argument)
+        count = 0
+        arg = arg.lower()
+        for obj in object_list:
+            if ch.can_see_obj(obj) and game_utils.is_name(arg, obj.name.lower()):
+                count += 1
+            if count == number:
+                return obj
+        return None
+    def get_skill(self, sn):
+
+        if sn == -1:  # shorthand for level based skills */
+            skill = self.level * 5 // 2
+        elif sn not in skill_table:
+            logger.error("BUG: Bad sn %s in get_skill." % sn)
+            skill = 0
+        elif not self.is_npc():
+            if self.level < skill_table[sn].skill_level[self.guild.name] \
+                    or sn not in self.pcdata.learned:
+                skill = 0
+            else:
+                skill = self.pcdata.learned[sn]
+        else:  # mobiles */
+            if skill_table[sn].spell_fun is not None:
+                skill = 40 + 2 * self.level
+            elif sn == 'sneak' or sn == 'hide':
+                skill = self.level * 2 + 20
+            elif (sn == 'dodge' and self.off_flags.is_set(OFF_DODGE)) \
+                    or (sn == 'parry' and self.off_flags.is_set(OFF_PARRY)):
+                skill = self.level * 2
+            elif sn == 'shield block':
+                skill = 10 + 2 * self.level
+            elif sn == 'second attack' \
+                    and (self.act.is_set(ACT_WARRIOR)
+                         or self.act.is_set(ACT_THIEF)):
+                skill = 10 + 3 * self.level
+            elif sn == 'third attack' and self.act.is_set(ACT_WARRIOR):
+                skill = 4 * self.level - 40
+            elif sn == 'hand to hand':
+                skill = 40 + 2 * self.level
+            elif sn == "trip" and self.off_flags.is_set(OFF_TRIP):
+                skill = 10 + 3 * self.level
+            elif sn == "bash" and self.off_flags.is_set(OFF_BASH):
+                skill = 10 + 3 * self.level
+            elif sn == "disarm" and (self.off_flags.is_set(OFF_DISARM)
+                                     or self.act.is_set(ACT_WARRIOR)
+                                     or self.act.is_set(ACT_THIEF)):
+                skill = 20 + 3 * self.level
+            elif sn == "berserk" and self.off_flags.is_set(OFF_BERSERK):
+                skill = 3 * self.level
+            elif sn == "kick":
+                skill = 10 + 3 * self.level
+            elif sn == "backstab" and self.act.is_set(ACT_THIEF):
+                skill = 20 + 2 * self.level
+            elif sn == "rescue":
+                skill = 40 + self.level
+            elif sn == "recall":
+                skill = 40 + self.level
+            elif sn in ["sword", "dagger", "spear", "mace", "axe", "flail", "whip", "polearm"]:
+                skill = 40 + 5 * self.level // 2
+            else:
+                skill = 0
+        if self.daze > 0:
+            if skill_table[sn].spell_fun is not None:
+                skill //= 2
+            else:
+                skill = 2 * skill // 3
+        if not self.is_npc() \
+                and self.pcdata.condition[COND_DRUNK] > 10:
+            skill = 9 * skill // 10
+
+        return max(0, min(skill, 100))
+
 
 
 class Mobile(Living):
@@ -895,6 +1151,9 @@ class Character(Living):
             self._title = title
         else:
             self._title = ' ' + title
+
+    def get_age(self):
+            return 17 + (self.played + int(time.time() - self.logon)) // 72000
 
     # recursively adds a group given its number -- uses group_add */
     def gn_add(self, gn):

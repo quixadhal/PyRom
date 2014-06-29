@@ -14,10 +14,10 @@ def do_hide(ch, argument):
     ch.send("You attempt to hide.\n")
 
     if ch.is_affected(merc.AFF_HIDE):
-        state_checks.REMOVE_BIT(ch.affected_by, merc.AFF_HIDE)
+        ch.affected_by.rem_bit(merc.AFF_HIDE)
 
     if random.randint(1, 99) < ch.get_skill("hide"):
-        state_checks.SET_BIT(ch.affected_by, merc.AFF_HIDE)
+        ch.affected_by.set_bit(merc.AFF_HIDE)
         ch.check_improve( "hide", True, 3)
     else:
         ch.check_improve( "hide", False, 3)

@@ -22,7 +22,7 @@ def do_nochannels(ch, argument):
     if victim.get_trust() >= ch.trust:
         ch.send("You failed.\n")
         return
-    if state_checks.IS_SET(victim.comm, merc.COMM_NOCHANNELS):
+    if victim.comm.is_set(merc.COMM_NOCHANNELS):
         victim.comm = state_checks.REMOVE_BIT(victim.comm, merc.COMM_NOCHANNELS)
         victim.send("The gods have restored your channel priviliges.\n")
         ch.send("NOCHANNELS removed.\n")

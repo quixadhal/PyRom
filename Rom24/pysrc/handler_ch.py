@@ -286,7 +286,7 @@ class handler_ch:
         mod = paf.modifier
         if fAdd:
             if paf.where == TO_AFFECTS:
-                state_checks.SET_BIT(ch.affected_by, paf.bitvector)
+                ch.affected_by.set_bit(paf.bitvector)
             elif paf.where == TO_IMMUNE:
                 state_checks.SET_BIT(ch.imm_flags, paf.bitvector)
             elif paf.where == TO_RESIST:
@@ -295,7 +295,7 @@ class handler_ch:
                 state_checks.SET_BIT(ch.vuln_flags, paf.bitvector)
         else:
             if paf.where == TO_AFFECTS:
-                state_checks.REMOVE_BIT(ch.affected_by, paf.bitvector)
+                ch.affected_by.rem_bit(paf.bitvector)
             elif paf.where == TO_IMMUNE:
                 state_checks.REMOVE_BIT(ch.imm_flags, paf.bitvector)
             elif paf.where == TO_RESIST:
@@ -613,8 +613,8 @@ class handler_ch:
             logger.warning("Equip_char: already equipped (%d)." % iWear)
             return
 
-        if (state_checks.IS_OBJ_STAT(obj, ITEM_ANTI_EVIL) and state_checks.IS_EVIL(ch)) \
-                or (state_checks.IS_OBJ_STAT(obj, ITEM_ANTI_GOOD) and state_checks.IS_GOOD(ch)) \
+        if (state_checks.IS_OBJ_STAT(obj, ITEM_ANTI_EVIL) and ch.is_evil()) \
+                or (state_checks.IS_OBJ_STAT(obj, ITEM_ANTI_GOOD) and ch.is_good()) \
                 or (state_checks.IS_OBJ_STAT(obj, ITEM_ANTI_NEUTRAL) and state_checks.IS_NEUTRAL(ch)):
             # Thanks to Morgenes for the bug fix here!
             handler_game.act("You are zapped by $p and drop it.", ch, obj, None, TO_CHAR)
@@ -692,7 +692,7 @@ class handler_ch:
         for paf in ch.affected:
             if paf.where == where and paf.bitvector == vector:
                 if where == TO_AFFECTS:
-                    state_checks.SET_BIT(ch.affected_by, vector)
+                    ch.affected_by.set_bit(vector)
                 elif where == TO_IMMUNE:
                     state_checks.SET_BIT(ch.imm_flags, vector)
                 elif where == TO_RESIST:
@@ -707,7 +707,7 @@ class handler_ch:
             for paf in obj.affected:
                 if paf.where == where and paf.bitvector == vector:
                     if where == TO_AFFECTS:
-                        state_checks.SET_BIT(ch.affected_by, vector)
+                        ch.affected_by.set_bit(vector)
                     elif where == TO_IMMUNE:
                         state_checks.SET_BIT(ch.imm_flags, vector)
                     elif where == TO_RESIST:
@@ -720,7 +720,7 @@ class handler_ch:
             for paf in obj.pIndexData.affected:
                 if paf.where == where and paf.bitvector == vector:
                     if where == TO_AFFECTS:
-                        state_checks.SET_BIT(ch.affected_by, vector)
+                        ch.affected_by.set_bit(vector)
                     elif where == TO_IMMUNE:
                         state_checks.SET_BIT(ch.imm_flags, vector)
                     elif where == TO_RESIST:
@@ -793,7 +793,7 @@ class handler_ch:
         if ch.is_affected(AFF_PLAGUE):
             af = [af for af in ch.affected if af.type == 'plague']
             if not af:
-                state_checks.REMOVE_BIT(ch.affected_by, AFF_PLAGUE)
+                ch.affected_by.rem_bit(AFF_PLAGUE)
                 return
             af = af[0]
 
@@ -1416,7 +1416,7 @@ def stop_follower(ch):
         return
 
     if ch.is_affected(AFF_CHARM):
-        state_checks.REMOVE_BIT(ch.affected_by, AFF_CHARM)
+        ch.affected_by.rem_bit(AFF_CHARM)
         ch.affect_strip('charm person')
 
     if ch.master.can_see(ch) and ch.in_room:

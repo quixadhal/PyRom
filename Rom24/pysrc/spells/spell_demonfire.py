@@ -9,7 +9,7 @@ import state_checks
 
 def spell_demonfire(sn, level, ch, victim, target):
     # RT replacement demonfire spell */
-    if not ch.is_npc() and not state_checks.IS_EVIL(ch):
+    if not ch.is_npc() and not ch.is_evil():
         victim = ch
         ch.send("The demons turn upon you! \n")
 

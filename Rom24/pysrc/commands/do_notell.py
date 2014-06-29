@@ -21,7 +21,7 @@ def do_notell(ch, argument):
     if victim.get_trust() >= ch.trust:
         ch.send("You failed.\n")
         return
-    if state_checks.IS_SET(victim.comm, merc.COMM_NOTELL):
+    if victim.comm.is_set(merc.COMM_NOTELL):
         victim.comm = state_checks.REMOVE_BIT(victim.comm, merc.COMM_NOTELL)
         victim.send("You can tell again.\n")
         ch.send("NOTELL removed.\n")

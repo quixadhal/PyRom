@@ -204,7 +204,7 @@ def fread_char(chdict, ch):
     ch.description = chdict["Desc"]
     ch.prompt = chdict["Prom"]
     ch.race = const.race_table[chdict["Race"]]
-    ch.clan = tables.clan_table[chdict["Clan"]]
+    ch.clan = chdict["Clan"]
     ch.sex = int(chdict["Sex"])
     ch._guild = chdict["Cla"]
     ch.level = chdict["Levl"]

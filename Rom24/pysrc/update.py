@@ -516,7 +516,7 @@ def char_update():
             ch.send("You writhe in agony from the plague.\n")
             af = [a for a in ch.affected if af.type == 'plague'][:1]
             if not af:
-                state_checks.REMOVE_BIT(ch.affected_by, AFF_PLAGUE)
+                ch.affected_by.rem_bit(AFF_PLAGUE)
                 continue
             if af.level == 1:
                 continue
