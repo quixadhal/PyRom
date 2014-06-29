@@ -42,7 +42,7 @@ def value_lookup(pdict, arg):
 def PERS(ch, looker):
     if not looker.can_see(ch):
         return "someone"
-    if IS_NPC(ch):
+    if ch.is_npc():
         return ch.short_descr
     else:
         return ch.name

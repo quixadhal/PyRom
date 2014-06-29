@@ -142,7 +142,7 @@ def wiznet( string, ch, obj, flag, flag_skip, min_level):
         and  (not flag_skip or not d.character.wiznet.set(flag_skip)) \
         and  d.character.trust >= min_level \
         and  d.character != ch:
-            if d.character.wiznet.set(WIZ_PREFIX):
+            if d.character.wiznet.set_bit(WIZ_PREFIX):
                 d.send("-. ",d.character)
             act(string,d.character,obj,ch,TO_CHAR,POS_DEAD)
 

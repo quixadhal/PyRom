@@ -25,14 +25,14 @@ def do_reply(ch, argument):
         handler_game.act("$E can't hear you.", ch, 0, victim, merc.TO_CHAR)
         return
 
-    if (state_checks.IS_SET(victim.comm, merc.COMM_QUIET) or state_checks.IS_SET(victim.comm, merc.COMM_DEAF)) \
+    if (victim.comm.is_set(merc.COMM_QUIET) or victim.comm.is_set(merc.COMM_DEAF)) \
             and not ch.is_immortal() and not state_checks.IS_IMMORTAL(victim):
         handler_game.act("$E is not receiving tells.", ch, None, victim, merc.TO_CHAR, merc.POS_DEAD)
         return
     if not state_checks.IS_IMMORTAL(victim) and not ch.is_awake():
         ch.send("In your dreams, or what?\n")
         return
-    if state_checks.IS_SET(victim.comm, merc.COMM_AFK):
+    if victim.comm.is_set(merc.COMM_AFK):
         if victim.is_npc():
             handler_game.act("$E is AFK, and not receiving tells.", ch, None, victim, merc.TO_CHAR, merc.POS_DEAD)
             return

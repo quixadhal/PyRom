@@ -19,9 +19,9 @@ def spell_frenzy(sn, level, ch, victim, target):
         else:
             handler_game.act("$N doesn't look like $e wants to fight anymore.", ch, None, victim, merc.TO_CHAR)
         return
-    if (state_checks.IS_GOOD(ch) and not state_checks.IS_GOOD(victim)) or \
+    if (ch.is_good() and not state_checks.IS_GOOD(victim)) or \
             (state_checks.IS_NEUTRAL(ch) and not state_checks.IS_NEUTRAL(victim)) or \
-            (state_checks.IS_EVIL(ch) and not state_checks.IS_EVIL(victim)):
+            (ch.is_evil() and not state_checks.IS_EVIL(victim)):
         handler_game.act("Your god doesn't seem to like $N", ch, None, victim, merc.TO_CHAR)
         return
 

@@ -112,7 +112,7 @@ def do_who(ch, argument):
                 guild,
                 "(Incog) " if wch.incog_level >= merc.LEVEL_HERO else "",
                 "(Wizi) " if wch.invis_level >= merc.LEVEL_HERO else "",
-                wch.clan.who_name if wch.clan else "",
+                wch.clan.who_name,
                 "[AFK] " if wch.comm.is_set(merc.COMM_AFK) else "",
                 "(KILLER) " if wch.act.is_set(merc.PLR_KILLER) else "",
                 "(THIEF) " if wch.act.is_set(merc.PLR_THIEF) else "",

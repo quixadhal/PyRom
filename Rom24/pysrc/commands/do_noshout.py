@@ -23,7 +23,7 @@ def do_noshout(ch, argument):
     if victim.get_trust() >= ch.trust:
         ch.send("You failed.\n")
         return
-    if state_checks.IS_SET(victim.comm, merc.COMM_NOSHOUT):
+    if victim.comm.is_set(merc.COMM_NOSHOUT):
         victim.comm = state_checks.REMOVE_BIT(victim.comm, merc.COMM_NOSHOUT)
         victim.send("You can shout again.\n")
         ch.send("NOSHOUT removed.\n")

@@ -53,7 +53,7 @@ def do_steal(ch, argument):
         # Failure.
         ch.send("Oops.\n")
         ch.affect_strip("sneak")
-        ch.affected_by = state_checks.REMOVE_BIT(ch.affected_by, merc.AFF_SNEAK)
+        ch.affected_by = ch.affected_by.rem_bit(merc.AFF_SNEAK)
         handler_game.act("$n tried to steal from you.\n", ch, None, victim, merc.TO_VICT)
         handler_game.act("$n tried to steal from $N.\n", ch, None, victim, merc.TO_NOTVICT)
         outcome = random.randint(0, 3)

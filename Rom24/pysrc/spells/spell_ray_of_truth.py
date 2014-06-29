@@ -8,7 +8,7 @@ import state_checks
 
 
 def spell_ray_of_truth(sn, level, ch, victim, target):
-    if state_checks.IS_EVIL(ch):
+    if ch.is_evil():
         victim = ch
         ch.send("The energy explodes inside you! \n")
     if victim != ch:

@@ -21,7 +21,7 @@ def do_noemote(ch, argument):
     if victim.get_trust() >= ch.trust:
         ch.send("You failed.\n")
         return
-    if state_checks.IS_SET(victim.comm, merc.COMM_NOEMOTE):
+    if victim.comm.is_set(merc.COMM_NOEMOTE):
         victim.comm = state_checks.REMOVE_BIT(victim.comm, merc.COMM_NOEMOTE)
         victim.send("You can emote again.\n")
         ch.send("NOEMOTE removed.\n")

@@ -11,9 +11,9 @@ def do_visible(ch, argument):
     ch.affect_strip("invis")
     ch.affect_strip("mass invis")
     ch.affect_strip("sneak")
-    state_checks.REMOVE_BIT(ch.affected_by, merc.AFF_HIDE)
-    state_checks.REMOVE_BIT(ch.affected_by, merc.AFF_INVISIBLE)
-    state_checks.REMOVE_BIT(ch.affected_by, merc.AFF_SNEAK)
+    ch.affected_by.rem_bit(merc.AFF_HIDE)
+    ch.affected_by.rem_bit(merc.AFF_INVISIBLE)
+    ch.affected_by.rem_bit(merc.AFF_SNEAK)
     ch.send("Ok.\n")
 
 

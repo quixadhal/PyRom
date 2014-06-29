@@ -11,10 +11,10 @@ def do_prompt(ch, argument):
     if not argument:
         if ch.comm.is_set(merc.COMM_PROMPT):
             ch.send("You will no longer see prompts.\n")
-            ch.comm = state_checks.REMOVE_BIT(ch.comm, merc.COMM_PROMPT)
+            ch.comm.rem_bit(merc.COMM_PROMPT)
         else:
             ch.send("You will now see prompts.\n")
-            ch.comm = state_checks.SET_BIT(ch.comm, merc.COMM_PROMPT)
+            ch.comm.set_bit(merc.COMM_PROMPT)
         return
     if argument.lower() == "all":
         buf = "<%hhp %mm %vmv> "

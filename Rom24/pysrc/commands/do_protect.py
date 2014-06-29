@@ -15,7 +15,7 @@ def do_protect(ch, argument):
     if not victim:
         ch.send("You can't find them.\n")
         return
-    if state_checks.IS_SET(victim.comm, merc.COMM_SNOOP_PROOF):
+    if victim.comm.is_set(merc.COMM_SNOOP_PROOF):
         handler_game.act("$N is no longer snoop-proof.", ch, None, victim, merc.TO_CHAR, merc.POS_DEAD)
         victim.send("Your snoop-proofing was just removed.\n")
         victim.comm = state_checks.REMOVE_BIT(victim.comm, merc.COMM_SNOOP_PROOF)

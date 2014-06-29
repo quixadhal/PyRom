@@ -505,7 +505,7 @@ def damage(ch, victim, dam, dt, dam_type, show):
     if ch.is_affected(AFF_INVISIBLE):
         ch.affect_strip("invis")
         ch.affect_strip("mass invis")
-        state_checks.REMOVE_BIT(ch.affected_by, AFF_INVISIBLE)
+        ch.affected_by.rem_bit(AFF_INVISIBLE)
         handler_game.act("$n fades into existence.", ch, None, None, TO_ROOM)
 
         # Damage modifiers.
@@ -514,8 +514,8 @@ def damage(ch, victim, dam, dt, dam_type, show):
     if dam > 1 and victim.is_affected(AFF_SANCTUARY):
         dam //= 2
 
-    if dam > 1 and ((victim.is_affected(AFF_PROTECT_EVIL) and state_checks.IS_EVIL(ch)) \
-                            or (victim.is_affected(AFF_PROTECT_GOOD) and state_checks.IS_GOOD(ch) )):
+    if dam > 1 and ((victim.is_affected(AFF_PROTECT_EVIL) and ch.is_evil()) \
+                            or (victim.is_affected(AFF_PROTECT_GOOD) and ch.is_good() )):
         dam -= dam // 4
 
     immune = False
@@ -789,7 +789,7 @@ def check_killer(ch, victim):
         if ch.master == None:
             logger.warn("BUG: Check_killer: %s bad AFF_CHARM", ch.short_descr if ch.is_npc() else ch.name)
             ch.affect_strip('charm person')
-            state_checks.REMOVE_BIT(ch.affected_by, AFF_CHARM)
+            ch.affected_by.rem_bit(AFF_CHARM)
             return
             #    send_to_char( "*** You are now a KILLER!! ***\n", ch.master )
             #    SET_BIT(ch.master.act, PLR_KILLER)
@@ -903,7 +903,7 @@ def stop_fighting(ch, fBoth):
     for fch in char_list:
         if fch == ch or ( fBoth and fch.fighting == ch ):
             fch.fighting = None
-            fch.position = fch.default_pos if state_checks.IS_NPC(fch) else POS_STANDING
+            fch.position = fch.default_pos if fch.is_npc() else POS_STANDING
             update_pos(fch)
     return
 
@@ -926,7 +926,7 @@ def make_corpse(ch):
         name = ch.name
         corpse = create_object(obj_index_hash[OBJ_VNUM_CORPSE_PC], 0)
         corpse.timer = random.randint(25, 40)
-        state_checks.REMOVE_BIT(ch.act, PLR_CANLOOT)
+        ch.act.rem_bit(PLR_CANLOOT)
         if not ch.is_clan():
             corpse.owner = ch.name
         else:
@@ -989,27 +989,27 @@ def death_cry(ch):
         if ch.material == 0:
             msg = "$n splatters blood on your armor."
     elif num == 2:
-        if state_checks.IS_SET(ch.parts, PART_GUTS):
+        if ch.parts.is_set(PART_GUTS):
             msg = "$n spills $s guts all over the floor."
             vnum = OBJ_VNUM_GUTS
     elif num == 3:
-        if state_checks.IS_SET(ch.parts, PART_HEAD):
+        if ch.parts.is_set(PART_HEAD):
             msg = "$n's severed head plops on the ground."
             vnum = OBJ_VNUM_SEVERED_HEAD
     elif num == 4:
-        if state_checks.IS_SET(ch.parts, PART_HEART):
+        if ch.parts.is_set(PART_HEART):
             msg = "$n's heart is torn from $s chest."
             vnum = OBJ_VNUM_TORN_HEART
     elif num == 5:
-        if state_checks.IS_SET(ch.parts, PART_ARMS):
+        if ch.parts.is_set(PART_ARMS):
             msg = "$n's arm is sliced from $s dead body."
             vnum = OBJ_VNUM_SLICED_ARM
     elif num == 6:
-        if state_checks.IS_SET(ch.parts, PART_LEGS):
+        if ch.parts.is_set(PART_LEGS):
             msg = "$n's leg is sliced from $s dead body."
             vnum = OBJ_VNUM_SLICED_LEG
     elif num == 7:
-        if state_checks.IS_SET(ch.parts, PART_BRAINS):
+        if ch.parts.is_set(PART_BRAINS):
             msg = "$n's head is shattered, and $s brains splash all over you."
             vnum = OBJ_VNUM_BRAINS
     handler_game.act(msg, ch, None, None, TO_ROOM)
@@ -1021,9 +1021,9 @@ def death_cry(ch):
         obj.short_descr = obj.short_descr % name
         obj.description = obj.description % name
         if obj.item_type == ITEM_FOOD:
-            if state_checks.IS_SET(ch.form, FORM_POISON):
+            if ch.form.is_set(FORM_POISON):
                 obj.value[3] = 1
-            elif not state_checks.IS_SET(ch.form, FORM_EDIBLE):
+            elif not ch.form.is_set(FORM_EDIBLE):
                 obj.item_type = ITEM_TRASH
             obj.to_room(ch.in_room)
 
@@ -1055,7 +1055,7 @@ def raw_kill(victim):
     victim.extract(False)
     for af in victim.affected[:]:
         victim.affect_remove(af)
-    victim.affected_by = victim.race.aff
+    victim.affected_by.set_bit(victim.race.aff)
     victim.armor = [100 for i in range(4)]
     victim.position = POS_RESTING
     victim.hit = max(1, victim.hit)
@@ -1086,7 +1086,7 @@ def group_gain(ch, victim):
     lch = ch.leader if ch.leader else ch
 
     for gch in ch.in_room.people:
-        if not gch.is_same_group(ch) or state_checks.IS_NPC(gch):
+        if not gch.is_same_group(ch) or gch.is_npc():
             continue
 
         # Taken out, add it back if you want it
@@ -1104,8 +1104,8 @@ def group_gain(ch, victim):
         for obj in ch.contents[:]:
             if obj.wear_loc == WEAR_NONE:
                 continue
-            if (state_checks.IS_OBJ_STAT(obj, ITEM_ANTI_EVIL) and state_checks.IS_EVIL(ch) ) \
-                    or (state_checks.IS_OBJ_STAT(obj, ITEM_ANTI_GOOD) and state_checks.IS_GOOD(ch) ) \
+            if (state_checks.IS_OBJ_STAT(obj, ITEM_ANTI_EVIL) and ch.is_evil() ) \
+                    or (state_checks.IS_OBJ_STAT(obj, ITEM_ANTI_GOOD) and ch.is_good() ) \
                     or (state_checks.IS_OBJ_STAT(obj, ITEM_ANTI_NEUTRAL) and state_checks.IS_NEUTRAL(ch) ):
                 handler_game.act("You are zapped by $p.", ch, obj, None, TO_CHAR)
                 handler_game.act("$n is zapped by $p.", ch, obj, None, TO_ROOM)

@@ -37,10 +37,11 @@ import character
 logger = logging.getLogger()
 
 from collections import OrderedDict
-
+from merc import *
 import game_utils
 import handler_game
 import handler_ch
+import state_checks
 from fight import *
 from settings import LOGALL
 
