@@ -8,7 +8,7 @@ import state_checks
 def spell_plague(sn, level, ch, victim, target):
     # RT plague spell, very nasty */
     if handler_magic.saves_spell(level, victim, merc.DAM_DISEASE) or (
-        victim.is_npc() and state_checks.IS_SET(victim.act, merc.ACT_UNDEAD)):
+        victim.is_npc() and victim.act.is_set(merc.ACT_UNDEAD)):
         if ch == victim:
             ch.send("You feel momentarily ill, but it passes.\n")
         else:

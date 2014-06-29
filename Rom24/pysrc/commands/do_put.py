@@ -67,7 +67,7 @@ def do_put(ch, argument):
             handler_game.act("You put $p in $P.", ch, obj, container, merc.TO_CHAR)
     else:
         # 'put all container' or 'put all.obj container'
-        for obj in ch.carrying[:]:
+        for obj in ch.contents[:]:
             if (len(arg1) == 3 or arg1[4:] in obj.name ) \
                     and ch.can_see_obj(obj) and state_checks.WEIGHT_MULT(obj) == 100 \
                     and obj.wear_loc == merc.WEAR_NONE and obj != container \

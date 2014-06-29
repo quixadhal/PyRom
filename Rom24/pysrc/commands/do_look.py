@@ -87,7 +87,7 @@ def do_look(ch, argument):
     if victim:
         handler_ch.show_char_to_char_1(victim, ch)
         return
-    obj_list = ch.carrying
+    obj_list = ch.contents
     obj_list.extend(ch.in_room.contents)
     for obj in obj_list:
         if ch.can_see_obj(obj):

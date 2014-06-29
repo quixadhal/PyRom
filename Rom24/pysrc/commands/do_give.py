@@ -44,7 +44,7 @@ def do_give(ch, argument):
         handler_game.act("$n gives $N some coins.", ch, None, victim, merc.TO_NOTVICT)
         handler_game.act("You give $N %d %s." % (amount, "silver" if silver else "gold"), ch, None, victim, merc.TO_CHAR)
 
-        if victim.is_npc() and state_checks.IS_SET(victim.act, merc.ACT_IS_CHANGER):
+        if victim.is_npc() and victim.act.is_set(merc.ACT_IS_CHANGER):
             change = 95 * amount / 100 / 100 if silver else 95 * amount
             if not silver and change > victim.silver:
                 victim.silver += change

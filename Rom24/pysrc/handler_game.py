@@ -131,7 +131,6 @@ def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
         to.send(format+"\n")
     return
 
-
 def wiznet( string, ch, obj, flag, flag_skip, min_level):
     from nanny import con_playing
     for d in descriptor_list:
@@ -145,7 +144,6 @@ def wiznet( string, ch, obj, flag, flag_skip, min_level):
             if d.character.wiznet.set_bit(WIZ_PREFIX):
                 d.send("-. ",d.character)
             act(string,d.character,obj,ch,TO_CHAR,POS_DEAD)
-
 
 # does aliasing and other fun stuff */
 def substitute_alias(d, argument):
@@ -161,11 +159,11 @@ def substitute_alias(d, argument):
     if ch.is_npc() or not ch.pcdata.alias \
     or "alias".startswith(argument) or "unalias".startswith(argument)  \
     or "prefix".startswith(argument):
-        interp.interpret(ch,argument)
+        ch.interpret(argument)
         return
     remains, sub = game_utils.read_word(argument)
     if sub not in ch.pcdata.alias:
-        interp.interpret(ch, argument)
+        ch.interpret(argument)
         return
-    buf = "%s %s" % ( ch.pcdata.alias[sub], remains )
-    interp.interpret(ch,buf)
+    buf = "%s %s" % (ch.pcdata.alias[sub], remains)
+    ch.interpret(buf)

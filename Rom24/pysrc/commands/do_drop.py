@@ -79,7 +79,7 @@ def do_drop(ch, argument):
     else:
         # 'drop all' or 'drop all.obj'
         found = False
-        for obj in ch.carrying[:]:
+        for obj in ch.contents[:]:
             if (len(arg) == 3 or arg[4:] in obj.name) \
                     and ch.can_see_obj(obj) \
                     and obj.wear_loc == merc.WEAR_NONE \

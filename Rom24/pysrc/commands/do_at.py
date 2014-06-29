@@ -24,7 +24,7 @@ def do_at(ch, argument):
     on = ch.on
     ch.from_room()
     ch.to_room(location)
-    interp.interpret(ch, argument)
+    ch.interpret(argument)
 
     # See if 'ch' still exists before continuing!
     # Handles 'at XXXX quit' case.

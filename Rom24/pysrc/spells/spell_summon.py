@@ -15,13 +15,13 @@ def spell_summon(sn, level, ch, victim, target):
             or state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_PRIVATE) \
             or state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_SOLITARY) \
             or state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_NO_RECALL) \
-            or (victim.is_npc() and state_checks.IS_SET(victim.act, merc.ACT_AGGRESSIVE)) \
+            or (victim.is_npc() and victim.act.is_set(merc.ACT_AGGRESSIVE)) \
             or victim.level >= level + 3 \
             or (not victim.is_npc() and victim.level >= merc.LEVEL_IMMORTAL) \
             or victim.fighting != None \
             or (victim.is_npc() and state_checks.IS_SET(victim.imm_flags, merc.IMM_SUMMON)) \
             or (victim.is_npc() and victim.pIndexData.pShop != None) \
-            or (not victim.is_npc() and state_checks.IS_SET(victim.act, merc.PLR_NOSUMMON)) \
+            or (not victim.is_npc() and victim.act.is_set(merc.PLR_NOSUMMON)) \
             or (victim.is_npc() and handler_magic.saves_spell(level, victim, merc.DAM_OTHER)):
         ch.send("You failed.\n")
         return

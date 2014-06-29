@@ -21,7 +21,7 @@ def do_compare(ch, argument):
         return
     obj2 = None
     if not arg2:
-        for obj2 in ch.carrying:
+        for obj2 in ch.contents:
             if obj2.wear_loc != merc.WEAR_NONE and ch.can_see_obj(obj2) and obj1.item_type == obj2.item_type \
                     and (obj1.wear_flags & obj2.wear_flags & ~merc.ITEM_TAKE) != 0:
                 break

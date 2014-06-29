@@ -87,7 +87,7 @@ def do_buy(ch, argument):
             return
         items = None
         if not merc.IS_OBJ_STAT(obj, merc.ITEM_INVENTORY):
-            items = [t_obj for t_obj in keeper.carrying if
+            items = [t_obj for t_obj in keeper.contents if
                      t_obj.pIndexData == obj.pIndexData and t_obj.short_descr == obj.short_descr][:number]
             count = len(items)
             if count < number:

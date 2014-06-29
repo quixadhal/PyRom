@@ -5,7 +5,7 @@ logger = logging.getLogger()
 
 from game_utils import read_word
 from merc import POS_DEAD, LOG_NORMAL, ML
-from interp import register_command, cmd_type, interpret
+from interp import register_command, cmd_type
 
 def do_debug(ch, argument):
     if not argument:
@@ -16,7 +16,7 @@ def do_debug(ch, argument):
         ch.send("Nope.\n")
         return
     try:
-        interpret(ch, argument)
+        ch.interpret(argument)
     except:
         ch.send(traceback.format_exc())
         logger.exception('Failed to execute %s', word)

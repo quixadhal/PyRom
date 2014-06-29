@@ -40,7 +40,7 @@ def do_list(ch, argument):
             return
         argument, arg = game_utils.read_word(argument)
         items = collections.OrderedDict()
-        for obj in keeper.carrying:
+        for obj in keeper.contents:
             cost = shop_utils.get_cost(keeper, obj, True)
             if obj.wear_loc == merc.WEAR_NONE and ch.can_see_obj(obj) and cost > 0 \
                     and ( not arg or arg in obj.name.lower()):

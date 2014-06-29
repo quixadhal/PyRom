@@ -28,7 +28,7 @@ def spell_remove_curse(sn, level, ch, victim, target):
         victim.send("You feel better.\n")
         handler_game.act("$n looks more relaxed.", victim, None, None, merc.TO_ROOM)
 
-    for obj in victim.carrying:
+    for obj in victim.contents:
         if (state_checks.IS_OBJ_STAT(obj, merc.ITEM_NODROP) or state_checks.IS_OBJ_STAT(obj,
                                                                                         merc.ITEM_NOREMOVE)) and not state_checks.IS_OBJ_STAT(obj,
                                                                                                                                               merc.ITEM_NOUNCURSE):

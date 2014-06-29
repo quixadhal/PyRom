@@ -34,7 +34,7 @@ def spell_calm(sn, level, ch, victim, target):
     if random.randint(0, chance) >= mlevel:  # hard to stop large fights */
         for vch in ch.in_room.people:
             if vch.is_npc() and (state_checks.IS_SET(vch.imm_flags, merc.IMM_MAGIC) \
-                                        or state_checks.IS_SET(vch.act, merc.ACT_UNDEAD)):
+                                        or vch.act.is_set(merc.ACT_UNDEAD)):
                 return
 
             if state_checks.IS_AFFECTED(vch, merc.AFF_CALM) or state_checks.IS_AFFECTED(vch, merc.AFF_BERSERK) \
