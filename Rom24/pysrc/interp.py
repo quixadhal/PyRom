@@ -93,7 +93,7 @@ def interpret(ch, argument):
     argument = argument.lstrip()
 
     # No hiding.
-    ch.affected_by.remove(AFF_HIDE)
+    ch.affected_by.rem_bit(AFF_HIDE)
 
     # Implement freeze command.
     if not ch.is_npc() and ch.act.is_set(PLR_FREEZE):
