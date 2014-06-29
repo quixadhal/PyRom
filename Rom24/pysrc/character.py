@@ -92,6 +92,19 @@ class CharInteract:
         self.pet = None
         self.group = 0
         self.clan = None
+    # * It is very important that this be an equivalence relation:
+    # * (1) A ~ A
+    # * (2) if A ~ B then B ~ A
+    # * (3) if A ~ B  and B ~ C, then A ~ C
+    def is_same_group(self, bch):
+        if self is None or bch is None:
+            return False
+
+        if self.leader is not None:
+            self = self.leader
+        if bch.leader is not None:
+            bch = bch.leader
+        return self == bch
 
 class Physical:
     def __init__(self):

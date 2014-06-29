@@ -19,7 +19,7 @@ def do_murder(ch, argument):
 
     if ch.is_affected(merc.AFF_CHARM) \
             or (ch.is_npc()
-                and state_checks.IS_SET(ch.act, merc.ACT_PET)):
+                and ch.act.is_set(merc.ACT_PET)):
         return
     victim = ch.get_char_room(arg)
     if victim is None:

@@ -53,7 +53,7 @@ def do_buy(ch, argument):
         if roll < ch.get_skill("haggle"):
             cost -= cost // 2 * roll // 100
             ch.send("You haggle the price down to %d coins.\n" % cost)
-            skills.check_improve(ch, "haggle", True, 4)
+            ch.check_improve( "haggle", True, 4)
         ch.deduct_cost(cost)
         pet = db.create_mobile(pet.pIndexData)
         pet.act = merc.SET_BIT(pet.act, merc.ACT_PET)
@@ -116,7 +116,7 @@ def do_buy(ch, argument):
         if not merc.IS_OBJ_STAT(obj, merc.ITEM_SELL_EXTRACT) and roll < ch.get_skill("haggle"):
             cost -= obj.cost // 2 * roll // 100
             merc.act("You haggle with $N.", ch, None, keeper, merc.TO_CHAR)
-            skills.check_improve(ch, "haggle", True, 4)
+            ch.check_improve( "haggle", True, 4)
 
         if number > 1:
             merc.act("$n buys $p[%d]." % number, ch, obj, None, merc.TO_ROOM)

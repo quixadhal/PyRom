@@ -28,7 +28,7 @@ def do_brandish(ch, argument):
         if ch.level < staff.level or random.randint(1, 99) >= 20 + ch.get_skill("staves") * 4 / 5:
             merc.act("You fail to invoke $p.", ch, staff, None, merc.TO_CHAR)
             merc.act("...and nothing happens.", ch, None, None, merc.TO_ROOM)
-            skills.check_improve(ch, "staves", False, 2)
+            ch.check_improve( "staves", False, 2)
         else:
             for vch in ch.in_room.people[:]:
                 target = const.skill_table[sn].target
@@ -48,7 +48,7 @@ def do_brandish(ch, argument):
                     logger.error("BUG: Do_brandish: bad target for sn %s.", sn)
                     return
                 merc.obj_cast_spell(staff.value[3], staff.value[0], ch, vch, None)
-                skills.check_improve(ch, "staves", True, 2)
+                ch.check_improve( "staves", True, 2)
     staff.value[2] -= 1
     if staff.value[2] <= 0:
         merc.act("$n's $p blazes bright and is gone.", ch, staff, None, merc.TO_ROOM)

@@ -15,7 +15,7 @@ def do_kick(ch, argument):
     if not ch.is_npc() and ch.level < const.skill_table['kick'].skill_level[ch.guild.name]:
         ch.send("You better leave the martial arts to fighters.\n")
         return
-    if ch.is_npc() and not state_checks.IS_SET(ch.off_flags, merc.OFF_KICK):
+    if ch.is_npc() and not ch.off_flags.is_set(merc.OFF_KICK):
         return
     victim = ch.fighting
     if not victim:
@@ -25,10 +25,10 @@ def do_kick(ch, argument):
     state_checks.WAIT_STATE(ch, const.skill_table['kick'].beats)
     if ch.get_skill('kick') > random.randint(1, 99):
         fight.damage(ch, victim, random.randint(1, ch.level), 'kick', merc.DAM_BASH, True)
-        skills.check_improve(ch, 'kick', True, 1)
+        ch.check_improve( 'kick', True, 1)
     else:
         fight.damage(ch, victim, 0, 'kick', merc.DAM_BASH, True)
-        skills.check_improve(ch, 'kick', False, 1)
+        ch.check_improve( 'kick', False, 1)
     fight.check_killer(ch, victim)
     return
 

@@ -25,11 +25,11 @@ def do_score(ch, argument):
                                                                            state_checks.get_carry_weight(ch) // 10,
                                                                            ch.can_carry_w() // 10))
     ch.send("Str: %d(%d)  Int: %d(%d)  Wis: %d(%d)  Dex: %d(%d)  Con: %d(%d)\n" % (
-        ch.perm_stat[merc.STAT_STR], ch.get_curr_stat(merc.STAT_STR),
-        ch.perm_stat[merc.STAT_INT], ch.get_curr_stat(merc.STAT_INT),
-        ch.perm_stat[merc.STAT_WIS], ch.get_curr_stat(merc.STAT_WIS),
-        ch.perm_stat[merc.STAT_DEX], ch.get_curr_stat(merc.STAT_DEX),
-        ch.perm_stat[merc.STAT_CON], ch.get_curr_stat(merc.STAT_CON)))
+        ch.perm_stat[merc.STAT_STR], ch.stat(merc.STAT_STR),
+        ch.perm_stat[merc.STAT_INT], ch.stat(merc.STAT_INT),
+        ch.perm_stat[merc.STAT_WIS], ch.stat(merc.STAT_WIS),
+        ch.perm_stat[merc.STAT_DEX], ch.stat(merc.STAT_DEX),
+        ch.perm_stat[merc.STAT_CON], ch.stat(merc.STAT_CON)))
 
     ch.send("You have scored %d exp, and have %ld gold and %ld silver coins.\n" % (ch.exp, ch.gold, ch.silver))
     # RT shows exp to level
@@ -110,7 +110,7 @@ def do_score(ch, argument):
     # RT wizinvis and holy light
     if state_checks.IS_IMMORTAL(ch):
         ch.send("Holy Light: ")
-        if state_checks.IS_SET(ch.act, merc.PLR_HOLYLIGHT):
+        if ch.act.is_set(merc.PLR_HOLYLIGHT):
             ch.send("on")
         else:
             ch.send("off")

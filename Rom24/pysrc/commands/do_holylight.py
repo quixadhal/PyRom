@@ -10,11 +10,11 @@ import state_checks
 def do_holylight(ch, argument):
     if ch.is_npc():
         return
-    if state_checks.IS_SET(ch.act, merc.PLR_HOLYLIGHT):
-        ch.act = state_checks.REMOVE_BIT(ch.act, merc.PLR_HOLYLIGHT)
+    if ch.act.is_set(merc.PLR_HOLYLIGHT):
+        ch.act.rem_bit(merc.PLR_HOLYLIGHT)
         ch.send("Holy light mode off.\n")
     else:
-        ch.act = state_checks.SET_BIT(ch.act, merc.PLR_HOLYLIGHT)
+        ch.act.set_bit(merc.PLR_HOLYLIGHT)
         ch.send("Holy light mode on.\n")
     return
 

@@ -42,7 +42,7 @@ def do_sacrifice(ch, argument):
     else:
         ch.send("Mota gives you %d silver coins for your sacrifice.\n" % silver)
     ch.silver += silver
-    if state_checks.IS_SET(ch.act, merc.PLR_AUTOSPLIT):
+    if ch.act.is_set(merc.PLR_AUTOSPLIT):
         # AUTOSPLIT code
         members = len([gch for gch in ch.in_room.people if gch.is_same_group(ch)])
         if members > 1 and silver > 1:

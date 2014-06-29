@@ -34,7 +34,7 @@ def do_follow(ch, argument):
             and not state_checks.IS_IMMORTAL(ch):
         handler_game.act("$N doesn't seem to want any followers.\n", ch, None, victim, merc.TO_CHAR)
         return
-    ch.act = state_checks.REMOVE_BIT(ch.act, merc.PLR_NOFOLLOW)
+    ch.act.rem_bit(merc.PLR_NOFOLLOW)
     if ch.master:
         handler_ch.stop_follower(ch)
     handler_ch.add_follower(ch, victim)

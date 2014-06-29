@@ -35,7 +35,7 @@ def do_rstat(ch, argument):
     ch.send("Characters:")
     for rch in location.people:
         if ch.can_see(rch):
-            ch.send("%s " % rch.name if not state_checks.IS_NPC(rch) else rch.short_descr)
+            ch.send("%s " % rch.name if not rch.is_npc() else rch.short_descr)
     ch.send(".\nObjects:   ")
     for obj in location.contents:
         ch.send("'%s' " % obj.name)

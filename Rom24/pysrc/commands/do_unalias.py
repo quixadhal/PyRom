@@ -14,7 +14,7 @@ def do_unalias(ch, argument):
     else:
         rch = ch.desc.original if ch.desc.original else ch
 
-    if state_checks.IS_NPC(rch):
+    if rch.is_npc():
         return
 
     argument, arg = game_utils.read_word(argument)

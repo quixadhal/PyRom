@@ -11,12 +11,12 @@ import state_checks
 def do_nofollow(ch, argument):
     if ch.is_npc():
         return
-    if state_checks.IS_SET(ch.act, merc.PLR_NOFOLLOW):
+    if ch.act.is_set(merc.PLR_NOFOLLOW):
         ch.send("You now accept followers.\n")
-        ch.act = state_checks.REMOVE_BIT(ch.act, merc.PLR_NOFOLLOW)
+        ch.act.rem_bit(merc.PLR_NOFOLLOW)
     else:
         ch.send("You no longer accept followers.\n")
-        ch.act = state_checks.SET_BIT(ch.act, merc.PLR_NOFOLLOW)
+        ch.act.set_bit(merc.PLR_NOFOLLOW)
         handler_ch.die_follower(ch)
 
 

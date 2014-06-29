@@ -60,12 +60,12 @@ def advance_level(ch, hide):
     buf = "the %s" % ( const.title_table[ch.guild.name][ch.level][1 if ch.sex == SEX_FEMALE else 0] )
     game_utils.set_title(ch, buf)
 
-    add_hp = const.con_app[ch.get_curr_stat(STAT_CON)].hitp + random.randint(ch.guild.hp_min, ch.guild.hp_max)
-    add_mana = random.randint(2, (2 * ch.get_curr_stat(STAT_INT) + ch.get_curr_stat(STAT_WIS)) // 5)
+    add_hp = const.con_app[ch.stat(STAT_CON)].hitp + random.randint(ch.guild.hp_min, ch.guild.hp_max)
+    add_mana = random.randint(2, (2 * ch.stat(STAT_INT) + ch.stat(STAT_WIS)) // 5)
     if not ch.guild.fMana:
         add_mana //= 2
-    add_move = random.randint(1, (ch.get_curr_stat(STAT_CON) + ch.get_curr_stat(STAT_DEX)) // 6)
-    add_prac = const.wis_app[ch.get_curr_stat(STAT_WIS)].practice
+    add_move = random.randint(1, (ch.stat(STAT_CON) + ch.stat(STAT_DEX)) // 6)
+    add_prac = const.wis_app[ch.stat(STAT_WIS)].practice
 
     add_hp = add_hp * 9 // 10
     add_mana = add_mana * 9 // 10
@@ -123,13 +123,13 @@ def hit_gain(ch):
         else:
             gain //= 2
     else:
-        gain = max(3, ch.get_curr_stat(STAT_CON) - 3 + ch.level // 2)
+        gain = max(3, ch.stat(STAT_CON) - 3 + ch.level // 2)
         gain += ch.guild.hp_max - 10
         number = random.randint(1, 99)
         if number < ch.get_skill('fast healing'):
             gain += number * gain // 100
             if ch.hit < ch.max_hit:
-                skills.check_improve(ch, 'fast healing', True, 8)
+                ch.check_improve( 'fast healing', True, 8)
 
         if ch.position == POS_SLEEPING:
             pass
@@ -178,12 +178,12 @@ def mana_gain(ch):
         else:
             gain //= 2
     else:
-        gain = (ch.get_curr_stat(STAT_WIS) + ch.get_curr_stat(STAT_INT) + ch.level) // 2
+        gain = (ch.stat(STAT_WIS) + ch.stat(STAT_INT) + ch.level) // 2
         number = random.randint(1, 99)
         if number < ch.get_skill('meditation'):
             gain += number * gain // 100
             if ch.mana < ch.max_mana:
-                skills.check_improve(ch, 'meditation', True, 8)
+                ch.check_improve( 'meditation', True, 8)
 
         if not ch.guild.fMana:
             gain //= 2
@@ -229,9 +229,9 @@ def move_gain(ch):
         gain = max(15, ch.level)
 
         if ch.position == POS_SLEEPING:
-            gain += ch.get_curr_stat(STAT_DEX)
+            gain += ch.stat(STAT_DEX)
         elif ch.position == POS_RESTING:
-            gain += ch.get_curr_stat(STAT_DEX) // 2
+            gain += ch.stat(STAT_DEX) // 2
 
         if not ch.pcdata.condition[COND_HUNGER]:
             gain //= 2
@@ -698,7 +698,7 @@ def aggr_update():
                 if not vch.is_npc() \
                         and vch.level < LEVEL_IMMORTAL \
                         and ch.level >= vch.level - 5 \
-                        and ( not state_checks.IS_SET(ch.act, ACT_WIMPY) or not state_checks.IS_AWAKE(vch) ) \
+                        and ( not ch.act.is_set(ACT_WIMPY) or not state_checks.IS_AWAKE(vch) ) \
                         and ch.can_see(vch):
                     if random.randint(0, count) == 0:
                         victim = vch

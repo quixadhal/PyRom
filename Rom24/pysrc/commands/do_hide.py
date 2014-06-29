@@ -18,9 +18,9 @@ def do_hide(ch, argument):
 
     if random.randint(1, 99) < ch.get_skill("hide"):
         state_checks.SET_BIT(ch.affected_by, merc.AFF_HIDE)
-        skills.check_improve(ch, "hide", True, 3)
+        ch.check_improve( "hide", True, 3)
     else:
-        skills.check_improve(ch, "hide", False, 3)
+        ch.check_improve( "hide", False, 3)
     return
 
 

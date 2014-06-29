@@ -72,12 +72,12 @@ def do_steal(ch, argument):
             victim.do_yell(buf)
         if not ch.is_npc():
             if victim.is_npc():
-                skills.check_improve(ch, "steal", False, 2)
+                ch.check_improve( "steal", False, 2)
                 fight.multi_hit(victim, ch, merc.TYPE_UNDEFINED)
             else:
                 handler_game.wiznet("$N tried to steal from %s." % victim.name, ch, None, merc.WIZ_FLAGS, 0, 0)
-                if not state_checks.IS_SET(ch.act, merc.PLR_THIEF):
-                    ch.act = state_checks.SET_BIT(ch.act, merc.PLR_THIEF)
+                if not ch.act.is_set(merc.PLR_THIEF):
+                    ch.act.set_bit(merc.PLR_THIEF)
                     ch.send("*** You are now a THIEF!! ***\n")
                     save.save_char_obj(ch)
         return
@@ -98,7 +98,7 @@ def do_steal(ch, argument):
             ch.send("Bingo!  You got %d silver coins.\n" % silver)
         else:
             ch.send("Bingo!  You got %d silver and %d gold coins.\n" % (silver, gold))
-        skills.check_improve(ch, "steal", True, 2)
+        ch.check_improve( "steal", True, 2)
         return
     obj = victim.get_obj_carry(arg1, ch)
     if not obj:
@@ -116,7 +116,7 @@ def do_steal(ch, argument):
     obj.from_char()
     obj.to_char(ch)
     handler_game.act("You pocket $p.", ch, obj, None, merc.TO_CHAR)
-    skills.check_improve(ch, "steal", True, 2)
+    ch.check_improve( "steal", True, 2)
     ch.send("Got it!\n")
     return
 

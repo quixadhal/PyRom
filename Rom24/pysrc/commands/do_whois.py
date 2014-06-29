@@ -54,12 +54,12 @@ def do_whois(ch, argument):
                     guild,
                     ("(Incog) " if wch.incog_level >= merc.LEVEL_HERO else ""),
                     ("(Wizi) " if wch.invis_level >= merc.LEVEL_HERO else ""),
-                    wch.clan.who_name,
+                    wch.clan.who_name if wch.clan else "",
                     ("[AFK] " if state_checks.IS_SET(wch.comm, merc.COMM_AFK) else ""),
-                    ("(KILLER) " if state_checks.IS_SET(wch.act, merc.PLR_KILLER) else ""),
-                    ("(THIEF) " if state_checks.IS_SET(wch.act, merc.PLR_THIEF) else ""),
+                    ("(KILLER) " if wch.act.is_set(merc.PLR_KILLER) else ""),
+                    ("(THIEF) " if wch.act.is_set(merc.PLR_THIEF) else ""),
                     wch.name,
-                    ("" if state_checks.IS_NPC(wch) else wch.pcdata.title)))
+                    ("" if wch.is_npc() else wch.pcdata.title)))
 
     if not found:
         ch.send("No one of that name is playing.\n")

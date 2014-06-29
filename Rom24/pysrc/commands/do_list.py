@@ -60,7 +60,7 @@ def do_list(ch, argument):
             obj, count = p
             cost = shop_utils.get_cost(keeper, obj, True)
             ch.send("[%2d %5d %2s ] %s" % (obj.level, cost, ("--" if count == -1 else count), obj.short_descr))
-            if state_checks.IS_SET(ch.act, merc.PLR_OMNI):
+            if ch.act.is_set(merc.PLR_OMNI):
                 ch.send("(%d)" % obj.pIndexData.vnum)
             ch.send("\n")
 

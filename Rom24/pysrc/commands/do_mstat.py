@@ -32,11 +32,11 @@ def do_mstat(ch, argument):
     if victim.is_npc():
         ch.send("Count: %d  Killed: %d\n" % (victim.pIndexData.count, victim.pIndexData.killed))
     ch.send("Str: %d(%d)  Int: %d(%d)  Wis: %d(%d)  Dex: %d(%d)  Con: %d(%d)\n" % (
-        victim.perm_stat[merc.STAT_STR], victim.get_curr_stat(merc.STAT_STR),
-        victim.perm_stat[merc.STAT_INT], victim.get_curr_stat(merc.STAT_INT),
-        victim.perm_stat[merc.STAT_WIS], victim.get_curr_stat(merc.STAT_WIS),
-        victim.perm_stat[merc.STAT_DEX], victim.get_curr_stat(merc.STAT_DEX),
-        victim.perm_stat[merc.STAT_CON], victim.get_curr_stat(merc.STAT_CON)))
+        victim.perm_stat[merc.STAT_STR], victim.stat(merc.STAT_STR),
+        victim.perm_stat[merc.STAT_INT], victim.stat(merc.STAT_INT),
+        victim.perm_stat[merc.STAT_WIS], victim.stat(merc.STAT_WIS),
+        victim.perm_stat[merc.STAT_DEX], victim.stat(merc.STAT_DEX),
+        victim.perm_stat[merc.STAT_CON], victim.stat(merc.STAT_CON)))
     ch.send("Hp: %d/%d  Mana: %d/%d  Move: %d/%d  Practices: %d\n" % (
         victim.hit, victim.max_hit,
         victim.mana, victim.max_mana,

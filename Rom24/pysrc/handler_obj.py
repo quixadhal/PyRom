@@ -248,7 +248,7 @@ def wear_obj( ch, obj, fReplace ):
     if state_checks.CAN_WEAR( obj, merc.ITEM_WIELD):
         if not remove_obj( ch, merc.WEAR_WIELD, fReplace ):
             return
-        if not ch.is_npc() and obj.get_weight() > (const.str_app[ch.get_curr_stat(merc.STAT_STR)].wield * 10):
+        if not ch.is_npc() and obj.get_weight() > (const.str_app[ch.stat(merc.STAT_STR)].wield * 10):
             ch.send("It is too heavy for you to wield.\n")
             return
         if not ch.is_npc() and ch.size < merc.SIZE_LARGE \
@@ -333,7 +333,7 @@ def get_obj(ch, obj, container):
     if obj.item_type == merc.ITEM_MONEY:
         ch.silver += obj.value[0]
         ch.gold += obj.value[1]
-        if state_checks.IS_SET(ch.act, merc.PLR_AUTOSPLIT):
+        if ch.act.is_set(merc.PLR_AUTOSPLIT):
             # AUTOSPLIT code */
             members = len([gch for gch in ch.in_room.people if not state_checks.IS_AFFECTED(gch, merc.AFF_CHARM) and gch.is_same_group(ch)])
             if members > 1 and (obj.value[0] > 1 or obj.value[1]):
@@ -378,7 +378,7 @@ def format_obj_to_char(obj, ch, fShort):
     else:
         if obj.description:
             buf += obj.description
-    if state_checks.IS_SET(ch.act, merc.PLR_OMNI):
+    if ch.act.is_set(merc.PLR_OMNI):
         buf += "(%d)" % obj.pIndexData.vnum
     return buf
 

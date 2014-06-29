@@ -14,7 +14,7 @@ import update
 
 
 def do_recall(ch, argument):
-    if ch.is_npc() and not state_checks.IS_SET(ch.act, merc.ACT_PET):
+    if ch.is_npc() and not ch.act.is_set(merc.ACT_PET):
         ch.send("Only players can recall.\n")
         return
     handler_game.act("$n prays for transportation!", ch, 0, 0, merc.TO_ROOM)
@@ -31,13 +31,13 @@ def do_recall(ch, argument):
     if victim:
         skill = ch.get_skill("recall")
         if random.randint(1, 99) < 80 * skill / 100:
-            skills.check_improve(ch, "recall", False, 6)
+            ch.check_improve( "recall", False, 6)
             state_checks.WAIT_STATE(ch, 4)
             ch.send("You failed!.\n")
             return
         lose = 25 if ch.desc else 50
         update.gain_exp(ch, 0 - lose)
-        skills.check_improve(ch, "recall", True, 4)
+        ch.check_improve( "recall", True, 4)
         ch.send("You recall from combat!  You lose %d exps.\n" % lose)
         fight.stop_fighting(ch, True)
     ch.move /= 2
