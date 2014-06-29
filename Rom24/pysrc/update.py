@@ -35,7 +35,7 @@ import idlelib.PyParse
 
 import random
 from merc import *
-from handler import *
+import nanny
 import save
 import db
 import hotfix
@@ -47,9 +47,6 @@ import handler_magic
 
 import handler_game
 import handler_ch
-import handler_obj
-import handler_olc
-import handler_room
 import game_utils
 
 # * Advancement stuff.
@@ -410,7 +407,7 @@ def weather_update():
 
     if buf:
         for d in descriptor_list:
-            if d.is_connected(con_playing) and state_checks.IS_OUTSIDE(d.character) and state_checks.IS_AWAKE(
+            if d.is_connected(nanny.con_playing) and state_checks.IS_OUTSIDE(d.character) and state_checks.IS_AWAKE(
                     d.character):
                 idlelib.PyParse.ch.send(buf)
     return

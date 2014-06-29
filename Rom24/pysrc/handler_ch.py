@@ -47,6 +47,7 @@ import skills
 import state_checks
 import game_utils
 import handler_game
+import handler_obj
 
 depth = 0
 

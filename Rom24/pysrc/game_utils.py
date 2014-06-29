@@ -32,7 +32,7 @@ def read_word(pstr, lower=True):
 
 
 def read_int(pstr):
-    if not str:
+    if not pstr:
         return None, None
     pstr = pstr.lstrip()
     number = ""
@@ -65,7 +65,7 @@ def read_string(pstr):
 
 
 def read_flags(pstr):
-    if not str:
+    if not pstr:
         return None, None
     pstr, w = read_word(pstr, False)
     if w == '0' or w == 0:
