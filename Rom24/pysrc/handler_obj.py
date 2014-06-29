@@ -609,7 +609,7 @@ class handler_obj:
         if obj.wear_loc != merc.WEAR_NONE:
             ch.unequip(obj)
 
-        ch.contains.remove(obj)
+        ch.contents.remove(obj)
 
         obj.carried_by = None
         ch.carry_number -= obj.get_number()

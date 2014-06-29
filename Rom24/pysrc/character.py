@@ -11,7 +11,7 @@ from handler_magic import saves_spell
 logger = logging.getLogger()
 
 from const import race_table, wiznet_table, skill_type, guild_table, pc_race_table, str_app, group_table, skill_table, \
-    int_app, guild_type
+    int_app, guild_type, race_type
 import handler_game
 from merc import MAX_STATS, PLR_NOSUMMON, COMM_PROMPT, COMM_COMBINE, ACT_IS_NPC, TO_ROOM, AFF_PLAGUE, DAM_DISEASE, \
     APPLY_STR, TO_AFFECTS, ITEM_LIGHT, WEAR_LIGHT, ROOM_VNUM_TEMPLE, room_index_hash, LEVEL_HERO, STAT_CON, APPLY_SEX, \
@@ -645,6 +645,18 @@ class Living(Immortal, Fight, CharInteract, Physical,
                 points -= 10
         expl += points * inc // 10
         return expl * pc_race_table[self.race.name].class_mult[self.guild.name] // 100
+    @property
+    def race(self):
+        try:
+            return race_table[self._race]
+        except KeyError:
+            return race_table['human']
+    @race.setter
+    def race(self, value):
+        if isinstance(value, race_type):
+            self._race = value.name
+        elif value in race_table:
+            self._race = value
 
     @property
     def guild(self):
@@ -1037,10 +1049,10 @@ class Living(Immortal, Fight, CharInteract, Physical,
             skill = 0
         elif not self.is_npc():
             if self.level < skill_table[sn].skill_level[self.guild.name] \
-                    or sn not in self.pcdata.learned:
+                    or sn not in self.learned:
                 skill = 0
             else:
-                skill = self.pcdata.learned[sn]
+                skill = self.learned[sn]
         else:  # mobiles */
             if skill_table[sn].spell_fun is not None:
                 skill = 40 + 2 * self.level
@@ -1087,9 +1099,34 @@ class Living(Immortal, Fight, CharInteract, Physical,
             else:
                 skill = 2 * skill // 3
         if not self.is_npc() \
-                and self.pcdata.condition[COND_DRUNK] > 10:
+                and self.condition[COND_DRUNK] > 10:
             skill = 9 * skill // 10
 
+        return max(0, min(skill, 100))
+    # for returning weapon information */
+    def get_weapon_sn(self):
+        wield = self.get_eq(WEAR_WIELD)
+        if not wield or wield.item_type != ITEM_WEAPON:
+            sn = "hand to hand"
+            return sn
+        else:
+            return wield.value[0]
+
+    def get_weapon_skill(self, sn):
+        # -1 is exotic */
+        skill = 0
+        if self.is_npc():
+            if sn == -1:
+                skill = 3 * self.level
+            elif sn == "hand to hand":
+                skill = 40 + 2 * self.level
+            else:
+                skill = 40 + 5 * self.level / 2
+        elif sn in self.learned:
+            if sn == -1:
+                skill = 3 * self.level
+            else:
+                skill = self.learned[sn]
         return max(0, min(skill, 100))
 
 
@@ -1180,7 +1217,7 @@ class Character(Living):
 
         if name in skill_table:
             sn = skill_table[name]
-            if sn.name not in self.pcdata.learned: # i.e. not known */
+            if sn.name not in self.learned: # i.e. not known */
                 self.learned[sn.name] = 1
             if deduct:
                 self.points += sn.rating[self.guild.name]
@@ -1248,7 +1285,7 @@ class Character(Living):
             self.send( "\n" )
         self.send("\n")
 
-        self.send("Creation points: %d\n" % self.pcdata.points)
+        self.send("Creation points: %d\n" % self.points)
         self.send("Experience per level: %d\n" % self.exp_per_level(self.gen_data.points_chosen))
         return
 
@@ -1344,8 +1381,8 @@ class Character(Living):
                 self.send("%s skill added\n" % sn.name)
                 self.gen_data.skill_chosen[sn.name] = True
                 self.gen_data.points_chosen += sn.rating[self.guild.name]
-                self.pcdata.learned[sn] = 1
-                self.pcdata.points += sn.rating[self.guild.name]
+                self.learned[sn] = 1
+                self.points += sn.rating[self.guild.name]
                 return True
 
             self.send("No skills or groups by that name...\n")
