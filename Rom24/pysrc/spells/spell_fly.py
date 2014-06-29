@@ -5,7 +5,7 @@ import state_checks
 
 
 def spell_fly(sn, level, ch, victim, target):
-    if state_checks.IS_AFFECTED(victim, merc.AFF_FLYING):
+    if victim.is_affected( merc.AFF_FLYING):
         if victim == ch:
             ch.send("You are already airborne.\n")
         else:

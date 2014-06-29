@@ -62,7 +62,7 @@ def do_bash(ch, argument):
     # speed */
     if state_checks.IS_SET(ch.off_flags, merc.OFF_FAST) or ch.is_affected(merc.AFF_HASTE):
         chance += 10
-    if state_checks.IS_SET(victim.off_flags, merc.OFF_FAST) or state_checks.IS_AFFECTED(victim, merc.AFF_HASTE):
+    if state_checks.IS_SET(victim.off_flags, merc.OFF_FAST) or victim.is_affected( merc.AFF_HASTE):
         chance -= 30
     # level
     chance += (ch.level - victim.level)

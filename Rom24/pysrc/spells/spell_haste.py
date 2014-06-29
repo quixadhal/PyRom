@@ -7,14 +7,14 @@ import state_checks
 
 def spell_haste(sn, level, ch, victim, target):
     # RT haste spell */
-    if state_checks.is_affected(victim, sn) or state_checks.IS_AFFECTED(victim, merc.AFF_HASTE) or state_checks.IS_SET(victim.off_flags,
+    if state_checks.is_affected(victim, sn) or victim.is_affected( merc.AFF_HASTE) or state_checks.IS_SET(victim.off_flags,
                                                                                                                        merc.OFF_FAST):
         if victim == ch:
             ch.send("You can't move any faster! \n")
         else:
             handler_game.act("$N is already moving as fast as $E can.", ch, None, victim, merc.TO_CHAR)
         return
-    if state_checks.IS_AFFECTED(victim, merc.AFF_SLOW):
+    if victim.is_affected( merc.AFF_SLOW):
         if not handler_magic.check_dispel(level, victim, const.skill_table["slow"]):
             if victim != ch:
                 ch.send("Spell failed.\n")

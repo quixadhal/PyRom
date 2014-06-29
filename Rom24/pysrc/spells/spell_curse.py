@@ -42,7 +42,7 @@ def spell_curse(sn, level, ch, victim, target):
         return
 
     # character curses */
-    if state_checks.IS_AFFECTED(victim, merc.AFF_CURSE) or handler_magic.saves_spell(level, victim, merc.DAM_NEGATIVE):
+    if victim.is_affected( merc.AFF_CURSE) or handler_magic.saves_spell(level, victim, merc.DAM_NEGATIVE):
         return
     af = handler_game.AFFECT_DATA()
     af.where = merc.TO_AFFECTS

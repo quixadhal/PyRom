@@ -5,7 +5,7 @@ import state_checks
 
 
 def spell_faerie_fire(sn, level, ch, victim, target):
-    if state_checks.IS_AFFECTED(victim, merc.AFF_FAERIE_FIRE):
+    if victim.is_affected( merc.AFF_FAERIE_FIRE):
         return
     af = handler_game.AFFECT_DATA()
     af.where = merc.TO_AFFECTS

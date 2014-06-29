@@ -6,7 +6,7 @@ import state_checks
 
 
 def spell_blindness(sn, level, ch, victim, target):
-    if state_checks.IS_AFFECTED(victim, merc.AFF_BLIND) or handler_magic.saves_spell(level, victim, merc.DAM_OTHER):
+    if victim.is_affected( merc.AFF_BLIND) or handler_magic.saves_spell(level, victim, merc.DAM_OTHER):
         return
 
     af = handler_game.AFFECT_DATA()

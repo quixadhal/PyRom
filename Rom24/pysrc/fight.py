@@ -498,11 +498,11 @@ def damage(ch,victim,dam,dt,dam_type,show):
      # Damage modifiers.
     if dam > 1 and not state_checks.IS_NPC(victim) and victim.pcdata.condition[COND_DRUNK] > 10:
         dam = 9 * dam // 10
-    if dam > 1 and state_checks.IS_AFFECTED(victim, AFF_SANCTUARY):
+    if dam > 1 and victim.is_affected( AFF_SANCTUARY):
         dam //= 2
 
-    if dam > 1 and ((state_checks.IS_AFFECTED(victim, AFF_PROTECT_EVIL) and state_checks.IS_EVIL(ch)) \
-    or (state_checks.IS_AFFECTED(victim, AFF_PROTECT_GOOD) and state_checks.IS_GOOD(ch) )):
+    if dam > 1 and ((victim.is_affected( AFF_PROTECT_EVIL) and state_checks.IS_EVIL(ch)) \
+    or (victim.is_affected( AFF_PROTECT_GOOD) and state_checks.IS_GOOD(ch) )):
         dam -= dam // 4
 
     immune = False
@@ -614,7 +614,7 @@ def damage(ch,victim,dam,dt,dam_type,show):
     if state_checks.IS_NPC(victim) and dam > 0 and victim.wait < PULSE_VIOLENCE // 2:
         if (state_checks.IS_SET(victim.act, ACT_WIMPY) and random.randint(0,4) == 0 \
         and victim.hit < victim.max_hit // 5) \
-        or ( state_checks.IS_AFFECTED(victim, AFF_CHARM) and victim.master \
+        or ( victim.is_affected( AFF_CHARM) and victim.master \
         and victim.master.in_room != victim.in_room ):
             victim.do_flee("")
 
@@ -652,7 +652,7 @@ def is_safe(ch, victim):
                 return True
 
             # no charmed creatures unless owner */
-            if state_checks.IS_AFFECTED(victim,AFF_CHARM) and ch != victim.master:
+            if victim.is_affected(AFF_CHARM) and ch != victim.master:
                 ch.send("You don't own that monster.\n")
                 return True
     # killing players */
@@ -713,7 +713,7 @@ def is_safe_spell(ch, victim, area ):
             if state_checks.IS_SET(victim.act,ACT_PET):
                 return True
             # no charmed creatures unless owner */
-            if state_checks.IS_AFFECTED(victim,AFF_CHARM) and (area or ch != victim.master):
+            if victim.is_affected(AFF_CHARM) and (area or ch != victim.master):
                 return True
             # legal kill? -- cannot hit mob fighting non-group member */
             if victim.fighting != None and not ch.is_same_group(victim.fighting):
@@ -755,7 +755,7 @@ def is_safe_spell(ch, victim, area ):
 def check_killer( ch, victim ):
 #     * Follow charm thread to responsible character.
 #     * Attacking someone's charmed char is hostile!
-    while state_checks.IS_AFFECTED(victim, AFF_CHARM) and victim.master != None:
+    while victim.is_affected( AFF_CHARM) and victim.master != None:
         victim = victim.master
 
      # NPC's are fair game.

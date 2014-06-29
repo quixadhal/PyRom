@@ -49,7 +49,7 @@ def spell_dispel_magic(sn, level, ch, victim, target):
                 handler_game.act(v, victim, None, None, merc.TO_ROOM)
             found = True
 
-    if state_checks.IS_AFFECTED(victim,
+    if victim.is_affected(
                                 merc.AFF_SANCTUARY) and not handler_magic.saves_dispel(level, victim.level, -1) and not state_checks.is_affected(victim,
                                                                                                             const.skill_table[
                                                                                                                 "sanctuary"]):

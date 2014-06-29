@@ -5,7 +5,7 @@ import state_checks
 
 
 def spell_detect_good(sn, level, ch, victim, target):
-    if state_checks.IS_AFFECTED(victim, merc.AFF_DETECT_GOOD):
+    if victim.is_affected( merc.AFF_DETECT_GOOD):
         if victim == ch:
             ch.send("You can already sense good.\n")
         else:

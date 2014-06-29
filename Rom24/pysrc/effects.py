@@ -53,13 +53,15 @@ def acid_effect(vo, level, dam, target):
         return
     if target == TARGET_OBJ: # toast an object */
         obj = vo
-        if state_checks.IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or state_checks.IS_OBJ_STAT(obj,ITEM_NOPURGE) or random.randint(0,4) == 0:
+        if state_checks.IS_OBJ_STAT(obj,ITEM_BURN_PROOF) \
+                or state_checks.IS_OBJ_STAT(obj,ITEM_NOPURGE) \
+                or random.randint(0,4) == 0:
             return
         chance = level / 4 + dam / 10
         if chance > 25:
-            chance = (chance - 25) / 2 + 25
+            chance = (chance - 25) // 2 + 25
         if chance > 50:
-            chance = (chance - 50) / 2 + 50
+            chance = (chance - 50) // 2 + 50
 
         if state_checks.IS_OBJ_STAT(obj,ITEM_BLESS):
             chance -= 5
@@ -164,13 +166,15 @@ def cold_effect( vo, level, dam, target):
         return
     if target == TARGET_OBJ: # toast an object */
         obj = vo
-        if state_checks.IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or state_checks.IS_OBJ_STAT(obj,ITEM_NOPURGE) or random.randint(0,4) == 0:
+        if state_checks.IS_OBJ_STAT(obj,ITEM_BURN_PROOF) \
+                or state_checks.IS_OBJ_STAT(obj,ITEM_NOPURGE) \
+                or random.randint(0,4) == 0:
             return
-        chance = level / 4 + dam / 10
+        chance = level // 4 + dam // 10
         if chance > 25:
-            chance = (chance - 25) / 2 + 25
+            chance = (chance - 25) // 2 + 25
         if chance > 50:
-            chance = (chance - 50) / 2 + 50
+            chance = (chance - 50) // 2 + 50
 
         if state_checks.IS_OBJ_STAT(obj,ITEM_BLESS):
             chance -= 5
@@ -207,7 +211,7 @@ def fire_effect(vo, level, dam, target):
     if target == TARGET_CHAR:   # do the effect on a victim */
         victim = vo
         # chance of blindness */
-        if not state_checks.IS_AFFECTED(victim,AFF_BLIND) and not handler_magic.saves_spell(level / 4 + dam / 20, victim,DAM_FIRE):
+        if not victim.is_affected(AFF_BLIND) and not handler_magic.saves_spell(level / 4 + dam / 20, victim,DAM_FIRE):
             handler_game.act("$n is blinded by smoke!",victim,None,None,TO_ROOM)
             handler_game.act("Your eyes tear up from smoke...you can't see a thing!", victim,None,None,TO_CHAR)
             af = handler_game.AFFECT_DATA()

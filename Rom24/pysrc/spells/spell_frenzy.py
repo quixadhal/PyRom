@@ -6,7 +6,7 @@ import state_checks
 
 def spell_frenzy(sn, level, ch, victim, target):
     # RT clerical berserking spell */
-    if state_checks.is_affected(victim, sn) or state_checks.IS_AFFECTED(victim, merc.AFF_BERSERK):
+    if state_checks.is_affected(victim, sn) or victim.is_affected( merc.AFF_BERSERK):
         if victim == ch:
             ch.send("You are already in a frenzy.\n")
         else:

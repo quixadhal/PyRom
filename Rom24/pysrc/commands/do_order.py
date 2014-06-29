@@ -37,7 +37,7 @@ def do_order(ch, argument):
         if victim == ch:
             ch.send("Aye aye, right away!\n")
             return
-        if not state_checks.IS_AFFECTED(victim, merc.AFF_CHARM) or victim.master != ch \
+        if not victim.is_affected( merc.AFF_CHARM) or victim.master != ch \
                 or (state_checks.IS_IMMORTAL(victim) and victim.trust >= ch.trust):
             ch.send("Do it yourself!\n")
             return

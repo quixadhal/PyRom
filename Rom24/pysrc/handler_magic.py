@@ -25,7 +25,7 @@ def say_spell(ch, spell):
 
 def saves_spell(level, victim, dam_type):
     save = 50 + ( victim.level - level) * 5 - victim.saving_throw * 2
-    if state_checks.IS_AFFECTED(victim, merc.AFF_BERSERK):
+    if victim.is_affected( merc.AFF_BERSERK):
         save += victim.level//2
 
     immunity = victim.check_immune(dam_type)

@@ -5,7 +5,7 @@ import state_checks
 
 
 def spell_detect_invis(sn, level, ch, victim, target):
-    if state_checks.IS_AFFECTED(victim, merc.AFF_DETECT_INVIS):
+    if victim.is_affected( merc.AFF_DETECT_INVIS):
         if victim == ch:
             ch.send("You can already see invisible.\n")
         else:

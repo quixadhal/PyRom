@@ -93,10 +93,10 @@ def interpret(ch, argument):
     argument = argument.lstrip()
 
     # No hiding.
-    state_checks.REMOVE_BIT(ch.affected_by, AFF_HIDE)
+    ch.affected_by.rem_bit(AFF_HIDE)
 
     # Implement freeze command.
-    if not ch.is_npc() and state_checks.IS_SET(ch.act, PLR_FREEZE):
+    if not ch.is_npc() and ch.act.is_set(PLR_FREEZE):
         ch.send("You're totally frozen!\n")
         return
     # Grab the command word.
@@ -109,17 +109,17 @@ def interpret(ch, argument):
     else:
         argument, command = game_utils.read_word(argument)
     # Look for command in command table.
-    trust = ch.get_trust()
+    trust = ch.trust
     cmd = state_checks.prefix_lookup(cmd_table, command)
     if cmd is not None:
         if cmd.level > trust:
             cmd = None
 
     #* Log and snoop.
-    if (not ch.is_npc() and state_checks.IS_SET(ch.act, PLR_LOG)) or LOGALL or (cmd and cmd.log == LOG_ALWAYS):
+    if (not ch.is_npc() and ch.act.is_set(PLR_LOG)) or LOGALL or (cmd and cmd.log == LOG_ALWAYS):
         if cmd and cmd.log != LOG_NEVER:
             log_buf = "Log %s: %s" % (ch.name, logline)
-            handler_game.wiznet(log_buf, ch, None, WIZ_SECURE, 0, ch.get_trust())
+            handler_game.wiznet(log_buf, ch, None, WIZ_SECURE, 0, ch.trust)
             logger.info(log_buf)
     if ch.desc and ch.desc.snoop_by:
         ch.desc.snoop_by.send("% ")
@@ -163,7 +163,7 @@ def check_social(ch, command, argument):
             cmd = social
     if not cmd:
         return False
-    if not ch.is_npc() and state_checks.IS_SET(ch.comm, COMM_NOEMOTE):
+    if not ch.is_npc() and ch.comm.is_set(COMM_NOEMOTE):
         ch.send("You are anti-social!\n")
         return True
 
@@ -198,7 +198,7 @@ def check_social(ch, command, argument):
         handler_game.act(cmd.vict_found, ch, None, victim, TO_VICT)
 
         if not ch.is_npc() and state_checks.IS_NPC(victim) \
-                and not state_checks.IS_AFFECTED(victim, AFF_CHARM) \
+                and not victim.is_affected( AFF_CHARM) \
                 and state_checks.IS_AWAKE(victim) and victim.desc is None:
             num = random.randint(0, 12)
             if num in [0, 1, 2, 3, 4, 5, 6, 7, 8]:
