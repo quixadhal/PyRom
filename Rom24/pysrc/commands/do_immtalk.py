@@ -12,7 +12,7 @@ import state_checks
 
 def do_immtalk(ch, argument):
     if not argument:
-        if state_checks.IS_SET(ch.comm, merc.COMM_NOWIZ):
+        if ch.comm.is_set(merc.COMM_NOWIZ):
             ch.send("Immortal channel is now ON\n")
             ch.comm = state_checks.REMOVE_BIT(ch.comm, merc.COMM_NOWIZ)
         else:

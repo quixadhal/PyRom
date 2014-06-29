@@ -53,19 +53,19 @@ def do_autolist(ch, argument):
         ch.send("OFF\n")
 
     ch.send("compact mode   ")
-    if state_checks.IS_SET(ch.comm, merc.COMM_COMPACT):
+    if ch.comm.is_set(merc.COMM_COMPACT):
         ch.send("ON\n")
     else:
         ch.send("OFF\n")
 
     ch.send("prompt         ")
-    if state_checks.IS_SET(ch.comm, merc.COMM_PROMPT):
+    if ch.comm.is_set(merc.COMM_PROMPT):
         ch.send("ON\n")
     else:
         ch.send("OFF\n")
 
     ch.send("combine items  ")
-    if state_checks.IS_SET(ch.comm, merc.COMM_COMBINE):
+    if ch.comm.is_set(merc.COMM_COMBINE):
         ch.send("ON\n")
     else:
         ch.send("OFF\n")

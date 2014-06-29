@@ -8,7 +8,7 @@ import interp
 
 
 def do_compact(ch, argument):
-    if state_checks.IS_SET(ch.comm, merc.COMM_COMPACT):
+    if ch.comm.is_set(merc.COMM_COMPACT):
         ch.send("Compact mode removed.\n")
         ch.comm = state_checks.REMOVE_BIT(ch.comm, merc.COMM_COMPACT)
     else:

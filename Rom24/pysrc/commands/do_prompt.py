@@ -9,7 +9,7 @@ import state_checks
 
 def do_prompt(ch, argument):
     if not argument:
-        if state_checks.IS_SET(ch.comm, merc.COMM_PROMPT):
+        if ch.comm.is_set(merc.COMM_PROMPT):
             ch.send("You will no longer see prompts.\n")
             ch.comm = state_checks.REMOVE_BIT(ch.comm, merc.COMM_PROMPT)
         else:

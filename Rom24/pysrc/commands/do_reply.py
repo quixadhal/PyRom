@@ -9,7 +9,7 @@ import state_checks
 
 
 def do_reply(ch, argument):
-    if state_checks.IS_SET(ch.comm, merc.COMM_NOTELL):
+    if ch.comm.is_set(merc.COMM_NOTELL):
         ch.send("Your message didn't get through.\n")
         return
     if not ch.reply:

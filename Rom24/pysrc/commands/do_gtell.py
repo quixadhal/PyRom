@@ -11,7 +11,7 @@ def do_gtell(ch, argument):
     if not argument:
         ch.send("Tell your group what?\n")
         return
-    if state_checks.IS_SET(ch.comm, merc.COMM_NOTELL):
+    if ch.comm.is_set(merc.COMM_NOTELL):
         ch.send("Your message didn't get through!\n")
         return
     for gch in merc.char_list[:]:

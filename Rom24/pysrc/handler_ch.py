@@ -1444,13 +1444,13 @@ def show_list_to_char(clist, ch, fShort, fShowNothing):
                 objects[frmt] += 1
 
     if not objects and fShowNothing:
-        if ch.is_npc() or state_checks.IS_SET(ch.comm, COMM_COMBINE):
+        if ch.is_npc() or ch.comm.is_set(COMM_COMBINE):
             ch.send("     ")
         ch.send("Nothing.\n")
 
         #* Output the formatted list.
     for desc, count in objects.items():
-        if ch.is_npc() or state_checks.IS_SET(ch.comm, COMM_COMBINE) and count > 1:
+        if ch.is_npc() or ch.comm.is_set(COMM_COMBINE) and count > 1:
             ch.send("(%2d) %s\n" % (count, desc))
         else:
             for i in range(count):
@@ -1492,7 +1492,7 @@ def show_char_to_char_0(victim, ch):
         return
 
     buf += state_checks.PERS(victim, ch)
-    if not victim.is_npc() and not state_checks.IS_SET(ch.comm, COMM_BRIEF) \
+    if not victim.is_npc() and not ch.comm.is_set(COMM_BRIEF) \
             and victim.position == POS_STANDING and not ch.on:
         buf += victim.pcdata.title
 

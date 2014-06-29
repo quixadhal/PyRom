@@ -12,17 +12,17 @@ import state_checks
 
 def do_grats(ch, argument):
     if not argument:
-        if state_checks.IS_SET(ch.comm, merc.COMM_NOGRATS):
+        if ch.comm.is_set(merc.COMM_NOGRATS):
             ch.send("Grats channel is now ON.\n")
             ch.comm = state_checks.REMOVE_BIT(ch.comm, merc.COMM_NOGRATS)
         else:
             ch.send("Grats channel is now OFF.\n")
             ch.comm = state_checks.SET_BIT(ch.comm, merc.COMM_NOGRATS)
     else:  # grats message sent, turn grats on if it isn't already
-        if state_checks.IS_SET(ch.comm, merc.COMM_QUIET):
+        if ch.comm.is_set(merc.COMM_QUIET):
             ch.send("You must turn off quiet mode first.\n")
             return
-        if state_checks.IS_SET(ch.comm, merc.COMM_NOCHANNELS):
+        if ch.comm.is_set(merc.COMM_NOCHANNELS):
             ch.send("The gods have revoked your channel priviliges.\n")
             return
         ch.comm = state_checks.REMOVE_BIT(ch.comm, merc.COMM_NOGRATS)

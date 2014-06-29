@@ -13,17 +13,17 @@ import state_checks
 # RT music channel
 def do_music(ch, argument):
     if not argument:
-        if state_checks.IS_SET(ch.comm, merc.COMM_NOMUSIC):
+        if ch.comm.is_set(merc.COMM_NOMUSIC):
             ch.send("Music channel is now ON.\n")
             ch.comm = state_checks.REMOVE_BIT(ch.comm, merc.COMM_NOMUSIC)
         else:
             ch.send("Music channel is now OFF.\n")
             ch.comm = state_checks.SET_BIT(ch.comm, merc.COMM_NOMUSIC)
     else:  # music sent, turn music on if it isn't already
-        if state_checks.IS_SET(ch.comm, merc.COMM_QUIET):
+        if ch.comm.is_set(merc.COMM_QUIET):
             ch.send("You must turn off quiet mode first.\n")
             return
-        if state_checks.IS_SET(ch.comm, merc.COMM_NOCHANNELS):
+        if ch.comm.is_set(merc.COMM_NOCHANNELS):
             ch.send("The gods have revoked your channel priviliges.\n")
             return
         ch.comm = state_checks.REMOVE_BIT(ch.comm, merc.COMM_NOMUSIC)

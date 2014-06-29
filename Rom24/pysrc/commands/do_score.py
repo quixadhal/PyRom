@@ -145,7 +145,7 @@ def do_score(ch, argument):
     else:
         ch.send("satanic.\n")
 
-    if state_checks.IS_SET(ch.comm, merc.COMM_SHOW_AFFECTS):
+    if ch.comm.is_set(merc.COMM_SHOW_AFFECTS):
         ch.do_affects("")
 
 

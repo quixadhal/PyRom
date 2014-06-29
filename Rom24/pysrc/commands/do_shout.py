@@ -12,14 +12,14 @@ import state_checks
 
 def do_shout(ch, argument):
     if not argument:
-        if state_checks.IS_SET(ch.comm, merc.COMM_SHOUTSOFF):
+        if ch.comm.is_set(merc.COMM_SHOUTSOFF):
             ch.send("You can hear shouts again.\n")
             ch.comm = state_checks.REMOVE_BIT(ch.comm, merc.COMM_SHOUTSOFF)
         else:
             ch.send("You will no longer hear shouts.\n")
             ch.comm = state_checks.SET_BIT(ch.comm, merc.COMM_SHOUTSOFF)
         return
-    if state_checks.IS_SET(ch.comm, merc.COMM_NOSHOUT):
+    if ch.comm.is_set(merc.COMM_NOSHOUT):
         ch.send("You can't shout.\n")
         return
     ch.comm = state_checks.REMOVE_BIT(ch.comm, merc.COMM_SHOUTSOFF)

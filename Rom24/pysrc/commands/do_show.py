@@ -8,7 +8,7 @@ import state_checks
 
 
 def do_show(ch, argument):
-    if state_checks.IS_SET(ch.comm, merc.COMM_SHOW_AFFECTS):
+    if ch.comm.is_set(merc.COMM_SHOW_AFFECTS):
         ch.send("Affects will no longer be shown in score.\n")
         ch.comm = state_checks.REMOVE_BIT(ch.comm, merc.COMM_SHOW_AFFECTS)
     else:
