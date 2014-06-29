@@ -6,7 +6,7 @@ import state_checks
 
 
 def spell_pass_door(sn, level, ch, victim, target):
-    if state_checks.IS_AFFECTED(victim, merc.AFF_PASS_DOOR):
+    if victim.is_affected( merc.AFF_PASS_DOOR):
         if victim == ch:
             ch.send("You are already out of phase.\n")
         else:

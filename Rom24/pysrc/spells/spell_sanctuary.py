@@ -5,7 +5,7 @@ import state_checks
 
 
 def spell_sanctuary(sn, level, ch, victim, target):
-    if state_checks.IS_AFFECTED(victim, merc.AFF_SANCTUARY):
+    if victim.is_affected( merc.AFF_SANCTUARY):
         if victim == ch:
             ch.send("You are already in sanctuary.\n")
         else:

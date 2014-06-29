@@ -30,7 +30,7 @@ def do_dirt(ch, argument):
         if victim is None:
             ch.send("They aren't here.\n")
             return
-    if state_checks.IS_AFFECTED(victim, merc.AFF_BLIND):
+    if victim.is_affected( merc.AFF_BLIND):
         handler_game.act("$E's already been blinded.", ch, None, victim, merc.TO_CHAR)
         return
     if victim == ch:
@@ -53,7 +53,7 @@ def do_dirt(ch, argument):
     # speed
     if state_checks.IS_SET(ch.off_flags, merc.OFF_FAST) or ch.is_affected(merc.AFF_HASTE):
         chance += 10
-    if state_checks.IS_SET(victim.off_flags, merc.OFF_FAST) or state_checks.IS_AFFECTED(victim, merc.AFF_HASTE):
+    if state_checks.IS_SET(victim.off_flags, merc.OFF_FAST) or victim.is_affected( merc.AFF_HASTE):
         chance -= 25
     # level
     chance += (ch.level - victim.level) * 2

@@ -5,7 +5,7 @@ import state_checks
 
 
 def spell_detect_evil(sn, level, ch, victim, target):
-    if state_checks.IS_AFFECTED(victim, merc.AFF_DETECT_EVIL):
+    if victim.is_affected( merc.AFF_DETECT_EVIL):
         if victim == ch:
             ch.send("You can already sense evil.\n")
         else:

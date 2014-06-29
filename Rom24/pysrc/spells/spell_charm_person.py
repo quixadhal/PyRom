@@ -16,7 +16,7 @@ def spell_charm_person(sn, level, ch, victim, target):
         ch.send("You like yourself even better! \n")
         return
 
-    if ( state_checks.IS_AFFECTED(victim, merc.AFF_CHARM) \
+    if ( victim.is_affected( merc.AFF_CHARM) \
                  or ch.is_affected(merc.AFF_CHARM) \
                  or level < victim.level \
                  or state_checks.IS_SET(victim.imm_flags, merc.IMM_CHARM) \

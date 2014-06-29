@@ -5,7 +5,7 @@ import state_checks
 
 
 def spell_protection_evil(sn, level, ch, victim, target):
-    if state_checks.IS_AFFECTED(victim, merc.AFF_PROTECT_EVIL) or state_checks.IS_AFFECTED(victim,
+    if victim.is_affected( merc.AFF_PROTECT_EVIL) or victim.is_affected(
                                                                                            merc.AFF_PROTECT_GOOD):
         if victim == ch:
             ch.send("You are already protected.\n")

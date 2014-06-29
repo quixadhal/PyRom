@@ -5,7 +5,7 @@ import state_checks
 
 
 def spell_detect_hidden(sn, level, ch, victim, target):
-    if state_checks.IS_AFFECTED(victim, merc.AFF_DETECT_HIDDEN):
+    if victim.is_affected( merc.AFF_DETECT_HIDDEN):
         if victim == ch:
             ch.send("You are already as alert as you can be. \n")
         else:

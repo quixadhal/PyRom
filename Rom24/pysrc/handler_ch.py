@@ -1018,12 +1018,12 @@ class handler_ch:
             return False
         if ch.in_room.is_dark() and not ch.is_affected(AFF_INFRARED):
             return False
-        if state_checks.IS_AFFECTED(victim, AFF_INVISIBLE) \
+        if victim.is_affected( AFF_INVISIBLE) \
                 and not ch.is_affected(AFF_DETECT_INVIS):
             return False
         # sneaking */
 
-        if state_checks.IS_AFFECTED(victim, AFF_SNEAK) \
+        if victim.is_affected( AFF_SNEAK) \
                 and not ch.is_affected(AFF_DETECT_HIDDEN) \
                 and victim.fighting is None:
             chance = victim.get_skill("sneak")
@@ -1034,7 +1034,7 @@ class handler_ch:
             if random.randint(1, 99) < chance:
                 return False
 
-        if state_checks.IS_AFFECTED(victim, AFF_HIDE) \
+        if victim.is_affected( AFF_HIDE) \
                 and not ch.is_affected(AFF_DETECT_HIDDEN) \
                 and victim.fighting is None:
             return False
@@ -1461,23 +1461,23 @@ def show_char_to_char_0(victim, ch):
     buf = ''
     if state_checks.IS_SET(victim.comm, COMM_AFK):
         buf += "[AFK] "
-    if state_checks.IS_AFFECTED(victim, AFF_INVISIBLE):
+    if victim.is_affected( AFF_INVISIBLE):
         buf += "(Invis) "
     if victim.invis_level >= LEVEL_HERO:
         buf += "(Wizi) "
-    if state_checks.IS_AFFECTED(victim, AFF_HIDE):
+    if victim.is_affected( AFF_HIDE):
         buf += "(Hide) "
-    if state_checks.IS_AFFECTED(victim, AFF_CHARM):
+    if victim.is_affected( AFF_CHARM):
         buf += "(Charmed) "
-    if state_checks.IS_AFFECTED(victim, AFF_PASS_DOOR):
+    if victim.is_affected( AFF_PASS_DOOR):
         buf += "(Translucent) "
-    if state_checks.IS_AFFECTED(victim, AFF_FAERIE_FIRE):
+    if victim.is_affected( AFF_FAERIE_FIRE):
         buf += "(Pink Aura) "
     if state_checks.IS_EVIL(victim) and ch.is_affected(AFF_DETECT_EVIL):
         buf += "(Red Aura) "
     if state_checks.IS_GOOD(victim) and ch.is_affected(AFF_DETECT_GOOD):
         buf += "(Golden Aura) "
-    if state_checks.IS_AFFECTED(victim, AFF_SANCTUARY):
+    if victim.is_affected( AFF_SANCTUARY):
         buf += "(White Aura) "
     if not state_checks.IS_NPC(victim) and state_checks.IS_SET(victim.act, PLR_KILLER):
         buf += "(KILLER) "

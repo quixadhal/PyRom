@@ -163,7 +163,7 @@ def check_social(ch, command, argument):
             cmd = social
     if not cmd:
         return False
-    if not ch.is_npc() and state_checks.IS_SET(ch.comm, COMM_NOEMOTE):
+    if not ch.is_npc() and ch.comm.is_set(COMM_NOEMOTE):
         ch.send("You are anti-social!\n")
         return True
 
@@ -198,7 +198,7 @@ def check_social(ch, command, argument):
         handler_game.act(cmd.vict_found, ch, None, victim, TO_VICT)
 
         if not ch.is_npc() and state_checks.IS_NPC(victim) \
-                and not state_checks.IS_AFFECTED(victim, AFF_CHARM) \
+                and not victim.is_affected( AFF_CHARM) \
                 and state_checks.IS_AWAKE(victim) and victim.desc is None:
             num = random.randint(0, 12)
             if num in [0, 1, 2, 3, 4, 5, 6, 7, 8]:

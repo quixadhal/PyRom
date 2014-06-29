@@ -36,8 +36,8 @@ def do_where(ch, argument):
         for victim in merc.char_list[:]:
             if victim.in_room \
             and victim.in_room.area == ch.in_room.area \
-            and not state_checks.IS_AFFECTED(victim, merc.AFF_HIDE) \
-            and not state_checks.IS_AFFECTED(victim, merc.AFF_SNEAK) \
+            and not victim.is_affected( merc.AFF_HIDE) \
+            and not victim.is_affected( merc.AFF_SNEAK) \
             and ch.can_see(victim) \
             and arg in victim.name.lower():
                 found = True

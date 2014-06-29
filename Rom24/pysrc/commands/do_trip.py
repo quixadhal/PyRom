@@ -35,7 +35,7 @@ def do_trip(ch, argument):
     if state_checks.IS_NPC(victim) and victim.fighting and not ch.is_same_group(victim.fighting):
         ch.send("Kill stealing is not permitted.\n\r")
         return
-    if state_checks.IS_AFFECTED(victim, merc.AFF_FLYING):
+    if victim.is_affected( merc.AFF_FLYING):
         handler_game.act("$S feet aren't on the ground.",ch,None,victim, merc.TO_CHAR)
         return
     if victim.position < merc.POS_FIGHTING:
@@ -62,7 +62,7 @@ def do_trip(ch, argument):
     # speed */
     if state_checks.IS_SET(ch.off_flags, merc.OFF_FAST) or ch.is_affected(merc.AFF_HASTE):
         chance += 10
-    if state_checks.IS_SET(victim.off_flags, merc.OFF_FAST) or state_checks.IS_AFFECTED(victim, merc.AFF_HASTE):
+    if state_checks.IS_SET(victim.off_flags, merc.OFF_FAST) or victim.is_affected( merc.AFF_HASTE):
         chance -= 20
     # level */
     chance += (ch.level - victim.level) * 2

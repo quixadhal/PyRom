@@ -6,7 +6,7 @@ import state_checks
 
 
 def spell_slow(sn, level, ch, victim, target):
-    if state_checks.is_affected(victim, sn) or state_checks.IS_AFFECTED(victim, merc.AFF_SLOW):
+    if state_checks.is_affected(victim, sn) or victim.is_affected( merc.AFF_SLOW):
         if victim == ch:
             ch.send("You can't move any slower! \n")
         else:
@@ -19,7 +19,7 @@ def spell_slow(sn, level, ch, victim, target):
         victim.send("You feel momentarily lethargic.\n")
         return
 
-    if state_checks.IS_AFFECTED(victim, merc.AFF_HASTE):
+    if victim.is_affected( merc.AFF_HASTE):
         if not handler_magic.check_dispel(level, victim, const.skill_table['haste']):
             if victim != ch:
                 ch.send("Spell failed.\n")

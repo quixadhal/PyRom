@@ -5,7 +5,7 @@ import state_checks
 
 
 def spell_detect_magic(sn, level, ch, victim, target):
-    if state_checks.IS_AFFECTED(victim, merc.AFF_DETECT_MAGIC):
+    if victim.is_affected( merc.AFF_DETECT_MAGIC):
         if victim == ch:
             ch.send("You can already sense magical auras.\n")
         else:

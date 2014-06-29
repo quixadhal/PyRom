@@ -24,7 +24,7 @@ def spell_invis(sn, level, ch, victim, target):
         handler_game.act("$p fades out of sight.", ch, obj, None, merc.TO_ALL)
         return
     # character invisibility */
-    if state_checks.IS_AFFECTED(victim, merc.AFF_INVISIBLE):
+    if victim.is_affected( merc.AFF_INVISIBLE):
         return
 
     handler_game.act("$n fades out of existence.", victim, None, None, merc.TO_ROOM)
