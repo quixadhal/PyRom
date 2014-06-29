@@ -9,7 +9,7 @@ import state_checks
 
 
 def do_nofollow(ch, argument):
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         return
     if state_checks.IS_SET(ch.act, merc.PLR_NOFOLLOW):
         ch.send("You now accept followers.\n")

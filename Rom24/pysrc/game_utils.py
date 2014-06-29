@@ -158,7 +158,7 @@ def mass_replace(str, dict):
 
 
 def set_title(ch, title):
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         return
     nospace = ['.', ',', '!', '?']
     if title[0] in nospace:

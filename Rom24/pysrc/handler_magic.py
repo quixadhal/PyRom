@@ -78,7 +78,7 @@ def find_spell(ch, name):
     #* finds a spell the character can cast if possible */
     from const import skill_table
     found = None
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         return state_checks.prefix_lookup(skill_table,name)
     for key, sn in skill_table.items():
         if key.startswith(name.lower()):

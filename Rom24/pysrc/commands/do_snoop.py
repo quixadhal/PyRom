@@ -46,7 +46,7 @@ def do_snoop(ch, argument):
                 return
             d = d.snoop_by
     victim.desc.snoop_by = ch.desc
-    buf = "$N starts snooping on %s" % (victim.short_descr if state_checks.IS_NPC(ch) else victim.name)
+    buf = "$N starts snooping on %s" % (victim.short_descr if ch.is_npc() else victim.name)
     handler_game.wiznet(buf, ch, None, merc.WIZ_SNOOPS, merc.WIZ_SECURE, ch.get_trust())
     ch.send("Ok.\n")
     return

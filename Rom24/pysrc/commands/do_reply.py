@@ -29,7 +29,7 @@ def do_reply(ch, argument):
             and not state_checks.IS_IMMORTAL(ch) and not state_checks.IS_IMMORTAL(victim):
         handler_game.act("$E is not receiving tells.", ch, None, victim, merc.TO_CHAR, merc.POS_DEAD)
         return
-    if not state_checks.IS_IMMORTAL(victim) and not state_checks.IS_AWAKE(ch):
+    if not state_checks.IS_IMMORTAL(victim) and not ch.is_awake():
         ch.send("In your dreams, or what?\n")
         return
     if state_checks.IS_SET(victim.comm, merc.COMM_AFK):

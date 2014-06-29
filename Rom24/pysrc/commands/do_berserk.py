@@ -15,15 +15,15 @@ import state_checks
 
 def do_berserk(ch, argument):
     chance = ch.get_skill('berserk')
-    if chance == 0 or (state_checks.IS_NPC(ch) and not state_checks.IS_SET(ch.off_flags, merc.OFF_BERSERK)) \
-            or (not state_checks.IS_NPC(ch) and ch.level < const.skill_table['berserk'].skill_level[ch.guild.name]):
+    if chance == 0 or (ch.is_npc() and not state_checks.IS_SET(ch.off_flags, merc.OFF_BERSERK)) \
+            or (not ch.is_npc() and ch.level < const.skill_table['berserk'].skill_level[ch.guild.name]):
         ch.send("You turn red in the face, but nothing happens.\n")
         return
 
-    if state_checks.IS_AFFECTED(ch, merc.AFF_BERSERK) or state_checks.is_affected(ch, 'berserk') or state_checks.is_affected(ch, "frenzy"):
+    if ch.is_affected(merc.AFF_BERSERK) or state_checks.is_affected(ch, 'berserk') or state_checks.is_affected(ch, "frenzy"):
         ch.send("You get a little madder.\n")
         return
-    if state_checks.IS_AFFECTED(ch, merc.AFF_CALM):
+    if ch.is_affected(merc.AFF_CALM):
         ch.send("You're feeling to mellow to berserk.\n")
         return
     if ch.mana < 50:

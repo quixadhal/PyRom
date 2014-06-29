@@ -22,7 +22,7 @@ def spell_fire_breath(sn, level, ch, victim, target):
     effects.fire_effect(victim.in_room, level, dam // 2, merc.TARGET_ROOM)
 
     for vch in victim.in_room.people[:]:
-        if fight.is_safe_spell(ch, vch, True) or (state_checks.IS_NPC(vch) and state_checks.IS_NPC(ch) and (ch.fighting != vch or vch.fighting != ch)):
+        if fight.is_safe_spell(ch, vch, True) or (vch.is_npc() and ch.is_npc() and (ch.fighting != vch or vch.fighting != ch)):
             continue
 
         if vch == victim:  # full damage */

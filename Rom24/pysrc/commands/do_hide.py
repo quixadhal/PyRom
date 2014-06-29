@@ -13,7 +13,7 @@ import interp
 def do_hide(ch, argument):
     ch.send("You attempt to hide.\n")
 
-    if state_checks.IS_AFFECTED(ch, merc.AFF_HIDE):
+    if ch.is_affected(merc.AFF_HIDE):
         state_checks.REMOVE_BIT(ch.affected_by, merc.AFF_HIDE)
 
     if random.randint(1, 99) < ch.get_skill("hide"):

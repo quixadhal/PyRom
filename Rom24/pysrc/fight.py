@@ -56,7 +56,7 @@ def violence_update( ):
         if not ch.fighting or not ch.in_room:
             continue
         victim = ch.fighting
-        if state_checks.IS_AWAKE(ch) and ch.in_room == victim.in_room:
+        if ch.is_awake() and ch.in_room == victim.in_room:
             multi_hit( ch, victim, TYPE_UNDEFINED )
         else:
             stop_fighting( ch, False )
@@ -74,12 +74,12 @@ def check_assist( ch, victim):
     for rch in ch.in_room.people[:]:
         if state_checks.IS_AWAKE(rch) and rch.fighting == None:
             # quick check for ASSIST_PLAYER */
-            if not state_checks.IS_NPC(ch) and state_checks.IS_NPC(rch) and state_checks.IS_SET(rch.off_flags,ASSIST_PLAYERS) and rch.level + 6 > victim.level:
+            if not ch.is_npc() and state_checks.IS_NPC(rch) and state_checks.IS_SET(rch.off_flags,ASSIST_PLAYERS) and rch.level + 6 > victim.level:
                 rch.do_emote("screams and attacks!")
                 multi_hit(rch,victim,TYPE_UNDEFINED)
                 continue
         # PCs next */
-        if not state_checks.IS_NPC(ch) or state_checks.IS_AFFECTED(ch,AFF_CHARM):
+        if not ch.is_npc() or state_checks.IS_AFFECTED(ch,AFF_CHARM):
             if( (not state_checks.IS_NPC(rch) and state_checks.IS_SET(rch.act,PLR_AUTOASSIST)) \
             or state_checks.IS_AFFECTED(rch,AFF_CHARM)) \
             and ch.is_same_group(rch) \
@@ -88,7 +88,7 @@ def check_assist( ch, victim):
                 continue
    
         # now check the NPC cases */
-        if state_checks.IS_NPC(ch) and not state_checks.IS_AFFECTED(ch,AFF_CHARM):
+        if ch.is_npc() and not state_checks.IS_AFFECTED(ch,AFF_CHARM):
             if (state_checks.IS_NPC(rch) and state_checks.IS_SET(rch.off_flags,ASSIST_ALL)) \
             or (state_checks.IS_NPC(rch) and rch.group and rch.group == ch.group) \
             or (state_checks.IS_NPC(rch) and rch.race == ch.race and state_checks.IS_SET(rch.off_flags,ASSIST_RACE)) \
@@ -124,7 +124,7 @@ def multi_hit( ch, victim, dt ):
     if ch.position < POS_RESTING:
         return
 
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         mob_hit(ch,victim,dt)
         return
 
@@ -283,7 +283,7 @@ def one_hit( ch, victim, dt ):
     skill = 20 + ch.get_weapon_skill(sn)
 
     #* Calculate to-hit-armor-guild-0 versus armor.
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         thac0_00 = 20
         thac0_32 = -4   # as good as a thief */ 
         if state_checks.IS_SET(ch.act,ACT_WARRIOR):
@@ -337,7 +337,7 @@ def one_hit( ch, victim, dt ):
         return
      # Hit.
      # Calc damage.
-    if state_checks.IS_NPC(ch) and (not ch.pIndexData.new_format or wield == None):
+    if ch.is_npc() and (not ch.pIndexData.new_format or wield == None):
         if not ch.pIndexData.new_format:
             dam = random.randint( ch.level // 2, ch.level * 3 // 2 )
             if wield != None:
@@ -489,7 +489,7 @@ def damage(ch,victim,dam,dt,dam_type,show):
         if victim.master == ch:
             handler_ch.stop_follower( victim )
     # * Inviso attacks ... not.
-    if state_checks.IS_AFFECTED(ch, AFF_INVISIBLE):
+    if ch.is_affected(AFF_INVISIBLE):
         ch.affect_strip("invis")
         ch.affect_strip("mass invis")
         state_checks.REMOVE_BIT( ch.affected_by, AFF_INVISIBLE )
@@ -562,14 +562,14 @@ def damage(ch,victim,dam,dt,dam_type,show):
         group_gain( ch, victim )
 
         if not state_checks.IS_NPC(victim):
-            logger.warn ("%s killed by %s at %d", victim.name, ch.short_descr if state_checks.IS_NPC(ch) else ch.name, ch.in_room.vnum )
+            logger.warn ("%s killed by %s at %d", victim.name, ch.short_descr if ch.is_npc() else ch.name, ch.in_room.vnum )
             # Dying penalty:
             # 2/3 way back to previous level.
             if victim.exp > victim.exp_per_level(victim.pcdata.points) * victim.level:
                 update.gain_exp( victim, (2 * (victim.exp_per_level(victim.pcdata.points) * victim.level - victim.exp) // 3) + 50 )
 
         log_buf = "%s got toasted by %s at %s [room %d]" % ( victim.short_descr if state_checks.IS_NPC(victim) else victim.name,
-            ch.short_descr if state_checks.IS_NPC(ch) else ch.name, ch.in_room.name, ch.in_room.vnum)
+            ch.short_descr if ch.is_npc() else ch.name, ch.in_room.name, ch.in_room.vnum)
  
         if state_checks.IS_NPC(victim):
             handler_game.wiznet(log_buf,None,None,WIZ_MOBDEATHS,0,0)
@@ -578,7 +578,7 @@ def damage(ch,victim,dam,dt,dam_type,show):
 
         raw_kill( victim )
         # dump the flags */
-        if ch != victim and not state_checks.IS_NPC(ch) and not ch.is_same_clan(victim):
+        if ch != victim and not ch.is_npc() and not ch.is_same_clan(victim):
             if state_checks.IS_SET(victim.act,PLR_KILLER):
                 state_checks.REMOVE_BIT(victim.act,PLR_KILLER)
             else:
@@ -586,7 +586,7 @@ def damage(ch,victim,dam,dt,dam_type,show):
             # RT new auto commands */
         corpse = ch.get_obj_list("corpse", ch.in_room.contents)
 
-        if not state_checks.IS_NPC(ch) and corpse and corpse.item_type == ITEM_CORPSE_NPC and ch.can_see_obj(corpse):
+        if not ch.is_npc() and corpse and corpse.item_type == ITEM_CORPSE_NPC and ch.can_see_obj(corpse):
             if state_checks.IS_SET(ch.act, PLR_AUTOLOOT) and corpse and corpse.contains: # exists and not empty */
                 ch.do_get("all corpse")
             
@@ -645,7 +645,7 @@ def is_safe(ch, victim):
         or state_checks.IS_SET(victim.act,ACT_IS_CHANGER):
             ch.send("I don't think Mota would approve.\n")
             return True
-        if not state_checks.IS_NPC(ch):
+        if not ch.is_npc():
             # no pets */
             if state_checks.IS_SET(victim.act,ACT_PET):
                 handler_game.act("But $N looks so cute and cuddly...", ch,None,victim,TO_CHAR)
@@ -658,7 +658,7 @@ def is_safe(ch, victim):
     # killing players */
     else:
         # NPC doing the killing */
-        if state_checks.IS_NPC(ch):
+        if ch.is_npc():
             # safe room check */
             if state_checks.IS_SET(victim.in_room.room_flags,ROOM_SAFE):
                 ch.send("Not in this room.\n")
@@ -708,7 +708,7 @@ def is_safe_spell(ch, victim, area ):
         or state_checks.IS_SET(victim.act,ACT_IS_HEALER) \
         or state_checks.IS_SET(victim.act,ACT_IS_CHANGER):
             return True
-        if not state_checks.IS_NPC(ch):
+        if not ch.is_npc():
             # no pets */
             if state_checks.IS_SET(victim.act,ACT_PET):
                 return True
@@ -728,7 +728,7 @@ def is_safe_spell(ch, victim, area ):
             return True
 
         # NPC doing the killing */
-        if state_checks.IS_NPC(ch):
+        if ch.is_npc():
             # charmed mobs and pets cannot attack players while owned */
             if state_checks.IS_AFFECTED(ch,AFF_CHARM) and ch.master and ch.master.fighting != victim:
                 return True
@@ -766,7 +766,7 @@ def check_killer( ch, victim ):
      # Charm-o-rama.
     if state_checks.IS_SET(ch.affected_by, AFF_CHARM):
         if ch.master == None:
-            logger.warn ("BUG: Check_killer: %s bad AFF_CHARM", ch.short_descr if state_checks.IS_NPC(ch) else ch.name )
+            logger.warn ("BUG: Check_killer: %s bad AFF_CHARM", ch.short_descr if ch.is_npc() else ch.name )
             ch.affect_strip('charm person')
             state_checks.REMOVE_BIT(ch.affected_by, AFF_CHARM)
             return
@@ -779,7 +779,7 @@ def check_killer( ch, victim ):
      # Hitting yourself is cool too (bleeding).
      # So is being immortal (Alander's idea).
      # And current killers stay as they are.
-    if state_checks.IS_NPC(ch) or ch == victim or ch.level >= LEVEL_IMMORTAL \
+    if ch.is_npc() or ch == victim or ch.level >= LEVEL_IMMORTAL \
     or not ch.is_clan() or state_checks.IS_SET(ch.act, PLR_KILLER) or ch.fighting == victim:
         return
 
@@ -861,7 +861,7 @@ def set_fighting( ch, victim ):
         logger.warn ("BUG: Set_fighting: already fighting")
         return
 
-    if state_checks.IS_AFFECTED(ch, AFF_SLEEP):
+    if ch.is_affected(AFF_SLEEP):
         ch.affect_strip('sleep')
 
     ch.fighting = victim
@@ -879,7 +879,7 @@ def stop_fighting( ch, fBoth ):
 # * Make a corpse out of a character.
 def make_corpse(ch):
     from db import create_object
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         name = ch.short_descr
         corpse      = create_object(obj_index_hash[OBJ_VNUM_CORPSE_NPC], 0)
         corpse.timer   = random.randint( 3, 6 )
@@ -977,7 +977,7 @@ def death_cry( ch ):
             vnum = OBJ_VNUM_BRAINS
     handler_game.act( msg, ch, None, None, TO_ROOM )
     if vnum != 0:
-        name = ch.short_descr if state_checks.IS_NPC(ch) else ch.name
+        name = ch.short_descr if ch.is_npc() else ch.name
         obj = create_object( obj_index_hash[vnum], 0 )
         obj.timer = random.randint( 4, 7 )
 
@@ -990,7 +990,7 @@ def death_cry( ch ):
                 obj.item_type = ITEM_TRASH
             obj.to_room(ch.in_room)
 
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         msg = "You hear something's death cry."
     else:
         msg = "You hear someone's death cry."

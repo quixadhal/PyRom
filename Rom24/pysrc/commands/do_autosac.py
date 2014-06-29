@@ -8,7 +8,7 @@ import state_checks
 
 
 def do_autosac(ch, argument):
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         return
     if state_checks.IS_SET(ch.act, merc.PLR_AUTOSAC):
         ch.send("Autosacrificing removed.\n")

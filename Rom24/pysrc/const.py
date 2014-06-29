@@ -93,7 +93,7 @@ attack_type = namedtuple('attack_type', 'name, noun, damage')
 attack_table = OrderedDict()
 
 
-wiznet_type = namedtuple('wiznet_type', 'name flag level')
+wiznet_type = namedtuple('wiznet_type', 'name bit level')
 wiznet_table = OrderedDict()
 
 liq_type = namedtuple('liq_type', 'name color proof full thirst food ssize')

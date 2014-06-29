@@ -11,7 +11,7 @@ def do_help(ch, argument):
     if not argument:
         argument = "summary"
 
-    found = [h for h in help_list if h.level <= ch.get_trust() and argument.lower() in h.keyword.lower()]
+    found = [h for h in help_list if h.level <= ch.trust and argument.lower() in h.keyword.lower()]
 
     for pHelp in found:
         if ch.desc.is_connected(nanny.con_playing):

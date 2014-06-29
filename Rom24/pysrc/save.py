@@ -44,10 +44,10 @@ import handler_ch
 import settings
 import state_checks
 import tables
-
+import character
 
 def save_char_obj(ch):
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         return
 
     if ch.desc and ch.desc.original:
@@ -78,10 +78,10 @@ def save_char_obj(ch):
 
 
 def load_char_obj(d, name):
-    ch = handler_ch.CHAR_DATA()
-    ch.pcdata = handler_ch.PC_DATA()
+    #ch = handler_ch.CHAR_DATA()
+    #ch.pcdata = handler_ch.PC_DATA()
+    ch = character.Character()
     ch.name = name
-    ch.act = 0
     found = False
     pfile = os.path.join(settings.PLAYER_DIR, name + '.json')
     if os.path.isfile(pfile):
@@ -142,7 +142,7 @@ def fwrite_char(ch):
     chdict["Wimp"] = ch.wimpy
     chdict["Attr"] = ch.perm_stat
     chdict["AMod"] = ch.mod_stat
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         chdict["Vnum"] = ch.pIndexData.vnum
     else:
         chdict["Pass"] = ch.pcdata.pwd
@@ -231,7 +231,7 @@ def fread_char(chdict, ch):
     ch.wimpy = chdict["Wimp"]
     ch.perm_stat = chdict["Attr"]
     ch.mod_stat = chdict["AMod"]
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         ch.pIndexData.vnum = chdict["Vnum"]
     else:
         ch.pcdata.pwd = chdict["Pass"]

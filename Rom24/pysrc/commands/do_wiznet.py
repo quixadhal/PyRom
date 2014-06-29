@@ -32,7 +32,7 @@ def do_wiznet(ch, argument):
         if not state_checks.IS_SET(ch.wiznet, merc.WIZ_ON):
           buf += "off "
         for name, flag in const.wiznet_table.items():
-            if state_checks.IS_SET(ch.wiznet, flag.flag):
+            if state_checks.IS_SET(ch.wiznet, flag.bit):
                 buf += name + " "
             ch.send("Wiznet status:\n%s\n" % buf)
             return
@@ -48,13 +48,13 @@ def do_wiznet(ch, argument):
     if not flag or ch.get_trust() < flag.level:
         ch.send("No such option.\n")
         return
-    if state_checks.IS_SET(ch.wiznet, flag.flag):
+    if state_checks.IS_SET(ch.wiznet, flag.bit):
         ch.send("You will no longer see %s on wiznet.\n" % flag.name)
-        ch.wiznet = state_checks.REMOVE_BIT(ch.wiznet, flag.flag)
+        ch.wiznet = state_checks.REMOVE_BIT(ch.wiznet, flag.bit)
         return
     else:
         ch.send("You will now see %s on wiznet.\n" % flag.name)
-        ch.wiznet = state_checks.SET_BIT(ch.wiznet, flag.flag)
+        ch.wiznet = state_checks.SET_BIT(ch.wiznet, flag.bit)
         return
 
 

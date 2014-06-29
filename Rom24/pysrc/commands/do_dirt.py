@@ -16,8 +16,8 @@ import fight
 def do_dirt(ch, argument):
     arghold, arg = game_utils.read_word(argument)
     chance = ch.get_skill('dirt kicking')
-    if chance == 0 or (state_checks.IS_NPC(ch) and not state_checks.IS_SET(ch.off_flags, merc.OFF_KICK_DIRT)) \
-            or ( not state_checks.IS_NPC(ch) and ch.level < const.skill_table['dirt kicking'].skill_level[ch.guild.name]):
+    if chance == 0 or (ch.is_npc() and not state_checks.IS_SET(ch.off_flags, merc.OFF_KICK_DIRT)) \
+            or ( not ch.is_npc() and ch.level < const.skill_table['dirt kicking'].skill_level[ch.guild.name]):
         ch.send("You get your feet dirty.\n")
         return
     if not arg:
@@ -41,7 +41,7 @@ def do_dirt(ch, argument):
     if state_checks.IS_NPC(victim) and victim.fighting is not None and not ch.is_same_group(victim.fighting):
         ch.send("Kill stealing is not permitted.\n")
         return
-    if state_checks.IS_AFFECTED(ch, merc.AFF_CHARM) and ch.master == victim:
+    if ch.is_affected(merc.AFF_CHARM) and ch.master == victim:
         handler_game.act("But $N is such a good friend!", ch, None, victim, merc.TO_CHAR)
         return
 
@@ -51,7 +51,7 @@ def do_dirt(ch, argument):
     chance -= 2 * victim.get_curr_stat(merc.STAT_DEX)
 
     # speed
-    if state_checks.IS_SET(ch.off_flags, merc.OFF_FAST) or state_checks.IS_AFFECTED(ch, merc.AFF_HASTE):
+    if state_checks.IS_SET(ch.off_flags, merc.OFF_FAST) or ch.is_affected(merc.AFF_HASTE):
         chance += 10
     if state_checks.IS_SET(victim.off_flags, merc.OFF_FAST) or state_checks.IS_AFFECTED(victim, merc.AFF_HASTE):
         chance -= 25

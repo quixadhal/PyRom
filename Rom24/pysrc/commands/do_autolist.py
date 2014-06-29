@@ -12,7 +12,7 @@ import state_checks
 
 def do_autolist(ch, argument):
     # lists most player flags */
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         return
     ch.send("   action     status\n")
     ch.send("---------------------\n")

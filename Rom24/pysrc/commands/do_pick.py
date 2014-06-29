@@ -30,7 +30,7 @@ def do_pick(self, argument):
         if state_checks.IS_NPC(gch) and state_checks.IS_AWAKE(gch) and ch.level + 5 < gch.level:
             handler_game.act("$N is standing too close to the lock.", ch, None, gch, merc.TO_CHAR)
             return
-        if not state_checks.IS_NPC(ch) and random.randint(1, 99) > ch.get_skill("pick lock"):
+        if not ch.is_npc() and random.randint(1, 99) > ch.get_skill("pick lock"):
             ch.send("You failed.\n")
             skills.check_improve(ch, "pick lock", False, 2)
             return

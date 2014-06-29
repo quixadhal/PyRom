@@ -12,7 +12,7 @@ import settings
 
 
 def do_password(ch, argument):
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         return
 
     # Can't use read_word here because it smashes case.

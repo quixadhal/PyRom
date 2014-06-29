@@ -21,7 +21,7 @@ def spell_gas_breath(sn, level, ch, victim, target):
     effects.poison_effect(ch.in_room, level, dam, merc.TARGET_ROOM)
 
     for vch in ch.in_room.people[:]:
-        if fight.is_safe_spell(ch, vch, True) or (state_checks.IS_NPC(ch) and state_checks.IS_NPC(vch) and (ch.fighting == vch or vch.fighting == ch)):
+        if fight.is_safe_spell(ch, vch, True) or (ch.is_npc() and vch.is_npc() and (ch.fighting == vch or vch.fighting == ch)):
             continue
 
         if handler_magic.saves_spell(level, vch, merc.DAM_POISON):

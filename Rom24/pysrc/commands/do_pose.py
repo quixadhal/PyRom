@@ -172,7 +172,7 @@ pose_table = {
 
 
 def do_pose(ch, argument):
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         return
     band = merc.LEVEL_HERO // len(pose_table['to_ch'][ch.guild.name])
     level = min(ch.level, merc.LEVEL_HERO) // band

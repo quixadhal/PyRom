@@ -32,6 +32,7 @@
  ************/
 """
 import logging
+import character
 
 
 logger = logging.getLogger()
@@ -603,7 +604,7 @@ def reset_area(pArea):
             if pRoomIndex.vnum - 1 in merc.room_index_hash:
                 pRoomIndexPrev = merc.room_index_hash[pRoomIndex.vnum - 1]
                 if state_checks.IS_SET(pRoomIndexPrev.room_flags, merc.ROOM_PET_SHOP):
-                    mob.act = state_checks.SET_BIT(mob.act, merc.ACT_PET)
+                    mob.act.set_bit(merc.ACT_PET)
 
             # set area */
             mob.zone = pRoomIndex.area
@@ -783,7 +784,7 @@ def create_mobile(pMobIndex):
         logger.critical("Create_mobile: None pMobIndex.")
         sys.exit(1)
 
-    mob = handler_ch.CHAR_DATA()
+    mob = character.Mobile()
 
     mob.pIndexData = pMobIndex
 
@@ -808,9 +809,9 @@ def create_mobile(pMobIndex):
         # load in new style */
         # read from prototype */
         mob.group = pMobIndex.group
-        mob.act = pMobIndex.act
-        mob.comm = merc.COMM_NOCHANNELS | merc.COMM_NOSHOUT | merc.COMM_NOTELL
-        mob.affected_by = pMobIndex.affected_by
+        mob.act.set_bit(pMobIndex.act)
+        mob.comm.set_bit(merc.COMM_NOCHANNELS | merc.COMM_NOSHOUT | merc.COMM_NOTELL)
+        mob.affected_by.set_bit(pMobIndex.affected_by)
         mob.alignment = pMobIndex.alignment
         mob.level = pMobIndex.level
         mob.hitroll = pMobIndex.hitroll
@@ -834,18 +835,18 @@ def create_mobile(pMobIndex):
                 mob.dam_type = 11  # pierce */
         for i in range(4):
             mob.armor[i] = pMobIndex.ac[i]
-        mob.off_flags = pMobIndex.off_flags
-        mob.imm_flags = pMobIndex.imm_flags
-        mob.res_flags = pMobIndex.res_flags
-        mob.vuln_flags = pMobIndex.vuln_flags
+        mob.off_flags.set_bit(pMobIndex.off_flags)
+        mob.imm_flags.set_bit(pMobIndex.imm_flags)
+        mob.res_flags.set_bit(pMobIndex.res_flags)
+        mob.vuln_flags.set_bit(pMobIndex.vuln_flags)
         mob.start_pos = pMobIndex.start_pos
         mob.default_pos = pMobIndex.default_pos
         mob.sex = pMobIndex.sex
         if type(pMobIndex.sex) != int or mob.sex == 3:  # random sex */
             mob.sex = random.randint(1, 2)
         mob.race = pMobIndex.race
-        mob.form = pMobIndex.form
-        mob.parts = pMobIndex.parts
+        mob.form.set_bit(pMobIndex.form)
+        mob.parts.set_bit(pMobIndex.parts)
         mob.size = int(pMobIndex.size)
         mob.material = pMobIndex.material
 
@@ -853,34 +854,34 @@ def create_mobile(pMobIndex):
         for i in range(merc.MAX_STATS):
             mob.perm_stat[i] = min(25, 11 + mob.level // 4)
 
-        if state_checks.IS_SET(mob.act, merc.ACT_WARRIOR):
+        if mob.act.is_set(merc.ACT_WARRIOR):
             mob.perm_stat[merc.STAT_STR] += 3
             mob.perm_stat[merc.STAT_INT] -= 1
             mob.perm_stat[merc.STAT_CON] += 2
 
-        if state_checks.IS_SET(mob.act, merc.ACT_THIEF):
+        if mob.act.is_set(merc.ACT_THIEF):
             mob.perm_stat[merc.STAT_DEX] += 3
             mob.perm_stat[merc.STAT_INT] += 1
             mob.perm_stat[merc.STAT_WIS] -= 1
 
-        if state_checks.IS_SET(mob.act, merc.ACT_CLERIC):
+        if mob.act.is_set(merc.ACT_CLERIC):
             mob.perm_stat[merc.STAT_WIS] += 3
             mob.perm_stat[merc.STAT_DEX] -= 1
             mob.perm_stat[merc.STAT_STR] += 1
 
-        if state_checks.IS_SET(mob.act, merc.ACT_MAGE):
+        if mob.act.is_set(merc.ACT_MAGE):
             mob.perm_stat[merc.STAT_INT] += 3
             mob.perm_stat[merc.STAT_STR] -= 1
             mob.perm_stat[merc.STAT_DEX] += 1
 
-        if state_checks.IS_SET(mob.off_flags, merc.OFF_FAST):
+        if mob.off_flags.is_set(merc.OFF_FAST):
             mob.perm_stat[merc.STAT_DEX] += 2
 
         mob.perm_stat[merc.STAT_STR] += mob.size - merc.SIZE_MEDIUM
         mob.perm_stat[merc.STAT_CON] += (mob.size - merc.SIZE_MEDIUM) // 2
         af = handler_game.AFFECT_DATA()
         # let's get some spell action */
-        if state_checks.IS_AFFECTED(mob, merc.AFF_SANCTUARY):
+        if mob.is_affected(merc.AFF_SANCTUARY):
             af.where = merc.TO_AFFECTS
             af.type = "sanctuary"
             af.level = mob.level
@@ -890,7 +891,7 @@ def create_mobile(pMobIndex):
             af.bitvector = merc.AFF_SANCTUARY
             mob.affect_add(af)
 
-        if state_checks.IS_AFFECTED(mob, merc.AFF_HASTE):
+        if mob.is_affected(merc.AFF_HASTE):
             af.where = merc.TO_AFFECTS
             af.type = "haste"
             af.level = mob.level
@@ -900,7 +901,7 @@ def create_mobile(pMobIndex):
             af.bitvector = merc.AFF_HASTE
             mob.affect_add(af)
 
-        if state_checks.IS_AFFECTED(mob, merc.AFF_PROTECT_EVIL):
+        if mob.is_affected(merc.AFF_PROTECT_EVIL):
             af.where = merc.TO_AFFECTS
             af.type = "protection evil"
             af.level = mob.level
@@ -910,7 +911,7 @@ def create_mobile(pMobIndex):
             af.bitvector = merc.AFF_PROTECT_EVIL
             mob.affect_add(af)
 
-        if state_checks.IS_AFFECTED(mob, merc.AFF_PROTECT_GOOD):
+        if mob.is_affected(merc.AFF_PROTECT_GOOD):
             af.where = merc.TO_AFFECTS
             af.type = "protection good"
             af.level = mob.level
@@ -920,8 +921,8 @@ def create_mobile(pMobIndex):
             af.bitvector = merc.AFF_PROTECT_GOOD
             mob.affect_add(af)
     else:  # read in old format and convert */
-        mob.act = pMobIndex.act
-        mob.affected_by = pMobIndex.affected_by
+        mob.act.set_bit(pMobIndex.act)
+        mob.affected_by.set_bit(pMobIndex.affected_by)
         mob.alignment = pMobIndex.alignment
         mob.level = pMobIndex.level
         mob.hitroll = pMobIndex.hitroll
@@ -942,15 +943,15 @@ def create_mobile(pMobIndex):
             mob.armor[i] = game_utils.interpolate(mob.level, 100, -100)
         mob.armor[3] = game_utils.interpolate(mob.level, 100, 0)
         mob.race = pMobIndex.race
-        mob.off_flags = pMobIndex.off_flags
-        mob.imm_flags = pMobIndex.imm_flags
-        mob.res_flags = pMobIndex.res_flags
-        mob.vuln_flags = pMobIndex.vuln_flags
+        mob.off_flags.set_bit(pMobIndex.off_flags)
+        mob.imm_flags.set_bit(pMobIndex.imm_flags)
+        mob.res_flags.set_bit(pMobIndex.res_flags)
+        mob.vuln_flags.set_bit(pMobIndex.vuln_flags)
         mob.start_pos = pMobIndex.start_pos
         mob.default_pos = pMobIndex.default_pos
         mob.sex = pMobIndex.sex
-        mob.form = pMobIndex.form
-        mob.parts = pMobIndex.parts
+        mob.form.set_bit(pMobIndex.form)
+        mob.parts.set_bit(pMobIndex.parts)
         mob.size = merc.SIZE_MEDIUM
         mob.material = ""
 

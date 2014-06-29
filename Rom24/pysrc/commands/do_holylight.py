@@ -8,7 +8,7 @@ import state_checks
 
 
 def do_holylight(ch, argument):
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         return
     if state_checks.IS_SET(ch.act, merc.PLR_HOLYLIGHT):
         ch.act = state_checks.REMOVE_BIT(ch.act, merc.PLR_HOLYLIGHT)

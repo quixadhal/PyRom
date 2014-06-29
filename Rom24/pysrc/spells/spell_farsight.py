@@ -5,7 +5,7 @@ import state_checks
 
 
 def spell_farsight(sn, level, ch, victim, target):
-    if state_checks.IS_AFFECTED(ch, merc.AFF_BLIND):
+    if ch.is_affected(merc.AFF_BLIND):
         ch.send("Maybe it would help if you could see?\n")
         return
 

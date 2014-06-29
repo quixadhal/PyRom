@@ -34,7 +34,7 @@ def do_kill(ch, argument):
     if victim.fighting and not ch.is_same_group(victim.fighting):
         ch.send("Kill stealing is not permitted.\n")
         return
-    if state_checks.IS_AFFECTED(ch, merc.AFF_CHARM) and ch.master == victim:
+    if ch.is_affected(merc.AFF_CHARM) and ch.master == victim:
         handler_game.act("$N is your beloved master.", ch, None, victim, merc.TO_CHAR)
         return
     if ch.position == merc.POS_FIGHTING:

@@ -38,7 +38,7 @@ def do_group(ch, argument):
     if state_checks.IS_AFFECTED(victim, merc.AFF_CHARM):
         ch.send("You can't remove charmed mobs from your group.\n")
         return
-    if state_checks.IS_AFFECTED(ch, merc.AFF_CHARM):
+    if ch.is_affected(merc.AFF_CHARM):
         handler_game.act("You like your master too much to leave $m!", ch, None, victim, merc.TO_VICT,
                          merc.POS_SLEEPING)
         return

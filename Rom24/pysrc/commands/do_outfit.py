@@ -11,7 +11,7 @@ import state_checks
 
 # equips a character
 def do_outfit(ch, argument):
-    if ch.level > 5 or state_checks.IS_NPC(ch):
+    if ch.level > 5 or ch.is_npc():
         ch.send("Find it yourself!\n")
         return
 

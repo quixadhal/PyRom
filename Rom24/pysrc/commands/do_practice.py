@@ -10,7 +10,7 @@ import handler_game
 import state_checks
 
 def do_practice(ch, argument):
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         return
     if not argument:
         col = 0
@@ -28,7 +28,7 @@ def do_practice(ch, argument):
 
         ch.send("You have %d practice sessions left.\n" % ch.practice)
     else:
-        if not state_checks.IS_AWAKE(ch):
+        if not ch.is_awake():
             ch.send("In your dreams, or what?\n")
             return
         mob = None
@@ -43,12 +43,12 @@ def do_practice(ch, argument):
             ch.send("You have no practice sessions left.\n")
             return
         skill = state_checks.prefix_lookup(const.skill_table, argument)
-        if not skill or not state_checks.IS_NPC(ch) \
+        if not skill or not ch.is_npc() \
                 and (ch.level < skill.skill_level[ch.guild.name] or ch.pcdata.learned[skill.name] < 1 \
                              or skill.rating[ch.guild.name] == 0):
             ch.send("You can't practice that.\n")
             return
-        adept = 100 if state_checks.IS_NPC(ch) else ch.guild.skill_adept
+        adept = 100 if ch.is_npc() else ch.guild.skill_adept
 
         if ch.pcdata.learned[skill.name] >= adept:
             ch.send("You are already learned at %s.\n" % skill.name)

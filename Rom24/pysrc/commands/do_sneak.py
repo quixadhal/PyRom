@@ -16,7 +16,7 @@ def do_sneak(ch, argument):
     ch.send("You attempt to move silently.\n")
     ch.affect_strip("sneak")
 
-    if state_checks.IS_AFFECTED(ch, merc.AFF_SNEAK):
+    if ch.is_affected(merc.AFF_SNEAK):
         return
 
     if random.randint(1, 99) < ch.get_skill("sneak"):

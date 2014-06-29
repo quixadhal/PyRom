@@ -41,7 +41,7 @@ def do_mstat(ch, argument):
         victim.hit, victim.max_hit,
         victim.mana, victim.max_mana,
         victim.move, victim.max_move,
-        0 if state_checks.IS_NPC(ch) else victim.practice ))
+        0 if ch.is_npc() else victim.practice ))
     ch.send("Lv: %d  Class: %s  Align: %d  Gold: %ld  Silver: %ld  Exp: %d\n" % (
         victim.level,
         "mobile" if state_checks.IS_NPC(victim) else victim.guild.name,

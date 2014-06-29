@@ -34,7 +34,6 @@
 import idlelib.PyParse
 
 import random
-from handler_magic import saves_spell
 from merc import *
 from handler import *
 import save
@@ -44,6 +43,8 @@ import skills
 import const
 import fight
 import state_checks
+import handler_magic
+
 import handler_game
 import handler_ch
 import handler_obj
@@ -91,7 +92,7 @@ def advance_level(ch, hide):
 
 
 def gain_exp(ch, gain):
-    if state_checks.IS_NPC(ch) or ch.level >= LEVEL_HERO:
+    if ch.is_npc() or ch.level >= LEVEL_HERO:
         return
 
     ch.exp = max(ch.exp_per_level(ch.pcdata.points), ch.exp + gain)
@@ -109,9 +110,9 @@ def hit_gain(ch):
     if not ch.in_room:
         return 0
 
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         gain = 5 + ch.level
-        if state_checks.IS_AFFECTED(ch, AFF_REGENERATION):
+        if ch.is_affected(AFF_REGENERATION):
             gain *= 2
 
         if ch.position == POS_SLEEPING:
@@ -151,13 +152,13 @@ def hit_gain(ch):
     if ch.on and ch.on.item_type == ITEM_FURNITURE:
         gain = gain * ch.on.value[3] // 100
 
-    if state_checks.IS_AFFECTED(ch, AFF_POISON):
+    if ch.is_affected(AFF_POISON):
         gain //= 4
 
-    if state_checks.IS_AFFECTED(ch, AFF_PLAGUE):
+    if ch.is_affected(AFF_PLAGUE):
         gain //= 8
 
-    if state_checks.IS_AFFECTED(ch, AFF_HASTE) or state_checks.IS_AFFECTED(ch, AFF_SLOW):
+    if ch.is_affected(AFF_HASTE) or ch.is_affected(AFF_SLOW):
         gain //= 2
 
     return int(min(gain, ch.max_hit - ch.hit))
@@ -167,7 +168,7 @@ def mana_gain(ch):
     if ch.in_room == None:
         return 0
 
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         gain = 5 + ch.level
         if ch.position == POS_SLEEPING:
             3 * gain // 2
@@ -207,13 +208,13 @@ def mana_gain(ch):
     if ch.on and ch.on.item_type == ITEM_FURNITURE:
         gain = gain * ch.on.value[4] // 100
 
-    if state_checks.IS_AFFECTED(ch, AFF_POISON):
+    if ch.is_affected(AFF_POISON):
         gain //= 4
 
-    if state_checks.IS_AFFECTED(ch, AFF_PLAGUE):
+    if ch.is_affected(AFF_PLAGUE):
         gain //= 8
 
-    if state_checks.IS_AFFECTED(ch, AFF_HASTE) or state_checks.IS_AFFECTED(ch, AFF_SLOW):
+    if ch.is_affected(AFF_HASTE) or ch.is_affected(AFF_SLOW):
         gain //= 2
 
     return int(min(gain, ch.max_mana - ch.mana))
@@ -223,7 +224,7 @@ def move_gain(ch):
     if not ch.in_room:
         return 0
 
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         gain = ch.level
     else:
         gain = max(15, ch.level)
@@ -244,20 +245,20 @@ def move_gain(ch):
     if ch.on and ch.on.item_type == ITEM_FURNITURE:
         gain = gain * ch.on.value[3] // 100
 
-    if state_checks.IS_AFFECTED(ch, AFF_POISON):
+    if ch.is_affected(AFF_POISON):
         gain //= 4
 
-    if state_checks.IS_AFFECTED(ch, AFF_PLAGUE):
+    if ch.is_affected(AFF_PLAGUE):
         gain //= 8
 
-    if state_checks.IS_AFFECTED(ch, AFF_HASTE) or state_checks.IS_AFFECTED(ch, AFF_SLOW):
+    if ch.is_affected(AFF_HASTE) or ch.is_affected(AFF_SLOW):
         gain //= 2
 
     return int(min(gain, ch.max_move - ch.move))
 
 
 def gain_condition(ch, iCond, value):
-    if value == 0 or state_checks.IS_NPC(ch) or ch.level >= LEVEL_IMMORTAL:
+    if value == 0 or ch.is_npc() or ch.level >= LEVEL_IMMORTAL:
         return
 
     condition = ch.pcdata.condition[iCond]
@@ -282,10 +283,10 @@ def gain_condition(ch, iCond, value):
 def mobile_update():
     # Examine all mobs. */
     for ch in char_list[:]:
-        if not state_checks.IS_NPC(ch) or ch.in_room == None or state_checks.IS_AFFECTED(ch, AFF_CHARM):
+        if not ch.is_npc() or ch.in_room == None or ch.is_affected(AFF_CHARM):
             continue
 
-        if ch.in_room.area.empty and not state_checks.IS_SET(ch.act, ACT_UPDATE_ALWAYS):
+        if ch.in_room.area.empty and not ch.act.is_set(ACT_UPDATE_ALWAYS):
             continue
 
         # Examine call for special procedure */
@@ -321,16 +322,16 @@ def mobile_update():
         door = random.randint(0, 5)
         pexit = ch.in_room.exit[door]
 
-        if not state_checks.IS_SET(ch.act, ACT_SENTINEL) \
+        if not ch.act.is_set(ACT_SENTINEL) \
                 and random.randint(0, 3) == 0 \
                 and pexit \
                 and pexit.to_room \
                 and not state_checks.IS_SET(pexit.exit_info, EX_CLOSED) \
                 and not state_checks.IS_SET(pexit.to_room.room_flags, ROOM_NO_MOB) \
-                and (not state_checks.IS_SET(ch.act, ACT_STAY_AREA) or pexit.to_room.area == ch.in_room.area) \
-                and (not state_checks.IS_SET(ch.act, ACT_OUTDOORS) or not state_checks.IS_SET(pexit.to_room.room_flags,
+                and (not ch.act.is_set(ACT_STAY_AREA) or pexit.to_room.area == ch.in_room.area) \
+                and (not ch.act.is_set(ACT_OUTDOORS) or not state_checks.IS_SET(pexit.to_room.room_flags,
                                                                                               ROOM_INDOORS)) \
-                and (not state_checks.IS_SET(ch.act, ACT_INDOORS) \
+                and (not ch.act.is_set(ACT_INDOORS) \
                              or state_checks.IS_SET(pexit.to_room.room_flags, ROOM_INDOORS)):
             handler_ch.move_char(ch, door, False)
 
@@ -434,7 +435,7 @@ def char_update():
 
         if ch.position >= POS_STUNNED:
             # check to see if we need to go home */
-            if state_checks.IS_NPC(ch) and ch.zone and ch.zone != ch.in_room.area \
+            if ch.is_npc() and ch.zone and ch.zone != ch.in_room.area \
                     and not ch.desc and not ch.fighting and not state_checks.IS_AFFECTED(ch,
                                                                                          AFF_CHARM) and random.randint(
                     1, 99) < 5:
@@ -460,7 +461,7 @@ def char_update():
         if ch.position == POS_STUNNED:
             fight.update_pos(ch)
 
-        if not state_checks.IS_NPC(ch) and ch.level < LEVEL_IMMORTAL:
+        if not ch.is_npc() and ch.level < LEVEL_IMMORTAL:
             obj = ch.get_eq(WEAR_LIGHT)
             if obj and obj.item_type == ITEM_LIGHT and obj.value[2] > 0:
                 obj.value[2] -= 1
@@ -534,7 +535,7 @@ def char_update():
             plague.bitvector = AFF_PLAGUE
 
             for vch in ch.in_room.people:
-                if not saves_spell(plague.level - 2, vch, DAM_DISEASE) and not state_checks.IS_IMMORTAL(vch) \
+                if not handler_magic.saves_spell(plague.level - 2, vch, DAM_DISEASE) and not state_checks.IS_IMMORTAL(vch) \
                         and not state_checks.IS_AFFECTED(vch, AFF_PLAGUE) and random.randint(0, 4) == 0:
                     vch.send("You feel hot and feverish.\n")
                     handler_game.act("$n shivers and looks very ill.", vch, None, None, TO_ROOM)
@@ -543,7 +544,7 @@ def char_update():
             ch.mana -= dam
             ch.move -= dam
             fight.damage(ch, ch, dam, gsn_plague, DAM_DISEASE, False)
-        elif state_checks.IS_AFFECTED(ch, AFF_POISON) and ch and not state_checks.IS_AFFECTED(ch, AFF_SLOW):
+        elif ch.is_affected(AFF_POISON) and ch and not ch.is_affected(AFF_SLOW):
             poison = state_checks.affect_find(ch.affected, 'poison')
             if poison:
                 handler_game.act("$n shivers and suffers.", ch, None, None, TO_ROOM)
@@ -559,7 +560,7 @@ def char_update():
     # * Check that these chars still exist.
     # */
     for ch in char_list[:]:
-        if ch.desc and save_number == 28:
+        if not ch.is_npc() and ch.desc and save_number == 28:
             save.save_char_obj(ch)
     for ch in ch_quit[:]:
         ch.do_quit("")
@@ -670,21 +671,21 @@ def obj_update():
 # */
 def aggr_update():
     for wch in char_list[:]:
-        if state_checks.IS_NPC(wch) \
+        if wch.is_npc() \
                 or wch.level >= LEVEL_IMMORTAL \
                 or wch.in_room == None \
                 or wch.in_room.area.empty:
             continue
 
         for ch in wch.in_room.people[:]:
-            if not state_checks.IS_NPC(ch) \
-                    or not state_checks.IS_SET(ch.act, ACT_AGGRESSIVE) \
+            if not ch.is_npc() \
+                    or not ch.act.is_set(ACT_AGGRESSIVE) \
                     or state_checks.IS_SET(ch.in_room.room_flags, ROOM_SAFE) \
-                    or state_checks.IS_AFFECTED(ch, AFF_CALM) \
+                    or ch.is_affected(AFF_CALM) \
                     or ch.fighting != None \
-                    or state_checks.IS_AFFECTED(ch, AFF_CHARM) \
-                    or not state_checks.IS_AWAKE(ch) \
-                    or ( state_checks.IS_SET(ch.act, ACT_WIMPY) and state_checks.IS_AWAKE(wch) ) \
+                    or ch.is_affected(AFF_CHARM) \
+                    or not ch.is_awake() \
+                    or ( ch.act.is_set(ACT_WIMPY) and wch.is_awake() ) \
                     or not ch.can_see(wch) \
                     or random.randint(0, 1) == 0:
                 continue
@@ -696,7 +697,7 @@ def aggr_update():
             count = 0
             victim = None
             for vch in wch.in_room.people[:]:
-                if not state_checks.IS_NPC(vch) \
+                if not vch.is_npc() \
                         and vch.level < LEVEL_IMMORTAL \
                         and ch.level >= vch.level - 5 \
                         and ( not state_checks.IS_SET(ch.act, ACT_WIMPY) or not state_checks.IS_AWAKE(vch) ) \

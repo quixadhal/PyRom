@@ -8,7 +8,7 @@ import state_checks
 
 
 def do_worth(ch, argument):
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         ch.send("You have %ld gold and %ld silver.\n" % (ch.gold, ch.silver))
         return
     ch.send("You have %ld gold, %ld silver, and %d experience (%d exp to level).\n" % (

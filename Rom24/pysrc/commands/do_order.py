@@ -21,7 +21,7 @@ def do_order(ch, argument):
         ch.send("Order whom to do what?\n")
         return
 
-    if state_checks.IS_AFFECTED(ch, merc.AFF_CHARM):
+    if ch.is_affected(merc.AFF_CHARM):
         ch.send("You feel like taking, not giving, orders.\n")
         return
     victim = None

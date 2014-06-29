@@ -16,7 +16,7 @@ def do_skills(ch, argument):
     max_lev = merc.LEVEL_HERO
     level = 0
     skill = None
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         return
     argument = argument.lower()
     if argument:
