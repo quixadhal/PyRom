@@ -34,7 +34,7 @@ def do_backstab(ch, argument):
             return
         if fight.is_safe(ch, victim):
             return
-        if state_checks.IS_NPC(victim) and victim.fighting and not ch.is_same_group(victim.fighting):
+        if victim.is_npc() and victim.fighting and not ch.is_same_group(victim.fighting):
             ch.send("Kill stealing is not permitted.\n")
             return
         obj = ch.get_eq(merc.WEAR_WIELD)

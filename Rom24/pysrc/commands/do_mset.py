@@ -70,12 +70,12 @@ def do_mset(ch, argument):
             ch.send("Sex range is 0 to 2.\n")
             return
         victim.sex = value
-        if not state_checks.IS_NPC(victim):
+        if not victim.is_npc():
             victim.pcdata.true_sex = value
         ch.send("Sex set to %s.\n" % tables.sex_table[value])
         return
     if "class".startswith(arg2):
-        if state_checks.IS_NPC(victim):
+        if victim.is_npc():
             ch.send("Mobiles have no class.\n")
             return
         guild = state_checks.prefix_lookup(const.guild_table, arg3)
@@ -89,7 +89,7 @@ def do_mset(ch, argument):
         victim.guild = guild
         return
     if "level".startswith(arg2):
-        if not state_checks.IS_NPC(victim):
+        if not victim.is_npc():
             ch.send("Not on PC's.\n")
             return
         if value < 0 or value > merc.MAX_LEVEL:
@@ -112,7 +112,7 @@ def do_mset(ch, argument):
             return
         victim.max_hit = value
         ch.send("Max Hitpoints set to %d\n" % value)
-        if not state_checks.IS_NPC(victim):
+        if not victim.is_npc():
             victim.pcdata.perm_hit = value
         return
     if "mana".startswith(arg2):
@@ -121,7 +121,7 @@ def do_mset(ch, argument):
             return
         victim.max_mana = value
         ch.send("Max Mana set to %d\n" % value)
-        if not state_checks.IS_NPC(victim):
+        if not victim.is_npc():
             victim.pcdata.perm_mana = value
         return
     if "move".startswith(arg2):
@@ -130,7 +130,7 @@ def do_mset(ch, argument):
             return
         victim.max_move = value
         ch.send("Max Move set to %d.\n" % value)
-        if not state_checks.IS_NPC(victim):
+        if not victim.is_npc():
             victim.pcdata.perm_move = value
         return
     if "practice".startswith(arg2):
@@ -155,7 +155,7 @@ def do_mset(ch, argument):
         ch.send("Alignment set to %d.\n" % value)
         return
     if "thirst".startswith(arg2):
-        if state_checks.IS_NPC(victim):
+        if victim.is_npc():
             ch.send("Not on NPC's.\n")
             return
         if value < -1 or value > 100:
@@ -165,7 +165,7 @@ def do_mset(ch, argument):
         ch.send("Victims thirst set to %d.\n" % value)
         return
     if "drunk".startswith(arg2):
-        if state_checks.IS_NPC(victim):
+        if victim.is_npc():
             ch.send("Not on NPC's.\n")
             return
         if value < -1 or value > 100:
@@ -175,7 +175,7 @@ def do_mset(ch, argument):
         ch.send("Victims Drunk set to %d.\n" % value)
         return
     if "full".startswith(arg2):
-        if state_checks.IS_NPC(victim):
+        if victim.is_npc():
             ch.send("Not on NPC's.\n")
             return
         if value < -1 or value > 100:
@@ -185,7 +185,7 @@ def do_mset(ch, argument):
         victim.pcdata.condition[merc.COND_FULL] = value
         return
     if "hunger".startswith(arg2):
-        if state_checks.IS_NPC(victim):
+        if victim.is_npc():
             ch.send("Not on NPC's.\n")
             return
         if value < -1 or value > 100:
@@ -199,14 +199,14 @@ def do_mset(ch, argument):
         if not race:
             ch.send("That is not a valid race.\n")
             return
-        if not state_checks.IS_NPC(victim) and race.name not in const.pc_race_table:
+        if not victim.is_npc() and race.name not in const.pc_race_table:
             ch.send("That is not a valid player race.\n")
             return
         ch.send("Race set to %s.\n" % race.name)
         victim.race = race
         return
     if "group".startswith(arg2):
-        if not state_checks.IS_NPC(victim):
+        if not victim.is_npc():
             ch.send("Only on NPCs.\n")
             return
         victim.group = value

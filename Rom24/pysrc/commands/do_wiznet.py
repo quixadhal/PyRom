@@ -40,12 +40,12 @@ def do_wiznet(ch, argument):
         # list of all wiznet options
         buf = ''
         for name, flag in const.wiznet_table.items():
-            if flag.level <= ch.get_trust():
+            if flag.level <= ch.trust:
                 buf += name + " "
         ch.send("Wiznet options available to you are:\n%s\n" % buf)
         return
     flag = state_checks.prefix_lookup(const.wiznet_table, argument)
-    if not flag or ch.get_trust() < flag.level:
+    if not flag or ch.trust < flag.level:
         ch.send("No such option.\n")
         return
     if state_checks.IS_SET(ch.wiznet, flag.bit):

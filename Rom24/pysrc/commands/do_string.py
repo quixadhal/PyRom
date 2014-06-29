@@ -32,7 +32,7 @@ def do_string(ch, argument):
         victim.zone = None
         # string something
         if "name".startswith(arg2):
-            if not state_checks.IS_NPC(victim):
+            if not victim.is_npc():
                 ch.send("Not on PC's.\n")
                 return
             victim.name = arg3
@@ -47,13 +47,13 @@ def do_string(ch, argument):
             victim.long_descr = arg3 + "\n"
             return
         if "title".startswith(arg2):
-            if state_checks.IS_NPC(victim):
+            if victim.is_npc():
                 ch.send("Not on NPC's.\n")
                 return
             game_utils.set_title(victim, arg3)
             return
         if "spec".startswith(arg2):
-            if not state_checks.IS_NPC(victim):
+            if not victim.is_npc():
                 ch.send("Not on PC's.\n")
                 return
             spec = state_checks.prefix_lookup(special.spec_table, arg3)

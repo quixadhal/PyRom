@@ -125,7 +125,7 @@ def spec_patrolman(ch):
                 victim = vch if (vch.level > vch.fighting.level) else vch.fighting
                 count += 1
 
-    if victim == None or (state_checks.IS_NPC(victim) and victim.spec_fun == ch.spec_fun):
+    if victim == None or (victim.is_npc() and victim.spec_fun == ch.spec_fun):
         return False
     neck1 = ch.get_eq(WEAR_NECK_1)
     neck2 = ch.get_eq(WEAR_NECK_2)
@@ -157,7 +157,7 @@ def spec_nasty( ch ):
 
     if ch.position != POS_FIGHTING:
         for victim in ch.in_room.people[:]:
-            if not state_checks.IS_NPC(victim) and (victim.level > ch.level) and (victim.level < ch.level + 10):
+            if not victim.is_npc() and (victim.level > ch.level) and (victim.level < ch.level + 10):
                 ch.do_backstab(victim.name)
             if ch.position != POS_FIGHTING:
                 ch.do_murder(victim.name)
@@ -618,7 +618,7 @@ def spec_thief( ch ):
         return False
 
     for victim in ch.in_room.people:
-        if state_checks.IS_NPC(victim) or victim.level >= LEVEL_IMMORTAL or random.randint(0,31) != 0 or not ch.can_see(victim):
+        if victim.is_npc() or victim.level >= LEVEL_IMMORTAL or random.randint(0,31) != 0 or not ch.can_see(victim):
             continue
 
         if state_checks.IS_AWAKE(victim) and random.randint( 0, ch.level ) == 0:

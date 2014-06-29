@@ -17,10 +17,10 @@ def do_noshout(ch, argument):
     if not victim:
         ch.send("They aren't here.\n")
         return
-    if state_checks.IS_NPC(victim):
+    if victim.is_npc():
         ch.send("Not on NPC's.\n")
         return
-    if victim.get_trust() >= ch.get_trust():
+    if victim.get_trust() >= ch.trust:
         ch.send("You failed.\n")
         return
     if state_checks.IS_SET(victim.comm, merc.COMM_NOSHOUT):

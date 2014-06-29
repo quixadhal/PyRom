@@ -13,8 +13,8 @@ def do_score(ch, argument):
                                                                     ch.level, ch.get_age(), (
     ch.played + (int)(time.time() - ch.logon)) // 3600))
 
-    if ch.get_trust() != ch.level:
-        ch.send("You are trusted at level %d.\n" % ch.get_trust())
+    if ch.trust != ch.level:
+        ch.send("You are trusted at level %d.\n" % ch.trust)
     ch.send("Race: %s  Sex: %s  Class: %s\n" % (
     ch.race.name, "sexless" if ch.sex == 0 else "male" if ch.sex == 1 else "female",
     "mobile" if ch.is_npc() else ch.guild.name))

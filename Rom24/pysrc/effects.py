@@ -157,7 +157,7 @@ def cold_effect( vo, level, dam, target):
             victim.affect_join(af)
 
         # hunger! (warmth sucked out */
-        if not state_checks.IS_NPC(victim):
+        if not victim.is_npc():
             gain_condition(victim,COND_HUNGER,dam/20)
 
         # let's toast some gear */
@@ -224,7 +224,7 @@ def fire_effect(vo, level, dam, target):
             af.bitvector    = AFF_BLIND
             victim.affect_add(af)
         # getting thirsty */
-        if not state_checks.IS_NPC(victim):
+        if not victim.is_npc():
             gain_condition(victim,COND_THIRST,dam/20)
 
         # let's toast some gear! */

@@ -8,9 +8,9 @@ import state_checks
 def spell_cancellation(sn, level, ch, victim, target):
     found = False
     level += 2
-    if (not ch.is_npc() and state_checks.IS_NPC(victim) and not (
+    if (not ch.is_npc() and victim.is_npc() and not (
         ch.is_affected(merc.AFF_CHARM) and ch.master == victim)) \
-            or (ch.is_npc() and not state_checks.IS_NPC(victim)):
+            or (ch.is_npc() and not victim.is_npc()):
         ch.send("You failed, try dispel magic.\n")
         return
     # unlike dispel magic, the victim gets NO save */

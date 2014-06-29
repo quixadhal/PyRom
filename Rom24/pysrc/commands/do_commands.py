@@ -9,7 +9,7 @@ import interp
 def do_commands(ch, argument):
     col = 0
     for key, cmd in interp.cmd_table.items():
-        if cmd.level < merc.LEVEL_HERO and cmd.level <= ch.get_trust() and cmd.show:
+        if cmd.level < merc.LEVEL_HERO and cmd.level <= ch.trust and cmd.show:
             ch.send("%-12s" % key)
             col += 1
             if col % 6 == 0:

@@ -30,7 +30,7 @@ def do_murder(ch, argument):
         return
     if fight.is_safe(ch, victim):
         return
-    if state_checks.IS_NPC(victim) and victim.fighting and not ch.is_same_group(victim.fighting):
+    if victim.is_npc() and victim.fighting and not ch.is_same_group(victim.fighting):
         ch.send("Kill stealing is not permitted.\n")
         return
     if ch.is_affected(merc.AFF_CHARM) and ch.master == victim:

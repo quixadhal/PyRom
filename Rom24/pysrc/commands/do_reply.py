@@ -16,7 +16,7 @@ def do_reply(ch, argument):
         ch.send("They aren't here.\n")
         return
     victim = ch
-    if not victim.desc and not state_checks.IS_NPC(victim):
+    if not victim.desc and not victim.is_npc():
         handler_game.act("$N seems to have misplaced $S link...try again later.", ch, None, victim, merc.TO_CHAR)
         buf = "%s tells you '%s'\n" % (state_checks.PERS(ch, victim), argument)
         victim.pcdata.buffer.append(buf)
@@ -33,7 +33,7 @@ def do_reply(ch, argument):
         ch.send("In your dreams, or what?\n")
         return
     if state_checks.IS_SET(victim.comm, merc.COMM_AFK):
-        if state_checks.IS_NPC(victim):
+        if victim.is_npc():
             handler_game.act("$E is AFK, and not receiving tells.", ch, None, victim, merc.TO_CHAR, merc.POS_DEAD)
             return
         handler_game.act("$E is AFK, but your tell will go through when $E returns.", ch, None, victim, merc.TO_CHAR,

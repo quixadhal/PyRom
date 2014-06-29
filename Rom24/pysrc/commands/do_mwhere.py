@@ -33,8 +33,8 @@ def do_mwhere(ch, argument):
             found = True
             count += 1
             ch.send("%3d) [%5d] %-28s [%5d] %s\n" % (
-                count, 0 if not state_checks.IS_NPC(victim) else victim.pIndexData.vnum,
-                victim.short_descr if state_checks.IS_NPC(victim) else victim.name,
+                count, 0 if not victim.is_npc() else victim.pIndexData.vnum,
+                victim.short_descr if victim.is_npc() else victim.name,
                 victim.in_room.vnum,
                 victim.in_room.name ))
     if found:

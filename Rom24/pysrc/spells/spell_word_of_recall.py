@@ -8,7 +8,7 @@ import state_checks
 
 def spell_word_of_recall(sn, level, ch, victim, target):
     # RT recall spell is back */
-    if state_checks.IS_NPC(victim):
+    if victim.is_npc():
         return
 
     if merc.ROOM_VNUM_TEMPLE not in merc.room_index_hash:

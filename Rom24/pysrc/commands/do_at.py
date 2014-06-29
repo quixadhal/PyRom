@@ -17,7 +17,7 @@ def do_at(ch, argument):
         ch.send("No such location.\n")
         return
     if not ch.is_room_owner(location) and location.is_private() \
-            and ch.get_trust() < merc.MAX_LEVEL:
+            and ch.trust < merc.MAX_LEVEL:
         ch.send("That room is private right now.\n")
         return
     original = ch.in_room

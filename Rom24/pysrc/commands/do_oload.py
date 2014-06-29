@@ -17,14 +17,14 @@ def do_oload(ch, argument):
     if not arg1 or not arg1.isdigit():
         ch.send("Syntax: load obj <vnum> <level>.\n")
         return
-    level = ch.get_trust()  # default
+    level = ch.trust  # default
 
     if arg2:  # load with a level
         if not arg2.isdigit():
             ch.send("Syntax: oload <vnum> <level>.\n")
             return
         level = int(arg2)
-        if level < 0 or level > ch.get_trust():
+        if level < 0 or level > ch.trust:
             ch.send("Level must be be between 0 and your level.\n")
             return
     vnum = int(arg1)
@@ -37,7 +37,7 @@ def do_oload(ch, argument):
     else:
         obj.to_room(ch.in_room)
     handler_game.act("$n has created $p!", ch, obj, None, merc.TO_ROOM)
-    handler_game.wiznet("$N loads $p.", ch, obj, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.get_trust())
+    handler_game.wiznet("$N loads $p.", ch, obj, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.trust)
     ch.send("Ok.\n")
     return
 

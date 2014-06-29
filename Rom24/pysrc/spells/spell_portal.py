@@ -19,9 +19,9 @@ def spell_portal(sn, level, ch, victim, target):
             or state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_NO_RECALL) \
             or state_checks.IS_SET(ch.in_room.room_flags, merc.ROOM_NO_RECALL) \
             or victim.level >= level + 3 \
-            or (not state_checks.IS_NPC(victim) and victim.level >= merc.LEVEL_HERO) \
-            or (state_checks.IS_NPC(victim) and state_checks.IS_SET(victim.imm_flags, merc.IMM_SUMMON)) \
-            or (state_checks.IS_NPC(victim) and handler_magic.saves_spell(level, victim, merc.DAM_NONE) ) \
+            or (not victim.is_npc() and victim.level >= merc.LEVEL_HERO) \
+            or (victim.is_npc() and state_checks.IS_SET(victim.imm_flags, merc.IMM_SUMMON)) \
+            or (victim.is_npc() and handler_magic.saves_spell(level, victim, merc.DAM_NONE) ) \
             or (victim.is_clan() and not ch.is_same_clan(victim)):
         ch.send("You failed.\n")
         return

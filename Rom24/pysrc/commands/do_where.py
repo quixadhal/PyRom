@@ -20,7 +20,7 @@ def do_where(ch, argument):
             victim = handler_ch.CH(d)
             if d.is_connected(nanny.con_playing) \
             and victim \
-            and not state_checks.IS_NPC(victim) \
+            and not victim.is_npc() \
             and victim.in_room \
             and not state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_NOWHERE) \
             and (ch.is_room_owner(victim.in_room) or not victim.in_room.is_private()) \

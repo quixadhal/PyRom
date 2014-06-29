@@ -32,7 +32,7 @@ def do_trip(ch, argument):
             return
     if fight.is_safe(ch,victim):
         return
-    if state_checks.IS_NPC(victim) and victim.fighting and not ch.is_same_group(victim.fighting):
+    if victim.is_npc() and victim.fighting and not ch.is_same_group(victim.fighting):
         ch.send("Kill stealing is not permitted.\n\r")
         return
     if victim.is_affected( merc.AFF_FLYING):

@@ -21,7 +21,7 @@ def do_slay(ch, argument):
     if ch == victim:
         ch.send("Suicide is a mortal sin.\n")
         return
-    if not state_checks.IS_NPC(victim) and victim.level >= ch.get_trust():
+    if not victim.is_npc() and victim.level >= ch.trust:
         ch.send("You failed.\n")
         return
     handler_game.act("You slay $M in cold blood!", ch, None, victim, merc.TO_CHAR)

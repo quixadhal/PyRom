@@ -24,7 +24,7 @@ def do_sset(ch, argument):
     if not victim:
         ch.send("They aren't here.\n")
         return
-    if state_checks.IS_NPC(victim):
+    if victim.is_npc():
         ch.send("Not on NPC's.\n")
         return
     fAll = arg2 == "all"

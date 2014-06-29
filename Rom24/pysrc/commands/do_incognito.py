@@ -18,13 +18,13 @@ def do_incognito(ch, argument):
             handler_game.act("$n is no longer cloaked.", ch, None, None, merc.TO_ROOM)
             ch.send("You are no longer cloaked.\n")
         else:
-            ch.incog_level = ch.get_trust()
+            ch.incog_level = ch.trust
             handler_game.act("$n cloaks $s presence.", ch, None, None, merc.TO_ROOM)
             ch.send("You cloak your presence.\n")
     else:
         # do the level thing
         level = int(arg) if arg.isdigit() else -1
-        if level < 2 or level > ch.get_trust():
+        if level < 2 or level > ch.trust:
             ch.send("Incog level must be between 2 and your level.\n")
             return
         else:

@@ -35,7 +35,7 @@ def do_delete(ch, argument):
     ch.send("WARNING: this command is irreversible.\n")
     ch.send("Typing delete with an argument will undo delete status.\n")
     ch.pcdata.confirm_delete = True
-    handler_game.wiznet("$N is contemplating deletion.", ch, None, 0, 0, ch.get_trust())
+    handler_game.wiznet("$N is contemplating deletion.", ch, None, 0, 0, ch.trust)
 
 
 interp.register_command(interp.cmd_type('delete', do_delete, merc.POS_STANDING, 0, merc.LOG_ALWAYS, 1))

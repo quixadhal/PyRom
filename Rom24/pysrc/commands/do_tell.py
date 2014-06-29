@@ -27,10 +27,10 @@ def do_tell(ch, argument):
         # Can tell to PC's anywhere, but NPC's only in same room.
         # -- Furey
     victim = ch.get_char_world(arg)
-    if not victim or ( state_checks.IS_NPC(victim) and victim.in_room != ch.in_room ):
+    if not victim or ( victim.is_npc() and victim.in_room != ch.in_room ):
         ch.send("They aren't here.\n")
         return
-    if victim.desc is None and not state_checks.IS_NPC(victim):
+    if victim.desc is None and not victim.is_npc():
         handler_game.act("$N seems to have misplaced $S link...try again later.", ch, None, victim, merc.TO_CHAR)
         buf = "%s tells you '%s'\n" % (state_checks.PERS(ch, victim), argument)
         victim.pcdata.buffer.append(buf)
@@ -47,7 +47,7 @@ def do_tell(ch, argument):
         return
 
     if state_checks.IS_SET(victim.comm, merc.COMM_AFK):
-        if state_checks.IS_NPC(victim):
+        if victim.is_npc():
             handler_game.act("$E is AFK, and not receiving tells.", ch, None, victim, merc.TO_CHAR)
             return
         handler_game.act("$E is AFK, but your tell will go through when $E returns.", ch, None, victim, merc.TO_CHAR)

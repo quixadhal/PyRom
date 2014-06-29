@@ -36,7 +36,7 @@ def saves_spell(level, victim, dam_type):
     elif immunity == merc.IS_VULNERABLE:
         save -= 2
 
-    if not state_checks.IS_NPC(victim) and victim.guild.fMana:
+    if not victim.is_npc() and victim.guild.fMana:
         save = 9 * save // 10
     save = max( 5, min(save, 95 ) )
 
