@@ -453,6 +453,8 @@ class Living(Immortal, Fight, CharInteract, Physical,
         self.exp = 0
         self.position = 0
         self.alignment = 0
+        self.desc = None
+
     def is_npc(self):
         return self.act.is_set(ACT_IS_NPC)
     def is_good(self):
@@ -872,7 +874,6 @@ class Character(Living):
         self.points = 0
         self.confirm_delete = False
         self.alias = {}
-        self.desc = None
         self.gen_data = None
         self.prompt = "<%hhp %mm %vmv>"
         self.prefix = ""

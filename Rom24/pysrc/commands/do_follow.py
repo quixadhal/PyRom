@@ -31,7 +31,7 @@ def do_follow(ch, argument):
         return
     if not victim.is_npc() \
             and state_checks.IS_SET(victim.act, merc.PLR_NOFOLLOW) \
-            and not state_checks.IS_IMMORTAL(ch):
+            and not ch.is_immortal():
         handler_game.act("$N doesn't seem to want any followers.\n", ch, None, victim, merc.TO_CHAR)
         return
     ch.act.rem_bit(merc.PLR_NOFOLLOW)

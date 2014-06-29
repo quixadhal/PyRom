@@ -248,7 +248,7 @@ class handler_ch:
         if ch.is_affected(AFF_PLAGUE):
             af = [af for af in ch.affected if af.type == 'plague']
             if not af:
-                state_checks.REMOVE_BIT(ch.affected_by, AFF_PLAGUE)
+                ch.affected_by.rem_bit(AFF_PLAGUE)
                 return
             af = af[0]
             if af.level == 1:
@@ -264,7 +264,7 @@ class handler_ch:
 
             for vch in ch.in_room.people[:]:
                 if not magic.saves_spell(plague.level - 2, vch, DAM_DISEASE) \
-                        and not state_checks.IS_IMMORTAL(vch) and not state_checks.IS_AFFECTED(vch, AFF_PLAGUE) \
+                        and not vch.is_immortal() and not vch.is_affected(AFF_PLAGUE) \
                         and random.randint(0, 5) == 0:
                     vch.send("You feel hot and feverish.\n\r")
                     handler_game.act("$n shivers and looks very ill.", vch, None, None, TO_ROOM)
@@ -990,14 +990,14 @@ class handler_ch:
     def can_see_room(ch, pRoomIndex):
         if state_checks.IS_SET(pRoomIndex.room_flags, ROOM_IMP_ONLY) and ch.trust < MAX_LEVEL:
             return False
-        if state_checks.IS_SET(pRoomIndex.room_flags, ROOM_GODS_ONLY) and not state_checks.IS_IMMORTAL(ch):
+        if state_checks.IS_SET(pRoomIndex.room_flags, ROOM_GODS_ONLY) and not ch.is_immortal():
             return False
-        if state_checks.IS_SET(pRoomIndex.room_flags, ROOM_HEROES_ONLY) and not state_checks.IS_IMMORTAL(ch):
+        if state_checks.IS_SET(pRoomIndex.room_flags, ROOM_HEROES_ONLY) and not ch.is_immortal():
             return False
         if state_checks.IS_SET(pRoomIndex.room_flags,
-                               ROOM_NEWBIES_ONLY) and ch.level > 5 and not state_checks.IS_IMMORTAL(ch):
+                               ROOM_NEWBIES_ONLY) and ch.level > 5 and not ch.is_immortal():
             return False
-        if not state_checks.IS_IMMORTAL(ch) and pRoomIndex.clan and ch.clan != pRoomIndex.clan:
+        if not ch.is_immortal() and pRoomIndex.clan and ch.clan != pRoomIndex.clan:
             return False
         return True
 
@@ -1013,7 +1013,7 @@ class handler_ch:
         if (not ch.is_npc()
             and ch.act.is_set(PLR_HOLYLIGHT)) \
                 or (ch.is_npc()
-                    and state_checks.IS_IMMORTAL(ch)):
+                    and ch.is_immortal()):
             return True
         if ch.is_affected(AFF_BLIND):
             return False
@@ -1260,7 +1260,7 @@ class handler_ch:
         return expl * const.pc_race_table[ch.race.name].class_mult[ch.guild.name] / 100
 
     def can_loot(ch, obj):
-        if state_checks.IS_IMMORTAL(ch):
+        if ch.is_immortal():
             return True
         if not obj.owner or obj.owner is None:
             return True
@@ -1331,7 +1331,7 @@ def move_char(ch, door, follow):
                 and not ch.is_affected(AFF_FLYING):
             # Look for a boat.
             boats = [obj for obj in ch.contents if obj.item_type == ITEM_BOAT]
-            if not boats and not state_checks.IS_IMMORTAL(ch):
+            if not boats and not ch.is_immortal():
                 ch.send("You need a boat to go there.\n")
                 return
         move = movement_loss[min(SECT_MAX - 1, in_room.sector_type)] + movement_loss[
@@ -1460,7 +1460,7 @@ def show_list_to_char(clist, ch, fShort, fShowNothing):
 
 def show_char_to_char_0(victim, ch):
     buf = ''
-    if state_checks.IS_SET(victim.comm, COMM_AFK):
+    if victim.comm.is_set(COMM_AFK):
         buf += "[AFK] "
     if victim.is_affected( AFF_INVISIBLE):
         buf += "(Invis) "
@@ -1474,15 +1474,15 @@ def show_char_to_char_0(victim, ch):
         buf += "(Translucent) "
     if victim.is_affected( AFF_FAERIE_FIRE):
         buf += "(Pink Aura) "
-    if state_checks.IS_EVIL(victim) and ch.is_affected(AFF_DETECT_EVIL):
+    if victim.is_evil() and ch.is_affected(AFF_DETECT_EVIL):
         buf += "(Red Aura) "
-    if state_checks.IS_GOOD(victim) and ch.is_affected(AFF_DETECT_GOOD):
+    if victim.is_evil() and ch.is_affected(AFF_DETECT_GOOD):
         buf += "(Golden Aura) "
     if victim.is_affected( AFF_SANCTUARY):
         buf += "(White Aura) "
-    if not victim.is_npc() and state_checks.IS_SET(victim.act, PLR_KILLER):
+    if not victim.is_npc() and victim.act.is_set(PLR_KILLER):
         buf += "(KILLER) "
-    if not victim.is_npc() and state_checks.IS_SET(victim.act, PLR_THIEF):
+    if not victim.is_npc() and victim.act.is_set(PLR_THIEF):
         buf += "(THIEF) "
 
     if victim.is_npc() and victim.position == victim.start_pos and victim.long_descr:
@@ -1622,6 +1622,6 @@ def show_char_to_char(plist, ch):
         if ch.can_see(rch):
             show_char_to_char_0(rch, ch)
             ch.send("\n")
-        elif ch.in_room.is_dark() and state_checks.IS_AFFECTED(rch, AFF_INFRARED):
+        elif ch.in_room.is_dark() and rch.is_affected(AFF_INFRARED):
             ch.send("You see glowing red eyes watching YOU!\n")
 

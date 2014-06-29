@@ -108,7 +108,7 @@ def do_score(ch, argument):
             ch.send("divinely armored against %s.\n" % temp)
 
     # RT wizinvis and holy light
-    if state_checks.IS_IMMORTAL(ch):
+    if ch.is_immortal():
         ch.send("Holy Light: ")
         if ch.act.is_set(merc.PLR_HOLYLIGHT):
             ch.send("on")

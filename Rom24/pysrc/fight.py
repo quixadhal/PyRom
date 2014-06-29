@@ -470,7 +470,7 @@ def damage(ch, victim, dam, dt, dam_type, show):
     if dam > 1200 and dt >= TYPE_HIT:
         logger.warn("BUG: Damage: %d: more than 1200 points!", dam)
         dam = 1200
-        if not state_checks.IS_IMMORTAL(ch):
+        if not ch.is_immortal():
             obj = ch.get_eq(WEAR_WIELD)
             ch.send("You really shouldn't cheat.\n")
             if obj:
@@ -645,7 +645,7 @@ def is_safe(ch, victim):
         return True
     if victim.fighting == ch or victim == ch:
         return False
-    if state_checks.IS_IMMORTAL(ch) and ch.level > LEVEL_IMMORTAL:
+    if ch.is_immortal() and ch.level > LEVEL_IMMORTAL:
         return False
     # killing mobiles */
     if victim.is_npc():
@@ -712,7 +712,7 @@ def is_safe_spell(ch, victim, area):
         return True
     if victim.fighting == ch or victim == ch:
         return False
-    if state_checks.IS_IMMORTAL(ch) and ch.level > LEVEL_IMMORTAL and not area:
+    if ch.is_immortal() and ch.level > LEVEL_IMMORTAL and not area:
         return False
     # killing mobiles */
     if victim.is_npc():

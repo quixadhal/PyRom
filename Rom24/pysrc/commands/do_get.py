@@ -73,7 +73,7 @@ def do_get(ch, argument):
             for obj in container.contains[:]:
                 if (len(arg1) == 3 or arg1[4:] in obj.name) and ch.can_see_obj(obj):
                     found = True
-                    if container.pIndexData.vnum == merc.OBJ_VNUM_PIT and not state_checks.IS_IMMORTAL(ch):
+                    if container.pIndexData.vnum == merc.OBJ_VNUM_PIT and not ch.is_immortal():
                         ch.send("Don't be so greedy!\n")
                         return
                     handler_obj.get_obj(ch, obj, container)

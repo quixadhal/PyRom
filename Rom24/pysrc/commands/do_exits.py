@@ -11,11 +11,11 @@ import interp
 def do_exits(ch, argument):
     fAuto = argument == "auto"
     buf = ''
-    if not state_checks.check_blind(ch):
+    if not ch.check_blind():
         return
     if fAuto:
         buf += "[Exits:"
-    elif state_checks.IS_IMMORTAL(ch):
+    elif ch.is_immortal():
         buf += "Obvious exits from room %d:\n" % ch.in_room.vnum
     else:
         buf += "Obvious exits:\n"
@@ -36,7 +36,7 @@ def do_exits(ch, argument):
             else:
                 buf += "%-5s - %s" % (merc.dir_name[door].capitalize(),
                                       "Too dark to tell" if pexit.to_room.is_dark() else pexit.to_room.name)
-                if state_checks.IS_IMMORTAL(ch):
+                if ch.is_immortal():
                     buf += " (room %d)\n" % pexit.to_room.vnum
                 else:
                     buf += "\n"

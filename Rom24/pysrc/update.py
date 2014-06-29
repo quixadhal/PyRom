@@ -468,7 +468,7 @@ def char_update():
                 elif obj.value[2] <= 5 and ch.in_room:
                     handler_game.act("$p flickers.", ch, obj, None, TO_CHAR)
 
-            if state_checks.IS_IMMORTAL(ch):
+            if ch.is_immortal():
                 ch.timer = 0
             ch.timer += 1
             if ch.timer >= 12:

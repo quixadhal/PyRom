@@ -125,10 +125,10 @@ def fwrite_char(ch):
     chdict["Gold"] = min(0, ch.gold)
     chdict["Silv"] = min(0, ch.silver)
     chdict["Exp"] = ch.exp
-    chdict["Act"] = ch.act
-    chdict["AfBy"] = ch.affected_by
-    chdict["Comm"] = ch.comm
-    chdict["Wizn"] = ch.wiznet
+    chdict["Act"] = repr(ch.act)
+    chdict["AfBy"] = repr(ch.affected_by)
+    chdict["Comm"] = repr(ch.comm)
+    chdict["Wizn"] = repr(ch.wiznet)
     chdict["Invi"] = ch.invis_level
     chdict["Inco"] = ch.incog_level
     chdict["Pos"] = POS_STANDING if ch.position == POS_FIGHTING else ch.position
@@ -214,10 +214,10 @@ def fread_char(chdict, ch):
     ch.gold = chdict["Gold"]
     ch.silver = chdict["Silv"]
     ch.exp = chdict["Exp"]
-    ch.act = chdict["Act"]
-    ch.affected_by = chdict["AfBy"]
-    ch.comm = chdict["Comm"]
-    ch.wiznet = chdict["Wizn"]
+    ch.act.set_bit(chdict["Act"])
+    ch.affected_by.set_bit(chdict["AfBy"])
+    ch.comm.set_bit(chdict["Comm"])
+    ch.wiznet.set_bit(chdict["Wizn"])
     ch.invis_level = chdict["Invi"]
     ch.incog_level = chdict["Inco"]
     ch.position = chdict["Pos"]

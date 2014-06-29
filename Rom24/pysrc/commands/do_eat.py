@@ -20,7 +20,7 @@ def do_eat(ch, argument):
     if not obj:
         ch.send("You do not have that item.\n")
         return
-    if not state_checks.IS_IMMORTAL(ch):
+    if not ch.is_immortal():
         if obj.item_type != merc.ITEM_FOOD and obj.item_type != merc.ITEM_PILL:
             ch.send("That's not edible.\n")
             return
