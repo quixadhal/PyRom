@@ -56,9 +56,6 @@ def value_to_str(v):
             return '<ERROR: CANNOT PRINT>'
 
 def parse_exception(error_object, *args):
-    if hasattr(args[0][0], 'pcdata'):
-        ch = args[0][0]
-        ch.send("\nAn error has occurred. Sorry.\n")
     wrap_call = inspect.getinnerframes(sys.exc_info()[2])
     print("Exception: %s %s" % (type(error_object), str(error_object)))
     for call_info in reversed(wrap_call):

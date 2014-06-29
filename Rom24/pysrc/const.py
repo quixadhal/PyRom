@@ -36,6 +36,7 @@ import logging
 
 logger = logging.getLogger()
 
+spell_lookup_dict = {}
 
 race_type = namedtuple('race_type', 'name, pc_race, act, aff, off, imm, res, vuln, form, parts')
 race_table = OrderedDict()
@@ -55,7 +56,8 @@ skill_table = OrderedDict()
 
 def register_spell(entry: skill_type):
     skill_table[entry.name] = entry
-    global spell_lookup_dict = {entry.name: on}
+    spell_lookup_dict[entry.name] = [entry.slot]
+    logger.debug("    %s  %d added to lookup", entry.name, entry.slot)
     logger.debug('    %s registered in skill table.', entry.name)
 
 group_type = namedtuple('group_type', 'name, rating, spells')
