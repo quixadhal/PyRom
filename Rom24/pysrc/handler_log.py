@@ -32,9 +32,14 @@
  ************/
  """
 __author__ = 'syn'
+import logging
+
+logger = logging.getLogger()
+
 import sys
 import functools
 import inspect
+
 """So far this wrapper class will allow debugging of a function as such:
 @logger("Debug")
 def some_func(stuff)
@@ -44,6 +49,7 @@ It will also send a message to the calling character about a failure,
 if there was a calling character.
 
 Will add actual logfile support soon, and build out additional logging templates"""
+
 
 def value_to_str(v):
     if isinstance(v, str):
@@ -57,18 +63,18 @@ def value_to_str(v):
 
 def parse_exception(error_object, *args):
     wrap_call = inspect.getinnerframes(sys.exc_info()[2])
-    print("Exception: %s %s" % (type(error_object), str(error_object)))
+    logger.debug("Exception: %s %s" % (type(error_object), str(error_object)))
     for call_info in reversed(wrap_call):
         local_calls = call_info[0].f_locals
         if '_logger__tracer_var_' in local_calls:
             continue
-        print("Frame Trace - File: ", call_info[1],
+        logger.debug("Frame Trace - File: ", call_info[1],
               "Line: ", call_info[2],
               "Function: ", call_info[3],
               "Offending Code: ", call_info[4][0].lstrip())
-        print("Local Env Variables: ")
+        logger.debug("Local Env Variables: ")
         for k, v in local_calls.items():
-            print("%s : %s " % (k, value_to_str(v)))
+            logger.debug("%s : %s " % (k, value_to_str(v)))
 
 
 class logged(object):

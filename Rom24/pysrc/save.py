@@ -48,7 +48,6 @@ import tables
 import character
 
 
-@handler_log.logged("Debug")
 def save_char_obj(ch):
     if ch.is_npc():
         return

@@ -1,8 +1,8 @@
 import logging
 
-
 logger = logging.getLogger()
 
+import handler_log
 import merc
 import interp
 import save
@@ -11,6 +11,8 @@ import handler_ch
 import handler_game
 import state_checks
 
+
+@handler_log.logged("Debug")
 def do_quit(ch, argument):
     if ch.is_npc():
         return
