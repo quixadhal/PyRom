@@ -62,7 +62,7 @@ def gn_remove( ch, gn):
 
 # use for processing a skill or group for addition  */
 def group_add( ch, name, deduct):
-    if state_checks.IS_NPC(ch): # NPCs do not have skills */
+    if ch.is_npc(): # NPCs do not have skills */
         return
     
     if name in const.skill_table:
@@ -108,7 +108,7 @@ def group_remove(ch, name):
 
 # shows skills, groups and costs (only if not bought) */
 def list_group_costs(ch):
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         return
     col = 0
     ch.send("%-18s %-5s %-18s %-5s %-18s %-5s\n" % ("group","cp","group","cp","group","cp"))
@@ -144,7 +144,7 @@ def list_group_costs(ch):
     return
 
 def list_group_chosen(ch):
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         return
     col = 0
     ch.send("%-18s %-5s %-18s %-5s %-18s %-5s" % ("group","cp","group","cp","group","cp\n"))
@@ -294,7 +294,7 @@ def parse_gen_groups(ch, argument):
 def check_improve( ch, sn, success, multiplier ):
     import const
     import update
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         return
     if type(sn) == str:
         sn = const.skill_table[sn]

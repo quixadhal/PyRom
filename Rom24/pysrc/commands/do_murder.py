@@ -17,8 +17,8 @@ def do_murder(ch, argument):
         ch.send("Murder whom?\n")
         return
 
-    if state_checks.IS_AFFECTED(ch, merc.AFF_CHARM) \
-            or (state_checks.IS_NPC(ch)
+    if ch.is_affected(merc.AFF_CHARM) \
+            or (ch.is_npc()
                 and state_checks.IS_SET(ch.act, merc.ACT_PET)):
         return
     victim = ch.get_char_room(arg)
@@ -33,7 +33,7 @@ def do_murder(ch, argument):
     if state_checks.IS_NPC(victim) and victim.fighting and not ch.is_same_group(victim.fighting):
         ch.send("Kill stealing is not permitted.\n")
         return
-    if state_checks.IS_AFFECTED(ch, merc.AFF_CHARM) and ch.master == victim:
+    if ch.is_affected(merc.AFF_CHARM) and ch.master == victim:
         handler_game.act("$N is your beloved master.", ch, None, victim, merc.TO_CHAR)
         return
     if ch.position == merc.POS_FIGHTING:
@@ -41,7 +41,7 @@ def do_murder(ch, argument):
         return
 
     state_checks.WAIT_STATE(ch, 1 * merc.PULSE_VIOLENCE)
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         buf = "Help! I am being attacked by %s!" % ch.short_descr
     else:
         buf = "Help!  I am being attacked by %s!" % ch.name

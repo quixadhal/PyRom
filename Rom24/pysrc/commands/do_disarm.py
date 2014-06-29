@@ -21,7 +21,7 @@ def do_disarm(ch, argument):
         return
     hth = ch.get_skill('hand to hand')
     if not ch.get_eq(merc.WEAR_WIELD) \
-            and hth == 0 or (state_checks.IS_NPC(ch) and not state_checks.IS_SET(ch.off_flags, merc.OFF_DISARM)):
+            and hth == 0 or (ch.is_npc() and not state_checks.IS_SET(ch.off_flags, merc.OFF_DISARM)):
         ch.send("You must wield a weapon to disarm.\n")
         return
     victim = ch.fighting

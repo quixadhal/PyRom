@@ -16,8 +16,8 @@ import state_checks
 def do_trip(ch, argument):
     arghold, arg = game_utils.read_word(argument)
     chance = ch.get_skill('trip')
-    if chance == 0 or (state_checks.IS_NPC(ch) and not state_checks.IS_SET(ch.off_flags, merc.OFF_TRIP)) \
-    or ( not state_checks.IS_NPC(ch) and ch.level < const.skill_table['trip'].skill_level[ch.guild.name]):
+    if chance == 0 or (ch.is_npc() and not state_checks.IS_SET(ch.off_flags, merc.OFF_TRIP)) \
+    or ( not ch.is_npc() and ch.level < const.skill_table['trip'].skill_level[ch.guild.name]):
         ch.send("Tripping?  What's that?\n\r")
         return
     if not arg:
@@ -47,7 +47,7 @@ def do_trip(ch, argument):
         handler_game.act("$n trips over $s own feet!",ch,None,None, merc.TO_ROOM)
         return
 
-    if state_checks.IS_AFFECTED(ch, merc.AFF_CHARM) and ch.master == victim:
+    if ch.is_affected(merc.AFF_CHARM) and ch.master == victim:
         handler_game.act("$N is your beloved master.",ch,None,victim, merc.TO_CHAR)
         return
     # modifiers */
@@ -60,7 +60,7 @@ def do_trip(ch, argument):
     chance -= victim.get_curr_stat(merc.STAT_DEX) * 3 // 2
 
     # speed */
-    if state_checks.IS_SET(ch.off_flags, merc.OFF_FAST) or state_checks.IS_AFFECTED(ch, merc.AFF_HASTE):
+    if state_checks.IS_SET(ch.off_flags, merc.OFF_FAST) or ch.is_affected(merc.AFF_HASTE):
         chance += 10
     if state_checks.IS_SET(victim.off_flags, merc.OFF_FAST) or state_checks.IS_AFFECTED(victim, merc.AFF_HASTE):
         chance -= 20

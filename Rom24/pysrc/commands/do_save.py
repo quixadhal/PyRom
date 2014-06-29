@@ -9,7 +9,7 @@ import state_checks
 
 
 def do_save(ch, argument):
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         return
     save.save_char_obj(ch)
     ch.send("Saving. Remember that ROM has automatic saving now.\n")

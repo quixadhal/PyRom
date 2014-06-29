@@ -8,7 +8,7 @@ import state_checks
 
 
 def spell_dispel_evil(sn, level, ch, victim, target):
-    if not state_checks.IS_NPC(ch) and state_checks.IS_EVIL(ch):
+    if not ch.is_npc() and state_checks.IS_EVIL(ch):
         victim = ch
 
     if state_checks.IS_GOOD(victim):

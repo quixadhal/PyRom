@@ -12,7 +12,7 @@ import interp
 
 
 def do_look(ch, argument):
-    if not ch.desc:
+    if ch.is_npc() or not ch.desc:
         return
     if ch.position < merc.POS_SLEEPING:
         ch.send("You can't see anything but stars!\n")
@@ -20,9 +20,9 @@ def do_look(ch, argument):
     if ch.position == merc.POS_SLEEPING:
         ch.send("You can't see anything, you're sleeping!\n")
         return
-    if not state_checks.check_blind(ch):
+    if not ch.check_blind():
         return
-    if not state_checks.IS_NPC(ch) and not state_checks.IS_SET(ch.act, merc.PLR_HOLYLIGHT) \
+    if not ch.is_npc() and not ch.act.is_set(merc.PLR_HOLYLIGHT) \
             and ch.in_room.is_dark():
         ch.send("It is pitch black ... \n")
         handler_ch.show_char_to_char(ch.in_room.people, ch)
@@ -34,17 +34,17 @@ def do_look(ch, argument):
     if not arg1 or arg1 == "auto":
         # 'look' or 'look auto'
         ch.send(ch.in_room.name)
-        if state_checks.IS_IMMORTAL(ch) \
-                and (state_checks.IS_NPC(ch)
-                     or (state_checks.IS_SET(ch.act, merc.PLR_HOLYLIGHT)
-                         or state_checks.IS_SET(ch.act, merc.PLR_OMNI))):
+        if ch.is_immortal() \
+                and (ch.is_npc()
+                     or (ch.act.is_set(merc.PLR_HOLYLIGHT)
+                         or ch.act.is_set(merc.PLR_OMNI))):
             ch.send(" [Room %d]" % ch.in_room.vnum)
         ch.send("\n")
-        if not arg1 or (not state_checks.IS_NPC(ch)
-                        and not state_checks.IS_SET(ch.comm, merc.COMM_BRIEF)):
+        if not arg1 or (not ch.is_npc()
+                        and not ch.comm.is_set(merc.COMM_BRIEF)):
             ch.send("  %s" % ch.in_room.description)
-        if not state_checks.IS_NPC(ch) \
-                and state_checks.IS_SET(ch.act, merc.PLR_AUTOEXIT):
+        if not ch.is_npc() \
+                and ch.act.is_set(merc.PLR_AUTOEXIT):
             ch.send("\n")
             ch.do_exits("auto")
         handler_ch.show_list_to_char(ch.in_room.contents, ch, False, False)

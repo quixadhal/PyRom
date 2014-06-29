@@ -8,7 +8,7 @@ import state_checks
 
 
 def do_replay(ch, argument):
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         ch.send("You can't replay.\n")
         return
     if not ch.pcdata.buffer:

@@ -25,7 +25,7 @@ def spell_call_lightning(sn, level, ch, victim, target):
         if vch.in_room == None:
             continue
         if vch.in_room == ch.in_room:
-            if vch is not ch and ( not state_checks.IS_NPC(vch) if state_checks.IS_NPC(ch) else state_checks.IS_NPC(vch) ):
+            if vch is not ch and ( not vch.is_npc() if ch.is_npc() else vch.is_npc() ):
                 fight.damage(ch, vch, dam // 2 if handler_magic.saves_spell(level, vch, merc.DAM_LIGHTNING) else dam, sn,
                              merc.DAM_LIGHTNING, True)
             continue

@@ -32,6 +32,7 @@
  ************/
 """
 import logging
+import character
 
 logger = logging.getLogger()
 
@@ -54,6 +55,7 @@ class cmd_type:
         self.show = show
         self.default_arg = default_arg
         setattr(handler_ch.CHAR_DATA, self.do_fun.__name__, self.do_fun)
+        setattr(character.Living, self.do_fun.__name__, self.do_fun)
 
 # These commands don't need to be here but are, for order. These will always match first with prefixes.
 cmd_table = OrderedDict()
@@ -94,7 +96,7 @@ def interpret(ch, argument):
     state_checks.REMOVE_BIT(ch.affected_by, AFF_HIDE)
 
     # Implement freeze command.
-    if not state_checks.IS_NPC(ch) and state_checks.IS_SET(ch.act, PLR_FREEZE):
+    if not ch.is_npc() and state_checks.IS_SET(ch.act, PLR_FREEZE):
         ch.send("You're totally frozen!\n")
         return
     # Grab the command word.
@@ -114,7 +116,7 @@ def interpret(ch, argument):
             cmd = None
 
     #* Log and snoop.
-    if (not state_checks.IS_NPC(ch) and state_checks.IS_SET(ch.act, PLR_LOG)) or LOGALL or (cmd and cmd.log == LOG_ALWAYS):
+    if (not ch.is_npc() and state_checks.IS_SET(ch.act, PLR_LOG)) or LOGALL or (cmd and cmd.log == LOG_ALWAYS):
         if cmd and cmd.log != LOG_NEVER:
             log_buf = "Log %s: %s" % (ch.name, logline)
             handler_game.wiznet(log_buf, ch, None, WIZ_SECURE, 0, ch.get_trust())
@@ -161,7 +163,7 @@ def check_social(ch, command, argument):
             cmd = social
     if not cmd:
         return False
-    if not state_checks.IS_NPC(ch) and state_checks.IS_SET(ch.comm, COMM_NOEMOTE):
+    if not ch.is_npc() and state_checks.IS_SET(ch.comm, COMM_NOEMOTE):
         ch.send("You are anti-social!\n")
         return True
 
@@ -195,7 +197,7 @@ def check_social(ch, command, argument):
         handler_game.act(cmd.char_found, ch, None, victim, TO_CHAR)
         handler_game.act(cmd.vict_found, ch, None, victim, TO_VICT)
 
-        if not state_checks.IS_NPC(ch) and state_checks.IS_NPC(victim) \
+        if not ch.is_npc() and state_checks.IS_NPC(victim) \
                 and not state_checks.IS_AFFECTED(victim, AFF_CHARM) \
                 and state_checks.IS_AWAKE(victim) and victim.desc is None:
             num = random.randint(0, 12)

@@ -7,7 +7,7 @@ import interp
 import state_checks
 
 def do_nosummon(ch, argument):
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         if state_checks.IS_SET(ch.imm_flags, merc.IMM_SUMMON):
             ch.send("You are no longer immune to summon.\n")
             ch.imm_flags = state_checks.REMOVE_BIT(ch.imm_flags, merc.IMM_SUMMON)

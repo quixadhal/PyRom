@@ -15,7 +15,7 @@ def do_wake(ch, argument):
         ch.do_stand("")
         return
 
-    if not state_checks.IS_AWAKE(ch):
+    if not ch.is_awake():
         ch.send("You are asleep yourself!\n")
         return
     victim = ch.get_char_room(arg)

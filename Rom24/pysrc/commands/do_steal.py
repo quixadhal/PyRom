@@ -47,9 +47,9 @@ def do_steal(ch, argument):
         percent += 50
 
     if ((ch.level + 7 < victim.level or ch.level - 7 > victim.level)
-        and not state_checks.IS_NPC(victim) and not state_checks.IS_NPC(ch) ) \
-            or (not state_checks.IS_NPC(ch) and percent > ch.get_skill("steal")) \
-            or (not state_checks.IS_NPC(ch) and not ch.is_clan()):
+        and not state_checks.IS_NPC(victim) and not ch.is_npc() ) \
+            or (not ch.is_npc() and percent > ch.get_skill("steal")) \
+            or (not ch.is_npc() and not ch.is_clan()):
         # Failure.
         ch.send("Oops.\n")
         ch.affect_strip("sneak")
@@ -70,7 +70,7 @@ def do_steal(ch, argument):
             victim.do_wake("")
         if state_checks.IS_AWAKE(victim):
             victim.do_yell(buf)
-        if not state_checks.IS_NPC(ch):
+        if not ch.is_npc():
             if state_checks.IS_NPC(victim):
                 skills.check_improve(ch, "steal", False, 2)
                 fight.multi_hit(victim, ch, merc.TYPE_UNDEFINED)

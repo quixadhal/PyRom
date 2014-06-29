@@ -8,7 +8,7 @@ import state_checks
 
 
 def do_autogold(ch, argument):
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         return
 
     if merc.IS_SET(ch.act, merc.PLR_AUTOGOLD):

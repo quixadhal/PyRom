@@ -236,7 +236,7 @@ class handler_ch:
             return
         ch.in_room = pRoomIndex
         pRoomIndex.people.append(ch)
-        if not state_checks.IS_NPC(ch):
+        if not ch.is_npc():
             if ch.in_room.area.empty:
                 ch.in_room.area.empty = False
                 ch.in_room.area.age = 0
@@ -244,7 +244,7 @@ class handler_ch:
         obj = ch.get_eq(WEAR_LIGHT)
         if obj and obj.item_type == ITEM_LIGHT and obj.value[2] != 0:
             ch.in_room.light += 1
-        if state_checks.IS_AFFECTED(ch, AFF_PLAGUE):
+        if ch.is_affected(AFF_PLAGUE):
             af = [af for af in ch.affected if af.type == 'plague']
             if not af:
                 state_checks.REMOVE_BIT(ch.affected_by, AFF_PLAGUE)
@@ -363,7 +363,7 @@ class handler_ch:
         # * Check for weapon wielding.
         # * Guard against recursion (for weapons with affects).
         wield = ch.get_eq(WEAR_WIELD)
-        if not state_checks.IS_NPC(ch) and wield \
+        if not ch.is_npc() and wield \
                 and wield.get_weight() > (const.str_app[ch.get_curr_stat(STAT_STR)].wield * 10):
             global depth
 
@@ -445,14 +445,14 @@ class handler_ch:
         if ch.trust:
             return ch.trust
 
-        if state_checks.IS_NPC(ch) and ch.level >= LEVEL_HERO:
+        if ch.is_npc() and ch.level >= LEVEL_HERO:
             return LEVEL_HERO - 1
         else:
             return ch.level
 
     # used to de-screw characters */
     def reset(ch):
-        if state_checks.IS_NPC(ch):
+        if ch.is_npc():
             return
 
         if ch.pcdata.perm_hit == 0 \
@@ -472,7 +472,7 @@ class handler_ch:
                     if af.location == APPLY_SEX:
                         ch.sex -= mod
                         if ch.sex < 0 or ch.sex > 2:
-                            ch.sex = 0 if state_checks.IS_NPC(ch) else ch.pcdata.true_sex
+                            ch.sex = 0 if ch.is_npc() else ch.pcdata.true_sex
                     elif af.location == APPLY_MANA:
                         ch.max_mana -= mod
                     elif af.location == APPLY_HIT:
@@ -765,25 +765,6 @@ class handler_ch:
         ch.affect_add(paf)
         return
 
-    # * Move a char out of a room.
-    def from_room(ch):
-        if not ch.in_room:
-            logger.error("BUG: Char_from_room: None.")
-            return
-
-        if not state_checks.IS_NPC(ch):
-            ch.in_room.area.nplayer -= 1
-        obj = ch.get_eq(WEAR_LIGHT)
-        if obj and obj.item_type == ITEM_LIGHT and obj.value[2] != 0 and ch.in_room.light > 0:
-            ch.in_room.light -= 1
-
-        if ch not in ch.in_room.people:
-            logger.error("BUG: Char_from_room: ch not found.")
-            return
-        ch.in_room.people.remove(ch)
-        ch.in_room = None
-        ch.on = None  # sanity check! */
-        return
 
     # * Move a char into a room.
     def to_room(ch, pRoomIndex):
@@ -796,7 +777,7 @@ class handler_ch:
         ch.in_room = pRoomIndex
         pRoomIndex.people.append(ch)
 
-        if not state_checks.IS_NPC(ch):
+        if not ch.is_npc():
             if ch.in_room.area.empty:
                 ch.in_room.area.empty = False
                 ch.in_room.area.age = 0
@@ -808,7 +789,7 @@ class handler_ch:
         if obj and obj.item_type == ITEM_LIGHT and obj.value[2] != 0:
             ch.in_room.light += 1
 
-        if state_checks.IS_AFFECTED(ch, AFF_PLAGUE):
+        if ch.is_affected(AFF_PLAGUE):
             af = [af for af in ch.affected if af.type == 'plague']
             if not af:
                 state_checks.REMOVE_BIT(ch.affected_by, AFF_PLAGUE)
@@ -1028,22 +1009,22 @@ class handler_ch:
             return False
         if ch.get_trust() < victim.incog_level and ch.in_room != victim.in_room:
             return False
-        if (not state_checks.IS_NPC(ch)
+        if (not ch.is_npc()
             and state_checks.IS_SET(ch.act, PLR_HOLYLIGHT)) \
-                or (state_checks.IS_NPC(ch)
+                or (ch.is_npc()
                     and state_checks.IS_IMMORTAL(ch)):
             return True
-        if state_checks.IS_AFFECTED(ch, AFF_BLIND):
+        if ch.is_affected(AFF_BLIND):
             return False
-        if ch.in_room.is_dark() and not state_checks.IS_AFFECTED(ch, AFF_INFRARED):
+        if ch.in_room.is_dark() and not ch.is_affected(AFF_INFRARED):
             return False
         if state_checks.IS_AFFECTED(victim, AFF_INVISIBLE) \
-                and not state_checks.IS_AFFECTED(ch, AFF_DETECT_INVIS):
+                and not ch.is_affected(AFF_DETECT_INVIS):
             return False
         # sneaking */
 
         if state_checks.IS_AFFECTED(victim, AFF_SNEAK) \
-                and not state_checks.IS_AFFECTED(ch, AFF_DETECT_HIDDEN) \
+                and not ch.is_affected(AFF_DETECT_HIDDEN) \
                 and victim.fighting is None:
             chance = victim.get_skill("sneak")
             chance += victim.get_curr_stat(STAT_DEX) * 3 // 2
@@ -1054,7 +1035,7 @@ class handler_ch:
                 return False
 
         if state_checks.IS_AFFECTED(victim, AFF_HIDE) \
-                and not state_checks.IS_AFFECTED(ch, AFF_DETECT_HIDDEN) \
+                and not ch.is_affected(AFF_DETECT_HIDDEN) \
                 and victim.fighting is None:
             return False
 
@@ -1062,24 +1043,24 @@ class handler_ch:
 
     # * True if char can see obj.
     def can_see_obj(ch, obj):
-        if not state_checks.IS_NPC(ch) \
+        if not ch.is_npc() \
                 and state_checks.IS_SET(ch.act, PLR_HOLYLIGHT):
             return True
         if state_checks.IS_SET(obj.extra_flags, ITEM_VIS_DEATH):
             return False
-        if state_checks.IS_AFFECTED(ch, AFF_BLIND) \
+        if ch.is_affected(AFF_BLIND) \
                 and obj.item_type != ITEM_POTION:
             return False
         if obj.item_type == ITEM_LIGHT \
                 and obj.value[2] != 0:
             return True
         if state_checks.IS_SET(obj.extra_flags, ITEM_INVIS) \
-                and not state_checks.IS_AFFECTED(ch, AFF_DETECT_INVIS):
+                and not ch.is_affected(AFF_DETECT_INVIS):
             return False
         if state_checks.IS_OBJ_STAT(obj, ITEM_GLOW):
             return True
         if ch.in_room.is_dark() \
-                and not state_checks.IS_AFFECTED(ch, AFF_DARK_VISION):
+                and not ch.is_affected(AFF_DARK_VISION):
             return False
         return True
 
@@ -1087,7 +1068,7 @@ class handler_ch:
     def can_drop_obj(ch, obj):
         if not state_checks.IS_SET(obj.extra_flags, ITEM_NODROP):
             return True
-        if not state_checks.IS_NPC(ch) \
+        if not ch.is_npc() \
                 and ch.level >= LEVEL_IMMORTAL:
             return True
         return False
@@ -1100,7 +1081,7 @@ class handler_ch:
         elif sn not in const.skill_table:
             logger.error("BUG: Bad sn %s in get_skill." % sn)
             skill = 0
-        elif not state_checks.IS_NPC(ch):
+        elif not ch.is_npc():
             if ch.level < const.skill_table[sn].skill_level[ch.guild.name] \
                     or sn not in ch.pcdata.learned:
                 skill = 0
@@ -1151,7 +1132,7 @@ class handler_ch:
                 skill /= 2
             else:
                 skill = 2 * skill / 3
-        if not state_checks.IS_NPC(ch) \
+        if not ch.is_npc() \
                 and ch.pcdata.condition[COND_DRUNK] > 10:
             skill = 9 * skill / 10
 
@@ -1169,7 +1150,7 @@ class handler_ch:
     def get_weapon_skill(ch, sn):
         # -1 is exotic */
         skill = 0
-        if state_checks.IS_NPC(ch):
+        if ch.is_npc():
             if sn == -1:
                 skill = 3 * ch.level
             elif sn == "hand to hand":
@@ -1189,23 +1170,23 @@ class handler_ch:
 
     # * Retrieve a character's carry capacity.
     def can_carry_n(ch):
-        if not state_checks.IS_NPC(ch) and ch.level >= LEVEL_IMMORTAL:
+        if not ch.is_npc() and ch.level >= LEVEL_IMMORTAL:
             return 1000
-        if state_checks.IS_NPC(ch) and state_checks.IS_SET(ch.act, ACT_PET):
+        if ch.is_npc() and state_checks.IS_SET(ch.act, ACT_PET):
             return 0
         return MAX_WEAR + 2 * ch.get_curr_stat(STAT_DEX) + ch.level
 
     # * Retrieve a character's carry capacity.
     def can_carry_w(ch):
-        if not state_checks.IS_NPC(ch) and ch.level >= LEVEL_IMMORTAL:
+        if not ch.is_npc() and ch.level >= LEVEL_IMMORTAL:
             return 10000000
-        if state_checks.IS_NPC(ch) and state_checks.IS_SET(ch.act, ACT_PET):
+        if ch.is_npc() and state_checks.IS_SET(ch.act, ACT_PET):
             return 0
         return const.str_app[ch.get_curr_stat(STAT_STR)].carry * 10 + ch.level * 25
 
     #/* command for retrieving stats */
     def get_curr_stat(ch, stat):
-        if state_checks.IS_NPC(ch) or ch.level > LEVEL_IMMORTAL:
+        if ch.is_npc() or ch.level > LEVEL_IMMORTAL:
             smax = 25
         else:
             smax = const.pc_race_table[ch.race.name].max_stats[stat] + 4
@@ -1221,7 +1202,7 @@ class handler_ch:
 
     # command for returning max training score */
     def get_max_train(ch, stat):
-        if state_checks.IS_NPC(ch) or ch.level > LEVEL_IMMORTAL:
+        if ch.is_npc() or ch.level > LEVEL_IMMORTAL:
             return 25
 
         smax = const.pc_race_table[ch.race.name].max_stats[stat]
@@ -1256,7 +1237,7 @@ class handler_ch:
             return ch.clan == victim.clan
 
     def exp_per_level(ch, points):
-        if state_checks.IS_NPC(ch):
+        if ch.is_npc():
             return 1000
         expl = 1000
         inc = 500
@@ -1320,19 +1301,19 @@ def move_char(ch, door, follow):
         return
     to_room = pexit.to_room
     if state_checks.IS_SET(pexit.exit_info, EX_CLOSED) \
-            and (not state_checks.IS_AFFECTED(ch, AFF_PASS_DOOR)
+            and (not ch.is_affected(AFF_PASS_DOOR)
                  or state_checks.IS_SET(pexit.exit_info, EX_NOPASS)) \
             and not state_checks.IS_TRUSTED(ch, L7):
         handler_game.act("The $d is closed.", ch, None, pexit.keyword, TO_CHAR)
         return
-    if state_checks.IS_AFFECTED(ch, AFF_CHARM) \
+    if ch.is_affected(AFF_CHARM) \
             and ch.master and in_room == ch.master.in_room:
         ch.send("What?  And leave your beloved master?\n")
         return
     if not ch.is_room_owner(to_room) and to_room.is_private():
         ch.send("That room is private right now.\n")
         return
-    if not state_checks.IS_NPC(ch):
+    if not ch.is_npc():
         for gn, guild in const.guild_table.items():
             for room in guild.guild_rooms:
                 if guild != ch.guild and to_room.vnum == room:
@@ -1340,15 +1321,15 @@ def move_char(ch, door, follow):
                     return
         if in_room.sector_type == SECT_AIR \
                 or to_room.sector_type == SECT_AIR:
-            if not state_checks.IS_AFFECTED(ch, AFF_FLYING) \
-                    and not state_checks.IS_IMMORTAL(ch):
+            if not ch.is_affected(AFF_FLYING) \
+                    and not ch.is_immortal():
                 ch.send("You can't fly.\n")
                 return
         if (in_room.sector_type == SECT_WATER_NOSWIM
              or to_room.sector_type == SECT_WATER_NOSWIM) \
-                and not state_checks.IS_AFFECTED(ch, AFF_FLYING):
+                and not ch.is_affected(AFF_FLYING):
             # Look for a boat.
-            boats = [obj for obj in ch.carrying if obj.item_type == ITEM_BOAT]
+            boats = [obj for obj in ch.contents if obj.item_type == ITEM_BOAT]
             if not boats and not state_checks.IS_IMMORTAL(ch):
                 ch.send("You need a boat to go there.\n")
                 return
@@ -1356,33 +1337,33 @@ def move_char(ch, door, follow):
             min(SECT_MAX - 1, to_room.sector_type)]
         move /= 2  # i.e. the average */
         # conditional effects */
-        if state_checks.IS_AFFECTED(ch, AFF_FLYING) or state_checks.IS_AFFECTED(ch, AFF_HASTE):
-            move /= 2
-        if state_checks.IS_AFFECTED(ch, AFF_SLOW):
+        if ch.is_affected(AFF_FLYING) or ch.is_affected(AFF_HASTE):
+            move //= 2
+        if ch.is_affected(AFF_SLOW):
             move *= 2
         if ch.move < move:
             ch.send("You are too exhausted.\n")
             return
         state_checks.WAIT_STATE(ch, 1)
         ch.move -= move
-    if not state_checks.IS_AFFECTED(ch, AFF_SNEAK) and ch.invis_level < LEVEL_HERO:
+    if not ch.is_affected(AFF_SNEAK) and (not ch.is_npc() and ch.invis_level < LEVEL_HERO):
         handler_game.act("$n leaves $T.", ch, None, dir_name[door], TO_ROOM)
     ch.from_room()
     ch.to_room(to_room)
-    if not state_checks.IS_AFFECTED(ch, AFF_SNEAK) and ch.invis_level < LEVEL_HERO:
+    if not ch.is_affected(AFF_SNEAK) and (not ch.is_npc() and ch.invis_level < LEVEL_HERO):
         handler_game.act("$n has arrived.", ch, None, None, TO_ROOM)
     ch.do_look("auto")
     if in_room == to_room:  # no circular follows */
         return
 
     for fch in in_room.people[:]:
-        if fch.master == ch and state_checks.IS_AFFECTED(fch, AFF_CHARM) and fch.position < POS_STANDING:
+        if fch.master == ch and fch.is_affected(AFF_CHARM) and fch.position < POS_STANDING:
             fch.do_stand("")
 
         if fch.master == ch and fch.position == POS_STANDING and fch.can_see_room(to_room):
             if state_checks.IS_SET(ch.in_room.room_flags, ROOM_LAW) \
-                    and (state_checks.IS_NPC(fch)
-                         and state_checks.IS_SET(fch.act, ACT_AGGRESSIVE)):
+                    and (fch.is_npc()
+                         and fch.act.is_set(ACT_AGGRESSIVE)):
                 handler_game.act("You can't bring $N into the city.", ch, None, fch, TO_CHAR)
                 handler_game.act("You aren't allowed in the city.", fch, None, None, TO_CHAR)
                 continue
@@ -1433,7 +1414,7 @@ def stop_follower(ch):
         logger.error("BUG: Stop_follower: null master.")
         return
 
-    if state_checks.IS_AFFECTED(ch, AFF_CHARM):
+    if ch.is_affected(AFF_CHARM):
         state_checks.REMOVE_BIT(ch.affected_by, AFF_CHARM)
         ch.affect_strip('charm person')
 
@@ -1463,13 +1444,13 @@ def show_list_to_char(clist, ch, fShort, fShowNothing):
                 objects[frmt] += 1
 
     if not objects and fShowNothing:
-        if state_checks.IS_NPC(ch) or state_checks.IS_SET(ch.comm, COMM_COMBINE):
+        if ch.is_npc() or state_checks.IS_SET(ch.comm, COMM_COMBINE):
             ch.send("     ")
         ch.send("Nothing.\n")
 
         #* Output the formatted list.
     for desc, count in objects.items():
-        if state_checks.IS_NPC(ch) or state_checks.IS_SET(ch.comm, COMM_COMBINE) and count > 1:
+        if ch.is_npc() or state_checks.IS_SET(ch.comm, COMM_COMBINE) and count > 1:
             ch.send("(%2d) %s\n" % (count, desc))
         else:
             for i in range(count):
@@ -1492,9 +1473,9 @@ def show_char_to_char_0(victim, ch):
         buf += "(Translucent) "
     if state_checks.IS_AFFECTED(victim, AFF_FAERIE_FIRE):
         buf += "(Pink Aura) "
-    if state_checks.IS_EVIL(victim) and state_checks.IS_AFFECTED(ch, AFF_DETECT_EVIL):
+    if state_checks.IS_EVIL(victim) and ch.is_affected(AFF_DETECT_EVIL):
         buf += "(Red Aura) "
-    if state_checks.IS_GOOD(victim) and state_checks.IS_AFFECTED(ch, AFF_DETECT_GOOD):
+    if state_checks.IS_GOOD(victim) and ch.is_affected(AFF_DETECT_GOOD):
         buf += "(Golden Aura) "
     if state_checks.IS_AFFECTED(victim, AFF_SANCTUARY):
         buf += "(White Aura) "
@@ -1623,7 +1604,7 @@ def show_char_to_char_1(victim, ch):
                 found = True
             ch.send(where_name[iWear])
             ch.send(handler_obj.format_obj_to_char(obj, ch, True) + "\n")
-    if victim != ch and not state_checks.IS_NPC(ch) \
+    if victim != ch and not ch.is_npc() \
             and random.randint(1, 99) < ch.get_skill("peek"):
         ch.send("\nYou peek at the inventory:\n")
         skills.check_improve(ch, 'peek', True, 4)

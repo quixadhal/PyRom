@@ -30,7 +30,7 @@ def do_flee( ch, argument ):
                 or not pexit.to_room \
                 or state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED) \
                 or random.randint(0, ch.daze) != 0 \
-                or (state_checks.IS_NPC(ch)
+                or (ch.is_npc()
                     and state_checks.IS_SET(pexit.u1.to_room.room_flags, merc.ROOM_NO_MOB)):
             continue
 
@@ -41,7 +41,7 @@ def do_flee( ch, argument ):
         ch.in_room = was_in
         handler_game.act("$n has fled!", ch, None, None, merc.TO_ROOM)
         ch.in_room = now_in
-        if not state_checks.IS_NPC(ch):
+        if not ch.is_npc():
             ch.send("You flee from combat!\n")
             if ch.guild.name == 'thief' and (random.randint(1, 99) < 3 * (ch.level // 2) ):
                 ch.send("You snuck away safely.\n")

@@ -8,7 +8,7 @@ import state_checks
 
 
 def do_bamfin(ch, argument):
-    if not state_checks.IS_NPC(ch):
+    if not ch.is_npc():
         if not argument:
             ch.send("Your poofin is %s\n" % ch.pcdata.bamfin)
             return

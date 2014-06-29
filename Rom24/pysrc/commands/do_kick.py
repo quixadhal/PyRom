@@ -12,10 +12,10 @@ import interp
 
 
 def do_kick(ch, argument):
-    if not state_checks.IS_NPC(ch) and ch.level < const.skill_table['kick'].skill_level[ch.guild.name]:
+    if not ch.is_npc() and ch.level < const.skill_table['kick'].skill_level[ch.guild.name]:
         ch.send("You better leave the martial arts to fighters.\n")
         return
-    if state_checks.IS_NPC(ch) and not state_checks.IS_SET(ch.off_flags, merc.OFF_KICK):
+    if ch.is_npc() and not state_checks.IS_SET(ch.off_flags, merc.OFF_KICK):
         return
     victim = ch.fighting
     if not victim:

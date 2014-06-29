@@ -20,7 +20,7 @@ def do_follow(ch, argument):
     if not victim:
         ch.send("They aren't here.\n")
         return
-    if state_checks.IS_AFFECTED(ch, merc.AFF_CHARM) and ch.master:
+    if ch.is_affected(merc.AFF_CHARM) and ch.master:
         handler_game.act("But you'd rather follow $N!", ch, None, ch.master, merc.TO_CHAR)
         return
     if victim == ch:

@@ -11,7 +11,7 @@ import state_checks
 def do_train(ch, argument):
     stat = -1
     pOutput = ""
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         return
 
         # Check for trainer.

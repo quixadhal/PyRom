@@ -248,10 +248,10 @@ def wear_obj( ch, obj, fReplace ):
     if state_checks.CAN_WEAR( obj, merc.ITEM_WIELD):
         if not remove_obj( ch, merc.WEAR_WIELD, fReplace ):
             return
-        if not state_checks.IS_NPC(ch) and obj.get_weight() > (const.str_app[ch.get_curr_stat(merc.STAT_STR)].wield * 10):
+        if not ch.is_npc() and obj.get_weight() > (const.str_app[ch.get_curr_stat(merc.STAT_STR)].wield * 10):
             ch.send("It is too heavy for you to wield.\n")
             return
-        if not state_checks.IS_NPC(ch) and ch.size < merc.SIZE_LARGE \
+        if not ch.is_npc() and ch.size < merc.SIZE_LARGE \
                 and state_checks.IS_WEAPON_STAT(obj, merc.WEAPON_TWO_HANDS) \
                 and ch.get_eq(merc.WEAR_SHIELD) is not None:
             ch.send("You need two hands free for that weapon.\n")
@@ -361,11 +361,11 @@ def format_obj_to_char(obj, ch, fShort):
 
     if state_checks.IS_OBJ_STAT(obj, merc.ITEM_INVIS):
         buf += "(Invis) "
-    if state_checks.IS_AFFECTED(ch, merc.AFF_DETECT_EVIL) and state_checks.IS_OBJ_STAT(obj, merc.ITEM_EVIL):
+    if ch.is_affected(merc.AFF_DETECT_EVIL) and state_checks.IS_OBJ_STAT(obj, merc.ITEM_EVIL):
         buf += "(Red Aura) "
-    if state_checks.IS_AFFECTED(ch, merc.AFF_DETECT_GOOD) and  state_checks.IS_OBJ_STAT(obj, merc.ITEM_BLESS):
+    if ch.is_affected(merc.AFF_DETECT_GOOD) and  state_checks.IS_OBJ_STAT(obj, merc.ITEM_BLESS):
         buf += "(Blue Aura) "
-    if state_checks.IS_AFFECTED(ch, merc.AFF_DETECT_MAGIC) and state_checks.IS_OBJ_STAT(obj, merc.ITEM_MAGIC):
+    if ch.is_affected(merc.AFF_DETECT_MAGIC) and state_checks.IS_OBJ_STAT(obj, merc.ITEM_MAGIC):
         buf += "(Magical) "
     if state_checks.IS_OBJ_STAT(obj, merc.ITEM_GLOW):
         buf += "(Glowing) "
@@ -416,7 +416,7 @@ class handler_obj:
 
     # * Give an obj to a char.
     def to_char(obj, ch):
-        ch.carrying.append(obj)
+        ch.contents.append(obj)
         obj.carried_by = ch
         obj.in_room = None
         obj.in_obj = None
@@ -609,7 +609,7 @@ class handler_obj:
         if obj.wear_loc != merc.WEAR_NONE:
             ch.unequip(obj)
 
-        ch.carrying.remove(obj)
+        ch.contains.remove(obj)
 
         obj.carried_by = None
         ch.carry_number -= obj.get_number()

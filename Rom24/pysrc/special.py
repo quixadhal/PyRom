@@ -45,13 +45,13 @@ import state_checks
 
 
 def spec_troll_member( ch ):
-    if not state_checks.IS_AWAKE(ch) or state_checks.IS_AFFECTED(ch,AFF_CALM) or ch.in_room == None  \
+    if not ch.is_awake() or state_checks.IS_AFFECTED(ch,AFF_CALM) or ch.in_room == None  \
     or  state_checks.IS_AFFECTED(ch,AFF_CHARM) or ch.fighting != None:
         return False
     count = 0
     # find an ogre to beat up */
     for vch in ch.in_room.people:
-        if not state_checks.IS_NPC(vch) or ch == vch:
+        if not vch.is_npc() or ch == vch:
             continue
 
         if vch.pIndexData.vnum == MOB_VNUM_PATROLMAN:
@@ -79,13 +79,13 @@ def spec_troll_member( ch ):
     return True
 
 def spec_ogre_member( ch ):
-    if not state_checks.IS_AWAKE(ch) or state_checks.IS_AFFECTED(ch,AFF_CALM) or not ch.in_room or state_checks.IS_AFFECTED(ch,AFF_CHARM) or ch.fighting:
+    if not ch.is_awake() or state_checks.IS_AFFECTED(ch,AFF_CALM) or not ch.in_room or state_checks.IS_AFFECTED(ch,AFF_CHARM) or ch.fighting:
         return False
     count = 0
     victim = None
     # find an troll to beat up */
     for vch in ch.in_room.people:
-        if not state_checks.IS_NPC(vch) or ch == vch:
+        if not vch.is_npc() or ch == vch:
             continue
  
         if vch.pIndexData.vnum == MOB_VNUM_PATROLMAN:
@@ -112,7 +112,7 @@ def spec_ogre_member( ch ):
     return True
 
 def spec_patrolman(ch):
-    if not state_checks.IS_AWAKE(ch) or state_checks.IS_AFFECTED(ch,AFF_CALM) or not ch.in_room or state_checks.IS_AFFECTED(ch,AFF_CHARM) or ch.fighting:
+    if not ch.is_awake() or state_checks.IS_AFFECTED(ch,AFF_CALM) or not ch.in_room or state_checks.IS_AFFECTED(ch,AFF_CHARM) or ch.fighting:
         return False
     victim = None
     # look for a fight in the room */
@@ -152,7 +152,7 @@ def spec_patrolman(ch):
     return True
 
 def spec_nasty( ch ):
-    if not state_checks.IS_AWAKE(ch):
+    if not ch.is_awake():
        return False
 
     if ch.position != POS_FIGHTING:
@@ -236,11 +236,11 @@ def spec_breath_lightning( ch ):
     return dragon( ch, "lightning breath" )
 
 def spec_cast_adept( ch ):
-    if not state_checks.IS_AWAKE(ch):
+    if not ch.is_awake():
         return False
     victim = None
     for vch in ch.in_room.people[:]:
-        if vch != ch and ch.can_see(vch) and random.randint(0, 1 ) == 0 and not state_checks.IS_NPC(vch) and vch.level < 11:
+        if vch != ch and ch.can_see(vch) and random.randint(0, 1 ) == 0 and not vch.is_npc() and vch.level < 11:
             victim = vch
             break
 
@@ -457,30 +457,30 @@ def spec_cast_undead( ch ):
     return True
 
 def spec_executioner( ch ):
-    if not state_checks.IS_AWAKE(ch) or ch.fighting != None:
+    if not ch.is_awake() or ch.fighting != None:
         return False
 
     crime = ""
     victim = None
     for vch in ch.in_room.people[:]:
-        if not state_checks.IS_NPC(vch) and state_checks.IS_SET(vch.act, PLR_KILLER) and ch.can_see(vch):
+        if not vch.is_npc() and vch.act.is_set(PLR_KILLER) and ch.can_see(vch):
             victim = vch
             crime = "KILLER"
 
-        if not state_checks.IS_NPC(vch) and state_checks.IS_SET(vch.act, PLR_THIEF) and ch.can_see(vch):
+        if not vch.is_npc() and vch.act.is_set(PLR_THIEF) and ch.can_see(vch):
             victim = vch
             crime = "THIEF"
 
     if victim == None:
         return False
  
-    state_checks.REMOVE_BIT(ch.comm,COMM_NOSHOUT)
+    ch.comm.rem_bit(COMM_NOSHOUT)
     ch.do_yell("%s is a %s!  PROTECT THE INNOCENT!  MORE BLOOOOD!!!" % (victim.name, crime))
-    fight.multi_hit( ch, victim, TYPE_UNDEFINED )
+    fight.multi_hit(ch, victim, TYPE_UNDEFINED)
     return True            
 
 def spec_fido( ch ):
-    if not state_checks.IS_AWAKE(ch):
+    if not ch.is_awake():
         return False
 
     for corpse in ch.in_room.contents:
@@ -496,7 +496,7 @@ def spec_fido( ch ):
     return False
 
 def spec_guard( ch ):
-    if not state_checks.IS_AWAKE(ch) or ch.fighting != None:
+    if not ch.is_awake() or ch.fighting != None:
         return False
 
     max_evil = 300
@@ -504,12 +504,12 @@ def spec_guard( ch ):
     crime = ""
     victim = None
     for vch in ch.in_room.people:
-        if not state_checks.IS_NPC(vch) and state_checks.IS_SET(vch.act, PLR_KILLER) and ch.can_see(vch):
+        if not vch.is_npc() and state_checks.IS_SET(vch.act, PLR_KILLER) and ch.can_see(vch):
             victim = vch
             crime = "KILLER"
             break
 
-        if not state_checks.IS_NPC(vch) and state_checks.IS_SET(vch.act, PLR_THIEF) and ch.can_see(vch):
+        if not vch.is_npc() and state_checks.IS_SET(vch.act, PLR_THIEF) and ch.can_see(vch):
             crime = "THIEF" 
             victim = vch
             break
@@ -532,7 +532,7 @@ def spec_guard( ch ):
     return False
 
 def spec_janitor( ch ):
-    if not state_checks.IS_AWAKE(ch):
+    if not ch.is_awake():
         return False
 
     for trash in ch.in_room.contents:

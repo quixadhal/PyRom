@@ -14,7 +14,7 @@ import update
 
 
 def do_recall(ch, argument):
-    if state_checks.IS_NPC(ch) and not state_checks.IS_SET(ch.act, merc.ACT_PET):
+    if ch.is_npc() and not state_checks.IS_SET(ch.act, merc.ACT_PET):
         ch.send("Only players can recall.\n")
         return
     handler_game.act("$n prays for transportation!", ch, 0, 0, merc.TO_ROOM)
@@ -24,7 +24,7 @@ def do_recall(ch, argument):
         return
     if ch.in_room == location:
         return
-    if state_checks.IS_SET(ch.in_room.room_flags, merc.ROOM_NO_RECALL) or state_checks.IS_AFFECTED(ch, merc.AFF_CURSE):
+    if state_checks.IS_SET(ch.in_room.room_flags, merc.ROOM_NO_RECALL) or ch.is_affected(merc.AFF_CURSE):
         ch.send("Mota has forsaken you.\n")
         return
     victim = ch.fighting

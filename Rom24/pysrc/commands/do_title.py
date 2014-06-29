@@ -8,7 +8,7 @@ import game_utils
 import state_checks
 
 def do_title(ch, argument):
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         return
     if not argument:
         ch.send("Change your title to what?\n")

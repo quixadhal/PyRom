@@ -136,13 +136,13 @@ def wiznet( string, ch, obj, flag, flag_skip, min_level):
     from nanny import con_playing
     for d in descriptor_list:
         if   d.is_connected(con_playing) \
-        and  state_checks.IS_IMMORTAL(d.character) \
-        and  state_checks.IS_SET(d.character.wiznet, WIZ_ON) \
-        and  (not flag or state_checks.IS_SET(d.character.wiznet,flag)) \
-        and  (not flag_skip or not state_checks.IS_SET(d.character.wiznet,flag_skip)) \
-        and  d.character.get_trust() >= min_level \
+        and d.character.is_immortal() \
+        and  d.character.wiznet.is_set(WIZ_ON) \
+        and  (not flag or d.character.wiznet.is_set(flag)) \
+        and  (not flag_skip or not d.character.wiznet.set(flag_skip)) \
+        and  d.character.trust >= min_level \
         and  d.character != ch:
-            if state_checks.IS_SET(d.character.wiznet,WIZ_PREFIX):
+            if d.character.wiznet.set(WIZ_PREFIX):
                 d.send("-. ",d.character)
             act(string,d.character,obj,ch,TO_CHAR,POS_DEAD)
 
@@ -158,7 +158,7 @@ def substitute_alias(d, argument):
         else:
             prefix = "%s %s" % (ch.prefix,argument)
 
-    if state_checks.IS_NPC(ch) or not ch.pcdata.alias \
+    if ch.is_npc() or not ch.pcdata.alias \
     or "alias".startswith(argument) or "unalias".startswith(argument)  \
     or "prefix".startswith(argument):
         interp.interpret(ch,argument)

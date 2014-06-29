@@ -27,7 +27,7 @@ def do_enter(ch, argument):
             ch.send("You can't seem to find a way in.\n")
             return
         if not state_checks.IS_TRUSTED(ch, merc.L7) and not state_checks.IS_SET(portal.value[2], merc.GATE_NOCURSE) \
-                and (state_checks.IS_AFFECTED(ch, merc.AFF_CURSE) or state_checks.IS_SET(old_room.room_flags, merc.ROOM_NO_RECALL)):
+                and (ch.is_affected(merc.AFF_CURSE) or state_checks.IS_SET(old_room.room_flags, merc.ROOM_NO_RECALL)):
             ch.send("Something prevents you from leaving...\n")
             return
         location = None
@@ -43,7 +43,7 @@ def do_enter(ch, argument):
                 or (location.is_private() and not state_checks.IS_TRUSTED(ch, merc.MAX_LEVEL)):
             handler_game.act("$p doesn't seem to go anywhere.", ch, portal, None, merc.TO_CHAR)
             return
-        if state_checks.IS_NPC(ch) and state_checks.IS_SET(ch.act, merc.ACT_AGGRESSIVE) \
+        if ch.is_npc() and state_checks.IS_SET(ch.act, merc.ACT_AGGRESSIVE) \
                 and state_checks.IS_SET(location.room_flags, merc.ROOM_LAW):
             ch.send("Something prevents you from leaving...\n")
             return

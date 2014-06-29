@@ -17,7 +17,7 @@ def spell_charm_person(sn, level, ch, victim, target):
         return
 
     if ( state_checks.IS_AFFECTED(victim, merc.AFF_CHARM) \
-                 or state_checks.IS_AFFECTED(ch, merc.AFF_CHARM) \
+                 or ch.is_affected(merc.AFF_CHARM) \
                  or level < victim.level \
                  or state_checks.IS_SET(victim.imm_flags, merc.IMM_CHARM) \
                  or handler_magic.saves_spell(level, victim, merc.DAM_CHARM) ):

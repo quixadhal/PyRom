@@ -8,7 +8,7 @@ import interp
 import state_checks
 
 def do_groups(ch, argument):
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         return
     col = 0
 

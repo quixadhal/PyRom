@@ -34,7 +34,7 @@ def do_sit(ch, argument):
             ch.on = obj
 
     if ch.position == merc.POS_SLEEPING:
-        if state_checks.IS_AFFECTED(ch, merc.AFF_SLEEP):
+        if ch.is_affected(merc.AFF_SLEEP):
             ch.send("You can't wake up!\n")
             return
 

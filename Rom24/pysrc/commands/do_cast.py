@@ -14,7 +14,7 @@ import skills
 
 def do_cast(ch, argument):
     # Switched NPC's can cast spells, but others can't.
-    if state_checks.IS_NPC(ch) and not ch.desc:
+    if ch.is_npc() and not ch.desc:
         return
 
     handler_magic.target_name, arg1 = game_utils.read_word(argument)
@@ -25,7 +25,7 @@ def do_cast(ch, argument):
         return
     sn = handler_magic.find_spell(ch, arg1)
     if not sn or sn.spell_fun is None \
-            or (not state_checks.IS_NPC(ch)
+            or (not ch.is_npc()
                 and (ch.level < sn.skill_level[ch.guild.name]
                      or ch.pcdata.learned[sn.name] == 0)):
         ch.send("You don't know any spells of that name.\n")
@@ -58,14 +58,14 @@ def do_cast(ch, argument):
             # if ch == victim:
             # ch.send("You can't do that to yourself.\n")
             # return
-            if not state_checks.IS_NPC(ch):
+            if not ch.is_npc():
                 if fight.is_safe(ch, victim) and victim != ch:
                     ch.send("Not on that target.\n")
                     return
 
                 fight.check_killer(ch, victim)
 
-            if state_checks.IS_AFFECTED(ch, merc.AFF_CHARM) and ch.master == victim:
+            if ch.is_affected(merc.AFF_CHARM) and ch.master == victim:
                 ch.send("You can't do that on your own follower.\n")
                 return
             vo = victim
@@ -113,10 +113,10 @@ def do_cast(ch, argument):
                 if fight.is_safe_spell(ch, victim, False) and victim != ch:
                     ch.send("Not on that target.\n")
                     return
-                if state_checks.IS_AFFECTED(ch, merc.AFF_CHARM) and ch.master == victim:
+                if ch.is_affected(merc.AFF_CHARM) and ch.master == victim:
                     ch.send("You can't do that on your own follower.\n")
                     return
-                if not state_checks.IS_NPC(ch):
+                if not ch.is_npc():
                     fight.check_killer(ch, victim)
                 vo = victim
             elif obj:
@@ -145,7 +145,7 @@ def do_cast(ch, argument):
         logging.error("BUG: Do_cast: bad target for sn %s.", sn)
         return
 
-    if not state_checks.IS_NPC(ch) and ch.mana < mana:
+    if not ch.is_npc() and ch.mana < mana:
         ch.send("You don't have enough mana.\n")
         return
 
@@ -159,7 +159,7 @@ def do_cast(ch, argument):
         ch.mana -= mana // 2
     else:
         ch.mana -= mana
-        if state_checks.IS_NPC(ch) or ch.guild.fMana:
+        if ch.is_npc() or ch.guild.fMana:
             # class has spells
             sn.spell_fun(sn, ch.level, ch, vo, target)
         else:

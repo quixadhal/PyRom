@@ -83,7 +83,7 @@ def con_get_name(self):
 
     found, ch = save.load_char_obj(self, name)
 
-    if state_checks.IS_SET(ch.act, merc.PLR_DENY):
+    if ch.act.is_set(merc.PLR_DENY):
         logger.info("Denying access to %s@%s" % (ch.name, self.addrport()))
         self.send("You have been denied access.")
         self.deactivate()
@@ -92,7 +92,7 @@ def con_get_name(self):
     if comm.is_reconnecting(self, name):
         found = True
     
-    if settings.WIZLOCK and not state_checks.IS_IMMORTAL(ch):
+    if settings.WIZLOCK and not ch.is_immortal():
         ch.send("Game is wizlocked")
         self.deactivate()
         return
@@ -139,7 +139,7 @@ def con_get_new_password(self):
     else:
         pwdnew = argument
 
-    ch.pcdata.pwd = pwdnew
+    ch.pwd = pwdnew
     
     ch.send("Please retype password: ")
     self.set_connected(con_confirm_new_password)
@@ -153,7 +153,7 @@ def con_confirm_new_password(self):
         argument = argument.encode('utf8')
         argument = hashlib.sha512(argument).hexdigest()
 
-    if argument != ch.pcdata.pwd:
+    if argument != ch.pwd:
         ch.send("Passwords don't match.\nRetype password: ")
         self.set_connected(con_get_new_password)
         return
@@ -192,16 +192,16 @@ def con_get_new_race(self):
     #initialize stats */
     for i in range(merc.MAX_STATS):
         ch.perm_stat[i] = race.stats[i]
-    ch.affected_by = ch.affected_by | const.race_table[race.name].aff
-    ch.imm_flags = ch.imm_flags | const.race_table[race.name].imm
-    ch.res_flags = ch.res_flags | const.race_table[race.name].res
-    ch.vuln_flags = ch.vuln_flags | const.race_table[race.name].vuln
-    ch.form = const.race_table[race.name].form
-    ch.parts = const.race_table[race.name].parts
+    ch.affected_by.set_bit(const.race_table[race.name].aff)
+    ch.imm_flags.set_bit(const.race_table[race.name].imm)
+    ch.res_flags.set_bit(const.race_table[race.name].res)
+    ch.vuln_flags.set_bit(const.race_table[race.name].vuln)
+    ch.form.set_bit(const.race_table[race.name].form)
+    ch.parts.set_bit(const.race_table[race.name].parts)
 
     # add skills */
     for i in race.skills:
-        skills.group_add(ch, i, False)
+        ch.group_add(i, False)
 
     # add cost */
     ch.pcdata.points = race.points
@@ -249,7 +249,7 @@ def con_get_new_class(self):
     log_buf = "%s@%s new player." % (ch.name, self.addrport())
     logger.info(log_buf)
     handler_game.wiznet("Newbie alert!  $N sighted.", ch, None, merc.WIZ_NEWBIE, 0, 0)
-    handler_game.wiznet(log_buf, None, None, merc.WIZ_SITES, 0, ch.get_trust())
+    handler_game.wiznet(log_buf, None, None, merc.WIZ_SITES, 0, ch.trust)
 
     ch.send("\nYou may be good, neutral, or evil.\n")
     ch.send("Which alignment (G/N/E)? ")
@@ -273,8 +273,8 @@ def con_get_alignment(self):
         return
 
     ch.send("\n")
-    skills.group_add(ch, "rom basics", False)
-    skills.group_add(ch, ch.guild.base_group, False)
+    ch.group_add("rom basics", False)
+    ch.group_add(ch.guild.base_group, False)
     ch.pcdata.learned['recall'] = 50
     ch.send("Do you wish to customize this character?\n")
     ch.send("Customization takes time, but allows a wider range of skills and abilities.\n")
@@ -291,17 +291,17 @@ def con_default_choice(self):
         ch.gen_data = handler_game.GEN_DATA()
         ch.gen_data.points_chosen = ch.pcdata.points
         ch.do_help("group header")
-        skills.list_group_costs(ch)
+        ch.list_group_costs()
         ch.send("You already have the following skills:\n")
         ch.do_skills("")
         ch.do_help("menu choice")
         self.set_connected(con_gen_groups)
     elif argument == 'n':
-        skills.group_add(ch, ch.guild.default_group, True)
+        ch.group_add(ch.guild.default_group, True)
         ch.send("Please pick a weapon from the following choices:\n")
         
         for k, weapon in const.weapon_table.items():
-            if weapon.gsn in ch.pcdata.learned:
+            if weapon.gsn in ch.learned:
                 ch.send("%s " % weapon.name)
 
         ch.send("\nYour choice? ")
@@ -315,7 +315,7 @@ def con_pick_weapon(self):
     argument = self.get_command()
     ch = self.character
     weapon = state_checks.prefix_lookup(const.weapon_table, argument)
-    if not weapon or ch.pcdata.learned[weapon.gsn] <= 0:
+    if not weapon or ch.learned[weapon.gsn] <= 0:
         ch.send("That's not a valid selection. Choices are:\n")
         for k, weapon in const.weapon_table.items():
             if weapon.gsn in ch.pcdata.learned:
@@ -334,31 +334,31 @@ def con_gen_groups(self):
     ch = self.character
 
     if argument == "done":
-        if ch.pcdata.points == const.pc_race_table[ch.race.name].points:
+        if ch.points == const.pc_race_table[ch.race.name].points:
             ch.send("You didn't pick anything.\n")
             return
-        if ch.pcdata.points < 40 + const.pc_race_table[ch.race.name].points:
+        if ch.points < 40 + const.pc_race_table[ch.race.name].points:
             ch.send("You must take at least %d points of skills and groups" %
                     (40 + const.pc_race_table[ch.race.name].points))
             return
 
-        ch.send("Creation points: %d\n" % ch.pcdata.points)
+        ch.send("Creation points: %d\n" % ch.points)
         ch.send("Experience per level: %d\n" % ch.exp_per_level(ch.gen_data.points_chosen))
-        if ch.pcdata.points < 40:
-            ch.train = (40 - ch.pcdata.points + 1) / 2
+        if ch.points < 40:
+            ch.train = (40 - ch.points + 1) / 2
         del ch.gen_data
         ch.gen_data = None
         ch.send("Please pick a weapon from the following choices:\n")
         
         for w, weapon in const.weapon_table.items():
-            if ch.pcdata.learned[weapon.gsn] > 0:
+            if weapon.gsn in ch.learned and ch.learned[weapon.gsn] > 0:
                 ch.send("%s " % weapon.name)
 
         ch.send("\nYour choice? ")
         self.set_connected(con_pick_weapon)
         return
 
-    if not skills.parse_gen_groups(ch, argument):
+    if not ch.parse_gen_groups(argument):
         ch.send("Choices are: list,learned,premise,add,drop,info,help, and done.\n")
         ch.do_help("menu choice")
         return
@@ -373,7 +373,7 @@ def con_get_old_password(self):
         pwdcmp = hashlib.sha512(argument).hexdigest()
     else:
         pwdcmp = argument
-    if pwdcmp != ch.pcdata.pwd:
+    if pwdcmp != ch.pwd:
         ch.send("Wrong password.\n")
         comm.close_socket(self)
         return
@@ -387,8 +387,8 @@ def con_get_old_password(self):
 
     log_buf = "%s@%s has connected." % (ch.name, self.addrport())
     logger.info(log_buf)
-    handler_game.wiznet(log_buf, None, None, merc.WIZ_SITES, 0, ch.get_trust())
-    if state_checks.IS_IMMORTAL(ch):
+    handler_game.wiznet(log_buf, None, None, merc.WIZ_SITES, 0, ch.trust)
+    if ch.is_immortal():
         ch.do_help("imotd")
         self.set_connected(con_read_imotd)
     else:
@@ -438,7 +438,7 @@ def con_read_imotd(self):
 
 def con_read_motd(self):
     ch = self.character
-    if not ch.pcdata or not ch.pcdata.pwd:
+    if not ch.pwd:
         ch.send("Warning! Null password!\n")
         ch.send("Please report old password with bug.\n")
         ch.send("Type 'password null <new password>' to fix.\n")
@@ -459,16 +459,16 @@ def con_read_motd(self):
         ch.train = 3
         ch.practice = 5
         buf = "the %s" % const.title_table[ch.guild.name][ch.level][ch.sex - 1]
-        game_utils.set_title(ch, buf)
+        ch.title = buf
 
         ch.do_outfit("")
         db.create_object(merc.obj_index_hash[merc.OBJ_VNUM_MAP], 0).to_char(ch)
-
         ch.to_room(merc.room_index_hash[merc.ROOM_VNUM_SCHOOL])
         ch.do_help("newbie info")
+
     elif ch.in_room:
         ch.to_room(ch.in_room)
-    elif state_checks.IS_IMMORTAL(ch):
+    elif ch.is_immortal():
         ch.to_room(merc.room_index_hash[merc.ROOM_VNUM_CHAT])
     else:
         ch.to_room(ch, merc.room_index_hash[merc.ROOM_VNUM_TEMPLE])
@@ -476,7 +476,7 @@ def con_read_motd(self):
     handler_game.act("$n has entered the game.", ch, None, None, merc.TO_ROOM)
     ch.do_look("auto")
 
-    handler_game.wiznet("$N has left real life behind.", ch, None, merc.WIZ_LOGINS, merc.WIZ_SITES, ch.get_trust())
+    handler_game.wiznet("$N has left real life behind.", ch, None, merc.WIZ_LOGINS, merc.WIZ_SITES, ch.trust)
     if ch.pet:
         ch.pet.to_room(ch.in_room)
         handler_game.act("$n has entered the game.", ch.pet, None, None, merc.TO_ROOM)

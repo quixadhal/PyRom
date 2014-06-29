@@ -12,7 +12,7 @@ import settings
 import fight
 
 def do_delete(ch, argument):
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         return
 
     if ch.pcdata.confirm_delete:

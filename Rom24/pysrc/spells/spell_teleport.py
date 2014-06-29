@@ -10,7 +10,7 @@ def spell_teleport(sn, level, ch, victim, target):
     if victim.in_room == None \
             or state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_NO_RECALL) \
             or ( victim != ch and state_checks.IS_SET(victim.imm_flags, merc.IMM_SUMMON)) \
-            or ( not state_checks.IS_NPC(ch) and victim.fighting != None ) \
+            or ( not ch.is_npc() and victim.fighting != None ) \
             or ( victim != ch \
                          and ( handler_magic.saves_spell(level - 5, victim, merc.DAM_OTHER))):
         ch.send("You failed.\n")

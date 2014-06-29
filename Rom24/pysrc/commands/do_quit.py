@@ -12,7 +12,7 @@ import handler_game
 import state_checks
 
 def do_quit(ch, argument):
-    if state_checks.IS_NPC(ch):
+    if ch.is_npc():
         return
     if ch.position == merc.POS_FIGHTING:
         ch.send("No way! You are fighting.\n")

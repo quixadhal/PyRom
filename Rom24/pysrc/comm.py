@@ -136,7 +136,7 @@ def check_playing(d, name):
 #Look for link-dead player to reconnect.
 def check_reconnect(d, name, fConn):
     for ch in merc.char_list:
-        if not state_checks.IS_NPC(ch) and (not fConn or not ch.desc) \
+        if not ch.is_npc() and (not fConn or not ch.desc) \
                 and d.character.name == ch.name:
             if not fConn:
                 d.character.pcdata.pwd = ch.pcdata.pwd
@@ -170,7 +170,7 @@ def bust_a_prompt(ch):
     if not pstr:
         ch.send("<%dhp %dm %dmv> %s" % (ch.hit, ch.mana, ch.move, ch.prefix))
         return
-    if state_checks.IS_SET(ch.comm, merc.COMM_AFK):
+    if ch.comm.is_set(merc.COMM_AFK):
         ch.send("<AFK> ")
         return
     replace = OrderedDict()
@@ -179,8 +179,8 @@ def bust_a_prompt(ch):
         if pexit \
                 and pexit.to_room \
                 and (ch.can_see_room(pexit.to_room)
-                     or (state_checks.IS_AFFECTED(ch, merc.AFF_INFRARED)
-                         and not state_checks.IS_AFFECTED(ch, merc.AFF_BLIND))) \
+                     or (ch.is_affected(merc.AFF_INFRARED)
+                         and not ch.is_affected(merc.AFF_BLIND))) \
                 and not state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED):
             found = True
             doors += dir_name[door]
@@ -196,7 +196,7 @@ def bust_a_prompt(ch):
     replace['%v'] = "%d" % ch.move
     replace['%V'] = "%d" % ch.max_move
     replace['%x'] = "%d" % ch.exp
-    replace['%X'] = "%d" % (0 if state_checks.IS_NPC(ch)
+    replace['%X'] = "%d" % (0 if ch.is_npc()
                             else (ch.level + 1) * ch.exp_per_level(ch.pcdata.points) - ch.exp)
     replace['%g'] = "%ld" % ch.gold
     replace['%s'] = "%ld" % ch.silver
@@ -204,15 +204,15 @@ def bust_a_prompt(ch):
         replace['%a'] = "%d" % ch.alignment
     else:
         replace['%a'] = "%s" % "good" \
-            if state_checks.IS_GOOD(ch) \
+            if ch.is_good() \
             else "evil" \
-            if state_checks.IS_EVIL(ch) \
+            if ch.is_evil() \
             else "neutral"
     
     if ch.in_room:
-        if (not state_checks.IS_NPC(ch)
-            and state_checks.IS_SET(ch.act, merc.PLR_HOLYLIGHT)) \
-                or (not state_checks.IS_AFFECTED(ch, merc.AFF_BLIND)
+        if (not ch.is_npc()
+            and ch.act.is_set(merc.PLR_HOLYLIGHT)) \
+                or (not ch.is_affected(merc.AFF_BLIND)
                     and not ch.in_room.is_dark()):
             replace['%r'] = ch.in_room.name 
         else: 
@@ -220,12 +220,12 @@ def bust_a_prompt(ch):
     else:
         replace['%r'] = " "
      
-    if state_checks.IS_IMMORTAL(ch) and ch.in_room:
+    if ch.is_immortal() and ch.in_room:
         replace['%R'] = "%d" % ch.in_room.vnum 
     else:
         replace['%R'] = " "
     
-    if state_checks.IS_IMMORTAL(ch) and ch.in_room:
+    if ch.is_immortal() and ch.in_room:
         replace['%z'] = "%s" % ch.in_room.area.name
     else:
         replace['%z'] = " "
