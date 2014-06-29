@@ -93,10 +93,10 @@ def interpret(ch, argument):
     argument = argument.lstrip()
 
     # No hiding.
-    state_checks.REMOVE_BIT(ch.affected_by, AFF_HIDE)
+    ch.affected_by.remove(AFF_HIDE)
 
     # Implement freeze command.
-    if not ch.is_npc() and state_checks.IS_SET(ch.act, PLR_FREEZE):
+    if not ch.is_npc() and ch.act.is_set(PLR_FREEZE):
         ch.send("You're totally frozen!\n")
         return
     # Grab the command word.
@@ -109,17 +109,17 @@ def interpret(ch, argument):
     else:
         argument, command = game_utils.read_word(argument)
     # Look for command in command table.
-    trust = ch.get_trust()
+    trust = ch.trust
     cmd = state_checks.prefix_lookup(cmd_table, command)
     if cmd is not None:
         if cmd.level > trust:
             cmd = None
 
     #* Log and snoop.
-    if (not ch.is_npc() and state_checks.IS_SET(ch.act, PLR_LOG)) or LOGALL or (cmd and cmd.log == LOG_ALWAYS):
+    if (not ch.is_npc() and ch.act.is_set(PLR_LOG)) or LOGALL or (cmd and cmd.log == LOG_ALWAYS):
         if cmd and cmd.log != LOG_NEVER:
             log_buf = "Log %s: %s" % (ch.name, logline)
-            handler_game.wiznet(log_buf, ch, None, WIZ_SECURE, 0, ch.get_trust())
+            handler_game.wiznet(log_buf, ch, None, WIZ_SECURE, 0, ch.trust)
             logger.info(log_buf)
     if ch.desc and ch.desc.snoop_by:
         ch.desc.snoop_by.send("% ")
