@@ -34,6 +34,7 @@
 import os
 import json
 from collections import OrderedDict
+import handler_log
 
 from merc import *
 
@@ -46,6 +47,8 @@ import state_checks
 import tables
 import character
 
+
+@handler_log.logged("Debug")
 def save_char_obj(ch):
     if ch.is_npc():
         return
@@ -58,8 +61,8 @@ def save_char_obj(ch):
     os.makedirs(settings.PLAYER_DIR, 0o755, True)
 
     fwrite = fwrite_char(ch)
-    if ch.carrying:
-        fwrite['carrying'] = [fwrite_obj(ch, o) for o in ch.carrying]
+    if ch.contents:
+        fwrite['carrying'] = [fwrite_obj(ch, o) for o in ch.contents]
 
     to_write = json.dumps(fwrite, indent=4)
     with open(pfile, 'w') as pf:
@@ -106,10 +109,10 @@ def fwrite_char(ch):
     chdict["LnD"] = ch.long_descr
     chdict["Desc"] = ch.description
     chdict["Prom"] = ch.prompt
-    chdict["Race"] = ch.race.name
-    chdict["Clan"] = ch.clan.name
+    chdict["Race"] = ch.race
+    chdict["Clan"] = ch.guild
     chdict["Sex"] = ch.sex
-    chdict["Cla"] = ch.guild.name
+    chdict["Cla"] = ch.guild
     chdict["Levl"] = ch.level
     chdict["Tru"] = ch.trust
     chdict["Plyd"] = ch.played + int(current_time - ch.logon)
