@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*- line endings: unix -*-
 # ------------------------------------------------------------------------------
-#   miniboa/terminal.py
-#   Copyright 2009 Jim Storch
-#   Licensed under the Apache License, Version 2.0 (the "License"); you may
-#   not use this file except in compliance with the License. You may obtain a
-#   copy of the License at http://www.apache.org/licenses/LICENSE-2.0
-#   Unless required by applicable law or agreed to in writing, software
-#   distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-#   WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-#   License for the specific language governing permissions and limitations
-#   under the License.
+# miniboa/terminal.py
+# Copyright 2009 Jim Storch
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain a
+# copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
 #------------------------------------------------------------------------------
 # Changes made by pR0Ps.CM[at]gmail[dot]com on 18/07/2012
 # -Updated for use with Python 3.x
@@ -39,6 +39,9 @@
 # The replacement is dependant on the terminal type passed in, which
 # defaults to ANSI, but can be "unknown" to strip colors, or
 # "i3" or "imc2" for the intermud networks, or "mxp" for that.
+#
+# By popular demand, I've also added support for ROM style color codes,
+# and also IMC2, and Smaug, since they are parsed in the same way.
 #------------------------------------------------------------------------------
 
 """
@@ -46,9 +49,13 @@ Support for color and formatting for various terminals or
 terminal-like systems
 """
 
+import logging
+
+logger = logging.getLogger()
+
 import re
 
-from miniboa.colors import _TERMINAL_TYPES, _COLOR_TOKENS, _COLOR_MAP
+from miniboa.colors import TERMINAL_TYPES, COLOR_MAP
 
 
 _PARA_BREAK = re.compile(r"(\n\s*\n)", re.MULTILINE)
@@ -83,26 +90,42 @@ def word_wrap(text, columns=80, indent=4, padding=2):
     return lines
 
 
-def colorize(text, terminal='ansi'):
+def color_convert(text: str, input_type: str='rom', output_type: str='ansi'):
     """
-    Given a chunk of text, replace color tokesn with the appropriate
-    color codes for the given terminal type
+    Given a chunk of text, replace color tokens of the specified input type
+    with the appropriate color codes for the given output terminal type
     """
-    if text is None or text == '':
+    if text is None or len(text) < 1:
         return text
-    if terminal is None or terminal not in _TERMINAL_TYPES:
-        terminal = 'unknown'
-    words = text.split('%^')
-    for word in words:
-        if word == '':
-            continue
-        if word not in _COLOR_TOKENS:
-            continue
-        if word not in _COLOR_MAP[terminal]:
-            continue
-        i = words.index(word)
-        words[i] = _COLOR_MAP[terminal][word]
-    return ''.join(words)
+    if input_type is None or input_type not in COLOR_MAP:
+        return text
+    if output_type is not None and output_type not in TERMINAL_TYPES:
+        output_type = None
+
+    if input_type == 'i3':
+        words = text.split('%^')
+        for word in words:
+            if word == '':
+                continue
+            if word not in COLOR_MAP[input_type]:
+                continue
+            i = words.index(word)
+            if output_type is None:
+                words[i] = ''
+            else:
+                o = TERMINAL_TYPES.index(output_type)
+                words[i] = COLOR_MAP[input_type][word][o]
+        return ''.join(words)
+    else:
+        for k in COLOR_MAP[input_type].keys():
+            if output_type is None:
+                text = text.replace(k, '')
+            else:
+                o = TERMINAL_TYPES.index(output_type)
+                v = COLOR_MAP[input_type][k][o]
+                if k != v:
+                    text = text.replace(k, v)
+        return text
 
 
 def escape(text):
