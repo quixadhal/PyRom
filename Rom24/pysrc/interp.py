@@ -33,6 +33,7 @@
 """
 import logging
 import character
+import handler_log
 
 logger = logging.getLogger()
 
@@ -88,11 +89,13 @@ def register_command(entry: cmd_type):
 
 #hotfix.init_directory(os.path.join('commands'))
 
+logged = handler_log.logged("Debug", True) if gdf is True else handler_log.logged("Debug", False)
 
+
+@logged
 def interpret(ch, argument):
     # Strip leading spaces.
     argument = argument.lstrip()
-
     # No hiding.
     ch.affected_by.rem_bit(AFF_HIDE)
 

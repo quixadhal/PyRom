@@ -1,40 +1,6 @@
-"""
-/***************************************************************************
- *  Original Diku Mud copyright (C) 1990, 1991 by Sebastian Hammer,        *
- *  Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
- *                                                                         *
- *  Merc Diku Mud improvments copyright (C) 1992, 1993 by Michael          *
- *  Chastain, Michael Quan, and Mitchell Tse.                              *
- *                                                                         *
- *  In order to use any part of this Merc Diku Mud, you must comply with   *
- *  both the original Diku license in 'license.doc' as well the Merc       *
- *  license in 'license.txt'.  In particular, you may not remove either of *
- *  these copyright notices.                                               *
- *                                                                         *
- *  Much time and thought has gone into this software and you are          *
- *  benefitting.  We hope that you share your changes too.  What goes      *
- *  around, comes around.                                                  *
- ***************************************************************************/
-
-/***************************************************************************
-*   ROM 2.4 is copyright 1993-1998 Russ Taylor                             *
-*   ROM has been brought to you by the ROM consortium                      *
-*       Russ Taylor (rtaylor@hypercube.org)                                *
-*       Gabrielle Taylor (gtaylor@hypercube.org)                           *
-*       Brian Moore (zump@rom.org)                                         *
-*   By using this code, you have agreed to follow the terms of the         *
-*   ROM license, in the file Rom24/doc/rom.license                         *
-***************************************************************************/
-/************
- * Ported to Python by Davion of MudBytes.net
- * Using Miniboa https://code.google.com/p/miniboa/
- * Now using Python 3 version https://code.google.com/p/miniboa-py3/
- ************/
-"""
 import os
 import json
 from collections import OrderedDict
-import handler_log
 
 from merc import *
 
@@ -46,7 +12,6 @@ import settings
 import state_checks
 import tables
 import character
-
 
 def save_char_obj(ch):
     if ch.is_npc():
@@ -108,10 +73,10 @@ def fwrite_char(ch):
     chdict["LnD"] = ch.long_descr
     chdict["Desc"] = ch.description
     chdict["Prom"] = ch.prompt
-    chdict["Race"] = ch.race
-    chdict["Clan"] = ch.guild
+    chdict["Race"] = ch.race.name
+    chdict["Clan"] = ch.clan.name
     chdict["Sex"] = ch.sex
-    chdict["Cla"] = ch.guild
+    chdict["Cla"] = ch.guild.name
     chdict["Levl"] = ch.level
     chdict["Tru"] = ch.trust
     chdict["Plyd"] = ch.played + int(current_time - ch.logon)

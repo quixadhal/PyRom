@@ -40,6 +40,10 @@ import sys
 import functools
 import inspect
 
+from merc import *
+import character
+import interp
+
 """So far this wrapper class will allow debugging of a function as such:
 @logger("Debug")
 def some_func(stuff)
@@ -52,7 +56,11 @@ Will add actual logfile support soon, and build out additional logging templates
 
 
 def value_to_str(v):
-    if isinstance(v, str):
+    if isinstance(v, character.Character):
+        return v.name
+    elif isinstance(v, interp.cmd_type):
+        return v.do_fun
+    elif isinstance(v, str):
         return ''.join(["'", v.replace('\n', '\\n'), "'"])
     else:
         # noinspection PyBroadException
@@ -61,33 +69,66 @@ def value_to_str(v):
         except:
             return '<ERROR: CANNOT PRINT>'
 
-def parse_exception(error_object, *args):
+
+def char_parse_exception(error_object, *args, ch):
+    wrap_call = inspect.getinnerframes(sys.exc_info()[2])
+    ch.send("An Exception Occurred: \n%s %s\n\n" % (type(error_object), str(error_object)))
+    logger.debug("Exception: %s %s" % (type(error_object), str(error_object)))
+    for call_info in reversed(wrap_call):
+        local_calls = call_info[0].f_locals
+        if '_logged__tracer_var_' in local_calls:
+            continue
+        ch.send("--Frame Trace-- \nFile: %s \nFunction: %s \nLine: %d \nCode: %s " % (call_info[1],
+                                                                                      call_info[3],
+                                                                                      call_info[2],
+                                                                                      call_info[4][0].lstrip()))
+        ch.send("\n")
+        logger.debug("--Frame Trace-- \nFile: %s \nFunction: %s \nLine: %d \nCode: %s " % (call_info[1],
+                                                                                        call_info[3],
+                                                                                        call_info[2],
+                                                                                        call_info[4][0].lstrip()))
+        logger.debug("Local Env Variables: ")
+        for k, v in local_calls.items():
+            levtrace = value_to_str(v)
+            logger.debug("%s : %s", k, levtrace)
+
+def noch_parse_exception(error_object, *args):
     wrap_call = inspect.getinnerframes(sys.exc_info()[2])
     logger.debug("Exception: %s %s" % (type(error_object), str(error_object)))
     for call_info in reversed(wrap_call):
         local_calls = call_info[0].f_locals
-        if '_logger__tracer_var_' in local_calls:
+        if '_logged__tracer_var_' in local_calls:
             continue
-        logger.debug("Frame Trace - File: ", call_info[1],
-              "Line: ", call_info[2],
-              "Function: ", call_info[3],
-              "Offending Code: ", call_info[4][0].lstrip())
+        tracestring = "Frame Trace: \nFile: %s \nLine: %d \n ", call_info[1], call_info[2]
+        tracestring += "Function: %s \nCode: %s ", call_info[3], call_info[4][0].lstrip()
+        logger.debug(tracestring)
         logger.debug("Local Env Variables: ")
         for k, v in local_calls.items():
-            logger.debug("%s : %s " % (k, value_to_str(v)))
+            levtrace = value_to_str(v)
+            logger.debug("%s : %s", k, levtrace)
 
 
 class logged(object):
-    def __init__(self, log_type):
+    def __init__(self, log_type, on=False, ch=None):
         """Init the logger, log_type"""
         self.log_type = log_type
+        self.ch = ch
+        self.on = on
 
     def __call__(self, func):
         """the class needs to be callable for this to work"""
         functools.update_wrapper(self, func)
     #Add debug log for any function you wish for TS, provides trace of incident
+        if not self.on is False:
+            return func
         if self.log_type == "Debug":
             def debug(*args, **kwargs):
+                global gdf
+                gdf = False
+                if args and isinstance(args[0], character.Character):
+                    mch = args[0]
+                else:
+                    mch = self.ch
                 """__tracer_var_ becomes _logger__tracer_var_ in the trace.
                 This is used to determine if we are within the wrapping frame
                 or the wrapped frame.
@@ -98,7 +139,11 @@ class logged(object):
                 try:
                     return func(*args, **kwargs)
                 except Exception as err:
-                    parse_exception(err, args)
+                    if isinstance(mch, character.Character):
+                        mch.send("Debug has been Enabled\n\n")
+                        char_parse_exception(err, args, ch=mch)
+                    else:
+                        noch_parse_exception(err, args)
                     return
             return debug
 
