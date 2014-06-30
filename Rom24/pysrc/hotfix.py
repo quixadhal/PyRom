@@ -70,6 +70,7 @@ def init_monitoring():
     init_file('handler_ch.py', ['handler_ch'])
     init_file('handler_obj.py', ['handler_obj'])
     init_file('handler_room.py', ['handler_room'])
+    init_file('handler_log.py', ['handler_log'])
     init_directory(os.path.join('commands'))
     init_directory(os.path.join('spells'))
 
