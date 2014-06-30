@@ -25,7 +25,7 @@ def do_quote(ch, argument):
         if ch.comm.is_set(merc.COMM_NOCHANNELS):
             ch.send("The gods have revoked your channel priviliges.\n")
             return
-        ch.commm = state_checks.REMOVE_BIT(ch.comm, merc.COMM_NOQUOTE)
+        ch.commm = ch.comm.rem_bit( merc.COMM_NOQUOTE)
 
         ch.send("You quote '%s'\n" % argument)
         for d in merc.descriptor_list:

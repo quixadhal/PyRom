@@ -13,7 +13,7 @@ def do_wear(ch, argument):
         ch.send("Wear, wield, or hold what?\n")
         return
     if arg == "all":
-        for obj in ch.carrying[:]:
+        for obj in ch.contents[:]:
             if obj.wear_loc == merc.WEAR_NONE and ch.can_see_obj(obj):
                 handler_obj.wear_obj( ch, obj, False )
         return

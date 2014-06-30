@@ -32,19 +32,12 @@
  ************/
 """
 import logging
-import character
-import handler_log
 
 logger = logging.getLogger()
 
 from collections import OrderedDict
-from merc import *
-import game_utils
-import handler_game
-import handler_ch
-import state_checks
-from fight import *
-from settings import LOGALL
+
+from living import Living
 
 
 class cmd_type:
@@ -56,8 +49,7 @@ class cmd_type:
         self.log = log
         self.show = show
         self.default_arg = default_arg
-        setattr(handler_ch.CHAR_DATA, self.do_fun.__name__, self.do_fun)
-        setattr(character.Living, self.do_fun.__name__, self.do_fun)
+        setattr(Living, self.do_fun.__name__, self.do_fun)
 
 # These commands don't need to be here but are, for order. These will always match first with prefixes.
 cmd_table = OrderedDict()
@@ -85,133 +77,3 @@ cmd_table['autolist'] = None
 def register_command(entry: cmd_type):
     cmd_table[entry.name] = entry
     logger.debug('    %s registered in command table.', entry.name)
-
-
-#hotfix.init_directory(os.path.join('commands'))
-
-logged = handler_log.logged("Debug", True) if gdf is True else handler_log.logged("Debug", False)
-
-
-@logged
-def interpret(ch, argument):
-    # Strip leading spaces.
-    argument = argument.lstrip()
-    # No hiding.
-    ch.affected_by.rem_bit(AFF_HIDE)
-
-    # Implement freeze command.
-    if not ch.is_npc() and ch.act.is_set(PLR_FREEZE):
-        ch.send("You're totally frozen!\n")
-        return
-    # Grab the command word.
-    # Special parsing so ' can be a command,
-    #   also no spaces needed after punctuation.
-    logline = argument
-    if not argument[0].isalpha() and not argument[0].isdigit():
-        command = argument[0]
-        argument = argument[:1].lstrip()
-    else:
-        argument, command = game_utils.read_word(argument)
-    # Look for command in command table.
-    trust = ch.trust
-    cmd = state_checks.prefix_lookup(cmd_table, command)
-    if cmd is not None:
-        if cmd.level > trust:
-            cmd = None
-
-    #* Log and snoop.
-    if (not ch.is_npc() and ch.act.is_set(PLR_LOG)) or LOGALL or (cmd and cmd.log == LOG_ALWAYS):
-        if cmd and cmd.log != LOG_NEVER:
-            log_buf = "Log %s: %s" % (ch.name, logline)
-            handler_game.wiznet(log_buf, ch, None, WIZ_SECURE, 0, ch.trust)
-            logger.info(log_buf)
-    if ch.desc and ch.desc.snoop_by:
-        ch.desc.snoop_by.send("% ")
-        ch.desc.snoop_by.send(logline)
-        ch.desc.snoop_by.send("\n")
-    if not cmd:
-        #* Look for command in socials table.
-        if not check_social(ch, command, argument):
-            ch.send("Huh?\n")
-        return
-    #* Character not in position for command?
-    if ch.position < cmd.position:
-        if ch.position == POS_DEAD:
-            ch.send("Lie still; you are DEAD.\n")
-        elif ch.position == POS_MORTAL \
-                or ch.position == POS_INCAP:
-            ch.send("You are hurt far too bad for that.\n")
-        elif ch.position == POS_STUNNED:
-            ch.send("You are too stunned to do that.\n")
-        elif ch.position == POS_SLEEPING:
-            ch.send("In your dreams, or what?\n")
-        elif ch.position == POS_RESTING:
-            ch.send("Nah... You feel too relaxed...\n")
-        elif ch.position == POS_SITTING:
-            ch.send("Better stand up first.\n")
-        elif ch.position == POS_FIGHTING:
-            ch.send("No way!  You are still fighting!\n")
-        return
-
-    # Dispatch the command.
-    if cmd.default_arg:
-        cmd.do_fun(ch, cmd.default_arg)
-        return
-    cmd.do_fun(ch, argument)
-
-
-def check_social(ch, command, argument):
-    cmd = None
-    for social in social_list:
-        if social.name.lower().startswith(command):
-            cmd = social
-    if not cmd:
-        return False
-    if not ch.is_npc() and ch.comm.is_set(COMM_NOEMOTE):
-        ch.send("You are anti-social!\n")
-        return True
-
-    if ch.position == POS_DEAD:
-        ch.send("Lie still; you are DEAD.\n")
-        return True
-    if ch.position == POS_INCAP or ch.position == POS_MORTAL:
-        ch.send("You are hurt far too bad for that.\n")
-        return True
-    if ch.position == POS_STUNNED:
-        ch.send("You are too stunned to do that.\n")
-        return True
-    if ch.position == POS_SLEEPING:
-        # I just know this is the path to a 12" 'if' statement.  :(
-        # But two players asked for it already!  -- Furey
-        if cmd.name != "snore":
-            ch.send("In your dreams, or what?\n")
-            return True
-    holder, arg = game_utils.read_word(argument)
-    victim = ch.get_char_room(arg)
-    if not arg:
-        handler_game.act(cmd.others_no_arg, ch, None, victim, TO_ROOM)
-        handler_game.act(cmd.char_no_arg, ch, None, victim, TO_CHAR)
-    elif not victim:
-        ch.send("They aren't here.\n")
-    elif victim == ch:
-        handler_game.act(cmd.others_auto, ch, None, victim, TO_ROOM)
-        handler_game.act(cmd.char_auto, ch, None, victim, TO_CHAR)
-    else:
-        handler_game.act(cmd.others_found, ch, None, victim, TO_NOTVICT)
-        handler_game.act(cmd.char_found, ch, None, victim, TO_CHAR)
-        handler_game.act(cmd.vict_found, ch, None, victim, TO_VICT)
-
-        if not ch.is_npc() and victim.is_npc() \
-                and not victim.is_affected( AFF_CHARM) \
-                and state_checks.IS_AWAKE(victim) and victim.desc is None:
-            num = random.randint(0, 12)
-            if num in [0, 1, 2, 3, 4, 5, 6, 7, 8]:
-                handler_game.act(cmd.others_found, victim, None, ch, TO_NOTVICT)
-                handler_game.act(cmd.char_found, victim, None, ch, TO_CHAR)
-                handler_game.act(cmd.vict_found, victim, None, ch, TO_VICT)
-
-            elif num in [9, 10, 11, 12]:
-                handler_game.act("$n slaps $N.", victim, None, ch, TO_NOTVICT)
-                handler_game.act("You slap $N.", victim, None, ch, TO_CHAR)
-                handler_game.act("$n slaps you.", victim, None, ch, TO_VICT)
-    return True

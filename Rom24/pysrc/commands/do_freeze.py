@@ -25,13 +25,13 @@ def do_freeze(ch, argument):
     if victim.get_trust() >= ch.trust:
         ch.send("You failed.\n")
         return
-    if state_checks.IS_SET(victim.act, merc.PLR_FREEZE):
-        victim.act = state_checks.REMOVE_BIT(victim.act, merc.PLR_FREEZE)
+    if victim.act.is_set(merc.PLR_FREEZE):
+        victim.act.rem_bit(merc.PLR_FREEZE)
         victim.send("You can play again.\n")
         ch.send("FREEZE removed.\n")
         handler_game.wiznet("$N thaws %s." % victim.name, ch, None, merc.WIZ_PENALTIES, merc.WIZ_SECURE, 0)
     else:
-        victim.act = state_checks.SET_BIT(victim.act, merc.PLR_FREEZE)
+        state_checks.SET_BIT(victim.act, merc.PLR_FREEZE)
         victim.send("You can't do ANYthing!\n")
         ch.send("FREEZE set.\n")
         handler_game.wiznet("$N puts %s in the deep freeze." % victim.name, ch, None, merc.WIZ_PENALTIES,

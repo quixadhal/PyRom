@@ -33,6 +33,7 @@
 """
 import logging
 import character
+from mobile import Mobile
 
 
 logger = logging.getLogger()
@@ -784,7 +785,7 @@ def create_mobile(pMobIndex):
         logger.critical("Create_mobile: None pMobIndex.")
         sys.exit(1)
 
-    mob = character.Mobile()
+    mob = Mobile()
 
     mob.pIndexData = pMobIndex
 

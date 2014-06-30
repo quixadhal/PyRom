@@ -898,9 +898,3 @@ where_name = ["<used as light>     ",
               "<wielded>           ",
               "<held>              ",
               "<floating nearby>   "]
-
-
-import interp
-import handler_ch
-import handler_obj
-import handler_room

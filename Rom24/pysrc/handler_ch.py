@@ -69,7 +69,7 @@ class CHAR_DATA(object):
         self.desc = None
         self.affected = []
         self.pnote = None
-        self.carrying = []
+        self.contents = []
         self.on = None
         self.in_room = None
         self.was_in_room = None
@@ -602,7 +602,7 @@ class handler_ch:
     def get_eq(ch, iWear):
         if not ch:
             return None
-        objs = [obj for obj in ch.carrying if obj.wear_loc == iWear]
+        objs = [obj for obj in ch.contents if obj.wear_loc == iWear]
         if not objs:
             return None
         return objs[0]
@@ -701,7 +701,7 @@ class handler_ch:
                     state_checks.SET_BIT(ch.vuln_flags, vector)
                 return
 
-        for obj in ch.carrying:
+        for obj in ch.contents:
             if obj.wear_loc == -1:
                 continue
             for paf in obj.affected:
@@ -832,7 +832,7 @@ class handler_ch:
         #    die_follower( ch )
         fight.stop_fighting(ch, True)
 
-        for obj in ch.carrying[:]:
+        for obj in ch.contents[:]:
             obj.extract()
 
         if ch.in_room:
@@ -917,7 +917,7 @@ class handler_ch:
     def get_obj_carry(ch, argument, viewer):
         number, arg = game_utils.number_argument(argument)
         count = 0
-        for obj in ch.carrying:
+        for obj in ch.contents:
             if obj.wear_loc == WEAR_NONE and viewer.can_see_obj(obj) and game_utils.is_name(arg, obj.name.lower()):
                 count += 1
                 if count == number:
@@ -928,7 +928,7 @@ class handler_ch:
     def get_obj_wear(ch, argument):
         number, arg = game_utils.number_argument(argument)
         count = 0
-        for obj in ch.carrying:
+        for obj in ch.contents:
             if obj.wear_loc != WEAR_NONE and ch.can_see_obj(obj) and game_utils.is_name(arg, obj.name.lower()):
                 count += 1
                 if count == number:
@@ -1285,7 +1285,7 @@ for m, f in methods.items():
 
 
 def has_key(ch, key):
-    for obj in ch.carrying:
+    for obj in ch.contents:
         if obj.pIndexData.vnum == key:
             return True
     return False

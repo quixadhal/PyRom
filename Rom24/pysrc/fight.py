@@ -595,10 +595,10 @@ def damage(ch, victim, dam, dt, dam_type, show):
         raw_kill(victim)
         # dump the flags */
         if ch != victim and not ch.is_npc() and not ch.is_same_clan(victim):
-            if state_checks.IS_SET(victim.act, PLR_KILLER):
-                state_checks.REMOVE_BIT(victim.act, PLR_KILLER)
+            if victim.act.is_set(PLR_KILLER):
+                victim.act.rem_bit(PLR_KILLER)
             else:
-                state_checks.REMOVE_BIT(victim.act, PLR_THIEF)
+                victim.act.rem_bit(PLR_THIEF)
                 # RT new auto commands */
         corpse = ch.get_obj_list("corpse", ch.in_room.contents)
 
@@ -606,8 +606,7 @@ def damage(ch, victim, dam, dt, dam_type, show):
             if ch.act.is_set(PLR_AUTOLOOT) and corpse and corpse.contains:  # exists and not empty */
                 ch.do_get("all corpse")
 
-            if ch.act.is_set(PLR_AUTOGOLD) and corpse and corpse.contains and not state_checks.IS_SET(
-                    ch.act, PLR_AUTOLOOT):
+            if ch.act.is_set(PLR_AUTOGOLD) and corpse and corpse.contains and not ch.act.is_set(PLR_AUTOLOOT):
                 coins = ch.get_obj_list("gcash", corpse.contains)
                 if coins: ch.do_get("all.gcash corpse")
 
@@ -629,7 +628,7 @@ def damage(ch, victim, dam, dt, dam_type, show):
 
     # * Wimp out?
     if victim.is_npc() and dam > 0 and victim.wait < PULSE_VIOLENCE // 2:
-        if (state_checks.IS_SET(victim.act, ACT_WIMPY) and random.randint(0, 4) == 0 \
+        if (victim.act.is_set(ACT_WIMPY) and random.randint(0, 4) == 0 \
                     and victim.hit < victim.max_hit // 5) \
                 or ( victim.is_affected(AFF_CHARM) and victim.master \
                              and victim.master.in_room != victim.in_room ):
@@ -657,15 +656,15 @@ def is_safe(ch, victim):
             ch.send("The shopkeeper wouldn't like that.\n")
             return True
         # no killing healers, trainers, etc */
-        if state_checks.IS_SET(victim.act, ACT_TRAIN) \
-                or state_checks.IS_SET(victim.act, ACT_PRACTICE) \
-                or state_checks.IS_SET(victim.act, ACT_IS_HEALER) \
-                or state_checks.IS_SET(victim.act, ACT_IS_CHANGER):
+        if victim.act.is_set(ACT_TRAIN) \
+                or victim.act.is_set(ACT_PRACTICE) \
+                or victim.act.is_set(ACT_IS_HEALER) \
+                or victim.act.is_set(ACT_IS_CHANGER):
             ch.send("I don't think Mota would approve.\n")
             return True
         if not ch.is_npc():
             # no pets */
-            if state_checks.IS_SET(victim.act, ACT_PET):
+            if victim.act.is_set(ACT_PET):
                 handler_game.act("But $N looks so cute and cuddly...", ch, None, victim, TO_CHAR)
                 return True
 
@@ -692,7 +691,7 @@ def is_safe(ch, victim):
                 ch.send("Join a clan if you want to kill players.\n")
                 return True
 
-            if state_checks.IS_SET(victim.act, PLR_KILLER) or state_checks.IS_SET(victim.act, PLR_THIEF):
+            if victim.act.is_set(PLR_KILLER) or victim.act.is_set(PLR_THIEF):
                 return False
 
             if not victim.is_clan():
@@ -722,14 +721,14 @@ def is_safe_spell(ch, victim, area):
         if victim.pIndexData.pShop:
             return True
         # no killing healers, trainers, etc */
-        if state_checks.IS_SET(victim.act, ACT_TRAIN) \
-                or state_checks.IS_SET(victim.act, ACT_PRACTICE) \
-                or state_checks.IS_SET(victim.act, ACT_IS_HEALER) \
-                or state_checks.IS_SET(victim.act, ACT_IS_CHANGER):
+        if victim.act.is_set(ACT_TRAIN) \
+                or victim.act.is_set(ACT_PRACTICE) \
+                or victim.act.is_set(ACT_IS_HEALER) \
+                or victim.act.is_set(ACT_IS_CHANGER):
             return True
         if not ch.is_npc():
             # no pets */
-            if state_checks.IS_SET(victim.act, ACT_PET):
+            if victim.act.is_set(ACT_PET):
                 return True
             # no charmed creatures unless owner */
             if victim.is_affected(AFF_CHARM) and (area or ch != victim.master):
@@ -762,7 +761,7 @@ def is_safe_spell(ch, victim, area):
         else:
             if not ch.is_clan():
                 return True
-            if state_checks.IS_SET(victim.act, PLR_KILLER) or state_checks.IS_SET(victim.act, PLR_THIEF):
+            if victim.act.is_set(PLR_KILLER) or victim.act.is_set(PLR_THIEF):
                 return False
             if not victim.is_clan():
                 return True
@@ -781,11 +780,11 @@ def check_killer(ch, victim):
 
         # NPC's are fair game.
         # So are killers and thieves.
-    if victim.is_npc() or state_checks.IS_SET(victim.act, PLR_KILLER) or state_checks.IS_SET(victim.act, PLR_THIEF):
+    if victim.is_npc() or victim.act.is_set(PLR_KILLER) or victim.act.is_set(PLR_THIEF):
         return
 
         # Charm-o-rama.
-    if state_checks.IS_SET(ch.affected_by, AFF_CHARM):
+    if ch.affected_by.is_set(AFF_CHARM):
         if ch.master == None:
             logger.warn("BUG: Check_killer: %s bad AFF_CHARM", ch.short_descr if ch.is_npc() else ch.name)
             ch.affect_strip('charm person')
@@ -1076,7 +1075,7 @@ def group_gain(ch, victim):
     for gch in ch.in_room.people:
         if gch.is_same_group(ch):
             members += 1
-            group_levels += gch.level // 2 if state_checks.IS_NPC(gch) else gch.level
+            group_levels += gch.level // 2 if gch.is_npc() else gch.level
 
     if members == 0:
         logger.warn("BUG: Group_gain: members. %s", members)
@@ -1106,7 +1105,7 @@ def group_gain(ch, victim):
                 continue
             if (state_checks.IS_OBJ_STAT(obj, ITEM_ANTI_EVIL) and ch.is_evil() ) \
                     or (state_checks.IS_OBJ_STAT(obj, ITEM_ANTI_GOOD) and ch.is_good() ) \
-                    or (state_checks.IS_OBJ_STAT(obj, ITEM_ANTI_NEUTRAL) and state_checks.IS_NEUTRAL(ch) ):
+                    or (state_checks.IS_OBJ_STAT(obj, ITEM_ANTI_NEUTRAL) and ch.is_neutral() ):
                 handler_game.act("You are zapped by $p.", ch, obj, None, TO_CHAR)
                 handler_game.act("$n is zapped by $p.", ch, obj, None, TO_ROOM)
                 obj.from_char()
@@ -1155,7 +1154,7 @@ def xp_compute(gch, victim, total_levels):
         base_exp = 160 + 20 * (level_range - 4)
     # do alignment computations */
     align = victim.alignment - gch.alignment
-    if state_checks.IS_SET(victim.act, ACT_NOALIGN):
+    if victim.act.is_set(ACT_NOALIGN):
         pass  # no change */
     elif align > 500:  # monster is more good than slayer */
         change = (align - 500) * base_exp // 500 * gch.level // total_levels
@@ -1169,7 +1168,7 @@ def xp_compute(gch, victim, total_levels):
         change = gch.alignment * base_exp // 500 * gch.level // total_levels
         gch.alignment -= change
     # calculate exp multiplier */
-    if state_checks.IS_SET(victim.act, ACT_NOALIGN):
+    if victim.act.is_set(ACT_NOALIGN):
         xp = base_exp
     elif gch.alignment > 500:  # for goodie two shoes */
         if victim.alignment < -750:

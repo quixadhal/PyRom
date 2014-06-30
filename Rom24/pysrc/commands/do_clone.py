@@ -68,7 +68,7 @@ def do_clone(ch, argument):
         clone = db.create_mobile(mob.pIndexData)
         db.clone_mobile(mob, clone)
 
-        for obj in mob.carrying:
+        for obj in mob.contents:
             if handler_obj.obj_check(ch, obj):
                 new_obj = db.create_object(obj.pIndexData, 0)
                 db.clone_object(obj, new_obj)

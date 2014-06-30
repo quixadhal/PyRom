@@ -8,7 +8,7 @@ import game_utils
 def get_obj_keeper(ch, keeper, argument):
     number, arg = game_utils.number_argument(argument)
     count = 0
-    for obj in keeper.carrying:
+    for obj in keeper.contents:
         if obj.wear_loc == merc.WEAR_NONE and keeper.can_see_obj(obj) and ch.can_see_obj(obj) and game_utils.is_name(arg, obj.name):
             count += 1
             if count == number:
@@ -21,7 +21,7 @@ def obj_to_keeper(obj, ch):
     # see if any duplicates are found */
     n_obj = None
     spot = -1
-    for i, t_obj in enumerate(ch.carrying):
+    for i, t_obj in enumerate(ch.contents):
         if obj.pIndexData == t_obj.pIndexData \
                 and obj.short_descr == t_obj.short_descr:
             # if this is an unlimited item, destroy the new one */
@@ -34,9 +34,9 @@ def obj_to_keeper(obj, ch):
             break
 
     if n_obj is None or spot == -1:
-        ch.carrying.remove(obj)
+        ch.contents.remove(obj)
     else:
-        ch.carrying.insert(spot, t_obj)
+        ch.contents.insert(spot, t_obj)
     obj.carried_by = ch
     obj.in_room = None
     obj.in_obj = None
@@ -57,7 +57,7 @@ def get_cost(keeper, obj, fBuy):
                 break
 
         if not state_checks.IS_OBJ_STAT(obj, merc.ITEM_SELL_EXTRACT):
-            for obj2 in keeper.carrying:
+            for obj2 in keeper.contents:
                 if obj.pIndexData == obj2.pIndexData and obj.short_descr == obj2.short_descr:
                     if state_checks.IS_OBJ_STAT(obj2, merc.ITEM_INVENTORY):
                         cost /= 2

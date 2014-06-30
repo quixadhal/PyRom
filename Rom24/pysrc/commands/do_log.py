@@ -28,8 +28,8 @@ def do_log(ch, argument):
         ch.send("Not on NPC's.\n")
         return
     # No level check, gods can log anyone.
-    if state_checks.IS_SET(victim.act, merc.PLR_LOG):
-        victim.act = state_checks.REMOVE_BIT(victim.act, merc.PLR_LOG)
+    if victim.act.is_set(merc.PLR_LOG):
+        victim.act = victim.act.rem_bit(merc.PLR_LOG)
         ch.send("LOG removed.\n")
     else:
         victim.act = state_checks.SET_BIT(victim.act, merc.PLR_LOG)

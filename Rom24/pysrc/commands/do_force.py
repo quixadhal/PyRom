@@ -28,7 +28,7 @@ def do_force(ch, argument):
         for vch in merc.char_list[:]:
             if not vch.is_npc() and vch.trust < ch.trust:
                 handler_game.act(buf, ch, None, vch, merc.TO_VICT)
-                interp.interpret(vch, argument)
+                vch.interpret( argument)
     elif arg == "players":
         if ch.trust < merc.MAX_LEVEL - 2:
             ch.send("Not at your level!\n")
@@ -36,7 +36,7 @@ def do_force(ch, argument):
         for vch in merc.char_list[:]:
             if not vch.is_npc() and vch.trust < ch.trust and vch.level < merc.LEVEL_HERO:
                 handler_game.act(buf, ch, None, vch, merc.TO_VICT)
-                interp.interpret(vch, argument)
+                vch.interpret(argument)
     elif arg == "gods":
         if ch.trust < merc.MAX_LEVEL - 2:
             ch.send("Not at your level!\n")
@@ -44,7 +44,7 @@ def do_force(ch, argument):
         for vch in merc.char_list[:]:
             if not vch.is_npc() and vch.trust < ch.trust and vch.level >= merc.LEVEL_HERO:
                 handler_game.act(buf, ch, None, vch, merc.TO_VICT)
-                interp.interpret(vch, argument)
+                vch.interpret(argument)
     else:
         victim = ch.get_char_world(arg)
         if not victim:
@@ -64,7 +64,7 @@ def do_force(ch, argument):
             ch.send("Not at your level!\n")
             return
         handler_game.act(buf, ch, None, victim, merc.TO_VICT)
-        interp.interpret(victim, argument)
+        victim.interpret(argument)
     ch.send("Ok.\n")
     return
 

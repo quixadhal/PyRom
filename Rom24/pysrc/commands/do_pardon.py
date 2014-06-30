@@ -22,14 +22,14 @@ def do_pardon(ch, argument):
         ch.send("Not on NPC's.\n")
         return
     if arg2 == "killer":
-        if state_checks.IS_SET(victim.act, merc.PLR_KILLER):
-            victim.act = state_checks.REMOVE_BIT(victim.act, merc.PLR_KILLER)
+        if victim.act.is_set(merc.PLR_KILLER):
+            victim.act = victim.act.rem_bit(merc.PLR_KILLER)
             ch.send("Killer flag removed.\n")
             victim.send("You are no longer a KILLER.\n")
         return
     if arg2 == "thief":
-        if state_checks.IS_SET(victim.act, merc.PLR_THIEF):
-            victim.act = state_checks.REMOVE_BIT(victim.act, merc.PLR_THIEF)
+        if victim.act.is_set(merc.PLR_THIEF):
+            victim.act = victim.act.rem_bit(merc.PLR_THIEF)
             ch.send("Thief flag removed.\n")
             victim.send("You are no longer a THIEF.\n")
         return

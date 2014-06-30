@@ -48,7 +48,7 @@ def do_order(ch, argument):
                 and (fAll or och == victim):
             found = True
             handler_game.act("$n orders you to '%s'." % argument, ch, None, och, merc.TO_VICT)
-            interp.interpret(och, argument)
+            och.interpret(argument)
 
     if found:
         state_checks.WAIT_STATE(ch, merc.PULSE_VIOLENCE)

@@ -32,8 +32,8 @@ def save_char_obj(ch):
     with open(pfile, 'w') as pf:
         pf.write(to_write)
 
-#    if ( ch.carrying != NULL )
- #       fwrite_obj( ch, ch.carrying, fp, 0 );
+#    if ( ch.contents != NULL )
+ #       fwrite_obj( ch, ch.contents, fp, 0 );
  #   /* save the pets */
  #   if (ch.pet != NULL and ch.pet.in_room == ch.in_room)
  #       fwrite_pet(ch.pet,fp);
@@ -168,7 +168,7 @@ def fread_char(chdict, ch):
     ch.long_descr = chdict["LnD"]
     ch.description = chdict["Desc"]
     ch.prompt = chdict["Prom"]
-    ch.race = const.race_table[chdict["Race"]]
+    ch.race = chdict["Race"]
     ch.clan = chdict["Clan"]
     ch.sex = int(chdict["Sex"])
     ch._guild = chdict["Cla"]

@@ -504,12 +504,12 @@ def spec_guard( ch ):
     crime = ""
     victim = None
     for vch in ch.in_room.people:
-        if not vch.is_npc() and state_checks.IS_SET(vch.act, PLR_KILLER) and ch.can_see(vch):
+        if not vch.is_npc() and vch.act.is_set(PLR_KILLER) and ch.can_see(vch):
             victim = vch
             crime = "KILLER"
             break
 
-        if not vch.is_npc() and state_checks.IS_SET(vch.act, PLR_THIEF) and ch.can_see(vch):
+        if not vch.is_npc() and vch.act.is_set(PLR_THIEF) and ch.can_see(vch):
             crime = "THIEF" 
             victim = vch
             break
@@ -520,7 +520,7 @@ def spec_guard( ch ):
 
     if victim:
         buf = "%s is a %s!  PROTECT THE INNOCENT!!  BANZAI!!" % ( victim.name, crime )
-        state_checks.REMOVE_BIT(ch.comm,COMM_NOSHOUT)
+        ch.comm.rem_bit(COMM_NOSHOUT)
         ch.do_yell(buf)
         fight.multi_hit( ch, victim, TYPE_UNDEFINED )
         return True

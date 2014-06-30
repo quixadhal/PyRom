@@ -7,7 +7,7 @@ import state_checks
 
 def spell_sleep(sn, level, ch, victim, target):
     if victim.is_affected( merc.AFF_SLEEP) \
-            or (victim.is_npc() and state_checks.IS_SET(victim.act, merc.ACT_UNDEAD)) \
+            or (victim.is_npc() and victim.act.is_set(merc.ACT_UNDEAD)) \
             or (level + 2) < victim.level \
             or handler_magic.saves_spell(level - 4, victim, merc.DAM_CHARM):
         return
