@@ -3,7 +3,6 @@ import logging
 logger = logging.getLogger()
 
 import game_utils
-import handler_ch
 import handler_game
 import handler_room
 import interp
@@ -30,7 +29,7 @@ def do_lock(ch, argument):
             if obj.value[4] < 0 or state_checks.IS_SET(obj.value[1], merc.EX_NOLOCK):
                 ch.send("It can't be locked.\n")
                 return
-            if not handler_ch.has_key(ch, obj.value[4]):
+            if not ch.has_key(obj.value[4]):
                 ch.send("You lack the key.\n")
                 return
             if state_checks.IS_SET(obj.value[1], merc.EX_LOCKED):
@@ -50,7 +49,7 @@ def do_lock(ch, argument):
         if obj.value[2] < 0:
             ch.send("It can't be locked.\n")
             return
-        if not handler_ch.has_key(ch, obj.value[2]):
+        if not ch.has_key(obj.value[2]):
             ch.send("You lack the key.\n")
             return
         if state_checks.IS_SET(obj.value[1], merc.CONT_LOCKED):
@@ -71,7 +70,7 @@ def do_lock(ch, argument):
         if pexit.key < 0:
             ch.send("It can't be locked.\n")
             return
-        if not handler_ch.has_key(ch, pexit.key):
+        if not ch.has_key(pexit.key):
             ch.send("You lack the key.\n")
             return
         if state_checks.IS_SET(pexit.exit_info, merc.EX_LOCKED):

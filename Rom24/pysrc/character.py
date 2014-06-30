@@ -1,22 +1,22 @@
 import random
 import logging
 import time
+
+logger = logging.getLogger()
+
 import game_utils
 import handler_game
+import handler_log
 from interp import cmd_table
 
 from living import Living
 from settings import LOGALL
 import state_checks
-
-
-logger = logging.getLogger()
-
 from const import group_table, skill_table, \
     int_app
 from merc import STAT_INT, TO_CHAR, TO_VICT, TO_NOTVICT, AFF_CHARM, TO_ROOM, POS_SLEEPING, POS_STUNNED, POS_MORTAL, \
     POS_INCAP, POS_DEAD, COMM_NOEMOTE, social_list, POS_FIGHTING, POS_SITTING, POS_RESTING, WIZ_SECURE, LOG_NEVER, \
-    LOG_ALWAYS, PLR_LOG, PLR_FREEZE, AFF_HIDE
+    LOG_ALWAYS, PLR_LOG, PLR_FREEZE, AFF_HIDE, gdf
 from update import gain_exp
 
 
@@ -328,7 +328,7 @@ class Character(Living):
             return  # skill is not known */
 
         # check to see if the character has a chance to learn */
-        chance = 10 * int_app[self.get_curr_stat(STAT_INT)].learn
+        chance = 10 * int_app[self.stat(STAT_INT)].learn
         chance //= (multiplier * sn.rating[self.guild.name] * 4)
         chance += self.level
 
@@ -351,6 +351,9 @@ class Character(Living):
                 self.learned[sn.name] = min(self.learned[sn.name],100)
                 gain_exp(self,2 * sn.rating[self.guild.name])
 
+    logged = handler_log.logged("Debug", True) if gdf is True else handler_log.logged("Debug", False)
+
+    @logged
     def interpret(self, argument):
         # Strip leading spaces.
         argument = argument.lstrip()

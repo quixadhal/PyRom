@@ -32,17 +32,11 @@
  ************/
 """
 import logging
-import character
 
 logger = logging.getLogger()
 
 from collections import OrderedDict
-from merc import *
-import game_utils
-import handler_game
-import state_checks
-from fight import *
-from settings import LOGALL
+
 from living import Living
 
 

@@ -1,26 +1,23 @@
 import logging
+import bit
+import const
+import handler_game
+import merc
+import tables
 
 
 logger = logging.getLogger()
-from bit import Bit
-from const import skill_type, str_app
-import handler_game
-from merc import TO_OBJECT, TO_WEAPON, TO_AFFECTS, TO_IMMUNE, TO_RESIST, TO_VULN, APPLY_NONE, APPLY_STR, STAT_STR, \
-    APPLY_DEX, STAT_DEX, APPLY_INT, STAT_INT, APPLY_WIS, STAT_WIS, APPLY_CON, STAT_CON, APPLY_SEX, APPLY_CLASS, \
-    APPLY_LEVEL, APPLY_AGE, APPLY_HEIGHT, APPLY_WEIGHT, APPLY_MANA, APPLY_HIT, APPLY_MOVE, APPLY_GOLD, APPLY_EXP, \
-    APPLY_AC, APPLY_HITROLL, APPLY_DAMROLL, APPLY_SAVES, APPLY_SAVING_ROD, APPLY_SAVING_PETRI, APPLY_SAVING_BREATH, \
-    APPLY_SAVING_SPELL, APPLY_SPELL_AFFECT, WEAR_WIELD, TO_CHAR, TO_ROOM
-from tables import affect_flags
+
 
 
 class Affects:
     def __init__(self):
         super().__init__()
         self.affected = []
-        self.affected_by = Bit(flags=affect_flags)
+        self.affected_by = bit.Bit(flags=tables.affect_flags)
 
     def is_affected(self, aff):
-        if isinstance(aff, skill_type):
+        if isinstance(aff, const.skill_type):
             aff = aff.name
         if type(aff) == str:
             return True if [paf for paf in self.affected if paf.type == aff][:1] else False
@@ -38,7 +35,7 @@ class Affects:
     def affect_join(self, paf):
         for paf_old in self.affected:
             if paf_old.type == paf.type:
-                paf.level = (paf.level + paf_old.level) / 2
+                paf.level = (paf.level + paf_old.level) // 2
                 paf.duration += paf_old.duration
                 paf.modifier += paf_old.modifier
                 self.affect_remove(paf_old)
@@ -65,18 +62,18 @@ class Affects:
         return
 
     def affect_check(self, where, vector):
-        if where in [TO_OBJECT, TO_WEAPON] or not vector:
+        if where in [merc.TO_OBJECT, merc.TO_WEAPON] or not vector:
             return
 
         for paf in self.affected:
             if paf.where == where and paf.bitvector == vector:
-                if where == TO_AFFECTS:
+                if where == merc.TO_AFFECTS:
                     self.affected_by.set_bit(vector)
-                elif where == TO_IMMUNE:
+                elif where == merc.TO_IMMUNE:
                     self.imm_flags.set_bit(vector)
-                elif where == TO_RESIST:
+                elif where == merc.TO_RESIST:
                     self.res_flags.set_bit(vector)
-                elif where == TO_VULN:
+                elif where == merc.TO_VULN:
                     self.vuln_flags.set_bit(vector)
                 return
 
@@ -85,26 +82,26 @@ class Affects:
                 continue
             for paf in obj.affected:
                 if paf.where == where and paf.bitvector == vector:
-                    if where == TO_AFFECTS:
+                    if where == merc.TO_AFFECTS:
                         self.affected_by.set_bit(vector)
-                    elif where == TO_IMMUNE:
+                    elif where == merc.TO_IMMUNE:
                         self.imm_flags.set_bit(vector)
-                    elif where == TO_RESIST:
+                    elif where == merc.TO_RESIST:
                         self.res_flags.set_bit(vector)
-                    elif where == TO_VULN:
+                    elif where == merc.TO_VULN:
                         self.vuln_flags.set_bit(vector)
                     return
             if obj.enchanted:
                 continue
             for paf in obj.pIndexData.affected:
                 if paf.where == where and paf.bitvector == vector:
-                    if where == TO_AFFECTS:
+                    if where == merc.TO_AFFECTS:
                         self.affected_by.set_bit(vector)
-                    elif where == TO_IMMUNE:
+                    elif where == merc.TO_IMMUNE:
                         self.imm_flags.set_bit(vector)
-                    elif where == TO_RESIST:
+                    elif where == merc.TO_RESIST:
                         self.res_flags.set_bit(vector)
-                    elif where == TO_VULN:
+                    elif where == merc.TO_VULN:
                         self.vuln_flags.set_bit(vector)
                     return
 
@@ -112,77 +109,77 @@ class Affects:
     def affect_modify(self, paf, fAdd):
         mod = paf.modifier
         if fAdd:
-            if paf.where == TO_AFFECTS:
+            if paf.where == merc.TO_AFFECTS:
                 self.affected_by.set_bit(paf.bitvector)
-            elif paf.where == TO_IMMUNE:
+            elif paf.where == merc.TO_IMMUNE:
                 self.imm_flags.set_bit(paf.bitvector)
-            elif paf.where == TO_RESIST:
+            elif paf.where == merc.TO_RESIST:
                 self.res_flags.set_bit(paf.bitvector)
-            elif paf.where == TO_VULN:
+            elif paf.where == merc.TO_VULN:
                 self.vuln_flags.set_bit(paf.bitvector)
         else:
-            if paf.where == TO_AFFECTS:
+            if paf.where == merc.TO_AFFECTS:
                 self.affected_by.rem_bit(paf.bitvector)
-            elif paf.where == TO_IMMUNE:
+            elif paf.where == merc.TO_IMMUNE:
                 self.imm_flags.rem_bit(paf.bitvector)
-            elif paf.where == TO_RESIST:
+            elif paf.where == merc.TO_RESIST:
                 self.res_flags.rem_bit(paf.bitvector)
-            elif paf.where == TO_VULN:
+            elif paf.where == merc.TO_VULN:
                 self.vuln_flags.rem_bit(paf.bitvector)
             mod = 0 - mod
 
-        if paf.location == APPLY_NONE:
+        if paf.location == merc.APPLY_NONE:
             pass
-        elif paf.location == APPLY_STR:
-            self.mod_stat[STAT_STR] += mod
-        elif paf.location == APPLY_DEX:
-            self.mod_stat[STAT_DEX] += mod
-        elif paf.location == APPLY_INT:
-            self.mod_stat[STAT_INT] += mod
-        elif paf.location == APPLY_WIS:
-            self.mod_stat[STAT_WIS] += mod
-        elif paf.location == APPLY_CON:
-            self.mod_stat[STAT_CON] += mod
-        elif paf.location == APPLY_SEX:
+        elif paf.location == merc.APPLY_STR:
+            self.mod_stat[merc.STAT_STR] += mod
+        elif paf.location == merc.APPLY_DEX:
+            self.mod_stat[merc.STAT_DEX] += mod
+        elif paf.location == merc.APPLY_INT:
+            self.mod_stat[merc.STAT_INT] += mod
+        elif paf.location == merc.APPLY_WIS:
+            self.mod_stat[merc.STAT_WIS] += mod
+        elif paf.location == merc.APPLY_CON:
+            self.mod_stat[merc.STAT_CON] += mod
+        elif paf.location == merc.APPLY_SEX:
             self.sex += mod
-        elif paf.location == APPLY_CLASS:
+        elif paf.location == merc.APPLY_CLASS:
             pass
-        elif paf.location == APPLY_LEVEL:
+        elif paf.location == merc.APPLY_LEVEL:
             pass
-        elif paf.location == APPLY_AGE:
+        elif paf.location == merc.APPLY_AGE:
             pass
-        elif paf.location == APPLY_HEIGHT:
+        elif paf.location == merc.APPLY_HEIGHT:
             pass
-        elif paf.location == APPLY_WEIGHT:
+        elif paf.location == merc.APPLY_WEIGHT:
             pass
-        elif paf.location == APPLY_MANA:
+        elif paf.location == merc.APPLY_MANA:
             self.max_mana += mod
-        elif paf.location == APPLY_HIT:
+        elif paf.location == merc.APPLY_HIT:
             self.max_hit += mod
-        elif paf.location == APPLY_MOVE:
+        elif paf.location == merc.APPLY_MOVE:
             self.max_move += mod
-        elif paf.location == APPLY_GOLD:
+        elif paf.location == merc.APPLY_GOLD:
             pass
-        elif paf.location == APPLY_EXP:
+        elif paf.location == merc.APPLY_EXP:
             pass
-        elif paf.location == APPLY_AC:
+        elif paf.location == merc.APPLY_AC:
             for i in range(4):
                 self.armor[i] += mod
-        elif paf.location == APPLY_HITROLL:
+        elif paf.location == merc.APPLY_HITROLL:
             self.hitroll += mod
-        elif paf.location == APPLY_DAMROLL:
+        elif paf.location == merc.APPLY_DAMROLL:
             self.damroll += mod
-        elif paf.location == APPLY_SAVES:
+        elif paf.location == merc.APPLY_SAVES:
             self.saving_throw += mod
-        elif paf.location == APPLY_SAVING_ROD:
+        elif paf.location == merc.APPLY_SAVING_ROD:
             self.saving_throw += mod
-        elif paf.location == APPLY_SAVING_PETRI:
+        elif paf.location == merc.APPLY_SAVING_PETRI:
             self.saving_throw += mod
-        elif paf.location == APPLY_SAVING_BREATH:
+        elif paf.location == merc.APPLY_SAVING_BREATH:
             self.saving_throw += mod
-        elif paf.location == APPLY_SAVING_SPELL:
+        elif paf.location == merc.APPLY_SAVING_SPELL:
             self.saving_throw += mod
-        elif paf.location == APPLY_SPELL_AFFECT:
+        elif paf.location == merc.APPLY_SPELL_AFFECT:
             pass
         else:
             logger.error("Affect_modify: unknown location %d." % paf.location)
@@ -190,16 +187,21 @@ class Affects:
         #
         # * Check for weapon wielding.
         # * Guard against recursion (for weapons with affects).
-        wield = self.get_eq(WEAR_WIELD)
+        wield = self.get_eq(merc.WEAR_WIELD)
         if not self.is_npc() and wield \
-                and wield.get_weight() > (str_app[self.stat(STAT_STR)].wield * 10):
+                and wield.get_weight() > (const.str_app[self.stat(merc.STAT_STR)].wield * 10):
             global depth
 
             if depth == 0:
                 depth += 1
-                handler_game.act("You drop $p.", self, wield, None, TO_CHAR)
-                handler_game.act("$n drops $p.", self, wield, None, TO_ROOM)
+                handler_game.act("You drop $p.", self, wield, None, merc.TO_CHAR)
+                handler_game.act("$n drops $p.", self, wield, None, merc.TO_ROOM)
                 wield.from_char()
                 wield.to_room(self.in_room)
                 depth -= 1
+        return
+
+    # * Strip all affects of a given sn.
+    def affect_strip(self, sn):
+        [self.affect_remove(paf) for paf in self.affected[:] if paf.type == sn]
         return
