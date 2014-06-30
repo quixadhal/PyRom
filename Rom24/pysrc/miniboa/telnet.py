@@ -32,7 +32,9 @@ import socket
 import time
 import logging
 
-from miniboa.terminal import colorize
+logger = logging.getLogger()
+
+from miniboa.terminal import color_convert
 from miniboa.terminal import word_wrap
 
 
@@ -182,7 +184,7 @@ class TelnetClient(object):
             self.cmd_ready = False
         return cmd
 
-    def send(self, text, wrap=None, terminal='ansi'):
+    def send(self, text: str, wrap: int=None, terminal: str='ansi'):
         """
         Send raw text to the distant end.
         """
@@ -193,7 +195,7 @@ class TelnetClient(object):
             if wrap:
                 text = '\n'.join(word_wrap(text, wrap))  # Note self.columns is negotiated
             if terminal:
-                text = colorize(text, terminal)  # Note self.terminal_type is negotiated
+                text = color_convert(text, 'rom', terminal)  # Note self.terminal_type is negotiated
             self.send_buffer += text.replace('\n', '\r\n')
             self.send_pending = True
 
