@@ -4,7 +4,8 @@ logger = logging.getLogger()
 
 from game_utils import read_word
 from merc import *
-from interp import register_command, cmd_type, interpret
+from interp import register_command, cmd_type
+from character import Character
 
 
 def do_debug(ch, argument):
@@ -21,7 +22,7 @@ def do_debug(ch, argument):
         ch.send("Nope.\n")
         return
     gdf = True
-    interpret(ch, argument)
+    Character.interpret(ch, argument)
     return
 
 
