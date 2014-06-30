@@ -83,21 +83,24 @@ def value_to_str(v):
 def char_parse_exception(error_object, *args, ch):  # Parser for exceptions with a CH entity for extra msging
     merc.GDF = False
     wrap_call = inspect.getinnerframes(sys.exc_info()[2])
-    ch.send("An Exception Occurred: \n%s %s\n\n" % (type(error_object), str(error_object)))
+    if ch.level == merc.ML:
+        ch.send("An Exception Occurred: \n%s %s\n\n" % (type(error_object), str(error_object)))
     logger.debug("Exception: %s %s" % (type(error_object), str(error_object)))
     for call_info in reversed(wrap_call):
         local_calls = call_info[0].f_locals
         if '_logged__tracer_var_' in local_calls:
             continue
-        ch.send("--Frame Trace-- \nFile: %s \nFunction: %s \nLine: %d \nCode: %s "
-                % (call_info[1], call_info[3], call_info[2], call_info[4][0].lstrip()))
-        ch.send("\n")
+        if ch.level == merc.ML:
+            ch.send("--Frame Trace-- \nFile: %s \nFunction: %s \nLine: %d \nCode: %s "
+                    % (call_info[1], call_info[3], call_info[2], call_info[4][0].lstrip()))
+            ch.send("\n")
         logger.debug("--Frame Trace-- \nFile: %s \nFunction: %s \nLine: %d \nCode: %s "
                      % (call_info[1], call_info[3], call_info[2], call_info[4][0].lstrip()))
         logger.debug("Local Env Variables: ")
         for k, v in local_calls.items():
             levtrace = value_to_str(v)
             logger.debug("%s : %s", k, levtrace)
+
 
 def noch_parse_exception(error_object, *args):
     merc.GDF = False
@@ -144,7 +147,8 @@ class logged(object):
                     return func(*args, **kwargs)
                 except Exception as err:
                     if isinstance(mch, character.Character):
-                        mch.send("Debug has been Enabled\n\n")
+                        if mch.level == merc.ML:
+                            mch.send("Debug has been Enabled\n\n")
                         char_parse_exception(err, args, ch=mch)
                     else:
                         noch_parse_exception(err, args)
