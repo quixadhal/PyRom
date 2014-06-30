@@ -11,7 +11,7 @@ import state_checks
 
 
 def do_restore(ch, argument):
-    argument, arg = game_utils.read_word(argument)
+    arg = game_utils.read_word(argument)
     if not arg or arg == "room":
         # cure room
         for vch in ch.in_room.people:
@@ -33,7 +33,7 @@ def do_restore(ch, argument):
         # cure all
         for d in merc.descriptor_list:
             victim = d.character
-            if victim == None or victim.is_npc():
+            if victim is None or victim.is_npc():
                 continue
             victim.affect_strip("plague")
             victim.affect_strip("poison")
