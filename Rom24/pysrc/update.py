@@ -431,9 +431,8 @@ def char_update():
         if ch.position >= POS_STUNNED:
             # check to see if we need to go home */
             if ch.is_npc() and ch.zone and ch.zone != ch.in_room.area \
-                    and not ch.desc and not ch.fighting and not state_checks.IS_AFFECTED(ch,
-                                                                                         AFF_CHARM) and random.randint(
-                    1, 99) < 5:
+                    and not ch.desc and not ch.fighting\
+                    and not ch.is_affected(AFF_CHARM) and random.randint(1, 99) < 5:
                 handler_game.act("$n wanders on home.", ch, None, None, TO_ROOM)
                 ch.extract(True)
                 continue
@@ -530,8 +529,8 @@ def char_update():
             plague.bitvector = AFF_PLAGUE
 
             for vch in ch.in_room.people:
-                if not handler_magic.saves_spell(plague.level - 2, vch, DAM_DISEASE) and not state_checks.IS_IMMORTAL(vch) \
-                        and not state_checks.IS_AFFECTED(vch, AFF_PLAGUE) and random.randint(0, 4) == 0:
+                if not handler_magic.saves_spell(plague.level - 2, vch, DAM_DISEASE) and not vch.is_immmortal() \
+                        and not vch.is_affected(AFF_PLAGUE) and random.randint(0, 4) == 0:
                     vch.send("You feel hot and feverish.\n")
                     handler_game.act("$n shivers and looks very ill.", vch, None, None, TO_ROOM)
                     vch.affect_join(plague)
@@ -544,7 +543,7 @@ def char_update():
             if poison:
                 handler_game.act("$n shivers and suffers.", ch, None, None, TO_ROOM)
                 ch.send("You shiver and suffer.\n")
-                fight.damage(ch, ch, poison.level // 10 + 1, gsn_poison, DAM_POISON, False)
+                fight.damage(ch, ch, poison.level // 10 + 1, 'poison', DAM_POISON, False)
         elif ch.position == POS_INCAP and random.randint(0, 1) == 0:
             fight.damage(ch, ch, 1, TYPE_UNDEFINED, DAM_NONE, False)
         elif ch.position == POS_MORTAL:

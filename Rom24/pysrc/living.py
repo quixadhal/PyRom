@@ -1,3 +1,4 @@
+import random
 import logging
 import random
 
@@ -15,7 +16,7 @@ import immortal
 import location
 import state_checks
 
-class CharInteract:
+class Grouping:
     def __init__(self):
         super().__init__()
         self.master = None
@@ -64,6 +65,34 @@ class CharInteract:
         self.master = None
         self.leader = None
         return
+
+    def is_clan(ch):
+        return ch.clan.name != ""
+
+    def is_same_clan(ch, victim):
+        if ch.clan.independent:
+            return False
+        else:
+            return ch.clan == victim.clan
+
+    def can_loot(ch, obj):
+        if ch.is_immortal():
+            return True
+        if not obj.owner or obj.owner is None:
+            return True
+        owner = None
+        for wch in merc.char_list:
+            if wch.name == obj.owner:
+                owner = wch
+        if owner is None:
+            return True
+        if ch.name == owner.name:
+            return True
+        if not owner.is_npc() and owner.act.is_set(merc.PLR_CANLOOT):
+            return True
+        if ch.is_same_group(owner):
+            return True
+        return False
 
 
 class Physical:
@@ -188,7 +217,7 @@ class Container:
         return const.str_app[self.stat(merc.STAT_STR)].carry * 10 + self.level * 25
 
 
-class Living(immortal.Immortal, Fight, CharInteract, Physical,
+class Living(immortal.Immortal, Fight, Grouping, Physical,
              location.Location, affects.Affects, Communication, Container):
     def __init__(self):
         super().__init__()
@@ -759,8 +788,16 @@ class Living(immortal.Immortal, Fight, CharInteract, Physical,
             if count == number:
                 return obj
         return None
-    def get_skill(self, sn):
+    # * True if char can drop obj.
+    def can_drop_obj(self, obj):
+        if not state_checks.IS_SET(obj.extra_flags, merc.ITEM_NODROP):
+            return True
+        if not self.is_npc() \
+                and self.level >= merc.LEVEL_IMMORTAL:
+            return True
+        return False
 
+    def get_skill(self, sn):
         if sn == -1:  # shorthand for level based skills */
             skill = self.level * 5 // 2
         elif sn not in const.skill_table:
@@ -822,6 +859,7 @@ class Living(immortal.Immortal, Fight, CharInteract, Physical,
             skill = 9 * skill // 10
 
         return max(0, min(skill, 100))
+
     # for returning weapon information */
     def get_weapon_sn(self):
         wield = self.get_eq(merc.WEAR_WIELD)
@@ -847,6 +885,7 @@ class Living(immortal.Immortal, Fight, CharInteract, Physical,
             else:
                 skill = self.learned[sn]
         return max(0, min(skill, 100))
+
     # deduct cost from a character */
     def deduct_cost(self, cost):
         silver = min(self.silver, cost)
