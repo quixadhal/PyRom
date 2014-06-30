@@ -94,9 +94,9 @@ class Fight:
         self.daze = 0
         self.hit = 20
         self.max_hit = 20
-        self.imm_flags = bit.Bit(flags=imm_flags)
-        self.res_flags = bit.Bit(flags=imm_flags)
-        self.vuln_flags = bit.Bit(flags=imm_flags)
+        self.imm_flags = bit.Bit(flags=tables.imm_flags)
+        self.res_flags = bit.Bit(flags=tables.imm_flags)
+        self.vuln_flags = bit.Bit(flags=tables.imm_flags)
 
     def check_immune(self, dam_type):
         immune = -1
