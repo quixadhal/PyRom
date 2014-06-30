@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*- line endings: unix -*-
 # ------------------------------------------------------------------------------
-#   miniboa/colors.py
-#   Copyright 2009 Jim Storch
-#   Licensed under the Apache License, Version 2.0 (the "License"); you may
-#   not use this file except in compliance with the License. You may obtain a
-#   copy of the License at http://www.apache.org/licenses/LICENSE-2.0
-#   Unless required by applicable law or agreed to in writing, software
-#   distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-#   WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-#   License for the specific language governing permissions and limitations
-#   under the License.
+# miniboa/colors.py
+# Copyright 2009 Jim Storch
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain a
+# copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
 #------------------------------------------------------------------------------
 # Changes made by pR0Ps.CM[at]gmail[dot]com on 18/07/2012
 # -Updated for use with Python 3.x
@@ -41,260 +41,282 @@
 # "i3" or "imc2" for the intermud networks, or "mxp" for that.
 #------------------------------------------------------------------------------
 """
-Split off the color codes themselves into a seperate module
+Split off the color codes themselves into a separate module
 to make it easier to edit the actual terminal code
 """
 
-_TERMINAL_TYPES = ['unknown', 'ansi', 'imc2', 'i3', 'mxp']
-_COLOR_TOKENS = ['BOLD', 'FLASH', 'ITALIC', 'RESET', 'REVERSE', 'STRIKETHRU', 'UNDERLINE',
-                 'CLEARLINE', 'CURS_DOWN', 'CURS_LEFT', 'CURS_RIGHT', 'CURS_UP',
-                 'ENDTERM', 'HOME', 'INITTERM', 'RESTORE', 'SAVE',
-                 'BLACK', 'RED', 'GREEN', 'ORANGE',
-                 'BLUE', 'MAGENTA', 'CYAN', 'GREY',
-                 'DARKGREY', 'LIGHTRED', 'LIGHTGREEN', 'YELLOW',
-                 'LIGHTBLUE', 'PINK', 'LIGHTCYAN', 'WHITE',
-                 'B_BLACK', 'B_RED', 'B_GREEN', 'B_ORANGE',
-                 'B_BLUE', 'B_MAGENTA', 'B_CYAN', 'B_GREY',
-                 'B_DARKGREY', 'B_LIGHTRED', 'B_LIGHTGREEN', 'B_YELLOW',
-                 'B_LIGHTBLUE', 'B_PINK', 'B_LIGHTCYAN', 'B_WHITE']
+import logging
 
-_COLOR_MAP = {}
+logger = logging.getLogger()
 
-for k in _TERMINAL_TYPES:
-    _COLOR_MAP[k] = {}
+from collections import namedtuple
 
-for k in _COLOR_TOKENS:
-    _COLOR_MAP['unknown'][k] = ''
+TERMINAL_TYPES = ('rom', 'smaug', 'imc2', 'i3', 'ansi', 'mxp')
 
-_COLOR_MAP['ansi'] = {
-    'BOLD': "\033[1m",
-    'FLASH': "\033[5m",
-    'ITALIC': "\033[3m",
-    'RESET': "\033[0m",
-    'REVERSE': "\033[7m",
-    'STRIKETHRU': "\033[9m",
-    'UNDERLINE': "\033[4m",
+ColorToken = namedtuple('ColorToken', TERMINAL_TYPES)
 
-    'CLEARLINE': "\033[L\033[G",
-    'CURS_DOWN': "\033[B",
-    'CURS_LEFT': "\033[D",
-    'CURS_RIGHT': "\033[C",
-    'CURS_UP': "\033[A",
+COLOR_MAP = {}
 
-    'ENDTERM': "",
-    'HOME': "\033[H",
-    'INITTERM': "\033[H\033[2J",
-    'RESTORE': "\033[u",
-    'SAVE': "\033[s",
+COLOR_MAP['rom'] = {
+    '{d': ColorToken('{d', '&x', '~x', '%^BLACK%^', '\033[30m', '<COLOR FORE=\"#000000\">'),
+    '{r': ColorToken('{r', '&r', '~r', '%^RED%^', '\033[31m', '<COLOR FORE=\"#bb0000\">'),
+    '{g': ColorToken('{g', '&g', '~g', '%^GREEN%^', '\033[32m', '<COLOR FORE=\"#00bb00\">'),
+    '{y': ColorToken('{y', '&O', '~y', '%^ORANGE%^', '\033[33m', '<COLOR FORE=\"#bbbb00\">'),
+    '{b': ColorToken('{b', '&b', '~b', '%^BLUE%^', '\033[34m', '<COLOR FORE=\"#0000bb\">'),
+    '{m': ColorToken('{m', '&p', '~p', '%^MAGENTA%^', '\033[35m', '<COLOR FORE=\"#bb00bb\">'),
+    '{c': ColorToken('{c', '&c', '~c', '%^CYAN%^', '\033[36m', '<COLOR FORE=\"#00bbbb\">'),
+    '{w': ColorToken('{w', '&w', '~w', '%^WHITE%^', '\033[37m', '<COLOR FORE=\"#bbbbbb\">'),
 
-    'BLACK': "\033[30m",
-    'RED': "\033[31m",
-    'GREEN': "\033[32m",
-    'ORANGE': "\033[33m",
-    'BLUE': "\033[34m",
-    'MAGENTA': "\033[35m",
-    'CYAN': "\033[36m",
-    'GREY': "\033[37m",
+    '{D': ColorToken('{D', '&z', '~z', '%^BOLD%^BLACK%^', '\033[1;30m', '<COLOR FORE=\"#555555\">'),
+    '{R': ColorToken('{R', '&R', '~R', '%^BOLD%^RED%^', '\033[1;31m', '<COLOR FORE=\"#ff5555\">'),
+    '{G': ColorToken('{G', '&G', '~G', '%^BOLD%^GREEN%^', '\033[1;32m', '<COLOR FORE=\"#55ff55\">'),
+    '{Y': ColorToken('{Y', '&Y', '~Y', '%^BOLD%^ORANGE%^', '\033[1;33m', '<COLOR FORE=\"#ffff55\">'),
+    '{B': ColorToken('{B', '&B', '~B', '%^BOLD%^BLUE%^', '\033[1;34m', '<COLOR FORE=\"#5555ff\">'),
+    '{M': ColorToken('{M', '&P', '~P', '%^BOLD%^MAGENTA%^', '\033[1;35m', '<COLOR FORE=\"#ff55ff\">'),
+    '{C': ColorToken('{C', '&C', '~C', '%^BOLD%^CYAN%^', '\033[1;36m', '<COLOR FORE=\"#55ffff\">'),
+    '{W': ColorToken('{W', '&W', '~W', '%^BOLD%^WHITE%^', '\033[1;37m', '<COLOR FORE=\"#ffffff\">'),
 
-    'DARKGREY': "\033[1;30m",
-    'LIGHTRED': "\033[1;31m",
-    'LIGHTGREEN': "\033[1;32m",
-    'YELLOW': "\033[1;33m",
-    'LIGHTBLUE': "\033[1;34m",
-    'PINK': "\033[1;35m",
-    'LIGHTCYAN': "\033[1;36m",
-    'WHITE': "\033[1;37m",
+    '{*': ColorToken('{*', '', '', '', '\007', ''),
+    '{/': ColorToken('{/', '', '', '', '\012', ''),
 
-    'B_BLACK': "\033[40m",
-    'B_RED': "\033[41m",
-    'B_GREEN': "\033[42m",
-    'B_ORANGE': "\033[43m",
-    'B_BLUE': "\033[44m",
-    'B_MAGENTA': "\033[45m",
-    'B_CYAN': "\033[46m",
-    'B_GREY': "\033[47m",
+    '{{': ColorToken('{{', '{', '{', '{', '{', '{'),
+    '}}': ColorToken('}}', '}}', '}', '}', '}', '}'),
 
-    'B_DARKGREY': "\033[40m",
-    'B_LIGHTRED': "\033[41m",
-    'B_LIGHTGREEN': "\033[42m",
-    'B_YELLOW': "\033[43m",
-    'B_LIGHTBLUE': "\033[44m",
-    'B_PINK': "\033[45m",
-    'B_LIGHTCYAN': "\033[46m",
-    'B_WHITE': "\033[47m"
+    '{x': ColorToken('{x', '&d', '~!', '%^RESET%^', '\033[0m', '<RESET>'),
+    '{L': ColorToken('{L', '&L', '~L', '%^BOLD%^', '\033[1m', '<BOLD>'),
+    '{i': ColorToken('{i', '&i', '~i', '%^ITALIC%^', '\033[3m', '<ITALIC>'),
+    '{u': ColorToken('{u', '&u', '~u', '%^UNDERLINE%^', '\033[4m', '<UNDERLINE>'),
+    '{f': ColorToken('{f', '&f', '~$', '%^FLASH%^', '\033[5m', '<FONT COLOR=BLINK>'),
+    '{V': ColorToken('{v', '&v', '~v', '%^REVERSE%^', '\033[7m', '<FONT COLOR=INVERSE>'),
+    '{s': ColorToken('{s', '&s', '~s', '%^STRIKETHRU%^', '\033[9m', '<STRIKEOUT>'),
+
+    '{H': ColorToken('{H', '', '', '%^HOME%^', '\033[H', ''),  # Home
+    '{_': ColorToken('{_', '', '', '%^CLEARLINE%^', '\033[K', ''),  # Clear to end of line
+    '{@': ColorToken('{@', '', '', '', '\033[J', ''),  # Clear to end of screen
+    '{^': ColorToken('{^', '', '', '%^CURS_UP%^', '\033[A', ''),  # Cursor up
+    '{v': ColorToken('{v', '', '', '%^CURS_DOWN%^', '\033[B', ''),  # Cursor down
+    '{>': ColorToken('{>', '', '', '%^CURS_RIGHT%^', '\033[C', ''),  # Cursor right
+    '{<': ColorToken('{<', '', '', '%^CURS_LEFT%^', '\033[D', ''),  # Cursor left
+
+    # Background colors
+    '}d': ColorToken('}d', '^x', '^x', '%^B_BLACK%^', '\033[40m', '<COLOR BACK=\"#000000\">'),
+    '}r': ColorToken('}r', '^r', '^r', '%^B_RED%^', '\033[41m', '<COLOR BACK=\"#bb0000\">'),
+    '}g': ColorToken('}g', '^g', '^g', '%^B_GREEN%^', '\033[42m', '<COLOR BACK=\"#00bb00\">'),
+    '}y': ColorToken('}y', '^O', '^y', '%^B_ORANGE%^', '\033[43m', '<COLOR BACK=\"#bbbb00\">'),
+    '}b': ColorToken('}b', '^b', '^b', '%^B_BLUE%^', '\033[44m', '<COLOR BACK=\"#0000bb\">'),
+    '}m': ColorToken('}m', '^p', '^p', '%^B_MAGENTA%^', '\033[45m', '<COLOR BACK=\"#bb00bb\">'),
+    '}c': ColorToken('}c', '^c', '^c', '%^B_CYAN%^', '\033[46m', '<COLOR BACK=\"#00bbbb\">'),
+    '}w': ColorToken('}w', '^w', '^w', '%^B_WHITE%^', '\033[47m', '<COLOR BACK=\"#bbbbbb\">'),
+
+    # Background colors cannot BE bold in ANSI
+    '}D': ColorToken('}D', '^z', '^z', '%^B_BLACK%^', '\033[40m', '<COLOR BACK=\"#555555\">'),
+    '}R': ColorToken('}R', '^R', '^R', '%^B_RED%^', '\033[41m', '<COLOR BACK=\"#ff5555\">'),
+    '}G': ColorToken('}G', '^G', '^G', '%^B_GREEN%^', '\033[42m', '<COLOR BACK=\"#55ff55\">'),
+    '}Y': ColorToken('}Y', '^Y', '^Y', '%^B_ORANGE%^', '\033[43m', '<COLOR BACK=\"#ffff55\">'),
+    '}B': ColorToken('}B', '^B', '^B', '%^B_BLUE%^', '\033[44m', '<COLOR BACK=\"#5555ff\">'),
+    '}M': ColorToken('}M', '^P', '^P', '%^B_MAGENTA%^', '\033[45m', '<COLOR BACK=\"#ff55ff\">'),
+    '}C': ColorToken('}C', '^C', '^C', '%^B_CYAN%^', '\033[46m', '<COLOR BACK=\"#55ffff\">'),
+    '}W': ColorToken('}W', '^W', '^W', '%^B_WHITE%^', '\033[47m', '<COLOR BACK=\"#ffffff\">'),
 }
 
-_COLOR_MAP['imc2'] = {
-    'BOLD': "~L",
-    'FLASH': "~\$",
-    'ITALIC': "~i",
-    'RESET': "~!",
-    'REVERSE': "~v",
-    'STRIKETHRU': "~s",
-    'UNDERLINE': "~u",
+COLOR_MAP['smaug'] = {
+    '&x': ColorToken('{d', '&x', '~x', '%^BLACK%^', '\033[30m', '<COLOR FORE=\"#000000\">'),
+    '&r': ColorToken('{r', '&r', '~r', '%^RED%^', '\033[31m', '<COLOR FORE=\"#bb0000\">'),
+    '&g': ColorToken('{g', '&g', '~g', '%^GREEN%^', '\033[32m', '<COLOR FORE=\"#00bb00\">'),
+    '&O': ColorToken('{y', '&O', '~y', '%^ORANGE%^', '\033[33m', '<COLOR FORE=\"#bbbb00\">'),
+    '&b': ColorToken('{b', '&b', '~b', '%^BLUE%^', '\033[34m', '<COLOR FORE=\"#0000bb\">'),
+    '&p': ColorToken('{m', '&p', '~p', '%^MAGENTA%^', '\033[35m', '<COLOR FORE=\"#bb00bb\">'),
+    '&c': ColorToken('{c', '&c', '~c', '%^CYAN%^', '\033[36m', '<COLOR FORE=\"#00bbbb\">'),
+    '&w': ColorToken('{w', '&w', '~w', '%^WHITE%^', '\033[37m', '<COLOR FORE=\"#bbbbbb\">'),
 
-    'CLEARLINE': "",
-    'CURS_DOWN': "",
-    'CURS_LEFT': "",
-    'CURS_RIGHT': "",
-    'CURS_UP': "",
+    '&z': ColorToken('{D', '&z', '~z', '%^BOLD%^BLACK%^', '\033[1;30m', '<COLOR FORE=\"#555555\">'),
+    '&R': ColorToken('{R', '&R', '~R', '%^BOLD%^RED%^', '\033[1;31m', '<COLOR FORE=\"#ff5555\">'),
+    '&G': ColorToken('{G', '&G', '~G', '%^BOLD%^GREEN%^', '\033[1;32m', '<COLOR FORE=\"#55ff55\">'),
+    '&Y': ColorToken('{Y', '&Y', '~Y', '%^BOLD%^ORANGE%^', '\033[1;33m', '<COLOR FORE=\"#ffff55\">'),
+    '&B': ColorToken('{B', '&B', '~B', '%^BOLD%^BLUE%^', '\033[1;34m', '<COLOR FORE=\"#5555ff\">'),
+    '&P': ColorToken('{M', '&P', '~P', '%^BOLD%^MAGENTA%^', '\033[1;35m', '<COLOR FORE=\"#ff55ff\">'),
+    '&C': ColorToken('{C', '&C', '~C', '%^BOLD%^CYAN%^', '\033[1;36m', '<COLOR FORE=\"#55ffff\">'),
+    '&W': ColorToken('{W', '&W', '~W', '%^BOLD%^WHITE%^', '\033[1;37m', '<COLOR FORE=\"#ffffff\">'),
 
-    'ENDTERM': "",
-    'HOME': "",
-    'INITTERM': "",
-    'RESTORE': "",
-    'SAVE': "",
+    '&&': ColorToken('&', '&&', '&', '&', '&', '&'),
+    '^^': ColorToken('^', '^^', '^^', '^', '^', '^'),
+    '}}': ColorToken('}}', '}}', '}', '}', '}', '}'),
 
-    'BLACK': "~x",
-    'RED': "~r",
-    'GREEN': "~g",
-    'ORANGE': "~y",
-    'BLUE': "~b",
-    'MAGENTA': "~p",
-    'CYAN': "~c",
-    'GREY': "~w",
+    '&d': ColorToken('{x', '&d', '~!', '%^RESET%^', '\033[0m', '<RESET>'),
+    '&L': ColorToken('{L', '&L', '~L', '%^BOLD%^', '\033[1m', '<BOLD>'),
+    '&i': ColorToken('{i', '&i', '~i', '%^ITALIC%^', '\033[3m', '<ITALIC>'),
+    '&u': ColorToken('{u', '&u', '~u', '%^UNDERLINE%^', '\033[4m', '<UNDERLINE>'),
+    '&f': ColorToken('{f', '&f', '~$', '%^FLASH%^', '\033[5m', '<FONT COLOR=BLINK>'),
+    '&v': ColorToken('{v', '&v', '~v', '%^REVERSE%^', '\033[7m', '<FONT COLOR=INVERSE>'),
+    '&s': ColorToken('{s', '&s', '~s', '%^STRIKETHRU%^', '\033[9m', '<STRIKEOUT>'),
+    '&I': ColorToken('{i', '&i', '~i', '%^ITALIC%^', '\033[3m', '<ITALIC>'),
+    '&U': ColorToken('{u', '&u', '~u', '%^UNDERLINE%^', '\033[4m', '<UNDERLINE>'),
+    '&F': ColorToken('{f', '&f', '~$', '%^FLASH%^', '\033[5m', '<FONT COLOR=BLINK>'),
+    '&V': ColorToken('{v', '&v', '~v', '%^REVERSE%^', '\033[7m', '<FONT COLOR=INVERSE>'),
+    '&S': ColorToken('{s', '&s', '~s', '%^STRIKETHRU%^', '\033[9m', '<STRIKEOUT>'),
 
-    'DARKGREY': "~z",
-    'LIGHTRED': "~R",
-    'LIGHTGREEN': "~G",
-    'YELLOW': "~Y",
-    'LIGHTBLUE': "~B",
-    'PINK': "~P",
-    'LIGHTCYAN': "~C",
-    'WHITE': "~W",
+    # Background colors
+    '^x': ColorToken('}d', '^x', '^x', '%^B_BLACK%^', '\033[40m', '<COLOR BACK=\"#000000\">'),
+    '^r': ColorToken('}r', '^r', '^r', '%^B_RED%^', '\033[41m', '<COLOR BACK=\"#bb0000\">'),
+    '^g': ColorToken('}g', '^g', '^g', '%^B_GREEN%^', '\033[42m', '<COLOR BACK=\"#00bb00\">'),
+    '^O': ColorToken('}y', '^O', '^y', '%^B_ORANGE%^', '\033[43m', '<COLOR BACK=\"#bbbb00\">'),
+    '^b': ColorToken('}b', '^b', '^b', '%^B_BLUE%^', '\033[44m', '<COLOR BACK=\"#0000bb\">'),
+    '^p': ColorToken('}m', '^p', '^p', '%^B_MAGENTA%^', '\033[45m', '<COLOR BACK=\"#bb00bb\">'),
+    '^c': ColorToken('}c', '^c', '^c', '%^B_CYAN%^', '\033[46m', '<COLOR BACK=\"#00bbbb\">'),
+    '^w': ColorToken('}w', '^w', '^w', '%^B_WHITE%^', '\033[47m', '<COLOR BACK=\"#bbbbbb\">'),
 
-    'B_BLACK': "^x",
-    'B_RED': "^r",
-    'B_GREEN': "^g",
-    'B_ORANGE': "^O",
-    'B_BLUE': "^b",
-    'B_MAGENTA': "^p",
-    'B_CYAN': "^c",
-    'B_GREY': "^w",
+    # Background colors cannot BE bold in ANSI
+    '^z': ColorToken('}D', '^z', '^z', '%^B_BLACK%^', '\033[40m', '<COLOR BACK=\"#555555\">'),
+    '^R': ColorToken('}R', '^R', '^R', '%^B_RED%^', '\033[41m', '<COLOR BACK=\"#ff5555\">'),
+    '^G': ColorToken('}G', '^G', '^G', '%^B_GREEN%^', '\033[42m', '<COLOR BACK=\"#55ff55\">'),
+    '^Y': ColorToken('}Y', '^Y', '^Y', '%^B_ORANGE%^', '\033[43m', '<COLOR BACK=\"#ffff55\">'),
+    '^B': ColorToken('}B', '^B', '^B', '%^B_BLUE%^', '\033[44m', '<COLOR BACK=\"#5555ff\">'),
+    '^P': ColorToken('}M', '^P', '^P', '%^B_MAGENTA%^', '\033[45m', '<COLOR BACK=\"#ff55ff\">'),
+    '^C': ColorToken('}C', '^C', '^C', '%^B_CYAN%^', '\033[46m', '<COLOR BACK=\"#55ffff\">'),
+    '^W': ColorToken('}W', '^W', '^W', '%^B_WHITE%^', '\033[47m', '<COLOR BACK=\"#ffffff\">'),
 
-    'B_DARKGREY': "^z",
-    'B_LIGHTRED': "^R",
-    'B_LIGHTGREEN': "^G",
-    'B_YELLOW': "^Y",
-    'B_LIGHTBLUE': "^B",
-    'B_PINK': "^P",
-    'B_LIGHTCYAN': "^C",
-    'B_WHITE': "^W",
+    # Blinking colors
+    '}x': ColorToken('{f{d', '}x', '`x', '%^FLASH%^BLACK%^', '\033[5;30m', '<FONT COLOR=BLINK><COLOR FORE=\"#000000\">'),
+    '}r': ColorToken('{f{r', '}r', '`r', '%^FLASH%^RED%^', '\033[5;31m', '<FONT COLOR=BLINK><COLOR FORE=\"#bb0000\">'),
+    '}g': ColorToken('{f{g', '}g', '`g', '%^FLASH%^GREEN%^', '\033[5;32m', '<FONT COLOR=BLINK><COLOR FORE=\"#00bb00\">'),
+    '}O': ColorToken('{f{y', '}O', '`y', '%^FLASH%^ORANGE%^', '\033[5;33m', '<FONT COLOR=BLINK><COLOR FORE=\"#bbbb00\">'),
+    '}b': ColorToken('{f{b', '}b', '`b', '%^FLASH%^BLUE%^', '\033[5;34m', '<FONT COLOR=BLINK><COLOR FORE=\"#0000bb\">'),
+    '}p': ColorToken('{f{m', '}p', '`p', '%^FLASH%^MAGENTA%^', '\033[5;35m', '<FONT COLOR=BLINK><COLOR FORE=\"#bb00bb\">'),
+    '}c': ColorToken('{f{c', '}c', '`c', '%^FLASH%^CYAN%^', '\033[5;36m', '<FONT COLOR=BLINK><COLOR FORE=\"#00bbbb\">'),
+    '}w': ColorToken('{f{w', '}w', '`w', '%^FLASH%^WHITE%^', '\033[5;37m', '<FONT COLOR=BLINK><COLOR FORE=\"#bbbbbb\">'),
+
+    '}z': ColorToken('{f{D', '}z', '`z', '%^FLASH%^BOLD%^BLACK%^', '\033[5;1;30m', '<FONT COLOR=BLINK><COLOR FORE=\"#555555\">'),
+    '}R': ColorToken('{f{R', '}R', '`R', '%^FLASH%^BOLD%^RED%^', '\033[5;1;31m', '<FONT COLOR=BLINK><COLOR FORE=\"#ff5555\">'),
+    '}G': ColorToken('{f{G', '}G', '`G', '%^FLASH%^BOLD%^GREEN%^', '\033[5;1;32m', '<FONT COLOR=BLINK><COLOR FORE=\"#55ff55\">'),
+    '}Y': ColorToken('{f{Y', '}Y', '`Y', '%^FLASH%^BOLD%^ORANGE%^', '\033[5;1;33m', '<FONT COLOR=BLINK><COLOR FORE=\"#ffff55\">'),
+    '}B': ColorToken('{f{B', '}B', '`B', '%^FLASH%^BOLD%^BLUE%^', '\033[5;1;34m', '<FONT COLOR=BLINK><COLOR FORE=\"#5555ff\">'),
+    '}P': ColorToken('{f{M', '}P', '`P', '%^FLASH%^BOLD%^MAGENTA%^', '\033[5;1;35m', '<FONT COLOR=BLINK><COLOR FORE=\"#ff55ff\">'),
+    '}C': ColorToken('{f{C', '}C', '`C', '%^FLASH%^BOLD%^CYAN%^', '\033[5;1;36m', '<FONT COLOR=BLINK><COLOR FORE=\"#55ffff\">'),
+    '}W': ColorToken('{f{W', '}W', '`W', '%^FLASH%^BOLD%^WHITE%^', '\033[5;1;37m', '<FONT COLOR=BLINK><COLOR FORE=\"#ffffff\">'),
 }
 
-_COLOR_MAP['i3'] = {
-    'BOLD': "%^BOLD%^",
-    'FLASH': "%^FLASH%^",
-    'ITALIC': "%^ITALIC%^",
-    'RESET': "%^RESET%^",
-    'REVERSE': "%^REVERSE%^",
-    'STRIKETHRU': "%^STRIKETHRU%^",
-    'UNDERLINE': "%^UNDERLINE%^",
+COLOR_MAP['i3'] = {
+    'BLACK': ColorToken('{d', '&x', '~x', '%^BLACK%^', '\033[30m', '<COLOR FORE=\"#000000\">'),
+    'RED': ColorToken('{r', '&r', '~r', '%^RED%^', '\033[31m', '<COLOR FORE=\"#bb0000\">'),
+    'GREEN': ColorToken('{g', '&g', '~g', '%^GREEN%^', '\033[32m', '<COLOR FORE=\"#00bb00\">'),
+    'ORANGE': ColorToken('{y', '&O', '~y', '%^ORANGE%^', '\033[33m', '<COLOR FORE=\"#bbbb00\">'),
+    'BLUE': ColorToken('{b', '&b', '~b', '%^BLUE%^', '\033[34m', '<COLOR FORE=\"#0000bb\">'),
+    'MAGENTA': ColorToken('{m', '&p', '~p', '%^MAGENTA%^', '\033[35m', '<COLOR FORE=\"#bb00bb\">'),
+    'CYAN': ColorToken('{c', '&c', '~c', '%^CYAN%^', '\033[36m', '<COLOR FORE=\"#00bbbb\">'),
+    'WHITE': ColorToken('{w', '&w', '~w', '%^WHITE%^', '\033[37m', '<COLOR FORE=\"#bbbbbb\">'),
 
-    'CLEARLINE': "%^CLEARLINE%^",
-    'CURS_DOWN': "%^CURS_DOWN%^",
-    'CURS_LEFT': "%^CURS_LEFT%^",
-    'CURS_RIGHT': "%^CURS_RIGHT%^",
-    'CURS_UP': "%^CURS_UP%^",
+    'YELLOW': ColorToken('{Y', '&Y', '~Y', '%^BOLD%^ORANGE%^', '\033[1;33m', '<COLOR FORE=\"#ffff55\">'),
 
-    'ENDTERM': "%^ENDTERM%^",
-    'HOME': "%^HOME%^",
-    'INITTERM': "%^INITTERM%^",
-    'RESTORE': "%^RESTORE%^",
-    'SAVE': "%^SAVE%^",
+    'RESET': ColorToken('{x', '&d', '~!', '%^RESET%^', '\033[0m', '<RESET>'),
+    'BOLD': ColorToken('{L', '&L', '~L', '%^BOLD%^', '\033[1m', '<BOLD>'),
+    'ITALIC': ColorToken('{i', '&i', '~i', '%^ITALIC%^', '\033[3m', '<ITALIC>'),
+    'UNDERLINE': ColorToken('{u', '&u', '~u', '%^UNDERLINE%^', '\033[4m', '<UNDERLINE>'),
+    'FLASH': ColorToken('{f', '&f', '~$', '%^FLASH%^', '\033[5m', '<FONT COLOR=BLINK>'),
+    'REVERSE': ColorToken('{v', '&v', '~v', '%^REVERSE%^', '\033[7m', '<FONT COLOR=INVERSE>'),
+    'STRIKETHRU': ColorToken('{s', '&s', '~s', '%^STRIKETHRU%^', '\033[9m', '<STRIKEOUT>'),
 
-    'BLACK': "%^BLACK%^",
-    'RED': "%^RED%^",
-    'GREEN': "%^GREEN%^",
-    'ORANGE': "%^ORANGE%^",
-    'BLUE': "%^BLUE%^",
-    'MAGENTA': "%^MAGENTA%^",
-    'CYAN': "%^CYAN%^",
-    'GREY': "%^WHITE%^",
+    'HOME': ColorToken('{H', '', '', '%^HOME%^', '\033[H', ''),  # Home
+    'CLEARLINE': ColorToken('{_', '', '', '%^CLEARLINE%^', '\033[K', ''),  # Clear to end of line
+    'CURS_UP': ColorToken('{^', '', '', '%^CURS_UP%^', '\033[A', ''),  # Cursor up
+    'CURS_DOWN': ColorToken('{v', '', '', '%^CURS_DOWN%^', '\033[B', ''),  # Cursor down
+    'CURS_RIGHT': ColorToken('{>', '', '', '%^CURS_RIGHT%^', '\033[C', ''),  # Cursor right
+    'CURS_LEFT': ColorToken('{<', '', '', '%^CURS_LEFT%^', '\033[D', ''),  # Cursor left
 
-    'DARKGREY': "%^BOLD%^BLACK%^",
-    'LIGHTRED': "%^BOLD%^RED%^",
-    'LIGHTGREEN': "%^BOLD%^GREEN%^",
-    'YELLOW': "%^YELLOW%^",
-    'LIGHTBLUE': "%^BOLD%^BLUE%^",
-    'PINK': "%^BOLD%^MAGENTA%^",
-    'LIGHTCYAN': "%^BOLD%^CYAN%^",
-    'WHITE': "%^BOLD%^WHITE%^",
+    'B_BLACK': ColorToken('}d', '^x', '^x', '%^B_BLACK%^', '\033[40m', '<COLOR BACK=\"#000000\">'),
+    'B_RED': ColorToken('}r', '^r', '^r', '%^B_RED%^', '\033[41m', '<COLOR BACK=\"#bb0000\">'),
+    'B_GREEN': ColorToken('}g', '^g', '^g', '%^B_GREEN%^', '\033[42m', '<COLOR BACK=\"#00bb00\">'),
+    'B_ORANGE': ColorToken('}y', '^O', '^y', '%^B_ORANGE%^', '\033[43m', '<COLOR BACK=\"#bbbb00\">'),
+    'B_BLUE': ColorToken('}b', '^b', '^b', '%^B_BLUE%^', '\033[44m', '<COLOR BACK=\"#0000bb\">'),
+    'B_MAGENTA': ColorToken('}m', '^p', '^p', '%^B_MAGENTA%^', '\033[45m', '<COLOR BACK=\"#bb00bb\">'),
+    'B_CYAN': ColorToken('}c', '^c', '^c', '%^B_CYAN%^', '\033[46m', '<COLOR BACK=\"#00bbbb\">'),
+    'B_WHITE': ColorToken('}w', '^w', '^w', '%^B_WHITE%^', '\033[47m', '<COLOR BACK=\"#bbbbbb\">'),
 
-    'B_BLACK': "%^B_BLACK%^",
-    'B_RED': "%^B_RED%^",
-    'B_GREEN': "%^B_GREEN%^",
-    'B_ORANGE': "%^B_ORANGE%^",
-    'B_BLUE': "%^B_BLUE%^",
-    'B_MAGENTA': "%^B_MAGENTA%^",
-    'B_CYAN': "%^B_CYAN%^",
-    'B_GREY': "%^B_WHITE%^",
-
-    'B_DARKGREY': "%^B_BLACK%^",
-    'B_LIGHTRED': "%^B_RED%^",
-    'B_LIGHTGREEN': "%^B_GREEN%^",
-    'B_YELLOW': "%^B_YELLOW%^",
-    'B_LIGHTBLUE': "%^B_BLUE%^",
-    'B_PINK': "%^B_MAGENTA%^",
-    'B_LIGHTCYAN': "%^B_CYAN%^",
-    'B_WHITE': "%^B_WHITE%^",
+    'B_YELLOW': ColorToken('}Y', '^Y', '^Y', '%^B_ORANGE%^', '\033[43m', '<COLOR BACK=\"#ffff55\">'),
 }
 
-_COLOR_MAP['mxp'] = {
-    'BOLD': "<BOLD>",
-    'FLASH': "<FONT COLOR=BLINK>",
-    'ITALIC': "<ITALIC>",
-    'RESET': "<RESET>",
-    'REVERSE': "<FONT COLOR=INVERSE>",
-    'STRIKETHRU': "<STRIKEOUT>",
-    'UNDERLINE': "<UNDERLINE>",
+COLOR_MAP['imc2'] = {
+    '~x': ColorToken('{d', '&x', '~x', '%^BLACK%^', '\033[30m', '<COLOR FORE=\"#000000\">'),
+    '~r': ColorToken('{r', '&r', '~r', '%^RED%^', '\033[31m', '<COLOR FORE=\"#bb0000\">'),
+    '~g': ColorToken('{g', '&g', '~g', '%^GREEN%^', '\033[32m', '<COLOR FORE=\"#00bb00\">'),
+    '~y': ColorToken('{y', '&O', '~y', '%^ORANGE%^', '\033[33m', '<COLOR FORE=\"#bbbb00\">'),
+    '~b': ColorToken('{b', '&b', '~b', '%^BLUE%^', '\033[34m', '<COLOR FORE=\"#0000bb\">'),
+    '~p': ColorToken('{m', '&p', '~p', '%^MAGENTA%^', '\033[35m', '<COLOR FORE=\"#bb00bb\">'),
+    '~c': ColorToken('{c', '&c', '~c', '%^CYAN%^', '\033[36m', '<COLOR FORE=\"#00bbbb\">'),
+    '~w': ColorToken('{w', '&w', '~w', '%^WHITE%^', '\033[37m', '<COLOR FORE=\"#bbbbbb\">'),
 
-    'CLEARLINE': "",
-    'CURS_DOWN': "",
-    'CURS_LEFT': "",
-    'CURS_RIGHT': "",
-    'CURS_UP': "",
+    '~z': ColorToken('{D', '&z', '~z', '%^BOLD%^BLACK%^', '\033[1;30m', '<COLOR FORE=\"#555555\">'),
+    '~R': ColorToken('{R', '&R', '~R', '%^BOLD%^RED%^', '\033[1;31m', '<COLOR FORE=\"#ff5555\">'),
+    '~G': ColorToken('{G', '&G', '~G', '%^BOLD%^GREEN%^', '\033[1;32m', '<COLOR FORE=\"#55ff55\">'),
+    '~Y': ColorToken('{Y', '&Y', '~Y', '%^BOLD%^ORANGE%^', '\033[1;33m', '<COLOR FORE=\"#ffff55\">'),
+    '~B': ColorToken('{B', '&B', '~B', '%^BOLD%^BLUE%^', '\033[1;34m', '<COLOR FORE=\"#5555ff\">'),
+    '~P': ColorToken('{M', '&P', '~P', '%^BOLD%^MAGENTA%^', '\033[1;35m', '<COLOR FORE=\"#ff55ff\">'),
+    '~C': ColorToken('{C', '&C', '~C', '%^BOLD%^CYAN%^', '\033[1;36m', '<COLOR FORE=\"#55ffff\">'),
+    '~W': ColorToken('{W', '&W', '~W', '%^BOLD%^WHITE%^', '\033[1;37m', '<COLOR FORE=\"#ffffff\">'),
 
-    'ENDTERM': "",
-    'HOME': "",
-    'INITTERM': "",
-    'RESTORE': "",
-    'SAVE': "",
+    '~~': ColorToken('~', '~', '~~', '~', '~', '~'),
+    '^^': ColorToken('^', '^^', '^^', '^', '^', '^'),
+    '``': ColorToken('`', '`', '``', '`', '`', '`'),
 
-    'BLACK': "<COLOR FORE=\"#000000\">",
-    'RED': "<COLOR FORE=\"#bb0000\">",
-    'GREEN': "<COLOR FORE=\"#00bb00\">",
-    'ORANGE': "<COLOR FORE=\"#bbbb00\">",
-    'BLUE': "<COLOR FORE=\"#0000bb\">",
-    'MAGENTA': "<COLOR FORE=\"#bb00bb\">",
-    'CYAN': "<COLOR FORE=\"#00bbbb\">",
-    'GREY': "<COLOR FORE=\"#bbbbbb\">",
+    '~!': ColorToken('{x', '&d', '~!', '%^RESET%^', '\033[0m', '<RESET>'),
+    '~L': ColorToken('{L', '&L', '~L', '%^BOLD%^', '\033[1m', '<BOLD>'),
+    '~i': ColorToken('{i', '&i', '~i', '%^ITALIC%^', '\033[3m', '<ITALIC>'),
+    '~u': ColorToken('{u', '&u', '~u', '%^UNDERLINE%^', '\033[4m', '<UNDERLINE>'),
+    '~$': ColorToken('{f', '&f', '~$', '%^FLASH%^', '\033[5m', '<FONT COLOR=BLINK>'),
+    '~v': ColorToken('{v', '&v', '~v', '%^REVERSE%^', '\033[7m', '<FONT COLOR=INVERSE>'),
+    '~s': ColorToken('{s', '&s', '~s', '%^STRIKETHRU%^', '\033[9m', '<STRIKEOUT>'),
 
-    'DARKGREY': "<COLOR FORE=\"#555555\">",
-    'LIGHTRED': "<COLOR FORE=\"#ff5555\">",
-    'LIGHTGREEN': "<COLOR FORE=\"#55ff55\">",
-    'YELLOW': "<COLOR FORE=\"#ffff55\">",
-    'LIGHTBLUE': "<COLOR FORE=\"#5555ff\">",
-    'PINK': "<COLOR FORE=\"#ff55ff\">",
-    'LIGHTCYAN': "<COLOR FORE=\"#55ffff\">",
-    'WHITE': "<COLOR FORE=\"#ffffff\">",
+    '~Z': ColorToken('', '&Z', '~Z', '', '', ''),  # Random foreground
+    '~D': ColorToken('{D', '&z', '~z', '%^BOLD%^BLACK%^', '\033[1;30m', '<COLOR FORE=\"#555555\">'),
+    '~m': ColorToken('{m', '&p', '~p', '%^MAGENTA%^', '\033[35m', '<COLOR FORE=\"#bb00bb\">'),
+    '~d': ColorToken('{w', '&w', '~w', '%^WHITE%^', '\033[37m', '<COLOR FORE=\"#bbbbbb\">'),
+    '~M': ColorToken('{M', '&P', '~P', '%^BOLD%^MAGENTA%^', '\033[1;35m', '<COLOR FORE=\"#ff55ff\">'),
 
-    'B_BLACK': "<COLOR BACK=\"#000000\">",
-    'B_RED': "<COLOR BACK=\"#bb0000\">",
-    'B_GREEN': "<COLOR BACK=\"#00bb00\">",
-    'B_ORANGE': "<COLOR BACK=\"#bbbb00\">",
-    'B_BLUE': "<COLOR BACK=\"#0000bb\">",
-    'B_MAGENTA': "<COLOR BACK=\"#bb00bb\">",
-    'B_CYAN': "<COLOR BACK=\"#00bbbb\">",
-    'B_GREY': "<COLOR BACK=\"#bbbbbb\">",
+    # Background colors
+    '^x': ColorToken('}d', '^x', '^x', '%^B_BLACK%^', '\033[40m', '<COLOR BACK=\"#000000\">'),
+    '^r': ColorToken('}r', '^r', '^r', '%^B_RED%^', '\033[41m', '<COLOR BACK=\"#bb0000\">'),
+    '^g': ColorToken('}g', '^g', '^g', '%^B_GREEN%^', '\033[42m', '<COLOR BACK=\"#00bb00\">'),
+    '^y': ColorToken('}y', '^O', '^y', '%^B_ORANGE%^', '\033[43m', '<COLOR BACK=\"#bbbb00\">'),
+    '^b': ColorToken('}b', '^b', '^b', '%^B_BLUE%^', '\033[44m', '<COLOR BACK=\"#0000bb\">'),
+    '^p': ColorToken('}m', '^p', '^p', '%^B_MAGENTA%^', '\033[45m', '<COLOR BACK=\"#bb00bb\">'),
+    '^c': ColorToken('}c', '^c', '^c', '%^B_CYAN%^', '\033[46m', '<COLOR BACK=\"#00bbbb\">'),
+    '^w': ColorToken('}w', '^w', '^w', '%^B_WHITE%^', '\033[47m', '<COLOR BACK=\"#bbbbbb\">'),
 
-    'B_DARKGREY': "<COLOR BACK=\"#555555\">",
-    'B_LIGHTRED': "<COLOR BACK=\"#ff5555\">",
-    'B_LIGHTGREEN': "<COLOR BACK=\"#55ff55\">",
-    'B_YELLOW': "<COLOR BACK=\"#ffff55\">",
-    'B_LIGHTBLUE': "<COLOR BACK=\"#5555ff\">",
-    'B_PINK': "<COLOR BACK=\"#ff55ff\">",
-    'B_LIGHTCYAN': "<COLOR BACK=\"#55ffff\">",
-    'B_WHITE': "<COLOR BACK=\"#ffffff\">",
+    # Background colors cannot BE bold in ANSI
+    '^z': ColorToken('}D', '^z', '^z', '%^B_BLACK%^', '\033[40m', '<COLOR BACK=\"#555555\">'),
+    '^R': ColorToken('}R', '^R', '^R', '%^B_RED%^', '\033[41m', '<COLOR BACK=\"#ff5555\">'),
+    '^G': ColorToken('}G', '^G', '^G', '%^B_GREEN%^', '\033[42m', '<COLOR BACK=\"#55ff55\">'),
+    '^Y': ColorToken('}Y', '^Y', '^Y', '%^B_ORANGE%^', '\033[43m', '<COLOR BACK=\"#ffff55\">'),
+    '^B': ColorToken('}B', '^B', '^B', '%^B_BLUE%^', '\033[44m', '<COLOR BACK=\"#5555ff\">'),
+    '^P': ColorToken('}M', '^P', '^P', '%^B_MAGENTA%^', '\033[45m', '<COLOR BACK=\"#ff55ff\">'),
+    '^C': ColorToken('}C', '^C', '^C', '%^B_CYAN%^', '\033[46m', '<COLOR BACK=\"#55ffff\">'),
+    '^W': ColorToken('}W', '^W', '^W', '%^B_WHITE%^', '\033[47m', '<COLOR BACK=\"#ffffff\">'),
+
+    '^D': ColorToken('}D', '^z', '^z', '%^B_BLACK%^', '\033[40m', '<COLOR BACK=\"#555555\">'),
+    '^m': ColorToken('}m', '^p', '^p', '%^B_MAGENTA%^', '\033[45m', '<COLOR BACK=\"#bb00bb\">'),
+    '^d': ColorToken('}w', '^w', '^w', '%^B_WHITE%^', '\033[47m', '<COLOR BACK=\"#bbbbbb\">'),
+    '^M': ColorToken('}M', '^P', '^P', '%^B_MAGENTA%^', '\033[45m', '<COLOR BACK=\"#ff55ff\">'),
+
+    # Blinking colors
+    '`x': ColorToken('{f{d', '}x', '`x', '%^FLASH%^BLACK%^', '\033[5;30m', '<FONT COLOR=BLINK><COLOR FORE=\"#000000\">'),
+    '`r': ColorToken('{f{r', '}r', '`r', '%^FLASH%^RED%^', '\033[5;31m', '<FONT COLOR=BLINK><COLOR FORE=\"#bb0000\">'),
+    '`g': ColorToken('{f{g', '}g', '`g', '%^FLASH%^GREEN%^', '\033[5;32m', '<FONT COLOR=BLINK><COLOR FORE=\"#00bb00\">'),
+    '`y': ColorToken('{f{y', '}O', '`y', '%^FLASH%^ORANGE%^', '\033[5;33m', '<FONT COLOR=BLINK><COLOR FORE=\"#bbbb00\">'),
+    '`b': ColorToken('{f{b', '}b', '`b', '%^FLASH%^BLUE%^', '\033[5;34m', '<FONT COLOR=BLINK><COLOR FORE=\"#0000bb\">'),
+    '`p': ColorToken('{f{m', '}p', '`p', '%^FLASH%^MAGENTA%^', '\033[5;35m', '<FONT COLOR=BLINK><COLOR FORE=\"#bb00bb\">'),
+    '`c': ColorToken('{f{c', '}c', '`c', '%^FLASH%^CYAN%^', '\033[5;36m', '<FONT COLOR=BLINK><COLOR FORE=\"#00bbbb\">'),
+    '`w': ColorToken('{f{w', '}w', '`w', '%^FLASH%^WHITE%^', '\033[5;37m', '<FONT COLOR=BLINK><COLOR FORE=\"#bbbbbb\">'),
+
+    '`z': ColorToken('{f{D', '}z', '`z', '%^FLASH%^BOLD%^BLACK%^', '\033[5;1;30m', '<FONT COLOR=BLINK><COLOR FORE=\"#555555\">'),
+    '`R': ColorToken('{f{R', '}R', '`R', '%^FLASH%^BOLD%^RED%^', '\033[5;1;31m', '<FONT COLOR=BLINK><COLOR FORE=\"#ff5555\">'),
+    '`G': ColorToken('{f{G', '}G', '`G', '%^FLASH%^BOLD%^GREEN%^', '\033[5;1;32m', '<FONT COLOR=BLINK><COLOR FORE=\"#55ff55\">'),
+    '`Y': ColorToken('{f{Y', '}Y', '`Y', '%^FLASH%^BOLD%^ORANGE%^', '\033[5;1;33m', '<FONT COLOR=BLINK><COLOR FORE=\"#ffff55\">'),
+    '`B': ColorToken('{f{B', '}B', '`B', '%^FLASH%^BOLD%^BLUE%^', '\033[5;1;34m', '<FONT COLOR=BLINK><COLOR FORE=\"#5555ff\">'),
+    '`P': ColorToken('{f{M', '}P', '`P', '%^FLASH%^BOLD%^MAGENTA%^', '\033[5;1;35m', '<FONT COLOR=BLINK><COLOR FORE=\"#ff55ff\">'),
+    '`C': ColorToken('{f{C', '}C', '`C', '%^FLASH%^BOLD%^CYAN%^', '\033[5;1;36m', '<FONT COLOR=BLINK><COLOR FORE=\"#55ffff\">'),
+    '`W': ColorToken('{f{W', '}W', '`W', '%^FLASH%^BOLD%^WHITE%^', '\033[5;1;37m', '<FONT COLOR=BLINK><COLOR FORE=\"#ffffff\">'),
+
+    '`D': ColorToken('{f{D', '}z', '`z', '%^FLASH%^BOLD%^B_BLACK%^', '\033[5;1;30m', '<FONT COLOR=BLINK><COLOR FORE=\"#555555\">'),
+    '`m': ColorToken('{f{m', '}p', '`p', '%^FLASH%^MAGENTA%^', '\033[5;35m', '<FONT COLOR=BLINK><COLOR FORE=\"#bb00bb\">'),
+    '`d': ColorToken('{f{w', '}w', '`w', '%^FLASH%^WHITE%^', '\033[5;37m', '<FONT COLOR=BLINK><COLOR FORE=\"#bbbbbb\">'),
+    '`M': ColorToken('{f{M', '}P', '`P', '%^FLASH%^BOLD%^MAGENTA%^', '\033[5;1;35m', '<FONT COLOR=BLINK><COLOR FORE=\"#ff55ff\">'),
 }
-
