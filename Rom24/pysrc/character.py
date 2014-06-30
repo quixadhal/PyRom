@@ -328,7 +328,7 @@ class Character(Living):
             return  # skill is not known */
 
         # check to see if the character has a chance to learn */
-        chance = 10 * int_app[self.get_curr_stat(STAT_INT)].learn
+        chance = 10 * int_app[self.stat(STAT_INT)].learn
         chance //= (multiplier * sn.rating[self.guild.name] * 4)
         chance += self.level
 

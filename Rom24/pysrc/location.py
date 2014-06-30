@@ -91,3 +91,9 @@ class Location:
         self.in_room = None
         self.on = None  # sanity check! */
         return
+
+    def has_key(self, key):
+        for obj in self.contents:
+            if obj.pIndexData.vnum == key:
+                return True
+        return False
