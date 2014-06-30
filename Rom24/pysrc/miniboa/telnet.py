@@ -184,7 +184,7 @@ class TelnetClient(object):
             self.cmd_ready = False
         return cmd
 
-    def send(self, text, wrap=None, terminal='ansi'):
+    def send(self, text: str, wrap: int=None, terminal: str='ansi'):
         """
         Send raw text to the distant end.
         """
