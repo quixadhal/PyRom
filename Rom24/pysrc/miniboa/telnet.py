@@ -186,7 +186,7 @@ class TelnetClient(object):
         """
         Send raw text to the distant end.
         """
-        if text:
+        if text and isinstance(text, str):
             text = text.replace('\n\r', '\n')  # DikuMUD got their line endings backwards
             text = text.replace('\r\n', '\n')  # This is correct for TELNET, but we need to ensure
             # that "\r\n" doesn't become "\r\n\n" later.
