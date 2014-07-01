@@ -694,7 +694,7 @@ def aggr_update():
                 if not vch.is_npc() \
                         and vch.level < LEVEL_IMMORTAL \
                         and ch.level >= vch.level - 5 \
-                        and ( not ch.act.is_set(ACT_WIMPY) or not state_checks.IS_AWAKE(vch) ) \
+                        and ( not ch.act.is_set(ACT_WIMPY) or not vch.is_awake() ) \
                         and ch.can_see(vch):
                     if random.randint(0, count) == 0:
                         victim = vch

@@ -1,5 +1,7 @@
+import character
 import handler_ch
 import handler_obj
+import living
 from merc import *
 import interp
 import state_checks
@@ -116,7 +118,7 @@ def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
             act_trans['$e'] = he_she[ch.sex]
             act_trans['$m'] = him_her[ch.sex]
             act_trans['$s'] = his_her[ch.sex]
-        if vch and type(vch) == handler_ch.CHAR_DATA:
+        if vch and isinstance(vch, living.Living):
             act_trans['$N'] = state_checks.PERS(vch, to)
             act_trans['$E'] = he_she[vch.sex]
             act_trans['$M'] = him_her[vch.sex]
