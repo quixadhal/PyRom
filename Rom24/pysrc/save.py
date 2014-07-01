@@ -92,7 +92,7 @@ def fwrite_char(ch):
     chdict["Gold"] = min(0, ch.gold)
     chdict["Silv"] = min(0, ch.silver)
     chdict["Exp"] = ch.exp
-    chdict["Act"] = repr(ch.act)
+    chdict["Act"] = ch.act.print_flags(tables.plr_flags)
     chdict["AfBy"] = repr(ch.affected_by)
     chdict["Comm"] = repr(ch.comm)
     chdict["Wizn"] = repr(ch.wiznet)
