@@ -1,10 +1,8 @@
 import time
 
 __author__ = 'venom'
-from merc import *
-
+import merc
 import random
-import state_checks
 
 
 def read_forward(pstr, jump=1):
@@ -26,7 +24,7 @@ def read_word(pstr, lower=True):
     if lower:
         word = word.lower()
     pstr = pstr.lstrip()
-    pstr = pstr[len(word)+1:]
+    pstr = pstr[len(word) + 1:]
     word = word.replace("'", '')
     return pstr, word.strip()
 
@@ -77,13 +75,13 @@ def read_flags(pstr):
     for c in w:
         flag = 0
         if 'A' <= c <= 'Z':
-            flag = A
+            flag = merc.A
             while c != 'A':
                 flag *= 2
                 c = chr(ord(c) - 1)
 
         elif 'a' <= c <= 'z':
-            flag = aa
+            flag = merc.aa
             while c != 'a':
                 flag *= 2
                 c = chr(ord(c) - 1)
@@ -91,13 +89,14 @@ def read_flags(pstr):
         flags += flag
     return pstr, flags
 
-def find_location( ch, arg ):
+
+def find_location(ch, arg):
     if arg.isdigit():
         vnum = int(arg)
-        if vnum not in room_index_hash:
+        if vnum not in merc.room_index_hash:
             return None
         else:
-            return room_index_hash[vnum]
+            return merc.room_index_hash[vnum]
     victim = ch.get_char_world(arg)
     if victim:
         return victim.in_room
@@ -106,9 +105,11 @@ def find_location( ch, arg ):
         return obj.in_room
     return None
 
-def append_file(ch, fp, str):
+
+def append_file(ch, fp, pstr):
     with open(fp, "a") as f:
-        f.write(str + "\n")
+        f.write(pstr + "\n")
+
 
 def read_to_eol(pstr):
     pstr = pstr.split('\n')
@@ -127,6 +128,7 @@ def is_name(arg, name):
         name, tmp = read_word(name)
     return False
 
+
 def dice(number, size):
     return sum([random.randint(1, size) for x in range(number)])
 
@@ -134,15 +136,18 @@ def dice(number, size):
 def number_fuzzy(number):
     return random.randint(number - 1, number + 1)
 
+
 def number_argument(argument):
+    if not argument:
+        return 0, ""
     if '.' not in argument:
         return 1, argument
-
     dot = argument.find('.')
     number = argument[:dot]
     if number.isdigit():
         return int(number), argument[dot + 1:]
-    return 1, argument
+    else:
+        return 1, argument[dot + 1:]
 
 
 # * Simple linear interpolation.
@@ -150,11 +155,11 @@ def interpolate(level, value_00, value_32):
     return value_00 + level * (value_32 - value_00) / 32
 
 
-def mass_replace(str, dict):
-    for k,v in dict.items():
+def mass_replace(pstr, pdict):
+    for k, v in pdict.items():
         if v:
-            str = str.replace(k,v)
-    return str
+            pstr = pstr.replace(k, v)
+    return pstr
 
 
 def set_title(ch, title):
@@ -173,7 +178,8 @@ def get_mob_id():
 
 # * Get an extra description from a list.
 def get_extra_descr(name, edlist):
-    if not edlist: return None
+    if not edlist:
+        return None
     for ed in edlist:
         if name.lower() in ed.keyword:
             return ed.description

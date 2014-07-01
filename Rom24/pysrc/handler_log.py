@@ -40,7 +40,7 @@ import sys
 import functools
 import inspect
 
-from merc import *
+import merc
 import character
 import interp
 
@@ -54,6 +54,16 @@ if there was a calling character.
 
 Will add actual logfile support soon, and build out additional logging templates"""
 
+
+class GlobalDebugFlag:
+    """Enable or disable our global flags"""
+    def gdfset(state):
+        merc.GDF = state
+        return
+
+    def gdcfset(state):
+        merc.GDCF = state
+        return
 
 def value_to_str(v):
     if isinstance(v, character.Character):
@@ -70,29 +80,30 @@ def value_to_str(v):
             return '<ERROR: CANNOT PRINT>'
 
 
-def char_parse_exception(error_object, *args, ch):
+def char_parse_exception(error_object, *args, ch):  # Parser for exceptions with a CH entity for extra msging
+    merc.GDF = False
     wrap_call = inspect.getinnerframes(sys.exc_info()[2])
-    ch.send("An Exception Occurred: \n%s %s\n\n" % (type(error_object), str(error_object)))
+    if ch.level == merc.ML:
+        ch.send("An Exception Occurred: \n%s %s\n\n" % (type(error_object), str(error_object)))
     logger.debug("Exception: %s %s" % (type(error_object), str(error_object)))
     for call_info in reversed(wrap_call):
         local_calls = call_info[0].f_locals
         if '_logged__tracer_var_' in local_calls:
             continue
-        ch.send("--Frame Trace-- \nFile: %s \nFunction: %s \nLine: %d \nCode: %s " % (call_info[1],
-                                                                                      call_info[3],
-                                                                                      call_info[2],
-                                                                                      call_info[4][0].lstrip()))
-        ch.send("\n")
-        logger.debug("--Frame Trace-- \nFile: %s \nFunction: %s \nLine: %d \nCode: %s " % (call_info[1],
-                                                                                        call_info[3],
-                                                                                        call_info[2],
-                                                                                        call_info[4][0].lstrip()))
+        if ch.level == merc.ML:
+            ch.send("--Frame Trace-- \nFile: %s \nFunction: %s \nLine: %d \nCode: %s "
+                    % (call_info[1], call_info[3], call_info[2], call_info[4][0].lstrip()))
+            ch.send("\n")
+        logger.debug("--Frame Trace-- \nFile: %s \nFunction: %s \nLine: %d \nCode: %s "
+                     % (call_info[1], call_info[3], call_info[2], call_info[4][0].lstrip()))
         logger.debug("Local Env Variables: ")
         for k, v in local_calls.items():
             levtrace = value_to_str(v)
             logger.debug("%s : %s", k, levtrace)
 
+
 def noch_parse_exception(error_object, *args):
+    merc.GDF = False
     wrap_call = inspect.getinnerframes(sys.exc_info()[2])
     logger.debug("Exception: %s %s" % (type(error_object), str(error_object)))
     for call_info in reversed(wrap_call):
@@ -109,26 +120,50 @@ def noch_parse_exception(error_object, *args):
 
 
 class logged(object):
-    def __init__(self, log_type, on=False, ch=None):
+    def __init__(self, log_type, ch=None):
         """Init the logger, log_type"""
         self.log_type = log_type
         self.ch = ch
-        self.on = on
 
     def __call__(self, func):
         """the class needs to be callable for this to work"""
         functools.update_wrapper(self, func)
+
     #Add debug log for any function you wish for TS, provides trace of incident
-        if not self.on is False:
-            return func
-        if self.log_type == "Debug":
+        if self.log_type == "Debug":  # Used to wrap any function and does not know about or care about flags
             def debug(*args, **kwargs):
-                global gdf
-                gdf = False
                 if args and isinstance(args[0], character.Character):
                     mch = args[0]
                 else:
                     mch = self.ch
+                """__tracer_var_ becomes _logger__tracer_var_ in the trace.
+                This is used to determine if we are within the wrapping frame
+                or the wrapped frame.
+
+                Leave this in place to receive only the wrapped frame trace info
+                 - we dont care about the wrapping frame information."""
+                __tracer_var_ = 0
+                try:
+                    return func(*args, **kwargs)
+                except Exception as err:
+                    if isinstance(mch, character.Character):
+                        if mch.level == merc.ML:
+                            mch.send("Debug has been Enabled\n\n")
+                        char_parse_exception(err, args, ch=mch)
+                    else:
+                        noch_parse_exception(err, args)
+                    return
+            return debug
+
+        if self.log_type == "Interp":  # Used with interp and either debug command, or global debug flag
+            def interp_debug(*args, **kwargs):
+                if merc.GDF is False and merc.GDCF is False:  # Check for global/debug command flags
+                    return func(*args, **kwargs)  # if none of the debugs are on, just send the command as normal
+                if args and isinstance(args[0], character.Character):
+                    """check if there are args, and the args entail a character structure"""
+                    mch = args[0]  # If so, lets make a char object so we can send messages as needed
+                else:
+                    mch = self.ch  # If so, lets make a char object so we can send messages as needed
                 """__tracer_var_ becomes _logger__tracer_var_ in the trace.
                 This is used to determine if we are within the wrapping frame
                 or the wrapped frame.
@@ -145,7 +180,10 @@ class logged(object):
                     else:
                         noch_parse_exception(err, args)
                     return
-            return debug
+            return interp_debug
+
+        else:
+            return func
 
 
 

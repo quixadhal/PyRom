@@ -2,14 +2,14 @@ import logging
 
 logger = logging.getLogger()
 
-from game_utils import read_word
-from merc import *
-from interp import register_command, cmd_type
-from character import Character
+import character
+import game_utils
+import interp
+import merc
+import handler_log
 
 
 def do_debug(ch, argument):
-    global gdf
     if not argument:
         ch.send("Syntax: debug <command> "
                 "<arguments>\n\n   "
@@ -17,13 +17,12 @@ def do_debug(ch, argument):
                 "get valuable debugging "
                 "information.\n")
         return
-    safety, word = read_word(argument)
+    safety, word = game_utils.read_word(argument)
     if word.startswith('debug'):
         ch.send("Nope.\n")
         return
-    gdf = True
-    Character.interpret(ch, argument)
+    handler_log.GlobalDebugFlag.gdfset(True)
+    character.Character.interpret(ch, argument)
     return
 
-
-register_command(cmd_type('debug', do_debug, POS_DEAD, ML, LOG_NORMAL, 1))
+interp.register_command(interp.cmd_type('debug', do_debug, merc.POS_DEAD, merc.ML, merc.LOG_NORMAL, 1))
