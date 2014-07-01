@@ -11,7 +11,7 @@ import state_checks
 
 
 def do_restore(ch, argument):
-    arg = game_utils.read_word(argument)
+    junky, arg = game_utils.read_word(argument)
     if not arg or arg == "room":
         # cure room
         for vch in ch.in_room.people:

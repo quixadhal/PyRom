@@ -3,7 +3,7 @@ import state_checks
 
 
 class Bit:
-    def __init__(self, default=0,  flags=None):
+    def __init__(self, default=0, flags=None):
         self.bits = default
         self._flags = flags
 
