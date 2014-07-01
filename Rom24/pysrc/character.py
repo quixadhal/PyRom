@@ -2,7 +2,6 @@ import random
 import logging
 import time
 
-
 logger = logging.getLogger()
 
 import game_utils
@@ -15,6 +14,7 @@ import living
 import settings
 import state_checks
 import update
+
 
 class Character(living.Living):
 
@@ -54,6 +54,7 @@ class Character(living.Living):
     @property
     def title(self):
         return self._title
+
     @title.setter
     def title(self, title):
         if self.is_npc():
@@ -73,7 +74,7 @@ class Character(living.Living):
         for i in gn.spells:
             if not i:
                 break
-            self.group_add(i,False)
+            self.group_add(i, False)
 
     # recursively removes a group given its number -- uses group_remove */
     def gn_remove(self, gn):
@@ -87,12 +88,12 @@ class Character(living.Living):
 
     # use for processing a skill or group for addition  */
     def group_add(self, name, deduct):
-        if self.is_npc(): # NPCs do not have skills */
+        if self.is_npc():  # NPCs do not have skills */
             return
 
         if name in const.skill_table:
             sn = const.skill_table[name]
-            if sn.name not in self.learned: # i.e. not known */
+            if sn.name not in self.learned:  # i.e. not known */
                 self.learned[sn.name] = 1
             if deduct:
                 self.points += sn.rating[self.guild.name]
@@ -107,11 +108,9 @@ class Character(living.Living):
             if deduct:
                 self.points += gn.rating[self.guild.name]
 
-            self.gn_add(gn) # make sure all skills in the group are known */
-
+            self.gn_add(gn)  # make sure all skills in the group are known */
 
     # used for processing a skill or group for deletion -- no points back! */
-
     def group_remove(self, name):
         if name in const.skill_table:
             sn = const.skill_table[name]
@@ -125,17 +124,19 @@ class Character(living.Living):
 
             if gn.name in self.group_known:
                 del self.group_known[gn.name]
-                self.gn_remove(gn) # be sure to call gn_add on all remaining groups */
+                self.gn_remove(gn)  # be sure to call gn_add on all remaining groups */
 
     # shows skills, groups and costs (only if not bought) */
     def list_group_costs(self):
         if self.is_npc():
             return
         col = 0
-        self.send("%-18s %-5s %-18s %-5s %-18s %-5s\n" % ("group","cp","group","cp","group","cp"))
+        self.send("%-18s %-5s %-18s %-5s %-18s %-5s\n" % ("group", "cp", "group", "cp", "group", "cp"))
 
         for gn, group in const.group_table.items():
-            if gn not in self.gen_data.group_chosen and gn not in self.group_known and group.rating[self.guild.name] > 0:
+            if gn not in self.gen_data.group_chosen \
+                    and gn not in self.group_known \
+                    and group.rating[self.guild.name] > 0:
                 self.send("%-18s %-5d " % (const.group_table[gn].name, group.rating[self.guild.name]))
                 col += 1
                 if col % 3 == 0:
@@ -145,19 +146,19 @@ class Character(living.Living):
         self.send("\n")
         col = 0
 
-        self.send("%-18s %-5s %-18s %-5s %-18s %-5s\n" % ("skill","cp","skill","cp","skill","cp"))
+        self.send("%-18s %-5s %-18s %-5s %-18s %-5s\n" % ("skill", "cp", "skill", "cp", "skill", "cp"))
 
         for sn, skill in const.skill_table.items():
             if sn not in self.gen_data.skill_chosen \
-            and sn not in self.learned \
-            and  skill.spell_fun == None \
-            and  skill.rating[self.guild.name] > 0:
+                    and sn not in self.learned \
+                    and skill.spell_fun is None \
+                    and skill.rating[self.guild.name] > 0:
                 self.send("%-18s %-5d " % (skill.name, skill.rating[self.guild.name]))
                 col += 1
                 if col % 3 == 0:
                     self.send("\n")
-        if  col % 3 != 0:
-            self.send( "\n" )
+        if col % 3 != 0:
+            self.send("\n")
         self.send("\n")
 
         self.send("Creation points: %d\n" % self.points)
@@ -168,30 +169,30 @@ class Character(living.Living):
         if self.is_npc():
             return
         col = 0
-        self.send("%-18s %-5s %-18s %-5s %-18s %-5s" % ("group","cp","group","cp","group","cp\n"))
+        self.send("%-18s %-5s %-18s %-5s %-18s %-5s" % ("group", "cp", "group", "cp", "group", "cp\n"))
 
         for gn, group in const.group_table.items():
             if gn in self.gen_data.group_chosen and group.rating[self.guild.name] > 0:
-                self.send("%-18s %-5d " % (group.name, group.rating[self.guild.name]) )
+                self.send("%-18s %-5d " % (group.name, group.rating[self.guild.name]))
                 col += 1
                 if col % 3 == 0:
                     self.send("\n")
         if col % 3 != 0:
-            self.send( "\n" )
+            self.send("\n")
         self.send("\n")
 
         col = 0
 
-        self.send("%-18s %-5s %-18s %-5s %-18s %-5s" % ("skill","cp","skill","cp","skill","cp\n"))
+        self.send("%-18s %-5s %-18s %-5s %-18s %-5s" % ("skill", "cp", "skill", "cp", "skill", "cp\n"))
 
         for sn, skill in const.skill_table.items():
             if sn in self.gen_data.skill_chosen and skill.rating[self.guild.name] > 0:
-                self.send("%-18s %-5d " % (skill.name, skill.rating[self.guild.name]) )
+                self.send("%-18s %-5d " % (skill.name, skill.rating[self.guild.name]))
                 col += 1
                 if col % 3 == 0:
                     self.send("\n")
         if col % 3 != 0:
-            self.send( "\n" )
+            self.send("\n")
         self.send("\n")
 
         self.send("Creation points: %d\n" % self.gen_data.points_chosen)
@@ -246,7 +247,7 @@ class Character(living.Living):
                     self.send("You already know that skill!\n")
                     return True
 
-                if sn.rating[self.guild.name] < 1 or sn.spell_fun != None:
+                if sn.rating[self.guild.name] < 1 or sn.spell_fun is not None:
                     self.send("That skill is not available.\n")
                     return True
                 # Close security hole */
@@ -276,7 +277,7 @@ class Character(living.Living):
                 del self.gen_data.group_chosen[gn.name]
                 self.gen_data.points_chosen -= gn.rating[self.guild.name]
                 self.gn_remove(gn)
-                for k,v in self.gen_data.group_chosen:
+                for k, v in self.gen_data.group_chosen:
                     self.gn_add(const.group_table[k])
                 self.points -= gn.rating[self.guild.name]
                 return True
@@ -320,104 +321,34 @@ class Character(living.Living):
             sn = const.skill_table[sn]
 
         if self.level < sn.skill_level[self.guild.name] \
-        or sn.rating[self.guild.name] == 0 \
-        or sn.name not in self.learned \
-        or self.learned[sn.name] == 100:
+                or sn.rating[self.guild.name] == 0 \
+                or sn.name not in self.learned \
+                or self.learned[sn.name] == 100:
             return  # skill is not known */
 
         # check to see if the character has a chance to learn */
-        chance = 10 * int_app[self.stat(STAT_INT)].learn
+        chance = 10 * const.int_app[self.stat(merc.STAT_INT)].learn
         chance //= (multiplier * sn.rating[self.guild.name] * 4)
         chance += self.level
 
-        if random.randint(1,1000) > chance:
+        if random.randint(1, 1000) > chance:
             return
 
         # now that the character has a CHANCE to learn, see if they really have */
 
         if success:
             chance = max(5, min(100 - self.learned[sn.name], 95))
-            if random.randint(1,99) < chance:
+            if random.randint(1, 99) < chance:
                 self.send("You have become better at %s!\n" % sn.name)
                 self.learned[sn.name] += 1
-                update.gain_exp(self,2 * sn.rating[self.guild.name])
+                update.gain_exp(self, 2 * sn.rating[self.guild.name])
         else:
-            chance = max(5, min(self.learned[sn.name]/2,30))
-            if random.randint(1,99) < chance:
+            chance = max(5, min(self.learned[sn.name] / 2, 30))
+            if random.randint(1, 99) < chance:
                 self.send("You learn from your mistakes, and your %s skill improves.\n" % sn.name)
-                self.learned[sn.name] += random.randint(1,3)
-                self.learned[sn.name] = min(self.learned[sn.name],100)
-                update.gain_exp(self,2 * sn.rating[self.guild.name])
-
-    @handler_log.logged("Interp")
-    def interpret(self, argument):
-
-        # Strip leading spaces.
-        argument = argument.lstrip()
-
-        # No hiding.
-        self.affected_by.rem_bit(merc.AFF_HIDE)
-
-        # Implement freeze command.
-        if not self.is_npc() and self.act.is_set(merc.PLR_FREEZE):
-            self.send("You're totally frozen!\n")
-            return
-        # Grab the command word.
-        # Special parsing so ' can be a command,
-        #   also no spaces needed after punctuation.
-        logline = argument
-        if not argument[0].isalpha() and not argument[0].isdigit():
-            command = argument[0]
-            argument = argument[:1].lstrip()
-        else:
-            argument, command = game_utils.read_word(argument)
-        # Look for command in command table.
-        trust = self.trust
-        cmd = state_checks.prefix_lookup(interp.cmd_table, command)
-        if cmd is not None:
-            if cmd.level > trust:
-                cmd = None
-
-        #* Log and snoop.
-        if (not self.is_npc() and self.act.is_set(merc.PLR_LOG)) or settings.LOGALL or (cmd and cmd.log == merc.LOG_ALWAYS):
-            if cmd and cmd.log != merc.LOG_NEVER:
-                log_buf = "Log %s: %s" % (self.name, logline)
-                handler_game.wiznet(log_buf, self, None, merc.WIZ_SECURE, 0, self.trust)
-                logger.info(log_buf)
-        if self.desc and self.desc.snoop_by:
-            self.desc.snoop_by.send("% ")
-            self.desc.snoop_by.send(logline)
-            self.desc.snoop_by.send("\n")
-        if not cmd:
-            #* Look for command in socials table.
-            if not check_social(self, command, argument):
-                self.send("Huh?\n")
-            return
-        #* Character not in position for command?
-        if self.position < cmd.position:
-            if self.position == merc.POS_DEAD:
-                self.send("Lie still; you are DEAD.\n")
-            elif self.position == merc.POS_MORTAL \
-                    or self.position == merc.POS_INCAP:
-                self.send("You are hurt far too bad for that.\n")
-            elif self.position == merc.POS_STUNNED:
-                self.send("You are too stunned to do that.\n")
-            elif self.position == merc.POS_SLEEPING:
-                self.send("In your dreams, or what?\n")
-            elif self.position == merc.POS_RESTING:
-                self.send("Nah... You feel too relaxed...\n")
-            elif self.position == merc.POS_SITTING:
-                self.send("Better stand up first.\n")
-            elif self.position == merc.POS_FIGHTING:
-                self.send("No way!  You are still fighting!\n")
-            return
-
-        # Dispatch the command.
-        if cmd.default_arg:
-            cmd.do_fun(self, cmd.default_arg)
-            return
-        cmd.do_fun(self, argument)
-
+                self.learned[sn.name] += random.randint(1, 3)
+                self.learned[sn.name] = min(self.learned[sn.name], 100)
+                update.gain_exp(self, 2 * sn.rating[self.guild.name])
 
     def check_social(ch, command, argument):
         cmd = None
@@ -474,3 +405,77 @@ class Character(living.Living):
                     handler_game.act("You slap $N.", victim, None, ch, merc.TO_CHAR)
                     handler_game.act("$n slaps you.", victim, None, ch, merc.TO_VICT)
         return True
+
+    @handler_log.logged("Interp")
+    def interpret(self, argument):
+
+        # Strip leading spaces.
+        argument = argument.lstrip()
+
+        # No hiding.
+        self.affected_by.rem_bit(merc.AFF_HIDE)
+
+        # Implement freeze command.
+        if not self.is_npc() and self.act.is_set(merc.PLR_FREEZE):
+            self.send("You're totally frozen!\n")
+            return
+        # Grab the command word.
+        # Special parsing so ' can be a command,
+        #   also no spaces needed after punctuation.
+        logline = argument
+        if not argument[0].isalpha() and not argument[0].isdigit():
+            command = argument[0]
+            argument = argument[:1].lstrip()
+        else:
+            argument, command = game_utils.read_word(argument)
+        # Look for command in command table.
+        trust = self.trust
+        cmd = state_checks.prefix_lookup(interp.cmd_table, command)
+        if cmd is not None:
+            if cmd.level > trust:
+                cmd = None
+
+        #* Log and snoop.
+        if (not self.is_npc() and self.act.is_set(merc.PLR_LOG)) \
+                or settings.LOGALL \
+                or (cmd and cmd.log == merc.LOG_ALWAYS):
+            if cmd and cmd.log != merc.LOG_NEVER:
+                log_buf = "Log %s: %s" % (self.name, logline)
+                handler_game.wiznet(log_buf, self, None, merc.WIZ_SECURE, 0, self.trust)
+                logger.info(log_buf)
+        if self.desc and self.desc.snoop_by:
+            self.desc.snoop_by.send("% ")
+            self.desc.snoop_by.send(logline)
+            self.desc.snoop_by.send("\n")
+        if not cmd:
+            #* Look for command in socials table.
+            if not Character.check_social(self, command, argument):
+                self.send("Huh?\n")
+            return
+        #* Character not in position for command?
+        if self.position < cmd.position:
+            if self.position == merc.POS_DEAD:
+                self.send("Lie still; you are DEAD.\n")
+            elif self.position == merc.POS_MORTAL \
+                    or self.position == merc.POS_INCAP:
+                self.send("You are hurt far too bad for that.\n")
+            elif self.position == merc.POS_STUNNED:
+                self.send("You are too stunned to do that.\n")
+            elif self.position == merc.POS_SLEEPING:
+                self.send("In your dreams, or what?\n")
+            elif self.position == merc.POS_RESTING:
+                self.send("Nah... You feel too relaxed...\n")
+            elif self.position == merc.POS_SITTING:
+                self.send("Better stand up first.\n")
+            elif self.position == merc.POS_FIGHTING:
+                self.send("No way!  You are still fighting!\n")
+            return
+
+        # Dispatch the command.
+        if cmd.default_arg:
+            cmd.do_fun(self, cmd.default_arg)
+            return
+        cmd.do_fun(self, argument)
+
+
+

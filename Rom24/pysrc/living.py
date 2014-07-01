@@ -690,17 +690,17 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
 
     # * Find a char in the room.
     def get_char_room(ch, argument):
-        number, arg = game_utils.number_argument(argument)
+        number, word = game_utils.number_argument(argument)
         count = 0
-        arg = arg.lower()
-        if arg == "self":
+        word = word.lower()
+        if word == "self":
             return ch
         for rch in ch.in_room.people:
             if not ch.can_see(rch):
                 continue
-            if not rch.is_npc() and not rch.name.lower().startswith(arg):
+            if not rch.is_npc() and not rch.name.lower().startswith(word):
                 continue
-            if rch.is_npc() and not game_utils.is_name(arg, rch.name):
+            if rch.is_npc() and not game_utils.is_name(word, rch.name):
                 continue
             count += 1
             if count == number:

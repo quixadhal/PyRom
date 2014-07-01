@@ -2,15 +2,12 @@ import logging
 
 logger = logging.getLogger()
 
-import handler_log
 import merc
 import interp
 import save
 import comm
 import handler_ch
 import handler_game
-import state_checks
-
 
 
 def do_quit(ch, argument):
