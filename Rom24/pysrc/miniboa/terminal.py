@@ -75,7 +75,7 @@ def word_wrap(text, columns=80, indent=4, padding=2):
         line = ' ' * indent
         linelen = len(line)
         for word in para.split():
-            bareword = colorize(word, None)
+            bareword = color_convert(word, 'rom', None)
             if (linelen + 1 + len(bareword)) > columns:
                 lines.append(line)
                 line = ' ' * padding
@@ -88,6 +88,23 @@ def word_wrap(text, columns=80, indent=4, padding=2):
         if not line.isspace():
             lines.append(line)
     return lines
+
+
+class Xlator(dict):
+    """ All-in-one multiple-string-substitution class """
+    def _make_regex(self):
+        """ Build re object based on the keys of the current dictionary """
+        #x = lambda s: '(?<!' + re.escape(s[0]) + ')' + re.escape(s)
+        return re.compile("|".join(map(re.escape, self.keys())))
+
+    def __call__(self, match):
+        """ Handler invoked for each regex match """
+        return self[match.group(0)][self.otype]
+
+    def xlat(self, text, otype):
+        """ Translate text, returns the modified text. """
+        self.otype = otype
+        return self._make_regex().sub(self, text)
 
 
 def color_convert(text: str, input_type: str='rom', output_type: str='ansi'):
@@ -117,15 +134,19 @@ def color_convert(text: str, input_type: str='rom', output_type: str='ansi'):
                 words[i] = COLOR_MAP[input_type][word][o]
         return ''.join(words)
     else:
-        for k in COLOR_MAP[input_type].keys():
-            if output_type is None:
-                text = text.replace(k, '')
-            else:
-                o = TERMINAL_TYPES.index(output_type)
-                v = COLOR_MAP[input_type][k][o]
-                if k != v:
-                    text = text.replace(k, v)
-        return text
+        o = TERMINAL_TYPES.index(output_type)
+        xl = Xlator(COLOR_MAP[input_type])
+        return xl.xlat(text, o)
+
+        # for k in COLOR_MAP[input_type].keys():
+        #     if output_type is None:
+        #         text = text.replace(k, '')
+        #     else:
+        #         o = TERMINAL_TYPES.index(output_type)
+        #         v = COLOR_MAP[input_type][k][o]
+        #         if k != v and v not in COLOR_MAP[input_type]:
+        #             text = text.replace(k, v)
+        # return text
 
 
 def escape(text):
