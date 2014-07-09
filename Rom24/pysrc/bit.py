@@ -45,10 +45,13 @@ class Bit:
         return as_str
 
     def from_name(self, name):
-        if type(name) == int:
+        if type(name) is int:
             return name
-        name = name.strip()
-        bitstring = name.split(' ')
+        elif type(name) is list or type(name) is tuple:
+            bitstring = name
+        else:
+            name = name.strip()
+            bitstring = name.split(' ')
         bits = 0
         flags = self.flags
         for tok in flags.values():
