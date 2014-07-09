@@ -35,6 +35,7 @@ import idlelib.PyParse
 
 import random
 from merc import *
+import merc
 import nanny
 import save
 import db
@@ -145,7 +146,7 @@ def hit_gain(ch):
 
     gain = gain * ch.in_room.heal_rate // 100
 
-    if ch.on and ch.on.item_type == ITEM_FURNITURE:
+    if obj_templates[ch.on] and obj_templates[ch.on].item_type == ITEM_FURNITURE:
         gain = gain * ch.on.value[3] // 100
 
     if ch.is_affected(AFF_POISON):
@@ -278,10 +279,10 @@ def gain_condition(ch, iCond, value):
 def mobile_update():
     # Examine all mobs. */
     for ch in char_list[:]:
-        if not ch.is_npc() or ch.in_room == None or ch.is_affected(AFF_CHARM):
+        if not ch.is_npc() or room_templates[ch.in_room] is None or ch.is_affected(AFF_CHARM):
             continue
 
-        if ch.in_room.area.empty and not ch.act.is_set(ACT_UPDATE_ALWAYS):
+        if merc.area_templates[room_templates[ch.in_room].area] and not ch.act.is_set(ACT_UPDATE_ALWAYS):
             continue
 
         # Examine call for special procedure */
@@ -300,10 +301,10 @@ def mobile_update():
             continue
 
         # Scavenge */
-        if ch.act.is_set(ACT_SCAVENGER) and ch.in_room.contents != None and random.randint(0, 6) == 0:
+        if ch.act.is_set(ACT_SCAVENGER) and room_templates[ch.in_room.vnum].contents is not None and random.randint(0, 6) == 0:
             top = 1
             obj_best = 0
-            for obj in ch.in_room.contents:
+            for obj in room_templates[ch.in_room.vnum].contents:
                 if state_checks.CAN_WEAR(obj, ITEM_TAKE) and ch.can_loot(obj) and obj.cost > top and obj.cost > 0:
                     obj_best = obj
                     top = obj.cost
@@ -430,7 +431,7 @@ def char_update():
 
         if ch.position >= POS_STUNNED:
             # check to see if we need to go home */
-            if ch.is_npc() and ch.zone and ch.zone != ch.in_room.area \
+            if ch.is_npc() and ch.zone and ch.zone != area_templates[room_templates[ch.in_room].area] \
                     and not ch.desc and not ch.fighting\
                     and not ch.is_affected(AFF_CHARM) and random.randint(1, 99) < 5:
                 handler_game.act("$n wanders on home.", ch, None, None, TO_ROOM)
@@ -459,8 +460,8 @@ def char_update():
             obj = ch.get_eq(WEAR_LIGHT)
             if obj and obj.item_type == ITEM_LIGHT and obj.value[2] > 0:
                 obj.value[2] -= 1
-                if obj.value[2] == 0 and ch.in_room != None:
-                    ch.in_room.light -= 1
+                if obj.value[2] == 0 and room_templates[ch.in_room] is not None:
+                    room_templates[ch.in_room].light -= 1
                     handler_game.act("$p goes out.", ch, obj, None, TO_ROOM)
                     handler_game.act("$p flickers and goes out.", ch, obj, None, TO_CHAR)
                     obj.extract()
@@ -471,8 +472,8 @@ def char_update():
                 ch.timer = 0
             ch.timer += 1
             if ch.timer >= 12:
-                if not ch.was_in_room and ch.in_room:
-                    ch.was_in_room = ch.in_room
+                if not room_templates[ch.was_in_room] and room_templates[ch.in_room]:
+                    room_templates[ch.was_in_room] = room_templates[ch.in_room]
                     if ch.fighting:
                         fight.stop_fighting(ch, True)
                     handler_game.act("$n disappears into the void.", ch, None, None, TO_ROOM)
@@ -480,7 +481,7 @@ def char_update():
                     if ch.level > 1:
                         save.save_char_obj(ch)
                     ch.from_room()
-                    ch.to_room(room_index_hash[ROOM_VNUM_LIMBO])
+                    ch.to_room(room_templates[ROOM_VNUM_LIMBO])
 
             gain_condition(ch, COND_DRUNK, -1)
             gain_condition(ch, COND_FULL, -4 if ch.size > SIZE_MEDIUM else -2)
@@ -508,7 +509,7 @@ def char_update():
                 # */
 
         if state_checks.is_affected(ch, 'plague') and ch:
-            if ch.in_room == None:
+            if room_templates[ch.in_room] is None:
                 continue
 
             handler_game.act("$n writhes in agony as plague sores erupt from $s skin.", ch, None, None, TO_ROOM)
@@ -528,7 +529,7 @@ def char_update():
             plague.modifier = -5
             plague.bitvector = AFF_PLAGUE
 
-            for vch in ch.in_room.people:
+            for vch in room_templates[ch.in_room].people:
                 if not handler_magic.saves_spell(plague.level - 2, vch, DAM_DISEASE) and not vch.is_immmortal() \
                         and not vch.is_affected(AFF_PLAGUE) and random.randint(0, 4) == 0:
                     vch.send("You feel hot and feverish.\n")
@@ -582,7 +583,7 @@ def obj_update():
                         rch = obj.carried_by
                         handler_game.act(const.skill_table[paf.type].msg_obj, rch, obj, None, TO_CHAR)
 
-                    if obj.in_room != None and obj.in_room.people:
+                    if obj[obj.in_room] is not None and room_templates[obj.in_room].people:
                         handler_game.act(const.skill_table[paf.type].msg_obj, obj.in_room.people, obj, None, TO_ALL)
                 obj.affect_remove(paf)
         obj.timer -= 1

@@ -130,13 +130,13 @@ def spec_patrolman(ch):
     neck1 = ch.get_eq(WEAR_NECK_1)
     neck2 = ch.get_eq(WEAR_NECK_2)
     if (neck1 and neck1.pIndexData.vnum == OBJ_VNUM_WHISTLE) or ( neck2 and neck2.pIndexData.vnum == OBJ_VNUM_WHISTLE):
-        handler_game.act("You blow down hard on $p.",ch, obj,None,TO_CHAR)
-        handler_game.act("$n blows on $p, ***WHEEEEEEEEEEEET***",ch, obj,None,TO_ROOM)
+        handler_game.act("You blow down hard on $p.",ch, obj_templates,None,TO_CHAR)
+        handler_game.act("$n blows on $p, ***WHEEEEEEEEEEEET***",ch, obj_templates,None,TO_ROOM)
 
         for vch in char_list:
             if vch.in_room == None:
                 continue
-            if vch.in_room != ch.in_room and vch.in_room.area == ch.in_room.area:
+            if room_templates[vch.in_room] != room_templates[ch.in_room.vnum] and area_templates[room_templates[vch.in_room].area] == area_templates[room_templates[ch.in_room.vnum].area]:
                 vch.send("You hear a shrill whistling sound.\n")
 
     messages = ["$n yells 'All roit! All roit! break it up!'",
@@ -239,7 +239,7 @@ def spec_cast_adept( ch ):
     if not ch.is_awake():
         return False
     victim = None
-    for vch in ch.in_room.people[:]:
+    for vch in ch.room_template.people[:]:
         if vch != ch and ch.can_see(vch) and random.randint(0, 1 ) == 0 and not vch.is_npc() and vch.level < 11:
             victim = vch
             break
@@ -483,13 +483,13 @@ def spec_fido( ch ):
     if not ch.is_awake():
         return False
 
-    for corpse in ch.in_room.contents:
+    for corpse in ch.room_template.contents:
         if corpse.item_type != ITEM_CORPSE_NPC:
             continue
         handler_game.act( "$n savagely devours a corpse.", ch, None, None, TO_ROOM )
         for obj in corpse.contains[:]:
             obj.from_obj()
-            obj.to_room(ch.in_room)
+            obj.to_room(ch.room_template)
 
         corpse.extract()
         return True

@@ -914,7 +914,7 @@ def make_corpse(ch):
 
     if ch.is_npc():
         name = ch.short_descr
-        corpse = create_object(obj_index_hash[OBJ_VNUM_CORPSE_NPC], 0)
+        corpse = create_object(obj_templates[OBJ_VNUM_CORPSE_NPC], 0)
         corpse.timer = random.randint(3, 6)
         if ch.gold > 0:
             db.create_money(ch.gold, ch.silver).to_obj(corpse)
@@ -923,7 +923,7 @@ def make_corpse(ch):
         corpse.cost = 0
     else:
         name = ch.name
-        corpse = create_object(obj_index_hash[OBJ_VNUM_CORPSE_PC], 0)
+        corpse = create_object(obj_templates[OBJ_VNUM_CORPSE_PC], 0)
         corpse.timer = random.randint(25, 40)
         ch.act.rem_bit(PLR_CANLOOT)
         if not ch.is_clan():
@@ -1014,7 +1014,7 @@ def death_cry(ch):
     handler_game.act(msg, ch, None, None, TO_ROOM)
     if vnum != 0:
         name = ch.short_descr if ch.is_npc() else ch.name
-        obj = create_object(obj_index_hash[vnum], 0)
+        obj = create_object(obj_templates[vnum], 0)
         obj.timer = random.randint(4, 7)
 
         obj.short_descr = obj.short_descr % name

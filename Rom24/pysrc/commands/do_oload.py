@@ -28,10 +28,10 @@ def do_oload(ch, argument):
             ch.send("Level must be be between 0 and your level.\n")
             return
     vnum = int(arg1)
-    if vnum not in merc.obj_index_hash:
+    if vnum not in merc.obj_templates:
         ch.send("No object has that vnum.\n")
         return
-    obj = db.create_object(merc.obj_index_hash[vnum], level)
+    obj = db.create_object(merc.obj_templates[vnum], level)
     if state_checks.CAN_WEAR(obj, merc.ITEM_TAKE):
         obj.to_char(ch)
     else:

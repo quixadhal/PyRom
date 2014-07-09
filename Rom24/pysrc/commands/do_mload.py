@@ -14,10 +14,10 @@ def do_mload(ch, argument):
         ch.send("Syntax: load mob <vnum>.\n")
         return
     vnum = int(arg)
-    if vnum not in merc.mob_index_hash:
+    if vnum not in merc.mob_templates:
         ch.send("No mob has that vnum.\n")
         return
-    pMobIndex = merc.mob_index_hash[vnum]
+    pMobIndex = merc.mob_templates[vnum]
     victim = db.create_mobile(pMobIndex)
     victim.to_room(ch.in_room)
     handler_game.act("$n has created $N!", ch, None, victim, merc.TO_ROOM)

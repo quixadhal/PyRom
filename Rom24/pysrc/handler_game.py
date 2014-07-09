@@ -1,20 +1,10 @@
-import character
 import handler_ch
 import handler_obj
 import living
 from merc import *
-import interp
 import state_checks
 import game_utils
 __author__ = 'venom'
-
-
-class GEN_DATA:
-    def __init__(self):
-        self.valid = False
-        self.skill_chosen = {}
-        self.group_chosen = {}
-        self.points_chosen = 0
 
 
 class SOCIAL_DATA:
@@ -75,7 +65,7 @@ weather_info = weather_data()
 def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
     if not format:
         return
-    if not ch or not ch.in_room:
+    if not ch or not ch.room_template:
         return
 
     vch = arg2
@@ -86,7 +76,7 @@ def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
     him_her = ["it",  "him", "her"]
     his_her = ["its", "his", "her"]
 
-    to_players = ch.in_room.people
+    to_players = ch.room_template.people
 
     if send_to is TO_VICT:
         if not vch:

@@ -32,12 +32,21 @@
  ************/
 """
 import logging
+import os
+import settings
 
 logger = logging.getLogger()
 
 import merc
 import state_checks
 
+def global_instance_generator():
+    merc.instance_number += 1
+    instance_num_file = os.path.join(settings.AREA_DIR, "instance_tracker.txt")
+    fp = open(instance_num_file, 'w')
+    fp.write(str(merc.instance_number))
+    fp.close()
+    return merc.instance_number
 
 # * Return ascii name of an affect location.
 def affect_loc_name(location):

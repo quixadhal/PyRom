@@ -5,7 +5,7 @@ import merc
 
 
 def spell_create_rose(sn, level, ch, victim, target):
-    rose = db.create_object(merc.obj_index_hash[merc.OBJ_VNUM_ROSE], 0)
+    rose = db.create_object(merc.obj_templates[merc.OBJ_VNUM_ROSE], 0)
     handler_game.act("$n has created a beautiful red rose.", ch, rose, None, merc.TO_ROOM)
     ch.send("You create a beautiful red rose.\n")
     rose.to_char(ch)

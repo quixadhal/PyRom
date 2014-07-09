@@ -15,11 +15,11 @@ def do_list(ch, argument):
         # hack to make new thalos pets work
         pRoomIndexNext = None
         if ch.in_room.vnum == 9621:
-            if 9706 in merc.room_index_hash:
-                pRoomIndexNext = merc.room_index_hash[9706]
+            if 9706 in merc.room_templates:
+                pRoomIndexNext = merc.room_templates[9706]
         else:
-            if ch.in_room.vnum + 1 in merc.room_index_hash:
-                pRoomIndexNext = merc.room_index_hash[ch.in_room.vnum + 1]
+            if ch.in_room.vnum + 1 in merc.room_templates:
+                pRoomIndexNext = merc.room_templates[ch.in_room.vnum + 1]
         if not pRoomIndexNext:
             logger.warn("BUG: Do_list: bad pet shop at vnum %d.", ch.in_room.vnum)
             ch.send("You can't do that here.\n")

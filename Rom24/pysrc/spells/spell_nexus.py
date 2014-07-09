@@ -40,7 +40,7 @@ def spell_nexus(sn, level, ch, victim, target):
         stone.extract()
 
     # portal one */
-    portal = db.create_object(merc.obj_index_hash[merc.OBJ_VNUM_PORTAL], 0)
+    portal = db.create_object(merc.obj_templates[merc.OBJ_VNUM_PORTAL], 0)
     portal.timer = 1 + level // 10
     portal.value[3] = to_room.vnum
 
@@ -54,7 +54,7 @@ def spell_nexus(sn, level, ch, victim, target):
         return
 
     # portal two */
-    portal = db.create_object(merc.obj_index_hash[merc.OBJ_VNUM_PORTAL], 0)
+    portal = db.create_object(merc.obj_templates[merc.OBJ_VNUM_PORTAL], 0)
     portal.timer = 1 + level // 10
     portal.value[3] = from_room.vnum
 

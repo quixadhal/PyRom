@@ -39,14 +39,38 @@ from merc import *
 import state_checks
 
 
-class ROOM_INDEX_DATA:
+class ROOM_TEMPLATE_DATA:
     def __init__(self):
+        self.template_people = []
+        self.template_contents = []
+        self.template_extra_descr = []
+        self.template_area = ""
+        self.template_exit = [0, 0, 0, 0, 0, 0]
+        self.template_old_exit = [0, 0, 0, 0, 0, 0]
+        self.template_name = ""
+        self.template_description = ""
+        self.template_owner = ""
+        self.template_vnum = 0
+        self.template_room_flags = 0
+        self.template_light = 0
+        self.template_sector_type = 0
+        self.template_heal_rate = 0
+        self.template_mana_rate = 0
+        self.template_clan = 0
+
+    def __repr__(self):
+        return "<RoomTemplate: %d>" % self.template_vnum
+
+class ROOM_DATA:
+    def __init__(self):
+        self.instance_id = 0
+        self.roomTemplate = 0
         self.people = []
         self.contents = []
         self.extra_descr = []
-        self.area = None
-        self.exit = [None, None, None, None, None, None]
-        self.old_exit = [None, None, None, None, None, None]
+        self.area = ""
+        self.exit = [0, 0, 0, 0, 0, 0]
+        self.old_exit = [0, 0, 0, 0, 0, 0]
         self.name = ""
         self.description = ""
         self.owner = ""
@@ -59,13 +83,12 @@ class ROOM_INDEX_DATA:
         self.clan = 0
 
     def __repr__(self):
-        return "<RoomIndex: %d" % self.vnum
-
+        return "<Room Instance Number: %d - Template: %d >" % (self.instance_id, self.roomTemplate)
 
 def get_random_room(ch):
     room = None
     while True:
-        room = random.choice(room_index_hash)
+        room = random.choice(room_instances)
         if ch.can_see_room(room) and not room.is_private() \
             and not state_checks.IS_SET(room.room_flags, ROOM_PRIVATE) \
             and not state_checks.IS_SET(room.room_flags, ROOM_SOLITARY) \
@@ -108,30 +131,30 @@ def find_door(ch, arg):
     return door
 
 class handler_room:
-    def is_dark(pRoomIndex):
-        if pRoomIndex.light > 0:
+    def is_dark(room_instance):
+        if room_instance.light > 0:
             return False
-        if state_checks.IS_SET(pRoomIndex.room_flags, ROOM_DARK):
+        if state_checks.IS_SET(room_instance.room_flags, ROOM_DARK):
             return True
-        if pRoomIndex.sector_type == SECT_INSIDE or pRoomIndex.sector_type == SECT_CITY:
+        if room_instance.sector_type == SECT_INSIDE or room_instance.sector_type == SECT_CITY:
             return False
         if handler_game.weather_info.sunlight == SUN_SET or handler_game.weather_info.sunlight == SUN_DARK:
             return True
         return False
     
     # * True if room is private.
-    def is_private(pRoomIndex):
-        if pRoomIndex.owner:
+    def is_private(room_instance):
+        if room_instance.owner:
             return True
-        count = len(pRoomIndex.people)
-        if state_checks.IS_SET(pRoomIndex.room_flags, ROOM_PRIVATE) and count >= 2:
+        count = len(room_instance.people)
+        if state_checks.IS_SET(room_instance.room_flags, ROOM_PRIVATE) and count >= 2:
             return True
-        if state_checks.IS_SET(pRoomIndex.room_flags, ROOM_SOLITARY) and count >= 1:
+        if state_checks.IS_SET(room_instance.room_flags, ROOM_SOLITARY) and count >= 1:
             return True
-        if state_checks.IS_SET(pRoomIndex.room_flags, ROOM_IMP_ONLY):
+        if state_checks.IS_SET(room_instance.room_flags, ROOM_IMP_ONLY):
             return True
         return False
 
 methods = {d:f for d,f in handler_room.__dict__.items() if not d.startswith('__')}
 for m,f in methods.items():
-    setattr(ROOM_INDEX_DATA, m, f)
+    setattr(ROOM_DATA, m, f)

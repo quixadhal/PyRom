@@ -19,7 +19,7 @@ def do_mfind(ch, argument):
     # Get_mob_index is fast, and I don't feel like threading another link.
     # Do you?
     # -- Furey
-    for pMobIndex in merc.mob_index_hash.values():
+    for pMobIndex in merc.mob_templates.values():
         if fAll or game_utils.is_name(arg, pMobIndex.player_name):
             found = True
             ch.send("[%5d] %s\n" % (pMobIndex.vnum, pMobIndex.short_descr))

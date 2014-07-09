@@ -32,6 +32,8 @@
  ************/
 """
 import logging
+import entity_instancer
+from world_classes import GEN_DATA
 
 logger = logging.getLogger()
 
@@ -288,7 +290,7 @@ def con_default_choice(self):
 
     ch.send("\n")
     if argument == 'y':
-        ch.gen_data = handler_game.GEN_DATA()
+        ch.gen_data = GEN_DATA()
         ch.gen_data.points_chosen = ch.pcdata.points
         ch.do_help("group header")
         ch.list_group_costs()
@@ -462,23 +464,25 @@ def con_read_motd(self):
         ch.title = buf
 
         ch.do_outfit("")
-        db.create_object(merc.obj_index_hash[merc.OBJ_VNUM_MAP], 0).to_char(ch)
-        ch.to_room(merc.room_index_hash[merc.ROOM_VNUM_SCHOOL])
+        entity_instancer.create_object(merc.obj_templates[merc.OBJ_VNUM_MAP], 0).to_char(ch)
+        ch.to_room(game_utils.find_vnum_instance('room', 1, merc.ROOM_VNUM_SCHOOL))
         ch.do_help("newbie info")
 
-    elif ch.in_room:
-        ch.to_room(ch.in_room)
+    elif ch.in_room_instance > 0:
+        ch.to_room(ch.in_room_instance)
     elif ch.is_immortal():
-        ch.to_room(merc.room_index_hash[merc.ROOM_VNUM_CHAT])
+        to_instance = game_utils.find_vnum_instance('room', 1, merc.ROOM_VNUM_TEMPLE)
+        ch.to_room(to_instance)
     else:
-        ch.to_room(ch, merc.room_index_hash[merc.ROOM_VNUM_TEMPLE])
+        to_instance = game_utils.find_vnum_instance('room', 1, merc.ROOM_VNUM_TEMPLE)
+        ch.to_room(to_instance)
 
     handler_game.act("$n has entered the game.", ch, None, None, merc.TO_ROOM)
     ch.do_look("auto")
 
     handler_game.wiznet("$N has left real life behind.", ch, None, merc.WIZ_LOGINS, merc.WIZ_SITES, ch.trust)
     if ch.pet:
-        ch.pet.to_room(ch.in_room)
+        ch.pet.to_room(ch.in_room_instance)
         handler_game.act("$n has entered the game.", ch.pet, None, None, merc.TO_ROOM)
 
 

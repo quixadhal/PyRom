@@ -165,6 +165,7 @@ def close_socket(d):
 #* coded by Morgenes for Aldara Mud
 def bust_a_prompt(ch):
     dir_name = ["N", "E", "S", "W", "U", "D"]
+    room = merc.room_instances[ch.in_room_instance]
     doors = ""
     pstr = ch.prompt
     if not pstr:
@@ -175,13 +176,14 @@ def bust_a_prompt(ch):
         return
     replace = OrderedDict()
     found = False
-    for door, pexit in enumerate(ch.in_room.exit):
-        if pexit \
-                and pexit.to_room \
-                and (ch.can_see_room(pexit.to_room)
+    for door, pexit in enumerate(room.exit):
+        instance_exit = merc.exit_instances[pexit.instance_id]
+        if instance_exit \
+                and instance_exit.roomTemplate != 0 \
+                and (ch.can_see_room(merc.room_instances[instance_exit.to_room_instance])
                      or (ch.is_affected(merc.AFF_INFRARED)
                          and not ch.is_affected(merc.AFF_BLIND))) \
-                and not state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED):
+                and not state_checks.IS_SET(instance_exit.exit_info, merc.EX_CLOSED):
             found = True
             doors += dir_name[door]
         if not found:
@@ -209,24 +211,24 @@ def bust_a_prompt(ch):
             if ch.is_evil() \
             else "neutral"
     
-    if ch.in_room:
+    if merc.room_instances[ch.in_room_instance]:
         if (not ch.is_npc()
             and ch.act.is_set(merc.PLR_HOLYLIGHT)) \
                 or (not ch.is_affected(merc.AFF_BLIND)
-                    and not ch.in_room.is_dark()):
-            replace['%r'] = ch.in_room.name 
+                    and not merc.room_instances[ch.in_room_instance].is_dark()):
+            replace['%r'] = merc.room_instances[ch.in_room_instance].name
         else: 
             replace['%r'] = "darkness"
     else:
         replace['%r'] = " "
      
-    if ch.is_immortal() and ch.in_room:
-        replace['%R'] = "%d" % ch.in_room.vnum 
+    if ch.is_immortal() and merc.room_instances[ch.in_room_instance]:
+        replace['%R'] = "%d" % ch.in_room_instance
     else:
         replace['%R'] = " "
     
-    if ch.is_immortal() and ch.in_room:
-        replace['%z'] = "%s" % ch.in_room.area.name
+    if ch.is_immortal() and merc.room_instances[ch.in_room_instance]:
+        replace['%z'] = "%s" % merc.area_templates[merc.room_templates[ch.room_template.vnum].area].name
     else:
         replace['%z'] = " "
         

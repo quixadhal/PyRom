@@ -1,17 +1,25 @@
 import os
 import json
 from collections import OrderedDict
+import pickle
+import entity_instancer
+import game_utils
+import handler_room
 
 from merc import *
 
 import db
-import handler_olc
-import const
-import handler_ch
+import world_classes
+import merc
 import settings
-import state_checks
-import tables
 import character
+import db
+
+
+def area_pickler():
+    pass
+
+
 
 def save_char_obj(ch):
     if ch.is_npc():
@@ -176,7 +184,9 @@ def fread_char(chdict, ch):
     ch.trust = chdict["Tru"]
     ch.played = chdict["Plyd"]
     ch.lines = chdict["Scro"]
-    ch.in_room = room_index_hash[chdict["Room"]]
+    ch.room_template = 0
+    vnum = room_templates[chdict["Room"]].template_vnum
+    ch.in_room_instance = game_utils.find_vnum_instance('room', 1, vnum)
     ch.hit, ch.max_hit, ch.mana, ch.max_mana, ch.move, ch.max_move = chdict["HMV"]
     ch.gold = chdict["Gold"]
     ch.silver = chdict["Silv"]
@@ -231,7 +241,7 @@ def fread_objs(contents, objects, contained_by=None):
 
 
 def fread_obj(contents, odict):
-    obj = db.create_object(obj_index_hash[odict['Vnum']], odict['Lev'])
+    obj = entity_instancer.create_object(obj_templates[odict['Vnum']], odict['Lev'])
     obj.enchanted = odict['Enchanted']
     obj.name = odict['Name']
     obj.short_descr = odict['ShD']
@@ -251,7 +261,7 @@ def fread_obj(contents, odict):
     obj.affected = odict['affected']
     extra_descr = []
     for k, v in odict['ExDe'].items():
-        newed = handler_olc.EXTRA_DESCR_DATA()
+        newed = world_classes.EXTRA_DESCR_DATA()
         newed.keyword = k
         newed.description = v
         extra_descr.append(newed)

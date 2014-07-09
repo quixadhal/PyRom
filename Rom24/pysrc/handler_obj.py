@@ -32,65 +32,63 @@
  ************/
 """
 import const
+import entity_instancer
+import handler
 import handler_game
 import merc
 import state_checks
 
-
-class OBJ_INDEX_DATA:
-    def __init__(self):
-        self.extra_descr = []
-        self.affected = []
-        self.new_format = True
-        self.name = ""
-        self.short_descr = ""
-        self.description = ""
-        self.vnum = 0
-        self.reset_num = 0
-        self.material = ""
-        self.item_type = 0
-        self.extra_flags = 0
-        self.wear_flags = 0
-        self.level = 0
-        self.condition = 0
-        self.count = 0
-        self.weight = 0
-        self.cost = 0
-        self.value = [0, 0, 0, 0, 0]
-
-    def __repr__(self):
-        return "<ObjIndex: %s:%d>" % (self.short_descr, self.vnum)
-
 # * One object.
 
 
-class OBJ_DATA:
-    def __init__(self):
-        self.contains = []
-        self.in_obj = None
-        self.on = None
-        self.carried_by = None
-        self.extra_descr = []
-        self.affected = []
-        self.pIndexData = None
-        self.in_room = None
-        self.valid = False
-        self.enchanted = False
-        self.owner = ""
-        self.name = ""
-        self.short_descr =""
-        self.description =""
-        self.item_type = 0
-        self.extra_flags = 0
-        self.wear_flags = 0
-        self.wear_loc = 0
-        self.weight = 0
-        self.cost = 0
-        self.level = 0
-        self.condition = 0
-        self.material = ""
-        self.timer = 0
-        self.value = [0 for x in range(5)]
+class OBJ_DATA():
+    def __init__(self, template=None):
+        if template:
+            copy = template.__dict__.copy()
+            for k, v in copy.items():
+                setattr(self, k, v)
+            self.instance_id = handler.global_instance_generator()
+            merc.global_instances[self.instance_id] = self
+            merc.obj_instances[self.instance_id] = merc.global_instances[self.instance_id]
+            copy = None
+        else:
+            super().__init__()
+            self.instance_id = None
+            self.count = 0
+            self.in_room = None
+            self.in_obj = None
+            self.on = None
+            self.carried_by = None
+            self.vnum = 0
+            self.reset_num = 0
+            self.contains = []
+            self.extra_descr = []
+            self.affected = []
+            self.objTemplate = 0
+            self.valid = False
+            self.enchanted = False
+            self.new_format = True
+            self.owner = ""
+            self.name = ""
+            self.short_descr = ""
+            self.description = ""
+            self.item_type = 0
+            self.extra_flags = 0
+            self.wear_flags = 0
+            self.wear_loc = 0
+            self._weight = 0
+            self.cost = 0
+            self.level = 0
+            self.condition = 0
+            self.material = ""
+            self.timer = 0
+            self.value = [0, 0, 0, 0, 0]
+
+    def __repr__(self):
+        if not self.instance_id:
+            return "<Obj Template: %s : %d>" % (self.short_descr, self.vnum)
+        else:
+            return "<Obj Instance: %s : ID %d>" % (self.short_descr, self.instance_id)
 
 
    # * Remove an object.
@@ -311,14 +309,14 @@ def get_obj(ch, obj, container):
         return
     if obj.in_room is not None:
         for gch in obj.in_room.people:
-            if gch.on == obj:
+            if merc.obj_templates[gch.on] == obj:
                 handler_game.act("$N appears to be using $p.", ch,obj,gch, merc.TO_CHAR)
                 return
     if container:
-        if container.pIndexData.vnum == merc.OBJ_VNUM_PIT and ch.trust < obj.level:
+        if container.objTemplate == merc.OBJ_VNUM_PIT and ch.trust < obj.level:
             ch.send("You are not powerful enough to use it.\n")
             return
-    if container.pIndexData.vnum == merc.OBJ_VNUM_PIT \
+    if container.objTemplate == merc.OBJ_VNUM_PIT \
             and not state_checks.CAN_WEAR(container, merc.ITEM_TAKE) \
     and not state_checks.IS_OBJ_STAT(obj, merc.ITEM_HAD_TIMER):
         obj.timer = 0
@@ -379,28 +377,31 @@ def format_obj_to_char(obj, ch, fShort):
         if obj.description:
             buf += obj.description
     if ch.act.is_set(merc.PLR_OMNI):
-        buf += "(%d)" % obj.pIndexData.vnum
+        buf += "(%d)" % obj.objTemplate
     return buf
 
 # * Find some object with a given index data.
 # * Used by area-reset 'P' command.
-def get_obj_type(pObjIndex):
-    search = [obj for obj in merc.object_list if obj.pIndexData == pObjIndex][:1]
-    return search[0] if search else None
+def get_obj_type(objTemplate):
+    for k, v in merc.obj_templates.items():
+        if k == objTemplate.vnum:
+            search = v
+            return search
+    return
 
 # * Count occurrences of an obj in a list.
-def count_obj_list(pObjIndex, contents):
-    return len([obj for obj in contents if obj.pIndexData == pObjIndex])
+def count_obj_list(objInstance, contents):
+    return len([obj for obj in contents if obj.instance_id == objInstance.instance_id])
 
 # for clone, to insure that cloning goes many levels deep */
 def recursive_clone(ch, obj, clone):
     import db
     for c_obj in obj.contains:
-        if obj_check(ch,c_obj):
-            t_obj = db.create_object(c_obj.pIndexData,0)
-            db.clone_object(c_obj,t_obj)
+        if obj_check(ch, c_obj):
+            t_obj = entity_instancer.create_object(c_obj.objTemplate, 0)
+            entity_instancer.clone_object(c_obj, t_obj)
             t_obj.to_obj(clone)
-            recursive_clone(ch,c_obj,t_obj)
+            recursive_clone(ch, c_obj, t_obj)
 
 class handler_obj:
     # * Find the ac value of an obj, including position effect.
@@ -417,9 +418,9 @@ class handler_obj:
     # * Give an obj to a char.
     def to_char(obj, ch):
         ch.contents.append(obj)
-        obj.carried_by = ch
-        obj.in_room = None
-        obj.in_obj = None
+        obj.carried_by = ch.instance_id
+        obj.in_room_instance = 0
+        obj.in_obj_instance = 0
         ch.carry_number += obj.get_number()
         ch.carry_weight += obj.get_weight()
 
@@ -450,7 +451,8 @@ class handler_obj:
         counted = [obj]
         for tobj in contents:
             if tobj in counted:
-                print("BUG: Objects contain eachother. %s(%d) - %s(%d)" % (obj.short_descr, obj.pIndexData.vnum, tobj.short_descr, tobj.pIndexData.vnum))
+                print("BUG: Objects contain eachother. %s(%d) - %s(%d)" %
+                      (obj.short_descr, obj.instance_id, tobj.short_descr, tobj.instance_id))
                 break
             counted.append(tobj)
 
@@ -469,7 +471,7 @@ class handler_obj:
         # okay, move all the old flags into new vectors if we have to */
         if not obj.enchanted:
             obj.enchanted = True
-            for paf in obj.pIndexData.affected:
+            for paf in merc.obj_templates[obj.objTemplate].affected:
                 af_new = handler_game.AFFECT_DATA()
                 obj.affected.append(af_new)
 
@@ -487,18 +489,19 @@ class handler_obj:
         # apply any affect vectors to the object's extra_flags */
         if paf.bitvector:
             if paf.where == merc.TO_OBJECT:
-                state_checks.SET_BIT(obj.extra_flags,paf.bitvector)
+                state_checks.SET_BIT(obj.extra_flags, paf.bitvector)
             elif paf.where == merc.TO_WEAPON:
                 if obj.item_type == merc.ITEM_WEAPON:
-                    state_checks.SET_BIT(obj.value[4],paf.bitvector)
+                    state_checks.SET_BIT(obj.value[4], paf.bitvector)
 
     def affect_remove(obj, paf):
         if not obj.affected:
             print ("BUG: Affect_remove_object: no affect.")
             return
 
-        if obj.carried_by != None and obj.wear_loc != -1:
-            obj.carried_by.affect_modify(paf, False)
+        if obj.carried_by != 0 and obj.wear_loc != -1:
+            #TODO add a char instance dict
+            merc.global_instances[obj.carried_by].affect_modify(paf, False)
 
         where = paf.where
         vector = paf.bitvector
@@ -516,43 +519,43 @@ class handler_obj:
             return
         obj.affected.remove(paf)
         del paf
-        if obj.carried_by != None and obj.wear_loc != -1:
-            obj.carried_by.affect_check(where, vector)
+        if obj.carried_by != 0 and obj.wear_loc != -1:
+            merc.global_instance[obj.carried_by].affect_check(where, vector)
         return
 
     # * Move an obj out of a room.
     def from_room(obj):
-        if not obj.in_room:
-            print ("Bug: obj_from_room: None.")
+        if obj.in_instance == 0:
+            print("Bug: obj_from_room: None.")
             return
-        in_room = obj.in_room
-        for ch in in_room.people:
-            if ch.on == obj:
-                ch.on = None
+        room = merc.room_instances[obj.in_room_instance]
+        for ch in room.people:
+            if merc.obj_instances[ch.on_instance] == obj:
+                merc.obj_instances[ch.on_instance] = 0
 
-        if obj not in in_room.contents:
-            print ("Bug: Obj_from_room: obj not found.")
+        if obj not in room.contents:
+            print("Bug: Obj_from_room: obj not found.")
             return
 
-        obj.in_room = None
-        in_room.contents.remove(obj)
+        obj.in_room_instance = 0
+        room.contents.remove(obj)
         return
 
     # * Move an obj into a room.
-    def to_room(obj, pRoomIndex):
-        pRoomIndex.contents.append(obj)
-        obj.in_room = pRoomIndex
-        obj.carried_by = None
-        obj.in_obj = None
+    def to_room(obj, room_instance):
+        room_instance.contents.append(obj)
+        obj.in_room_instance = room_instance.instance_id
+        obj.carried_by = 0
+        obj.in_obj_instance = 0
         return
 
     # * Move an object into an object.
     def to_obj(obj, obj_to):
         obj_to.contains.append(obj)
-        obj.in_obj = obj_to
-        obj.in_room = None
-        obj.carried_by = None
-        if obj_to.pIndexData.vnum == merc.OBJ_VNUM_PIT:
+        obj.in_obj_instance = obj_to.instance_id
+        obj.in_room_instance = 0
+        obj.carried_by = 0
+        if obj_to.objTemplate == merc.OBJ_VNUM_PIT:
             obj.cost = 0 
 
         while obj_to:
@@ -564,44 +567,45 @@ class handler_obj:
 
     # * Move an object out of an object.
     def from_obj(obj):
-        if not obj.in_obj:
-            print ("Bug: Obj_from_obj: null obj_from.")
+        if obj.in_obj_instance == 0:
+            print("Bug: Obj_from_obj: null obj_from.")
             return
-        obj_from = obj.in_obj
+        obj_from = merc.obj_instances[obj.in_obj_instance]
 
         if obj not in obj_from.contents:
-            print ("BUG: Obj_from_obj: obj not found.")
+            print("BUG: Obj_from_obj: obj not found.")
             return
         obj_from.contents.remove(obj)
-        obj.in_obj       = None
+        obj.in_obj_instance = 0
 
         while obj_from:
             if obj_from.carried_by:
                 obj_from.carried_by.carry_number -= obj.get_number()
                 obj_from.carried_by.carry_weight -= obj.get_weight() * state_checks.WEIGHT_MULT(obj_from) / 100
-            obj_from = obj_from.in_obj
+            obj_from = merc.obj_instances[obj_from.in_obj_instance]
         return
 
     # * Extract an obj from the world.
     def extract(obj):
-        if obj.in_room:
+        if obj.in_room_instance != 0:
             obj.from_room()
-        elif obj.carried_by:
+        elif obj.carried_by != 0:
             obj.from_char()
-        elif obj.in_obj:
+        elif obj.in_obj_instance != 0:
             obj.from_obj()
 
         for obj_content in obj.contains[:]:
             obj_content.extract()
 
-        if obj not in merc.object_list:
-            print ("Extract_obj: obj %d not found." % obj.pIndexData.vnum)
+        if obj.instance_id not in merc.obj_instances:
+            print("Extract_obj: obj %d not found in obj_instance dict." % obj.instance_id)
             return
-        merc.object_list.remove(obj)
+        del merc.obj_instances[obj.instance_id]
+        del merc.global_instances[obj.instance_id]
 
     # * Take an obj from its character.
     def from_char(obj):
-        ch = obj.carried_by
+        ch = merc.global_instances[obj.carried_by]
         if not ch:
             print ("BUG: Obj_from_char: null ch.")
             return
@@ -619,9 +623,9 @@ class handler_obj:
     # Return the number of players "on" an object.
     def count_users(obj):
         total = 0
-        if obj.in_room:
-            for person in obj.in_room.people:
-                if person.on == obj:
+        if obj.in_room_instance != 0:
+            for person in merc.room_instances[obj.in_room_instance].people:
+                if person.on_instance == obj.instance_id:
                     total += 1
         return total
 

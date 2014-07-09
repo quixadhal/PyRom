@@ -36,7 +36,7 @@ def spell_portal(sn, level, ch, victim, target):
         handler_game.act("It flares brightly and vanishes! ", ch, stone, None, merc.TO_CHAR)
         stone.extract()
 
-    portal = db.create_object(merc.obj_index_hash[merc.OBJ_VNUM_PORTAL], 0)
+    portal = db.create_object(merc.obj_templates[merc.OBJ_VNUM_PORTAL], 0)
     portal.timer = 2 + level // 25
     portal.value[3] = victim.in_room.vnum
 

@@ -20,11 +20,11 @@ def do_buy(ch, argument):
         pRoomIndexNext = None
         # hack to make new thalos pets work
         if ch.in_room.vnum == 9621:
-            if 9706 in merc.room_index_hash:
-                pRoomIndexNext = merc.room_index_hash[9706]
+            if 9706 in merc.room_templates:
+                pRoomIndexNext = merc.room_templates[9706]
         else:
-            if ch.in_room.vnum + 1 in merc.room_index_hash:
-                pRoomIndexNext = merc.room_index_hash[ch.in_room.vnum + 1]
+            if ch.in_room.vnum + 1 in merc.room_templates:
+                pRoomIndexNext = merc.room_templates[ch.in_room.vnum + 1]
         if not pRoomIndexNext:
             logger.warn("BUG: Do_buy: bad pet shop at vnum %d.", ch.in_room.vnum)
             ch.send("Sorry, you can't buy that here.\n")

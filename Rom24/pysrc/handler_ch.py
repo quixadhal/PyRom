@@ -56,6 +56,7 @@ class MOB_INDEX_DATA:
         self.spec_fun = None
         self.pShop = None
         self.vnum = 0
+        self.area = ""
         self.group = 0
         self.new_format = True
         self.count = 0
@@ -99,7 +100,7 @@ def move_char(ch, door, follow):
     if door < 0 or door > 5:
         logger.error("BUG: Do_move: bad door %d." % door)
         return
-    in_room = ch.in_room
+    in_room = game_utils.find_nth_instance()
     pexit = in_room.exit[door]
     if not pexit or not pexit.to_room or not ch.can_see_room(pexit.to_room):
         ch.send("Alas, you cannot go that way.\n")
@@ -166,7 +167,7 @@ def move_char(ch, door, follow):
             fch.do_stand("")
 
         if fch.master == ch and fch.position == POS_STANDING and fch.can_see_room(to_room):
-            if state_checks.IS_SET(ch.in_room.room_flags, ROOM_LAW) \
+            if state_checks.IS_SET(ch.room_template.room_flags, ROOM_LAW) \
                     and (fch.is_npc()
                          and fch.act.is_set(ACT_AGGRESSIVE)):
                 handler_game.act("You can't bring $N into the city.", ch, None, fch, TO_CHAR)
@@ -298,7 +299,7 @@ def show_char_to_char_0(victim, ch):
 
     buf += state_checks.PERS(victim, ch)
     if not victim.is_npc() and not ch.comm.is_set(COMM_BRIEF) \
-            and victim.position == POS_STANDING and not ch.on:
+            and victim.position == POS_STANDING and not obj_templates[ch.on]:
         buf += victim.pcdata.title
 
     if victim.position == POS_DEAD:
@@ -426,6 +427,6 @@ def show_char_to_char(plist, ch):
         if ch.can_see(rch):
             show_char_to_char_0(rch, ch)
             ch.send("\n")
-        elif ch.in_room.is_dark() and rch.is_affected(AFF_INFRARED):
+        elif ch.room_template.is_dark() and rch.is_affected(AFF_INFRARED):
             ch.send("You see glowing red eyes watching YOU!\n")
 

@@ -42,7 +42,7 @@ from db import boot_db
 boot_db()
 
 def send(txt):
-    print (txt)
+    print(txt)
 
 vars = globals().copy()
 vars.update(locals())

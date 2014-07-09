@@ -19,9 +19,9 @@ import state_checks
 class Grouping:
     def __init__(self):
         super().__init__()
-        self.master = None
-        self.leader = None
-        self.pet = None
+        self.master = 0
+        self.leader = 0
+        self.pet = 0
         self.group = 0
         self._clan = ""
     # * It is very important that this be an equivalence relation:
@@ -37,17 +37,20 @@ class Grouping:
         if bch.leader is not None:
             bch = bch.leader
         return self == bch
+
     @property
     def clan(self):
         try:
             return tables.clan_table[self._clan]
         except KeyError as e:
             return tables.clan_table[""]
+
     @clan.setter
     def clan(self, value):
         if value not in tables.clan_table:
             return
         self._clan = value
+
     def stop_follower(self):
         if not self.master:
             logger.error("BUG: Stop_follower: null master.")
@@ -111,7 +114,7 @@ class Physical:
 class Fight:
     def __init__(self):
         super().__init__()
-        self.fighting = None
+        self.fighting = 0
         self.hitroll = 0
         self.damroll = 0
         self.dam_type = 17
@@ -191,7 +194,7 @@ class Fight:
 class Communication:
     def __init__(self):
         super().__init__()
-        self.reply = None
+        self.reply = 0
         self.comm = bit.Bit(merc.COMM_COMBINE | merc.COMM_PROMPT, tables.comm_flags)
 
 class Container:
@@ -222,6 +225,7 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
     def __init__(self):
         super().__init__()
         self.id = 0
+        self.instance_id = 0
         self.version = 5
         self.level = 0
         self.act = bit.Bit(merc.PLR_NOSUMMON, [tables.act_flags, tables.plr_flags])
@@ -308,7 +312,7 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
             handler_game.act("You are zapped by $p and drop it.", self, obj, None, merc.TO_CHAR)
             handler_game.act("$n is zapped by $p and drops it.", self, obj, None, merc.TO_ROOM)
             obj.from_char()
-            obj.to_room(self.in_room)
+            obj.to_room(self.room_template)
             return
 
         for i in range(4):
@@ -316,7 +320,7 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
         obj.wear_loc = iWear
 
         if not obj.enchanted:
-            for paf in obj.pIndexData.affected:
+            for paf in merc.global_instances[obj.instance_id].affected:
                 if paf.location != merc.APPLY_SPELL_AFFECT:
                     self.affect_modify(paf, True)
 
@@ -326,8 +330,8 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
             else:
                 self.affect_modify(paf, True)
 
-        if obj.item_type == merc.ITEM_LIGHT and obj.value[2] != 0 and self.in_room is not None:
-            self.in_room.light += 1
+        if obj.item_type == merc.ITEM_LIGHT and obj.value[2] != 0 and merc.room_templates[self.room_template] is not None:
+            self.room_template.light += 1
         return
 
     # * Unequip a char with an obj.
@@ -341,7 +345,7 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
         obj.wear_loc = -1
 
         if not obj.enchanted:
-            for paf in obj.pIndexData.affected:
+            for paf in merc.global_instances[obj.instance_id].affected:
                 if paf.location == merc.APPLY_SPELL_AFFECT:
                     for lpaf in self.affected[:]:
                         if lpaf.type == paf.type and lpaf.level == paf.level and lpaf.location == merc.APPLY_SPELL_AFFECT:
@@ -366,9 +370,9 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
 
         if obj.item_type == merc.ITEM_LIGHT \
                 and obj.value[2] != 0 \
-                and self.in_room \
-                and self.in_room.light > 0:
-            self.in_room.light -= 1
+                and merc.room_templates[self.room_template] \
+                and merc.room_templates[self.room_template].light > 0:
+            merc.room_templates[self.room_template].light -= 1
         return
 
 
@@ -434,7 +438,7 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
                     continue
                 affected = obj.affected
                 if not obj.enchanted:
-                    affected.extend(obj.pIndexData.affected)
+                    affected.extend(merc.global_instances[obj.instance_id].affected)
                 for af in affected:
                     mod = af.modifier
                     if af.location == merc.APPLY_SEX:
@@ -485,7 +489,7 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
                 self.armor[i] -= obj.apply_ac(loc, i)
             affected = obj.affected
             if not obj.enchanted:
-                affected.extend(obj.pIndexData.affected)
+                affected.extend(merc.global_instances[obj.instance_id].affected)
 
             for af in affected:
                 mod = af.modifier
@@ -572,7 +576,7 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
             return True
         if self.trust < victim.invis_level:
             return False
-        if self.trust < victim.incog_level and self.in_room != victim.in_room:
+        if self.trust < victim.incog_level and self.room_template != victim.room_template:
             return False
         if (not self.is_npc()
             and self.act.is_set(merc.PLR_HOLYLIGHT)) \
@@ -581,7 +585,7 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
             return True
         if self.is_affected(merc.AFF_BLIND):
             return False
-        if self.in_room.is_dark() and not self.is_affected(merc.AFF_INFRARED):
+        if self.room_template.is_dark() and not self.is_affected(merc.AFF_INFRARED):
             return False
         if victim.is_affected(merc.AFF_INVISIBLE) \
                 and not self.is_affected(merc.AFF_DETECT_INVIS):
@@ -624,7 +628,7 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
             return False
         if state_checks.IS_OBJ_STAT(obj, merc.ITEM_GLOW):
             return True
-        if self.in_room.is_dark() \
+        if self.room_template.is_dark() \
                 and not self.is_affected(merc.AFF_DARK_VISION):
             return False
         return True
@@ -660,12 +664,12 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
         for obj in self.contents[:]:
             obj.extract()
 
-        if self.in_room:
+        if self.room_template:
             self.from_room()
 
         # Death room is set in the clan tabe now */
         if not fPull:
-            self.to_room(merc.room_index_hash[self.clan.hall])
+            self.to_room(merc.room_templates[self.clan.hall])
             return
 
         if self.desc and self.desc.original:
@@ -695,7 +699,7 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
         word = word.lower()
         if word == "self":
             return ch
-        for rch in ch.in_room.people:
+        for rch in merc.room_instances[ch.in_room_instance].people:
             if not ch.can_see(rch):
                 continue
             if not rch.is_npc() and not rch.name.lower().startswith(word):
@@ -716,7 +720,7 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
         number, arg = game_utils.number_argument(argument)
         count = 0
         for wch in merc.char_list:
-            if wch.in_room is None or not ch.can_see(wch):
+            if wch.in_instance is 0 or not ch.can_see(wch):
                 continue
             if not wch.is_npc() and not game_utils.is_name(arg, wch.name.lower()):
                 continue
@@ -762,7 +766,7 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
 
     # * Find an obj in the room or in inventory.
     def get_obj_here(ch, argument):
-        obj = ch.get_obj_list(argument, ch.in_room.contents)
+        obj = ch.get_obj_list(argument, ch.room_template.contents)
         if obj:
             return obj
         obj = ch.get_obj_carry(argument, ch)
@@ -778,15 +782,12 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
         obj = ch.get_obj_here(argument)
         if obj:
             return obj
-
         number, arg = game_utils.number_argument(argument)
-        count = 0
         arg = arg.lower()
-        for obj in merc.object_list:
-            if ch.can_see_obj(obj) and game_utils.is_name(arg, obj.name.lower()):
-                count += 1
-            if count == number:
-                return obj
+        instance = game_utils.find_name_instance('obj', number, arg)
+        if instance is not -1:
+            obj = merc.obj_instances[instance]
+            return obj
         return None
     # * True if char can drop obj.
     def can_drop_obj(self, obj):
