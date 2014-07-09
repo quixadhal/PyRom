@@ -7,6 +7,7 @@ WIZLOCK = False
 NEWLOCK = False
 ENCRYPT_PASSWORD = True
 LOGALL = False
+MAX_ITERATIONS = 300
 
 #Files
 AREA_LIST = 'area.lst'
