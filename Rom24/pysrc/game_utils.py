@@ -1,5 +1,6 @@
 import time
 
+
 __author__ = 'venom'
 import merc
 import random
@@ -18,14 +19,28 @@ def read_word(pstr, lower=True):
     if not pstr:
         return "", ""
     pstr = pstr.lstrip()
-    word = pstr.split()[0]
-    if word[0] == "'":
-        word = pstr[:pstr.find("'", 1) + 1]
+    locate = len(pstr)
+    if pstr[0] == "'":
+        locate = pstr.find("'", 1)+1
+    elif pstr[0] == '"':
+        locate = pstr.find('"', 1)+1
+    else:
+        for i, c in enumerate(pstr):
+            if c.isspace():
+                locate = i
+                break
+
+    word = pstr[:locate]
+    strip = len(word)
+    if not word:
+        return pstr, word
+    if word[0] in ['"', "'"]:
+        word = word[1:-1]
     if lower:
         word = word.lower()
+
     pstr = pstr.lstrip()
-    pstr = pstr[len(word) + 1:]
-    word = word.replace("'", '')
+    pstr = pstr[strip:]
     return pstr, word.strip()
 
 
