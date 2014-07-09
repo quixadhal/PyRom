@@ -1,5 +1,6 @@
 import logging
 import comm
+import handler_ch
 import save
 
 logger = logging.getLogger()
@@ -13,7 +14,7 @@ def do_shutdown(ch, argument):
         ch.do_echo("Shutdown by %s." % ch.name)
     merc_down = True  # TODO:  fix this at some point
     for d in merc.descriptor_list[:]:
-        vch = merc.CH(d)
+        vch = handler_ch.CH(d)
         if vch:
             save.save_char_obj(vch)
             comm.close_socket(d)

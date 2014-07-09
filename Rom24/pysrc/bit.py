@@ -10,9 +10,8 @@ class Bit:
     def __getattr__(self, name):
         if not name.startswith('is_'):
             raise AttributeError
-        flag = name[3:]
         flags = self.flags
-        flag = state_checks.name_lookup(flags, flag)
+        flag = state_checks.name_lookup(flags, name[3:])
         if not flag:
             raise AttributeError
         return self.is_set(flags[flag].bit)
@@ -29,31 +28,43 @@ class Bit:
         return flags
 
     def set_bit(self, bit):
-        self.bits = self.bits | self.from_name(bit)
+        self.bits |= self.from_name(bit)
 
     def rem_bit(self, bit):
-        self.bits = self.bits & ~self.from_name(bit)
+        self.bits &= ~self.from_name(bit)
 
     def is_set(self, bit):
         return self.bits & self.from_name(bit)
 
+    #lets you chose the flag table. so act/plr flags will save correctly.
+    def print_flags(self, flags):
+        holder = self._flags
+        self._flags = flags
+        as_str = repr(self)
+        self._flags = holder
+        return as_str
+
     def from_name(self, name):
-        if type(name) == int:
+        if type(name) is int:
             return name
-        name = name.strip()
-        bitstring = name.split(' ')
+        elif type(name) is list or type(name) is tuple:
+            bitstring = name
+        else:
+            name = name.strip()
+            bitstring = name.split(' ')
         bits = 0
         flags = self.flags
         for tok in flags.values():
             if tok.name in bitstring:
                 bits += tok.bit
         return bits
+
     def __repr__(self):
         buf = ""
         if not self.flags:
             return
         flags = self.flags
-        for k,fl in flags.items():
+        for k, fl in flags.items():
             if self.is_set(fl.bit):
                 buf += " %s" % fl.name
         return buf
