@@ -28,13 +28,14 @@ class Bit:
         return flags
 
     def set_bit(self, bit):
-        self.bits = self.bits | self.from_name(bit)
+        self.bits |= self.from_name(bit)
 
     def rem_bit(self, bit):
-        self.bits = self.bits & ~self.from_name(bit)
+        self.bits &= ~self.from_name(bit)
 
     def is_set(self, bit):
         return self.bits & self.from_name(bit)
+
     #lets you chose the flag table. so act/plr flags will save correctly.
     def print_flags(self, flags):
         holder = self._flags
@@ -60,7 +61,7 @@ class Bit:
         if not self.flags:
             return
         flags = self.flags
-        for k,fl in flags.items():
+        for k, fl in flags.items():
             if self.is_set(fl.bit):
                 buf += " %s" % fl.name
         return buf
