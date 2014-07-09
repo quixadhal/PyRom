@@ -105,11 +105,11 @@ class Progs:
             next(self.tokens)  # skip the operator
             next_token = next(self.tokens)
         except StopIteration:
-            logging.debug("Failed to process a variable with dot operator")
+            logger.debug("Failed to process a variable with dot operator")
             logger.debug(token)
             return None
         if next_token.type == tokenize.NEWLINE:
-            logging.debug("Un expected new line after operator")
+            logger.debug("Un expected new line after operator")
             logger.debug(token)
         return next_token
 
@@ -261,12 +261,12 @@ class Progs:
             var = self.get_in_scope(new_token.string, local_scope, scope + 1)
 
             if not var:
-                logging.debug("Unset variable with dot operator, %s", new_token.string)
+                logger.debug("Unset variable with dot operator, %s", new_token.string)
                 logger.debug(token)
                 logger.debug(new_token)
                 return None
             if not local_scope[scope + 1]:
-                logging.debug("dot operator on var with no members, %s", token.string)
+                logger.debug("dot operator on var with no members, %s", token.string)
                 logger.debug(token)
                 logger.debug(new_token)
                 return None
@@ -327,7 +327,7 @@ class Progs:
         # not a callable
         value = self.get_in_scope(token.string, local_scope, scope)
         if not value:
-            logging.debug("Error, value referenced before assignment. %s", token.string)
+            logger.debug("Error, value referenced before assignment. %s", token.string)
             logger.debug(token)
         return value
 
@@ -354,7 +354,7 @@ class Progs:
         return True
 
     def execute(self, actor, victim, argument, audience):
-        logging.debug("Executing script.")
+        logger.debug("Executing script.")
         try:
             exec_start = time.time()
             self.tokenize()
@@ -362,10 +362,15 @@ class Progs:
             self.current_scope = 0
             exec_types = [tokenize.NAME, tokenize.OP, tokenize.NEWLINE]
             for token in self.tokens:
+                now = time.time()
+                # logger.debug('Time difference is: %0.3fms', (now - exec_start) * 1000.0)
+                if (now - exec_start) * 1000.0 > 50.0:
+                    logger.error('Maximum PyProg execution time exceeded')
+                    raise TimeoutError
                 self.process_token(token, local_scope, exec_types)
 
             exec_stop = time.time()
-            logging.debug("Script took % 0.3fms", (exec_stop-exec_start) * 1000.0)
+            logger.debug("Script took % 0.3fms", (exec_stop-exec_start) * 1000.0)
         except:
             actor.send("Something went wrong.")
 
