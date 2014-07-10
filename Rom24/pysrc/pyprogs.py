@@ -298,6 +298,7 @@ class Progs:
                 logger.debug(new_token)
                 return None
             value = self.process_variable(new_token, local_scope, scope + 1)
+            del local_scope[scope + 1]
             return value
 
         elif next_char == '(':
@@ -387,9 +388,16 @@ class Progs:
         local_scope = {0: {'actor': actor, 'victim': victim, 'argument': argument}}
         self.current_scope = 0
         exec_types = [tokenize.NAME, tokenize.OP, tokenize.NEWLINE]
-        for token in self.tokens:
-            self.process_token(token, local_scope, 0, exec_types)
-
+        try:
+            for token in self.tokens:
+                now = time.time()
+                # logger.debug('Time difference is: %0.3fms', (now - exec_start) * 1000.0)
+                if (now - exec_start) * 1000.0 > 200.0:
+                    logger.error('Maximum PyProg execution time exceeded')
+                    raise TimeoutError
+                self.process_token(token, local_scope, 0, exec_types)
+        except:
+            actor.send("Something went wrong.")
         exec_stop = time.time()
         logger.debug("Script took % 0.3fms", (exec_stop-exec_start) * 1000.0)
 
