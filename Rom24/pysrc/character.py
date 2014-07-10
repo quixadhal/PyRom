@@ -50,7 +50,7 @@ class Character(living.Living):
         self.logon = 0
         self.practice = 0
         self.train = 0
-        self.dampend = False
+        self.dampen = False
 
     def absorb(self,*args):
         pass

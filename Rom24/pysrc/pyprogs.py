@@ -3,8 +3,11 @@ import copy
 import inspect
 import logging
 import time
+import collections
 import mobile
 import merc
+import settings
+
 logger = logging.getLogger()
 
 import tokenize
@@ -14,9 +17,9 @@ signals = {'say': []}
 
 
 def emit_signal(signal, actor=None, victim=None, argument=None, audience=None):
-    if actor.dampend:  # Prevent an actor from giving off signals while in scripting.
+    if actor.dampen:  # Prevent an actor from giving off signals while in scripting.
         return
-    actor.dampend = True
+    actor.dampen = True
     if actor and actor.is_npc():
         actor.absorb(signal, actor, victim, argument)
 
@@ -28,8 +31,7 @@ def emit_signal(signal, actor=None, victim=None, argument=None, audience=None):
          if a != actor and a != victim]
     for prog in signals[signal]:
         prog.execute(actor, victim, argument, audience)
-    actor.dampend = False
-
+    actor.dampen = False
 
 def register_prog(signal, prog):
     signals[signal].append(prog)
@@ -60,7 +62,7 @@ class Progs:
                                'continue': None,
                                'elif': self.process_elif,
                                'else': self.process_else,
-                               'for': None,
+                               'for': self.process_for,
                                'if': self.process_if}
 
     def tokenize(self):
@@ -68,10 +70,8 @@ class Progs:
 
     def increase_scope(self, local_scope):
         self.current_scope += 1
-        local_scope.update({self.current_scope: {}})
 
     def decrease_scope(self, local_scope):
-        del local_scope[self.current_scope]
         self.current_scope -= 1
 
     def get_in_scope(self, string, scope, current):
@@ -83,7 +83,7 @@ class Progs:
         return None
 
     def jump_scope(self, scope, keep=False):
-        tracking = scope
+        tracking = self.current_scope
         tokens = []
 
         for token in self.tokens:
@@ -153,6 +153,33 @@ class Progs:
                 if token.type == value:
                     return token
         return None
+    def process_for(self, token, local_scope, scope):
+        iterator_tok = copy.deepcopy(next(self.tokens))
+        next(self.tokens) # The in
+        iterable_tok =  copy.deepcopy(next(self.tokens))
+        iterable = self.process_variable(iterable_tok, local_scope, scope)
+        self.seek(tokenize.NEWLINE)
+        loop = self.jump_scope(local_scope, True)
+        self.increase_scope(local_scope)
+        local_scope[scope+1] = {iterator_tok.string: None}
+        if not iterable and not isinstance(iterable, collections.Iterable):
+            logger.debug("For sent a non-iterable %s", iterable_tok.string)
+            logger.debug(iterable_tok)
+            logger.debug(iterator_tok)
+            logger.debug(iterable)
+            return
+        tokens = self.tokens
+        for count, value in enumerate(iterable):
+            if count > settings.MAX_ITERATIONS:
+                logger.debug("Exceeded max iterations.")
+                logger.debug(iterable_tok)
+                logger.debug(iterator_tok)
+                break
+            local_scope[scope+1][iterator_tok.string] = value
+            self.tokens = iter(loop)
+            for token in self.tokens:
+                self.process_token(token, local_scope, scope + 1, [tokenize.NAME, tokenize.OP, tokenize.NEWLINE])
+        self.tokens = tokens
 
     def process_condition(self, token, local_scope, scope, open_paren=0):
         condition = False
@@ -279,6 +306,7 @@ class Progs:
             args = []
             value = None
             token = copy.deepcopy(token)
+            target = self.get_in_scope(token.string, local_scope, scope)
             for itoken in self.tokens:
                 if itoken.type == tokenize.NAME:
                     value = self.process_variable(itoken, local_scope, scope - 1)
@@ -292,7 +320,7 @@ class Progs:
                         value = None
                     if itoken.string == ')':
                         args.append(copy.deepcopy(value))
-                        return local_scope[scope][token.string](*args)
+                        return target(*args)
 
         elif next_char == '=' and self.next_char(token.line, next_pos) != '=':
             # Assignment
@@ -331,14 +359,14 @@ class Progs:
             logger.debug(token)
         return value
 
-    def process_token(self, token, local_scope, exec_types):
+    def process_token(self, token, local_scope, scope, exec_types):
         if token.type in exec_types:
             if token.type == tokenize.NAME and token.string not in self.process_tokens:
-                self.process_variable(token, local_scope, self.current_scope)
+                self.process_variable(token, local_scope, scope)
                 return True
             proc = self.process_tokens.get(token.string, None)
             if proc:
-                proc(token, local_scope, self.current_scope)
+                proc(token, local_scope, scope)
         elif token.type == tokenize.INDENT:
             if len(token.string) % 4:
                 logger.debug("Invalid indent")
@@ -355,24 +383,25 @@ class Progs:
 
     def execute(self, actor, victim, argument, audience):
         logger.debug("Executing script.")
+        exec_start = time.time()
+        self.tokenize()
+        local_scope = {0: {'actor': actor, 'victim': victim, 'argument': argument}}
+        self.current_scope = 0
+        exec_types = [tokenize.NAME, tokenize.OP, tokenize.NEWLINE]
         try:
-            exec_start = time.time()
-            self.tokenize()
-            local_scope = {0: {'actor': actor, 'victim': victim, 'argument': argument}}
-            self.current_scope = 0
-            exec_types = [tokenize.NAME, tokenize.OP, tokenize.NEWLINE]
             for token in self.tokens:
                 now = time.time()
                 # logger.debug('Time difference is: %0.3fms', (now - exec_start) * 1000.0)
-                if (now - exec_start) * 1000.0 > 50.0:
+                if (now - exec_start) * 1000.0 > 200.0:
                     logger.error('Maximum PyProg execution time exceeded')
                     raise TimeoutError
-                self.process_token(token, local_scope, exec_types)
-
-            exec_stop = time.time()
-            logger.debug("Script took % 0.3fms", (exec_stop-exec_start) * 1000.0)
+                self.process_token(token, local_scope, 0, exec_types)
         except:
             actor.send("Something went wrong.")
+        exec_stop = time.time()
+        logger.debug("Script took % 0.3fms", (exec_stop-exec_start) * 1000.0)
+
+#            actor.send("Something went wrong.")
 
 test_prog = """if actor.perm_hit > 20:
     if actor.perm_hit > 30:
@@ -388,5 +417,8 @@ elif actor.guild.name == 'thief':
 else:
     actor.do_say("I'm not sure what I am.")
 if not actor.act.is_set(PLR_CANLOOT):
-    actor.do_say("And I can't loot!")"""
+    actor.do_say("And I can't loot!")
+for vict in char_list:
+    actor.do_say(vict.name)
+"""
 register_prog('say', Progs(test_prog))
