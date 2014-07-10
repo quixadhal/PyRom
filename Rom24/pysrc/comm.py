@@ -38,6 +38,7 @@ logger = logging.getLogger()
 from collections import OrderedDict
 import random
 from types import MethodType
+import time
 
 import db
 import game_utils
@@ -249,8 +250,12 @@ def is_reconnecting(d, name):
 
 def game_loop(server):
     from update import update_handler
+    from pyom import startup_time
+
     db.boot_db()
 
+    boot_time = time.time()
+    logger.debug('Pyom database booted in %.3f seconds', (boot_time - startup_time))
     logger.info("Pyom is ready to rock on port %d", server.port)
 
     while True: 
