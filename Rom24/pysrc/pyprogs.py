@@ -106,11 +106,11 @@ class Progs:
             next_token = next(self.tokens)
         except StopIteration:
             logger.debug("Failed to process a variable with dot operator")
-            logger.debug(token)
+            logger.debug(next_token)
             return None
         if next_token.type == tokenize.NEWLINE:
-            logger.debug("Un expected new line after operator")
-            logger.debug(token)
+            logger.debug("Unexpected new line after operator")
+            logger.debug(next_token)
         return next_token
 
     def next_char(self, line, pos, impose=False):
@@ -400,8 +400,6 @@ class Progs:
             actor.send("Something went wrong.")
         exec_stop = time.time()
         logger.debug("Script took % 0.3fms", (exec_stop-exec_start) * 1000.0)
-
-#            actor.send("Something went wrong.")
 
 test_prog = """if actor.perm_hit > 20:
     if actor.perm_hit > 30:

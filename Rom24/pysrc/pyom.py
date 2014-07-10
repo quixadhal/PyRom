@@ -40,7 +40,9 @@ from miniboa import TelnetServer
 from settings import PORT
 from comm import game_loop, init_descriptor, close_socket
 from hotfix import init_monitoring
+import time
 
+startup_time = time.time()
 
 def Pyom():
     sys.path.append(os.getcwd())
