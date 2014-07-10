@@ -14,8 +14,7 @@ def do_purge(ch, argument):
     argument, arg = game_utils.read_word(argument)
     if not arg:
         for victim in ch.in_room.people[:]:
-            if victim.is_npc() and not state_checks.IS_SET(victim.act,
-                                                                       merc.ACT_NOPURGE) and victim != ch:  # safety precaution
+            if victim.is_npc() and not victim.act.is_nopurge and victim != ch:  # safety precaution
                 victim.extract(True)
         for obj in ch.in_room.contents[:]:
             if not state_checks.IS_OBJ_STAT(obj, merc.ITEM_NOPURGE):

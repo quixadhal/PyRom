@@ -39,9 +39,7 @@ def read_word(pstr, lower=True):
     if lower:
         word = word.lower()
 
-    pstr = pstr.lstrip()
-    pstr = pstr[strip:]
-    return pstr, word.strip()
+    return pstr.lstrip()[strip:], word.strip()
 
 
 def read_int(pstr):
@@ -127,11 +125,10 @@ def append_file(ch, fp, pstr):
 
 
 def read_to_eol(pstr):
-    pstr = pstr.split('\n')
-    line = pstr.pop(0)
-    pstr = "\n".join(pstr)
-    return pstr, line
-
+    locate = pstr.find('\n')
+    if locate == -1:
+        locate = len(pstr)
+    return pstr[locate+1:], pstr[:locate]
 
 def is_name(arg, name):
     name, tmp = read_word(name)
