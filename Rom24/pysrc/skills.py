@@ -44,7 +44,7 @@ import magic
 
 # recursively adds a group given its number -- uses group_add */
 def gn_add( ch, gn):
-    ch.pcdata.group_known[gn.name] = True
+    ch.group_known[gn.name] = True
     for i in gn.spells:
         if not i:
             break
@@ -52,8 +52,8 @@ def gn_add( ch, gn):
 
 # recusively removes a group given its number -- uses group_remove */
 def gn_remove( ch, gn):
-    if gn.name in ch.pcdata.group_known:
-        del ch.pcdata.group_known[gn.name]
+    if gn.name in ch.group_known:
+        del ch.group_known[gn.name]
 
     for i in gn.spells:
         if not i:
@@ -67,20 +67,20 @@ def group_add( ch, name, deduct):
     
     if name in const.skill_table:
         sn = const.skill_table[name]
-        if sn.name not in ch.pcdata.learned: # i.e. not known */
-            ch.pcdata.learned[sn.name] = 1
+        if sn.name not in ch.learned: # i.e. not known */
+            ch.learned[sn.name] = 1
         if deduct:
-            ch.pcdata.points += sn.rating[ch.guild.name] 
+            ch.points += sn.rating[ch.guild.name]
         return
 
     # now check groups */
 
     if name in const.group_table:
         gn = const.group_table[name]
-        if gn.name not in ch.pcdata.group_known:
-            ch.pcdata.group_known[gn.name] = True
+        if gn.name not in ch.group_known:
+            ch.group_known[gn.name] = True
         if deduct:
-            ch.pcdata.points += gn.rating[ch.guild.name]
+            ch.points += gn.rating[ch.guild.name]
     
         gn_add(ch,gn) # make sure all skills in the group are known */
 
@@ -91,16 +91,16 @@ def group_remove(ch, name):
     
     if name in const.skill_table:
         sn = const.skill_table[name]
-        if sn.name in ch.pcdata.learned:
-            del ch.pcdata.learned[sn.name]
+        if sn.name in ch.learned:
+            del ch.learned[sn.name]
             return
 
     # now check groups */
     if name in const.group_table:
         gn = const.group_table[name]
         
-        if gn.name in ch.pcdata.group_known:
-            del ch.pcdata.group_known[gn.name]
+        if gn.name in ch.group_known:
+            del ch.group_known[gn.name]
             gn_remove(ch,gn) # be sure to call gn_add on all remaining groups */
 
 
@@ -114,7 +114,7 @@ def list_group_costs(ch):
     ch.send("%-18s %-5s %-18s %-5s %-18s %-5s\n" % ("group","cp","group","cp","group","cp"))
 
     for gn, group in const.group_table.items():
-        if gn not in ch.gen_data.group_chosen and gn not in ch.pcdata.group_known and group.rating[ch.guild.name] > 0:
+        if gn not in ch.gen_data.group_chosen and gn not in ch.group_known and group.rating[ch.guild.name] > 0:
             ch.send("%-18s %-5d " % (const.group_table[gn].name, group.rating[ch.guild.name]))
             col += 1
             if col % 3 == 0:
@@ -128,7 +128,7 @@ def list_group_costs(ch):
  
     for sn, skill in const.skill_table.items():
         if sn not in ch.gen_data.skill_chosen \
-        and sn not in ch.pcdata.learned \
+        and sn not in ch.learned \
         and  skill.spell_fun == magic.spell_null \
         and  skill.rating[ch.guild.name] > 0:
             ch.send("%-18s %-5d " % (skill.name, skill.rating[ch.guild.name]))
@@ -139,7 +139,7 @@ def list_group_costs(ch):
         ch.send( "\n" )
     ch.send("\n")
 
-    ch.send("Creation points: %d\n" % ch.pcdata.points)
+    ch.send("Creation points: %d\n" % ch.points)
     ch.send("Experience per level: %d\n" % ch.exp_per_level(ch.gen_data.points_chosen))
     return
 
@@ -198,7 +198,7 @@ def parse_gen_groups(ch, argument):
         argument = argument.lower()
         if argument in const.group_table:
             gn = const.group_table[argument]
-            if gn.name in ch.gen_data.group_chosen or gn.name in ch.pcdata.group_known:
+            if gn.name in ch.gen_data.group_chosen or gn.name in ch.group_known:
                 ch.send("You already know that group!\n")
                 return True
             
@@ -215,12 +215,12 @@ def parse_gen_groups(ch, argument):
             ch.gen_data.group_chosen[gn.name] = True
             ch.gen_data.points_chosen += gn.rating[ch.guild.name]
             gn_add(ch,gn)
-            ch.pcdata.points += gn.rating[ch.guild.name]
+            ch.points += gn.rating[ch.guild.name]
             return True
 
         if argument in const.skill_table:
             sn = const.skill_table[argument]
-            if sn.name in ch.gen_data.skill_chosen or sn.name in ch.pcdata.learned:
+            if sn.name in ch.gen_data.skill_chosen or sn.name in ch.learned:
                 ch.send("You already know that skill!\n")
                 return True
 
@@ -235,8 +235,8 @@ def parse_gen_groups(ch, argument):
             ch.send("%s skill added\n" % sn.name)
             ch.gen_data.skill_chosen[sn.name] = True
             ch.gen_data.points_chosen += sn.rating[ch.guild.name]
-            ch.pcdata.learned[sn] = 1
-            ch.pcdata.points += sn.rating[ch.guild.name]
+            ch.learned[sn] = 1
+            ch.points += sn.rating[ch.guild.name]
             return True
 
         ch.send("No skills or groups by that name...\n")
@@ -256,7 +256,7 @@ def parse_gen_groups(ch, argument):
             gn_remove(ch,gn)
             for k,v in ch.gen_data.group_chosen:
                 gn_add(ch,const.group_table[k])
-            ch.pcdata.points -= gn.rating[ch.guild.name]
+            ch.points -= gn.rating[ch.guild.name]
             return True
      
         if argument in const.skill_table and argument in ch.gen_data.skill_chosen:
@@ -264,8 +264,8 @@ def parse_gen_groups(ch, argument):
             ch.send("Skill dropped.\n")
             del ch.gen_data.skill_chosen[sn.name]
             ch.gen_data.points_chosen -= sn.rating[ch.guild.name]
-            del ch.pcdata.learned[sn]
-            ch.pcdata.points -= sn.rating[ch.guild.name]
+            del ch.learned[sn]
+            ch.points -= sn.rating[ch.guild.name]
             return True
 
         ch.send("You haven't bought any such skill or group.\n")
@@ -301,8 +301,8 @@ def check_improve( ch, sn, success, multiplier ):
 
     if ch.level < sn.skill_level[ch.guild.name] \
     or sn.rating[ch.guild.name] == 0 \
-    or sn.name not in ch.pcdata.learned \
-    or ch.pcdata.learned[sn.name] == 100:
+    or sn.name not in ch.learned \
+    or ch.learned[sn.name] == 100:
         return  # skill is not known */ 
 
     # check to see if the character has a chance to learn */
@@ -316,15 +316,15 @@ def check_improve( ch, sn, success, multiplier ):
     # now that the character has a CHANCE to learn, see if they really have */ 
 
     if success:
-        chance = max(5, min(100 - ch.pcdata.learned[sn.name], 95))
+        chance = max(5, min(100 - ch.learned[sn.name], 95))
         if random.randint(1,99) < chance:
             ch.send("You have become better at %s!\n" % sn.name)
-            ch.pcdata.learned[sn.name] += 1
+            ch.learned[sn.name] += 1
             update.gain_exp(ch,2 * sn.rating[ch.guild.name])
     else:
-        chance = max(5, min(ch.pcdata.learned[sn.name]/2,30))
+        chance = max(5, min(ch.learned[sn.name]/2,30))
         if random.randint(1,99) < chance:
             ch.send("You learn from your mistakes, and your %s skill improves.\n" % sn.name)
-            ch.pcdata.learned[sn.name] += random.randint(1,3)
-            ch.pcdata.learned[sn.name] = min(ch.pcdata.learned[sn.name],100)
+            ch.learned[sn.name] += random.randint(1,3)
+            ch.learned[sn.name] = min(ch.learned[sn.name],100)
             update.gain_exp(ch,2 * sn.rating[ch.guild.name])

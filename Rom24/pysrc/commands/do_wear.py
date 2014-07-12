@@ -3,7 +3,7 @@ import logging
 logger = logging.getLogger()
 
 import game_utils
-import handler_obj
+import handler_item
 import merc
 import interp
 
@@ -14,15 +14,15 @@ def do_wear(ch, argument):
         return
     if arg == "all":
         for obj in ch.contents[:]:
-            if obj.wear_loc == merc.WEAR_NONE and ch.can_see_obj(obj):
-                handler_obj.wear_obj( ch, obj, False )
+            if obj.wear_loc == merc.WEAR_NONE and ch.can_see_item(obj):
+                handler_item.wear_item( ch, obj, False )
         return
     else:
-        obj = ch.get_obj_carry(arg, ch)
+        obj = ch.get_item_carry(arg, ch)
         if not obj:
             ch.send("You do not have that item.\n")
             return
-        handler_obj.wear_obj( ch, obj, True )
+        handler_item.wear_item( ch, obj, True )
     return
 
 

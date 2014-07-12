@@ -17,7 +17,6 @@ import update
 
 
 class Character(living.Living):
-
     def __init__(self):
         super().__init__()
         self.buffer = None

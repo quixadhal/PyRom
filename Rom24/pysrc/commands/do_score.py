@@ -9,7 +9,7 @@ import interp
 
 
 def do_score(ch, argument):
-    ch.send("You are %s%s, level %d, %d years old (%d hours).\n" % (ch.name, "" if ch.is_npc() else ch.pcdata.title,
+    ch.send("You are %s%s, level %d, %d years old (%d hours).\n" % (ch.name, "" if ch.is_npc() else ch.title,
                                                                     ch.level, ch.get_age(), (
     ch.played + (int)(time.time() - ch.logon)) // 3600))
 
@@ -34,13 +34,13 @@ def do_score(ch, argument):
     ch.send("You have scored %d exp, and have %ld gold and %ld silver coins.\n" % (ch.exp, ch.gold, ch.silver))
     # RT shows exp to level
     if not ch.is_npc() and ch.level < merc.LEVEL_HERO:
-        ch.send("You need %d exp to level.\n" % ((ch.level + 1) * ch.exp_per_level(ch.pcdata.points) - ch.exp))
+        ch.send("You need %d exp to level.\n" % ((ch.level + 1) * ch.exp_per_level(ch.points) - ch.exp))
     ch.send("Wimpy set to %d hit points.\n" % ch.wimpy)
-    if not ch.is_npc() and ch.pcdata.condition[merc.COND_DRUNK] > 10:
+    if not ch.is_npc() and ch.condition[merc.COND_DRUNK] > 10:
         ch.send("You are drunk.\n")
-    if not ch.is_npc() and ch.pcdata.condition[merc.COND_THIRST] == 0:
+    if not ch.is_npc() and ch.condition[merc.COND_THIRST] == 0:
         ch.send("You are thirsty.\n")
-    if not ch.is_npc() and ch.pcdata.condition[merc.COND_HUNGER] == 0:
+    if not ch.is_npc() and ch.condition[merc.COND_HUNGER] == 0:
         ch.send("You are hungry.\n")
 
     if ch.position == merc.POS_DEAD:

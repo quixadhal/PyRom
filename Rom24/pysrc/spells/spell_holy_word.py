@@ -11,7 +11,7 @@ def spell_holy_word(sn, level, ch, victim, target):
     handler_game.act("$n utters a word of divine power! ", ch, None, None, merc.TO_ROOM)
     ch.send("You utter a word of divine power.\n")
 
-    for vch in ch.in_room.people[:]:
+    for vch in merc.rooms[ch.in_room].people[:]:
         if (ch.is_good() and state_checks.IS_GOOD(vch)) or (
             ch.is_evil() and state_checks.IS_EVIL(vch)) or (
             state_checks.IS_NEUTRAL(ch) and state_checks.IS_NEUTRAL(vch)):

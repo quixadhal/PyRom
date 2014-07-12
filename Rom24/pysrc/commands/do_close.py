@@ -16,7 +16,7 @@ def do_close(ch, argument):
         ch.send("Close what?\n")
         return
 
-    obj = ch.get_obj_here(arg)
+    obj = ch.get_item_here(arg)
     if obj:
         # portal stuff */
         if obj.item_type == merc.ITEM_PORTAL:
@@ -48,7 +48,7 @@ def do_close(ch, argument):
     door = find_door(ch, arg)
     if find_door(ch, arg) >= 0:
         # 'close door'
-        pexit = ch.in_room.exit[door]
+        pexit = merc.rooms[ch.in_room].exit[door]
         if state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED):
             ch.send("It's already closed.\n")
             return

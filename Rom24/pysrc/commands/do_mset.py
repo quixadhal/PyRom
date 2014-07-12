@@ -71,7 +71,7 @@ def do_mset(ch, argument):
             return
         victim.sex = value
         if not victim.is_npc():
-            victim.pcdata.true_sex = value
+            victim.true_sex = value
         ch.send("Sex set to %s.\n" % tables.sex_table[value])
         return
     if "class".startswith(arg2):
@@ -113,7 +113,7 @@ def do_mset(ch, argument):
         victim.max_hit = value
         ch.send("Max Hitpoints set to %d\n" % value)
         if not victim.is_npc():
-            victim.pcdata.perm_hit = value
+            victim.perm_hit = value
         return
     if "mana".startswith(arg2):
         if value < 0 or value > 30000:
@@ -122,7 +122,7 @@ def do_mset(ch, argument):
         victim.max_mana = value
         ch.send("Max Mana set to %d\n" % value)
         if not victim.is_npc():
-            victim.pcdata.perm_mana = value
+            victim.perm_mana = value
         return
     if "move".startswith(arg2):
         if value < 0 or value > 30000:
@@ -131,7 +131,7 @@ def do_mset(ch, argument):
         victim.max_move = value
         ch.send("Max Move set to %d.\n" % value)
         if not victim.is_npc():
-            victim.pcdata.perm_move = value
+            victim.perm_move = value
         return
     if "practice".startswith(arg2):
         if value < 0 or value > 250:
@@ -161,7 +161,7 @@ def do_mset(ch, argument):
         if value < -1 or value > 100:
             ch.send("Thirst range is -1 to 100.\n")
             return
-        victim.pcdata.condition[merc.COND_THIRST] = value
+        victim.condition[merc.COND_THIRST] = value
         ch.send("Victims thirst set to %d.\n" % value)
         return
     if "drunk".startswith(arg2):
@@ -171,7 +171,7 @@ def do_mset(ch, argument):
         if value < -1 or value > 100:
             ch.send("Drunk range is -1 to 100.\n")
             return
-        victim.pcdata.condition[merc.COND_DRUNK] = value
+        victim.condition[merc.COND_DRUNK] = value
         ch.send("Victims Drunk set to %d.\n" % value)
         return
     if "full".startswith(arg2):
@@ -182,7 +182,7 @@ def do_mset(ch, argument):
             ch.send("Full range is -1 to 100.\n")
             return
         ch.send("Full condition set to %d\n" % value)
-        victim.pcdata.condition[merc.COND_FULL] = value
+        victim.condition[merc.COND_FULL] = value
         return
     if "hunger".startswith(arg2):
         if victim.is_npc():
@@ -192,7 +192,7 @@ def do_mset(ch, argument):
             ch.send("Full range is -1 to 100.\n")
             return
         ch.send("Hunger set to %d.\n" % value)
-        victim.pcdata.condition[merc.COND_HUNGER] = value
+        victim.condition[merc.COND_HUNGER] = value
         return
     if "race".startswith(arg2):
         race = state_checks.prefix_lookup(const.race_table, arg3)

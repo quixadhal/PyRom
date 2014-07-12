@@ -70,31 +70,32 @@ def process_output(self):
     ch = handler_ch.CH(self)
     if ch and self.is_connected(nanny.con_playing) and self.send_buffer:
         #/* battle prompt */
-        victim = ch.fighting
-        if victim and ch.can_see(victim):
-            if victim.max_hit > 0:
-                percent = victim.hit * 100 / victim.max_hit
-            else:
-                percent = -1
-            if percent >= 100:
-                wound = "is in excellent condition."
-            elif percent >= 90:
-                wound = "has a few scratches."
-            elif percent >= 75:
-                wound = "has some small wounds and bruises."
-            elif percent >= 50:
-                wound = "has quite a few wounds."
-            elif percent >= 30:
-                wound = "has some big nasty wounds and scratches."
-            elif percent >= 15:
-                wound = "looks pretty hurt."
-            elif percent >= 0:
-                wound = "is in awful condition."
-            else:
-                wound = "is bleeding to death."
-            wound = "%s %s \n" % (state_checks.PERS(victim, ch), wound)
-            wound = wound.capitalize()
-            ch.send(wound)
+        if ch.fighting:
+            victim = merc.characters[ch.fighting]
+            if victim and ch.can_see(victim):
+                if victim.max_hit > 0:
+                    percent = victim.hit * 100 / victim.max_hit
+                else:
+                    percent = -1
+                if percent >= 100:
+                    wound = "is in excellent condition."
+                elif percent >= 90:
+                    wound = "has a few scratches."
+                elif percent >= 75:
+                    wound = "has some small wounds and bruises."
+                elif percent >= 50:
+                    wound = "has quite a few wounds."
+                elif percent >= 30:
+                    wound = "has some big nasty wounds and scratches."
+                elif percent >= 15:
+                    wound = "looks pretty hurt."
+                elif percent >= 0:
+                    wound = "is in awful condition."
+                else:
+                    wound = "is bleeding to death."
+                wound = "%s %s \n" % (state_checks.PERS(victim, ch), wound)
+                wound = wound.capitalize()
+                ch.send(wound)
         self.send("\n")
         bust_a_prompt(ch)
     self.miniboa_send()
@@ -135,13 +136,13 @@ def check_playing(d, name):
 
 #Look for link-dead player to reconnect.
 def check_reconnect(d, name, fConn):
-    for ch in merc.char_list:
+    for ch in merc.player_characters.values():
         if not ch.is_npc() and (not fConn or not ch.desc) \
                 and d.character.name == ch.name:
             if not fConn:
-                d.character.pcdata.pwd = ch.pcdata.pwd
+                d.character.pwd = ch.pwd
             else:
-                d.character.pcdata.pwd = ""
+                d.character.pwd = ""
                 del d.character
                 d.character = ch
                 ch.desc = d
@@ -165,7 +166,7 @@ def close_socket(d):
 #* coded by Morgenes for Aldara Mud
 def bust_a_prompt(ch):
     dir_name = ["N", "E", "S", "W", "U", "D"]
-    room = merc.room_instances[ch.in_room_instance]
+    room = merc.rooms[ch.in_room]
     doors = ""
     pstr = ch.prompt
     if not pstr:
@@ -177,13 +178,10 @@ def bust_a_prompt(ch):
     replace = OrderedDict()
     found = False
     for door, pexit in enumerate(room.exit):
-        instance_exit = merc.exit_instances[pexit.instance_id]
-        if instance_exit \
-                and instance_exit.roomTemplate != 0 \
-                and (ch.can_see_room(merc.room_instances[instance_exit.to_room_instance])
-                     or (ch.is_affected(merc.AFF_INFRARED)
-                         and not ch.is_affected(merc.AFF_BLIND))) \
-                and not state_checks.IS_SET(instance_exit.exit_info, merc.EX_CLOSED):
+        if pexit and (ch.can_see_room(pexit.to_room)
+                      or (ch.is_affected(merc.AFF_INFRARED)
+                          and not ch.is_affected(merc.AFF_BLIND))) \
+                and not state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED):
             found = True
             doors += dir_name[door]
         if not found:
@@ -199,7 +197,7 @@ def bust_a_prompt(ch):
     replace['%V'] = "%d" % ch.max_move
     replace['%x'] = "%d" % ch.exp
     replace['%X'] = "%d" % (0 if ch.is_npc()
-                            else (ch.level + 1) * ch.exp_per_level(ch.pcdata.points) - ch.exp)
+                            else (ch.level + 1) * ch.exp_per_level(ch.points) - ch.exp)
     replace['%g'] = "%ld" % ch.gold
     replace['%s'] = "%ld" % ch.silver
     if ch.level > 9:
@@ -211,24 +209,24 @@ def bust_a_prompt(ch):
             if ch.is_evil() \
             else "neutral"
     
-    if merc.room_instances[ch.in_room_instance]:
+    if merc.rooms[ch.in_room]:
         if (not ch.is_npc()
             and ch.act.is_set(merc.PLR_HOLYLIGHT)) \
                 or (not ch.is_affected(merc.AFF_BLIND)
-                    and not merc.room_instances[ch.in_room_instance].is_dark()):
-            replace['%r'] = merc.room_instances[ch.in_room_instance].name
+                    and not merc.rooms[ch.in_room].is_dark()):
+            replace['%r'] = merc.rooms[ch.in_room].name
         else: 
             replace['%r'] = "darkness"
     else:
         replace['%r'] = " "
      
-    if ch.is_immortal() and merc.room_instances[ch.in_room_instance]:
-        replace['%R'] = "%d" % ch.in_room_instance
+    if ch.is_immortal() and ch.in_room:
+        replace['%R'] = "%d" % ch.in_room
     else:
         replace['%R'] = " "
     
-    if ch.is_immortal() and merc.room_instances[ch.in_room_instance]:
-        replace['%z'] = "%s" % merc.area_templates[merc.room_templates[ch.room_template.vnum].area].name
+    if ch.is_immortal() and ch.in_room:
+        replace['%z'] = "%s" % merc.areaTemplate[merc.rooms[ch.in_room].area].name
     else:
         replace['%z'] = " "
         
@@ -243,7 +241,7 @@ def bust_a_prompt(ch):
 
 
 def is_reconnecting(d, name):
-    for ch in merc.player_list:
+    for ch in merc.player_characters.values():
         if not ch.desc and ch.name == name:
             return True
     return False

@@ -2,13 +2,15 @@ import os
 import json
 from collections import OrderedDict
 import pickle
-import entity_instancer
+import handler
+import instancer
 import game_utils
 import handler_room
 
 from merc import *
 
 import db
+import tables
 import world_classes
 import merc
 import settings
@@ -67,12 +69,12 @@ def load_char_obj(d, name):
     ch.desc = d
     d.character = ch
     ch.send = d.send
-    player_list.append(ch)
     return found, ch
     
 
 def fwrite_char(ch):
     chdict = OrderedDict()
+    chdict['instance_id'] = ch.instace_id
     chdict['name'] = ch.name
     chdict['id'] = ch.id
     chdict['logo'] = time.time()
@@ -89,12 +91,12 @@ def fwrite_char(ch):
     chdict["Tru"] = ch.trust
     chdict["Plyd"] = ch.played + int(current_time - ch.logon)
     chdict["Scro"] = ch.lines
-    if ch.in_room.vnum == ROOM_VNUM_LIMBO and ch.was_in_room:
-        in_room = ch.was_in_room.vnum
+    if merc.rooms[ch.in_room].vnum == ROOM_VNUM_LIMBO and ch.was_in_room:
+        in_room = ch.was_in_room
     elif not ch.in_room:
-        in_room = ROOM_VNUM_TEMPLE
+        in_room = merc.instances_by_room[ROOM_VNUM_TEMPLE][0]
     else:
-        in_room = ch.in_room.vnum
+        in_room = ch.in_room
     chdict["Room"] = in_room
     chdict["HMV"] = [ch.hit, ch.max_hit, ch.mana, ch.max_mana, ch.move, ch.max_move]
     chdict["Gold"] = min(0, ch.gold)
@@ -118,20 +120,20 @@ def fwrite_char(ch):
     chdict["Attr"] = ch.perm_stat
     chdict["AMod"] = ch.mod_stat
     if ch.is_npc():
-        chdict["Vnum"] = ch.pIndexData.vnum
+        chdict["Vnum"] = ch.vnum
     else:
-        chdict["Pass"] = ch.pcdata.pwd
-    chdict["Bin"] = ch.pcdata.bamfin
-    chdict["Bout"] = ch.pcdata.bamfout
-    chdict["Titl"] = ch.pcdata.title
-    chdict["Pnts"] = ch.pcdata.points
-    chdict["TSex"] = ch.pcdata.true_sex
-    chdict["LLev"] = ch.pcdata.last_level
-    chdict["HMVP"] = [ch.pcdata.perm_hit, ch.pcdata.perm_mana, ch.pcdata.perm_move]
-    chdict["Cnd"] = ch.pcdata.condition
-    chdict['alias'] = ch.pcdata.alias
-    chdict['skills'] = ch.pcdata.learned
-    chdict['groups'] = ch.pcdata.group_known
+        chdict["Pass"] = ch.pwd
+    chdict["Bin"] = ch.bamfin
+    chdict["Bout"] = ch.bamfout
+    chdict["Titl"] = ch.title
+    chdict["Pnts"] = ch.points
+    chdict["TSex"] = ch.true_sex
+    chdict["LLev"] = ch.last_level
+    chdict["HMVP"] = [ch.perm_hit, ch.perm_mana, ch.perm_move]
+    chdict["Cnd"] = ch.condition
+    chdict['alias'] = ch.alias
+    chdict['skills'] = ch.learned
+    chdict['groups'] = ch.group_known
     chdict['affected'] = [a for a in ch.affected if a.type >= 0]
     return chdict
 
@@ -162,7 +164,7 @@ def fwrite_obj(ch, obj, contained_by=None):
     odict['affected'] = [a for a in obj.affected if a.type >= 0]
     odict['ExDe'] = {ed.keyword: ed.description for ed in obj.extra_descr}
     if contained_by:
-        odict['In'] = contained_by.pIndexData.vnum 
+        odict['In'] = contained_by.instance_id
     if obj.contains:
         odict['contains'] = [fwrite_obj(ch, o, obj) for o in obj.contains]
     return odict
@@ -171,7 +173,7 @@ def fwrite_obj(ch, obj, contained_by=None):
 def fread_char(chdict, ch):
     ch.name = chdict['name']
     ch.id = chdict['id']
-
+    handler.Instancer.id_generator(ch)
     ch.short_descr = chdict["ShD"]
     ch.long_descr = chdict["LnD"]
     ch.description = chdict["Desc"]
@@ -184,9 +186,10 @@ def fread_char(chdict, ch):
     ch.trust = chdict["Tru"]
     ch.played = chdict["Plyd"]
     ch.lines = chdict["Scro"]
-    ch.room_template = 0
-    vnum = room_templates[chdict["Room"]].template_vnum
-    ch.in_room_instance = game_utils.find_vnum_instance('room', 1, vnum)
+    room = merc.instances_by_room[chdict["Room"]][0]
+    if not room:
+        room = chdict["Room"]
+    ch.in_room = room
     ch.hit, ch.max_hit, ch.mana, ch.max_mana, ch.move, ch.max_move = chdict["HMV"]
     ch.gold = chdict["Gold"]
     ch.silver = chdict["Silv"]
@@ -209,61 +212,60 @@ def fread_char(chdict, ch):
     ch.perm_stat = chdict["Attr"]
     ch.mod_stat = chdict["AMod"]
     if ch.is_npc():
-        ch.pIndexData.vnum = chdict["Vnum"]
+        ch.vnum = chdict["Vnum"]
     else:
-        ch.pcdata.pwd = chdict["Pass"]
-    ch.pcdata.bamfin = chdict["Bin"]
-    ch.pcdata.bamfout = chdict["Bout"]
-    ch.pcdata.title = chdict["Titl"]
-    ch.pcdata.points = chdict["Pnts"]
-    ch.pcdata.true_sex = chdict["TSex"]
-    ch.pcdata.last_level = chdict["LLev"]
-    ch.pcdata.perm_hit, ch.pcdata.perm_mana, ch.pcdata.perm_move = chdict["HMVP"]
-    ch.pcdata.condition = chdict["Cnd"]
-    ch.pcdata.alias = chdict['alias']
-    ch.pcdata.learned = chdict['skills']
-    ch.pcdata.group_known = chdict['groups']
+        ch.pwd = chdict["Pass"]
+    ch.bamfin = chdict["Bin"]
+    ch.bamfout = chdict["Bout"]
+    ch.title = chdict["Titl"]
+    ch.points = chdict["Pnts"]
+    ch.true_sex = chdict["TSex"]
+    ch.last_level = chdict["LLev"]
+    ch.perm_hit, ch.perm_mana, ch.perm_move = chdict["HMVP"]
+    ch.condition = chdict["Cnd"]
+    ch.alias = chdict['alias']
+    ch.learned = chdict['skills']
+    ch.group_known = chdict['groups']
     ch.affected = chdict['affected']
     if 'contents' in chdict:
-        fread_objs(ch, chdict['contents'])
+        fread_items(ch, chdict['contents'])
     return ch
 
 
-def fread_objs(contents, objects, contained_by=None):
+def fread_items(contents, objects, contained_by=None):
     for odict in objects:
-        obj = fread_obj(contents, odict)
+        item = fread_item(contents, odict)
         if not contained_by:
-            obj.to_char(contents)
+            item.to_char(contents)
         else:
-            obj.to_obj(contained_by)
+            item.to_item(contained_by)
         if 'contains' in odict:
-            fread_objs(contents, odict['contains'], obj)
+            fread_items(contents, odict['contains'], item)
 
 
-def fread_obj(contents, odict):
-    obj = entity_instancer.create_object(obj_templates[odict['Vnum']], odict['Lev'])
-    obj.enchanted = odict['Enchanted']
-    obj.name = odict['Name']
-    obj.short_descr = odict['ShD']
-    obj.description = odict['Desc']
-    obj.extra_flags = odict['ExtF']
-    obj.wear_flags = odict['WeaF']
-    obj.item_type = odict['Ityp']
-    obj.weight = odict['Wt']
-    obj.condition = odict['Cond']
+def fread_item(contents, odict):
+    item = instancer.create_item(itemTemplate[odict['Vnum']], odict['Lev'])
+    item.enchanted = odict['Enchanted']
+    item.name = odict['Name']
+    item.short_descr = odict['ShD']
+    item.description = odict['Desc']
+    item.extra_flags = odict['ExtF']
+    item.wear_flags = odict['WeaF']
+    item.item_type = odict['Ityp']
+    item.weight = odict['Wt']
+    item.condition = odict['Cond']
+    item.wear_loc = odict['Wear']
+    item.level = odict['Lev']
+    item.timer = odict['timer']
+    item.cost = odict['cost']
+    item.value = odict['Val']
 
-    obj.wear_loc = odict['Wear']
-    obj.level = odict['Lev']
-    obj.timer = odict['timer']
-    obj.cost = odict['cost']
-    obj.value = odict['Val']
-
-    obj.affected = odict['affected']
+    item.affected = odict['affected']
     extra_descr = []
     for k, v in odict['ExDe'].items():
-        newed = world_classes.EXTRA_DESCR_DATA()
+        newed = world_classes.ExtraDescrData()
         newed.keyword = k
         newed.description = v
         extra_descr.append(newed)
-    obj.extra_descr = extra_descr
-    return obj
+    item.extra_descr = extra_descr
+    return item

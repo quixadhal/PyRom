@@ -20,15 +20,15 @@ def do_sell(ch, argument):
     keeper = shop_utils.find_keeper(ch)
     if not keeper:
         return
-    obj = ch.get_obj_carry(arg, ch)
+    obj = ch.get_item_carry(arg, ch)
     if not obj:
         handler_game.act("$n tells you 'You don't have that item'.", keeper, None, ch, merc.TO_VICT)
         ch.reply = keeper
         return
-    if not ch.can_drop_obj(obj):
+    if not ch.can_drop_item(obj):
         ch.send("You can't let go of it.\n")
         return
-    if not keeper.can_see_obj(obj):
+    if not keeper.can_see_item(obj):
         handler_game.act("$n doesn't see what you are offering.", keeper, None, ch, merc.TO_VICT)
         return
     cost = shop_utils.get_cost(keeper, obj, False)

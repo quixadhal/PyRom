@@ -10,13 +10,13 @@ import state_checks
 def do_bamfin(ch, argument):
     if not ch.is_npc():
         if not argument:
-            ch.send("Your poofin is %s\n" % ch.pcdata.bamfin)
+            ch.send("Your poofin is %s\n" % ch.bamfin)
             return
         if ch.name not in argument:
             ch.send("You must include your name.\n")
             return
-        ch.pcdata.bamfin = argument
-        ch.send("Your poofin is now %s\n" % ch.pcdata.bamfin)
+        ch.bamfin = argument
+        ch.send("Your poofin is now %s\n" % ch.bamfin)
     return
 
 

@@ -4,7 +4,7 @@ import state_checks
 
 
 def spell_mass_healing(sn, level, ch, victim, target):
-    for gch in ch.in_room.people:
+    for gch in merc.rooms[ch.in_room].people:
         if (
             ch.is_npc() and state_checks.IS_NPC(gch) ) or ( not ch.is_npc() and not state_checks.IS_NPC(gch)):
             const.skill_table['heal'].spell_fun('heal', level, ch, gch, merc.TARGET_CHAR)

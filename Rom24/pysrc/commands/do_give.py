@@ -62,7 +62,7 @@ def do_give(ch, argument):
                 handler_game.act("$n tells you 'Thank you, come again.'", victim, None, ch, merc.TO_VICT)
                 ch.reply = victim
         return
-    obj = ch.get_obj_carry(arg1, ch)
+    obj = ch.get_item_carry(arg1, ch)
     if not obj:
         ch.send("You do not have that item.\n")
         return
@@ -77,7 +77,7 @@ def do_give(ch, argument):
         handler_game.act("$N tells you 'Sorry, you'll have to sell that.'", ch, None, victim, merc.TO_CHAR)
         ch.reply = victim
         return
-    if not ch.can_drop_obj(obj):
+    if not ch.can_drop_item(obj):
         ch.send("You can't let go of it.\n")
         return
     if victim.carry_number + obj.get_number() > victim.can_carry_n():
@@ -86,7 +86,7 @@ def do_give(ch, argument):
     if state_checks.get_carry_weight(victim) + obj.get_weight() > victim.can_carry_w():
         handler_game.act("$N can't carry that much weight.", ch, None, victim, merc.TO_CHAR)
         return
-    if not victim.can_see_obj(obj):
+    if not victim.can_see_item(obj):
         handler_game.act("$N can't see it.", ch, None, victim, merc.TO_CHAR)
         return
     obj.from_char()

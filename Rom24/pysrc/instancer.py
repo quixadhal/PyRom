@@ -8,7 +8,7 @@ logger = logging.getLogger()
 import game_utils
 import handler
 import handler_game
-import handler_obj
+import handler_item
 import handler_room
 import world_classes
 import merc
@@ -17,71 +17,38 @@ import special
 import state_checks
 __author__ = 'venom'
 
+
 def create_room(roomTemplate):
     if roomTemplate is None:
         logger.critical("Create_room: No roomTemplate given.")
         sys.exit(1)
 
-    room = handler_room.ROOM_DATA()
-
-    room.roomTemplate = roomTemplate.template_vnum
-    room.instance_id = handler.global_instance_generator()
-    room.contents = []
-    room.people = []
-    merc.global_instances[room.instance_id] = room
-    merc.room_instances[room.instance_id] = merc.global_instances[room.instance_id]
-    room.name = roomTemplate.template_name
-    room.area = roomTemplate.template_area
-    room.description = roomTemplate.template_description
-    room.extra_descr = roomTemplate.template_extra_descr
-    room.clan = roomTemplate.template_clan
-    room.heal_rate = roomTemplate.template_heal_rate
-    room.mana_rate = roomTemplate.template_mana_rate
-    room.room_flags = roomTemplate.template_room_flags
-    room.sector_type = roomTemplate.template_sector_type
-    room.owner = roomTemplate.template_owner
-    room.light = roomTemplate.template_light
-    room.exit = roomTemplate.template_exit
-    room.old_exit = roomTemplate.template_old_exit
+    room = handler_room.Room(roomTemplate)
+    return room
 
 
 def clone_room(parent, clone):
     if not parent or not clone:
         return
     '''Clone a room, minus contents and exits'''
-    clone.instance_id = handler.global_instance_generator()
-    merc.global_instances[clone.instance_id] = clone
-    merc.room_instances[clone.instance_id] = merc.global_instances[clone.instance_id]
-    clone.roomTemplate = parent.roomTemplate
-    clone.name = parent.name
-    clone.area = parent.area
-    clone.description = parent.description
-    clone.extra_descr = parent.extra_descr
-    clone.clan = parent.clan
-    clone.heal_rate = parent.heal_rate
-    clone.mana_rate = parent.mana_rate
-    clone.room_flags = parent.room_flags
-    clone.sector_type = parent.sector_type
-    clone.owner = parent.owner
-    clone.light = parent.light
+    clone = handler_room.Room(parent)
+    clone.contents = None
+    clone.people = None
+    clone.contents = []
+    clone.people = []
+
 
 def setup_exits():
-    for id, room in merc.room_instances.items():
+    for room in merc.rooms.values():
         if room.exit:
             for door, pexit in enumerate(room.exit):
                 if pexit:
-                    template = merc.exit_templates[pexit]
-                    exit_instance = world_classes.EXIT_DATA(template)
-                    room.exit[door] = exit_instance.name
+                    iexit = world_classes.Exit(pexit)
+                    room.exit[door] = iexit
 
 
 def create_shop(shopTemplate, keeper, room):
-    shop = world_classes.SHOP_DATA()
-
-    shop.instance_id = handler.global_instance_generator()
-    merc.global_instances[shop.instance_id] = shop
-    merc.shops_instances[shop.instance_id] = merc.global_instances[shop.instance_id]
-
+    shop = world_classes.Shop()
     shop.buy_type = shopTemplate.template_buy_type
     shop.mobTemplate = shopTemplate.template_keeper
     shop.keeper_instance = keeper.instance_id
@@ -93,10 +60,6 @@ def create_shop(shopTemplate, keeper, room):
 
 
 def clone_shop(parent, clone, room, keeper):
-    clone.instance_id = handler.global_instance_generator()
-    merc.global_instances[clone.instance_id] = clone
-    merc.shops_instances[clone.instance_id] = merc.global_instances[clone.instance_id]
-
     clone.buy_type = parent.buy_type
     clone.mobTemplate = parent.keeper
     clone.keeper_instance = keeper.instance_id
@@ -107,28 +70,15 @@ def clone_shop(parent, clone, room, keeper):
     clone.profit_sell = parent.profit_sell
 
 
-def create_exit(exitTemplate):
-    pexit = world_classes.EXIT_DATA()
-
-    pexit.instance_id = handler.global_instance_generator()
-    merc.global_instances[pexit.instance_id] = pexit
-    merc.exit_instances[pexit.instance_id] = merc.global_instances[pexit.instance_id]
-
-
-
-
 def create_mobile(mobTemplate):
     if mobTemplate is None:
         logger.critical("Create_mobile: None pMobIndex.")
         sys.exit(1)
 
     mob = mobile.Mobile()
-
-    mob.mobTemplate = mobTemplate.vnum
-    mob.instance_id = handler.global_instance_generator()
-    merc.global_instances[mob.instance_id] = mob
-    merc.mob_instances[mob.instance_id] = merc.global_instances[mob.instance_id]
-    mob.name = mobTemplate.player_name
+    mob.vnum = mobTemplate.vnum
+    handler.Instancer.id_generator(mob)
+    mob.name = mobTemplate.name
     mob.id = game_utils.get_mob_id()
     mob.short_descr = mobTemplate.short_descr
     mob.long_descr = mobTemplate.long_descr
@@ -155,15 +105,15 @@ def create_mobile(mobTemplate):
         mob.alignment = mobTemplate.alignment
         mob.level = mobTemplate.level
         mob.hitroll = mobTemplate.hitroll
-        mob.damroll = mobTemplate.damage[merc.DICE_BONUS]
-        mob.max_hit = game_utils.dice(mobTemplate.hit[merc.DICE_NUMBER], mobTemplate.hit[merc.DICE_TYPE]) + mobTemplate.hit[
+        mob.damroll = mobTemplate.dam_dice[merc.DICE_BONUS]
+        mob.max_hit = game_utils.dice(mobTemplate.hit_dice[merc.DICE_NUMBER], mobTemplate.hit_dice[merc.DICE_TYPE]) + mobTemplate.hit_dice[
             merc.DICE_BONUS]
         mob.hit = mob.max_hit
-        mob.max_mana = game_utils.dice(mobTemplate.mana[merc.DICE_NUMBER], mobTemplate.mana[merc.DICE_TYPE]) + mobTemplate.mana[
+        mob.max_mana = game_utils.dice(mobTemplate.mana_dice[merc.DICE_NUMBER], mobTemplate.mana_dice[merc.DICE_TYPE]) + mobTemplate.mana_dice[
             merc.DICE_BONUS]
         mob.mana = mob.max_mana
-        mob.damage[merc.DICE_NUMBER] = mobTemplate.damage[merc.DICE_NUMBER]
-        mob.damage[merc.DICE_TYPE] = mobTemplate.damage[merc.DICE_TYPE]
+        mob.damage[merc.DICE_NUMBER] = mobTemplate.dam_dice[merc.DICE_NUMBER]
+        mob.damage[merc.DICE_TYPE] = mobTemplate.dam_dice[merc.DICE_TYPE]
         mob.dam_type = mobTemplate.dam_type
         if mob.dam_type == 0:
             num = random.randint(1, 3)
@@ -174,7 +124,7 @@ def create_mobile(mobTemplate):
             elif num == 3:
                 mob.dam_type = 11  # pierce */
         for i in range(4):
-            mob.armor[i] = mobTemplate.ac[i]
+            mob.armor[i] = mobTemplate.armor[i]
         mob.off_flags.set_bit(mobTemplate.off_flags)
         mob.imm_flags.set_bit(mobTemplate.imm_flags)
         mob.res_flags.set_bit(mobTemplate.res_flags)
@@ -300,7 +250,6 @@ def create_mobile(mobTemplate):
     mob.position = mob.start_pos
 
     # link the mob to the world list */
-    merc.char_list.append(mob)
     return mob
 
 
@@ -311,9 +260,6 @@ def clone_mobile(parent, clone):
 
     # start fixing values */
     clone.name = parent.name
-    clone.instance = handler.global_instance_generator()
-    merc.global_instances[clone.instance_id] = clone
-    merc.mob_instances[clone.instance_id] = merc.global_instances[clone.instance_id]
     clone.version = parent.version
     clone.short_descr = parent.short_descr
     clone.long_descr = parent.long_descr
@@ -376,142 +322,92 @@ def clone_mobile(parent, clone):
 
 
 # * Create an instance of an object.
-def create_object(objTemplate, level):
-    if not objTemplate:
+def create_item(item_template, level):
+    if not item_template:
         logger.critical("Create_object: No objTemplate.")
         sys.exit(1)
 
-    obj = handler_obj.OBJ_DATA()
-    obj.instance_id = handler.global_instance_generator()
-    merc.global_instances[obj.instance_id] = obj
-    merc.obj_instances[obj.instance_id] = merc.global_instances[obj.instance_id]
-    obj.in_room = 0
-    obj.enchanted = False
+    item = handler_item.Items(item_template)
+    item.in_room = None
+    item.enchanted = False
 
-    if objTemplate.template_new_format is True:
-        obj.level = objTemplate.template_level
-    else:
-        obj.level = max(0, level)
-    obj.wear_loc = -1
+    if item_template.new_format is False:
+        item.level = max(0, level)
 
-    obj.name = objTemplate.template_name
-    obj.short_descr = objTemplate.template_short_descr
-    obj.description = objTemplate.template_description
-    obj.material = objTemplate.template_material
-    obj.item_type = objTemplate.template_item_type
-    obj.extra_flags = objTemplate.template_extra_flags
-    obj.wear_flags = objTemplate.template_wear_flags
-    obj.value = objTemplate.template_value[:]
-    obj.weight = objTemplate.template_weight
-
-    if level == -1 or objTemplate.template_new_format:
-        obj.cost = objTemplate.template_cost
-    else:
-        obj.cost = game_utils.number_fuzzy(10) * game_utils.number_fuzzy(level) * game_utils.number_fuzzy(level)
+    if level != -1 or not item_template.new_format:
+        item.cost = game_utils.number_fuzzy(10) * game_utils.number_fuzzy(level) * game_utils.number_fuzzy(level)
 
         # Mess with object properties.
-    if obj.item_type == merc.ITEM_LIGHT:
-        if obj.value[2] == 999:
-            obj.value[2] = -1
-    elif obj.item_type == merc.ITEM_FURNITURE \
-            or obj.item_type == merc.ITEM_TRASH \
-            or obj.item_type == merc.ITEM_CONTAINER \
-            or obj.item_type == merc.ITEM_DRINK_CON \
-            or obj.item_type == merc.ITEM_KEY \
-            or obj.item_type == merc.ITEM_FOOD \
-            or obj.item_type == merc.ITEM_BOAT \
-            or obj.item_type == merc.ITEM_CORPSE_NPC \
-            or obj.item_type == merc.ITEM_CORPSE_PC \
-            or obj.item_type == merc.ITEM_FOUNTAIN \
-            or obj.item_type == merc.ITEM_MAP \
-            or obj.item_type == merc.ITEM_CLOTHING \
-            or obj.item_type == merc.ITEM_PORTAL:
-        if not objTemplate.template_new_format:
-            obj.cost //= 5
-    elif obj.item_type == merc.ITEM_TREASURE \
-            or obj.item_type == merc.ITEM_WARP_STONE \
-            or obj.item_type == merc.ITEM_ROOM_KEY \
-            or obj.item_type == merc.ITEM_GEM \
-            or obj.item_type == merc.ITEM_JEWELRY:
+    if item.item_type == merc.ITEM_LIGHT:
+        if item.value[2] == 999:
+            item.value[2] = -1
+    elif item.item_type == merc.ITEM_FURNITURE \
+            or item.item_type == merc.ITEM_TRASH \
+            or item.item_type == merc.ITEM_CONTAINER \
+            or item.item_type == merc.ITEM_DRINK_CON \
+            or item.item_type == merc.ITEM_KEY \
+            or item.item_type == merc.ITEM_FOOD \
+            or item.item_type == merc.ITEM_BOAT \
+            or item.item_type == merc.ITEM_CORPSE_NPC \
+            or item.item_type == merc.ITEM_CORPSE_PC \
+            or item.item_type == merc.ITEM_FOUNTAIN \
+            or item.item_type == merc.ITEM_MAP \
+            or item.item_type == merc.ITEM_CLOTHING \
+            or item.item_type == merc.ITEM_PORTAL:
+        if not item_template.new_format:
+            item.cost //= 5
+    elif item.item_type == merc.ITEM_TREASURE \
+            or item.item_type == merc.ITEM_WARP_STONE \
+            or item.item_type == merc.ITEM_ROOM_KEY \
+            or item.item_type == merc.ITEM_GEM \
+            or item.item_type == merc.ITEM_JEWELRY:
         pass
-    elif obj.item_type == merc.ITEM_JUKEBOX:
-        obj.value = [-1 for i in range(5)]
-    elif obj.item_type == merc.ITEM_SCROLL:
-        if level != -1 and not objTemplate.template_new_format:
-            obj.value[0] = game_utils.number_fuzzy(obj.value[0])
-    elif obj.item_type == merc.ITEM_WAND \
-            or obj.item_type == merc.ITEM_STAFF:
-        if level != -1 and not objTemplate.template_new_format:
-            obj.value[0] = game_utils.number_fuzzy(obj.value[0])
-            obj.value[1] = game_utils.number_fuzzy(obj.value[1])
-            obj.value[2] = obj.value[1]
-        if not objTemplate.template_new_format:
-            obj.cost *= 2
-    elif obj.item_type == merc.ITEM_WEAPON:
-        if level != -1 and not objTemplate.template_new_format:
-            obj.value[1] = game_utils.number_fuzzy(game_utils.number_fuzzy(1 * level // 4 + 2))
-            obj.value[2] = game_utils.number_fuzzy(game_utils.number_fuzzy(3 * level // 4 + 6))
-    elif obj.item_type == merc.ITEM_ARMOR:
-        if level != -1 and not objTemplate.template_new_format:
-            obj.value[0] = game_utils.number_fuzzy(level // 5 + 3)
-            obj.value[1] = game_utils.number_fuzzy(level // 5 + 3)
-            obj.value[2] = game_utils.number_fuzzy(level // 5 + 3)
-    elif obj.item_type == merc.ITEM_POTION \
-            or obj.item_type == merc.ITEM_PILL:
-        if level != -1 and not objTemplate.template_new_format:
-            obj.value[0] = game_utils.number_fuzzy(game_utils.number_fuzzy(obj.value[0]))
-    elif obj.item_type == merc.ITEM_MONEY:
-        if not objTemplate.template_new_format:
-            obj.value[0] = obj.cost
+    elif item.item_type == merc.ITEM_JUKEBOX:
+        item.value = [-1 for i in range(5)]
+    elif item.item_type == merc.ITEM_SCROLL:
+        if level != -1 and not item_template.new_format:
+            item.value[0] = game_utils.number_fuzzy(item.value[0])
+    elif item.item_type == merc.ITEM_WAND \
+            or item.item_type == merc.ITEM_STAFF:
+        if level != -1 and not item_template.new_format:
+            item.value[0] = game_utils.number_fuzzy(item.value[0])
+            item.value[1] = game_utils.number_fuzzy(item.value[1])
+            item.value[2] = item.value[1]
+        if not item_template.new_format:
+            item.cost *= 2
+    elif item.item_type == merc.ITEM_WEAPON:
+        if level != -1 and not item_template.new_format:
+            item.value[1] = game_utils.number_fuzzy(game_utils.number_fuzzy(1 * level // 4 + 2))
+            item.value[2] = game_utils.number_fuzzy(game_utils.number_fuzzy(3 * level // 4 + 6))
+    elif item.item_type == merc.ITEM_ARMOR:
+        if level != -1 and not item_template.new_format:
+            item.value[0] = game_utils.number_fuzzy(level // 5 + 3)
+            item.value[1] = game_utils.number_fuzzy(level // 5 + 3)
+            item.value[2] = game_utils.number_fuzzy(level // 5 + 3)
+    elif item.item_type == merc.ITEM_POTION \
+            or item.item_type == merc.ITEM_PILL:
+        if level != -1 and not item_template.new_format:
+            item.value[0] = game_utils.number_fuzzy(game_utils.number_fuzzy(item.value[0]))
+    elif item.item_type == merc.ITEM_MONEY:
+        if not item_template.new_format:
+            item.value[0] = item.cost
     else:
-        logger.error("Bad item_type objTemplate vnum: %s(%s)" % (objTemplate.template_vnum, obj.item_type ))
+        logger.error("Bad item_type objTemplate vnum: %s(%s)" % (item_template.vnum, item.item_type))
 
-    for paf in objTemplate.template_affected:
+    for paf in item_template.affected:
         if paf.location == merc.APPLY_SPELL_AFFECT:
-            obj.affect_add(paf)
-    obj.extra_descr = objTemplate.template_extra_descr
-    merc.object_list.append(obj)
-    obj.objTemplate = objTemplate.vnum
-    return obj
+            item.affect_add(paf)
+    return item
 
 
 # duplicate an object exactly -- except contents */
-def clone_object(parent, clone):
+def clone_item(parent, clone):
     if not parent or not clone:
         return
 
     # start fixing the object */
-    clone.name = parent.name
-    clone.instance = handler.global_instance_generator()
-    merc.global_instances[clone.instance_id] = clone
-    merc.obj_instances[clone.instance_id] = merc.global_instances[clone.instance_id]
-    clone.short_descr = parent.short_descr
-    clone.description = parent.description
-    clone.item_type = parent.item_type
-    clone.extra_flags = parent.extra_flags
-    clone.wear_flags = parent.wear_flags
-    clone.weight = parent.weight
-    clone.cost = parent.cost
-    clone.level = parent.level
-    clone.condition = parent.condition
-    clone.material = parent.material
-    clone.timer = parent.timer
-
-    for i in parent.value:
-        clone.value[i] = i
-
-    # affects */
-    clone.enchanted = parent.enchanted
-
-    for paf in parent.affected:
-        clone.affect_add(paf)
-
-    # extended desc */
-    for ed in parent.extra_descr:
-        ed_new = world_classes.EXTRA_DESCR_DATA()
-        ed_new.keyword = ed.keyword
-        ed_new.description = ed.description
-        clone.extra_descr.append(ed)
+    clone = handler_item.Items(parent)
+    return clone
 
 # * Create a 'money' obj.
 def create_money(gold, silver):
@@ -521,30 +417,27 @@ def create_money(gold, silver):
         silver = max(1, silver)
 
     if gold == 0 and silver == 1:
-        obj = create_object(merc.obj_templates[merc.OBJ_VNUM_SILVER_ONE], 0)
-        obj.instance_id = handler.global_instance_generator()
-        merc.global_instances[obj.instance_id] = obj
-        merc.obj_instances[obj.instance_id] = merc.global_instances[obj.instance_id]
+        item = create_item(merc.itemTemplate[merc.OBJ_VNUM_SILVER_ONE], 0)
     elif gold == 1 and silver == 0:
-        obj = create_object(merc.obj_templates[merc.OBJ_VNUM_GOLD_ONE], 0)
+        item = create_item(merc.itemTemplate[merc.OBJ_VNUM_GOLD_ONE], 0)
     elif silver == 0:
-        obj = create_object(merc.obj_templates[merc.OBJ_VNUM_GOLD_SOME], 0)
-        obj.short_descr += " %d" % gold
-        obj.value[1] = gold
-        obj.cost = gold
-        obj.weight = gold // 5
+        item = create_item(merc.itemTemplate[merc.OBJ_VNUM_GOLD_SOME], 0)
+        item.short_descr += " %d" % gold
+        item.value[1] = gold
+        item.cost = gold
+        item.weight = gold // 5
     elif gold == 0:
-        obj = create_object(merc.obj_templates[merc.OBJ_VNUM_SILVER_SOME], 0)
-        obj.short_descr += " %d" % silver
-        obj.value[0] = silver
-        obj.cost = silver
-        obj.weight = silver // 20
+        item = create_item(merc.itemTemplate[merc.OBJ_VNUM_SILVER_SOME], 0)
+        item.short_descr += " %d" % silver
+        item.value[0] = silver
+        item.cost = silver
+        item.weight = silver // 20
     else:
-        obj = create_object(merc.obj_templates[merc.OBJ_VNUM_COINS], 0)
-        obj.short_descr += " %d %d" % (gold, silver)
-        obj.value[0] = silver
-        obj.value[1] = gold
-        obj.cost = 100 * gold + silver
-        obj.weight = gold // 5 + silver // 20
-    return obj
+        item = create_item(merc.itemTemplate[merc.OBJ_VNUM_COINS], 0)
+        item.short_descr += " %d %d" % (gold, silver)
+        item.value[0] = silver
+        item.value[1] = gold
+        item.cost = 100 * gold + silver
+        item.weight = gold // 5 + silver // 20
+    return item
 

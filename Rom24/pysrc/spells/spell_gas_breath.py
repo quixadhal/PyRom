@@ -20,7 +20,7 @@ def spell_gas_breath(sn, level, ch, victim, target):
     dam = max(hp_dam + dice_dam // 10, dice_dam + hp_dam // 10)
     effects.poison_effect(ch.in_room, level, dam, merc.TARGET_ROOM)
 
-    for vch in ch.in_room.people[:]:
+    for vch in merc.rooms[ch.in_room].people[:]:
         if fight.is_safe_spell(ch, vch, True) or (ch.is_npc() and vch.is_npc() and (ch.fighting == vch or vch.fighting == ch)):
             continue
 

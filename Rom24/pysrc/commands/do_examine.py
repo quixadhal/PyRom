@@ -14,7 +14,7 @@ def do_examine(ch, argument):
         return
     ch.do_look(arg)
     buf = ""
-    obj = ch.get_obj_here(arg)
+    obj = ch.get_item_here(arg)
     if obj:
         if obj.item_type == merc.ITEM_JUKEBOX:
             ch.do_play("list")

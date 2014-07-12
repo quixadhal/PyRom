@@ -9,7 +9,7 @@ def get_obj_keeper(ch, keeper, argument):
     number, arg = game_utils.number_argument(argument)
     count = 0
     for obj in keeper.contents:
-        if obj.wear_loc == merc.WEAR_NONE and keeper.can_see_obj(obj) and ch.can_see_obj(obj) and game_utils.is_name(arg, obj.name):
+        if obj.wear_loc == merc.WEAR_NONE and keeper.can_see_item(obj) and ch.can_see_item(obj) and game_utils.is_name(arg, obj.name):
             count += 1
             if count == number:
                 return obj
@@ -39,7 +39,7 @@ def obj_to_keeper(obj, ch):
         ch.contents.insert(spot, t_obj)
     obj.carried_by = ch
     obj.in_room = None
-    obj.in_obj = None
+    obj.in_item = None
     ch.carry_number += obj.get_number()
     ch.carry_weight += obj.get_weight()
 
@@ -73,7 +73,7 @@ def get_cost(keeper, obj, fBuy):
 #* Shopping commands.
 def find_keeper(ch):
     pShop = None
-    for keeper in ch.in_room.people:
+    for keeper in merc.rooms[ch.in_room].people:
         if state_checks.IS_NPC(keeper) and keeper.pIndexData.pShop:
             pShop = keeper.pIndexData.pShop
             break

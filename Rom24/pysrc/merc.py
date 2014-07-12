@@ -60,13 +60,11 @@ HE = LEVEL_HERO  # hero */
 #Global Lists
 
 '''The template dicts contain our VNUM based template items'''
-area_templates = {}  # Currently areas are singleton, making them both a template and instance
-shops_templates = {}
-mob_templates = {}
-obj_templates = {}
-room_templates = {}  # Currently rooms are singleton, making them both a template and instance
-reset_templates = {}
-exit_templates = {}
+areaTemplate = {}  # Currently areas are singleton, making them both a template and instance
+shopTemplate = {}
+characterTemplate = {}
+itemTemplate = {}
+roomTemplate = {}  # Currently rooms are singleton, making them both a template and instance
 
 # dicts for entities that are not 'templates'
 helps = {}
@@ -97,23 +95,28 @@ Likewise you can effect a change TO mob from accessing either dict:
 >>>merc.mob_instances[mob.instance_id].name
 'bob'
 '''
-area_instances = {}  # Currently areas are singleton, making them both a template and instance
-obj_instances = {}
-room_instances = {}  # Currently rooms are singleton, making them both a template and instance
-mob_instances = {}
-shops_instances = {}
-reset_instances = {}
-exit_instances = {}
+areas = {}  # Currently areas are singleton, making them both a template and instance
+items = {}
+rooms = {}  # Currently rooms are singleton, making them both a template and instance
+characters = {}
+shops = {}
+player_characters = {}
 
 # global instance dict
 global_instances = {}
 
 instance_number = 0
 
+instances_by_area = {}
+instances_by_room = {}
+instances_by_item = {}
+instances_by_character = {}
+instances_by_shop = {}
+instances_by_player = {}
+
+
 descriptor_list = []
-player_list = []
-char_list = []
-object_list = []
+
 area_list = []
 help_list = []
 greeting_list = []

@@ -14,7 +14,7 @@ import handler_magic
 def do_recite(ch, argument):
     argument, arg1 = game_utils.read_word(argument)
     argument, arg2 = game_utils.read_word(argument)
-    scroll = ch.get_obj_carry(arg1, ch)
+    scroll = ch.get_item_carry(arg1, ch)
     if not scroll:
         ch.send("You do not have that scroll.\n")
         return
@@ -30,7 +30,7 @@ def do_recite(ch, argument):
         victim = ch
     else:
         victim = ch.get_char_room(arg2)
-        obj = ch.get_obj_here(arg2)
+        obj = ch.get_item_here(arg2)
         if not victim and not obj:
             ch.send("You can't find it.\n")
             return

@@ -32,8 +32,8 @@
  ************/
 """
 import logging
-import entity_instancer
-from world_classes import GEN_DATA
+import instancer
+from world_classes import Gen
 
 logger = logging.getLogger()
 
@@ -206,7 +206,7 @@ def con_get_new_race(self):
         ch.group_add(i, False)
 
     # add cost */
-    ch.pcdata.points = race.points
+    ch.points = race.points
     ch.size = race.size
 
     ch.send("What is your sex (M/F)? ")
@@ -220,10 +220,10 @@ def con_get_new_sex(self):
 
     if argument == 'm':
         ch.sex = merc.SEX_MALE
-        ch.pcdata.true_sex = merc.SEX_MALE
+        ch.true_sex = merc.SEX_MALE
     elif argument == 'f':
         ch.sex = merc.SEX_FEMALE
-        ch.pcdata.true_sex = merc.SEX_FEMALE
+        ch.true_sex = merc.SEX_FEMALE
     else:
         ch.send("That's not a sex.\nWhat IS your sex? ")
         return
@@ -277,7 +277,7 @@ def con_get_alignment(self):
     ch.send("\n")
     ch.group_add("rom basics", False)
     ch.group_add(ch.guild.base_group, False)
-    ch.pcdata.learned['recall'] = 50
+    ch.learned['recall'] = 50
     ch.send("Do you wish to customize this character?\n")
     ch.send("Customization takes time, but allows a wider range of skills and abilities.\n")
     ch.send("Customize (Y/N)? ")
@@ -290,8 +290,8 @@ def con_default_choice(self):
 
     ch.send("\n")
     if argument == 'y':
-        ch.gen_data = GEN_DATA()
-        ch.gen_data.points_chosen = ch.pcdata.points
+        ch.gen_data = Gen()
+        ch.gen_data.points_chosen = ch.points
         ch.do_help("group header")
         ch.list_group_costs()
         ch.send("You already have the following skills:\n")
@@ -320,13 +320,13 @@ def con_pick_weapon(self):
     if not weapon or ch.learned[weapon.gsn] <= 0:
         ch.send("That's not a valid selection. Choices are:\n")
         for k, weapon in const.weapon_table.items():
-            if weapon.gsn in ch.pcdata.learned:
+            if weapon.gsn in ch.learned:
                 ch.send("%s " % weapon.name)
 
             ch.send("\nYour choice? ")
         return
 
-    ch.pcdata.learned[weapon.gsn] = 40
+    ch.learned[weapon.gsn] = 40
     ch.do_help("motd")
     self.set_connected(con_read_motd)
 
@@ -446,7 +446,6 @@ def con_read_motd(self):
         ch.send("Type 'password null <new password>' to fix.\n")
 
     ch.send("\nWelcome to ROM 2.4.  Please do not feed the mobiles.\n")
-    merc.char_list.append(ch)
     ch.reset()
     self.set_connected(con_playing)
 
@@ -454,7 +453,7 @@ def con_read_motd(self):
         ch.perm_stat[ch.guild.attr_prime] += 3
         ch.position = merc.POS_STANDING
         ch.level = 1
-        ch.exp = ch.exp_per_level(ch.pcdata.points)
+        ch.exp = ch.exp_per_level(ch.points)
         ch.hit = ch.max_hit
         ch.mana = ch.max_mana
         ch.move = ch.max_move
@@ -464,17 +463,17 @@ def con_read_motd(self):
         ch.title = buf
 
         ch.do_outfit("")
-        entity_instancer.create_object(merc.obj_templates[merc.OBJ_VNUM_MAP], 0).to_char(ch)
+        instancer.create_item(merc.itemTemplate[merc.OBJ_VNUM_MAP], 0).to_char(ch)
         ch.to_room(game_utils.find_vnum_instance('room', 1, merc.ROOM_VNUM_SCHOOL))
         ch.do_help("newbie info")
 
-    elif ch.in_room_instance > 0:
-        ch.to_room(ch.in_room_instance)
+    elif ch.in_room:
+        ch.to_room(ch.in_room)
     elif ch.is_immortal():
-        to_instance = game_utils.find_vnum_instance('room', 1, merc.ROOM_VNUM_TEMPLE)
+        to_instance = merc.instances_by_room[merc.ROOM_VNUM_CHAT][0]
         ch.to_room(to_instance)
     else:
-        to_instance = game_utils.find_vnum_instance('room', 1, merc.ROOM_VNUM_TEMPLE)
+        to_instance = merc.instances_by_room[merc.ROOM_VNUM_TEMPLE][0]
         ch.to_room(to_instance)
 
     handler_game.act("$n has entered the game.", ch, None, None, merc.TO_ROOM)

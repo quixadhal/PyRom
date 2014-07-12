@@ -11,12 +11,12 @@ def spell_word_of_recall(sn, level, ch, victim, target):
     if victim.is_npc():
         return
 
-    if merc.ROOM_VNUM_TEMPLE not in merc.room_templates:
+    if merc.ROOM_VNUM_TEMPLE not in merc.roomTemplate:
         victim.send("You are completely lost.\n")
         return
-    location = merc.room_templates[merc.ROOM_VNUM_TEMPLE]
+    location = merc.roomTemplate[merc.ROOM_VNUM_TEMPLE]
 
-    if state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_NO_RECALL) or victim.is_affected(
+    if state_checks.IS_SET(merc.rooms[victim.in_room].room_flags, merc.ROOM_NO_RECALL) or victim.is_affected(
                                                                                                        merc.AFF_CURSE):
         victim.send("Spell failed.\n")
         return

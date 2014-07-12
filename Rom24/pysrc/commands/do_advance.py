@@ -43,7 +43,7 @@ def do_advance(ch, argument):
         victim.send("**** OOOOHHHHHHHHHH  NNNNOOOO ****\n")
         temp_prac = victim.practice
         victim.level = 1
-        victim.exp = victim.exp_per_level(victim.pcdata.points)
+        victim.exp = victim.exp_per_level(victim.points)
         victim.max_hit = 10
         victim.max_mana = 100
         victim.max_move = 100
@@ -60,7 +60,7 @@ def do_advance(ch, argument):
         victim.level += 1
         update.advance_level(victim, True)
     victim.send("You are now level %d.\n" % victim.level)
-    victim.exp = victim.exp_per_level(victim.pcdata.points) * max(1, victim.level)
+    victim.exp = victim.exp_per_level(victim.points) * max(1, victim.level)
     victim.trust = 0
     save.save_char_obj(victim)
     return

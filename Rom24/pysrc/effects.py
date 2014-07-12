@@ -122,7 +122,7 @@ def acid_effect(vo, level, dam, target):
         # get rid of the object */
         if obj.contains:  # dump contents */
             for t_obj in obj.contains[:]:
-                t_obj.from_obj()
+                t_obj.from_item()
                 if obj.in_room :
                     t_obj.to_room(obj.in_room)
                 elif obj.carried_by:
@@ -281,7 +281,7 @@ def fire_effect(vo, level, dam, target):
         if obj.contains:
             # dump the contents */
             for t_obj in obj.contains[:]:
-                t_obj.from_obj()
+                t_obj.from_item()
                 if obj.in_room:
                     t_obj.to_room(obj.in_room)
                 elif obj.carried_by:

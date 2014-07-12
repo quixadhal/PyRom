@@ -3,7 +3,7 @@ import logging
 logger = logging.getLogger()
 
 import merc
-import db
+import instancer
 import interp
 import game_utils
 import handler_game
@@ -28,10 +28,10 @@ def do_oload(ch, argument):
             ch.send("Level must be be between 0 and your level.\n")
             return
     vnum = int(arg1)
-    if vnum not in merc.obj_templates:
+    if vnum not in merc.itemTemplate:
         ch.send("No object has that vnum.\n")
         return
-    obj = db.create_object(merc.obj_templates[vnum], level)
+    obj = instancer.create_item(merc.itemTemplate[vnum], level)
     if state_checks.CAN_WEAR(obj, merc.ITEM_TAKE):
         obj.to_char(ch)
     else:

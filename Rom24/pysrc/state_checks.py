@@ -49,7 +49,7 @@ def PERS(ch, looker):
 
 
 def OPERS(looker, pobj):
-    if not looker.can_see_obj(pobj):
+    if not looker.can_see_item(pobj):
         return "something"
     return pobj.short_descr
 

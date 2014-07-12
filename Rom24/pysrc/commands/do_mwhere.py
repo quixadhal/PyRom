@@ -22,10 +22,10 @@ def do_mwhere(ch, argument):
             if d.original:
                 ch.send("%3d) %s (in the body of %s) is in %s [%d]\n" % (
                     count, d.original.name, victim.short_descr,
-                    victim.in_room.name, victim.in_room.vnum))
+                    merc.rooms[victim.in_room].name, merc.rooms[victim.in_room].vnum))
             else:
                 ch.send("%3d) %s is in %s [%d]\n" % (
-                    count, victim.name, victim.in_room.name, victim.in_room.vnum))
+                    count, victim.name, merc.rooms[victim.in_room].name, merc.rooms[victim.in_room].vnum))
         return
     found = False
     for victim in merc.char_list:
@@ -35,8 +35,8 @@ def do_mwhere(ch, argument):
             ch.send("%3d) [%5d] %-28s [%5d] %s\n" % (
                 count, 0 if not victim.is_npc() else victim.pIndexData.vnum,
                 victim.short_descr if victim.is_npc() else victim.name,
-                victim.in_room.vnum,
-                victim.in_room.name ))
+                merc.rooms[victim.in_room].vnum,
+                merc.rooms[victim.in_room].name ))
     if found:
         handler_game.act("You didn't find any $T.", ch, None, argument, merc.TO_CHAR)
 

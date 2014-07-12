@@ -22,7 +22,7 @@ def do_look(ch, argument):
         return
     if not ch.check_blind():
         return
-    room = merc.room_instances[ch.in_room_instance]
+    room = merc.rooms[ch.in_room]
     if not ch.is_npc() and not ch.act.is_set(merc.PLR_HOLYLIGHT) \
             and ch.room_template.is_dark():
         ch.send("It is pitch black ... \n")
@@ -39,7 +39,7 @@ def do_look(ch, argument):
                 and (ch.is_npc()
                      or (ch.act.is_set(merc.PLR_HOLYLIGHT)
                          or ch.act.is_set(merc.PLR_OMNI))):
-            ch.send(" [Room %d]" % room.roomTemplate)
+            ch.send(" [Room %d]" % room.instance_id)
         ch.send("\n")
         if not arg1 or (not ch.is_npc()
                         and not ch.comm.is_set(merc.COMM_BRIEF)):
@@ -56,7 +56,7 @@ def do_look(ch, argument):
         if not arg2:
             ch.send("Look in what?\n")
             return
-        obj = ch.get_obj_here(arg2)
+        obj = ch.get_item_here(arg2)
         if not obj:
             ch.send("You do not see that here.\n")
             return
@@ -91,7 +91,7 @@ def do_look(ch, argument):
     obj_list = ch.contents
     obj_list.extend(room.contents)
     for obj in obj_list:
-        if ch.can_see_obj(obj):
+        if ch.can_see_item(obj):
             # player can see object
             pdesc = game_utils.get_extra_descr(arg3, obj.extra_descr)
             if pdesc:

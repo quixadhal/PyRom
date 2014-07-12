@@ -14,7 +14,7 @@ def do_stand(ch, argument):
         if ch.position == merc.POS_FIGHTING:
             ch.send("Maybe you should finish fighting first?\n")
             return
-        obj = ch.get_obj_list(argument, ch.in_room.contents)
+        obj = ch.get_item_list(argument, merc.rooms[ch.in_room].contents)
         if not obj:
             ch.send("You don't see that here.\n")
             return

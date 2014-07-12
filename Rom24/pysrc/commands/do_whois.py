@@ -59,7 +59,7 @@ def do_whois(ch, argument):
                     ("(KILLER) " if wch.act.is_set(merc.PLR_KILLER) else ""),
                     ("(THIEF) " if wch.act.is_set(merc.PLR_THIEF) else ""),
                     wch.name,
-                    ("" if wch.is_npc() else wch.pcdata.title)))
+                    ("" if wch.is_npc() else wch.title)))
 
     if not found:
         ch.send("No one of that name is playing.\n")

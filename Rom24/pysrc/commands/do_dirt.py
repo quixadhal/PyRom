@@ -69,9 +69,9 @@ def do_dirt(ch, argument):
                  merc.SECT_MOUNTAIN: -10,
                  merc.SECT_DESERT: 10
     }
-    if ch.in_room.sector_type in nochance:
+    if merc.rooms[ch.in_room].sector_type in nochance:
         chance = 0
-    elif ch.in_room.sector_type in modifiers:
+    elif merc.rooms[ch.in_room].sector_type in modifiers:
         chance += modifiers[ch.in_room.sector_type]
 
     if chance == 0:

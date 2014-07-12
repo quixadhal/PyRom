@@ -1,7 +1,8 @@
 import handler_ch
-import handler_obj
+import handler_item
 import living
 from merc import *
+import merc
 import state_checks
 import game_utils
 __author__ = 'venom'
@@ -62,10 +63,10 @@ time_info = time_info_data()
 weather_info = weather_data()
 
 
-def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
+def act(format, ch, arg1, arg2, send_to, min_pos=POS_RESTING):
     if not format:
         return
-    if not ch or not ch.room_template:
+    if not ch or not ch.in_room:
         return
 
     vch = arg2
@@ -76,15 +77,15 @@ def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
     him_her = ["it",  "him", "her"]
     his_her = ["its", "his", "her"]
 
-    to_players = ch.room_template.people
+    to_players = [merc.characters[instance_id] for instance_id in merc.rooms[ch.in_room].people]
 
     if send_to is TO_VICT:
         if not vch:
-            print ("Act: null vict with TO_VICT: " + format)
+            print("Act: null vict with TO_VICT: " + format)
             return
         if not vch.in_room:
             return
-        to_players = vch.in_room.people
+        to_players = [merc.characters[instance_id] for instance_id in merc.rooms[ch.in_room].people]
 
     for to in to_players:
         if not to.desc or to.position < min_pos:
@@ -113,9 +114,9 @@ def act(format, ch, arg1, arg2, send_to, min_pos = POS_RESTING):
             act_trans['$E'] = he_she[vch.sex]
             act_trans['$M'] = him_her[vch.sex]
             act_trans['$S'] = his_her[vch.sex]
-        if obj1 and obj1.__class__ == handler_obj.OBJ_DATA:
+        if obj1 and obj1.__class__ == handler_item.Items:
             act_trans['$p'] = state_checks.OPERS(to, obj1)
-        if obj2 and obj2.__class__ == handler_obj.OBJ_DATA:
+        if obj2 and obj2.__class__ == handler_item.Items:
             act_trans['$P'] = state_checks.OPERS(to, obj2)
         act_trans['$d'] = arg2 if not arg2 else "door"
 
@@ -148,14 +149,14 @@ def substitute_alias(d, argument):
         else:
             prefix = "%s %s" % (ch.prefix,argument)
 
-    if ch.is_npc() or not ch.pcdata.alias \
+    if ch.is_npc() or not ch.alias \
     or "alias".startswith(argument) or "unalias".startswith(argument)  \
     or "prefix".startswith(argument):
         ch.interpret(argument)
         return
     remains, sub = game_utils.read_word(argument)
-    if sub not in ch.pcdata.alias:
+    if sub not in ch.alias:
         ch.interpret(argument)
         return
-    buf = "%s %s" % (ch.pcdata.alias[sub], remains)
+    buf = "%s %s" % (ch.alias[sub], remains)
     ch.interpret(buf)

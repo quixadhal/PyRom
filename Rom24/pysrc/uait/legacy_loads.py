@@ -8,7 +8,7 @@ import save
 logger = logging.getLogger()
 
 import const
-import handler_obj
+import handler_item
 import handler_room
 import settings
 import tables
@@ -182,7 +182,7 @@ def load_helps():
 def load_mobiles(mobile_dict):
     count = 0
     for k, v in mobile_dict.items():
-        merc.mob_templates[k] = v
+        merc.characterTemplate[k] = v
         count += 1
     logger.info("%d mobiles loaded", count)
 
@@ -190,7 +190,7 @@ def load_mobiles(mobile_dict):
 def load_objects(object_dict):
     count = 0
     for k, v in object_dict.items():
-        merc.obj_templates[k] = v
+        merc.itemTemplate[k] = v
         count += 1
     logger.info("%d items loaded", count)
 
@@ -206,7 +206,7 @@ def load_resets(reset_dict):
 def load_rooms(room_dict):
     count = 0
     for k, v in room_dict.items():
-        merc.room_templates[k] = v
+        merc.roomTemplate[k] = v
         count += 1
     logger.info("%d rooms loaded", count)
 
@@ -263,7 +263,7 @@ def load_area(area):
     pArea = None
     while area:
         if w == "#AREA":
-            pArea = world_classes.AREA_DATA()
+            pArea = world_classes.Area()
             area, pArea.file_name = game_utils.read_string(area)
             area, pArea.name = game_utils.read_string(area)
             area, pArea.credits = game_utils.read_string(area)
@@ -319,10 +319,10 @@ def load_mobiles(area, pArea):
     w = w[1:]  # strip the pound
 
     while w != '0':
-        mob = handler_ch.MOB_INDEX_DATA()
+        mob = handler_ch.Mobile()
         mob.vnum = int(w)
-        merc.mob_templates[mob.vnum] = mob
-        area, mob.player_name = game_utils.read_string(area)
+        merc.characterTemplate[mob.vnum] = mob
+        area, mob.name = game_utils.read_string(area)
         area, mob.short_descr = game_utils.read_string(area)
         area, mob.long_descr = game_utils.read_string(area)
         area, mob.description = game_utils.read_string(area)
@@ -336,21 +336,21 @@ def load_mobiles(area, pArea):
         area, mob.group = game_utils.read_int(area)
         area, mob.level = game_utils.read_int(area)
         area, mob.hitroll = game_utils.read_int(area)
-        area, mob.hit[0] = game_utils.read_int(area)
+        area, mob.hit_dice[0] = game_utils.read_int(area)
         area = game_utils.read_forward(area)
-        area, mob.hit[1] = game_utils.read_int(area)
+        area, mob.hit_dice[1] = game_utils.read_int(area)
         area = game_utils.read_forward(area)
-        area, mob.hit[2] = game_utils.read_int(area)
-        area, mob.mana[0] = game_utils.read_int(area)
+        area, mob.hit_dice[2] = game_utils.read_int(area)
+        area, mob.mana_dice[0] = game_utils.read_int(area)
         area = game_utils.read_forward(area)
-        area, mob.mana[1] = game_utils.read_int(area)
+        area, mob.mana_dice[1] = game_utils.read_int(area)
         area = game_utils.read_forward(area)
-        area, mob.mana[2] = game_utils.read_int(area)
-        area, mob.damage[0] = game_utils.read_int(area)
+        area, mob.mana_dice[2] = game_utils.read_int(area)
+        area, mob.dam_dice[0] = game_utils.read_int(area)
         area = game_utils.read_forward(area)
-        area, mob.damage[1] = game_utils.read_int(area)
+        area, mob.dam_dice[1] = game_utils.read_int(area)
         area = game_utils.read_forward(area)
-        area, mob.damage[2] = game_utils.read_int(area)
+        area, mob.dam_dice[2] = game_utils.read_int(area)
         area, mob.dam_type = game_utils.read_word(area, False)
         mob.dam_type = state_checks.name_lookup(const.attack_table, mob.dam_type)
         area, mob.ac[0] = game_utils.read_int(area)
@@ -393,9 +393,9 @@ def load_objects(area, pArea):
     area, w = game_utils.read_word(area, False)
     w = w[1:]  # strip the pound
     while w != '0':
-        obj = handler_obj.OBJ_DATA()
+        obj = handler_item.Items()
         obj.vnum = int(w)
-        merc.obj_templates[obj.vnum] = obj
+        merc.itemTemplate[obj.vnum] = obj
         area, obj.name = game_utils.read_string(area)
         area, obj.short_descr = game_utils.read_string(area)
 
@@ -477,7 +477,7 @@ def load_objects(area, pArea):
                 area, number = game_utils.read_int(area)
                 area, number = game_utils.read_int(area)
             elif w == 'E':
-                ed = world_classes.EXTRA_DESCR_DATA()
+                ed = world_classes.ExtraDescrData()
                 area, ed.keyword = game_utils.read_string(area)
                 area, ed.description = game_utils.read_string(area)
                 obj.extra_descr.append(ed)
@@ -499,7 +499,7 @@ def load_resets(area, pArea):
             area, t = game_utils.read_to_eol(area)
             continue
 
-        reset = world_classes.RESET_DATA()
+        reset = world_classes.Reset()
         reset.command = letter
         area, number = game_utils.read_int(area)  # if_flag
         area, reset.arg1 = game_utils.read_int(area)
@@ -517,52 +517,52 @@ def load_rooms(area, pArea):
     area, w = game_utils.read_word(area, False)
     w = w[1:]  # strip the pound
     while w != '0':
-        room = handler_room.ROOM_TEMPLATE_DATA()
-        room.template_vnum = int(w)
-        if room.template_vnum in merc.room_templates:
-            logger.critical('Dupicate room Vnum: %d', room.template_vnum)
+        room = handler_room.Room()
+        room.vnum = int(w)
+        if room.vnum in merc.roomTemplate:
+            logger.critical('Dupicate room Vnum: %d', room.vnum)
             sys.exit(1)
 
-        merc.room_templates[room.template_vnum] = room
-        room.template_area = pArea
-        area, room.template_name = game_utils.read_string(area)
-        area, room.template_description = game_utils.read_string(area)
+        merc.roomTemplate[room.vnum] = room
+        room.area = pArea
+        area, room.name = game_utils.read_string(area)
+        area, room.description = game_utils.read_string(area)
         area, number = game_utils.read_int(area)  # area number
-        area, room.template_room_flags = game_utils.read_flags(area)
-        area, room.template_sector_type = game_utils.read_int(area)
+        area, room.room_flags = game_utils.read_flags(area)
+        area, room.sector_type = game_utils.read_int(area)
         while True:
             area, letter = game_utils.read_letter(area)
 
             if letter == 'S':
                 break
             elif letter == 'H':  # Healing Room
-                area, room.template_heal_rate = game_utils.read_int(area)
+                area, room.heal_rate = game_utils.read_int(area)
             elif letter == 'M':  # Mana Room
-                area, room.template_mana_rate = game_utils.read_int(area)
+                area, room.mana_rate = game_utils.read_int(area)
             elif letter == 'C':  # Clan
-                area, room.template_clan = game_utils.read_string(area)
+                area, room.clan = game_utils.read_string(area)
             elif letter == 'D':  # exit
-                nexit = world_classes.EXIT_DATA()
+                nexit = world_classes.Exit()
                 area, door = game_utils.read_int(area)
                 area, nexit.description = game_utils.read_string(area)
                 area, nexit.keyword = game_utils.read_string(area)
                 area, locks = game_utils.read_int(area)
                 area, nexit.key = game_utils.read_int(area)
-                area, nexit.to_room_instance = game_utils.read_int(area)
-                room.template_exit[door] = nexit
+                area, nexit.to_room = game_utils.read_int(area)
+                room.exit[door] = nexit
             elif letter == 'E':
-                ed = world_classes.EXTRA_DESCR_DATA()
+                ed = world_classes.ExtraDescrData()
                 area, ed.keyword = game_utils.read_string(area)
                 area, ed.description = game_utils.read_string(area)
-                room.template_extra_descr.append(ed)
+                room.extra_descr.append(ed)
             elif letter == 'O':
-                area, room.template_owner = game_utils.read_string(area)
+                area, room.owner = game_utils.read_string(area)
             else:
-                logger.critical("RoomIndexData(%d) has flag other than SHMCDEO: %s", (room.template_vnum, letter))
+                logger.critical("RoomIndexData(%d) has flag other than SHMCDEO: %s", (room.vnum, letter))
                 sys.exit(1)
         area, w = game_utils.read_word(area, False)
         w = w[1:]  # strip the pound
-        pArea.room_dict[room.template_vnum] = room
+        pArea.room_dict[room.vnum] = room
     return area
 
 
@@ -572,7 +572,7 @@ def load_shops(area, pArea):
 
         if keeper == 0:
             break
-        shop = world_classes.SHOP_DATA()
+        shop = world_classes.Shop()
         shop.keeper = keeper
         for r in range(merc.MAX_TRADE):
             area, shop.buy_type[r] = game_utils.read_int(area)
@@ -581,7 +581,7 @@ def load_shops(area, pArea):
         area, shop.open_hour = game_utils.read_int(area)
         area, shop.close_hour = game_utils.read_int(area)
         area, t = game_utils.read_to_eol(area)
-        merc.mob_templates[keeper].pShop = shop
+        merc.characterTemplate[keeper].pShop = shop
         merc.shop_list.append(shop)
         pArea.shop_dict[shop.keeper] = shop
     return area
@@ -693,7 +693,7 @@ def load_specials(area):
             return area
         elif letter == 'M':
             area, vnum = game_utils.read_int(area)
-            area, merc.mob_templates[vnum].spec_fun = game_utils.read_word(area, False)
+            area, merc.characterTemplate[vnum].spec_fun = game_utils.read_word(area, False)
         else:
             logger.error("Load_specials: letter noth *SM: %s", letter)
 

@@ -21,14 +21,28 @@ def read_word(pstr, lower=True):
     if not pstr:
         return "", ""
     pstr = pstr.lstrip()
-    word = pstr.split()[0]
-    if word[0] == "'":
-        word = pstr[:pstr.find("'", 1) + 1]
+    locate = len(pstr)
+    if pstr[0] == "'":
+        locate = pstr.find("'", 1)+1
+    elif pstr[0] == '"':
+        locate = pstr.find('"', 1)+1
+    else:
+        for i, c in enumerate(pstr):
+            if c.isspace():
+                locate = i
+                break
+
+    word = pstr[:locate]
+    strip = len(word)
+    if not word:
+        return pstr, word
+    if word[0] in ['"', "'"]:
+        word = word[1:-1]
     if lower:
         word = word.lower()
+
     pstr = pstr.lstrip()
-    pstr = pstr[len(word) + 1:]
-    word = word.replace("'", '')
+    pstr = pstr[strip:]
     return pstr, word.strip()
 
 
@@ -96,14 +110,14 @@ def read_flags(pstr):
 def find_location(ch, arg):
     if arg.isdigit():
         vnum = int(arg)
-        if vnum not in merc.room_templates:
+        if vnum not in merc.roomTemplate:
             return None
         else:
-            return merc.room_templates[vnum]
+            return merc.roomTemplate[vnum]
     victim = ch.get_char_world(arg)
     if victim:
         return victim.in_room
-    obj = ch.get_obj_world(arg)
+    obj = ch.get_item_world(arg)
     if obj:
         return obj.in_room
     return None
@@ -170,9 +184,9 @@ def set_title(ch, title):
         return
     nospace = ['.', ',', '!', '?']
     if title[0] in nospace:
-        ch.pcdata.title = title
+        ch.title = title
     else:
-        ch.pcdata.title = ' ' + title
+        ch.title = ' ' + title
 
 
 def get_mob_id():
@@ -204,8 +218,8 @@ def find_vnum_instance(entity_type='any', number=1, vnum=1):
         else:
             return 0
     elif ('r' or 'room') in entity_type:
-        room_keys = merc.room_instances.keys()
-        target = [k for k in room_keys if merc.room_instances[k].roomTemplate == vnum]
+        room_keys = merc.rooms.keys()
+        target = [k for k in room_keys if merc.rooms[k].vnum == vnum]
         logger.info("Find instance", target)
         if number >= len(target) > 0:
             return sorted(target)[number - 1]
@@ -214,8 +228,8 @@ def find_vnum_instance(entity_type='any', number=1, vnum=1):
         else:
             return 0
     elif ('o' or 'obj' or 'object') in entity_type:
-        obj_keys = merc.obj_instances.keys()
-        target = [k for k in obj_keys if merc.obj_instances[k].objTemplate == vnum]
+        obj_keys = merc.items.keys()
+        target = [k for k in obj_keys if merc.items[k].objTemplate == vnum]
         if number >= len(target) > 0:
             return sorted(target)[number - 1]
         elif len(target) == 0:
@@ -223,8 +237,8 @@ def find_vnum_instance(entity_type='any', number=1, vnum=1):
         else:
             return 0
     elif ('m' or 'mob' or 'mobile') in entity_type:
-        mob_keys = merc.mob_instances.keys()
-        target = [k for k in mob_keys if merc.mob_instances[k].mobTemplate == vnum]
+        mob_keys = merc.characters.keys()
+        target = [k for k in mob_keys if merc.characters[k].mobTemplate == vnum]
         if number >= len(target) > 0:
             return sorted(target)[number - 1]
         elif len(target) == 0:
@@ -246,22 +260,22 @@ def find_name_instance(entity_type='any', number=1, name=''):
         else:
             return -1
     elif entity_type == ('r' or 'room' or 'Room'):
-        room_keys = merc.room_instances.keys()
-        target = [k for k in room_keys if merc.room_instances[k].name == name]
+        room_keys = merc.rooms.keys()
+        target = [k for k in room_keys if merc.rooms[k].name == name]
         if number < len(target) and len(target) > 0:
             return sorted(target)[number - 1]
         else:
             return -1
     elif entity_type == ('o' or 'object' or 'Object' or 'obj'):
-        obj_keys = merc.obj_instances.keys()
-        target = [k for k in obj_keys if merc.obj_instances[k].name == name]
+        obj_keys = merc.items.keys()
+        target = [k for k in obj_keys if merc.items[k].name == name]
         if number < len(target) and len(target) > 0:
             return sorted(target)[number - 1]
         else:
             return -1
     elif entity_type == ('m' or 'mob' or 'Mob' or 'mobile'):
-        mob_keys = merc.mob_instances.keys()
-        target = [k for k in mob_keys if merc.mob_instances[k].name == name]
+        mob_keys = merc.characters.keys()
+        target = [k for k in mob_keys if merc.characters[k].name == name]
         if number < len(target) and len(target) > 0:
             return sorted(target)[number - 1]
         else:

@@ -31,7 +31,7 @@ def do_switch(ch, argument):
         ch.send("You can only switch into mobiles.\n")
         return
     if not ch.is_room_owner(victim.in_room) and ch.in_room != victim.in_room \
-            and victim.in_room.is_private() and not state_checks.IS_TRUSTED(ch, merc.MAX_LEVEL):
+            and merc.rooms[victim.in_room].is_private() and not state_checks.IS_TRUSTED(ch, merc.MAX_LEVEL):
         ch.send("That character is in a private room.\n")
         return
     if victim.desc:

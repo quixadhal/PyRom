@@ -1,7 +1,7 @@
 import logging
 import game_utils
 import handler_game
-import handler_obj
+import handler_item
 import state_checks
 
 logger = logging.getLogger()
@@ -21,7 +21,7 @@ def do_clone(ch, argument):
         return
     if "object".startswith(arg):
         mob = None
-        obj = ch.get_obj_here(rest)
+        obj = ch.get_item_here(rest)
         if not obj:
             ch.send("You don't see that here.\n")
             return
@@ -33,22 +33,22 @@ def do_clone(ch, argument):
             return
     else:  # find both
         mob = ch.get_char_room(argument)
-        obj = ch.get_obj_here(argument)
+        obj = ch.get_item_here(argument)
         if mob is None and obj is None:
             ch.send("You don't see that here.\n")
             return
             # clone an object
     if obj:
-        if not handler_obj.obj_check(ch, obj):
+        if not handler_item.item_check(ch, obj):
             ch.send("Your powers are not great enough for such a task.\n")
             return
-        clone = db.create_object(obj.pIndexData, 0)
+        clone = instancer.create_object(obj.pIndexData, 0)
         db.clone_object(obj, clone)
         if obj.carried_by:
             clone.to_char(ch)
         else:
             clone.to_room(ch.in_room)
-        handler_obj.recursive_clone(ch, obj, clone)
+        handler_item.recursive_clone(ch, obj, clone)
 
         handler_game.act("$n has created $p.", ch, clone, None, merc.TO_ROOM)
         handler_game.act("You clone $p.", ch, clone, None, merc.TO_CHAR)
@@ -65,14 +65,14 @@ def do_clone(ch, argument):
                 or not state_checks.IS_TRUSTED(ch, merc.L8):
             ch.send("Your powers are not great enough for such a task.\n")
             return
-        clone = db.create_mobile(mob.pIndexData)
+        clone = instancer.create_mobile(mob.pIndexData)
         db.clone_mobile(mob, clone)
 
         for obj in mob.contents:
-            if handler_obj.obj_check(ch, obj):
-                new_obj = db.create_object(obj.pIndexData, 0)
+            if handler_item.item_check(ch, obj):
+                new_obj = instancer.create_object(obj.pIndexData, 0)
                 db.clone_object(obj, new_obj)
-                handler_obj.recursive_clone(ch, obj, new_obj)
+                handler_item.recursive_clone(ch, obj, new_obj)
                 new_obj.to_char(clone)
                 new_obj.wear_loc = obj.wear_loc
         clone.to_room(ch.in_room)

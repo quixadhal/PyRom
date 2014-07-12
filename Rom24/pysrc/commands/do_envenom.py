@@ -17,7 +17,7 @@ def do_envenom(ch, argument):
     if not argument:
         ch.send("Envenom what item?\n")
         return
-    obj = ch.get_obj_list(argument, ch.contents)
+    obj = ch.get_item_list(argument, ch.contents)
     if not obj:
         ch.send("You don't have that item.\n")
         return

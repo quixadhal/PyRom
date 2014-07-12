@@ -35,7 +35,7 @@ def do_zap(ch, argument):
             return
     else:
         victim = ch.get_char_room(arg)
-        obj = ch.get_obj_here(arg)
+        obj = ch.get_item_here(arg)
         if not victim or not obj:
             ch.send("You can't find it.\n")
             return

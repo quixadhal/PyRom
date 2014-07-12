@@ -15,7 +15,7 @@ def do_train(ch, argument):
         return
 
         # Check for trainer.
-    trainers = [mob for mob in ch.in_room.people if state_checks.IS_NPC(mob) and state_checks.IS_SET(mob.act, merc.ACT_TRAIN)]
+    trainers = [mob for mob in merc.rooms[ch.in_room].people if state_checks.IS_NPC(mob) and state_checks.IS_SET(mob.act, merc.ACT_TRAIN)]
     if not trainers:
         ch.send("You can't do that here.\n")
         return
@@ -57,7 +57,7 @@ def do_train(ch, argument):
             ch.send("You don't have enough training sessions.\n")
             return
         ch.train -= cost
-        ch.pcdata.perm_hit += 10
+        ch.perm_hit += 10
         ch.max_hit += 10
         ch.hit += 10
         handler_game.act("Your durability increases!", ch, None, None, merc.TO_CHAR)
@@ -68,7 +68,7 @@ def do_train(ch, argument):
             ch.send("You don't have enough training sessions.\n")
             return
         ch.train -= cost
-        ch.pcdata.perm_mana += 10
+        ch.perm_mana += 10
         ch.max_mana += 10
         ch.mana += 10
         handler_game.act("Your power increases!", ch, None, None, merc.TO_CHAR)

@@ -10,13 +10,13 @@ import state_checks
 def do_bamfout(ch, argument):
     if not ch.is_npc():
         if not argument:
-            ch.send("Your poofout is %s\n" % ch.pcdata.bamfout)
+            ch.send("Your poofout is %s\n" % ch.bamfout)
             return
         if ch.name not in argument:
             ch.send("You must include your name.\n")
             return
-        ch.pcdata.bamfout = argument
-        ch.send("Your poofout is now %s\n" % ch.pcdata.bamfout)
+        ch.bamfout = argument
+        ch.send("Your poofout is now %s\n" % ch.bamfout)
     return
 
 

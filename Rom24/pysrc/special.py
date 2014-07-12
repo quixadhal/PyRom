@@ -50,7 +50,7 @@ def spec_troll_member( ch ):
         return False
     count = 0
     # find an ogre to beat up */
-    for vch in ch.in_room.people:
+    for vch in merc.rooms[ch.in_room].people:
         if not vch.is_npc() or ch == vch:
             continue
 
@@ -84,7 +84,7 @@ def spec_ogre_member( ch ):
     count = 0
     victim = None
     # find an troll to beat up */
-    for vch in ch.in_room.people:
+    for vch in merc.rooms[ch.in_room].people:
         if not vch.is_npc() or ch == vch:
             continue
  
@@ -116,7 +116,7 @@ def spec_patrolman(ch):
         return False
     victim = None
     # look for a fight in the room */
-    for vch in ch.in_room.people:
+    for vch in merc.rooms[ch.in_room].people:
         if vch == ch:
             continue
 
@@ -130,13 +130,13 @@ def spec_patrolman(ch):
     neck1 = ch.get_eq(WEAR_NECK_1)
     neck2 = ch.get_eq(WEAR_NECK_2)
     if (neck1 and neck1.pIndexData.vnum == OBJ_VNUM_WHISTLE) or ( neck2 and neck2.pIndexData.vnum == OBJ_VNUM_WHISTLE):
-        handler_game.act("You blow down hard on $p.",ch, obj_templates,None,TO_CHAR)
-        handler_game.act("$n blows on $p, ***WHEEEEEEEEEEEET***",ch, obj_templates,None,TO_ROOM)
+        handler_game.act("You blow down hard on $p.",ch, itemTemplate,None,TO_CHAR)
+        handler_game.act("$n blows on $p, ***WHEEEEEEEEEEEET***",ch, itemTemplate,None,TO_ROOM)
 
         for vch in char_list:
             if vch.in_room == None:
                 continue
-            if room_templates[vch.in_room] != room_templates[ch.in_room.vnum] and area_templates[room_templates[vch.in_room].area] == area_templates[room_templates[ch.in_room.vnum].area]:
+            if roomTemplate[vch.in_room] != roomTemplate[ch.in_room.vnum] and areaTemplate[roomTemplate[vch.in_room].area] == areaTemplate[roomTemplate[ch.in_room.vnum].area]:
                 vch.send("You hear a shrill whistling sound.\n")
 
     messages = ["$n yells 'All roit! All roit! break it up!'",
@@ -156,7 +156,7 @@ def spec_nasty( ch ):
        return False
 
     if ch.position != POS_FIGHTING:
-        for victim in ch.in_room.people[:]:
+        for victim in merc.rooms[ch.in_room].people[:]:
             if not victim.is_npc() and (victim.level > ch.level) and (victim.level < ch.level + 10):
                 ch.do_backstab(victim.name)
             if ch.position != POS_FIGHTING:
@@ -190,7 +190,7 @@ def dragon( ch, spell_name ):
     if ch.position != POS_FIGHTING:
         return False
     victim = None
-    for vch in ch.in_room.people[:]:
+    for vch in merc.rooms[ch.in_room].people[:]:
         if vch.fighting == ch and random.randint(0,3) == 0:
             victim = vch
             break
@@ -281,7 +281,7 @@ def spec_cast_cleric( ch ):
     if ch.position != POS_FIGHTING:
         return False
     victim = None
-    for vch in ch.in_room.people[:]:
+    for vch in merc.rooms[ch.in_room].people[:]:
         if vch.fighting == ch and random.randint(0,3) == 0:
             victim = vch
             break
@@ -338,7 +338,7 @@ def spec_cast_judge( ch ):
         return False
  
     victim = None
-    for vch in ch.in_room.people:
+    for vch in merc.rooms[ch.in_room].people:
         if vch.fighting == ch and random.randint(0, 3 ) == 0:
             victim = vch
             break
@@ -356,7 +356,7 @@ def spec_cast_mage( ch ):
     if ch.position != POS_FIGHTING:
         return False
     victim = None
-    for vch in ch.in_room.people[:]:
+    for vch in merc.rooms[ch.in_room].people[:]:
         if vch.fighting == ch and random.randint(0,2) == 0:
             victim = vch
             break
@@ -409,7 +409,7 @@ def spec_cast_undead( ch ):
     if ch.position != POS_FIGHTING:
         return False
 
-    for vch in ch.in_room.people[:]:
+    for vch in merc.rooms[ch.in_room].people[:]:
         if vch.fighting == ch and random.randint(0,3) == 0:
             victim = vch
             break
@@ -462,7 +462,7 @@ def spec_executioner( ch ):
 
     crime = ""
     victim = None
-    for vch in ch.in_room.people[:]:
+    for vch in merc.rooms[ch.in_room].people[:]:
         if not vch.is_npc() and vch.act.is_set(PLR_KILLER) and ch.can_see(vch):
             victim = vch
             crime = "KILLER"
@@ -488,7 +488,7 @@ def spec_fido( ch ):
             continue
         handler_game.act( "$n savagely devours a corpse.", ch, None, None, TO_ROOM )
         for obj in corpse.contains[:]:
-            obj.from_obj()
+            obj.from_item()
             obj.to_room(ch.room_template)
 
         corpse.extract()
@@ -503,7 +503,7 @@ def spec_guard( ch ):
     ech = None
     crime = ""
     victim = None
-    for vch in ch.in_room.people:
+    for vch in merc.rooms[ch.in_room].people:
         if not vch.is_npc() and vch.act.is_set(PLR_KILLER) and ch.can_see(vch):
             victim = vch
             crime = "KILLER"
@@ -535,7 +535,7 @@ def spec_janitor( ch ):
     if not ch.is_awake():
         return False
 
-    for trash in ch.in_room.contents:
+    for trash in merc.rooms[ch.in_room].contents:
         if not state_checks.IS_SET( trash.wear_flags, ITEM_TAKE ) or not ch.can_loot(trash):
             continue
         if trash.item_type == ITEM_DRINK_CON or trash.item_type == ITEM_TRASH or trash.cost < 10:
@@ -617,7 +617,7 @@ def spec_thief( ch ):
     if ch.position != POS_STANDING:
         return False
 
-    for victim in ch.in_room.people:
+    for victim in merc.rooms[ch.in_room].people:
         if victim.is_npc() or victim.level >= LEVEL_IMMORTAL or random.randint(0,31) != 0 or not ch.can_see(victim):
             continue
 

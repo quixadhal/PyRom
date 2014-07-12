@@ -20,7 +20,7 @@ def do_ofind(ch, argument):
     # Get_obj_index is fast, and I don't feel like threading another link.
     # Do you?
     # -- Furey
-    for objTemplate in merc.obj_templates.values():
+    for objTemplate in merc.itemTemplate.values():
         if fAll or game_utils.is_name(arg, objTemplate.name):
             found = True
             ch.send("[%5d] %s(%s)\n" % (objTemplate.vnum, objTemplate.short_descr, objTemplate.name))

@@ -29,7 +29,7 @@ def do_password(ch, argument):
         arg1 = hashlib.sha512(arg1).hexdigest()
         arg2 = hashlib.sha512(arg2).hexdigest()
 
-    if arg1 == ch.pcdata.pwd:
+    if arg1 == ch.pwd:
         state_checks.WAIT_STATE(ch, 40)
         ch.send("Wrong password.  Wait 10 seconds.\n")
         return
@@ -40,7 +40,7 @@ def do_password(ch, argument):
         # No tilde allowed because of player file format.
         # Also now not true. Davion
 
-    ch.pcdata.pwd = arg2
+    ch.pwd = arg2
     save.save_char_obj(ch)
     ch.send("Ok.\n")
     return

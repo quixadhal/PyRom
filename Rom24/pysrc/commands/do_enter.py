@@ -18,7 +18,7 @@ def do_enter(ch, argument):
     # nifty portal stuff
     if argument:
         old_room = ch.in_room
-        portal = ch.get_obj_list(argument, ch.in_room.contents)
+        portal = ch.get_item_list(argument, merc.rooms[ch.in_room].contents)
         if not portal:
             ch.send("You don't see that here.\n")
             return
@@ -37,7 +37,7 @@ def do_enter(ch, argument):
         elif state_checks.IS_SET(portal.value[2], merc.GATE_BUGGY) and (random.randint(1, 99) < 5):
             location = handler_room.get_random_room(ch)
         else:
-            location = merc.room_templates[portal.value[3]]
+            location = merc.roomTemplate[portal.value[3]]
         if not location or location == old_room \
                 or not ch.can_see_room(location) \
                 or (location.is_private() and not state_checks.IS_TRUSTED(ch, merc.MAX_LEVEL)):

@@ -13,10 +13,10 @@ def spell_portal(sn, level, ch, victim, target):
             or victim == ch \
             or victim.in_room == None \
             or not ch.can_see_room(victim.in_room) \
-            or state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_SAFE) \
-            or state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_PRIVATE) \
-            or state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_SOLITARY) \
-            or state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_NO_RECALL) \
+            or state_checks.IS_SET(merc.rooms[victim.in_room].room_flags, merc.ROOM_SAFE) \
+            or state_checks.IS_SET(merc.rooms[victim.in_room].room_flags, merc.ROOM_PRIVATE) \
+            or state_checks.IS_SET(merc.rooms[victim.in_room].room_flags, merc.ROOM_SOLITARY) \
+            or state_checks.IS_SET(merc.rooms[victim.in_room].room_flags, merc.ROOM_NO_RECALL) \
             or state_checks.IS_SET(ch.in_room.room_flags, merc.ROOM_NO_RECALL) \
             or victim.level >= level + 3 \
             or (not victim.is_npc() and victim.level >= merc.LEVEL_HERO) \
@@ -36,7 +36,7 @@ def spell_portal(sn, level, ch, victim, target):
         handler_game.act("It flares brightly and vanishes! ", ch, stone, None, merc.TO_CHAR)
         stone.extract()
 
-    portal = db.create_object(merc.obj_templates[merc.OBJ_VNUM_PORTAL], 0)
+    portal = instancer.create_object(merc.itemTemplate[merc.OBJ_VNUM_PORTAL], 0)
     portal.timer = 2 + level // 25
     portal.value[3] = victim.in_room.vnum
 
