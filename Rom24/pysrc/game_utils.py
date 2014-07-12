@@ -1,7 +1,4 @@
 import time
-import logging
-
-logger = logging.getLogger()
 
 __author__ = 'venom'
 import merc
@@ -41,9 +38,7 @@ def read_word(pstr, lower=True):
     if lower:
         word = word.lower()
 
-    pstr = pstr.lstrip()
-    pstr = pstr[strip:]
-    return pstr, word.strip()
+    return pstr.lstrip()[strip:], word.strip()
 
 
 def read_int(pstr):
@@ -129,11 +124,10 @@ def append_file(ch, fp, pstr):
 
 
 def read_to_eol(pstr):
-    pstr = pstr.split('\n')
-    line = pstr.pop(0)
-    pstr = "\n".join(pstr)
-    return pstr, line
-
+    locate = pstr.find('\n')
+    if locate == -1:
+        locate = len(pstr)
+    return pstr[locate+1:], pstr[:locate]
 
 def is_name(arg, name):
     name, tmp = read_word(name)
@@ -184,9 +178,9 @@ def set_title(ch, title):
         return
     nospace = ['.', ',', '!', '?']
     if title[0] in nospace:
-        ch.title = title
+        ch.pcdata.title = title
     else:
-        ch.title = ' ' + title
+        ch.pcdata.title = ' ' + title
 
 
 def get_mob_id():
@@ -201,85 +195,3 @@ def get_extra_descr(name, edlist):
         if name.lower() in ed.keyword:
             return ed.description
     return None
-
-def find_vnum_instance(entity_type='any', number=1, vnum=1):
-    if number < 1:
-        number = 1
-    entity_type.lower()
-    logger.info("Entity type report %s ", entity_type)
-    if ('any' or 'all') in entity_type:
-        global_keys = merc.global_instances.keys()
-        target = [k for k in global_keys if merc.global_instances[k].vnum == vnum]
-        logger.info("Find instance", target)
-        if number >= len(target) > 0:
-            return sorted(target)[number - 1]
-        elif len(target) == 0:
-            return target[0]
-        else:
-            return 0
-    elif ('r' or 'room') in entity_type:
-        room_keys = merc.rooms.keys()
-        target = [k for k in room_keys if merc.rooms[k].vnum == vnum]
-        logger.info("Find instance", target)
-        if number >= len(target) > 0:
-            return sorted(target)[number - 1]
-        elif len(target) == 0:
-            return target[0]
-        else:
-            return 0
-    elif ('o' or 'obj' or 'object') in entity_type:
-        obj_keys = merc.items.keys()
-        target = [k for k in obj_keys if merc.items[k].objTemplate == vnum]
-        if number >= len(target) > 0:
-            return sorted(target)[number - 1]
-        elif len(target) == 0:
-            return target[0]
-        else:
-            return 0
-    elif ('m' or 'mob' or 'mobile') in entity_type:
-        mob_keys = merc.characters.keys()
-        target = [k for k in mob_keys if merc.characters[k].mobTemplate == vnum]
-        if number >= len(target) > 0:
-            return sorted(target)[number - 1]
-        elif len(target) == 0:
-            return target[0]
-        else:
-            return 0
-    else:
-        return 0
-
-
-def find_name_instance(entity_type='any', number=1, name=''):
-    if number == 0:
-        number = 1
-    if entity_type == ('all' or 'any' or ''):
-        global_keys = merc.global_instances.keys()
-        target = [k for k in global_keys if merc.global_instances[k].name == name]
-        if number < len(target) and len(target) > 0:
-            return sorted(target)[number - 1]
-        else:
-            return -1
-    elif entity_type == ('r' or 'room' or 'Room'):
-        room_keys = merc.rooms.keys()
-        target = [k for k in room_keys if merc.rooms[k].name == name]
-        if number < len(target) and len(target) > 0:
-            return sorted(target)[number - 1]
-        else:
-            return -1
-    elif entity_type == ('o' or 'object' or 'Object' or 'obj'):
-        obj_keys = merc.items.keys()
-        target = [k for k in obj_keys if merc.items[k].name == name]
-        if number < len(target) and len(target) > 0:
-            return sorted(target)[number - 1]
-        else:
-            return -1
-    elif entity_type == ('m' or 'mob' or 'Mob' or 'mobile'):
-        mob_keys = merc.characters.keys()
-        target = [k for k in mob_keys if merc.characters[k].name == name]
-        if number < len(target) and len(target) > 0:
-            return sorted(target)[number - 1]
-        else:
-            return -1
-    else:
-        return -1
-

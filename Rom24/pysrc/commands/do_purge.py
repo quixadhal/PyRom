@@ -13,13 +13,15 @@ import state_checks
 def do_purge(ch, argument):
     argument, arg = game_utils.read_word(argument)
     if not arg:
-        for victim in merc.rooms[ch.in_room].people[:]:
+        for victim_id in merc.rooms[ch.in_room].people[:]:
+            victim = merc.characters[victim_id]
             if victim.is_npc() and not state_checks.IS_SET(victim.act,
                                                                        merc.ACT_NOPURGE) and victim != ch:  # safety precaution
                 victim.extract(True)
-        for obj in merc.rooms[ch.in_room].contents[:]:
-            if not state_checks.IS_OBJ_STAT(obj, merc.ITEM_NOPURGE):
-                obj.extract()
+        for item_id in merc.rooms[ch.in_room].contents[:]:
+            item = merc.items[item_id]
+            if not state_checks.IS_OBJ_STAT(item, merc.ITEM_NOPURGE):
+                item.extract()
         handler_game.act("$n purges the room!", ch, None, None, merc.TO_ROOM)
         ch.send("Ok.\n")
         return

@@ -18,7 +18,7 @@ def REMOVE_BIT(var, bit):
 #utility functions
 def name_lookup(pdict, arg, key='name'):
     for i, n in pdict.items():
-        if n.__dict__[key] == arg:
+        if getattr(n, key) == arg:
             return i
 
 
