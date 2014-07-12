@@ -33,7 +33,7 @@ def do_tell(ch, argument):
     if victim.desc is None and not victim.is_npc():
         handler_game.act("$N seems to have misplaced $S link...try again later.", ch, None, victim, merc.TO_CHAR)
         buf = "%s tells you '%s'\n" % (state_checks.PERS(ch, victim), argument)
-        victim.pcdata.buffer.append(buf)
+        victim.buffer.append(buf)
         return
 
     if not (ch.is_immortal() and ch.level > merc.LEVEL_IMMORTAL) and not state_checks.IS_AWAKE(victim):
@@ -52,7 +52,7 @@ def do_tell(ch, argument):
             return
         handler_game.act("$E is AFK, but your tell will go through when $E returns.", ch, None, victim, merc.TO_CHAR)
         buf = "%s tells you '%s'\n" % (state_checks.PERS(ch, victim), argument)
-        victim.pcdata.buffer.append(buf)
+        victim.buffer.append(buf)
         return
     handler_game.act("You tell $N '$t'", ch, argument, victim, merc.TO_CHAR)
     handler_game.act("$n tells you '$t'", ch, argument, victim, merc.TO_VICT, merc.POS_DEAD)

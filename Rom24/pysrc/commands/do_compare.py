@@ -15,14 +15,14 @@ def do_compare(ch, argument):
     if not arg1:
         ch.send("Compare what to what?\n")
         return
-    obj1 = ch.get_obj_carry(arg1, ch)
+    obj1 = ch.get_item_carry(arg1, ch)
     if not obj1:
         ch.send("You do not have that item.\n")
         return
     obj2 = None
     if not arg2:
         for obj2 in ch.contents:
-            if obj2.wear_loc != merc.WEAR_NONE and ch.can_see_obj(obj2) and obj1.item_type == obj2.item_type \
+            if obj2.wear_loc != merc.WEAR_NONE and ch.can_see_item(obj2) and obj1.item_type == obj2.item_type \
                     and (obj1.wear_flags & obj2.wear_flags & ~merc.ITEM_TAKE) != 0:
                 break
 
@@ -30,7 +30,7 @@ def do_compare(ch, argument):
             ch.send("You aren't wearing anything comparable.\n")
             return
     else:
-        obj2 = ch.get_obj_carry(arg2, ch)
+        obj2 = ch.get_item_carry(arg2, ch)
         if not obj2:
             ch.send("You do not have that item.\n")
             return

@@ -23,19 +23,19 @@ def do_goto(ch, argument):
         return
     if ch.fighting:
         fight.stop_fighting(ch, True)
-    for rch in ch.in_room.people:
+    for rch in merc.rooms[ch.in_room].people:
         if rch.trust >= ch.invis_level:
-            if ch.pcdata and ch.pcdata.bamfout:
-                handler_game.act("$t", ch, ch.pcdata.bamfout, rch, merc.TO_VICT)
+            if ch.pcdata and ch.bamfout:
+                handler_game.act("$t", ch, ch.bamfout, rch, merc.TO_VICT)
             else:
                 handler_game.act("$n leaves in a swirling mist.", ch, None, rch, merc.TO_VICT)
     ch.from_room()
     ch.to_room(location)
 
-    for rch in ch.in_room.people:
+    for rch in merc.rooms[ch.in_room].people:
         if rch.trust >= ch.invis_level:
-            if ch.pcdata and ch.pcdata.bamfin:
-                handler_game.act("$t", ch, ch.pcdata.bamfin, rch, merc.TO_VICT)
+            if ch.pcdata and ch.bamfin:
+                handler_game.act("$t", ch, ch.bamfin, rch, merc.TO_VICT)
             else:
                 handler_game.act("$n appears in a swirling mist.", ch, None, rch, merc.TO_VICT)
     ch.do_look("auto")

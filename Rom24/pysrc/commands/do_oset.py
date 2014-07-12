@@ -18,7 +18,7 @@ def do_oset(ch, argument):
         ch.send("    value0 value1 value2 value3 value4 (v1-v4)\n")
         ch.send("    extra wear level weight cost timer\n")
         return
-    obj = ch.get_obj_world(arg1)
+    obj = ch.get_item_world(arg1)
     if not obj:
         ch.send("Nothing like that in heaven or earth.\n")
         return

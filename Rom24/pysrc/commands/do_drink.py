@@ -15,19 +15,19 @@ def do_drink(ch, argument):
     argument, arg = game_utils.read_word(argument)
     obj = None
     if not arg:
-        obj = [f for f in ch.in_room.contents if f.item_type == merc.ITEM_FOUNTAIN][:1]
+        obj = [f for f in merc.rooms[ch.in_room].contents if f.item_type == merc.ITEM_FOUNTAIN][:1]
         if obj:
             obj = obj[0]
         if not obj:
             ch.send("Drink what?\n")
             return
     else:
-        obj = ch.get_obj_here(arg)
+        obj = ch.get_item_here(arg)
         if not obj:
             ch.send("You can't find it.\n")
             return
 
-    if not ch.is_npc() and ch.pcdata.condition[merc.COND_DRUNK] > 10:
+    if not ch.is_npc() and ch.condition[merc.COND_DRUNK] > 10:
         ch.send("You fail to reach your mouth.  *Hic*\n")
         return
     amount = 0
@@ -51,7 +51,7 @@ def do_drink(ch, argument):
     else:
         ch.send("You can't drink from that.\n")
         return
-    if not ch.is_npc() and not ch.is_immortal() and ch.pcdata.condition[merc.COND_FULL] > 45:
+    if not ch.is_npc() and not ch.is_immortal() and ch.condition[merc.COND_FULL] > 45:
         ch.send("You're too full to drink more.\n")
         return
     handler_game.act("$n drinks $T from $p.", ch, obj, const.liq_table[liquid].liq_name, merc.TO_ROOM)
@@ -60,11 +60,11 @@ def do_drink(ch, argument):
     update.gain_condition(ch, merc.COND_FULL, amount * const.liq_table[liquid].liq_affect[merc.COND_FULL] / 4)
     update.gain_condition(ch, merc.COND_THIRST, amount * const.liq_table[liquid].liq_affect[merc.COND_THIRST] / 10)
     update.gain_condition(ch, merc.COND_HUNGER, amount * const.liq_table[liquid].liq_affect[merc.COND_HUNGER] / 2)
-    if not ch.is_npc() and ch.pcdata.condition[merc.COND_DRUNK] > 10:
+    if not ch.is_npc() and ch.condition[merc.COND_DRUNK] > 10:
         ch.send("You feel drunk.\n")
-    if not ch.is_npc() and ch.pcdata.condition[merc.COND_FULL] > 40:
+    if not ch.is_npc() and ch.condition[merc.COND_FULL] > 40:
         ch.send("You are full.\n")
-    if not ch.is_npc() and ch.pcdata.condition[merc.COND_THIRST] > 40:
+    if not ch.is_npc() and ch.condition[merc.COND_THIRST] > 40:
         ch.send("Your thirst is quenched.\n")
     if obj.value[3] != 0:
         # The drink was poisoned !

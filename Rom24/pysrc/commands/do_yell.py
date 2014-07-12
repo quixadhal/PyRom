@@ -21,7 +21,7 @@ def do_yell(ch, argument):
         if d.is_connected(nanny.con_playing) \
                 and d.character != ch \
                 and d.character.in_room is not None \
-                and d.character.in_room.area == ch.in_room.area \
+                and d.character.in_room.area == merc.rooms[ch.in_room].area \
                 and not state_checks.IS_SET(d.character.comm, merc.COMM_QUIET):
             handler_game.act("$n yells '$t'", ch, argument, d.character, merc.TO_VICT)
 

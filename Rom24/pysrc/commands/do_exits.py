@@ -16,7 +16,7 @@ def do_exits(ch, argument):
     if fAuto:
         buf += "[Exits:"
     elif ch.is_immortal():
-        buf += "Obvious exits from room %d:\n" % ch.in_room.vnum
+        buf += "Obvious exits from room %d:\n" % merc.rooms[ch.in_room].vnum
     else:
         buf += "Obvious exits:\n"
     found = False

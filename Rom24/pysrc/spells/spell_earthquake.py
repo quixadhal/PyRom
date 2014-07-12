@@ -21,7 +21,7 @@ def spell_earthquake(sn, level, ch, victim, target):
                     fight.damage(ch, vch, level + game_utils.dice(2, 8), sn, merc.DAM_BASH, True)
             continue
 
-        if vch.in_room.area == ch.in_room.area:
+        if vch.in_room.area == merc.rooms[ch.in_room].area:
             vch.send("The earth trembles and shivers.\n")
 
 

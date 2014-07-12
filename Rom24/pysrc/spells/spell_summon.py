@@ -11,10 +11,10 @@ def spell_summon(sn, level, ch, victim, target):
             or victim == ch \
             or victim.in_room == None \
             or state_checks.IS_SET(ch.in_room.room_flags, merc.ROOM_SAFE) \
-            or state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_SAFE) \
-            or state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_PRIVATE) \
-            or state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_SOLITARY) \
-            or state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_NO_RECALL) \
+            or state_checks.IS_SET(merc.rooms[victim.in_room].room_flags, merc.ROOM_SAFE) \
+            or state_checks.IS_SET(merc.rooms[victim.in_room].room_flags, merc.ROOM_PRIVATE) \
+            or state_checks.IS_SET(merc.rooms[victim.in_room].room_flags, merc.ROOM_SOLITARY) \
+            or state_checks.IS_SET(merc.rooms[victim.in_room].room_flags, merc.ROOM_NO_RECALL) \
             or (victim.is_npc() and victim.act.is_set(merc.ACT_AGGRESSIVE)) \
             or victim.level >= level + 3 \
             or (not victim.is_npc() and victim.level >= merc.LEVEL_IMMORTAL) \

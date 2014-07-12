@@ -14,11 +14,11 @@ def do_fill(ch, argument):
     if not arg:
         ch.send("Fill what?\n")
         return
-    obj = ch.get_obj_carry(arg, ch)
+    obj = ch.get_item_carry(arg, ch)
     if not obj:
         ch.send("You do not have that item.\n")
         return
-    fountain = [f for f in ch.in_room.contents if f.item_type == merc.ITEM_FOUNTAIN][:1]
+    fountain = [f for f in merc.rooms[ch.in_room].contents if f.item_type == merc.ITEM_FOUNTAIN][:1]
     if not fountain:
         ch.send("There is no fountain here!\n")
         return

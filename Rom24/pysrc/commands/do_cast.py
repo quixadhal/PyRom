@@ -27,7 +27,7 @@ def do_cast(ch, argument):
     if not sn or sn.spell_fun is None \
             or (not ch.is_npc()
                 and (ch.level < sn.skill_level[ch.guild.name]
-                     or ch.pcdata.learned[sn.name] == 0)):
+                     or ch.learned[sn.name] == 0)):
         ch.send("You don't know any spells of that name.\n")
         return
     if ch.position < sn.minimum_position:
@@ -91,7 +91,7 @@ def do_cast(ch, argument):
         if not arg2:
             ch.send("What should the spell be cast upon?\n")
             return
-        obj = ch.get_obj_carry(handler_magic.target_name, ch)
+        obj = ch.get_item_carry(handler_magic.target_name, ch)
         if not obj:
             ch.send("You are not carrying that.\n")
             return
@@ -106,7 +106,7 @@ def do_cast(ch, argument):
             target = merc.TARGET_CHAR
         else:
             victim = ch.get_char_room(handler_magic.target_name)
-            obj = ch.get_obj_here(handler_magic.target_name)
+            obj = ch.get_item_here(handler_magic.target_name)
             if victim:
                 target = merc.TARGET_CHAR
                 # check the sanity of the attack
@@ -131,7 +131,7 @@ def do_cast(ch, argument):
             target = merc.TARGET_CHAR
         else:
             victim = ch.get_char_room(handler_magic.target_name)
-            obj = ch.get_obj_carry(handler_magic.target_name, ch)
+            obj = ch.get_item_carry(handler_magic.target_name, ch)
             if not victim:
                 vo = victim
                 target = merc.TARGET_CHAR
@@ -168,7 +168,7 @@ def do_cast(ch, argument):
 
     if (sn.target == merc.TAR_CHAR_OFFENSIVE or (sn.target == merc.TAR_OBJ_CHAR_OFF and target == merc.TARGET_CHAR)) \
             and victim != ch and victim.master != ch:
-        for vch in ch.in_room.people[:]:
+        for vch in merc.rooms[ch.in_room].people[:]:
             if victim == vch and not victim.fighting:
                 fight.check_killer(victim, ch)
                 fight.multi_hit(victim, ch, merc.TYPE_UNDEFINED)

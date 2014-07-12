@@ -6,8 +6,9 @@ import merc
 import interp
 import game_utils
 import handler_game
-import handler_obj
+import handler_item
 import state_checks
+
 
 def do_get(ch, argument):
     argument, arg1 = game_utils.read_word(argument)
@@ -22,17 +23,18 @@ def do_get(ch, argument):
     if not arg2:
         if not arg1.startswith('all'):
             # 'get obj'
-            obj = ch.get_obj_list(arg1, ch.in_room.contents)
-            if not obj:
+            item = ch.get_item_list(arg1, merc.rooms[ch.in_room].contents)
+            if not item:
                 handler_game.act("I see no $T here.", ch, None, arg1, merc.TO_CHAR)
                 return
-            handler_obj.get_obj(ch, obj, None)
+            handler_item.get_item(ch, item, None)
         else:
             # 'get all' or 'get all.obj'
-            for obj in ch.in_room.contents[:]:
-                if (len(arg1) == 3 or arg1[4:] in obj.name) and ch.can_see_obj(obj):
+            for item_id in merc.rooms[ch.in_room].contents[:]:
+                item = merc.items[item_id]
+                if (len(arg1) == 3 or arg1[4:] in item.name) and ch.can_see_item(item_id):
                     found = True
-                    handler_obj.get_obj(ch, obj, None)
+                    handler_item.get_item(ch, item, None)
             if not found:
                 if len(arg1) == 3:
                     ch.send("I see nothing here.\n")
@@ -43,7 +45,7 @@ def do_get(ch, argument):
         if arg2.startswith("all"):
             ch.send("You can't do that.\n")
             return
-        container = ch.get_obj_here(arg2)
+        container = ch.get_item_here(arg2)
         if not container:
             handler_game.act("I see no $T here.", ch, None, arg2, merc.TO_CHAR)
             return
@@ -62,21 +64,21 @@ def do_get(ch, argument):
             return
         if not arg1.startswith('all'):
             # 'get obj container'
-            obj = ch.get_obj_list(arg1, container.contains)
-            if not obj is None:
+            item = ch.get_item_list(arg1, container.contains)
+            if not item is None:
                 handler_game.act("I see nothing like that in the $T.", ch, None, arg2, merc.TO_CHAR)
                 return
-            handler_obj.get_obj(ch, obj, container)
+            handler_item.get_item(ch, item, container)
         else:
             # 'get all container' or 'get all.obj container'
             found = False
-            for obj in container.contains[:]:
-                if (len(arg1) == 3 or arg1[4:] in obj.name) and ch.can_see_obj(obj):
+            for item in container.contains[:]:
+                if (len(arg1) == 3 or arg1[4:] in item.name) and ch.can_see_item(item):
                     found = True
                     if container.pIndexData.vnum == merc.OBJ_VNUM_PIT and not ch.is_immortal():
                         ch.send("Don't be so greedy!\n")
                         return
-                    handler_obj.get_obj(ch, obj, container)
+                    handler_item.get_item(ch, item, container)
             if not found:
                 if len(arg1) == 3:
                     handler_game.act("I see nothing in the $T.", ch, None, arg2, merc.TO_CHAR)

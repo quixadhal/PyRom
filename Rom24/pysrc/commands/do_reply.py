@@ -19,7 +19,7 @@ def do_reply(ch, argument):
     if not victim.desc and not victim.is_npc():
         handler_game.act("$N seems to have misplaced $S link...try again later.", ch, None, victim, merc.TO_CHAR)
         buf = "%s tells you '%s'\n" % (state_checks.PERS(ch, victim), argument)
-        victim.pcdata.buffer.append(buf)
+        victim.buffer.append(buf)
         return
     if not ch.is_immortal() and not state_checks.IS_AWAKE(victim):
         handler_game.act("$E can't hear you.", ch, 0, victim, merc.TO_CHAR)
@@ -39,7 +39,7 @@ def do_reply(ch, argument):
         handler_game.act("$E is AFK, but your tell will go through when $E returns.", ch, None, victim, merc.TO_CHAR,
                          merc.POS_DEAD)
         buf = "%s tells you '%s'\n" % (state_checks.PERS(ch, victim), argument)
-        victim.pcdata.buffer.append(buf)
+        victim.buffer.append(buf)
         return
     handler_game.act("You tell $N '$t'", ch, argument, victim, merc.TO_CHAR, merc.POS_DEAD)
     handler_game.act("$n tells you '$t'", ch, argument, victim, merc.TO_VICT, merc.POS_DEAD)

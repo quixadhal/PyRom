@@ -5,7 +5,6 @@ logger = logging.getLogger()
 import random
 import merc
 import interp
-import skills
 import const
 
 
@@ -30,7 +29,8 @@ def do_brandish(ch, argument):
             merc.act("...and nothing happens.", ch, None, None, merc.TO_ROOM)
             ch.check_improve( "staves", False, 2)
         else:
-            for vch in ch.in_room.people[:]:
+            for vch_id in merc.rooms[ch.in_room].people[:]:
+                vch = merc.characters[vch_id]
                 target = const.skill_table[sn].target
                 if target == merc.TAR_IGNORE:
                     if vch != ch:
@@ -48,7 +48,7 @@ def do_brandish(ch, argument):
                     logger.error("BUG: Do_brandish: bad target for sn %s.", sn)
                     return
                 merc.obj_cast_spell(staff.value[3], staff.value[0], ch, vch, None)
-                ch.check_improve( "staves", True, 2)
+                ch.check_improve("staves", True, 2)
     staff.value[2] -= 1
     if staff.value[2] <= 0:
         merc.act("$n's $p blazes bright and is gone.", ch, staff, None, merc.TO_ROOM)

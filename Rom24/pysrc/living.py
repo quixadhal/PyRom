@@ -1,6 +1,8 @@
+import copy
 import random
 import logging
 import random
+import handler
 
 logger = logging.getLogger()
 
@@ -15,6 +17,7 @@ import handler_game
 import immortal
 import location
 import state_checks
+import handler
 
 class Grouping:
     def __init__(self):
@@ -22,7 +25,7 @@ class Grouping:
         self.master = None
         self.leader = None
         self.pet = None
-        self.group = 0
+        self.group = None
         self._clan = ""
     # * It is very important that this be an equivalence relation:
     # * (1) A ~ A
@@ -33,21 +36,24 @@ class Grouping:
             return False
 
         if self.leader is not None:
-            self = self.leader
+            self = merc.characters[self.leader]
         if bch.leader is not None:
-            bch = bch.leader
+            bch = merc.characters[bch.leader]
         return self == bch
+
     @property
     def clan(self):
         try:
             return tables.clan_table[self._clan]
         except KeyError as e:
             return tables.clan_table[""]
+
     @clan.setter
     def clan(self, value):
         if value not in tables.clan_table:
             return
         self._clan = value
+
     def stop_follower(self):
         if not self.master:
             logger.error("BUG: Stop_follower: null master.")
@@ -57,11 +63,11 @@ class Grouping:
             self.affected_by.rem_bit(merc.AFF_CHARM)
             self.affect_strip('charm person')
 
-        if self.master.can_see(self) and self.in_room:
+        if merc.characters[self.master].can_see(self) and self.in_room:
             handler_game.act("$n stops following you.", self, None, self.master, merc.TO_VICT)
             handler_game.act("You stop following $N.", self, None, self.master, merc.TO_CHAR)
-        if self.master.pet == self:
-            self.master.pet = None
+        if merc.characters[self.master].pet == self.instance_id:
+            merc.characters[self.master].pet = None
         self.master = None
         self.leader = None
         return
@@ -75,14 +81,14 @@ class Grouping:
         else:
             return ch.clan == victim.clan
 
-    def can_loot(ch, obj):
+    def can_loot(ch, item):
         if ch.is_immortal():
             return True
-        if not obj.owner or obj.owner is None:
+        if not item.owner or item.owner is None:
             return True
         owner = None
-        for wch in merc.char_list:
-            if wch.name == obj.owner:
+        for wch in merc.characters.values():
+            if wch.name == item.owner:
                 owner = wch
         if owner is None:
             return True
@@ -188,11 +194,13 @@ class Fight:
             return immune
             # * Retrieve a character's trusted level for permission checking.
 
+
 class Communication:
     def __init__(self):
         super().__init__()
-        self.reply = None
+        self.reply = 0
         self.comm = bit.Bit(merc.COMM_COMBINE | merc.COMM_PROMPT, tables.comm_flags)
+
 
 class Container:
     def __init__(self):
@@ -218,32 +226,39 @@ class Container:
 
 
 class Living(immortal.Immortal, Fight, Grouping, Physical,
-             location.Location, affects.Affects, Communication, Container):
-    def __init__(self):
+             location.Location, affects.Affects, Communication,
+             Container):
+    def __init__(self, template=None):
         super().__init__()
-        self.id = 0
-        self.version = 5
-        self.level = 0
-        self.act = bit.Bit(merc.PLR_NOSUMMON, [tables.act_flags, tables.plr_flags])
-        self._race = 'human'
-        self._guild = None
-        self.sex = 0
-        self.level = 0
-        # stats */
-        self.perm_stat = [13 for x in range(merc.MAX_STATS)]
-        self.mod_stat = [0 for x in range(merc.MAX_STATS)]
-        self.mana = 100
-        self.max_mana = 100
-        self.move = 100
-        self.max_move = 100
-        self.gold = 0
-        self.silver = 0
-        self.exp = 0
-        self.position = 0
-        self.alignment = 0
-        self.desc = None
+        if template:
+            # TODO fix this section for proper inheritance
+            # handler.Instancer.id_generator(self)
+            pass
+        else:
+            self.id = 0
+            self.instance_id = None
+            self.version = 5
+            self.level = 0
+            self.act = bit.Bit(merc.PLR_NOSUMMON, [tables.act_flags, tables.plr_flags])
+            self._race = 'human'
+            self._guild = None
+            self.sex = 0
+            self.level = 0
+            # stats */
+            self.perm_stat = [13 for x in range(merc.MAX_STATS)]
+            self.mod_stat = [0 for x in range(merc.MAX_STATS)]
+            self.mana = 100
+            self.max_mana = 100
+            self.move = 100
+            self.max_move = 100
+            self.gold = 0
+            self.silver = 0
+            self.exp = 0
+            self.position = 0
+            self.alignment = 0
+            self.desc = None
 
-    def send(self, str):
+    def send(self, pstr):
         pass
 
     def is_npc(self):
@@ -260,7 +275,6 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
 
     def is_awake(self):
         return self.position > merc.POS_SLEEPING
-
 
     def check_blind(self):
         if not self.is_npc() and self.act.is_set(merc.PLR_HOLYLIGHT):
@@ -290,68 +304,70 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
     def get_eq(self, iWear):
         if not self:
             return None
-        obj = [obj for obj in self.contents if obj.wear_loc == iWear]
-        if not obj:
+        item_id = [eid for eid in self.contents if merc.items[eid].wear_loc == iWear]
+        if not item_id:
             return None
-        return obj[0]
+        return item_id[0]
     # * Equip a char with an obj.
 
-    def equip(self, obj, iWear):
+    def equip(self, item_id, iWear):
         if self.get_eq(iWear):
             logger.warning("Equip_char: already equipped (%d)." % iWear)
             return
-
-        if (state_checks.IS_OBJ_STAT(obj, merc.ITEM_ANTI_EVIL) and self.is_evil()) \
-                or (state_checks.IS_OBJ_STAT(obj, merc.ITEM_ANTI_GOOD) and self.is_good()) \
-                or (state_checks.IS_OBJ_STAT(obj, merc.ITEM_ANTI_NEUTRAL) and self.is_neutral()):
+        item = merc.items.get(item_id, None)
+        if (state_checks.IS_OBJ_STAT(item, merc.ITEM_ANTI_EVIL) and self.is_evil()) \
+                or (state_checks.IS_OBJ_STAT(item, merc.ITEM_ANTI_GOOD) and self.is_good()) \
+                or (state_checks.IS_OBJ_STAT(item, merc.ITEM_ANTI_NEUTRAL) and self.is_neutral()):
             # Thanks to Morgenes for the bug fix here!
-            handler_game.act("You are zapped by $p and drop it.", self, obj, None, merc.TO_CHAR)
-            handler_game.act("$n is zapped by $p and drops it.", self, obj, None, merc.TO_ROOM)
-            obj.from_char()
-            obj.to_room(self.in_room)
+            handler_game.act("You are zapped by $p and drop it.", self, item, None, merc.TO_CHAR)
+            handler_game.act("$n is zapped by $p and drops it.", self, item, None, merc.TO_ROOM)
+            item.from_char()
+            item.to_room(self.in_room)
             return
 
         for i in range(4):
-            self.armor[i] -= obj.apply_ac(iWear, i)
-        obj.wear_loc = iWear
+            self.armor[i] -= item.apply_ac(iWear, i)
+        item.wear_loc = iWear
 
-        if not obj.enchanted:
-            for paf in obj.pIndexData.affected:
+        if not item.enchanted:
+            for paf in item.affected:
                 if paf.location != merc.APPLY_SPELL_AFFECT:
                     self.affect_modify(paf, True)
 
-        for paf in obj.affected:
+        for paf in item.affected:
             if paf.location == merc.APPLY_SPELL_AFFECT:
                 self.affect_add(self, paf)
             else:
                 self.affect_modify(paf, True)
 
-        if obj.item_type == merc.ITEM_LIGHT and obj.value[2] != 0 and self.in_room is not None:
-            self.in_room.light += 1
+        if item.item_type == merc.ITEM_LIGHT and item.value[2] != 0 and merc.rooms[self.in_room] is not None:
+            merc.rooms[self.in_room].light += 1
         return
 
     # * Unequip a char with an obj.
-    def unequip(self, obj):
-        if obj.wear_loc == merc.WEAR_NONE:
+    def unequip(self, item_id):
+        item = merc.items.get(item_id, None)
+        if item.wear_loc == merc.WEAR_NONE:
             logger.warning("Unequip_char: already unequipped.")
             return
 
         for i in range(4):
-            self.armor[i] += obj.apply_ac(obj.wear_loc, i)
-        obj.wear_loc = -1
+            self.armor[i] += item.apply_ac(item.wear_loc, i)
+        item.wear_loc = -1
 
-        if not obj.enchanted:
-            for paf in obj.pIndexData.affected:
+        if not item.enchanted:
+            for paf in item.affected:
                 if paf.location == merc.APPLY_SPELL_AFFECT:
                     for lpaf in self.affected[:]:
-                        if lpaf.type == paf.type and lpaf.level == paf.level and lpaf.location == merc.APPLY_SPELL_AFFECT:
+                        if lpaf.type == paf.type and lpaf.level == paf.level \
+                                and lpaf.location == merc.APPLY_SPELL_AFFECT:
                             self.affect_remove(lpaf)
                             break
                 else:
                     self.affect_modify(paf, False)
                     self.affect_check(paf.where, paf.bitvector)
 
-        for paf in obj.affected:
+        for paf in item.affected:
             if paf.location == merc.APPLY_SPELL_AFFECT:
                 logger.error("Bug: Norm-Apply")
                 for lpaf in self.affected:
@@ -364,11 +380,11 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
                 self.affect_modify(paf, False)
                 self.affect_check(paf.where, paf.bitvector)
 
-        if obj.item_type == merc.ITEM_LIGHT \
-                and obj.value[2] != 0 \
-                and self.in_room \
-                and self.in_room.light > 0:
-            self.in_room.light -= 1
+        if item.item_type == merc.ITEM_LIGHT \
+                and item.value[2] != 0 \
+                and merc.rooms[self.in_room] \
+                and merc.rooms[self.in_room].light > 0:
+            merc.rooms[self.in_room].light -= 1
         return
 
 
@@ -409,15 +425,13 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
     @property
     def guild(self):
         return const.guild_table.get(self._guild, None)
+
     @guild.setter
     def guild(self, value):
         if isinstance(value, const.guild_type):
             self._guild = value.name
         else:
             self._guild = value
-    @property
-    def pcdata(self):
-        return self
 
     def reset(self):
         if self.is_npc():
@@ -429,12 +443,12 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
                 or self.last_level == 0:
             # do a FULL reset */
             for loc in range(merc.MAX_WEAR):
-                obj = self.get_eq(loc)
-                if not obj:
+                item = merc.items.get(self.get_eq(loc), None)
+                if not item:
                     continue
-                affected = obj.affected
-                if not obj.enchanted:
-                    affected.extend(obj.pIndexData.affected)
+                affected = item.affected
+                if not item.enchanted:
+                    affected.extend(merc.global_instances[item.instance_id].affected)
                 for af in affected:
                     mod = af.modifier
                     if af.location == merc.APPLY_SEX:
@@ -478,14 +492,14 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
 
         # now start adding back the effects */
         for loc in range(merc.MAX_WEAR):
-            obj = self.get_eq(loc)
-            if not obj:
+            item = merc.items.get(self.get_eq(loc), None)
+            if not item:
                 continue
             for i in range(4):
-                self.armor[i] -= obj.apply_ac(loc, i)
-            affected = obj.affected
-            if not obj.enchanted:
-                affected.extend(obj.pIndexData.affected)
+                self.armor[i] -= item.apply_ac(loc, i)
+            affected = item.affected
+            if not item.enchanted:
+                affected.extend(merc.global_instances[item.instance_id].affected)
 
             for af in affected:
                 mod = af.modifier
@@ -581,7 +595,7 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
             return True
         if self.is_affected(merc.AFF_BLIND):
             return False
-        if self.in_room.is_dark() and not self.is_affected(merc.AFF_INFRARED):
+        if merc.rooms[self.in_room].is_dark() and not self.is_affected(merc.AFF_INFRARED):
             return False
         if victim.is_affected(merc.AFF_INVISIBLE) \
                 and not self.is_affected(merc.AFF_DETECT_INVIS):
@@ -607,39 +621,41 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
         return True
 
     # * True if char can see obj.
-    def can_see_obj(self, obj):
+    def can_see_item(self, item_id):
         if not self.is_npc() \
                 and self.act.is_set(merc.PLR_HOLYLIGHT):
             return True
-        if state_checks.IS_SET(obj.extra_flags, merc.ITEM_VIS_DEATH):
+        item = merc.items.get(item_id, None)
+        if state_checks.IS_SET(item.extra_flags, merc.ITEM_VIS_DEATH):
             return False
         if self.is_affected(merc.AFF_BLIND) \
-                and obj.item_type != merc.ITEM_POTION:
+                and item.item_type != merc.ITEM_POTION:
             return False
-        if obj.item_type == merc.ITEM_LIGHT \
-                and obj.value[2] != 0:
+        if item.item_type == merc.ITEM_LIGHT \
+                and item.value[2] != 0:
             return True
-        if state_checks.IS_SET(obj.extra_flags, merc.ITEM_INVIS) \
+        if state_checks.IS_SET(item.extra_flags, merc.ITEM_INVIS) \
                 and not self.is_affected(merc.AFF_DETECT_INVIS):
             return False
-        if state_checks.IS_OBJ_STAT(obj, merc.ITEM_GLOW):
+        if state_checks.IS_OBJ_STAT(item, merc.ITEM_GLOW):
             return True
-        if self.in_room.is_dark() \
+        if merc.rooms[self.in_room].is_dark() \
                 and not self.is_affected(merc.AFF_DARK_VISION):
             return False
         return True
 
-    def can_see_room(self, pRoomIndex):
-        if state_checks.IS_SET(pRoomIndex.room_flags, merc.ROOM_IMP_ONLY) and self.trust < merc.MAX_LEVEL:
+    def can_see_room(self, room_id):
+        room = merc.rooms[room_id]
+        if state_checks.IS_SET(room.room_flags, merc.ROOM_IMP_ONLY) and self.trust < merc.MAX_LEVEL:
             return False
-        if state_checks.IS_SET(pRoomIndex.room_flags, merc.ROOM_GODS_ONLY) and not self.is_immortal():
+        if state_checks.IS_SET(room.room_flags, merc.ROOM_GODS_ONLY) and not self.is_immortal():
             return False
-        if state_checks.IS_SET(pRoomIndex.room_flags, merc.ROOM_HEROES_ONLY) and not self.is_immortal():
+        if state_checks.IS_SET(room.room_flags, merc.ROOM_HEROES_ONLY) and not self.is_immortal():
             return False
-        if state_checks.IS_SET(pRoomIndex.room_flags,
+        if state_checks.IS_SET(room.room_flags,
                                merc.ROOM_NEWBIES_ONLY) and self.level > 5 and not self.is_immortal():
             return False
-        if not self.is_immortal() and pRoomIndex.clan and self.clan != pRoomIndex.clan:
+        if not self.is_immortal() and room.clan and self.clan != room.clan:
             return False
         return True
 
@@ -657,32 +673,32 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
         #    die_follower( ch )
         fight.stop_fighting(self, True)
 
-        for obj in self.contents[:]:
-            obj.extract()
+        for item_id in self.contents[:]:
+            item = merc.items[item_id]
+            item.extract()
 
         if self.in_room:
             self.from_room()
 
         # Death room is set in the clan tabe now */
         if not fPull:
-            self.to_room(merc.room_index_hash[self.clan.hall])
+            room_id = merc.instances_by_room[self.clan.hall][0]
+            self.to_room(room_id)
             return
 
         if self.desc and self.desc.original:
             self.do_return("")
             self.desc = None
 
-        for wch in merc.player_list:
+        for wch in merc.player_characters.values():
             if wch.reply == self:
                 wch.reply = None
 
-        if self not in merc.char_list:
+        if self.instance_id not in merc.characters:
             logger.error("Extract_char: char not found.")
             return
 
-        merc.char_list.remove(self)
-        if self in merc.player_list:
-            merc.player_list.remove(self)
+        handler.Instancer.destructor(self)
 
         if self.desc:
             self.desc.character = None
@@ -695,7 +711,8 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
         word = word.lower()
         if word == "self":
             return ch
-        for rch in ch.in_room.people:
+        for rch_id in merc.rooms[ch.in_room].people:
+            rch = merc.characters[rch_id]
             if not ch.can_see(rch):
                 continue
             if not rch.is_npc() and not rch.name.lower().startswith(word):
@@ -715,8 +732,8 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
 
         number, arg = game_utils.number_argument(argument)
         count = 0
-        for wch in merc.char_list:
-            if wch.in_room is None or not ch.can_see(wch):
+        for wch in merc.characters.values():
+            if wch.in_room is 0 or not ch.can_see(wch):
                 continue
             if not wch.is_npc() and not game_utils.is_name(arg, wch.name.lower()):
                 continue
@@ -728,69 +745,72 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
         return None
 
     # * Find an obj in a list.
-    def get_obj_list(ch, argument, contents):
+    def get_item_list(ch, argument, contents):
+        #TODO check if this should be returning object pointer or id
         number, arg = game_utils.number_argument(argument)
         count = 0
-        for obj in contents:
-            if ch.can_see_obj(obj) and game_utils.is_name(arg, obj.name.lower()):
+        for item_id in contents:
+            item = merc.items[item_id]
+            if ch.can_see_item(item) and game_utils.is_name(arg, item.name.lower()):
                 count += 1
                 if count == number:
-                    return obj
+                    return item.instance_id
         return None
 
     # * Find an obj in player's inventory.
-    def get_obj_carry(ch, argument, viewer):
+    def get_item_carry(ch, argument, viewer):
         number, arg = game_utils.number_argument(argument)
         count = 0
-        for obj in ch.contents:
-            if obj.wear_loc == merc.WEAR_NONE and viewer.can_see_obj(obj) and game_utils.is_name(arg, obj.name.lower()):
+        item_instance_id = [item_id for item_id in ch.contents if merc.items[item_id].wear_loc != merc.WEAR_NONE
+                            and viewer.can_see_item(item_id)
+                            and game_utils.is_name(arg, merc.items[item_id].name.lower())]
+        if item_instance_id:
                 count += 1
                 if count == number:
-                    return obj
+                    return item_instance_id
         return None
 
     # * Find an obj in player's equipment.
-    def get_obj_wear(ch, argument):
+    def get_item_wear(ch, argument):
         number, arg = game_utils.number_argument(argument)
         count = 0
-        for obj in ch.contents:
-            if obj.wear_loc != merc.WEAR_NONE and ch.can_see_obj(obj) and game_utils.is_name(arg, obj.name.lower()):
-                count += 1
-                if count == number:
-                    return obj
+        item_instance_id = [item_id for item_id in ch.contents if merc.items[item_id].wear_loc != merc.WEAR_NONE
+                            and ch.can_see_item(merc.items[item_id])
+                            and game_utils.is_name(arg, merc.items[item_id].name.lower())]
+        if item_instance_id:
+            count += 1
+            if count == number:
+                return item_instance_id[0]
         return None
 
     # * Find an obj in the room or in inventory.
-    def get_obj_here(ch, argument):
-        obj = ch.get_obj_list(argument, ch.in_room.contents)
-        if obj:
-            return obj
-        obj = ch.get_obj_carry(argument, ch)
-        if obj:
-            return obj
-        obj = ch.get_obj_wear(argument)
-        if obj:
-            return obj
+    def get_item_here(ch, argument):
+        item_id = ch.get_item_list(argument, merc.rooms[ch.in_room].contents)
+        if item_id:
+            return item_id
+        item_id = ch.get_item_carry(argument, ch)
+        if item_id:
+            return item_id
+        item_id = ch.get_item_wear(argument)
+        if item_id:
+            return item_id
         return None
 
     # * Find an obj in the world.
-    def get_obj_world(ch, argument):
-        obj = ch.get_obj_here(argument)
-        if obj:
-            return obj
-
+    def get_item_world(ch, argument):
+        item_id = ch.get_item_here(argument)
+        if item_id:
+            return item_id
         number, arg = game_utils.number_argument(argument)
-        count = 0
         arg = arg.lower()
-        for obj in merc.object_list:
-            if ch.can_see_obj(obj) and game_utils.is_name(arg, obj.name.lower()):
-                count += 1
-            if count == number:
-                return obj
+        instance_id = game_utils.find_name_instance('obj', number, arg)
+        if instance_id:
+            item_id = merc.items[instance_id[0]]
+            return item_id
         return None
     # * True if char can drop obj.
-    def can_drop_obj(self, obj):
-        if not state_checks.IS_SET(obj.extra_flags, merc.ITEM_NODROP):
+    def can_drop_item(self, item_id):
+        if not state_checks.IS_SET(merc.items[item_id].extra_flags, merc.ITEM_NODROP):
             return True
         if not self.is_npc() \
                 and self.level >= merc.LEVEL_IMMORTAL:
@@ -862,7 +882,7 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
 
     # for returning weapon information */
     def get_weapon_sn(self):
-        wield = self.get_eq(merc.WEAR_WIELD)
+        wield = merc.items.get(self.get_eq(merc.WEAR_WIELD), None)
         if not wield or wield.item_type != merc.ITEM_WEAPON:
             sn = "hand to hand"
             return sn

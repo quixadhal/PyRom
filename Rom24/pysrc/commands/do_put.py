@@ -21,7 +21,7 @@ def do_put(ch, argument):
     if arg2.startswith("all") or "all" == arg2:
         ch.send("You can't do that.\n")
         return
-    container = ch.get_obj_here(arg2)
+    container = ch.get_item_here(arg2)
     if not container:
         handler_game.act("I see no $T here.", ch, None, arg2, merc.TO_CHAR)
         return
@@ -33,14 +33,14 @@ def do_put(ch, argument):
         return
     if arg1 != "all" and not arg1.startswith("all."):
         # 'put obj container'
-        obj = ch.get_obj_carry(arg1, ch)
+        obj = ch.get_item_carry(arg1, ch)
         if not obj:
             ch.send("You do not have that item.\n")
             return
         if obj == container:
             ch.send("You can't fold it into itself.\n")
             return
-        if not ch.can_drop_obj(obj):
+        if not ch.can_drop_item(obj):
             ch.send("You can't let go of it.\n")
             return
         if state_checks.WEIGHT_MULT(obj) != 100:
@@ -57,7 +57,7 @@ def do_put(ch, argument):
             else:
                 obj.timer = random.randint(100, 200)
         obj.from_char()
-        obj.to_obj(container)
+        obj.to_item(container)
 
         if state_checks.IS_SET(container.value[1], merc.CONT_PUT_ON):
             handler_game.act("$n puts $p on $P.", ch, obj, container, merc.TO_ROOM)
@@ -69,9 +69,9 @@ def do_put(ch, argument):
         # 'put all container' or 'put all.obj container'
         for obj in ch.contents[:]:
             if (len(arg1) == 3 or arg1[4:] in obj.name ) \
-                    and ch.can_see_obj(obj) and state_checks.WEIGHT_MULT(obj) == 100 \
+                    and ch.can_see_item(obj) and state_checks.WEIGHT_MULT(obj) == 100 \
                     and obj.wear_loc == merc.WEAR_NONE and obj != container \
-                    and ch.can_drop_obj(obj) \
+                    and ch.can_drop_item(obj) \
                     and obj.get_weight() + container.true_weight() <= (container.value[0] * 10) \
                     and obj.get_weight() < (container.value[3] * 10):
                 if container.pIndexData.vnum == merc.OBJ_VNUM_PIT and not state_checks.CAN_WEAR(obj, merc.ITEM_TAKE):
@@ -80,7 +80,7 @@ def do_put(ch, argument):
                     else:
                         obj.timer = random.randint(100, 200)
                 obj.from_char()
-                obj.to_obj(container)
+                obj.to_item(container)
                 if state_checks.IS_SET(container.value[1], merc.CONT_PUT_ON):
                     handler_game.act("$n puts $p on $P.", ch, obj, container, merc.TO_ROOM)
                     handler_game.act("You put $p on $P.", ch, obj, container, merc.TO_CHAR)

@@ -31,13 +31,131 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/ 
  ************/
 """
+import os
 import logging
+import character
+import handler_item
+import handler_room
+import mobile
+import world_classes
 
 logger = logging.getLogger()
 
+import settings
 import merc
 import state_checks
 
+
+class Instancer:
+    def id_generator(obj_instance=None):
+        """Here is the backbone of our instancing. This function takes the global instance
+        number and increments it. After dealing with the dicts for our objects, we will save
+        the global instance number to a file, which will be important later when persistence
+         is, or if someone wants to, be implemented.
+
+        It is passed the object instance, for which we will make an identification.
+
+        First we match the type we need to make, then add that to each dict that it needs to be in.
+
+        As we are using just a single pointer between all of these dicts, we populate global_instances
+        first, with a pointer to the object. The following dicts 'alias' their value to the value
+        represented in global_instances[instance_id].
+
+        This lets us maintain a single pointer, with windows to that single pointer from our sub dicts,
+        allowing for a saner environment.
+
+        This means that the destructor should destruct in reverse order, just in case."""
+        if not obj_instance:
+            logger.debug("No object passed to global instance generator.")
+            return None
+        if isinstance(obj_instance, world_classes.Area):
+            merc.instance_number += 1
+            obj_instance.instance_id = merc.instance_number
+            merc.global_instances[obj_instance.instance_id] = obj_instance
+            merc.areas[obj_instance.instance_id] = merc.global_instances[obj_instance.instance_id]
+            if obj_instance.name not in merc.instances_by_area.keys():
+                merc.instances_by_area[obj_instance.name] = [obj_instance.instance_id]
+            else:
+                merc.instances_by_area[obj_instance.name].append(obj_instance.instance_id)
+        elif isinstance(obj_instance, handler_room.Room):
+            merc.instance_number += 1
+            obj_instance.instance_id = merc.instance_number
+            merc.global_instances[obj_instance.instance_id] = obj_instance
+            merc.rooms[obj_instance.instance_id] = merc.global_instances[obj_instance.instance_id]
+            if obj_instance.vnum not in merc.instances_by_room.keys():
+                merc.instances_by_room[obj_instance.vnum] = [obj_instance.instance_id]
+            else:
+                merc.instances_by_room[obj_instance.vnum].append(obj_instance.instance_id)
+        elif isinstance(obj_instance, handler_item.Items):
+            merc.instance_number += 1
+            obj_instance.instance_id = merc.instance_number
+            merc.global_instances[obj_instance.instance_id] = obj_instance
+            merc.items[obj_instance.instance_id] = merc.global_instances[obj_instance.instance_id]
+            if obj_instance.vnum not in merc.instances_by_item.keys():
+                merc.instances_by_item[obj_instance.vnum] = [obj_instance.instance_id]
+            else:
+                merc.instances_by_item[obj_instance.vnum].append(obj_instance.instance_id)
+        elif isinstance(obj_instance, mobile.Mobile):
+            merc.instance_number += 1
+            obj_instance.instance_id = merc.instance_number
+            merc.global_instances[obj_instance.instance_id] = obj_instance
+            merc.characters[obj_instance.instance_id] = merc.global_instances[obj_instance.instance_id]
+            if obj_instance.vnum not in merc.instances_by_character.keys():
+                merc.instances_by_character[obj_instance.vnum] = [obj_instance.instance_id]
+            else:
+                merc.instances_by_character[obj_instance.vnum].append(obj_instance.instance_id)
+        elif isinstance(obj_instance, character.Character):
+            merc.instance_number += 1
+            obj_instance.instance_id = merc.instance_number
+            merc.global_instances[obj_instance.instance_id] = obj_instance
+            merc.characters[obj_instance.instance_id] = merc.global_instances[obj_instance.instance_id]
+            merc.player_characters[obj_instance.instance_id] = merc.global_instances[obj_instance.instance_id]
+            if obj_instance.name not in merc.instances_by_player.keys():
+                merc.instances_by_player[obj_instance.name] = [obj_instance.instance_id]
+            else:
+                merc.instances_by_player[obj_instance.name].append(obj_instance.instance_id)
+        else:
+            logger.debug("Global instance generator passed an unknown object type.")
+            return
+        instance_num_file = os.path.join(settings.AREA_DIR, "instance_tracker.txt")
+        fp = open(instance_num_file, 'w')
+        fp.write(str(merc.instance_number))
+        fp.close()
+        return merc.instance_number
+
+    def destructor(obj_instance=None):
+        if not obj_instance:
+            logger.debug("No object passed to global instance destructor.")
+            return None
+        if isinstance(obj_instance, world_classes.Area):
+            merc.instances_by_area[obj_instance.vnum].remove(obj_instance.instance_id)
+            del merc.areas[obj_instance.instance_id]
+            del merc.global_instances[obj_instance.instance_id]
+            #logger.info("Instance ID: %d removed from all instance dicts.", obj_instance.instance_id)
+        elif isinstance(obj_instance, handler_room.Room):
+            merc.instances_by_room[obj_instance.vnum].remove(obj_instance.instance_id)
+            del merc.rooms[obj_instance.instance_id]
+            del merc.global_instances[obj_instance.instance_id]
+            #logger.info("Instance ID: %d removed from all instance dicts.", obj_instance.instance_id)
+        elif isinstance(obj_instance, handler_item.Items):
+            merc.instances_by_item[obj_instance.vnum].remove(obj_instance.instance_id)
+            del merc.items[obj_instance.instance_id]
+            del merc.global_instances[obj_instance.instance_id]
+            #logger.info("Instance ID: %d removed from all instance dicts.", obj_instance.instance_id)
+        elif isinstance(obj_instance, mobile.Mobile):
+            merc.instances_by_character[obj_instance.vnum].remove(obj_instance.instance_id)
+            del merc.characters[obj_instance.instance_id]
+            del merc.global_instances[obj_instance.instance_id]
+            #logger.info("Instance ID: %d removed from all instance dicts.", obj_instance.instance_id)
+        elif isinstance(obj_instance, character.Character):
+            merc.instances_by_player[obj_instance.name].remove(obj_instance.instance_id)
+            del merc.player_characters[obj_instance.instance_id]
+            del merc.characters[obj_instance.instance_id]
+            del merc.global_instances[obj_instance.instance_id]
+            #logger.info("Instance ID: %d removed from all instance dicts.", obj_instance.instance_id)
+        else:
+            logger.debug("Unknown object type sent to global destructor")
+            return
 
 # * Return ascii name of an affect location.
 def affect_loc_name(location):

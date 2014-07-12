@@ -14,7 +14,7 @@ def do_quaff(ch, argument):
     if not arg:
         ch.send("Quaff what?\n")
         return
-    obj = ch.get_obj_carry(arg, ch)
+    obj = ch.get_item_carry(arg, ch)
     if not obj:
         ch.send("You do not have that potion.\n")
         return

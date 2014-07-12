@@ -12,7 +12,7 @@ import interp
 
 def do_heal(ch, argument):
     # check for healer
-    mob = [mob for mob in ch.in_room.people if state_checks.IS_NPC(mob) and mob.act.is_set(merc.ACT_IS_HEALER)][:1]
+    mob = [mob for mob in merc.rooms[ch.in_room].people if state_checks.IS_NPC(mob) and mob.act.is_set(merc.ACT_IS_HEALER)][:1]
     if not mob:
         ch.send("You can't do that here.\n")
         return

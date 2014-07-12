@@ -44,9 +44,9 @@ def do_sset(ch, argument):
 
     if fAll:
         for sn in const.skill_table.keys():
-            victim.pcdata.learned[sn] = value
+            victim.learned[sn] = value
     else:
-        victim.pcdata.learned[sn.name] = value
+        victim.learned[sn.name] = value
     ch.send("Skill set.\n")
 
 

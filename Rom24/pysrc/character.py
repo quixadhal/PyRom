@@ -17,7 +17,6 @@ import update
 
 
 class Character(living.Living):
-
     def __init__(self):
         super().__init__()
         self.buffer = None
@@ -410,7 +409,7 @@ class Character(living.Living):
                     handler_game.act("$n slaps you.", victim, None, ch, merc.TO_VICT)
         return True
 
-    @handler_log.logged("Interp")
+    #@handler_log.logged("Interp")
     def interpret(self, argument):
 
         # Strip leading spaces.

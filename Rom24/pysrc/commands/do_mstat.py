@@ -27,7 +27,7 @@ def do_mstat(ch, argument):
         "pc" if not victim.is_npc() else "new" if victim.pIndexData.new_format else "old",
         victim.race.name,
         0 if not victim.is_npc() else victim.group, tables.sex_table[victim.sex],
-        0 if not victim.in_room else victim.in_room.vnum ))
+        0 if not victim.in_room else merc.rooms[victim.in_room].vnum ))
 
     if victim.is_npc():
         ch.send("Count: %d  Killed: %d\n" % (victim.pIndexData.count, victim.pIndexData.killed))
@@ -60,15 +60,15 @@ def do_mstat(ch, argument):
     ch.send("Fighting: %s\n" % (victim.fighting.name if victim.fighting else "(none)" ))
     if not victim.is_npc():
         ch.send("Thirst: %d  Hunger: %d  Full: %d  Drunk: %d\n" % (
-            victim.pcdata.condition[merc.COND_THIRST],
-            victim.pcdata.condition[merc.COND_HUNGER],
-            victim.pcdata.condition[merc.COND_FULL],
-            victim.pcdata.condition[merc.COND_DRUNK] ))
+            victim.condition[merc.COND_THIRST],
+            victim.condition[merc.COND_HUNGER],
+            victim.condition[merc.COND_FULL],
+            victim.condition[merc.COND_DRUNK] ))
     ch.send("Carry number: %d  Carry weight: %ld\n" % (victim.carry_number, state_checks.get_carry_weight(victim) // 10 ))
     if not victim.is_npc():
         ch.send("Age: %d  Played: %d  Last Level: %d  Timer: %d\n",
                 victim.get_age(), (int)(victim.played + time.time() - victim.logon) // 3600,
-                victim.pcdata.last_level, victim.timer)
+                victim.last_level, victim.timer)
     ch.send("Act: %s\n" % handler.act_bit_name(victim.act))
     if victim.comm:
         ch.send("Comm: %s\n" % handler.comm_bit_name(victim.comm))

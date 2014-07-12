@@ -60,13 +60,13 @@ def do_skills(ch, argument):
                 and (fAll or level <= ch.level) \
                 and level >= min_lev and level <= max_lev \
                 and skill.spell_fun == None \
-                and sn in ch.pcdata.learned:
+                and sn in ch.learned:
             found = True
             level = skill.skill_level[ch.guild.name]
             if ch.level < level:
                 buf = "%-18s n/a      " % skill.name
             else:
-                buf = "%-18s %3d%%      " % (skill.name, ch.pcdata.learned[sn])
+                buf = "%-18s %3d%%      " % (skill.name, ch.learned[sn])
 
             if level not in skill_list:
                 skill_list[level] = "\nLevel %2d: %s" % (level, buf)

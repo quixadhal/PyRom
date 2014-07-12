@@ -68,7 +68,7 @@ def init_monitoring():
     #Called in main function to begin tracking files.
     logger.info('Monitoring system initializing...')
     init_file('handler_ch.py', ['handler_ch'])
-    init_file('handler_obj.py', ['handler_obj'])
+    init_file('handler_item.py', ['handler_item'])
     init_file('handler_room.py', ['handler_room'])
     init_file('handler_log.py', ['handler_log'])
     init_file('pyprogs.py', ['pyprogs'])

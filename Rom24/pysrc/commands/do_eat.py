@@ -16,7 +16,7 @@ def do_eat(ch, argument):
     if not arg:
         ch.send("Eat what?\n")
         return
-    obj = ch.get_obj_carry(arg, ch)
+    obj = ch.get_item_carry(arg, ch)
     if not obj:
         ch.send("You do not have that item.\n")
         return
@@ -24,19 +24,19 @@ def do_eat(ch, argument):
         if obj.item_type != merc.ITEM_FOOD and obj.item_type != merc.ITEM_PILL:
             ch.send("That's not edible.\n")
             return
-        if not ch.is_npc() and ch.pcdata.condition[merc.COND_FULL] > 40:
+        if not ch.is_npc() and ch.condition[merc.COND_FULL] > 40:
             ch.send("You are too full to eat more.\n")
             return
     handler_game.act("$n eats $p.", ch, obj, None, merc.TO_ROOM)
     handler_game.act("You eat $p.", ch, obj, None, merc.TO_CHAR)
     if obj.item_type == merc.ITEM_FOOD:
         if not ch.is_npc():
-            condition = ch.pcdata.condition[merc.COND_HUNGER]
+            condition = ch.condition[merc.COND_HUNGER]
             update.gain_condition(ch, merc.COND_FULL, obj.value[0])
             update.gain_condition(ch, merc.COND_HUNGER, obj.value[1])
-            if condition == 0 and ch.pcdata.condition[merc.COND_HUNGER] > 0:
+            if condition == 0 and ch.condition[merc.COND_HUNGER] > 0:
                 ch.send("You are no longer hungry.\n")
-            elif ch.pcdata.condition[merc.COND_FULL] > 40:
+            elif ch.condition[merc.COND_FULL] > 40:
                 ch.send("You are full.\n")
         if obj.value[3] != 0:
             # The food was poisoned!

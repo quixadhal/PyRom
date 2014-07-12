@@ -19,7 +19,7 @@ def do_smote(ch, argument):
         ch.send("You must include your name in an smote.\n")
         return
     ch.send(argument + "\n")
-    for vch in ch.in_room.people:
+    for vch in merc.rooms[ch.in_room].people:
         if vch.desc == None or vch == ch:
             continue
         if vch.name not in argument:

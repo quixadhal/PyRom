@@ -26,7 +26,7 @@ def do_stat(ch, argument):
         ch.do_mstat(string)
         return
     # do it the old way
-    obj = ch.get_obj_world(argument)
+    obj = ch.get_item_world(argument)
     if obj:
         ch.do_ostat(argument)
         return

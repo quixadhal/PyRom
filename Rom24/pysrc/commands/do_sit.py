@@ -14,7 +14,7 @@ def do_sit(ch, argument):
         return
     # okay, now that we know we can sit, find an object to sit on
     if argument:
-        obj = ch.get_obj_list(argument, ch.in_room.contents)
+        obj = ch.get_item_list(argument, merc.rooms[ch.in_room].contents)
         if obj is None:
             ch.send("You don't see that here.\n")
             return

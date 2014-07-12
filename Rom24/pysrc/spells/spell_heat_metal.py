@@ -3,7 +3,7 @@ import const
 import fight
 import handler_game
 import handler_magic
-import handler_obj
+import handler_item
 import merc
 import state_checks
 
@@ -20,9 +20,9 @@ def spell_heat_metal(sn, level, ch, victim, target):
                     and not state_checks.IS_OBJ_STAT(obj_lose, merc.ITEM_BURN_PROOF):
                 if obj_lose.item_type == merc.ITEM_ARMOR:
                     if obj_lose.wear_loc != -1:  # remove the item */
-                        if victim.can_drop_obj(obj_lose) \
+                        if victim.can_drop_item(obj_lose) \
                                 and (obj_lose.weight // 10) < random.randint(1, 2 * victim.stat(merc.STAT_DEX)) \
-                                and handler_obj.remove_obj(victim, obj_lose.wear_loc, True):
+                                and handler_item.remove_item(victim, obj_lose.wear_loc, True):
                             handler_game.act("$n yelps and throws $p to the ground! ", victim, obj_lose, None,
                                              merc.TO_ROOM)
                             handler_game.act("You remove and drop $p before it burns you.", victim, obj_lose, None,
@@ -37,7 +37,7 @@ def spell_heat_metal(sn, level, ch, victim, target):
                             dam += (random.randint(1, obj_lose.level))
                             fail = False
                     else:  # drop it if we can */
-                        if victim.can_drop_obj(obj_lose):
+                        if victim.can_drop_item(obj_lose):
                             handler_game.act("$n yelps and throws $p to the ground! ", victim, obj_lose, None,
                                              merc.TO_ROOM)
                             handler_game.act("You and drop $p before it burns you.", victim, obj_lose, None,
@@ -54,7 +54,7 @@ def spell_heat_metal(sn, level, ch, victim, target):
                     if obj_lose.wear_loc != -1:  # try to drop it */
                         if state_checks.IS_WEAPON_STAT(obj_lose, merc.WEAPON_FLAMING):
                             continue
-                        if victim.can_drop_obj(obj_lose) and handler_obj.remove_obj(victim, obj_lose.wear_loc, True):
+                        if victim.can_drop_item(obj_lose) and handler_item.remove_item(victim, obj_lose.wear_loc, True):
                             handler_game.act("$n is burned by $p, and throws it to the ground.", victim, obj_lose, None,
                                              merc.TO_ROOM)
                             victim.send("You throw your red-hot weapon to the ground! \n")
@@ -67,7 +67,7 @@ def spell_heat_metal(sn, level, ch, victim, target):
                             dam += random.randint(1, obj_lose.level)
                             fail = False
                     else:  # drop it if we can */
-                        if victim.can_drop_obj(obj_lose):
+                        if victim.can_drop_item(obj_lose):
                             handler_game.act("$n throws a burning hot $p to the ground! ", victim, obj_lose, None,
                                              merc.TO_ROOM)
                             handler_game.act("You and drop $p before it burns you.", victim, obj_lose, None,

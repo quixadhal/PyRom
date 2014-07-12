@@ -15,14 +15,14 @@ def do_groups(ch, argument):
     if not argument:
         # show all groups
         for gn, group in const.group_table.items():
-            if gn in ch.pcdata.group_known:
+            if gn in ch.group_known:
                 ch.send("%-20s " % group.name)
                 col += 1
                 if col % 3 == 0:
                     ch.send("\n")
         if col % 3 != 0:
             ch.send("\n")
-        ch.send("Creation points: %d\n" % ch.pcdata.points)
+        ch.send("Creation points: %d\n" % ch.points)
         return
 
     if "all" == argument.lower():

@@ -22,12 +22,12 @@ def do_where(ch, argument):
             and victim \
             and not victim.is_npc() \
             and victim.in_room \
-            and not state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_NOWHERE) \
-            and (ch.is_room_owner(victim.in_room) or not victim.in_room.is_private()) \
-            and victim.in_room.area == ch.in_room.area \
+            and not state_checks.IS_SET(merc.rooms[victim.in_room].room_flags, merc.ROOM_NOWHERE) \
+            and (ch.is_room_owner(victim.in_room) or not merc.rooms[victim.in_room].is_private()) \
+            and merc.rooms[victim.in_room].area == merc.rooms[ch.in_room].area \
             and ch.can_see(victim):
                 found = True
-                ch.send("%-28s %s\n" % (victim.name, victim.in_room.name))
+                ch.send("%-28s %s\n" % (victim.name, merc.rooms[victim.in_room].name))
         if not found:
             ch.send("None\n")
 
@@ -35,13 +35,13 @@ def do_where(ch, argument):
         found = False
         for victim in merc.char_list[:]:
             if victim.in_room \
-            and victim.in_room.area == ch.in_room.area \
+            and merc.rooms[victim.in_room].area == merc.rooms[ch.in_room].area \
             and not victim.is_affected( merc.AFF_HIDE) \
             and not victim.is_affected( merc.AFF_SNEAK) \
             and ch.can_see(victim) \
             and arg in victim.name.lower():
                 found = True
-                ch.send("%-28s %s\n" % (state_checks.PERS(victim, ch), victim.in_room.name))
+                ch.send("%-28s %s\n" % (state_checks.PERS(victim, ch), merc.rooms[victim.in_room].name))
                 break
         if not found:
             handler_game.act("You didn't find any $T.", ch, None, arg, merc.TO_CHAR)

@@ -5,7 +5,7 @@ logger = logging.getLogger()
 import merc
 import interp
 import game_utils
-import handler_olc
+import world_classes
 import state_checks
 import special
 
@@ -65,7 +65,7 @@ def do_string(ch, argument):
             return
     if "object".startswith(type):
         # string an obj
-        obj = ch.get_obj_world(arg1)
+        obj = ch.get_item_world(arg1)
         if not obj:
             ch.send("Nothing like that in heaven or earth.\n")
             return
@@ -84,7 +84,7 @@ def do_string(ch, argument):
                 ch.send("Syntax: oset <object> ed <keyword> <string>\n")
                 return
             argument += "\n"
-            ed = handler_olc.EXTRA_DESCR_DATA()
+            ed = world_classes.ExtraDescrData()
             ed.keyword = arg3
             ed.description = argument
             obj.extra_descr.append(ed)

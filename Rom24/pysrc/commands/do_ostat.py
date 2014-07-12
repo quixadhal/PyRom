@@ -15,7 +15,7 @@ def do_ostat(ch, argument):
     if not arg:
         ch.send("Stat what?\n")
         return
-    obj = ch.get_obj_world(arg)
+    obj = ch.get_item_world(arg)
     if not obj:
         ch.send("Nothing like that in hell, earth, or heaven.\n")
         return
@@ -33,7 +33,7 @@ def do_ostat(ch, argument):
 
     ch.send("In room: %d  In object: %s  Carried by: %s  Wear_loc: %d\n" % (
         0 if not obj.in_room else obj.in_room.vnum,
-        "(none)" if not obj.in_obj else obj.in_obj.short_descr,
+        "(none)" if not obj.in_item else obj.in_item.short_descr,
         "(noone)" if not obj.carried_by else "someone" if not ch.can_see(obj.carried_by) else obj.carried_by.name,
         obj.wear_loc ))
     ch.send("Values: %s\n" % [v for v in obj.value])

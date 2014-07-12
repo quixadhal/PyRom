@@ -100,11 +100,11 @@ def do_steal(ch, argument):
             ch.send("Bingo!  You got %d silver and %d gold coins.\n" % (silver, gold))
         ch.check_improve( "steal", True, 2)
         return
-    obj = victim.get_obj_carry(arg1, ch)
+    obj = victim.get_item_carry(arg1, ch)
     if not obj:
         ch.send("You can't find it.\n")
         return
-    if not ch.can_drop_obj(obj) or state_checks.IS_SET(obj.extra_flags, merc.ITEM_INVENTORY) or obj.level > ch.level:
+    if not ch.can_drop_item(obj) or state_checks.IS_SET(obj.extra_flags, merc.ITEM_INVENTORY) or obj.level > ch.level:
         ch.send("You can't pry it away.\n")
         return
     if ch.carry_number + obj.get_number() > ch.can_carry_n():

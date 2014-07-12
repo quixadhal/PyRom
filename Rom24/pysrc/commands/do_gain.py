@@ -15,7 +15,7 @@ import state_checks
 def do_gain(ch, argument):
     if ch.is_npc():
         return
-    trainer = [t for t in ch.in_room.people if state_checks.IS_NPC(t) and state_checks.IS_SET(t.act, merc.ACT_GAIN)]
+    trainer = [t for t in merc.rooms[ch.in_room].people if state_checks.IS_NPC(t) and state_checks.IS_SET(t.act, merc.ACT_GAIN)]
     # find a trainer
     if not trainer or not ch.can_see(trainer):
         ch.send("You can't do that here.\n")
@@ -28,7 +28,7 @@ def do_gain(ch, argument):
         col = 0
         ch.send("%-18s %-5s %-18s %-5s %-18s %-5s\n" % ("group", "cost", "group", "cost", "group", "cost"))
         for gn, group in const.group_table.items():
-            if gn not in ch.pcdata.group_known and group.rating[ch.guild.name] > 0:
+            if gn not in ch.group_known and group.rating[ch.guild.name] > 0:
                 ch.send("%-18s %-5d " % group.name, group.rating[ch.guild.name])
                 col += 1
                 if (col % 3) == 0:
@@ -40,7 +40,7 @@ def do_gain(ch, argument):
         ch.send("%-18s %-5s %-18s %-5s %-18s %-5s\n" % ("skill", "cost", "skill", "cost", "skill", "cost"))
 
         for sn, skill in const.skill_table.items():
-            if sn not in ch.pcdata.learned \
+            if sn not in ch.learned \
                     and skill.rating[ch.guild.name] > 0 \
                     and skill.spell_fun == magic.spell_null:
                 ch.send("%-18s %-5d " % (const.skill_table[sn].name, skill.rating[ch.guild.name]))
@@ -65,17 +65,17 @@ def do_gain(ch, argument):
             handler_game.act("$N tells you 'You are not yet ready.'", ch, None, trainer, merc.TO_CHAR)
             return
 
-        if ch.pcdata.points <= 40:
+        if ch.points <= 40:
             handler_game.act("$N tells you 'There would be no point in that.'", ch, None, trainer, merc.TO_CHAR)
             return
         handler_game.act("$N trains you, and you feel more at ease with your skills.", ch, None, trainer, merc.TO_CHAR)
         ch.train -= 2
-        ch.pcdata.points -= 1
-        ch.exp = ch.exp_per_level(ch.pcdata.points) * ch.level
+        ch.points -= 1
+        ch.exp = ch.exp_per_level(ch.points) * ch.level
         return
     if argument.lower() in const.group_table:
         gn = const.group_table[argument.lower()]
-        if gn.name in ch.pcdata.group_known:
+        if gn.name in ch.group_known:
             handler_game.act("$N tells you 'You already know that group!'", ch, None, trainer, merc.TO_CHAR)
             return
         if gn.rating[ch.guild.name] <= 0:
@@ -97,7 +97,7 @@ def do_gain(ch, argument):
         if sn.spell_fun is not None:
             handler_game.act("$N tells you 'You must learn the full group.'", ch, None, trainer, merc.TO_CHAR)
             return
-        if sn.name in ch.pcdata.learned:
+        if sn.name in ch.learned:
             handler_game.act("$N tells you 'You already know that skill!'", ch, None, trainer, merc.TO_CHAR)
             return
         if sn.rating[ch.guild.name] <= 0:
@@ -107,7 +107,7 @@ def do_gain(ch, argument):
             handler_game.act("$N tells you 'You are not yet ready for that skill.'", ch, None, trainer, merc.TO_CHAR)
             return
         # add the skill
-        ch.pcdata.learned[sn.name] = 1
+        ch.learned[sn.name] = 1
         handler_game.act("$N trains you in the art of $t", ch, sn.name, trainer, merc.TO_CHAR)
         ch.train -= sn.rating[ch.guild.name]
         return

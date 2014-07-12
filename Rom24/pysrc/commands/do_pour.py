@@ -15,7 +15,7 @@ def do_pour(ch, argument):
     if not arg or not argument:
         ch.send("Pour what into what?\n")
         return
-    out = ch.get_obj_carry(arg, ch)
+    out = ch.get_item_carry(arg, ch)
     if not out:
         ch.send("You don't have that item.\n")
         return
@@ -33,7 +33,7 @@ def do_pour(ch, argument):
         handler_game.act("$n inverts $p, spilling %s all over the ground." % const.liq_table[out.value[2]].liq_name, ch, out,
                  None, merc.TO_ROOM)
         return
-    into = ch.get_obj_here(argument)
+    into = ch.get_item_here(argument)
     vch = None
     if not into:
         vch = ch.get_char_room(argument)

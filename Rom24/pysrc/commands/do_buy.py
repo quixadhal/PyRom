@@ -1,4 +1,5 @@
 import logging
+import object_creator
 
 logger = logging.getLogger()
 
@@ -19,14 +20,14 @@ def do_buy(ch, argument):
         argument, arg = merc.read_word(argument)
         pRoomIndexNext = None
         # hack to make new thalos pets work
-        if ch.in_room.vnum == 9621:
-            if 9706 in merc.room_index_hash:
-                pRoomIndexNext = merc.room_index_hash[9706]
+        if merc.rooms[ch.in_room].vnum == 9621:
+            if 9706 in merc.roomTemplate:
+                pRoomIndexNext = merc.roomTemplate[9706]
         else:
-            if ch.in_room.vnum + 1 in merc.room_index_hash:
-                pRoomIndexNext = merc.room_index_hash[ch.in_room.vnum + 1]
+            if merc.rooms[ch.in_room].vnum + 1 in merc.roomTemplate:
+                pRoomIndexNext = merc.roomTemplate[ch.in_room.vnum + 1]
         if not pRoomIndexNext:
-            logger.warn("BUG: Do_buy: bad pet shop at vnum %d.", ch.in_room.vnum)
+            logger.warn("BUG: Do_buy: bad pet shop at vnum %d.", merc.rooms[ch.in_room].vnum)
             ch.send("Sorry, you can't buy that here.\n")
             return
         in_room = ch.in_room
@@ -55,7 +56,7 @@ def do_buy(ch, argument):
             ch.send("You haggle the price down to %d coins.\n" % cost)
             ch.check_improve( "haggle", True, 4)
         ch.deduct_cost(cost)
-        pet = db.create_mobile(pet.pIndexData)
+        pet = object_creator.create_mobile(pet.pIndexData)
         pet.act = merc.SET_BIT(pet.act, merc.ACT_PET)
         pet.affected_by = merc.SET_BIT(pet.affected_by, merc.AFF_CHARM)
         pet.comm = merc.COMM_NOTELL | merc.COMM_NOSHOUT | merc.COMM_NOCHANNELS
@@ -81,7 +82,7 @@ def do_buy(ch, argument):
         if number < 1 or number > 99:
             merc.act("$n tells you 'Get real!", keeper, None, ch, merc.TO_VICT)
             return
-        if cost <= 0 or not ch.can_see_obj(obj):
+        if cost <= 0 or not ch.can_see_item(obj):
             merc.act("$n tells you 'I don't sell that -- try 'list''.", keeper, None, ch, merc.TO_VICT)
             ch.reply = keeper
             return
@@ -132,7 +133,7 @@ def do_buy(ch, argument):
         if merc.IS_SET(obj.extra_flags, merc.ITEM_INVENTORY):
             items = []
             for count in range(number):
-                t_obj = db.create_object(obj.pIndexData, obj.level)
+                t_obj = object_creator.create_item(obj.pIndexData, obj.level)
                 items.append(t_obj)
         for t_obj in items[:]:
             if not merc.IS_SET(obj.extra_flags, merc.ITEM_INVENTORY):

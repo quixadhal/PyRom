@@ -22,10 +22,11 @@ def do_look(ch, argument):
         return
     if not ch.check_blind():
         return
+    room = merc.rooms[ch.in_room]
     if not ch.is_npc() and not ch.act.is_set(merc.PLR_HOLYLIGHT) \
-            and ch.in_room.is_dark():
+            and ch.room_template.is_dark():
         ch.send("It is pitch black ... \n")
-        handler_ch.show_char_to_char(ch.in_room.people, ch)
+        handler_ch.show_char_to_char(room.people, ch)
         return
     argument, arg1 = game_utils.read_word(argument)
     argument, arg2 = game_utils.read_word(argument)
@@ -33,29 +34,29 @@ def do_look(ch, argument):
     count = 0
     if not arg1 or arg1 == "auto":
         # 'look' or 'look auto'
-        ch.send(ch.in_room.name)
+        ch.send(room.name)
         if ch.is_immortal() \
                 and (ch.is_npc()
                      or (ch.act.is_set(merc.PLR_HOLYLIGHT)
                          or ch.act.is_set(merc.PLR_OMNI))):
-            ch.send(" [Room %d]" % ch.in_room.vnum)
+            ch.send(" [Room %d]" % room.instance_id)
         ch.send("\n")
         if not arg1 or (not ch.is_npc()
                         and not ch.comm.is_set(merc.COMM_BRIEF)):
-            ch.send("  %s" % ch.in_room.description)
+            ch.send("  %s" % room.description)
         if not ch.is_npc() \
                 and ch.act.is_set(merc.PLR_AUTOEXIT):
             ch.send("\n")
             ch.do_exits("auto")
-        handler_ch.show_list_to_char(ch.in_room.contents, ch, False, False)
-        handler_ch.show_char_to_char(ch.in_room.people, ch)
+        handler_ch.show_list_to_char(room.contents, ch, False, False)
+        handler_ch.show_char_to_char(room.people, ch)
         return
     if arg1 == "i" or arg1 == "in" or arg1 == "on":
         # 'look in'
         if not arg2:
             ch.send("Look in what?\n")
             return
-        obj = ch.get_obj_here(arg2)
+        obj = ch.get_item_here(arg2)
         if not obj:
             ch.send("You do not see that here.\n")
             return
@@ -88,9 +89,9 @@ def do_look(ch, argument):
         handler_ch.show_char_to_char_1(victim, ch)
         return
     obj_list = ch.contents
-    obj_list.extend(ch.in_room.contents)
+    obj_list.extend(room.contents)
     for obj in obj_list:
-        if ch.can_see_obj(obj):
+        if ch.can_see_item(obj):
             # player can see object
             pdesc = game_utils.get_extra_descr(arg3, obj.extra_descr)
             if pdesc:
@@ -100,7 +101,7 @@ def do_look(ch, argument):
                     return
             else:
                 continue
-            pdesc = game_utils.get_extra_descr(arg3, obj.pIndexData.extra_descr)
+            pdesc = game_utils.get_extra_descr(arg3, obj.extra_descr)
             if pdesc:
                 count += 1
                 if count == number:
@@ -113,7 +114,7 @@ def do_look(ch, argument):
                 if count == number:
                     ch.send("%s\n" % obj.description)
                     return
-    pdesc = game_utils.get_extra_descr(arg3, ch.in_room.extra_descr)
+    pdesc = game_utils.get_extra_descr(arg3, room.extra_descr)
     if pdesc:
         count += 1
         if count == number:
@@ -141,10 +142,11 @@ def do_look(ch, argument):
         ch.send("You do not see that here.\n")
         return
     # 'look direction'
-    if door not in ch.in_room.exit or not ch.in_room.exit[door]:
+    if door not in room.exit \
+            or not room.exit[door]:
         ch.send("Nothing special there.\n")
         return
-    pexit = ch.in_room.exit[door]
+    pexit = room.exit[door]
 
     if pexit.description:
         ch.send(pexit.description)

@@ -16,7 +16,7 @@ def do_open(ch, argument):
         ch.send("Open what?\n")
         return
 
-    obj = ch.get_obj_here(arg)
+    obj = ch.get_item_here(arg)
     if obj:
         # open portal
         if obj.item_type == merc.ITEM_PORTAL:
@@ -54,7 +54,7 @@ def do_open(ch, argument):
     door = handler_room.find_door(ch, arg)
     if door >= 0:
         # 'open door'
-        pexit = ch.in_room.exit[door]
+        pexit = merc.rooms[ch.in_room].exit[door]
         if not state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED):
             ch.send("It's already open.\n")
             return

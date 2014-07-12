@@ -13,7 +13,7 @@ def do_zecho(ch, argument):
         return
     for d in merc.descriptor_list:
         if d.is_connected(nanny.con_playing) and d.character.in_room and ch.in_room \
-                and d.character.in_room.area == ch.in_room.area:
+                and d.character.in_room.area == merc.rooms[ch.in_room].area:
             if d.character.get_trust() >= ch.trust:
                 d.send("zone> ")
             d.send(argument + "\n")

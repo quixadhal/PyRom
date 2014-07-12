@@ -15,10 +15,10 @@ def do_delete(ch, argument):
     if ch.is_npc():
         return
 
-    if ch.pcdata.confirm_delete:
+    if ch.confirm_delete:
         if argument:
             ch.send("Delete status removed.\n")
-            ch.pcdata.confirm_delete = False
+            ch.confirm_delete = False
             return
         else:
             pfile = os.path.join(settings.PLAYER_DIR, ch.name + '.json')
@@ -34,7 +34,7 @@ def do_delete(ch, argument):
     ch.send("Type delete again to confirm this command.\n")
     ch.send("WARNING: this command is irreversible.\n")
     ch.send("Typing delete with an argument will undo delete status.\n")
-    ch.pcdata.confirm_delete = True
+    ch.confirm_delete = True
     handler_game.wiznet("$N is contemplating deletion.", ch, None, 0, 0, ch.trust)
 
 

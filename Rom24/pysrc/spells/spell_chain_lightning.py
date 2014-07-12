@@ -22,7 +22,7 @@ def spell_chain_lightning(sn, level, ch, victim, target):
     # new targets */
     while level > 0:
         found = False
-        for tmp_vict in ch.in_room.people:
+        for tmp_vict in merc.rooms[ch.in_room].people:
             if not fight.is_safe_spell(ch, tmp_vict, True) and tmp_vict is not last_vict:
                 found = True
                 last_vict = tmp_vict

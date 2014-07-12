@@ -58,7 +58,7 @@ def do_spells(ch, argument):
                 and (fAll or level <= ch.level) \
                 and level >= min_lev and level <= max_lev \
                 and skill.spell_fun != None \
-                and sn in ch.pcdata.learned:
+                and sn in ch.learned:
             found = True
             level = skill.skill_level[ch.guild.name]
             if ch.level < level:
