@@ -104,7 +104,6 @@ class Instancer:
                 merc.instances_by_character[obj_instance.vnum] = [obj_instance.instance_id]
             else:
                 merc.instances_by_character[obj_instance.vnum].append(obj_instance.instance_id)
-
         elif isinstance(obj_instance, character.Character):
             merc.instance_number += 1
             obj_instance.instance_id = merc.instance_number
@@ -116,7 +115,7 @@ class Instancer:
             else:
                 merc.instances_by_player[obj_instance.name].append(obj_instance.instance_id)
         else:
-            logger.bug("Global instance generator passed an unknown object type.")
+            logger.debug("Global instance generator passed an unknown object type.")
             return
         instance_num_file = os.path.join(settings.AREA_DIR, "instance_tracker.txt")
         fp = open(instance_num_file, 'w')
@@ -132,28 +131,28 @@ class Instancer:
             merc.instances_by_area[obj_instance.vnum].remove(obj_instance.instance_id)
             del merc.areas[obj_instance.instance_id]
             del merc.global_instances[obj_instance.instance_id]
-            logger.info("Instance ID: %d removed from all instance dicts.", obj_instance.instance_id)
+            #logger.info("Instance ID: %d removed from all instance dicts.", obj_instance.instance_id)
         elif isinstance(obj_instance, handler_room.Room):
             merc.instances_by_room[obj_instance.vnum].remove(obj_instance.instance_id)
             del merc.rooms[obj_instance.instance_id]
             del merc.global_instances[obj_instance.instance_id]
-            logger.info("Instance ID: %d removed from all instance dicts.", obj_instance.instance_id)
+            #logger.info("Instance ID: %d removed from all instance dicts.", obj_instance.instance_id)
         elif isinstance(obj_instance, handler_item.Items):
             merc.instances_by_item[obj_instance.vnum].remove(obj_instance.instance_id)
             del merc.items[obj_instance.instance_id]
             del merc.global_instances[obj_instance.instance_id]
-            logger.info("Instance ID: %d removed from all instance dicts.", obj_instance.instance_id)
+            #logger.info("Instance ID: %d removed from all instance dicts.", obj_instance.instance_id)
         elif isinstance(obj_instance, mobile.Mobile):
             merc.instances_by_character[obj_instance.vnum].remove(obj_instance.instance_id)
             del merc.characters[obj_instance.instance_id]
             del merc.global_instances[obj_instance.instance_id]
-            logger.info("Instance ID: %d removed from all instance dicts.", obj_instance.instance_id)
+            #logger.info("Instance ID: %d removed from all instance dicts.", obj_instance.instance_id)
         elif isinstance(obj_instance, character.Character):
             merc.instances_by_player[obj_instance.name].remove(obj_instance.instance_id)
             del merc.player_characters[obj_instance.instance_id]
             del merc.characters[obj_instance.instance_id]
             del merc.global_instances[obj_instance.instance_id]
-            logger.info("Instance ID: %d removed from all instance dicts.", obj_instance.instance_id)
+            #logger.info("Instance ID: %d removed from all instance dicts.", obj_instance.instance_id)
         else:
             logger.debug("Unknown object type sent to global destructor")
             return
