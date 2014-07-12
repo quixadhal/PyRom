@@ -108,13 +108,14 @@ def find_location(ch, arg):
         if vnum not in merc.roomTemplate:
             return None
         else:
-            return merc.roomTemplate[vnum]
+            room_instance = merc.instances_by_room[vnum][0]
+            return merc.rooms[room_instance]
     victim = ch.get_char_world(arg)
     if victim:
         return victim.in_room
-    obj = ch.get_item_world(arg)
-    if obj:
-        return obj.in_room
+    item = ch.get_item_world(arg)
+    if item:
+        return item.in_room
     return None
 
 
@@ -178,9 +179,9 @@ def set_title(ch, title):
         return
     nospace = ['.', ',', '!', '?']
     if title[0] in nospace:
-        ch.pcdata.title = title
+        ch.title = title
     else:
-        ch.pcdata.title = ' ' + title
+        ch.title = ' ' + title
 
 
 def get_mob_id():

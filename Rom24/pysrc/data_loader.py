@@ -1,7 +1,7 @@
 import os
 import sys
 import const
-import instancer
+import object_creator
 import game_utils
 import handler
 import handler_ch
@@ -350,7 +350,7 @@ def load_rooms(area, pArea):
         area, w = game_utils.read_word(area, False)
         w = w[1:]  # strip the pound
         # Create our instances
-        instancer.create_room(room)
+        object_creator.create_room(room)
     return area
 
 

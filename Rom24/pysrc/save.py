@@ -3,7 +3,7 @@ import json
 from collections import OrderedDict
 import pickle
 import handler
-import instancer
+import object_creator
 import game_utils
 import handler_room
 
@@ -244,7 +244,7 @@ def fread_items(contents, objects, contained_by=None):
 
 
 def fread_item(contents, odict):
-    item = instancer.create_item(itemTemplate[odict['Vnum']], odict['Lev'])
+    item = object_creator.create_item(itemTemplate[odict['Vnum']], odict['Lev'])
     item.enchanted = odict['Enchanted']
     item.name = odict['Name']
     item.short_descr = odict['ShD']

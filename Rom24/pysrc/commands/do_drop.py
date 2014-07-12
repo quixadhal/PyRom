@@ -1,5 +1,5 @@
 import logging
-import instancer
+import object_creator
 
 logger = logging.getLogger()
 
@@ -57,7 +57,7 @@ def do_drop(ch, argument):
                 silver += item.value[0]
                 gold += item.value[1]
                 item.extract()
-        instancer.create_money(gold, silver).to_room(ch.in_room)
+        object_creator.create_money(gold, silver).to_room(ch.in_room)
         handler_game.act("$n drops some coins.", ch, None, None, merc.TO_ROOM)
         ch.send("OK.\n")
         return

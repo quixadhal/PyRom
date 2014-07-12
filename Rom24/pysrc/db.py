@@ -42,7 +42,7 @@ import time
 
 import merc
 import data_loader
-import instancer
+import object_creator
 import handler_item
 import settings
 import state_checks
@@ -59,7 +59,7 @@ def boot_db():
     data_loader.load_areas()
     #fix_exits()
     area_update()
-    instancer.setup_exits()
+    object_creator.setup_exits()
     logger.info('    Loaded %d Help files', len(merc.help_list))
     logger.info('    Loaded %d Areas', len(merc.areaTemplate))
     logger.info('    Loaded %d Mobile Indexes', len(merc.characterTemplate))
@@ -158,7 +158,7 @@ def reset_area(area):
             if count >= pReset.arg4:
                 continue
 
-            mob = instancer.create_mobile(mobTemplate)
+            mob = object_creator.create_mobile(mobTemplate)
 
             #
             # * Check for pet shop.
@@ -192,7 +192,7 @@ def reset_area(area):
                 last = False
                 continue
 
-            item = instancer.create_item(item_template, min(game_utils.number_fuzzy(level), merc.LEVEL_HERO - 1))
+            item = object_creator.create_item(item_template, min(game_utils.number_fuzzy(level), merc.LEVEL_HERO - 1))
             item.cost = 0
             item.to_room(pRoomInstanceID)
             last = True
@@ -226,7 +226,7 @@ def reset_area(area):
                 break
             count = handler_item.count_obj_list(item_template, item_to.contains)
             while count < pReset.arg4:
-                item = instancer.create_item(item_template, game_utils.number_fuzzy(item_to.level))
+                item = object_creator.create_item(item_template, game_utils.number_fuzzy(item_to.level))
                 item.to_item(item_to)
                 count += 1
                 if item_template.count >= limit:
@@ -272,7 +272,7 @@ def reset_area(area):
                     elif item_template.item_type == merc.ITEM_TREASURE:
                         olevel = random.randint(10, 20)
 
-                item = instancer.create_item(item_template, olevel)
+                item = object_creator.create_item(item_template, olevel)
                 item.extra_flags = state_checks.SET_BIT(item.extra_flags, merc.ITEM_INVENTORY)
             else:
                 if pReset.arg2 > 50:  # old format */
@@ -283,7 +283,7 @@ def reset_area(area):
                     limit = pReset.arg2
 
                 if item_template.count < limit or random.randint(0, 4) == 0:
-                    item = instancer.create_item(item_template,
+                    item = object_creator.create_item(item_template,
                                                                 min(game_utils.number_fuzzy(level),
                                                                     merc.LEVEL_HERO - 1))
                 # error message if it is too high */

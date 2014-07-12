@@ -32,7 +32,7 @@
  ************/
 """
 import logging
-import instancer
+import object_creator
 from world_classes import Gen
 
 logger = logging.getLogger()
@@ -463,7 +463,7 @@ def con_read_motd(self):
         ch.title = buf
 
         ch.do_outfit("")
-        instancer.create_item(merc.itemTemplate[merc.OBJ_VNUM_MAP], 0).to_char(ch)
+        object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_MAP], 0).to_char(ch)
         ch.to_room(game_utils.find_vnum_instance('room', 1, merc.ROOM_VNUM_SCHOOL))
         ch.do_help("newbie info")
 

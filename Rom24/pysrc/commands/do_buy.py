@@ -1,5 +1,5 @@
 import logging
-import instancer
+import object_creator
 
 logger = logging.getLogger()
 
@@ -56,7 +56,7 @@ def do_buy(ch, argument):
             ch.send("You haggle the price down to %d coins.\n" % cost)
             ch.check_improve( "haggle", True, 4)
         ch.deduct_cost(cost)
-        pet = instancer.create_mobile(pet.pIndexData)
+        pet = object_creator.create_mobile(pet.pIndexData)
         pet.act = merc.SET_BIT(pet.act, merc.ACT_PET)
         pet.affected_by = merc.SET_BIT(pet.affected_by, merc.AFF_CHARM)
         pet.comm = merc.COMM_NOTELL | merc.COMM_NOSHOUT | merc.COMM_NOCHANNELS
@@ -133,7 +133,7 @@ def do_buy(ch, argument):
         if merc.IS_SET(obj.extra_flags, merc.ITEM_INVENTORY):
             items = []
             for count in range(number):
-                t_obj = instancer.create_item(obj.pIndexData, obj.level)
+                t_obj = object_creator.create_item(obj.pIndexData, obj.level)
                 items.append(t_obj)
         for t_obj in items[:]:
             if not merc.IS_SET(obj.extra_flags, merc.ITEM_INVENTORY):

@@ -3,7 +3,7 @@ import logging
 logger = logging.getLogger()
 
 import merc
-import instancer
+import object_creator
 import interp
 import game_utils
 import handler_game
@@ -31,7 +31,7 @@ def do_oload(ch, argument):
     if vnum not in merc.itemTemplate:
         ch.send("No object has that vnum.\n")
         return
-    obj = instancer.create_item(merc.itemTemplate[vnum], level)
+    obj = object_creator.create_item(merc.itemTemplate[vnum], level)
     if state_checks.CAN_WEAR(obj, merc.ITEM_TAKE):
         obj.to_char(ch)
     else:

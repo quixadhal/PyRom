@@ -35,7 +35,7 @@
 import logging
 import handler_ch
 import handler_item
-import instancer
+import object_creator
 import merc
 
 logger = logging.getLogger()
@@ -928,16 +928,16 @@ def stop_fighting(ch, fBoth):
 def make_corpse(ch):
     if ch.is_npc():
         name = ch.short_descr
-        corpse = instancer.create_item(itemTemplate[OBJ_VNUM_CORPSE_NPC], 0)
+        corpse = object_creator.create_item(itemTemplate[OBJ_VNUM_CORPSE_NPC], 0)
         corpse.timer = random.randint(3, 6)
         if ch.gold > 0:
-            instancer.create_money(ch.gold, ch.silver).to_item(corpse.instance_id)
+            object_creator.create_money(ch.gold, ch.silver).to_item(corpse.instance_id)
             ch.gold = 0
             ch.silver = 0
         corpse.cost = 0
     else:
         name = ch.name
-        corpse = instancer.create_item(itemTemplate[OBJ_VNUM_CORPSE_PC], 0)
+        corpse = object_creator.create_item(itemTemplate[OBJ_VNUM_CORPSE_PC], 0)
         corpse.timer = random.randint(25, 40)
         ch.act.rem_bit(PLR_CANLOOT)
         if not ch.is_clan():
@@ -945,7 +945,7 @@ def make_corpse(ch):
         else:
             corpse.owner = ""
             if ch.gold > 1 or ch.silver > 1:
-                instancer.create_money(ch.gold // 2, ch.silver // 2).to_item(corpse.instance_id)
+                object_creator.create_money(ch.gold // 2, ch.silver // 2).to_item(corpse.instance_id)
                 ch.gold -= ch.gold // 2
                 ch.silver -= ch.silver // 2
         corpse.cost = 0
@@ -1028,7 +1028,7 @@ def death_cry(ch):
     handler_game.act(msg, ch, None, None, TO_ROOM)
     if vnum != 0:
         name = ch.short_descr if ch.is_npc() else ch.name
-        obj = instancer.create_item(itemTemplate[vnum], 0)
+        obj = object_creator.create_item(itemTemplate[vnum], 0)
         obj.timer = random.randint(4, 7)
 
         obj.short_descr = obj.short_descr % name

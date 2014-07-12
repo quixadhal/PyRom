@@ -38,7 +38,7 @@ logger = logging.getLogger()
 import const
 import handler
 import handler_game
-import instancer
+import object_creator
 import merc
 import state_checks
 
@@ -406,8 +406,8 @@ def recursive_clone(ch, item, clone):
     for c_item_id in item.contains:
         c_item = merc.items[c_item_id]
         if item_check(ch, c_item):
-            t_obj = instancer.create_item(merc.itemTemplate[c_item.vnum], 0)
-            instancer.clone_item(c_item, t_obj)
+            t_obj = object_creator.create_item(merc.itemTemplate[c_item.vnum], 0)
+            object_creator.clone_item(c_item, t_obj)
             t_obj.to_item(clone)
             recursive_clone(ch, c_item, t_obj)
 
