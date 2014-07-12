@@ -425,15 +425,13 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
     @property
     def guild(self):
         return const.guild_table.get(self._guild, None)
+
     @guild.setter
     def guild(self, value):
         if isinstance(value, const.guild_type):
             self._guild = value.name
         else:
             self._guild = value
-    @property
-    def pcdata(self):
-        return self
 
     def reset(self):
         if self.is_npc():
