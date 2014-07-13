@@ -5,7 +5,6 @@ logger = logging.getLogger()
 import merc
 import interp
 import handler_ch
-import state_checks
 
 
 def do_nofollow(ch, argument):

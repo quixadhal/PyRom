@@ -2,7 +2,6 @@ import const
 import handler_game
 import handler_magic
 import merc
-import state_checks
 
 
 def spell_cancellation(sn, level, ch, victim, target):

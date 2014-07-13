@@ -1,13 +1,12 @@
 import logging
+
+logger = logging.getLogger()
+
 import bit
 import const
 import handler_game
 import merc
 import tables
-
-
-logger = logging.getLogger()
-
 
 
 class Affects:

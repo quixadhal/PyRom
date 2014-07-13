@@ -48,10 +48,10 @@ def PERS(ch, looker):
         return ch.name
 
 
-def OPERS(looker, pobj):
-    if not looker.can_see_item(pobj):
+def OPERS(looker, item):
+    if not looker.can_see_item(item.instance_id):
         return "something"
-    return pobj.short_descr
+    return item.short_descr
 
 
 def IS_NPC(ch):
@@ -131,20 +131,20 @@ def get_carry_weight(ch):
 
  # Object macros.
 
-def CAN_WEAR(pobj, part):
-    return IS_SET(pobj.wear_flags, part)
+def CAN_WEAR(item, part):
+    return IS_SET(item.wear_flags, part)
 
 
-def IS_OBJ_STAT(pobj, stat):
-    return IS_SET(pobj.extra_flags, stat)
+def is_item_stat(item, stat):
+    return IS_SET(item.extra_flags, stat)
 
 
-def IS_WEAPON_STAT(pobj, stat):
-    return IS_SET(pobj.value[4], stat)
+def IS_WEAPON_STAT(item, stat):
+    return IS_SET(item.value[4], stat)
 
 
-def WEIGHT_MULT(pobj):
-    return pobj.value[4] if pobj.item_type is merc.ITEM_CONTAINER else 100
+def WEIGHT_MULT(item):
+    return item.value[4] if item.item_type is merc.ITEM_CONTAINER else 100
 
 def check_blind(ch):
     if not IS_NPC(ch) and IS_SET(ch.act, merc.PLR_HOLYLIGHT):

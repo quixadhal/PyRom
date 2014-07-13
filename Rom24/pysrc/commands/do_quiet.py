@@ -5,7 +5,6 @@ logger = logging.getLogger()
 
 import merc
 import interp
-import state_checks
 
 # RT quiet blocks out all communication
 def do_quiet(ch, argument):

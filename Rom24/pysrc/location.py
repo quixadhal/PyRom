@@ -1,4 +1,5 @@
 import logging
+
 import merc
 
 
@@ -9,7 +10,7 @@ import game_utils
 import handler_game
 from handler_magic import saves_spell
 from merc import ROOM_VNUM_TEMPLE, WEAR_LIGHT, ITEM_LIGHT, AFF_PLAGUE, TO_AFFECTS, APPLY_STR, \
-    DAM_DISEASE, TO_ROOM, roomTemplate, areaTemplate, rooms, areas, instances_by_room
+    DAM_DISEASE, TO_ROOM, areaTemplate, rooms, instances_by_room
 
 
 class Location:

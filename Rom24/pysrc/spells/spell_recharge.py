@@ -1,3 +1,5 @@
+import random
+
 import const
 import handler_game
 import merc

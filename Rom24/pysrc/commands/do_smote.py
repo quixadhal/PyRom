@@ -5,7 +5,7 @@ logger = logging.getLogger()
 import merc
 import interp
 import game_utils
-import state_checks
+
 
 def do_smote(ch, argument):
     matches = 0
@@ -20,7 +20,7 @@ def do_smote(ch, argument):
         return
     ch.send(argument + "\n")
     for vch in merc.rooms[ch.in_room].people:
-        if vch.desc == None or vch == ch:
+        if vch.desc is None or vch == ch:
             continue
         if vch.name not in argument:
             vch.send(argument + "\n")

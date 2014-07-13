@@ -2,12 +2,10 @@ import logging
 
 logger = logging.getLogger()
 
-import handler_game
 import merc
 import interp
 import nanny
 import handler_ch
-import state_checks
 
 
 def do_auction(ch, argument):
@@ -33,7 +31,7 @@ def do_auction(ch, argument):
             if d.is_connected(nanny.con_playing) and d.character != ch \
             and not victim.comm.is_set(merc.COMM_NOAUCTION) \
             and not victim.comm.is_set(merc.COMM_QUIET):
-                handler_game.act("$n auctions '$t'", ch, argument, d.character, merc.TO_VICT, merc.POS_DEAD)
+                act("$n auctions '$t'", ch, argument, d.character, merc.TO_VICT, merc.POS_DEAD)
 
 
 interp.register_command(interp.cmd_type('auction', do_auction, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1))

@@ -32,8 +32,10 @@
  ************/
 """
 import logging
+
 import object_creator
 from world_classes import Gen
+
 
 logger = logging.getLogger()
 
@@ -41,13 +43,11 @@ import hashlib
 import const
 
 import game_utils
-import db
 import handler_game
 import comm
 import merc
 import save
 import settings
-import skills
 import state_checks
 
 
@@ -464,7 +464,7 @@ def con_read_motd(self):
 
         ch.do_outfit("")
         object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_MAP], 0).to_char(ch)
-        ch.to_room(game_utils.find_vnum_instance('room', 1, merc.ROOM_VNUM_SCHOOL))
+        ch.to_room(merc.instances_by_room[merc.ROOM_VNUM_SCHOOL][0])
         ch.do_help("newbie info")
 
     elif ch.in_room:

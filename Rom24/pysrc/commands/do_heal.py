@@ -1,7 +1,9 @@
 import logging
+
 import game_utils
 import handler_game
 import state_checks
+
 
 logger = logging.getLogger()
 
@@ -100,7 +102,7 @@ def do_heal(ch, argument):
     mob.silver += cost % 100
     handler_game.act("$n utters the words '$T'.", mob, None, words, merc.TO_ROOM)
 
-    if spell == None:  # restore mana trap... kinda hackish... kinda?
+    if spell is None:  # restore mana trap... kinda hackish... kinda?
         ch.mana += game_utils.dice(2, 8) + mob.level // 3
         ch.mana = min(ch.mana, ch.max_mana)
         ch.send("A warm glow passes through you.\n")

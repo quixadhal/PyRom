@@ -15,7 +15,7 @@ def do_switch(ch, argument):
     if not arg:
         ch.send("Switch into whom?\n")
         return
-    if not ch.desc == None:
+    if not ch.desc is None:
         return
     if ch.desc.original:
         ch.send("You are already switched.\n")

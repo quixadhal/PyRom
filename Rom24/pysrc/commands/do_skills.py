@@ -7,7 +7,7 @@ import merc
 import interp
 import const
 import game_utils
-import state_checks
+
 
 def do_skills(ch, argument):
     fAll = False
@@ -59,7 +59,7 @@ def do_skills(ch, argument):
         if level < merc.LEVEL_HERO + 1 \
                 and (fAll or level <= ch.level) \
                 and level >= min_lev and level <= max_lev \
-                and skill.spell_fun == None \
+                and skill.spell_fun is None \
                 and sn in ch.learned:
             found = True
             level = skill.skill_level[ch.guild.name]

@@ -1,4 +1,5 @@
 import random
+
 import const
 import handler_game
 import handler_magic

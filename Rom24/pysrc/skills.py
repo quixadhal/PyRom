@@ -33,12 +33,9 @@
 """
 import random
 
-
 from merc import *
 import const
 import game_utils
-import state_checks
-import update
 import magic
 
 

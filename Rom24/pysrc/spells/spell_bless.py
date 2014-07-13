@@ -9,10 +9,10 @@ def spell_bless(sn, level, ch, victim, target):
     # deal with the object case first */
     if target == merc.TARGET_OBJ:
         obj = victim
-        if state_checks.IS_OBJ_STAT(obj, merc.ITEM_BLESS):
+        if state_checks.is_item_stat(obj, merc.ITEM_BLESS):
             handler_game.act("$p is already blessed.", ch, obj, target=merc.TO_CHAR)
             return
-        if state_checks.IS_OBJ_STAT(obj, merc.ITEM_EVIL):
+        if state_checks.is_item_stat(obj, merc.ITEM_EVIL):
             paf = state_checks.affect_find(obj.affected, "curse")
             level = obj.level
             if paf:

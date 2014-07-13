@@ -1,8 +1,7 @@
 import copy
-import random
 import logging
 import random
-import handler
+import handler_game
 
 logger = logging.getLogger()
 
@@ -13,7 +12,6 @@ import bit
 import const
 import fight
 import game_utils
-import handler_game
 import immortal
 import location
 import state_checks
@@ -227,36 +225,30 @@ class Container:
 
 class Living(immortal.Immortal, Fight, Grouping, Physical,
              location.Location, affects.Affects, Communication,
-             Container):
-    def __init__(self, template=None):
+             Container, handler.Instancer):
+    def __init__(self):
         super().__init__()
-        if template:
-            # TODO fix this section for proper inheritance
-            # handler.Instancer.id_generator(self)
-            pass
-        else:
-            self.id = 0
-            self.instance_id = None
-            self.version = 5
-            self.level = 0
-            self.act = bit.Bit(merc.PLR_NOSUMMON, [tables.act_flags, tables.plr_flags])
-            self._race = 'human'
-            self._guild = None
-            self.sex = 0
-            self.level = 0
-            # stats */
-            self.perm_stat = [13 for x in range(merc.MAX_STATS)]
-            self.mod_stat = [0 for x in range(merc.MAX_STATS)]
-            self.mana = 100
-            self.max_mana = 100
-            self.move = 100
-            self.max_move = 100
-            self.gold = 0
-            self.silver = 0
-            self.exp = 0
-            self.position = 0
-            self.alignment = 0
-            self.desc = None
+        self.id = 0
+        self.version = 5
+        self.level = 0
+        self.act = bit.Bit(merc.PLR_NOSUMMON, [tables.act_flags, tables.plr_flags])
+        self._race = 'human'
+        self._guild = None
+        self.sex = 0
+        self.level = 0
+        # stats */
+        self.perm_stat = [13 for x in range(merc.MAX_STATS)]
+        self.mod_stat = [0 for x in range(merc.MAX_STATS)]
+        self.mana = 100
+        self.max_mana = 100
+        self.move = 100
+        self.max_move = 100
+        self.gold = 0
+        self.silver = 0
+        self.exp = 0
+        self.position = 0
+        self.alignment = 0
+        self.desc = None
 
     def send(self, pstr):
         pass
@@ -315,9 +307,9 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
             logger.warning("Equip_char: already equipped (%d)." % iWear)
             return
         item = merc.items.get(item_id, None)
-        if (state_checks.IS_OBJ_STAT(item, merc.ITEM_ANTI_EVIL) and self.is_evil()) \
-                or (state_checks.IS_OBJ_STAT(item, merc.ITEM_ANTI_GOOD) and self.is_good()) \
-                or (state_checks.IS_OBJ_STAT(item, merc.ITEM_ANTI_NEUTRAL) and self.is_neutral()):
+        if (state_checks.is_item_stat(item, merc.ITEM_ANTI_EVIL) and self.is_evil()) \
+                or (state_checks.is_item_stat(item, merc.ITEM_ANTI_GOOD) and self.is_good()) \
+                or (state_checks.is_item_stat(item, merc.ITEM_ANTI_NEUTRAL) and self.is_neutral()):
             # Thanks to Morgenes for the bug fix here!
             handler_game.act("You are zapped by $p and drop it.", self, item, None, merc.TO_CHAR)
             handler_game.act("$n is zapped by $p and drops it.", self, item, None, merc.TO_ROOM)
@@ -637,7 +629,7 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
         if state_checks.IS_SET(item.extra_flags, merc.ITEM_INVIS) \
                 and not self.is_affected(merc.AFF_DETECT_INVIS):
             return False
-        if state_checks.IS_OBJ_STAT(item, merc.ITEM_GLOW):
+        if state_checks.is_item_stat(item, merc.ITEM_GLOW):
             return True
         if merc.rooms[self.in_room].is_dark() \
                 and not self.is_affected(merc.AFF_DARK_VISION):
@@ -697,8 +689,6 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
         if self.instance_id not in merc.characters:
             logger.error("Extract_char: char not found.")
             return
-
-        handler.Instancer.destructor(self)
 
         if self.desc:
             self.desc.character = None
@@ -922,3 +912,6 @@ class Living(immortal.Immortal, Fight, Grouping, Physical,
         if self.silver < 0:
             logger.error("BUG: deduct costs: silver %d < 0" % self.silver)
             self.silver = 0
+
+
+

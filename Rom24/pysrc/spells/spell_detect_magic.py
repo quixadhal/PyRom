@@ -1,7 +1,6 @@
 import const
 import handler_game
 import merc
-import state_checks
 
 
 def spell_detect_magic(sn, level, ch, victim, target):

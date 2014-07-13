@@ -1,8 +1,9 @@
 import json
 import logging
 import os
+
 from settings import DUMP_DIR, DATA_EXTN
-from tables import clan_table
+
 
 logger = logging.getLogger()
 

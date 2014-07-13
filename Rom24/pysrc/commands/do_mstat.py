@@ -90,7 +90,7 @@ def do_mstat(ch, argument):
     ch.send("Short description: %s\nLong  description: %s" % (  victim.short_descr,
                                                                 victim.long_descr if victim.long_descr else "(none)\n" ))
     if victim.is_npc() and victim.spec_fun is not None:
-        ch.send("Mobile has special procedure %s.\n" % victim.spec_fun.__name__)
+        ch.send("Npc has special procedure %s.\n" % victim.spec_fun.__name__)
 
     for paf in victim.affected:
         ch.send("Spell: '%s' modifies %s by %d for %d hours with bits %s, level %d.\n" % (

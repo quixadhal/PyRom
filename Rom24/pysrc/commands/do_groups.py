@@ -5,7 +5,7 @@ logger = logging.getLogger()
 import merc
 import const
 import interp
-import state_checks
+
 
 def do_groups(ch, argument):
     if ch.is_npc():

@@ -32,6 +32,7 @@
  ************/
 """
 import logging
+import handler_game
 
 logger = logging.getLogger()
 
@@ -42,7 +43,6 @@ import random
 import merc
 import const
 import state_checks
-import handler_game
 import handler_item
 
 depth = 0
@@ -203,12 +203,13 @@ def show_list_to_char(clist, ch, fShort, fShowNothing):
     item_dict = collections.OrderedDict()
     for item_id in clist:
         item = merc.items[item_id]
-        if item.wear_loc == merc.WEAR_NONE and ch.can_see_item(item.instance_id):
-            frmt = handler_item.format_item_to_char(item.instance_id, ch, fShort)
-            if frmt not in item_dict:
-                item_dict[frmt] = 1
-            else:
-                item_dict[frmt] += 1
+        if item.wear_loc <= 0 and ch.can_see_item(item.instance_id):
+                logger.debug("Showing an item")
+                frmt = handler_item.format_item_to_char(item.instance_id, ch, fShort)
+                if frmt not in item_dict:
+                    item_dict[frmt] = 1
+                else:
+                    item_dict[frmt] += 1
 
     if not item_dict and fShowNothing:
         if ch.is_npc() or ch.comm.is_set(merc.COMM_COMBINE):

@@ -4,7 +4,6 @@ logger = logging.getLogger()
 
 import merc
 import interp
-import handler_game
 import pyprogs
 
 def do_say(ch, argument):
@@ -12,8 +11,8 @@ def do_say(ch, argument):
         ch.send("Say what?\n")
         return
 
-    handler_game.act("$n says '$T'", ch, None, argument, merc.TO_ROOM)
-    handler_game.act("You say '$T'", ch, None, argument, merc.TO_CHAR)
+    act("$n says '$T'", ch, None, argument, merc.TO_ROOM)
+    act("You say '$T'", ch, None, argument, merc.TO_CHAR)
     pyprogs.emit_signal('say', actor=ch, argument=argument, audience=ch.in_room.people)
     return
 

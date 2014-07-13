@@ -4,8 +4,7 @@ logger = logging.getLogger()
 
 import merc
 import interp
-import handler_game
-import state_checks
+
 
 def do_gtell(ch, argument):
     if not argument:
@@ -16,7 +15,7 @@ def do_gtell(ch, argument):
         return
     for gch in merc.char_list[:]:
         if gch.is_same_group(ch):
-            handler_game.act("$n tells the group '$t'", ch, argument, gch, merc.TO_VICT, merc.POS_SLEEPING)
+            act("$n tells the group '$t'", ch, argument, gch, merc.TO_VICT, merc.POS_SLEEPING)
     return
 
 

@@ -6,7 +6,6 @@ logger = logging.getLogger()
 import merc
 import interp
 import game_utils
-import handler_game
 import state_checks
 
 
@@ -47,7 +46,7 @@ def do_order(ch, argument):
                 and och.master == ch \
                 and (fAll or och == victim):
             found = True
-            handler_game.act("$n orders you to '%s'." % argument, ch, None, och, merc.TO_VICT)
+            act("$n orders you to '%s'." % argument, ch, None, och, merc.TO_VICT)
             och.interpret(argument)
 
     if found:

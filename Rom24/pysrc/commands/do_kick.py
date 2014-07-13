@@ -1,5 +1,7 @@
 import logging
+
 import state_checks
+
 
 logger = logging.getLogger()
 
@@ -7,7 +9,6 @@ import random
 import merc
 import fight
 import const
-import skills
 import interp
 
 

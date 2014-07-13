@@ -44,7 +44,7 @@ def do_list(ch, argument):
             cost = shop_utils.get_cost(keeper, obj, True)
             if obj.wear_loc == merc.WEAR_NONE and ch.can_see_item(obj) and cost > 0 \
                     and ( not arg or arg in obj.name.lower()):
-                if state_checks.IS_OBJ_STAT(obj, merc.ITEM_INVENTORY):
+                if state_checks.is_item_stat(obj, merc.ITEM_INVENTORY):
                     items[(obj.pIndexData, obj.short_descr)] = (obj, -1)
                 else:
                     k = (obj.pIndexData, obj.short_descr)

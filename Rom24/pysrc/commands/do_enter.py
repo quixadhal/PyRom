@@ -6,7 +6,6 @@ import random
 
 import merc
 import interp
-import handler_game
 import handler_room
 import state_checks
 
@@ -41,27 +40,27 @@ def do_enter(ch, argument):
         if not location or location == old_room \
                 or not ch.can_see_room(location) \
                 or (location.is_private() and not state_checks.IS_TRUSTED(ch, merc.MAX_LEVEL)):
-            handler_game.act("$p doesn't seem to go anywhere.", ch, portal, None, merc.TO_CHAR)
+            act("$p doesn't seem to go anywhere.", ch, portal, None, merc.TO_CHAR)
             return
         if ch.is_npc() and ch.act.is_set(merc.ACT_AGGRESSIVE) \
                 and state_checks.IS_SET(location.room_flags, merc.ROOM_LAW):
             ch.send("Something prevents you from leaving...\n")
             return
-        handler_game.act("$n steps into $p.", ch, portal, None, merc.TO_ROOM)
+        act("$n steps into $p.", ch, portal, None, merc.TO_ROOM)
 
         if state_checks.IS_SET(portal.value[2], merc.GATE_NORMAL_EXIT):
-            handler_game.act("You enter $p.", ch, portal, None, merc.TO_CHAR)
+            act("You enter $p.", ch, portal, None, merc.TO_CHAR)
         else:
-            handler_game.act("You walk through $p and find yourself somewhere else:...", ch, portal, None, merc.TO_CHAR)
+            act("You walk through $p and find yourself somewhere else:...", ch, portal, None, merc.TO_CHAR)
         ch.from_room()
         ch.to_room(location)
         if state_checks.IS_SET(portal.value[2], merc.GATE_GOWITH):  # take the gate along
             portal.from_room()
             portal.to_room(location)
         if state_checks.IS_SET(portal.value[2], merc.GATE_NORMAL_EXIT):
-            handler_game.act("$n has arrived.", ch, portal, None, merc.TO_ROOM)
+            act("$n has arrived.", ch, portal, None, merc.TO_ROOM)
         else:
-            handler_game.act("$n has arrived through $p.", ch, portal, None, merc.TO_ROOM)
+            act("$n has arrived through $p.", ch, portal, None, merc.TO_ROOM)
 
         ch.do_look("auto")
         # charges
@@ -82,18 +81,18 @@ def do_enter(ch, argument):
             if fch.master == ch and fch.position == merc.POS_STANDING:
                 if state_checks.IS_SET(ch.in_room.room_flags, merc.ROOM_LAW) \
                         and (state_checks.IS_NPC(fch) and state_checks.IS_SET(fch.act, merc.ACT_AGGRESSIVE)):
-                    handler_game.act("You can't bring $N into the city.", ch, None, fch, merc.TO_CHAR)
-                    handler_game.act("You aren't allowed in the city.", fch, None, None, merc.TO_CHAR)
+                    act("You can't bring $N into the city.", ch, None, fch, merc.TO_CHAR)
+                    act("You aren't allowed in the city.", fch, None, None, merc.TO_CHAR)
                     continue
-                handler_game.act("You follow $N.", fch, None, ch, merc.TO_CHAR)
+                act("You follow $N.", fch, None, ch, merc.TO_CHAR)
                 fch.do_enter(argument)
         if portal and portal.value[0] == -1:
-            handler_game.act("$p fades out of existence.", ch, portal, None, merc.TO_CHAR)
+            act("$p fades out of existence.", ch, portal, None, merc.TO_CHAR)
             if ch.in_room == old_room:
-                handler_game.act("$p fades out of existence.", ch, portal, None, merc.TO_ROOM)
+                act("$p fades out of existence.", ch, portal, None, merc.TO_ROOM)
             elif old_room.people:
-                handler_game.act("$p fades out of existence.", old_room.people, portal, None, merc.TO_CHAR)
-                handler_game.act("$p fades out of existence.", old_room.people, portal, None, merc.TO_ROOM)
+                act("$p fades out of existence.", old_room.people, portal, None, merc.TO_CHAR)
+                act("$p fades out of existence.", old_room.people, portal, None, merc.TO_ROOM)
             portal.extract()
         return
     ch.send("Nope, can't do it.\n")

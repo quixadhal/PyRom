@@ -18,9 +18,9 @@ def spell_summon(sn, level, ch, victim, target):
             or (victim.is_npc() and victim.act.is_set(merc.ACT_AGGRESSIVE)) \
             or victim.level >= level + 3 \
             or (not victim.is_npc() and victim.level >= merc.LEVEL_IMMORTAL) \
-            or victim.fighting != None \
+            or victim.fighting is not None \
             or (victim.is_npc() and state_checks.IS_SET(victim.imm_flags, merc.IMM_SUMMON)) \
-            or (victim.is_npc() and victim.pIndexData.pShop != None) \
+            or (victim.is_npc() and victim.pIndexData.pShop is not None) \
             or (not victim.is_npc() and victim.act.is_set(merc.PLR_NOSUMMON)) \
             or (victim.is_npc() and handler_magic.saves_spell(level, victim, merc.DAM_OTHER)):
         ch.send("You failed.\n")

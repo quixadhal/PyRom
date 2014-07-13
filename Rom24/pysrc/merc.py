@@ -106,6 +106,7 @@ player_characters = {}
 global_instances = {}
 
 instance_number = 0
+not_to_instance = []
 
 instances_by_area = {}
 instances_by_room = {}
@@ -929,7 +930,7 @@ dir_name = ["north", "east", "south", "west", "up", "down"]
 rev_dir = [2, 3, 0, 1, 5, 4]
 movement_loss = [1, 2, 2, 3, 4, 6, 4, 1, 6, 10, 6]
 
-#Character Tracking
+#Pc Tracking
 max_on = 0
 
 where_name = ["<used as light>     ",

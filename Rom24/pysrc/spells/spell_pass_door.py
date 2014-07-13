@@ -2,7 +2,6 @@ import const
 import game_utils
 import handler_game
 import merc
-import state_checks
 
 
 def spell_pass_door(sn, level, ch, victim, target):

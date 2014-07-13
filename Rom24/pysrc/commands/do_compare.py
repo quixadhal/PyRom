@@ -1,6 +1,7 @@
 import logging
+
 import game_utils
-import handler_game
+
 
 logger = logging.getLogger()
 
@@ -65,7 +66,7 @@ def do_compare(ch, argument):
             msg = "$p looks better than $P."
         else:
             msg = "$p looks worse than $P."
-    handler_game.act(msg, ch, obj1, obj2, merc.TO_CHAR)
+    act(msg, ch, obj1, obj2, merc.TO_CHAR)
     return
 
 

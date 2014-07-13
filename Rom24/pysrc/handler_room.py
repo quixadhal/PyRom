@@ -31,6 +31,7 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/ 
  ************/
 """
+import copy
 import random
 
 import handler
@@ -40,14 +41,16 @@ import merc
 import state_checks
 
 
-class Room():
+class Room(handler.Instancer):
     def __init__(self, template=None):
+        super().__init__()
+        self.vnum = 0
         if template:
-            [setattr(self, k, v) for k, v in template.__dict__.items()]
-            handler.Instancer.id_generator(self)
+            self = copy.deepcopy(template)
+            self.instancer()
+            self.instance_setup()
         else:
             self.instance_id = None
-            self.vnum = 0
             self.people = []
             self.contents = []
             self.extra_descr = []
@@ -64,12 +67,28 @@ class Room():
             self.mana_rate = 0
             self.clan = None
 
+    def __del__(self):
+        if self.instance_id:
+            self.instance_destructor()
+
     def __repr__(self):
         if not self.instance_id:
             return "<Room Template: %d>" % self.vnum
         else:
             return "<Room Instance ID: %d - Template: %d >" % (self.instance_id, self.vnum)
 
+    def instance_setup(self):
+        merc.global_instances[self.instance_id] = self
+        merc.rooms[self.instance_id] = merc.global_instances[self.instance_id]
+        if self.vnum not in merc.instances_by_room.keys():
+            merc.instances_by_room[self.vnum] = [self.instance_id]
+        else:
+            merc.instances_by_room[self.vnum].append(self.instance_id)
+
+    def instance_destructor(self):
+        merc.instances_by_room[self.vnum].remove(self.instance_id)
+        del merc.rooms[self.instance_id]
+        del merc.global_instances[self.instance_id]
 
 def get_random_room(ch):
     room = None

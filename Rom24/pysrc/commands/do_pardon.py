@@ -6,7 +6,7 @@ logger = logging.getLogger()
 import merc
 import interp
 import game_utils
-import state_checks
+
 
 def do_pardon(ch, argument):
     argument, arg1 = game_utils.read_word(argument)

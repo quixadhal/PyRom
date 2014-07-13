@@ -1,5 +1,4 @@
 import const
-import db
 import handler_game
 import handler_magic
 import merc

@@ -5,12 +5,10 @@ import random
 logger = logging.getLogger()
 
 import game_utils
-import handler_game
 import handler_magic
 import state_checks
 import merc
 import interp
-import skills
 
 
 def do_zap(ch, argument):
@@ -43,24 +41,24 @@ def do_zap(ch, argument):
 
     if wand.value[2] > 0:
         if victim:
-            handler_game.act("$n zaps $N with $p.", ch, wand, victim, merc.TO_NOTVICT)
-            handler_game.act("You zap $N with $p.", ch, wand, victim, merc.TO_CHAR)
-            handler_game.act("$n zaps you with $p.", ch, wand, victim, merc.TO_VICT)
+            act("$n zaps $N with $p.", ch, wand, victim, merc.TO_NOTVICT)
+            act("You zap $N with $p.", ch, wand, victim, merc.TO_CHAR)
+            act("$n zaps you with $p.", ch, wand, victim, merc.TO_VICT)
         else:
-            handler_game.act("$n zaps $P with $p.", ch, wand, obj, merc.TO_ROOM)
-            handler_game.act("You zap $P with $p.", ch, wand, obj, merc.TO_CHAR)
+            act("$n zaps $P with $p.", ch, wand, obj, merc.TO_ROOM)
+            act("You zap $P with $p.", ch, wand, obj, merc.TO_CHAR)
         if ch.level < wand.level \
                 or random.randint(1, 99) >= 20 + ch.get_skill("wands") * 4 // 5:
-            handler_game.act("Your efforts with $p produce only smoke and sparks.", ch, wand, None, merc.TO_CHAR)
-            handler_game.act("$n's efforts with $p produce only smoke and sparks.", ch, wand, None, merc.TO_ROOM)
+            act("Your efforts with $p produce only smoke and sparks.", ch, wand, None, merc.TO_CHAR)
+            act("$n's efforts with $p produce only smoke and sparks.", ch, wand, None, merc.TO_ROOM)
             ch.check_improve( "wands", False, 2)
         else:
             handler_magic.obj_cast_spell(wand.value[3], wand.value[0], ch, victim, obj)
             ch.check_improve( "wands", True, 2)
     wand.value[2] -= 1
     if wand.value[2] <= 0:
-        handler_game.act("$n's $p explodes into fragments.", ch, wand, None, merc.TO_ROOM)
-        handler_game.act("Your $p explodes into fragments.", ch, wand, None, merc.TO_CHAR)
+        act("$n's $p explodes into fragments.", ch, wand, None, merc.TO_ROOM)
+        act("Your $p explodes into fragments.", ch, wand, None, merc.TO_CHAR)
         wand.extract()
 
 

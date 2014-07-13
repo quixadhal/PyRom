@@ -32,20 +32,23 @@
  ************/
 """
 import idlelib.PyParse
-
+import os
 import random
+import logging
+
+logger = logging.getLogger()
+
 from merc import *
 import merc
 import nanny
 import save
 import db
 import hotfix
-import skills
 import const
 import fight
+import settings
 import state_checks
 import handler_magic
-
 import handler_game
 import handler_ch
 import game_utils
@@ -713,6 +716,13 @@ def aggr_update():
 
             fight.multi_hit(ch, victim, TYPE_UNDEFINED)
 
+
+def instance_number_save():
+    instance_num_file = os.path.join(settings.AREA_DIR, "instance_tracker.txt")
+    fp = open(instance_num_file, 'w')
+    fp.write(str(merc.instance_number))
+    fp.close()
+    logger.info("Saved the current instance number: %d" % (merc.instance_number,))
 #
 # * Handle all kinds of updates.
 # * Called once per pulse from game loop.
@@ -738,6 +748,7 @@ def update_handler():
     if pulse_area <= 0:
         pulse_area = PULSE_AREA
         db.area_update()
+        instance_number_save()  # Piggyback on area updates to save the instance number.
 
     if pulse_npc <= 0:
         pulse_npc = PULSE_MOBILE

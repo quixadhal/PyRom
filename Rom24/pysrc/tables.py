@@ -32,7 +32,6 @@
  ************/
 """
 from collections import OrderedDict, namedtuple
-from merc import *
 
 clan_type = namedtuple('clan_type', 'name, who_name, hall, independent')
 clan_table = OrderedDict()

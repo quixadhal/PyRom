@@ -1,20 +1,20 @@
 import os
 import sys
+import logging
+
 import const
 import object_creator
 import game_utils
-import handler
-import handler_ch
 import handler_game
 import handler_item
-import mobile
+import npc_handler
 import world_classes
 import handler_room
 import merc
-import logging
 import settings
 import state_checks
 import tables
+
 
 logger = logging.getLogger()
 
@@ -44,7 +44,7 @@ def load_area(area):
     pArea = None
     while area:
         if w == "#AREA":
-            pArea = world_classes.Area()
+            pArea = world_classes.Area(None)
             area, pArea.file_name = game_utils.read_string(area)
             area, pArea.name = game_utils.read_string(area)
             area, pArea.credits = game_utils.read_string(area)
@@ -103,7 +103,7 @@ def load_mobiles(area, pArea):
     w = w[1:]  # strip the pound
 
     while w != '0':
-        mob = mobile.Mobile()
+        mob = npc_handler.Npc(None, None)
         mob.vnum = int(w)
         merc.characterTemplate[mob.vnum] = mob
         mob.area = pArea.name
@@ -177,7 +177,7 @@ def load_objects(area, pArea):
     area, w = game_utils.read_word(area, False)
     w = w[1:]  # strip the pound
     while w != '0':
-        obj = handler_item.Items()
+        obj = handler_item.Items(None)
         obj.vnum = int(w)
         merc.itemTemplate[obj.vnum] = obj
         obj.area = pArea.name
@@ -283,7 +283,7 @@ def load_resets(area, pArea):
             area, t = game_utils.read_to_eol(area)
             continue
 
-        reset = world_classes.Reset()
+        reset = world_classes.Reset(None)
         reset.command = letter
         reset.template_area = pArea.name
         reset.template_name = pArea.name + " Reset " + str(count)
@@ -301,7 +301,7 @@ def load_rooms(area, pArea):
     area, w = game_utils.read_word(area, False)
     w = w[1:]  # strip the pound
     while w != '0':
-        room = handler_room.Room()
+        room = handler_room.Room(None)
         room.vnum = int(w)
         if room.vnum in merc.roomTemplate:
             logger.critical('Dupicate room Vnum: %d', room.vnum)
@@ -325,7 +325,7 @@ def load_rooms(area, pArea):
             elif letter == 'C':  # Clan
                 area, room.clan = game_utils.read_string(area)
             elif letter == 'D':  # exit
-                nexit = world_classes.Exit()
+                nexit = world_classes.Exit(None)
                 area, door = game_utils.read_int(area)
                 area, nexit.description = game_utils.read_string(area)
                 area, nexit.keyword = game_utils.read_string(area)
@@ -360,7 +360,7 @@ def load_shops(area):
 
         if keeper == 0:
             break
-        shop = world_classes.Shop()
+        shop = world_classes.Shop(None)
         shop.keeper = keeper
         merc.shopTemplate[shop.keeper] = shop
         merc.characterTemplate[shop.keeper].pShop = merc.shopTemplate[shop.keeper]

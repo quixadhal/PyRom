@@ -7,7 +7,6 @@ import merc
 import const
 import interp
 import nanny
-import state_checks
 import tables
 import handler_ch
 

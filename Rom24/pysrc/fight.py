@@ -33,15 +33,14 @@
 """
 
 import logging
-import handler_ch
-import handler_item
-import object_creator
-import merc
 
 logger = logging.getLogger()
 
 from merc import *
-import db
+import handler_ch
+import handler_item
+import object_creator
+import merc
 import game_utils
 import handler_game
 import save
@@ -971,7 +970,7 @@ def make_corpse(ch):
         if state_checks.IS_SET(item.extra_flags, ITEM_INVENTORY):
             item.extract()
         elif floating:
-            if state_checks.IS_OBJ_STAT(item, ITEM_ROT_DEATH):  # get rid of it! */
+            if state_checks.is_item_stat(item, ITEM_ROT_DEATH):  # get rid of it! */
                 if item.contains:
                     handler_game.act("$p evaporates,scattering its contents.", ch, item, None, TO_ROOM)
                     for contents_id in item.contains[:]:
@@ -1120,9 +1119,9 @@ def group_gain(ch, victim):
             item = merc.items[item_id]
             if item.wear_loc == WEAR_NONE:
                 continue
-            if (state_checks.IS_OBJ_STAT(item, ITEM_ANTI_EVIL) and ch.is_evil() ) \
-                    or (state_checks.IS_OBJ_STAT(item, ITEM_ANTI_GOOD) and ch.is_good() ) \
-                    or (state_checks.IS_OBJ_STAT(item, ITEM_ANTI_NEUTRAL) and ch.is_neutral() ):
+            if (state_checks.is_item_stat(item, ITEM_ANTI_EVIL) and ch.is_evil() ) \
+                    or (state_checks.is_item_stat(item, ITEM_ANTI_GOOD) and ch.is_good() ) \
+                    or (state_checks.is_item_stat(item, ITEM_ANTI_NEUTRAL) and ch.is_neutral() ):
                 handler_game.act("You are zapped by $p.", ch, item, None, TO_CHAR)
                 handler_game.act("$n is zapped by $p.", ch, item, None, TO_ROOM)
                 item.from_char()
@@ -1360,7 +1359,7 @@ def disarm(ch, victim):
         ch.send("I think you're taking disarm a little too literally")
         return
 
-    if state_checks.IS_OBJ_STAT(item, ITEM_NOREMOVE):
+    if state_checks.is_item_stat(item, ITEM_NOREMOVE):
         handler_game.act("$S weapon won't budge!", ch, None, victim, TO_CHAR)
         handler_game.act("$n tries to disarm you, but your weapon won't budge!", ch, None, victim, TO_VICT)
         handler_game.act("$n tries to disarm $N, but fails.", ch, None, victim, TO_NOTVICT)
@@ -1369,7 +1368,7 @@ def disarm(ch, victim):
     handler_game.act("You disarm $N!", ch, None, victim, TO_CHAR)
     handler_game.act("$n disarms $N!", ch, None, victim, TO_NOTVICT)
     item.from_char()
-    if state_checks.IS_OBJ_STAT(item, ITEM_NODROP) or state_checks.IS_OBJ_STAT(item, ITEM_INVENTORY):
+    if state_checks.is_item_stat(item, ITEM_NODROP) or state_checks.is_item_stat(item, ITEM_INVENTORY):
         item.to_char(victim)
     else:
         item.to_room(victim.in_room)

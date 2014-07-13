@@ -3,7 +3,6 @@ import logging
 logger = logging.getLogger()
 
 import merc
-import db
 import interp
 import const
 import state_checks

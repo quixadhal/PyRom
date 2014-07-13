@@ -8,7 +8,6 @@ import update
 import game_utils
 import handler_game
 import handler_magic
-import state_checks
 
 
 def do_eat(ch, argument):
@@ -27,8 +26,8 @@ def do_eat(ch, argument):
         if not ch.is_npc() and ch.condition[merc.COND_FULL] > 40:
             ch.send("You are too full to eat more.\n")
             return
-    handler_game.act("$n eats $p.", ch, obj, None, merc.TO_ROOM)
-    handler_game.act("You eat $p.", ch, obj, None, merc.TO_CHAR)
+    act("$n eats $p.", ch, obj, None, merc.TO_ROOM)
+    act("You eat $p.", ch, obj, None, merc.TO_CHAR)
     if obj.item_type == merc.ITEM_FOOD:
         if not ch.is_npc():
             condition = ch.condition[merc.COND_HUNGER]
@@ -41,7 +40,7 @@ def do_eat(ch, argument):
         if obj.value[3] != 0:
             # The food was poisoned!
             af = handler_game.AFFECT_DATA()
-            handler_game.act("$n chokes and gags.", ch, 0, 0, merc.TO_ROOM)
+            act("$n chokes and gags.", ch, 0, 0, merc.TO_ROOM)
             ch.send("You choke and gag.\n")
             af.where = merc.TO_AFFECTS
             af.type = "poison"

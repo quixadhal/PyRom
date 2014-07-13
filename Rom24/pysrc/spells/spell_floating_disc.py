@@ -1,6 +1,6 @@
 import random
+
 import const
-import db
 import handler_game
 import handler_item
 import merc
@@ -9,7 +9,7 @@ import state_checks
 
 def spell_floating_disc(sn, level, ch, victim, target):
     floating = ch.get_eq(merc.WEAR_FLOAT)
-    if floating and state_checks.IS_OBJ_STAT(floating, merc.ITEM_NOREMOVE):
+    if floating and state_checks.is_item_stat(floating, merc.ITEM_NOREMOVE):
         handler_game.act("You can't remove $p.", ch, floating, None, merc.TO_CHAR)
         return
 

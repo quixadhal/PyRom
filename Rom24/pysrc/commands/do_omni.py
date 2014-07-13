@@ -4,7 +4,7 @@ logger = logging.getLogger()
 
 import merc
 import interp
-import state_checks
+
 
 def do_omni(ch, argument):
     if ch.act.is_set(merc.PLR_OMNI):

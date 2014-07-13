@@ -1,12 +1,11 @@
 import logging
+import handler_game
 
 
 logger = logging.getLogger()
 
 import merc
 import interp
-import handler_game
-import state_checks
 
 
 def do_emote(ch, argument):

@@ -1,13 +1,13 @@
 import logging
+
 import object_creator
+
 
 logger = logging.getLogger()
 
 import random
 import merc
 import interp
-import skills
-import db
 
 
 def do_buy(ch, argument):

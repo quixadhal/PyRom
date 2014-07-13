@@ -2,7 +2,7 @@ import logging
 
 logger = logging.getLogger()
 
-import character
+import pc
 import game_utils
 import interp
 import merc
@@ -22,7 +22,7 @@ def do_debug(ch, argument):
         ch.send("Nope.\n")
         return
     handler_log.GlobalDebugFlag.gdfset(True)
-    character.Character.interpret(ch, argument)
+    pc.Pc.interpret(ch, argument)
     return
 
 interp.register_command(interp.cmd_type('debug', do_debug, merc.POS_DEAD, merc.ML, merc.LOG_NORMAL, 1))

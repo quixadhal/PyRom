@@ -6,7 +6,6 @@ import random
 import merc
 import interp
 import const
-import skills
 import handler_game
 import state_checks
 
@@ -26,18 +25,18 @@ def do_envenom(ch, argument):
         ch.send("Are you crazy? You'd poison yourself!\n")
         return
     if obj.item_type == merc.ITEM_FOOD or obj.item_type == merc.ITEM_DRINK_CON:
-        if state_checks.IS_OBJ_STAT(obj, merc.ITEM_BLESS) or state_checks.IS_OBJ_STAT(obj, merc.ITEM_BURN_PROOF):
-            handler_game.act("You fail to poison $p.", ch, obj, None, merc.TO_CHAR)
+        if state_checks.is_item_stat(obj, merc.ITEM_BLESS) or state_checks.is_item_stat(obj, merc.ITEM_BURN_PROOF):
+            act("You fail to poison $p.", ch, obj, None, merc.TO_CHAR)
             return
         if random.randint(1, 99) < skill:  # success!
-            handler_game.act("$n treats $p with deadly poison.", ch, obj, None, merc.TO_ROOM)
-            handler_game.act("You treat $p with deadly poison.", ch, obj, None, merc.TO_CHAR)
+            act("$n treats $p with deadly poison.", ch, obj, None, merc.TO_ROOM)
+            act("You treat $p with deadly poison.", ch, obj, None, merc.TO_CHAR)
             if not obj.value[3]:
                 obj.value[3] = 1
                 ch.check_improve( "envenom", True, 4)
             state_checks.WAIT_STATE(ch, const.skill_table["envenom"].beats)
             return
-        handler_game.act("You fail to poison $p.", ch, obj, None, merc.TO_CHAR)
+        act("You fail to poison $p.", ch, obj, None, merc.TO_CHAR)
         if not obj.value[3]:
             ch.check_improve( "envenom", False, 4)
             state_checks.WAIT_STATE(ch, const.skill_table["envenom"].beats)
@@ -49,14 +48,14 @@ def do_envenom(ch, argument):
                 or state_checks.IS_WEAPON_STAT(obj, merc.WEAPON_SHARP) \
                 or state_checks.IS_WEAPON_STAT(obj, merc.WEAPON_VORPAL) \
                 or state_checks.IS_WEAPON_STAT(obj, merc.WEAPON_SHOCKING) \
-                or state_checks.IS_OBJ_STAT(obj, merc.ITEM_BLESS) or state_checks.IS_OBJ_STAT(obj, merc.ITEM_BURN_PROOF):
-            handler_game.act("You can't seem to envenom $p.", ch, obj, None, merc.TO_CHAR)
+                or state_checks.is_item_stat(obj, merc.ITEM_BLESS) or state_checks.is_item_stat(obj, merc.ITEM_BURN_PROOF):
+            act("You can't seem to envenom $p.", ch, obj, None, merc.TO_CHAR)
             return
         if obj.value[3] < 0 or const.attack_table[obj.value[3]].damage == merc.DAM_BASH:
             ch.send("You can only envenom edged weapons.\n")
             return
         if state_checks.IS_WEAPON_STAT(obj, merc.WEAPON_POISON):
-            handler_game.act("$p is already envenomed.", ch, obj, None, merc.TO_CHAR)
+            act("$p is already envenomed.", ch, obj, None, merc.TO_CHAR)
             return
         percent = random.randint(1, 99)
         if percent < skill:
@@ -70,17 +69,17 @@ def do_envenom(ch, argument):
             af.bitvector = merc.WEAPON_POISON
             obj.affect_add(af)
 
-            handler_game.act("$n coats $p with deadly venom.", ch, obj, None, merc.TO_ROOM)
-            handler_game.act("You coat $p with venom.", ch, obj, None, merc.TO_CHAR)
+            act("$n coats $p with deadly venom.", ch, obj, None, merc.TO_ROOM)
+            act("You coat $p with venom.", ch, obj, None, merc.TO_CHAR)
             ch.check_improve( "envenom", True, 3)
             state_checks.WAIT_STATE(ch, const.skill_table["envenom"].beats)
             return
         else:
-            handler_game.act("You fail to envenom $p.", ch, obj, None, merc.TO_CHAR)
+            act("You fail to envenom $p.", ch, obj, None, merc.TO_CHAR)
             ch.check_improve( "envenom", False, 3)
             state_checks.WAIT_STATE(ch, const.skill_table["envenom"].beats)
             return
-    handler_game.act("You can't poison $p.", ch, obj, None, merc.TO_CHAR)
+    act("You can't poison $p.", ch, obj, None, merc.TO_CHAR)
     return
 
 

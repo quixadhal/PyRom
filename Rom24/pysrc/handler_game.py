@@ -2,9 +2,11 @@ import handler_ch
 import handler_item
 import living
 from merc import *
+import game_utils
+from merc import POS_RESTING, TO_VICT, TO_CHAR, TO_ROOM, TO_NOTVICT
 import merc
 import state_checks
-import game_utils
+
 __author__ = 'venom'
 
 
@@ -62,7 +64,6 @@ class weather_data:
 time_info = time_info_data()
 weather_info = weather_data()
 
-
 def act(format, ch, arg1, arg2, send_to, min_pos=POS_RESTING):
     if not format:
         return
@@ -92,7 +93,7 @@ def act(format, ch, arg1, arg2, send_to, min_pos=POS_RESTING):
             continue
         if send_to is TO_CHAR and to is not ch:
             continue
-        if send_to is TO_VICT and ( to is not vch or to is ch ):
+        if send_to is TO_VICT and (to is not vch or to is ch):
             continue
         if send_to is TO_ROOM and to is ch:
             continue
@@ -160,3 +161,4 @@ def substitute_alias(d, argument):
         return
     buf = "%s %s" % (ch.alias[sub], remains)
     ch.interpret(buf)
+

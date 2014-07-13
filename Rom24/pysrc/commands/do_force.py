@@ -5,7 +5,6 @@ logger = logging.getLogger()
 import merc
 import interp
 import game_utils
-import handler_game
 import state_checks
 
 
@@ -27,7 +26,7 @@ def do_force(ch, argument):
             return
         for vch in merc.char_list[:]:
             if not vch.is_npc() and vch.trust < ch.trust:
-                handler_game.act(buf, ch, None, vch, merc.TO_VICT)
+                act(buf, ch, None, vch, merc.TO_VICT)
                 vch.interpret( argument)
     elif arg == "players":
         if ch.trust < merc.MAX_LEVEL - 2:
@@ -35,7 +34,7 @@ def do_force(ch, argument):
             return
         for vch in merc.char_list[:]:
             if not vch.is_npc() and vch.trust < ch.trust and vch.level < merc.LEVEL_HERO:
-                handler_game.act(buf, ch, None, vch, merc.TO_VICT)
+                act(buf, ch, None, vch, merc.TO_VICT)
                 vch.interpret(argument)
     elif arg == "gods":
         if ch.trust < merc.MAX_LEVEL - 2:
@@ -43,7 +42,7 @@ def do_force(ch, argument):
             return
         for vch in merc.char_list[:]:
             if not vch.is_npc() and vch.trust < ch.trust and vch.level >= merc.LEVEL_HERO:
-                handler_game.act(buf, ch, None, vch, merc.TO_VICT)
+                act(buf, ch, None, vch, merc.TO_VICT)
                 vch.interpret(argument)
     else:
         victim = ch.get_char_world(arg)
@@ -63,7 +62,7 @@ def do_force(ch, argument):
         if not victim.is_npc() and ch.trust < merc.MAX_LEVEL - 3:
             ch.send("Not at your level!\n")
             return
-        handler_game.act(buf, ch, None, victim, merc.TO_VICT)
+        act(buf, ch, None, victim, merc.TO_VICT)
         victim.interpret(argument)
     ch.send("Ok.\n")
     return

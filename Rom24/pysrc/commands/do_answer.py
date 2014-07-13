@@ -1,16 +1,16 @@
 import logging
+
 import handler_ch
+
 
 logger = logging.getLogger()
 
-import handler_game
 import merc
 import interp
 import nanny
 
 
 # RT answer channel - uses same line as questions */
-import state_checks
 
 
 def do_answer(ch, argument):
@@ -34,7 +34,7 @@ def do_answer(ch, argument):
             victim = handler_ch.CH(d)
             if d.is_connected(nanny.con_playing) and d.character != ch \
             and not victim.comm.is_set(merc.COMM_NOQUESTION) and not victim.comm.is_set(merc.COMM_QUIET):
-                handler_game.act("$n answers '$t'", ch, argument, d.character, merc.TO_VICT, merc.POS_SLEEPING)
+                act("$n answers '$t'", ch, argument, d.character, merc.TO_VICT, merc.POS_SLEEPING)
 
 
 interp.register_command(interp.cmd_type('answer', do_answer, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1))

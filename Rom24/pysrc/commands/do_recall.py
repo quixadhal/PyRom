@@ -6,8 +6,6 @@ import interp
 import merc
 import random
 import fight
-import handler_game
-import skills
 import state_checks
 import update
 
@@ -17,7 +15,7 @@ def do_recall(ch, argument):
     if ch.is_npc() and not ch.act.is_set(merc.ACT_PET):
         ch.send("Only players can recall.\n")
         return
-    handler_game.act("$n prays for transportation!", ch, 0, 0, merc.TO_ROOM)
+    act("$n prays for transportation!", ch, 0, 0, merc.TO_ROOM)
     location = merc.roomTemplate[merc.ROOM_VNUM_TEMPLE]
     if not location:
         ch.send("You are completely lost.\n")
@@ -41,10 +39,10 @@ def do_recall(ch, argument):
         ch.send("You recall from combat!  You lose %d exps.\n" % lose)
         fight.stop_fighting(ch, True)
     ch.move /= 2
-    handler_game.act("$n disappears.", ch, None, None, merc.TO_ROOM)
+    act("$n disappears.", ch, None, None, merc.TO_ROOM)
     ch.from_room()
     ch.to_room(location)
-    handler_game.act("$n appears in the room.", ch, None, None, merc.TO_ROOM)
+    act("$n appears in the room.", ch, None, None, merc.TO_ROOM)
     ch.do_look("auto")
 
     if ch.pet is not None:

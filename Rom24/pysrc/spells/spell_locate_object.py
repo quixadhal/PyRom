@@ -13,7 +13,7 @@ def spell_locate_object(sn, level, ch, victim, target):
 
     for obj in merc.object_list:
         if not ch.can_see_item(obj) or not game_utils.is_name(handler_magic.target_name, obj.name) \
-                or state_checks.IS_OBJ_STAT(obj, merc.ITEM_NOLOCATE) or random.randint(1, 99) > 2 * level \
+                or state_checks.is_item_stat(obj, merc.ITEM_NOLOCATE) or random.randint(1, 99) > 2 * level \
                 or ch.level < obj.level:
             continue
 
@@ -26,7 +26,7 @@ def spell_locate_object(sn, level, ch, victim, target):
         if in_item.carried_by and ch.can_see(in_item.carried_by):
             ch.send("one is carried by %s\n" % state_checks.PERS(in_item.carried_by, ch))
         else:
-            if ch.is_immortal() and in_item.in_room != None:
+            if ch.is_immortal() and in_item.in_room is not None:
                 ch.send("one is in %s [Room %d]\n" % (in_item.in_room.name, in_item.in_room.vnum))
             else:
                 ch.send("one is in %s\n" % ( "somewhere" if in_item.in_room == None else in_item.in_room.name ))

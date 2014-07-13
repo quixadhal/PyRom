@@ -7,7 +7,6 @@ import interp
 
 # RT this following section holds all the auto commands from ROM, as well as
 #   replacements for config */
-import state_checks
 
 
 def do_autolist(ch, argument):

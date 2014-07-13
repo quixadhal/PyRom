@@ -1,5 +1,4 @@
 import logging
-import state_checks
 
 logger = logging.getLogger()
 

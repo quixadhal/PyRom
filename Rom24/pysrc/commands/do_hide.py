@@ -1,12 +1,10 @@
 import logging
-import skills
 
 logger = logging.getLogger()
 
 import random
 
 import merc
-import state_checks
 import interp
 
 

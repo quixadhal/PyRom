@@ -9,7 +9,6 @@ import random
 import merc
 import interp
 import fight
-import skills
 
 
 def do_cast(ch, argument):

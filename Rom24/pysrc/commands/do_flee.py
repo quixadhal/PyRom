@@ -1,6 +1,8 @@
 import random
 import logging
+
 import handler_room
+
 
 logger = logging.getLogger()
 
@@ -11,7 +13,6 @@ import merc
 import interp
 import fight
 import update
-import handler_game
 
 
 def do_flee( ch, argument ):
@@ -39,7 +40,7 @@ def do_flee( ch, argument ):
         if now_in == was_in:
             continue
         ch.in_room = was_in.instance_id
-        handler_game.act("$n has fled!", ch, None, None, merc.TO_ROOM)
+        act("$n has fled!", ch, None, None, merc.TO_ROOM)
         ch.in_room = now_in.instance_id
         if not ch.is_npc():
             ch.send("You flee from combat!\n")

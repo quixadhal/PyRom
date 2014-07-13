@@ -4,7 +4,6 @@ logger = logging.getLogger()
 
 import merc
 import interp
-import handler_game
 
 
 def do_report(ch, argument):
@@ -18,7 +17,7 @@ def do_report(ch, argument):
         ch.mana, ch.max_mana,
         ch.move, ch.max_move,
         ch.exp  )
-    handler_game.act(buf, ch, None, None, merc.TO_ROOM)
+    act(buf, ch, None, None, merc.TO_ROOM)
     return
 
 
