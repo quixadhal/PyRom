@@ -32,7 +32,8 @@
  ************/
 """
 import logging
-import character
+import pc
+import update
 
 logger = logging.getLogger()
 
@@ -60,17 +61,21 @@ def boot_db():
     #fix_exits()
     area_update()
     object_creator.setup_exits()
+    update.instance_number_save()
     logger.info('    Loaded %d Help files', len(merc.help_list))
     logger.info('    Loaded %d Areas', len(merc.areaTemplate))
-    logger.info('    Loaded %d Mobile Indexes', len(merc.characterTemplate))
-    logger.info('    Loaded %d Object Indexes', len(merc.itemTemplate))
-    logger.info('    Loaded %d Room Indexes', len(merc.roomTemplate))
+    logger.info('    Loaded %d Npc Templates', len(merc.characterTemplate))
+    logger.info('    Loaded %d Item Templates', len(merc.itemTemplate))
+    logger.info('    Loaded %d Room Templates', len(merc.roomTemplate))
     logger.info('    Loaded %d Resets', len(merc.reset_list))
     logger.info('    Loaded %d Shops', len(merc.shop_list))
     logger.info('    Loaded %d Socials', len(merc.social_list))
 
 
 def init_instance():
+    #First lets add the bad terms we dont want to pass during instancing, while copying attributes
+    merc.not_to_instance.append('instance_id')
+    merc.not_to_instance.append('act')
     instance_num_file = os.path.join(settings.AREA_DIR, "instance_tracker.txt")
     fp = open(instance_num_file, 'a')  # in case the file doesnt exist open in append mode to not wipe
     fp.close()
@@ -147,7 +152,7 @@ def reset_area(area):
             for instanceID in roomInstance.people:
                 if instanceID:
                     mob = merc.characters[instanceID]
-                    if isinstance(mob, character.Character):
+                    if isinstance(mob, pc.Pc):
                         break
                     if mob.vnum == mobTemplate.vnum:
                         count += 1

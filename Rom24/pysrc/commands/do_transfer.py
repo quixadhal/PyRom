@@ -7,7 +7,7 @@ import fight
 import interp
 import nanny
 import game_utils
-import handler_game
+
 
 def do_transfer(ch, argument):
     argument, arg1 = game_utils.read_word(argument)
@@ -39,18 +39,18 @@ def do_transfer(ch, argument):
     if not victim:
         ch.send("They aren't here.\n")
         return
-    if victim.in_room == None:
+    if victim.in_room is None:
         ch.send("They are in limbo.\n")
         return
 
     if victim.fighting:
         fight.stop_fighting(victim, True)
-    handler_game.act("$n disappears in a mushroom cloud.", victim, None, None, merc.TO_ROOM)
+    act("$n disappears in a mushroom cloud.", victim, None, None, merc.TO_ROOM)
     victim.from_room()
     victim.to_room(location)
-    handler_game.act("$n arrives from a puff of smoke.", victim, None, None, merc.TO_ROOM)
+    act("$n arrives from a puff of smoke.", victim, None, None, merc.TO_ROOM)
     if ch != victim:
-        handler_game.act("$n has transferred you.", ch, None, victim, merc.TO_VICT)
+        act("$n has transferred you.", ch, None, victim, merc.TO_VICT)
     victim.do_look("auto")
     ch.send("Ok.\n")
 

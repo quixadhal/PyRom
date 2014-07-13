@@ -3,7 +3,6 @@ import logging
 logger = logging.getLogger()
 
 import game_utils
-import handler_game
 import handler_room
 import interp
 import merc
@@ -36,8 +35,8 @@ def do_lock(ch, argument):
                 ch.send("It's already locked.\n")
                 return
             state_checks.SET_BIT(obj.value[1], merc.EX_LOCKED)
-            handler_game.act("You lock $p.", ch, obj, None, merc.TO_CHAR)
-            handler_game.act("$n locks $p.", ch, obj, None, merc.TO_ROOM)
+            act("You lock $p.", ch, obj, None, merc.TO_CHAR)
+            act("$n locks $p.", ch, obj, None, merc.TO_ROOM)
             return
         # 'lock object'
         if obj.item_type != merc.ITEM_CONTAINER:
@@ -57,8 +56,8 @@ def do_lock(ch, argument):
             return
 
         state_checks.SET_BIT(obj.value[1], merc.CONT_LOCKED)
-        handler_game.act("You lock $p.", ch, obj, None, merc.TO_CHAR)
-        handler_game.act("$n locks $p.", ch, obj, None, merc.TO_ROOM)
+        act("You lock $p.", ch, obj, None, merc.TO_CHAR)
+        act("$n locks $p.", ch, obj, None, merc.TO_ROOM)
         return
     door = handler_room.find_door(ch, arg)
     if door >= 0:
@@ -79,7 +78,7 @@ def do_lock(ch, argument):
 
         state_checks.SET_BIT(pexit.exit_info, merc.EX_LOCKED)
         ch.send("*Click*\n")
-        handler_game.act("$n locks the $d.", ch, None, pexit.keyword, merc.TO_ROOM)
+        act("$n locks the $d.", ch, None, pexit.keyword, merc.TO_ROOM)
         # lock the other side
         to_room = pexit.to_room
         if to_room and to_room.exit[merc.rev_dir[door]] != 0 \

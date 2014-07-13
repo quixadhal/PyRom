@@ -6,7 +6,6 @@ logger = logging.getLogger()
 
 import game_utils
 import handler_game
-import handler_log
 import merc
 import const
 import interp
@@ -16,9 +15,13 @@ import state_checks
 import update
 
 
-class Character(living.Living):
-    def __init__(self):
+class Pc(living.Living):
+    def __init__(self, template=None):
         super().__init__()
+        if template:
+            self.name = template
+            self.instancer()
+            self.instance_setup()
         self.buffer = None
         self.valid = False
         self.pwd = ""
@@ -50,6 +53,27 @@ class Character(living.Living):
         self.practice = 0
         self.train = 0
         self.dampen = False
+
+    def __del__(self):
+        self.instance_destructor()
+
+    def __repr__(self):
+        return "<PC: %s ID %d>" % (self.name, self.instance_id)
+
+    def instance_setup(self):
+        merc.global_instances[self.instance_id] = self
+        merc.characters[self.instance_id] = merc.global_instances[self.instance_id]
+        merc.player_characters[self.instance_id] = merc.global_instances[self.instance_id]
+        if self.name not in merc.instances_by_player.keys():
+            merc.instances_by_player[self.name] = [self.instance_id]
+        else:
+            merc.instances_by_player[self.name].append(self.instance_id)
+
+    def instance_destructor(self):
+        merc.instances_by_player[self.name].remove(self.instance_id)
+        del merc.player_characters[self.instance_id]
+        del merc.characters[self.instance_id]
+        del merc.global_instances[self.instance_id]
 
     def absorb(self,*args):
         pass
@@ -452,10 +476,10 @@ class Character(living.Living):
             self.desc.snoop_by.send("\n")
         if not cmd:
             #* Look for command in socials table.
-            if not Character.check_social(self, command, argument):
+            if not Pc.check_social(self, command, argument):
                 self.send("Huh?\n")
             return
-        #* Character not in position for command?
+        #* Pc not in position for command?
         if self.position < cmd.position:
             if self.position == merc.POS_DEAD:
                 self.send("Lie still; you are DEAD.\n")

@@ -1,4 +1,5 @@
 import random
+
 import const
 import fight
 import handler_game
@@ -16,8 +17,8 @@ def spell_heat_metal(sn, level, ch, victim, target):
         for obj_lose in victim.contents[:]:
             if random.randint(1, 2 * level) > obj_lose.level \
                     and not handler_magic.saves_spell(level, victim, merc.DAM_FIRE) \
-                    and not state_checks.IS_OBJ_STAT(obj_lose, merc.ITEM_NONMETAL) \
-                    and not state_checks.IS_OBJ_STAT(obj_lose, merc.ITEM_BURN_PROOF):
+                    and not state_checks.is_item_stat(obj_lose, merc.ITEM_NONMETAL) \
+                    and not state_checks.is_item_stat(obj_lose, merc.ITEM_BURN_PROOF):
                 if obj_lose.item_type == merc.ITEM_ARMOR:
                     if obj_lose.wear_loc != -1:  # remove the item */
                         if victim.can_drop_item(obj_lose) \

@@ -9,7 +9,6 @@ import interp
 import nanny
 import handler_ch
 # whois command */
-import state_checks
 
 
 def do_whois(ch, argument):

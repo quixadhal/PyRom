@@ -34,6 +34,7 @@
 import random
 
 from merc import *
+import merc
 from update import gain_condition
 import handler_game
 import handler_magic
@@ -53,8 +54,8 @@ def acid_effect(vo, level, dam, target):
         return
     if target == TARGET_OBJ: # toast an object */
         obj = vo
-        if state_checks.IS_OBJ_STAT(obj,ITEM_BURN_PROOF) \
-                or state_checks.IS_OBJ_STAT(obj,ITEM_NOPURGE) \
+        if state_checks.is_item_stat(obj,ITEM_BURN_PROOF) \
+                or state_checks.is_item_stat(obj,ITEM_NOPURGE) \
                 or random.randint(0,4) == 0:
             return
         chance = level / 4 + dam / 10
@@ -63,7 +64,7 @@ def acid_effect(vo, level, dam, target):
         if chance > 50:
             chance = (chance - 50) // 2 + 50
 
-        if state_checks.IS_OBJ_STAT(obj,ITEM_BLESS):
+        if state_checks.is_item_stat(obj,ITEM_BLESS):
             chance -= 5
 
         chance -= obj.level * 2
@@ -90,9 +91,9 @@ def acid_effect(vo, level, dam, target):
 
         if random.randint(1,99) > chance:
             return
-        if obj.carried_by != None:
+        if obj.carried_by is not None:
             handler_game.act(msg,obj.carried_by,obj,None,TO_ALL)
-        elif obj.in_room and obj.in_room.people != None:
+        elif obj.in_room and merc.rooms[obj.in_room].people is not None:
             handler_game.act(msg,obj.in_room.people,obj,None,TO_ALL)
         if obj.item_type == ITEM_ARMOR:  # etch it */
             af_found = False
@@ -166,8 +167,8 @@ def cold_effect( vo, level, dam, target):
         return
     if target == TARGET_OBJ: # toast an object */
         obj = vo
-        if state_checks.IS_OBJ_STAT(obj,ITEM_BURN_PROOF) \
-                or state_checks.IS_OBJ_STAT(obj,ITEM_NOPURGE) \
+        if state_checks.is_item_stat(obj,ITEM_BURN_PROOF) \
+                or state_checks.is_item_stat(obj,ITEM_NOPURGE) \
                 or random.randint(0,4) == 0:
             return
         chance = level // 4 + dam // 10
@@ -176,7 +177,7 @@ def cold_effect( vo, level, dam, target):
         if chance > 50:
             chance = (chance - 50) // 2 + 50
 
-        if state_checks.IS_OBJ_STAT(obj,ITEM_BLESS):
+        if state_checks.is_item_stat(obj,ITEM_BLESS):
             chance -= 5
 
         chance -= obj.level * 2
@@ -195,7 +196,7 @@ def cold_effect( vo, level, dam, target):
         if random.randint(1,99) > chance:
             return
 
-        if obj.carried_by != None:
+        if obj.carried_by is not None:
             handler_game.act(msg,obj.carried_by,obj,None,TO_ALL)
         elif obj.in_room and obj.in_room.people:
             handler_game.act(msg,obj.in_room.people,obj,None,TO_ALL)
@@ -235,7 +236,7 @@ def fire_effect(vo, level, dam, target):
     if target == TARGET_OBJ:  # toast an object */
         obj = vo
 
-        if state_checks.IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or state_checks.IS_OBJ_STAT(obj,ITEM_NOPURGE) or random.randint(0,4) == 0:
+        if state_checks.is_item_stat(obj,ITEM_BURN_PROOF) or state_checks.is_item_stat(obj,ITEM_NOPURGE) or random.randint(0,4) == 0:
             return
  
         chance = level // 4 + dam // 10
@@ -245,7 +246,7 @@ def fire_effect(vo, level, dam, target):
         if chance > 50:
             chance = (chance - 50) // 2 + 50
 
-        if state_checks.IS_OBJ_STAT(obj,ITEM_BLESS):
+        if state_checks.is_item_stat(obj,ITEM_BLESS):
             chance -= 5
         chance -= obj.level * 2
 
@@ -324,7 +325,7 @@ def poison_effect( vo, level, dam, target):
         return
     if target == TARGET_OBJ:  # do some poisoning */
         obj = vo
-        if state_checks.IS_OBJ_STAT(obj,ITEM_BURN_PROOF) or state_checks.IS_OBJ_STAT(obj,ITEM_BLESS) or random.randint(0,4) == 0:
+        if state_checks.is_item_stat(obj,ITEM_BURN_PROOF) or state_checks.is_item_stat(obj,ITEM_BLESS) or random.randint(0,4) == 0:
             return
 
         chance = level // 4 + dam // 10
@@ -370,8 +371,8 @@ def shock_effect( vo, level, dam, target):
         return
     if target == TARGET_OBJ:
         obj = vo
-        if state_checks.IS_OBJ_STAT(obj,ITEM_BURN_PROOF) \
-                or state_checks.IS_OBJ_STAT(obj,ITEM_NOPURGE) \
+        if state_checks.is_item_stat(obj,ITEM_BURN_PROOF) \
+                or state_checks.is_item_stat(obj,ITEM_NOPURGE) \
                 or random.randint(0,4) == 0:
             return
 
@@ -382,7 +383,7 @@ def shock_effect( vo, level, dam, target):
         if chance > 50:
             chance = (chance - 50) // 2 + 50
 
-        if state_checks.IS_OBJ_STAT(obj,ITEM_BLESS):
+        if state_checks.is_item_stat(obj,ITEM_BLESS):
             chance -= 5
 
         chance -= obj.level * 2

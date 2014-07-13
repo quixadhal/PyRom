@@ -41,7 +41,7 @@ import functools
 import inspect
 
 import merc
-import character
+import pc
 import interp
 
 """So far this wrapper class will allow debugging of a function as such:
@@ -66,7 +66,7 @@ class GlobalDebugFlag:
         return
 
 def value_to_str(v):
-    if isinstance(v, character.Character):
+    if isinstance(v, pc.Pc):
         return v.name
     elif isinstance(v, interp.cmd_type):
         return v.do_fun
@@ -132,7 +132,7 @@ class logged(object):
     #Add debug log for any function you wish for TS, provides trace of incident
         if self.log_type == "Debug":  # Used to wrap any function and does not know about or care about flags
             def debug(*args, **kwargs):
-                if args and isinstance(args[0], character.Character):
+                if args and isinstance(args[0], pc.Pc):
                     mch = args[0]
                 else:
                     mch = self.ch
@@ -146,7 +146,7 @@ class logged(object):
                 try:
                     return func(*args, **kwargs)
                 except Exception as err:
-                    if isinstance(mch, character.Character):
+                    if isinstance(mch, pc.Pc):
                         if mch.level == merc.ML:
                             mch.send("Debug has been Enabled\n\n")
                         char_parse_exception(err, args, ch=mch)
@@ -159,7 +159,7 @@ class logged(object):
             def interp_debug(*args, **kwargs):
                 if merc.GDF is False and merc.GDCF is False:  # Check for global/debug command flags
                     return func(*args, **kwargs)  # if none of the debugs are on, just send the command as normal
-                if args and isinstance(args[0], character.Character):
+                if args and isinstance(args[0], pc.Pc):
                     """check if there are args, and the args entail a character structure"""
                     mch = args[0]  # If so, lets make a char object so we can send messages as needed
                 else:
@@ -174,7 +174,7 @@ class logged(object):
                 try:
                     return func(*args, **kwargs)
                 except Exception as err:
-                    if isinstance(mch, character.Character):
+                    if isinstance(mch, pc.Pc):
                         mch.send("Debug has been Enabled\n\n")
                         char_parse_exception(err, args, ch=mch)
                     else:

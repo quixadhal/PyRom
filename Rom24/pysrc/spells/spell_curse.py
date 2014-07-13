@@ -9,13 +9,13 @@ def spell_curse(sn, level, ch, victim, target):
     # deal with the object case first */
     if target == merc.TARGET_OBJ:
         obj = victim
-        if state_checks.IS_OBJ_STAT(obj, merc.ITEM_EVIL):
+        if state_checks.is_item_stat(obj, merc.ITEM_EVIL):
             handler_game.act("$p is already filled with evil.", ch, obj, None, merc.TO_CHAR)
             return
 
-        if state_checks.IS_OBJ_STAT(obj, merc.ITEM_BLESS):
+        if state_checks.is_item_stat(obj, merc.ITEM_BLESS):
             paf = state_checks.affect_find(obj.affected, const.skill_table["bless"])
-            if not handler_magic.saves_dispel(level, paf.level if paf != None else obj.level, 0):
+            if not handler_magic.saves_dispel(level, paf.level if paf is not None else obj.level, 0):
                 if paf:
                     obj.affect_remove(paf)
                 handler_game.act("$p glows with a red aura.", ch, obj, None, merc.TO_ALL)

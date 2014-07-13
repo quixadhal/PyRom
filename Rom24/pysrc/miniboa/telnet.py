@@ -85,11 +85,11 @@ MAX_CONNECTIONS = 500 if sys.platform == 'win32' else 1000
 SE = chr(240)  # End of subnegotiation parameters
 NOP = chr(241)  # No operation
 DATMK = chr(242)  # Data stream portion of a sync.
-BREAK = chr(243)  # NVT Character BRK
+BREAK = chr(243)  # NVT Pc BRK
 IP = chr(244)  # Interrupt Process
 AO = chr(245)  # Abort Output
 AYT = chr(246)  # Are you there
-EC = chr(247)  # Erase Character
+EC = chr(247)  # Erase Pc
 EL = chr(248)  # Erase Line
 GA = chr(249)  # The Go Ahead Signal
 SB = chr(250)  # Sub-option to follow

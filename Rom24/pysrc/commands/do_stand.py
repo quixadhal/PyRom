@@ -2,7 +2,6 @@ import logging
 
 logger = logging.getLogger()
 
-import handler_game
 import interp
 import merc
 import state_checks
@@ -25,7 +24,7 @@ def do_stand(ch, argument):
             ch.send("You can't seem to find a place to stand.\n")
             return
         if ch.on != obj and obj.count_users() >= obj.value[0]:
-            handler_game.act("There's no room to stand on $p.", ch, obj, None, merc.TO_CHAR, merc.POS_DEAD)
+            act("There's no room to stand on $p.", ch, obj, None, merc.TO_CHAR, merc.POS_DEAD)
             return
         ch.on = obj
 
@@ -35,34 +34,34 @@ def do_stand(ch, argument):
             return
         if not obj:
             ch.send("You wake and stand up.\n")
-            handler_game.act("$n wakes and stands up.", ch, None, None, merc.TO_ROOM)
+            act("$n wakes and stands up.", ch, None, None, merc.TO_ROOM)
             ch.on = None
         elif state_checks.IS_SET(obj.value[2], merc.STAND_AT):
-            handler_game.act("You wake and stand at $p.", ch, obj, None, merc.TO_CHAR, merc.POS_DEAD)
-            handler_game.act("$n wakes and stands at $p.", ch, obj, None, merc.TO_ROOM)
+            act("You wake and stand at $p.", ch, obj, None, merc.TO_CHAR, merc.POS_DEAD)
+            act("$n wakes and stands at $p.", ch, obj, None, merc.TO_ROOM)
         elif state_checks.IS_SET(obj.value[2], merc.STAND_ON):
-            handler_game.act("You wake and stand on $p.", ch, obj, None, merc.TO_CHAR, merc.POS_DEAD)
-            handler_game.act("$n wakes and stands on $p.", ch, obj, None, merc.TO_ROOM)
+            act("You wake and stand on $p.", ch, obj, None, merc.TO_CHAR, merc.POS_DEAD)
+            act("$n wakes and stands on $p.", ch, obj, None, merc.TO_ROOM)
         else:
-            handler_game.act("You wake and stand in $p.", ch, obj, None, merc.TO_CHAR, merc.POS_DEAD)
-            handler_game.act("$n wakes and stands in $p.", ch, obj, None, merc.TO_ROOM)
+            act("You wake and stand in $p.", ch, obj, None, merc.TO_CHAR, merc.POS_DEAD)
+            act("$n wakes and stands in $p.", ch, obj, None, merc.TO_ROOM)
         ch.position = merc.POS_STANDING
         ch.do_look("auto")
         return
     elif ch.position == merc.POS_RESTING or ch.position == merc.POS_SITTING:
         if not obj:
             ch.send("You stand up.\n")
-            handler_game.act("$n stands up.", ch, None, None, merc.TO_ROOM)
+            act("$n stands up.", ch, None, None, merc.TO_ROOM)
             ch.on = None
         elif state_checks.IS_SET(obj.value[2], merc.STAND_AT):
-            handler_game.act("You stand at $p.", ch, obj, None, merc.TO_CHAR)
-            handler_game.act("$n stands at $p.", ch, obj, None, merc.TO_ROOM)
+            act("You stand at $p.", ch, obj, None, merc.TO_CHAR)
+            act("$n stands at $p.", ch, obj, None, merc.TO_ROOM)
         elif state_checks.IS_SET(obj.value[2], merc.STAND_ON):
-            handler_game.act("You stand on $p.", ch, obj, None, merc.TO_CHAR)
-            handler_game.act("$n stands on $p.", ch, obj, None, merc.TO_ROOM)
+            act("You stand on $p.", ch, obj, None, merc.TO_CHAR)
+            act("$n stands on $p.", ch, obj, None, merc.TO_ROOM)
         else:
-            handler_game.act("You stand in $p.", ch, obj, None, merc.TO_CHAR)
-            handler_game.act("$n stands on $p.", ch, obj, None, merc.TO_ROOM)
+            act("You stand in $p.", ch, obj, None, merc.TO_CHAR)
+            act("$n stands on $p.", ch, obj, None, merc.TO_ROOM)
         ch.position = merc.POS_STANDING
         return
     elif ch.position == merc.POS_STANDING:

@@ -7,7 +7,6 @@ import comm
 import interp
 import save
 import game_utils
-import handler_game
 import state_checks
 
 def do_purge(ch, argument):
@@ -20,9 +19,9 @@ def do_purge(ch, argument):
                 victim.extract(True)
         for item_id in merc.rooms[ch.in_room].contents[:]:
             item = merc.items[item_id]
-            if not state_checks.IS_OBJ_STAT(item, merc.ITEM_NOPURGE):
+            if not state_checks.is_item_stat(item, merc.ITEM_NOPURGE):
                 item.extract()
-        handler_game.act("$n purges the room!", ch, None, None, merc.TO_ROOM)
+        act("$n purges the room!", ch, None, None, merc.TO_ROOM)
         ch.send("Ok.\n")
         return
     victim = ch.get_char_world(arg)
@@ -37,7 +36,7 @@ def do_purge(ch, argument):
             ch.send("Maybe that wasn't a good idea...\n")
             victim.send("%s tried to purge you!\n" % ch.name)
             return
-        handler_game.act("$n disintegrates $N.", ch, 0, victim, merc.TO_NOTVICT)
+        act("$n disintegrates $N.", ch, 0, victim, merc.TO_NOTVICT)
 
         if victim.level > 1:
             save.save_char_obj(victim)
@@ -46,7 +45,7 @@ def do_purge(ch, argument):
         if d:
             comm.close_socket(d)
         return
-    handler_game.act("$n purges $N.", ch, None, victim, merc.TO_NOTVICT)
+    act("$n purges $N.", ch, None, victim, merc.TO_NOTVICT)
     victim.extract(True)
     return
 

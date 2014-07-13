@@ -25,7 +25,7 @@ def obj_to_keeper(obj, ch):
         if obj.pIndexData == t_obj.pIndexData \
                 and obj.short_descr == t_obj.short_descr:
             # if this is an unlimited item, destroy the new one */
-            if state_checks.IS_OBJ_STAT(t_obj, merc.ITEM_INVENTORY):
+            if state_checks.is_item_stat(t_obj, merc.ITEM_INVENTORY):
                 obj.extract()
                 return
             obj.cost = t_obj.cost  # keep it standard */
@@ -56,10 +56,10 @@ def get_cost(keeper, obj, fBuy):
                 cost = obj.cost * pShop.profit_sell // 100
                 break
 
-        if not state_checks.IS_OBJ_STAT(obj, merc.ITEM_SELL_EXTRACT):
+        if not state_checks.is_item_stat(obj, merc.ITEM_SELL_EXTRACT):
             for obj2 in keeper.contents:
                 if obj.pIndexData == obj2.pIndexData and obj.short_descr == obj2.short_descr:
-                    if state_checks.IS_OBJ_STAT(obj2, merc.ITEM_INVENTORY):
+                    if state_checks.is_item_stat(obj2, merc.ITEM_INVENTORY):
                         cost /= 2
                     else:
                         cost = cost * 3 / 4

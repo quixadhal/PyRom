@@ -3,7 +3,6 @@ import logging
 logger = logging.getLogger()
 
 import merc
-import db
 import interp
 import game_utils
 import handler_game
@@ -20,7 +19,7 @@ def do_mload(ch, argument):
     pMobIndex = merc.characterTemplate[vnum]
     victim = instancer.create_mobile(pMobIndex)
     victim.to_room(ch.in_room)
-    handler_game.act("$n has created $N!", ch, None, victim, merc.TO_ROOM)
+    act("$n has created $N!", ch, None, victim, merc.TO_ROOM)
     handler_game.wiznet("$N loads %s." % victim.short_descr, ch, None, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.trust)
     ch.send("Ok.\n")
     return

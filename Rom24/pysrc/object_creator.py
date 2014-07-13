@@ -12,18 +12,18 @@ import handler_item
 import handler_room
 import world_classes
 import merc
-import mobile
+import npc_handler
 import special
 import state_checks
 __author__ = 'venom'
 
 
-def create_room(roomTemplate):
-    if roomTemplate is None:
+def create_room(room_template):
+    if room_template is None:
         logger.critical("Create_room: No roomTemplate given.")
         sys.exit(1)
 
-    room = handler_room.Room(roomTemplate)
+    room = handler_room.Room(room_template)
     return room
 
 
@@ -70,187 +70,185 @@ def clone_shop(parent, clone, room, keeper):
     clone.profit_sell = parent.profit_sell
 
 
-def create_mobile(mobTemplate):
-    if mobTemplate is None:
+def create_mobile(npc_template):
+    if npc_template is None:
         logger.critical("Create_mobile: None pMobIndex.")
         sys.exit(1)
 
-    mob = mobile.Mobile()
-    mob.vnum = mobTemplate.vnum
-    handler.Instancer.id_generator(mob)
-    mob.name = mobTemplate.name
-    mob.id = game_utils.get_mob_id()
-    mob.short_descr = mobTemplate.short_descr
-    mob.long_descr = mobTemplate.long_descr
-    mob.description = mobTemplate.description
-    if mobTemplate.spec_fun:
-        mob.spec_fun = special.spec_table[mobTemplate.spec_fun]
-    mob.prompt = None
+    npc = npc_handler.Npc(npc_template.vnum, 'npc')
+    npc.name = npc_template.name
+    npc.id = game_utils.get_mob_id()
+    npc.short_descr = npc_template.short_descr
+    npc.long_descr = npc_template.long_descr
+    npc.description = npc_template.description
+    if npc_template.spec_fun:
+        npc.spec_fun = special.spec_table[npc_template.spec_fun]
+    npc.prompt = None
 
-    if mobTemplate.wealth == 0:
-        mob.silver = 0
-        mob.gold = 0
+    if npc_template.wealth == 0:
+        npc.silver = 0
+        npc.gold = 0
     else:
-        wealth = random.randint(mobTemplate.wealth // 2, 3 * mobTemplate.wealth // 2)
-        mob.gold = random.randint(wealth // 200, wealth // 100)
-        mob.silver = wealth - (mob.gold * 100)
+        wealth = random.randint(npc_template.wealth // 2, 3 * npc_template.wealth // 2)
+        npc.gold = random.randint(wealth // 200, wealth // 100)
+        npc.silver = wealth - (npc.gold * 100)
 
-    if mobTemplate.new_format:
+    if npc_template.new_format:
         # load in new style */
         # read from prototype */
-        mob.group = mobTemplate.group
-        mob.act.set_bit(mobTemplate.act)
-        mob.comm.set_bit(merc.COMM_NOCHANNELS | merc.COMM_NOSHOUT | merc.COMM_NOTELL)
-        mob.affected_by.set_bit(mobTemplate.affected_by)
-        mob.alignment = mobTemplate.alignment
-        mob.level = mobTemplate.level
-        mob.hitroll = mobTemplate.hitroll
-        mob.damroll = mobTemplate.dam_dice[merc.DICE_BONUS]
-        mob.max_hit = game_utils.dice(mobTemplate.hit_dice[merc.DICE_NUMBER], mobTemplate.hit_dice[merc.DICE_TYPE]) + mobTemplate.hit_dice[
+        npc.group = npc_template.group
+        npc.act.set_bit(npc_template.act)
+        npc.comm.set_bit(merc.COMM_NOCHANNELS | merc.COMM_NOSHOUT | merc.COMM_NOTELL)
+        npc.affected_by.set_bit(npc_template.affected_by)
+        npc.alignment = npc_template.alignment
+        npc.level = npc_template.level
+        npc.hitroll = npc_template.hitroll
+        npc.damroll = npc_template.dam_dice[merc.DICE_BONUS]
+        npc.max_hit = game_utils.dice(npc_template.hit_dice[merc.DICE_NUMBER], npc_template.hit_dice[merc.DICE_TYPE]) + npc_template.hit_dice[
             merc.DICE_BONUS]
-        mob.hit = mob.max_hit
-        mob.max_mana = game_utils.dice(mobTemplate.mana_dice[merc.DICE_NUMBER], mobTemplate.mana_dice[merc.DICE_TYPE]) + mobTemplate.mana_dice[
+        npc.hit = npc.max_hit
+        npc.max_mana = game_utils.dice(npc_template.mana_dice[merc.DICE_NUMBER], npc_template.mana_dice[merc.DICE_TYPE]) + npc_template.mana_dice[
             merc.DICE_BONUS]
-        mob.mana = mob.max_mana
-        mob.damage[merc.DICE_NUMBER] = mobTemplate.dam_dice[merc.DICE_NUMBER]
-        mob.damage[merc.DICE_TYPE] = mobTemplate.dam_dice[merc.DICE_TYPE]
-        mob.dam_type = mobTemplate.dam_type
-        if mob.dam_type == 0:
+        npc.mana = npc.max_mana
+        npc.damage[merc.DICE_NUMBER] = npc_template.dam_dice[merc.DICE_NUMBER]
+        npc.damage[merc.DICE_TYPE] = npc_template.dam_dice[merc.DICE_TYPE]
+        npc.dam_type = npc_template.dam_type
+        if npc.dam_type == 0:
             num = random.randint(1, 3)
             if num == 1:
-                mob.dam_type = 3  # slash */
+                npc.dam_type = 3  # slash */
             elif num == 2:
-                mob.dam_type = 7  # pound */
+                npc.dam_type = 7  # pound */
             elif num == 3:
-                mob.dam_type = 11  # pierce */
+                npc.dam_type = 11  # pierce */
         for i in range(4):
-            mob.armor[i] = mobTemplate.armor[i]
-        mob.off_flags.set_bit(mobTemplate.off_flags)
-        mob.imm_flags.set_bit(mobTemplate.imm_flags)
-        mob.res_flags.set_bit(mobTemplate.res_flags)
-        mob.vuln_flags.set_bit(mobTemplate.vuln_flags)
-        mob.start_pos = mobTemplate.start_pos
-        mob.default_pos = mobTemplate.default_pos
-        mob.sex = mobTemplate.sex
-        if type(mobTemplate.sex) != int or mob.sex == 3:  # random sex */
-            mob.sex = random.randint(1, 2)
-        mob.race = mobTemplate.race
-        mob.form.set_bit(mobTemplate.form)
-        mob.parts.set_bit(mobTemplate.parts)
-        mob.size = int(mobTemplate.size)
-        mob.material = mobTemplate.material
+            npc.armor[i] = npc_template.armor[i]
+        npc.off_flags.set_bit(npc_template.off_flags)
+        npc.imm_flags.set_bit(npc_template.imm_flags)
+        npc.res_flags.set_bit(npc_template.res_flags)
+        npc.vuln_flags.set_bit(npc_template.vuln_flags)
+        npc.start_pos = npc_template.start_pos
+        npc.default_pos = npc_template.default_pos
+        npc.sex = npc_template.sex
+        if type(npc_template.sex) != int or npc.sex == 3:  # random sex */
+            npc.sex = random.randint(1, 2)
+        npc.race = npc_template.race
+        npc.form.set_bit(npc_template.form)
+        npc.parts.set_bit(npc_template.parts)
+        npc.size = int(npc_template.size)
+        npc.material = npc_template.material
 
         # computed on the spot */
         for i in range(merc.MAX_STATS):
-            mob.perm_stat[i] = min(25, 11 + mob.level // 4)
+            npc.perm_stat[i] = min(25, 11 + npc.level // 4)
 
-        if mob.act.is_set(merc.ACT_WARRIOR):
-            mob.perm_stat[merc.STAT_STR] += 3
-            mob.perm_stat[merc.STAT_INT] -= 1
-            mob.perm_stat[merc.STAT_CON] += 2
+        if npc.act.is_set(merc.ACT_WARRIOR):
+            npc.perm_stat[merc.STAT_STR] += 3
+            npc.perm_stat[merc.STAT_INT] -= 1
+            npc.perm_stat[merc.STAT_CON] += 2
 
-        if mob.act.is_set(merc.ACT_THIEF):
-            mob.perm_stat[merc.STAT_DEX] += 3
-            mob.perm_stat[merc.STAT_INT] += 1
-            mob.perm_stat[merc.STAT_WIS] -= 1
+        if npc.act.is_set(merc.ACT_THIEF):
+            npc.perm_stat[merc.STAT_DEX] += 3
+            npc.perm_stat[merc.STAT_INT] += 1
+            npc.perm_stat[merc.STAT_WIS] -= 1
 
-        if mob.act.is_set(merc.ACT_CLERIC):
-            mob.perm_stat[merc.STAT_WIS] += 3
-            mob.perm_stat[merc.STAT_DEX] -= 1
-            mob.perm_stat[merc.STAT_STR] += 1
+        if npc.act.is_set(merc.ACT_CLERIC):
+            npc.perm_stat[merc.STAT_WIS] += 3
+            npc.perm_stat[merc.STAT_DEX] -= 1
+            npc.perm_stat[merc.STAT_STR] += 1
 
-        if mob.act.is_set(merc.ACT_MAGE):
-            mob.perm_stat[merc.STAT_INT] += 3
-            mob.perm_stat[merc.STAT_STR] -= 1
-            mob.perm_stat[merc.STAT_DEX] += 1
+        if npc.act.is_set(merc.ACT_MAGE):
+            npc.perm_stat[merc.STAT_INT] += 3
+            npc.perm_stat[merc.STAT_STR] -= 1
+            npc.perm_stat[merc.STAT_DEX] += 1
 
-        if mob.off_flags.is_set(merc.OFF_FAST):
-            mob.perm_stat[merc.STAT_DEX] += 2
+        if npc.off_flags.is_set(merc.OFF_FAST):
+            npc.perm_stat[merc.STAT_DEX] += 2
 
-        mob.perm_stat[merc.STAT_STR] += mob.size - merc.SIZE_MEDIUM
-        mob.perm_stat[merc.STAT_CON] += (mob.size - merc.SIZE_MEDIUM) // 2
+        npc.perm_stat[merc.STAT_STR] += npc.size - merc.SIZE_MEDIUM
+        npc.perm_stat[merc.STAT_CON] += (npc.size - merc.SIZE_MEDIUM) // 2
         af = handler_game.AFFECT_DATA()
         # let's get some spell action */
-        if mob.is_affected(merc.AFF_SANCTUARY):
+        if npc.is_affected(merc.AFF_SANCTUARY):
             af.where = merc.TO_AFFECTS
             af.type = "sanctuary"
-            af.level = mob.level
+            af.level = npc.level
             af.duration = -1
             af.location = merc.APPLY_NONE
             af.modifier = 0
             af.bitvector = merc.AFF_SANCTUARY
-            mob.affect_add(af)
+            npc.affect_add(af)
 
-        if mob.is_affected(merc.AFF_HASTE):
+        if npc.is_affected(merc.AFF_HASTE):
             af.where = merc.TO_AFFECTS
             af.type = "haste"
-            af.level = mob.level
+            af.level = npc.level
             af.duration = -1
             af.location = merc.APPLY_DEX
-            af.modifier = 1 + (mob.level >= 18) + (mob.level >= 25) + (mob.level >= 32)
+            af.modifier = 1 + (npc.level >= 18) + (npc.level >= 25) + (npc.level >= 32)
             af.bitvector = merc.AFF_HASTE
-            mob.affect_add(af)
+            npc.affect_add(af)
 
-        if mob.is_affected(merc.AFF_PROTECT_EVIL):
+        if npc.is_affected(merc.AFF_PROTECT_EVIL):
             af.where = merc.TO_AFFECTS
             af.type = "protection evil"
-            af.level = mob.level
+            af.level = npc.level
             af.duration = -1
             af.location = merc.APPLY_SAVES
             af.modifier = -1
             af.bitvector = merc.AFF_PROTECT_EVIL
-            mob.affect_add(af)
+            npc.affect_add(af)
 
-        if mob.is_affected(merc.AFF_PROTECT_GOOD):
+        if npc.is_affected(merc.AFF_PROTECT_GOOD):
             af.where = merc.TO_AFFECTS
             af.type = "protection good"
-            af.level = mob.level
+            af.level = npc.level
             af.duration = -1
             af.location = merc.APPLY_SAVES
             af.modifier = -1
             af.bitvector = merc.AFF_PROTECT_GOOD
-            mob.affect_add(af)
+            npc.affect_add(af)
     else:  # read in old format and convert */
-        mob.act.set_bit(mobTemplate.act)
-        mob.affected_by.set_bit(mobTemplate.affected_by)
-        mob.alignment = mobTemplate.alignment
-        mob.level = mobTemplate.level
-        mob.hitroll = mobTemplate.hitroll
-        mob.damroll = 0
-        mob.max_hit = mob.level * 8 + random.randint(mob.level * mob.level // 4, mob.level * mob.level)
-        mob.max_hit *= .9
-        mob.hit = mob.max_hit
-        mob.max_mana = 100 + game_utils.dice(mob.level, 10)
-        mob.mana = mob.max_mana
+        npc.act.set_bit(npc_template.act)
+        npc.affected_by.set_bit(npc_template.affected_by)
+        npc.alignment = npc_template.alignment
+        npc.level = npc_template.level
+        npc.hitroll = npc_template.hitroll
+        npc.damroll = 0
+        npc.max_hit = npc.level * 8 + random.randint(npc.level * npc.level // 4, npc.level * npc.level)
+        npc.max_hit *= .9
+        npc.hit = npc.max_hit
+        npc.max_mana = 100 + game_utils.dice(npc.level, 10)
+        npc.mana = npc.max_mana
         num = random.randint(1, 3)
         if num == 1:
-            mob.dam_type = 3  # slash */
+            npc.dam_type = 3  # slash */
         elif num == 2:
-            mob.dam_type = 7  # pound */
+            npc.dam_type = 7  # pound */
         elif num == 3:
-            mob.dam_type = 11  # pierce */
+            npc.dam_type = 11  # pierce */
         for i in range(3):
-            mob.armor[i] = game_utils.interpolate(mob.level, 100, -100)
-        mob.armor[3] = game_utils.interpolate(mob.level, 100, 0)
-        mob.race = mobTemplate.race
-        mob.off_flags.set_bit(mobTemplate.off_flags)
-        mob.imm_flags.set_bit(mobTemplate.imm_flags)
-        mob.res_flags.set_bit(mobTemplate.res_flags)
-        mob.vuln_flags.set_bit(mobTemplate.vuln_flags)
-        mob.start_pos = mobTemplate.start_pos
-        mob.default_pos = mobTemplate.default_pos
-        mob.sex = mobTemplate.sex
-        mob.form.set_bit(mobTemplate.form)
-        mob.parts.set_bit(mobTemplate.parts)
-        mob.size = merc.SIZE_MEDIUM
-        mob.material = ""
+            npc.armor[i] = game_utils.interpolate(npc.level, 100, -100)
+        npc.armor[3] = game_utils.interpolate(npc.level, 100, 0)
+        npc.race = npc_template.race
+        npc.off_flags.set_bit(npc_template.off_flags)
+        npc.imm_flags.set_bit(npc_template.imm_flags)
+        npc.res_flags.set_bit(npc_template.res_flags)
+        npc.vuln_flags.set_bit(npc_template.vuln_flags)
+        npc.start_pos = npc_template.start_pos
+        npc.default_pos = npc_template.default_pos
+        npc.sex = npc_template.sex
+        npc.form.set_bit(npc_template.form)
+        npc.parts.set_bit(npc_template.parts)
+        npc.size = merc.SIZE_MEDIUM
+        npc.material = ""
 
         for i in merc.MAX_STATS:
-            mob.perm_stat[i] = 11 + mob.level // 4
-    mob.position = mob.start_pos
+            npc.perm_stat[i] = 11 + npc.level // 4
+    npc.position = npc.start_pos
 
     # link the mob to the world list */
-    return mob
+    return npc
 
 
 # duplicate a mobile exactly -- except inventory */

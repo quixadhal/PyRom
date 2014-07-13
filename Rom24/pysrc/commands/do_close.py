@@ -1,5 +1,7 @@
 import logging
+
 import interp
+
 
 logger = logging.getLogger()
 
@@ -8,7 +10,7 @@ from interp import cmd_type
 import merc
 import game_utils
 import state_checks
-import handler_game
+
 
 def do_close(ch, argument):
     argument, arg = game_utils.read_word(argument)
@@ -28,8 +30,8 @@ def do_close(ch, argument):
                 ch.send("It's already closed.\n")
                 return
             state_checks.SET_BIT(obj.value[1], merc.EX_CLOSED)
-            handler_game.act("You close $p.", ch, obj, None, merc.TO_CHAR)
-            handler_game.act("$n closes $p.", ch, obj, None, merc.TO_ROOM)
+            act("You close $p.", ch, obj, None, merc.TO_CHAR)
+            act("$n closes $p.", ch, obj, None, merc.TO_ROOM)
             return
         # 'close object' */
         if obj.item_type != merc.ITEM_CONTAINER:
@@ -42,8 +44,8 @@ def do_close(ch, argument):
             ch.send("You can't do that.\n")
             return
         state_checks.SET_BIT(obj.value[1], merc.CONT_CLOSED)
-        handler_game.act("You close $p.", ch, obj, None, merc.TO_CHAR)
-        handler_game.act("$n closes $p.", ch, obj, None, merc.TO_ROOM)
+        act("You close $p.", ch, obj, None, merc.TO_CHAR)
+        act("$n closes $p.", ch, obj, None, merc.TO_ROOM)
         return
     door = find_door(ch, arg)
     if find_door(ch, arg) >= 0:
@@ -53,7 +55,7 @@ def do_close(ch, argument):
             ch.send("It's already closed.\n")
             return
         state_checks.SET_BIT(pexit.exit_info, merc.EX_CLOSED)
-        handler_game.act("$n closes the $d.", ch, None, pexit.keyword, merc.TO_ROOM)
+        act("$n closes the $d.", ch, None, pexit.keyword, merc.TO_ROOM)
         ch.send("Ok.\n")
 
         # close the other side
@@ -62,7 +64,7 @@ def do_close(ch, argument):
         if to_room and pexit_rev and pexit_rev.to_room == ch.in_room:
             state_checks.SET_BIT(pexit_rev.exit_info, merc.EX_CLOSED)
             for rch in to_room.people:
-                handler_game.act("The $d closes.", rch, None, pexit_rev.keyword, merc.TO_CHAR)
+                act("The $d closes.", rch, None, pexit_rev.keyword, merc.TO_CHAR)
 
 
 interp.register_command(cmd_type('close', do_close, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

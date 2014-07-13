@@ -36,8 +36,8 @@ import logging
 logger = logging.getLogger()
 
 import const
-import handler
 import handler_game
+import handler
 import object_creator
 import merc
 import state_checks
@@ -45,19 +45,22 @@ import state_checks
 # * One object.
 
 
-class Items():
+class Items(handler.Instancer):
     def __init__(self, template=None):
+        super().__init__()
+        self.vnum = 0
         if template:
             [setattr(self, k, v) for k, v in template.__dict__.items()]
-            handler.Instancer.id_generator(self)
+            self.instancer()
+            self.instance_setup()
         else:
+            self.template = True
             self.instance_id = None
             self.count = 0
             self.in_room = None
             self.in_item = None
             self.on = None
             self.carried_by = None
-            self.vnum = 0
             self.reset_num = 0
             self.contains = []
             self.extra_descr = []
@@ -81,13 +84,28 @@ class Items():
             self.timer = 0
             self.value = [0, 0, 0, 0, 0]
 
+    def __del__(self):
+        if self.instance_id:
+            self.instance_destructor()
+
     def __repr__(self):
         if not self.instance_id:
             return "<Item Template: %s : %d>" % (self.short_descr, self.vnum)
         else:
             return "<Item Instance: %s : ID %d>" % (self.short_descr, self.instance_id)
 
+    def instance_setup(self):
+        merc.global_instances[self.instance_id] = self
+        merc.items[self.instance_id] = merc.global_instances[self.instance_id]
+        if self.vnum not in merc.instances_by_item.keys():
+            merc.instances_by_item[self.vnum] = [self.instance_id]
+        else:
+            merc.instances_by_item[self.vnum].append(self.instance_id)
 
+    def instance_destructor(self):
+        merc.instances_by_item[self.vnum].remove(self.instance_id)
+        del merc.items[self.instance_id]
+        del merc.global_instances[self.instance_id]
             # * Remove an object.
 
 
@@ -327,7 +345,7 @@ def get_item(ch, item, container):
             return
         if container.vnum == merc.OBJ_VNUM_PIT \
                 and not state_checks.CAN_WEAR(container, merc.ITEM_TAKE) \
-                and not state_checks.IS_OBJ_STAT(item, merc.ITEM_HAD_TIMER):
+                and not state_checks.is_item_stat(item, merc.ITEM_HAD_TIMER):
             item.timer = 0
             handler_game.act("You get $p from $P.", ch, item, container, merc.TO_CHAR)
             handler_game.act("$n gets $p from $P.", ch, item, container, merc.TO_ROOM)
@@ -372,17 +390,17 @@ def format_item_to_char(item_id, ch, fShort):
     if (fShort and not item.short_descr) or not item.description:
         return buf
 
-    if state_checks.IS_OBJ_STAT(item, merc.ITEM_INVIS):
+    if state_checks.is_item_stat(item, merc.ITEM_INVIS):
         buf += "(Invis) "
-    if ch.is_affected(merc.AFF_DETECT_EVIL) and state_checks.IS_OBJ_STAT(item, merc.ITEM_EVIL):
+    if ch.is_affected(merc.AFF_DETECT_EVIL) and state_checks.is_item_stat(item, merc.ITEM_EVIL):
         buf += "(Red Aura) "
-    if ch.is_affected(merc.AFF_DETECT_GOOD) and state_checks.IS_OBJ_STAT(item, merc.ITEM_BLESS):
+    if ch.is_affected(merc.AFF_DETECT_GOOD) and state_checks.is_item_stat(item, merc.ITEM_BLESS):
         buf += "(Blue Aura) "
-    if ch.is_affected(merc.AFF_DETECT_MAGIC) and state_checks.IS_OBJ_STAT(item, merc.ITEM_MAGIC):
+    if ch.is_affected(merc.AFF_DETECT_MAGIC) and state_checks.is_item_stat(item, merc.ITEM_MAGIC):
         buf += "(Magical) "
-    if state_checks.IS_OBJ_STAT(item, merc.ITEM_GLOW):
+    if state_checks.is_item_stat(item, merc.ITEM_GLOW):
         buf += "(Glowing) "
-    if state_checks.IS_OBJ_STAT(item, merc.ITEM_HUM):
+    if state_checks.is_item_stat(item, merc.ITEM_HUM):
         buf += "(Humming) "
 
     if fShort:
@@ -620,8 +638,6 @@ class handler_item:
                 return
             item = merc.items[item_id]
             item.extract()
-
-        handler.Instancer.destructor(item)
 
     # * Take an obj from its character.
     def from_char(item):

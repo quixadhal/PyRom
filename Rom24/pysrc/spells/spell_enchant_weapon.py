@@ -1,4 +1,5 @@
 import random
+
 import const
 import handler_game
 import merc
@@ -42,9 +43,9 @@ def spell_enchant_weapon(sn, level, ch, victim, target):
     # apply other modifiers */
     fail -= 3 * level // 2
 
-    if state_checks.IS_OBJ_STAT(obj, merc.ITEM_BLESS):
+    if state_checks.is_item_stat(obj, merc.ITEM_BLESS):
         fail -= 15
-    if state_checks.IS_OBJ_STAT(obj, merc.ITEM_GLOW):
+    if state_checks.is_item_stat(obj, merc.ITEM_GLOW):
         fail -= 5
 
     fail = max(5, min(fail, 95))

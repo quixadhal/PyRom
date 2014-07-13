@@ -6,7 +6,7 @@ import merc
 
 def spell_cause_light(sn, level, ch, victim, target):
     fight.damage(ch, victim, game_utils.dice(1, 8) + level // 3, sn, merc.DAM_HARM, True)
-    check_killer
+    fight.check_killer
     return
 
 

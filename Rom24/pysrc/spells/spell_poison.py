@@ -10,7 +10,7 @@ def spell_poison(sn, level, ch, victim, target):
         obj = victim
 
         if obj.item_type == merc.ITEM_FOOD or obj.item_type == merc.ITEM_DRINK_CON:
-            if state_checks.IS_OBJ_STAT(obj, merc.ITEM_BLESS) or state_checks.IS_OBJ_STAT(obj, merc.ITEM_BURN_PROOF):
+            if state_checks.is_item_stat(obj, merc.ITEM_BLESS) or state_checks.is_item_stat(obj, merc.ITEM_BURN_PROOF):
                 handler_game.act("Your spell fails to corrupt $p.", ch, obj, None, merc.TO_CHAR)
                 return
             obj.value[3] = 1
@@ -23,8 +23,8 @@ def spell_poison(sn, level, ch, victim, target):
                     or state_checks.IS_WEAPON_STAT(obj, merc.WEAPON_SHARP) \
                     or state_checks.IS_WEAPON_STAT(obj, merc.WEAPON_VORPAL) \
                     or state_checks.IS_WEAPON_STAT(obj, merc.WEAPON_SHOCKING) \
-                    or state_checks.IS_OBJ_STAT(obj, merc.ITEM_BLESS) \
-                    or state_checks.IS_OBJ_STAT(obj, merc.ITEM_BURN_PROOF):
+                    or state_checks.is_item_stat(obj, merc.ITEM_BLESS) \
+                    or state_checks.is_item_stat(obj, merc.ITEM_BURN_PROOF):
                 handler_game.act("You can't seem to envenom $p.", ch, obj, None, merc.TO_CHAR)
                 return
             if state_checks.IS_WEAPON_STAT(obj, merc.WEAPON_POISON):

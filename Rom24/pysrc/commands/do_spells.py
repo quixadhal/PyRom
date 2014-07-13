@@ -6,7 +6,6 @@ import merc
 import const
 import interp
 import game_utils
-import state_checks
 
 # RT spells and skills show the players spells (or skills)
 def do_spells(ch, argument):
@@ -57,7 +56,7 @@ def do_spells(ch, argument):
         if level < merc.LEVEL_HERO + 1 \
                 and (fAll or level <= ch.level) \
                 and level >= min_lev and level <= max_lev \
-                and skill.spell_fun != None \
+                and skill.spell_fun is not None \
                 and sn in ch.learned:
             found = True
             level = skill.skill_level[ch.guild.name]

@@ -2,7 +2,6 @@ import logging
 
 logger = logging.getLogger()
 
-import state_checks
 import merc
 import interp
 

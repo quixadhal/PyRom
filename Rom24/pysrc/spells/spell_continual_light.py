@@ -1,5 +1,4 @@
 import const
-import db
 import handler_game
 import merc
 import state_checks
@@ -13,7 +12,7 @@ def spell_continual_light(sn, level, ch, victim, target):
             ch.send("You don't see that here.\n")
             return
 
-        if state_checks.IS_OBJ_STAT(light, merc.ITEM_GLOW):
+        if state_checks.is_item_stat(light, merc.ITEM_GLOW):
             handler_game.act("$p is already glowing.", ch, light, None, merc.TO_CHAR)
             return
 

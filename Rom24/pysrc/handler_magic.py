@@ -1,10 +1,10 @@
 import random
+import handler_game
 
 __author__ = 'venom'
 import merc
 import state_checks
 import game_utils
-import handler_game
 
 #Magic functions
 def say_spell(ch, spell):

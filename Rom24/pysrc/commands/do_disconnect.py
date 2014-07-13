@@ -6,7 +6,7 @@ import merc
 import interp
 import comm
 import game_utils
-import handler_game
+
 
 def do_disconnect(ch, argument):
     argument, arg = game_utils.read_word(argument)
@@ -25,7 +25,7 @@ def do_disconnect(ch, argument):
         ch.send("They aren't here.\n")
         return
     if victim.desc is None:
-        handler_game.act("$N doesn't have a descriptor.", ch, None, victim, merc.TO_CHAR)
+        act("$N doesn't have a descriptor.", ch, None, victim, merc.TO_CHAR)
         return
     for d in merc.descriptor_list:
         if d == victim.desc:

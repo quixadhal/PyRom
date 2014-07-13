@@ -6,8 +6,7 @@ logger = logging.getLogger()
 import merc
 import interp
 import nanny
-import handler_game
-import state_checks
+
 
 def do_mwhere(ch, argument):
     count = 0
@@ -38,7 +37,7 @@ def do_mwhere(ch, argument):
                 merc.rooms[victim.in_room].vnum,
                 merc.rooms[victim.in_room].name ))
     if found:
-        handler_game.act("You didn't find any $T.", ch, None, argument, merc.TO_CHAR)
+        act("You didn't find any $T.", ch, None, argument, merc.TO_CHAR)
 
 
 interp.register_command(interp.cmd_type('mwhere', do_mwhere, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1))

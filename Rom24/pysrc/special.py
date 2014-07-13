@@ -34,19 +34,17 @@
 import random
 
 import handler_ch
-
-import handler_room
-from merc import *
-import magic
+import merc
 import const
 import fight
 import handler_game
+import merc
 import state_checks
 
 
 def spec_troll_member( ch ):
-    if not ch.is_awake() or state_checks.IS_AFFECTED(ch,AFF_CALM) or ch.in_room == None  \
-    or  state_checks.IS_AFFECTED(ch,AFF_CHARM) or ch.fighting != None:
+    if not ch.is_awake() or state_checks.IS_AFFECTED(ch, merc.AFF_CALM) or ch.in_room is None  \
+    or  state_checks.IS_AFFECTED(ch, merc.AFF_CHARM) or ch.fighting is not None:
         return False
     count = 0
     # find an ogre to beat up */
@@ -74,12 +72,13 @@ def spec_troll_member( ch ):
                  "$n says 'Time to join your brother, spud.'",  
                  "$n says 'Let's rock.'"]
     message = random.choice(messages)
-    handler_game.act(message,ch,None,victim,TO_ALL)
-    fight.multi_hit( ch, victim, TYPE_UNDEFINED )
+    handler_game.act(message,ch,None,victim, merc.TO_ALL)
+    fight.multi_hit( ch, victim, merc.TYPE_UNDEFINED)
     return True
 
 def spec_ogre_member( ch ):
-    if not ch.is_awake() or state_checks.IS_AFFECTED(ch,AFF_CALM) or not ch.in_room or state_checks.IS_AFFECTED(ch,AFF_CHARM) or ch.fighting:
+    if not ch.is_awake() or state_checks.IS_AFFECTED(ch, merc.AFF_CALM) or not ch.in_room or state_checks.IS_AFFECTED(ch,
+                                                                                                                merc.AFF_CHARM) or ch.fighting:
         return False
     count = 0
     victim = None
@@ -107,12 +106,13 @@ def spec_ogre_member( ch ):
                 "$n says 'Time to join your brother, spud.'",
                 "$n says 'Let's rock.'" ]
     message = random.choice(messages)
-    handler_game.act(message,ch,None,victim,TO_ALL)
-    fight.multi_hit( ch, victim, TYPE_UNDEFINED )
+    handler_game.act(message,ch,None,victim, merc.TO_ALL)
+    fight.multi_hit( ch, victim, merc.TYPE_UNDEFINED)
     return True
 
 def spec_patrolman(ch):
-    if not ch.is_awake() or state_checks.IS_AFFECTED(ch,AFF_CALM) or not ch.in_room or state_checks.IS_AFFECTED(ch,AFF_CHARM) or ch.fighting:
+    if not ch.is_awake() or state_checks.IS_AFFECTED(ch, merc.AFF_CALM) or not ch.in_room or state_checks.IS_AFFECTED(ch,
+                                                                                                                merc.AFF_CHARM) or ch.fighting:
         return False
     victim = None
     # look for a fight in the room */
@@ -120,23 +120,24 @@ def spec_patrolman(ch):
         if vch == ch:
             continue
 
-        if vch.fighting != None:  # break it up! */
+        if vch.fighting is not None:  # break it up! */
             if random.randint(0, count) == 0:
                 victim = vch if (vch.level > vch.fighting.level) else vch.fighting
                 count += 1
 
     if victim == None or (victim.is_npc() and victim.spec_fun == ch.spec_fun):
         return False
-    neck1 = ch.get_eq(WEAR_NECK_1)
-    neck2 = ch.get_eq(WEAR_NECK_2)
-    if (neck1 and neck1.pIndexData.vnum == OBJ_VNUM_WHISTLE) or ( neck2 and neck2.pIndexData.vnum == OBJ_VNUM_WHISTLE):
-        handler_game.act("You blow down hard on $p.",ch, itemTemplate,None,TO_CHAR)
-        handler_game.act("$n blows on $p, ***WHEEEEEEEEEEEET***",ch, itemTemplate,None,TO_ROOM)
+    neck1 = ch.get_eq(merc.WEAR_NECK_1)
+    neck2 = ch.get_eq(merc.WEAR_NECK_2)
+    if (neck1 and neck1.pIndexData.vnum == merc.OBJ_VNUM_WHISTLE) or ( neck2 and neck2.pIndexData.vnum == merc.OBJ_VNUM_WHISTLE):
+        handler_game.act("You blow down hard on $p.",ch, merc.itemTemplate,None, merc.TO_CHAR)
+        handler_game.act("$n blows on $p, ***WHEEEEEEEEEEEET***",ch, merc.itemTemplate,None, merc.TO_ROOM)
 
         for vch in char_list:
             if vch.in_room == None:
                 continue
-            if roomTemplate[vch.in_room] != roomTemplate[ch.in_room.vnum] and areaTemplate[roomTemplate[vch.in_room].area] == areaTemplate[roomTemplate[ch.in_room.vnum].area]:
+            if merc.roomTemplate[vch.in_room] != merc.roomTemplate[ch.in_room.vnum] and merc.areaTemplate[merc.roomTemplate[vch.in_room].area] == merc.areaTemplate[
+                merc.roomTemplate[ch.in_room.vnum].area]:
                 vch.send("You hear a shrill whistling sound.\n")
 
     messages = ["$n yells 'All roit! All roit! break it up!'",
@@ -147,19 +148,19 @@ def spec_patrolman(ch):
                 "$n sighs in resignation and proceeds to break up the fight.",
                 "$n says 'Settle down, you hooligans!'" ]
     message = random.choice(messages)
-    handler_game.act(message,ch,None,None,TO_ALL)
-    fight.multi_hit(ch,victim,TYPE_UNDEFINED)
+    handler_game.act(message,ch,None,None, merc.TO_ALL)
+    fight.multi_hit(ch,victim, merc.TYPE_UNDEFINED)
     return True
 
 def spec_nasty( ch ):
     if not ch.is_awake():
        return False
 
-    if ch.position != POS_FIGHTING:
+    if ch.position != merc.POS_FIGHTING:
         for victim in merc.rooms[ch.in_room].people[:]:
             if not victim.is_npc() and (victim.level > ch.level) and (victim.level < ch.level + 10):
                 ch.do_backstab(victim.name)
-            if ch.position != POS_FIGHTING:
+            if ch.position != merc.POS_FIGHTING:
                 ch.do_murder(victim.name)
               # should steal some coins right away? :) */
                 return True
@@ -171,9 +172,9 @@ def spec_nasty( ch ):
     victim = ch.fighting
     num = random.randint(0,2)
     if num == 0: 
-        handler_game.act( "$n rips apart your coin purse, spilling your gold!", ch, None, victim, TO_VICT)
-        handler_game.act( "You slash apart $N's coin purse and gather his gold.", ch, None, victim, TO_CHAR)
-        handler_game.act( "$N's coin purse is ripped apart!", ch, None, victim, TO_NOTVICT)
+        handler_game.act( "$n rips apart your coin purse, spilling your gold!", ch, None, victim, merc.TO_VICT)
+        handler_game.act( "You slash apart $N's coin purse and gather his gold.", ch, None, victim, merc.TO_CHAR)
+        handler_game.act( "$N's coin purse is ripped apart!", ch, None, victim, merc.TO_NOTVICT)
         gold = victim.gold / 10  # steal 10% of his gold */
         victim.gold -= gold
         ch.gold += gold
@@ -187,7 +188,7 @@ def spec_nasty( ch ):
 #
 # Core procedure for dragons.
 def dragon( ch, spell_name ):
-    if ch.position != POS_FIGHTING:
+    if ch.position != merc.POS_FIGHTING:
         return False
     victim = None
     for vch in merc.rooms[ch.in_room].people[:]:
@@ -200,12 +201,12 @@ def dragon( ch, spell_name ):
         return False
     if spell_name not in const.skill_table:
         return False
-    const.skill_table[spell_name].spell_fun( sn, ch.level, ch, victim, TARGET_CHAR)
+    const.skill_table[spell_name].spell_fun( sn, ch.level, ch, victim, merc.TARGET_CHAR)
     return True
 # Special procedures for mobiles.
 
 def spec_breath_any( ch ):
-    if ch.position != POS_FIGHTING:
+    if ch.position != merc.POS_FIGHTING:
         return False
 
     breaths = [ spec_breath_fire, spec_breath_lightning, spec_breath_gas, spec_breath_acid, spec_breath_frost ]
@@ -224,12 +225,12 @@ def spec_breath_frost( ch ):
     return dragon( ch, "frost breath" )
 
 def spec_breath_gas( ch ):
-    if ch.position != POS_FIGHTING:
+    if ch.position != merc.POS_FIGHTING:
         return False
 
     if "gas breath" not in const.skill_table:
         return False
-    const.skill_table["gas breath"].spell_fun( sn, ch.level, ch, None,TARGET_CHAR)
+    const.skill_table["gas breath"].spell_fun( sn, ch.level, ch, None, merc.TARGET_CHAR)
     return True
 
 def spec_breath_lightning( ch ):
@@ -249,36 +250,36 @@ def spec_cast_adept( ch ):
     
     num = random.randint(1,15)
     if num ==  0:
-        handler_game.act( "$n utters the word 'abrazak'.", ch, None, None, TO_ROOM )
-        const.skill_table["armor"].spell_fun('armor', ch.level,ch,victim,TARGET_CHAR)
+        handler_game.act( "$n utters the word 'abrazak'.", ch, None, None, merc.TO_ROOM)
+        const.skill_table["armor"].spell_fun('armor', ch.level,ch,victim, merc.TARGET_CHAR)
         return True
     elif num ==   1:
-        handler_game.act( "$n utters the word 'fido'.", ch, None, None, TO_ROOM )
-        const.skill_table["bless"].spell_fun('bless', ch.level,ch,victim,TARGET_CHAR)
+        handler_game.act( "$n utters the word 'fido'.", ch, None, None, merc.TO_ROOM)
+        const.skill_table["bless"].spell_fun('bless', ch.level,ch,victim, merc.TARGET_CHAR)
         return True
     elif num == 2:
-        handler_game.act("$n utters the words 'judicandus noselacri'.",ch,None,None,TO_ROOM)
-        const.skill_table["cure blindness"].spell_fun('cure blindness', ch.level, ch, victim,TARGET_CHAR)
+        handler_game.act("$n utters the words 'judicandus noselacri'.",ch,None,None, merc.TO_ROOM)
+        const.skill_table["cure blindness"].spell_fun('cure blindness', ch.level, ch, victim, merc.TARGET_CHAR)
         return True
     elif num == 3:
-        handler_game.act("$n utters the words 'judicandus dies'.", ch,None, None, TO_ROOM )
-        const.skill_table["cure light"].spell_fun('cure light', ch.level, ch, victim,TARGET_CHAR)
+        handler_game.act("$n utters the words 'judicandus dies'.", ch,None, None, merc.TO_ROOM)
+        const.skill_table["cure light"].spell_fun('cure light', ch.level, ch, victim, merc.TARGET_CHAR)
         return True
     elif num == 4:
-        handler_game.act( "$n utters the words 'judicandus sausabru'.",ch,None,None,TO_ROOM)
-        const.skill_table["cure poison"].spell_fun('cure poison', ch.level, ch, victim,TARGET_CHAR)
+        handler_game.act( "$n utters the words 'judicandus sausabru'.",ch,None,None, merc.TO_ROOM)
+        const.skill_table["cure poison"].spell_fun('cure poison', ch.level, ch, victim, merc.TARGET_CHAR)
         return True
     elif num == 5:
-        handler_game.act("$n utters the word 'candusima'.", ch, None, None, TO_ROOM )
-        const.skill_table["refresh"].spell_fun('refresh', ch.level,ch,victim,TARGET_CHAR)
+        handler_game.act("$n utters the word 'candusima'.", ch, None, None, merc.TO_ROOM)
+        const.skill_table["refresh"].spell_fun('refresh', ch.level,ch,victim, merc.TARGET_CHAR)
         return True
     elif num == 6:
-        handler_game.act("$n utters the words 'judicandus eugzagz'.",ch,None,None,TO_ROOM)
-        const.skill_table["cure disease"].spell_fun('cure disease', ch.level,ch,victim,TARGET_CHAR)
+        handler_game.act("$n utters the words 'judicandus eugzagz'.",ch,None,None, merc.TO_ROOM)
+        const.skill_table["cure disease"].spell_fun('cure disease', ch.level,ch,victim, merc.TARGET_CHAR)
         return False
 
 def spec_cast_cleric( ch ):
-    if ch.position != POS_FIGHTING:
+    if ch.position != merc.POS_FIGHTING:
         return False
     victim = None
     for vch in merc.rooms[ch.in_room].people[:]:
@@ -330,11 +331,11 @@ def spec_cast_cleric( ch ):
 
     if spell not in const.skill_table:
         return False
-    const.skill_table[spell].spell_fun( sn, ch.level, ch, victim,TARGET_CHAR)
+    const.skill_table[spell].spell_fun( sn, ch.level, ch, victim, merc.TARGET_CHAR)
     return True
 
 def spec_cast_judge( ch ):
-    if ch.position != POS_FIGHTING:
+    if ch.position != merc.POS_FIGHTING:
         return False
  
     victim = None
@@ -349,11 +350,11 @@ def spec_cast_judge( ch ):
     spell = "high explosive"
     if spell not in const.skill_table:
         return False
-    const.skill_table[spell].spell_fun( sn, ch.level, ch, victim,TARGET_CHAR)
+    const.skill_table[spell].spell_fun( sn, ch.level, ch, victim, merc.TARGET_CHAR)
     return True
 
 def spec_cast_mage( ch ):
-    if ch.position != POS_FIGHTING:
+    if ch.position != merc.POS_FIGHTING:
         return False
     victim = None
     for vch in merc.rooms[ch.in_room].people[:]:
@@ -402,11 +403,11 @@ def spec_cast_mage( ch ):
 
     if spell not in const.skill_table:
         return False
-    const.skill_table[spell].spell_fun( sn, ch.level, ch, victim,TARGET_CHAR)
+    const.skill_table[spell].spell_fun( sn, ch.level, ch, victim, merc.TARGET_CHAR)
     return True
 
 def spec_cast_undead( ch ):
-    if ch.position != POS_FIGHTING:
+    if ch.position != merc.POS_FIGHTING:
         return False
 
     for vch in merc.rooms[ch.in_room].people[:]:
@@ -453,30 +454,30 @@ def spec_cast_undead( ch ):
             break
     if spell not in const.skill_table:
         return False
-    const.skill_table[spell].spell_fun( sn, ch.level, ch, victim,TARGET_CHAR)
+    const.skill_table[spell].spell_fun( sn, ch.level, ch, victim, merc.TARGET_CHAR)
     return True
 
 def spec_executioner( ch ):
-    if not ch.is_awake() or ch.fighting != None:
+    if not ch.is_awake() or ch.fighting is not None:
         return False
 
     crime = ""
     victim = None
     for vch in merc.rooms[ch.in_room].people[:]:
-        if not vch.is_npc() and vch.act.is_set(PLR_KILLER) and ch.can_see(vch):
+        if not vch.is_npc() and vch.act.is_set(merc.PLR_KILLER) and ch.can_see(vch):
             victim = vch
             crime = "KILLER"
 
-        if not vch.is_npc() and vch.act.is_set(PLR_THIEF) and ch.can_see(vch):
+        if not vch.is_npc() and vch.act.is_set(merc.PLR_THIEF) and ch.can_see(vch):
             victim = vch
             crime = "THIEF"
 
     if victim == None:
         return False
  
-    ch.comm.rem_bit(COMM_NOSHOUT)
+    ch.comm.rem_bit(merc.COMM_NOSHOUT)
     ch.do_yell("%s is a %s!  PROTECT THE INNOCENT!  MORE BLOOOOD!!!" % (victim.name, crime))
-    fight.multi_hit(ch, victim, TYPE_UNDEFINED)
+    fight.multi_hit(ch, victim, merc.TYPE_UNDEFINED)
     return True            
 
 def spec_fido( ch ):
@@ -484,9 +485,9 @@ def spec_fido( ch ):
         return False
 
     for corpse in ch.room_template.contents:
-        if corpse.item_type != ITEM_CORPSE_NPC:
+        if corpse.item_type != merc.ITEM_CORPSE_NPC:
             continue
-        handler_game.act( "$n savagely devours a corpse.", ch, None, None, TO_ROOM )
+        handler_game.act( "$n savagely devours a corpse.", ch, None, None, merc.TO_ROOM)
         for obj in corpse.contains[:]:
             obj.from_item()
             obj.to_room(ch.room_template)
@@ -496,7 +497,7 @@ def spec_fido( ch ):
     return False
 
 def spec_guard( ch ):
-    if not ch.is_awake() or ch.fighting != None:
+    if not ch.is_awake() or ch.fighting is not None:
         return False
 
     max_evil = 300
@@ -504,12 +505,12 @@ def spec_guard( ch ):
     crime = ""
     victim = None
     for vch in merc.rooms[ch.in_room].people:
-        if not vch.is_npc() and vch.act.is_set(PLR_KILLER) and ch.can_see(vch):
+        if not vch.is_npc() and vch.act.is_set(merc.PLR_KILLER) and ch.can_see(vch):
             victim = vch
             crime = "KILLER"
             break
 
-        if not vch.is_npc() and vch.act.is_set(PLR_THIEF) and ch.can_see(vch):
+        if not vch.is_npc() and vch.act.is_set(merc.PLR_THIEF) and ch.can_see(vch):
             crime = "THIEF" 
             victim = vch
             break
@@ -520,14 +521,14 @@ def spec_guard( ch ):
 
     if victim:
         buf = "%s is a %s!  PROTECT THE INNOCENT!!  BANZAI!!" % ( victim.name, crime )
-        ch.comm.rem_bit(COMM_NOSHOUT)
+        ch.comm.rem_bit(merc.COMM_NOSHOUT)
         ch.do_yell(buf)
-        fight.multi_hit( ch, victim, TYPE_UNDEFINED )
+        fight.multi_hit( ch, victim, merc.TYPE_UNDEFINED)
         return True
 
     if ech:
-        handler_game.act( "$n screams 'PROTECT THE INNOCENT!!  BANZAI!!", ch, None, None, TO_ROOM )
-        fight.multi_hit( ch, ech, TYPE_UNDEFINED )
+        handler_game.act( "$n screams 'PROTECT THE INNOCENT!!  BANZAI!!", ch, None, None, merc.TO_ROOM)
+        fight.multi_hit( ch, ech, merc.TYPE_UNDEFINED)
         return True
     return False
 
@@ -536,10 +537,10 @@ def spec_janitor( ch ):
         return False
 
     for trash in merc.rooms[ch.in_room].contents:
-        if not state_checks.IS_SET( trash.wear_flags, ITEM_TAKE ) or not ch.can_loot(trash):
+        if not state_checks.IS_SET( trash.wear_flags, merc.ITEM_TAKE) or not ch.can_loot(trash):
             continue
-        if trash.item_type == ITEM_DRINK_CON or trash.item_type == ITEM_TRASH or trash.cost < 10:
-            handler_game.act( "$n picks up some trash.", ch, None, None, TO_ROOM )
+        if trash.item_type == merc.ITEM_DRINK_CON or trash.item_type == merc.ITEM_TRASH or trash.cost < 10:
+            handler_game.act( "$n picks up some trash.", ch, None, None, merc.TO_ROOM)
             trash.from_room()
             trash.to_char(ch)
             return True
@@ -567,31 +568,31 @@ def spec_mayor( ch ):
             move = True
             pos  = 0
 
-    if ch.fighting != None:
+    if ch.fighting is not None:
         return spec_cast_mage( ch )
-    if not move or ch.position < POS_SLEEPING:
+    if not move or ch.position < merc.POS_SLEEPING:
         return False
 
     if path[pos] == '0' or path[pos] =='1' or path[pos] =='2' or path[pos] =='3':
         handler_ch.move_char( ch, int(path[pos]), False )
     elif path[pos] == 'W':
-        ch.position = POS_STANDING
-        handler_game.act( "$n awakens and groans loudly.", ch, None, None, TO_ROOM )
+        ch.position = merc.POS_STANDING
+        handler_game.act( "$n awakens and groans loudly.", ch, None, None, merc.TO_ROOM)
     elif path[pos] ==  'S':
-        ch.position = POS_SLEEPING
-        handler_game.act( "$n lies down and falls asleep.", ch, None, None, TO_ROOM )
+        ch.position = merc.POS_SLEEPING
+        handler_game.act( "$n lies down and falls asleep.", ch, None, None, merc.TO_ROOM)
     elif path[pos] == 'a':
-        handler_game.act( "$n says 'Hello Honey!'", ch, None, None, TO_ROOM )
+        handler_game.act( "$n says 'Hello Honey!'", ch, None, None, merc.TO_ROOM)
     elif path[pos] ==  'b':
-        handler_game.act( "$n says 'What a view!  I must do something about that dump!'", ch, None, None, TO_ROOM )
+        handler_game.act( "$n says 'What a view!  I must do something about that dump!'", ch, None, None, merc.TO_ROOM)
     elif path[pos] == 'c':
-        handler_game.act( "$n says 'Vandals!  Youngsters have no respect for anything!'", ch, None, None, TO_ROOM )
+        handler_game.act( "$n says 'Vandals!  Youngsters have no respect for anything!'", ch, None, None, merc.TO_ROOM)
     elif path[pos] == 'd':
-        handler_game.act( "$n says 'Good day, citizens!'", ch, None, None, TO_ROOM )
+        handler_game.act( "$n says 'Good day, citizens!'", ch, None, None, merc.TO_ROOM)
     elif path[pos] == 'e':
-        handler_game.act( "$n says 'I hereby declare the city of Midgaard open!'", ch, None, None, TO_ROOM )
+        handler_game.act( "$n says 'I hereby declare the city of Midgaard open!'", ch, None, None, merc.TO_ROOM)
     elif path[pos] == 'E':
-        handler_game.act( "$n says 'I hereby declare the city of Midgaard closed!'", ch, None, None, TO_ROOM )
+        handler_game.act( "$n says 'I hereby declare the city of Midgaard closed!'", ch, None, None, merc.TO_ROOM)
     elif path[pos] == 'O':
         #  do_function(ch, &do_unlock, "gate" ) */
         ch.do_open("gate")
@@ -604,26 +605,26 @@ def spec_mayor( ch ):
     return False
 
 def spec_poison( ch ):
-    if ch.position != POS_FIGHTING or not ch.fighting or random.randint(1,99) > 2 * ch.level:
+    if ch.position != merc.POS_FIGHTING or not ch.fighting or random.randint(1,99) > 2 * ch.level:
         return False
     victim = ch.fighting
-    handler_game.act( "You bite $N!",  ch, None, victim, TO_CHAR    )
-    handler_game.act( "$n bites $N!",  ch, None, victim, TO_NOTVICT )
-    handler_game.act( "$n bites you!", ch, None, victim, TO_VICT    )
-    const.skill_table['poison'].spell_fun('poison', ch.level, ch, victim,TARGET_CHAR)
+    handler_game.act( "You bite $N!",  ch, None, victim, merc.TO_CHAR)
+    handler_game.act( "$n bites $N!",  ch, None, victim, merc.TO_NOTVICT)
+    handler_game.act( "$n bites you!", ch, None, victim, merc.TO_VICT)
+    const.skill_table['poison'].spell_fun('poison', ch.level, ch, victim, merc.TARGET_CHAR)
     return True
 
 def spec_thief( ch ):
-    if ch.position != POS_STANDING:
+    if ch.position != merc.POS_STANDING:
         return False
 
     for victim in merc.rooms[ch.in_room].people:
-        if victim.is_npc() or victim.level >= LEVEL_IMMORTAL or random.randint(0,31) != 0 or not ch.can_see(victim):
+        if victim.is_npc() or victim.level >= merc.LEVEL_IMMORTAL or random.randint(0,31) != 0 or not ch.can_see(victim):
             continue
 
         if state_checks.IS_AWAKE(victim) and random.randint( 0, ch.level ) == 0:
-            handler_game.act( "You discover $n's hands in your wallet!", ch, None, victim, TO_VICT )
-            handler_game.act( "$N discovers $n's hands in $S wallet!", ch, None, victim, TO_NOTVICT )
+            handler_game.act( "You discover $n's hands in your wallet!", ch, None, victim, merc.TO_VICT)
+            handler_game.act( "$N discovers $n's hands in $S wallet!", ch, None, victim, merc.TO_NOTVICT)
             return True
         else:
             gold = victim.gold * min(random.randint(1,20),ch.level / 2) / 100

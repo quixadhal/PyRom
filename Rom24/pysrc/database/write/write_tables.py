@@ -4,7 +4,6 @@ import os
 logger = logging.getLogger()
 
 from json import dumps
-from collections import namedtuple
 from database.tracker import tables
 from settings import DATA_EXTN, DUMP_DIR
 

@@ -6,7 +6,6 @@ logger = logging.getLogger()
 import merc
 import interp
 import const
-import handler_game
 import state_checks
 
 def do_practice(ch, argument):
@@ -57,12 +56,12 @@ def do_practice(ch, argument):
             ch.learned[skill.name] += const.int_app[ch.stat(merc.STAT_INT)].learn // skill.rating[
                 ch.guild.name]
             if ch.learned[skill.name] < adept:
-                handler_game.act("You practice $T.", ch, None, skill.name, merc.TO_CHAR)
-                handler_game.act("$n practices $T.", ch, None, skill.name, merc.TO_ROOM)
+                act("You practice $T.", ch, None, skill.name, merc.TO_CHAR)
+                act("$n practices $T.", ch, None, skill.name, merc.TO_ROOM)
             else:
                 ch.learned[skill.name] = adept
-                handler_game.act("You are now learned at $T.", ch, None, skill.name, merc.TO_CHAR)
-                handler_game.act("$n is now learned at $T.", ch, None, skill.name, merc.TO_ROOM)
+                act("You are now learned at $T.", ch, None, skill.name, merc.TO_CHAR)
+                act("$n is now learned at $T.", ch, None, skill.name, merc.TO_ROOM)
     return
 
 

@@ -2,7 +2,6 @@ import const
 import fight
 import handler_game
 import merc
-import special
 import state_checks
 
 

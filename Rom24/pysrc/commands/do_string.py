@@ -80,7 +80,7 @@ def do_string(ch, argument):
             return
         if "extended".startswith(arg2) or "ed".startswith(arg2):
             argument, arg3 = game_utils.read_word(argument)
-            if argument == None:
+            if argument is None:
                 ch.send("Syntax: oset <object> ed <keyword> <string>\n")
                 return
             argument += "\n"

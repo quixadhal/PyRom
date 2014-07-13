@@ -1,21 +1,14 @@
 import os
 import json
 from collections import OrderedDict
-import pickle
-import handler
+
 import object_creator
-import game_utils
-import handler_room
-
 from merc import *
-
-import db
 import tables
 import world_classes
 import merc
 import settings
-import character
-import db
+import pc
 
 
 def area_pickler():
@@ -57,8 +50,7 @@ def save_char_obj(ch):
 def load_char_obj(d, name):
     #ch = handler_ch.CHAR_DATA()
     #ch.pcdata = handler_ch.PC_DATA()
-    ch = character.Character()
-    ch.name = name
+    ch = pc.Pc(name)
     found = False
     pfile = os.path.join(settings.PLAYER_DIR, name + '.json')
     if os.path.isfile(pfile):
@@ -173,7 +165,6 @@ def fwrite_obj(ch, obj, contained_by=None):
 def fread_char(chdict, ch):
     ch.name = chdict['name']
     ch.id = chdict['id']
-    handler.Instancer.id_generator(ch)
     ch.short_descr = chdict["ShD"]
     ch.long_descr = chdict["LnD"]
     ch.description = chdict["Desc"]

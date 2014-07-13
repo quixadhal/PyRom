@@ -1,7 +1,6 @@
 import const
 import handler_magic
 import merc
-import state_checks
 
 
 def spell_farsight(sn, level, ch, victim, target):

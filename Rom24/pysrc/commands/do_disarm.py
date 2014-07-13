@@ -4,12 +4,10 @@ logger = logging.getLogger()
 
 import random
 
-import handler_game
 import state_checks
 import merc
 import const
 import interp
-import skills
 import fight
 
 
@@ -62,9 +60,9 @@ def do_disarm(ch, argument):
         ch.check_improve( 'disarm', True, 1)
     else:
         state_checks.WAIT_STATE(ch, const.skill_table['disarm'].beats)
-        handler_game.act("You fail to disarm $N.", ch, None, victim, merc.TO_CHAR)
-        handler_game.act("$n tries to disarm you, but fails.", ch, None, victim, merc.TO_VICT)
-        handler_game.act("$n tries to disarm $N, but fails.", ch, None, victim, merc.TO_NOTVICT)
+        act("You fail to disarm $N.", ch, None, victim, merc.TO_CHAR)
+        act("$n tries to disarm you, but fails.", ch, None, victim, merc.TO_VICT)
+        act("$n tries to disarm $N, but fails.", ch, None, victim, merc.TO_NOTVICT)
         ch.check_improve( 'disarm', False, 1)
     fight.check_killer(ch, victim)
     return

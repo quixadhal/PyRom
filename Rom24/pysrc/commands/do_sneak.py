@@ -6,10 +6,7 @@ logger = logging.getLogger()
 import random
 import handler_game
 import merc
-import skills
 import interp
-import state_checks
-
 
 
 def do_sneak(ch, argument):

@@ -3,7 +3,6 @@ import logging
 logger = logging.getLogger()
 
 import game_utils
-import handler_game
 import merc
 import interp
 import state_checks
@@ -23,12 +22,12 @@ def do_wake(ch, argument):
         ch.send("They aren't here.\n")
         return
     if state_checks.IS_AWAKE(victim):
-        handler_game.act("$N is already awake.", ch, None, victim, merc.TO_CHAR)
+        act("$N is already awake.", ch, None, victim, merc.TO_CHAR)
         return
     if victim.is_affected( merc.AFF_SLEEP):
-        handler_game.act("You can't wake $M!", ch, None, victim, merc.TO_CHAR)
+        act("You can't wake $M!", ch, None, victim, merc.TO_CHAR)
         return
-    handler_game.act("$n wakes you.", ch, None, victim, merc.TO_VICT, merc.POS_SLEEPING)
+    act("$n wakes you.", ch, None, victim, merc.TO_VICT, merc.POS_SLEEPING)
     victim.do_stand("")
     return
 

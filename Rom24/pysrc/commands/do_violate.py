@@ -6,7 +6,6 @@ import merc
 import interp
 import fight
 import game_utils
-import handler_game
 
 
 def do_violate(ch, argument):
@@ -26,18 +25,18 @@ def do_violate(ch, argument):
     for rch in merc.rooms[ch.in_room].people:
         if rch.trust >= ch.invis_level:
             if ch.pcdata and ch.bamfout:
-                handler_game.act("$t", ch, ch.bamfout, rch, merc.TO_VICT)
+                act("$t", ch, ch.bamfout, rch, merc.TO_VICT)
             else:
-                handler_game.act("$n leaves in a swirling mist.", ch, None, rch, merc.TO_VICT)
+                act("$n leaves in a swirling mist.", ch, None, rch, merc.TO_VICT)
     ch.from_room()
     ch.to_room(location)
 
     for rch in merc.rooms[ch.in_room].people:
         if rch.trust >= ch.invis_level:
             if ch.pcdata and ch.bamfin:
-                handler_game.act("$t", ch, ch.bamfin, rch, merc.TO_VICT)
+                act("$t", ch, ch.bamfin, rch, merc.TO_VICT)
             else:
-                handler_game.act("$n appears in a swirling mist.", ch, None, rch, merc.TO_VICT)
+                act("$n appears in a swirling mist.", ch, None, rch, merc.TO_VICT)
     ch.do_look("auto")
     return
 

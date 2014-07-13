@@ -1,13 +1,14 @@
 import logging
+import handler_game
+
 import object_creator
+
 
 logger = logging.getLogger()
 
 import merc
 import interp
-import db
 import game_utils
-import handler_game
 import state_checks
 
 
@@ -74,7 +75,7 @@ def do_drop(ch, argument):
         item.to_room(ch.in_room)
         handler_game.act("$n drops $p.", ch, item, None, merc.TO_ROOM)
         handler_game.act("You drop $p.", ch, item, None, merc.TO_CHAR)
-        if state_checks.IS_OBJ_STAT(item, merc.ITEM_MELT_DROP):
+        if state_checks.is_item_stat(item, merc.ITEM_MELT_DROP):
             handler_game.act("$p dissolves into smoke.", ch, item, None, merc.TO_ROOM)
             handler_game.act("$p dissolves into smoke.", ch, item, None, merc.TO_CHAR)
             item.extract()
@@ -92,7 +93,7 @@ def do_drop(ch, argument):
                 item.to_room(ch.in_room)
                 handler_game.act("$n drops $p.", ch, item, None, merc.TO_ROOM)
                 handler_game.act("You drop $p.", ch, item, None, merc.TO_CHAR)
-                if state_checks.IS_OBJ_STAT(item, merc.ITEM_MELT_DROP):
+                if state_checks.is_item_stat(item, merc.ITEM_MELT_DROP):
                     handler_game.act("$p dissolves into smoke.", ch, item, None, merc.TO_ROOM)
                     handler_game.act("$p dissolves into smoke.", ch, item, None, merc.TO_CHAR)
                     item.extract()

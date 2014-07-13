@@ -36,7 +36,7 @@ def do_oload(ch, argument):
         obj.to_char(ch)
     else:
         obj.to_room(ch.in_room)
-    handler_game.act("$n has created $p!", ch, obj, None, merc.TO_ROOM)
+    act("$n has created $p!", ch, obj, None, merc.TO_ROOM)
     handler_game.wiznet("$N loads $p.", ch, obj, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.trust)
     ch.send("Ok.\n")
     return

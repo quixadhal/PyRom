@@ -1,4 +1,5 @@
 
+
 import const
 import game_utils
 import handler_game
@@ -7,7 +8,7 @@ import state_checks
 
 
 def spell_fireproof(sn, level, ch, victim, target):
-    if state_checks.IS_OBJ_STAT(obj, merc.ITEM_BURN_PROOF):
+    if state_checks.is_item_stat(obj, merc.ITEM_BURN_PROOF):
         handler_game.act("$p is already protected from burning.", ch, obj, None, merc.TO_CHAR)
         return
     af = handler_game.AFFECT_DATA()

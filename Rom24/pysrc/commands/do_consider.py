@@ -1,6 +1,7 @@
 import logging
+
 import game_utils
-import handler_game
+
 
 logger = logging.getLogger()
 
@@ -36,7 +37,7 @@ def do_consider(ch, argument):
         msg = "$N laughs at you mercilessly."
     else:
         msg = "Death will thank you for your gift."
-    handler_game.act(msg, ch, None, victim, merc.TO_CHAR)
+    act(msg, ch, None, victim, merc.TO_CHAR)
     return
 
 

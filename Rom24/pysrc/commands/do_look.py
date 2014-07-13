@@ -1,8 +1,9 @@
 import logging
+
 import game_utils
 import handler_ch
-import handler_game
 import state_checks
+
 
 logger = logging.getLogger()
 
@@ -24,7 +25,7 @@ def do_look(ch, argument):
         return
     room = merc.rooms[ch.in_room]
     if not ch.is_npc() and not ch.act.is_set(merc.PLR_HOLYLIGHT) \
-            and ch.room_template.is_dark():
+            and merc.rooms[ch.in_room].is_dark():
         ch.send("It is pitch black ... \n")
         handler_ch.show_char_to_char(room.people, ch)
         return
@@ -78,7 +79,7 @@ def do_look(ch, argument):
             if state_checks.IS_SET(obj.value[1], merc.CONT_CLOSED):
                 ch.send("It is closed.\n")
                 return
-            handler_game.act("$p holds:", ch, obj, None, merc.TO_CHAR)
+            act("$p holds:", ch, obj, None, merc.TO_CHAR)
             handler_ch.show_list_to_char(obj.contains, ch, True, True)
             return
         else:
@@ -90,8 +91,9 @@ def do_look(ch, argument):
         return
     obj_list = ch.contents
     obj_list.extend(room.contents)
-    for obj in obj_list:
-        if ch.can_see_item(obj):
+    for obj_id in obj_list:
+        obj = merc.items[obj_id]
+        if ch.can_see_item(obj.instance_id):
             # player can see object
             pdesc = game_utils.get_extra_descr(arg3, obj.extra_descr)
             if pdesc:
@@ -154,9 +156,9 @@ def do_look(ch, argument):
         ch.send("Nothing special there.\n")
     if pexit.keyword and pexit.keyword.strip():
         if state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED):
-            handler_game.act("The $d is closed.", ch, None, pexit.keyword, merc.TO_CHAR)
+            act("The $d is closed.", ch, None, pexit.keyword, merc.TO_CHAR)
         elif state_checks.IS_SET(pexit.exit_info, merc.EX_ISDOOR):
-            handler_game.act("The $d is open.", ch, None, pexit.keyword, merc.TO_CHAR)
+            act("The $d is open.", ch, None, pexit.keyword, merc.TO_CHAR)
     return
 
 

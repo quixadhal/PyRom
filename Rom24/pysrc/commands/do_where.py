@@ -3,7 +3,6 @@ import logging
 logger = logging.getLogger()
 
 import game_utils
-import handler_game
 import merc
 import interp
 import nanny
@@ -44,7 +43,7 @@ def do_where(ch, argument):
                 ch.send("%-28s %s\n" % (state_checks.PERS(victim, ch), merc.rooms[victim.in_room].name))
                 break
         if not found:
-            handler_game.act("You didn't find any $T.", ch, None, arg, merc.TO_CHAR)
+            act("You didn't find any $T.", ch, None, arg, merc.TO_CHAR)
     return
 
 

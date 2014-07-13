@@ -8,7 +8,7 @@ def spell_invis(sn, level, ch, victim, target):
     # object invisibility */
     if target == merc.TARGET_OBJ:
         obj = victim
-        if state_checks.IS_OBJ_STAT(obj, merc.ITEM_INVIS):
+        if state_checks.is_item_stat(obj, merc.ITEM_INVIS):
             handler_game.act("$p is already invisible.", ch, obj, None, merc.TO_CHAR)
             return
 

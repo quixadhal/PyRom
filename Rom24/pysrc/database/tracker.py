@@ -1,4 +1,3 @@
-from collections import namedtuple
 from const import liq_table, wiznet_table, attack_table, con_app, dex_app, wis_app, int_app, str_app, title_table, \
     weapon_table, guild_table, group_table, pc_race_table, race_table, skill_table, pc_race_type, race_type, liq_type, \
     wiznet_type, attack_type, dex_app_type, wis_app_type, int_app_type, str_app_type, weapon_type, guild_type, \

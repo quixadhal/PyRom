@@ -1,3 +1,4 @@
+import random
 import const
 import fight
 import handler_magic

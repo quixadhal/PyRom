@@ -5,7 +5,7 @@ logger = logging.getLogger()
 import merc
 import interp
 import game_utils
-import state_checks
+
 
 def do_title(ch, argument):
     if ch.is_npc():
