@@ -718,11 +718,14 @@ def aggr_update():
 
 
 def instance_number_save():
-    instance_num_file = os.path.join(settings.AREA_DIR, "instance_tracker.txt")
-    fp = open(instance_num_file, 'w')
-    fp.write(str(merc.instance_number))
-    fp.close()
-    logger.info("Saved the current instance number: %d" % (merc.instance_number,))
+    if merc.instance_number > merc.previous_instance:
+        merc.previous_instance = merc.instance_number
+        instance_num_file = os.path.join(settings.AREA_DIR, "instance_tracker.txt")
+        fp = open(instance_num_file, 'w')
+        fp.write(str(merc.instance_number))
+        fp.close()
+        logger.info("Saved the current instance number: %d" % (merc.instance_number,))
+
 #
 # * Handle all kinds of updates.
 # * Called once per pulse from game loop.

@@ -106,6 +106,7 @@ player_characters = {}
 global_instances = {}
 
 instance_number = 0
+previous_instance = instance_number
 not_to_instance = []
 
 instances_by_area = {}
