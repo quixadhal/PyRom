@@ -20,7 +20,7 @@ def do_exits(ch, argument):
     else:
         buf += "Obvious exits:\n"
     found = False
-    for door, pexit in enumerate(ch.in_room.exit):
+    for door, pexit in enumerate(merc.rooms[ch.in_room].exit):
         if pexit and pexit.to_room \
                 and (ch.act.is_set(merc.PLR_OMNI)
                      or (ch.can_see_room(pexit.to_room)

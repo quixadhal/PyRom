@@ -35,6 +35,8 @@ import logging
 
 logger = logging.getLogger()
 
+import physical
+import location
 import const
 import handler_game
 import handler
@@ -45,7 +47,7 @@ import state_checks
 # * One object.
 
 
-class Items(handler.Instancer):
+class Items(handler.Instancer, location.Location, physical.Physical):
     def __init__(self, template=None):
         super().__init__()
         self.vnum = 0
@@ -57,10 +59,6 @@ class Items(handler.Instancer):
             self.template = True
             self.instance_id = None
             self.count = 0
-            self.in_room = None
-            self.in_item = None
-            self.on = None
-            self.carried_by = None
             self.reset_num = 0
             self.contains = []
             self.extra_descr = []
@@ -69,18 +67,15 @@ class Items(handler.Instancer):
             self.enchanted = False
             self.new_format = True
             self.owner = ""
-            self.name = ""
-            self.short_descr = ""
-            self.description = ""
             self.item_type = 0
             self.extra_flags = 0
             self.wear_flags = 0
             self.wear_loc = 0
-            self._weight = 0
+
             self.cost = 0
             self.level = 0
             self.condition = 0
-            self.material = ""
+
             self.timer = 0
             self.value = [0, 0, 0, 0, 0]
 

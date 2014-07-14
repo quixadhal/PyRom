@@ -50,8 +50,10 @@ class Npc(living.Living):
     def instance_destructor(self):
         instance_list = merc.instances_by_character[self.vnum]
         instance_list.remove(self.instance_id)
-        del merc.characters[self.instance_id]
-        del merc.global_instances[self.instance_id]
+        if self.instance_id in merc.characters:
+            del merc.characters[self.instance_id]
+        if self.instance_id in merc.global_instances:
+            del merc.global_instances[self.instance_id]
 
     register_signal = pyprogs.register_signal
     absorb = pyprogs.absorb

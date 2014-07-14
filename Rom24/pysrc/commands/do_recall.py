@@ -1,4 +1,5 @@
 import logging
+import handler_game
 
 logger = logging.getLogger()
 
@@ -15,14 +16,14 @@ def do_recall(ch, argument):
     if ch.is_npc() and not ch.act.is_set(merc.ACT_PET):
         ch.send("Only players can recall.\n")
         return
-    act("$n prays for transportation!", ch, 0, 0, merc.TO_ROOM)
+    handler_game.act("$n prays for transportation!", ch, 0, 0, merc.TO_ROOM)
     location = merc.roomTemplate[merc.ROOM_VNUM_TEMPLE]
     if not location:
         ch.send("You are completely lost.\n")
         return
     if ch.in_room == location:
         return
-    if state_checks.IS_SET(ch.in_room.room_flags, merc.ROOM_NO_RECALL) or ch.is_affected(merc.AFF_CURSE):
+    if state_checks.IS_SET(merc.rooms[ch.in_room].room_flags, merc.ROOM_NO_RECALL) or ch.is_affected(merc.AFF_CURSE):
         ch.send("Mota has forsaken you.\n")
         return
     victim = ch.fighting
@@ -39,10 +40,10 @@ def do_recall(ch, argument):
         ch.send("You recall from combat!  You lose %d exps.\n" % lose)
         fight.stop_fighting(ch, True)
     ch.move /= 2
-    act("$n disappears.", ch, None, None, merc.TO_ROOM)
+    handler_game.act("$n disappears.", ch, None, None, merc.TO_ROOM)
     ch.from_room()
     ch.to_room(location)
-    act("$n appears in the room.", ch, None, None, merc.TO_ROOM)
+    handler_game.act("$n appears in the room.", ch, None, None, merc.TO_ROOM)
     ch.do_look("auto")
 
     if ch.pet is not None:

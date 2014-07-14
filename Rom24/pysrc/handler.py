@@ -59,6 +59,7 @@ class Instancer:
         allowing for a saner environment.
 
         This means that the destructor should destruct in reverse order, just in case."""
+        super().__init__()
         self.instance_id = None
 
     def instancer(self):
