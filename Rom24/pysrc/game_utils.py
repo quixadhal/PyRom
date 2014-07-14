@@ -202,6 +202,7 @@ def sensing_reader(string):
         return None
 
     atype = None
+    number_or_count = None
     first = 1
 
     string = string.lstrip()
@@ -209,45 +210,56 @@ def sensing_reader(string):
         if string[0] == '#':
             atype = 'instance_id'
             second = string.replace('#', '')
-            return atype, first, second
+            return atype, number_or_count, first, second
         else:
             return None  # Funky id request
 
-    if '.' in string:
-        sep = string.find('.')
+    if '.' in string or '*' in string:
+        if '*' in string:
+            sep = string.find('*')
+            number_or_count = 'count'
+        else:
+            sep = string.find('.')
+            number_or_count = 'number'
         first = string[:sep]
         second = string[sep + 1:]
-        if '"' or "'" in second:
-            atype = 'numbered_compound'
+        if '"' in second or "'" in second:
+            if number_or_count == 'number':
+                atype = 'number_compound'
+            else:
+                atype = 'count_compound'
             compound_list = []
             if '"' in second:
                 second = second.replace('"', '')
-            elif "'" in second:
+            else:
                 second = second.replace("'", "")
             compound, word = read_word(second, True)
             compound_list.append(word)
             while len(compound) > 0:
                 compound, word = read_word(compound)
                 compound_list.append(word)
-            return atype, first, compound_list
+            return atype, number_or_count, first, compound_list
         if not first.isdigit():
             first = 1
         if second.isdigit():
             atype = 'vnum'
-            return atype, first, int(second)
+            return atype, number_or_count, first, second
         elif second.isalpha():
             atype = 'word'
-            return atype, first, second
+            return atype, number_or_count, first, second
         else:
-            return None
+            return None, None, None, None
 
     elif string.isdigit():
         atype = 'vnum'
-        return atype, first, int(string)
+        return atype, None, first, int(string)
 
     elif string.isalpha():
         atype = 'word'
-        return atype, first, string
+        return atype, None, first, string
+
+    elif not string.isalnum():
+        return None, None, None, None
 
     else:
         compound_list = []
@@ -257,7 +269,7 @@ def sensing_reader(string):
             compound, word = read_word(compound)
             compound_list.append(word)
         atype = 'compound'
-        return atype, first, compound_list
+        return atype, number_or_count, first, compound_list
 
 
 
