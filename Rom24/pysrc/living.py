@@ -1,7 +1,9 @@
-import copy
 import logging
 import random
+
 import handler_game
+import physical
+
 
 logger = logging.getLogger()
 
@@ -97,19 +99,6 @@ class Grouping:
         if ch.is_same_group(owner):
             return True
         return False
-
-
-class Physical:
-    def __init__(self):
-        super().__init__()
-        self.name = ""
-        self.short_descr = ""
-        self.long_descr = ""
-        self.description = ""
-        self.form = bit.Bit(flags=tables.form_flags)
-        self.parts = bit.Bit(flags=tables.part_flags)
-        self.size = 0
-        self.material = ""
 
 
 class Fight:
@@ -223,7 +212,7 @@ class Container:
         return const.str_app[self.stat(merc.STAT_STR)].carry * 10 + self.level * 25
 
 
-class Living(immortal.Immortal, Fight, Grouping, Physical,
+class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
              location.Location, affects.Affects, Communication,
              Container, handler.Instancer):
     def __init__(self):
