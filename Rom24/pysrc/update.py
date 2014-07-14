@@ -611,7 +611,7 @@ def item_update():
             message = "$p fades out of existence."
         elif item.item_type == ITEM_CONTAINER:
             if state_checks.CAN_WEAR(item, ITEM_WEAR_FLOAT):
-                if item.contains:
+                if item.contents:
                     message = "$p flickers and vanishes, spilling its contents on the floor."
                 else:
                     message = "$p flickers and vanishes."
@@ -633,9 +633,9 @@ def item_update():
                 handler_game.act(message, merc.rooms[item.in_room].people[:1], item, None, TO_ROOM)
                 handler_game.act(message, merc.rooms[item.in_room].people[:1], item, None, TO_CHAR)
 
-        if (item.item_type == ITEM_CORPSE_PC or item.wear_loc == WEAR_FLOAT) and item.contains:
+        if (item.item_type == ITEM_CORPSE_PC or item.wear_loc == WEAR_FLOAT) and item.contents:
             # save the contents */
-            for t_item_id in item.contains[:]:
+            for t_item_id in item.contents[:]:
                 t_item = merc.items[t_item_id]
                 t_item.from_item()
 

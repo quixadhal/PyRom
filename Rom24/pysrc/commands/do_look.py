@@ -80,7 +80,7 @@ def do_look(ch, argument):
                 ch.send("It is closed.\n")
                 return
             act("$p holds:", ch, obj, None, merc.TO_CHAR)
-            handler_ch.show_list_to_char(obj.contains, ch, True, True)
+            handler_ch.show_list_to_char(obj.contents, ch, True, True)
             return
         else:
             ch.send("That is not a container.\n")

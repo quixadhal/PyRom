@@ -488,7 +488,7 @@ def spec_fido( ch ):
         if corpse.item_type != merc.ITEM_CORPSE_NPC:
             continue
         handler_game.act( "$n savagely devours a corpse.", ch, None, None, merc.TO_ROOM)
-        for obj in corpse.contains[:]:
+        for obj in corpse.contents[:]:
             obj.from_item()
             obj.to_room(ch.room_template)
 

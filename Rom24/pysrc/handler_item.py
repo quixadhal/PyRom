@@ -32,6 +32,7 @@
  ************/
 """
 import logging
+import container
 
 logger = logging.getLogger()
 
@@ -47,7 +48,7 @@ import state_checks
 # * One object.
 
 
-class Items(handler.Instancer, location.Location, physical.Physical):
+class Items(handler.Instancer, location.Location, physical.Physical, container.Container):
     def __init__(self, template=None):
         super().__init__()
         self.vnum = 0
@@ -60,7 +61,6 @@ class Items(handler.Instancer, location.Location, physical.Physical):
             self.instance_id = None
             self.count = 0
             self.reset_num = 0
-            self.contains = []
             self.extra_descr = []
             self.affected = []
             self.valid = False
@@ -129,7 +129,7 @@ class Items(handler.Instancer, location.Location, physical.Physical):
             number = 0
         else:
             number = 1
-        contents = item.contains[:]
+        contents = item.contents[:]
         counted = [item.instance_id]
         for content_id in contents:
             content = merc.items[content_id]
@@ -139,7 +139,7 @@ class Items(handler.Instancer, location.Location, physical.Physical):
                              (item.short_descr, item.instance_id, content.short_descr, content.instance_id))
                 break
             counted.append(content)
-            contents.extend(content.contains)
+            contents.extend(content.contents)
 
         return number
 
@@ -147,7 +147,7 @@ class Items(handler.Instancer, location.Location, physical.Physical):
     # * Return weight of an object, including weight of contents.
     def get_weight(item):
         weight = item.weight
-        contents = item.contains[:]
+        contents = item.contents[:]
         counted = [item.instance_id]
         for content_id in contents:
             content = merc.items[content_id]
@@ -158,12 +158,12 @@ class Items(handler.Instancer, location.Location, physical.Physical):
             counted.append(content)
 
             weight += content.weight * state_checks.WEIGHT_MULT(item) / 100
-            contents.extend(content.contains)
+            contents.extend(content.contents)
         return weight
 
     def true_weight(item):
         weight = item.weight
-        for content_id in item.contains:
+        for content_id in item.contents:
             content = merc.items[content_id]
             weight += content.get_weight()
         return weight
@@ -257,7 +257,7 @@ class Items(handler.Instancer, location.Location, physical.Physical):
 
     # * Move an object into an object.
     def to_item(item, obj_to):
-        obj_to.contains.append(item.instance_id)
+        obj_to.contents.append(item.instance_id)
         item.in_item = obj_to.instance_id
         item.in_room = None
         item.in_living = None
@@ -302,7 +302,7 @@ class Items(handler.Instancer, location.Location, physical.Physical):
         elif item.in_item:
             item.from_item()
 
-        for item_id in item.contains[:]:
+        for item_id in item.contents[:]:
             if item.instance_id not in merc.items:
                 print("Extract_obj: obj %d not found in obj_instance dict." % item.instance_id)
                 return
@@ -651,7 +651,7 @@ def count_obj_list(itemInstance, contents):
 
 # for clone, to insure that cloning goes many levels deep */
 def recursive_clone(ch, item, clone):
-    for c_item_id in item.contains:
+    for c_item_id in item.contents:
         c_item = merc.items[c_item_id]
         if item_check(ch, c_item):
             t_obj = object_creator.create_item(merc.itemTemplate[c_item.vnum], 0)

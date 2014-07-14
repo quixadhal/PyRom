@@ -121,8 +121,8 @@ def acid_effect(vo, level, dam, target):
                 obj.in_living.armor[i] = [ i+1 for i in obj.in_living.armor ]
                 return
         # get rid of the object */
-        if obj.contains:  # dump contents */
-            for t_obj in obj.contains[:]:
+        if obj.contents:  # dump contents */
+            for t_obj in obj.contents[:]:
                 t_obj.from_item()
                 if obj.in_room :
                     t_obj.to_room(obj.in_room)
@@ -279,9 +279,9 @@ def fire_effect(vo, level, dam, target):
         elif obj.in_room and obj.in_room.people:
             handler_game.act(msg,obj.in_room.people,obj,None,TO_ALL)
 
-        if obj.contains:
+        if obj.contents:
             # dump the contents */
-            for t_obj in obj.contains[:]:
+            for t_obj in obj.contents[:]:
                 t_obj.from_item()
                 if obj.in_room:
                     t_obj.to_room(obj.in_room)

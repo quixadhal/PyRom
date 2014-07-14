@@ -63,7 +63,7 @@ def do_get(ch, argument):
             return
         if not arg1.startswith('all'):
             # 'get obj container'
-            item = ch.get_item_list(arg1, container.contains)
+            item = ch.get_item_list(arg1, container.contents)
             if not item is None:
                 act("I see nothing like that in the $T.", ch, None, arg2, merc.TO_CHAR)
                 return
@@ -71,7 +71,7 @@ def do_get(ch, argument):
         else:
             # 'get all container' or 'get all.obj container'
             found = False
-            for item in container.contains[:]:
+            for item in container.contents[:]:
                 if (len(arg1) == 3 or arg1[4:] in item.name) and ch.can_see_item(item):
                     found = True
                     if container.pIndexData.vnum == merc.OBJ_VNUM_PIT and not ch.is_immortal():

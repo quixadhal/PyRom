@@ -394,6 +394,6 @@ def show_char_to_char(plist, ch):
         if ch.can_see(character):
             show_char_to_char_0(character, ch)
             ch.send("\n")
-        elif ch.room_template.is_dark() and character.is_affected(merc.AFF_INFRARED):
+        elif merc[ch.in_room].is_dark() and character.is_affected(merc.AFF_INFRARED):
             ch.send("You see glowing red eyes watching YOU!\n")
 
