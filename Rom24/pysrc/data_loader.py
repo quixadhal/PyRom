@@ -285,14 +285,15 @@ def load_resets(area, pArea):
 
         reset = world_classes.Reset(None)
         reset.command = letter
-        reset.template_area = pArea.name
-        reset.template_name = pArea.name + " Reset " + str(count)
+        reset.area = pArea.name
+        reset.name = pArea.name + " Reset " + str(count)
         area, number = game_utils.read_int(area)  # if_flag
         area, reset.arg1 = game_utils.read_int(area)
         area, reset.arg2 = game_utils.read_int(area)
         area, reset.arg3 = (area, 0) if letter == 'G' or letter == 'R' else game_utils.read_int(area)
         area, reset.arg4 = game_utils.read_int(area) if letter == 'P' or letter == 'M' else (area, 0)
         area, t = game_utils.read_to_eol(area)
+        merc.resets[reset.name] = reset
         pArea.reset_list.append(reset)
     return area
 

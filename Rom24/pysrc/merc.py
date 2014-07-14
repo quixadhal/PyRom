@@ -115,6 +115,7 @@ instances_by_character = {}
 instances_by_shop = {}
 instances_by_player = {}
 
+resets = {}
 
 descriptor_list = []
 
@@ -465,7 +466,7 @@ zz = 1 << 51
 #  Used in #MOBILES.
 
 ACT_IS_NPC = A  # Auto set for mobs    */
-ACT_SENTINEL = B #  Stays in one room    */
+ACT_SENTINEL = B  #  Stays in one room    */
 ACT_SCAVENGER = C  # Picks up objects */
 ACT_AGGRESSIVE = F   # Attacks PC's     */
 ACT_STAY_AREA = G    # Won't leave area */

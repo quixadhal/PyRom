@@ -83,6 +83,8 @@ class Reset:
             [setattr(self, k, v) for k, v in template.__dict__.items()]
             self.room = merc.instances_by_room[self.room][0]
         else:
+            self.name = ""
+            self.area = ""
             self.instance_id = None
             self.room = None
             self.command = ""

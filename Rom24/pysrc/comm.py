@@ -32,6 +32,7 @@
  ************/
 """
 import logging
+import pdb
 
 logger = logging.getLogger()
 
@@ -253,6 +254,7 @@ def game_loop(server):
     from pyom import startup_time
 
     db.boot_db()
+
 
     boot_time = time.time()
     logger.debug('Pyom database booted in %.3f seconds', (boot_time - startup_time))

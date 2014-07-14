@@ -196,3 +196,68 @@ def get_extra_descr(name, edlist):
         if name.lower() in ed.keyword:
             return ed.description
     return None
+
+def sensing_reader(string):
+    if not string:
+        return None
+
+    atype = None
+    first = 1
+
+    string = string.lstrip()
+    if '#' in string:
+        if string[0] == '#':
+            atype = 'instance_id'
+            second = string.replace('#', '')
+            return atype, first, second
+        else:
+            return None  # Funky id request
+
+    if '.' in string:
+        sep = string.find('.')
+        first = string[:sep]
+        second = string[sep + 1:]
+        if '"' or "'" in second:
+            atype = 'numbered_compound'
+            compound_list = []
+            if '"' in second:
+                second = second.replace('"', '')
+            elif "'" in second:
+                second = second.replace("'", "")
+            compound, word = read_word(second, True)
+            compound_list.append(word)
+            while len(compound) > 0:
+                compound, word = read_word(compound)
+                compound_list.append(word)
+            return atype, first, compound_list
+        if not first.isdigit():
+            first = 1
+        if second.isdigit():
+            atype = 'vnum'
+            return atype, first, int(second)
+        elif second.isalpha():
+            atype = 'word'
+            return atype, first, second
+        else:
+            return None
+
+    elif string.isdigit():
+        atype = 'vnum'
+        return atype, first, int(string)
+
+    elif string.isalpha():
+        atype = 'word'
+        return atype, first, string
+
+    else:
+        compound_list = []
+        compound, word = read_word(string, True)
+        compound_list.append(word)
+        while len(compound) > 0:
+            compound, word = read_word(compound)
+            compound_list.append(word)
+        atype = 'compound'
+        return atype, first, compound_list
+
+
+

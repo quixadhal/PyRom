@@ -73,6 +73,7 @@ def violence_update():
             # * Fun for the whole family!
             #*/
             check_assist(ch, victim)
+    ch_list = None
     return
 
 

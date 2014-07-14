@@ -12,6 +12,8 @@ def do_ofind(ch, argument):
         ch.send("Find what?\n")
         return
 
+    if arg.isdigit():
+        item_id = merc.instances_by_item[arg][argument]
     fAll = False  # !str_cmp( arg, "all" )
     found = False
     nMatch = 0

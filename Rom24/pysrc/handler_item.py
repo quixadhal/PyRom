@@ -416,7 +416,7 @@ def format_item_to_char(item_id, ch, fShort):
 
 # * Count occurrences of an obj in a list.
 def count_obj_list(itemInstance, contents):
-    return len([item for item in contents if item == itemInstance.instance_id])
+    return len([item_id for item_id in contents if merc.items[item_id].name == itemInstance.name])
 
 
 # for clone, to insure that cloning goes many levels deep */
