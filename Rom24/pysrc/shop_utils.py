@@ -37,7 +37,7 @@ def obj_to_keeper(obj, ch):
         ch.contents.remove(obj)
     else:
         ch.contents.insert(spot, t_obj)
-    obj.carried_by = ch
+    obj.in_living = ch
     obj.in_room = None
     obj.in_item = None
     ch.carry_number += obj.get_number()

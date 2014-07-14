@@ -91,8 +91,8 @@ def acid_effect(vo, level, dam, target):
 
         if random.randint(1,99) > chance:
             return
-        if obj.carried_by is not None:
-            handler_game.act(msg,obj.carried_by,obj,None,TO_ALL)
+        if obj.in_living is not None:
+            handler_game.act(msg,obj.in_living,obj,None,TO_ALL)
         elif obj.in_room and merc.rooms[obj.in_room].people is not None:
             handler_game.act(msg,obj.in_room.people,obj,None,TO_ALL)
         if obj.item_type == ITEM_ARMOR:  # etch it */
@@ -117,8 +117,8 @@ def acid_effect(vo, level, dam, target):
                 paf.bitvector = 0
                 obj.affected.append(paf)
 
-            if obj.carried_by and obj.wear_loc != WEAR_NONE:
-                obj.carried_by.armor[i] = [ i+1 for i in obj.carried_by.armor ]
+            if obj.in_living and obj.wear_loc != WEAR_NONE:
+                obj.in_living.armor[i] = [ i+1 for i in obj.in_living.armor ]
                 return
         # get rid of the object */
         if obj.contains:  # dump contents */
@@ -126,8 +126,8 @@ def acid_effect(vo, level, dam, target):
                 t_obj.from_item()
                 if obj.in_room :
                     t_obj.to_room(obj.in_room)
-                elif obj.carried_by:
-                    t_obj.to_room(obj.carried_by.in_room)
+                elif obj.in_living:
+                    t_obj.to_room(obj.in_living.in_room)
                 else:
                     t_obj.extract()
                     continue
@@ -196,8 +196,8 @@ def cold_effect( vo, level, dam, target):
         if random.randint(1,99) > chance:
             return
 
-        if obj.carried_by is not None:
-            handler_game.act(msg,obj.carried_by,obj,None,TO_ALL)
+        if obj.in_living is not None:
+            handler_game.act(msg,obj.in_living,obj,None,TO_ALL)
         elif obj.in_room and obj.in_room.people:
             handler_game.act(msg,obj.in_room.people,obj,None,TO_ALL)
         obj.extract()
@@ -274,8 +274,8 @@ def fire_effect(vo, level, dam, target):
         if random.randint(1,99) > chance:
             return
  
-        if obj.carried_by:
-            handler_game.act( msg, obj.carried_by, obj, None, TO_ALL )
+        if obj.in_living:
+            handler_game.act( msg, obj.in_living, obj, None, TO_ALL )
         elif obj.in_room and obj.in_room.people:
             handler_game.act(msg,obj.in_room.people,obj,None,TO_ALL)
 
@@ -285,8 +285,8 @@ def fire_effect(vo, level, dam, target):
                 t_obj.from_item()
                 if obj.in_room:
                     t_obj.to_room(obj.in_room)
-                elif obj.carried_by:
-                    t_obj.to_room(obj.carried_by.in_room)
+                elif obj.in_living:
+                    t_obj.to_room(obj.in_living.in_room)
                 else:
                     t_obj.extract()
                     continue
@@ -402,8 +402,8 @@ def shock_effect( vo, level, dam, target):
         if random.randint(1,99) > chance:
             return
 
-        if obj.carried_by:
-            handler_game.act(msg,obj.carried_by,obj,None,TO_ALL)
+        if obj.in_living:
+            handler_game.act(msg,obj.in_living,obj,None,TO_ALL)
         elif obj.in_room and obj.in_room.people:
             handler_game.act(msg,obj.in_room.people,obj,None,TO_ALL)
 

@@ -46,7 +46,7 @@ def do_clone(ch, argument):
             return
         clone = instancer.create_object(obj.pIndexData, 0)
         db.clone_object(obj, clone)
-        if obj.carried_by:
+        if obj.in_living:
             clone.to_char(ch)
         else:
             clone.to_room(ch.in_room)

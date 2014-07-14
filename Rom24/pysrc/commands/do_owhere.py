@@ -25,9 +25,9 @@ def do_owhere(ch, argument):
         while in_item.in_item:
             in_item = in_item.in_item
 
-        if in_item.carried_by and ch.can_see(in_item.carried_by) and in_item.carried_by.in_room:
+        if in_item.in_living and ch.can_see(in_item.in_living) and in_item.in_living.in_room:
             ch.send("%3d) %s is carried by %s [Room %d]\n" % (
-                number, obj.short_descr, state_checks.PERS(in_item.carried_by, ch), in_item.carried_by.in_room.vnum ))
+                number, obj.short_descr, state_checks.PERS(in_item.in_living, ch), in_item.in_living.in_room.vnum ))
         elif in_item.in_room and ch.can_see_room(in_item.in_room):
             ch.send("%3d) %s is in %s [Room %d]\n" % (
                 number, obj.short_descr, in_item.in_room.name, in_item.in_room.vnum))

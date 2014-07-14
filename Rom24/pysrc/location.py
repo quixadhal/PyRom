@@ -18,8 +18,9 @@ class Location:
         #Location
         super().__init__()
         self.room_template = 0
+        self.environment = None
 
-        self.carried_by = None
+        self.in_living = None
         self.in_room = None
         self.in_item = None
         self.was_in_template = 0

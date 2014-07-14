@@ -585,8 +585,8 @@ def item_update():
             else:
                 multi = [a for a in item.affected if a.type == paf.type and a is not paf and a.duration > 0]
                 if multi and paf.type > 0 and const.skill_table[paf.type].msg_obj:
-                    if item.carried_by:
-                        rch = merc.characters[item.carried_by]
+                    if item.in_living:
+                        rch = merc.characters[item.in_living]
                         handler_game.act(const.skill_table[paf.type].msg_obj, rch, item, None, TO_CHAR)
 
                     if merc.rooms[item.in_room] is not None and merc.rooms[item.in_room].people:
@@ -620,13 +620,13 @@ def item_update():
         else:
             message = "$p crumbles into dust."
 
-        if item.carried_by:
-            if state_checks.IS_NPC(merc.characters[item.carried_by]) and merc.characters[item.carried_by].pShop:
-                merc.characters[item.carried_by].silver += item.cost // 5
+        if item.in_living:
+            if state_checks.IS_NPC(merc.characters[item.in_living]) and merc.characters[item.in_living].pShop:
+                merc.characters[item.in_living].silver += item.cost // 5
             else:
-                handler_game.act(message, merc.characters[item.carried_by], item, None, TO_CHAR)
+                handler_game.act(message, merc.characters[item.in_living], item, None, TO_CHAR)
                 if item.wear_loc == WEAR_FLOAT:
-                    handler_game.act(message, merc.characters[item.carried_by], item, None, TO_ROOM)
+                    handler_game.act(message, merc.characters[item.in_living], item, None, TO_ROOM)
         elif item.in_room and merc.rooms[item.in_room].people:
             if not (item.in_item and merc.items[item.in_item].vnum == OBJ_VNUM_PIT
                     and not state_checks.CAN_WEAR(merc.items[item.in_item], ITEM_TAKE)):
@@ -641,14 +641,14 @@ def item_update():
 
                 if item.in_item:  # in another object */
                     t_item.to_item(item.in_item)
-                elif item.carried_by:  # carried */
+                elif item.in_living:  # carried */
                     if item.wear_loc == WEAR_FLOAT:
-                        if merc.characters[item.carried_by].in_room is None:
+                        if merc.characters[item.in_living].in_room is None:
                             t_item.extract()
                         else:
-                            t_item.to_room(merc.characters[item.carried_by].in_room)
+                            t_item.to_room(merc.characters[item.in_living].in_room)
                     else:
-                        t_item.to_char(item.carried_by)
+                        t_item.to_char(item.in_living)
                 elif not item.in_room:  # destroy it */
                     t_item.extract()
                 else:  # to a room */

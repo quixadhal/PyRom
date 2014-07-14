@@ -23,8 +23,8 @@ def spell_locate_object(sn, level, ch, victim, target):
         while in_item.in_item:
             in_item = in_item.in_item
 
-        if in_item.carried_by and ch.can_see(in_item.carried_by):
-            ch.send("one is carried by %s\n" % state_checks.PERS(in_item.carried_by, ch))
+        if in_item.in_living and ch.can_see(in_item.in_living):
+            ch.send("one is carried by %s\n" % state_checks.PERS(in_item.in_living, ch))
         else:
             if ch.is_immortal() and in_item.in_room is not None:
                 ch.send("one is in %s [Room %d]\n" % (in_item.in_room.name, in_item.in_room.vnum))
