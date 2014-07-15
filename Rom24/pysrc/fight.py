@@ -694,7 +694,7 @@ def is_safe(ch, victim):
                 return True
 
             # charmed mobs and pets cannot attack players while owned */
-            if state_checks.IS_AFFECTED(ch, AFF_CHARM) and ch.master \
+            if ch.is_affected(AFF_CHARM) and ch.master \
                     and merc.characters[ch.master].fighting != victim.instance_id:
                 ch.send("Players are your friends!\n")
                 return True
