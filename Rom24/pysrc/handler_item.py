@@ -32,10 +32,10 @@
  ************/
 """
 import logging
-import container
 
 logger = logging.getLogger()
 
+import container
 import physical
 import location
 import const
@@ -71,11 +71,9 @@ class Items(handler.Instancer, location.Location, physical.Physical, container.C
             self.extra_flags = 0
             self.wear_flags = 0
             self.wear_loc = 0
-
             self.cost = 0
             self.level = 0
             self.condition = 0
-
             self.timer = 0
             self.value = [0, 0, 0, 0, 0]
 

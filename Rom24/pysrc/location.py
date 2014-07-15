@@ -19,13 +19,11 @@ class Location:
         super().__init__()
         self.room_template = 0
         self.environment = None
-
         self.in_living = None
         self.in_room = None
         self.in_item = None
         self.was_in_template = 0
         self.was_in_room = None
-
         self.on_template = 0
         self.on = None
         self.zone_template = ""

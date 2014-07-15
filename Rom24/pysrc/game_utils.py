@@ -197,66 +197,69 @@ def get_extra_descr(name, edlist):
             return ed.description
     return None
 
-def sensing_reader(string):
+
+def argument_parser(string):
     if not string:
         return None
 
     atype = None
-    number_or_count = None
-    first = 1
+    num_or_count = None
+    arg_num = 1
 
     string = string.lstrip()
     if '#' in string:
         if string[0] == '#':
             atype = 'instance_id'
-            second = string.replace('#', '')
-            return atype, number_or_count, first, second
+            target = string.replace('#', '')
+            return atype, num_or_count, arg_num, int(target)
         else:
             return None  # Funky id request
 
     if '.' in string or '*' in string:
         if '*' in string:
             sep = string.find('*')
-            number_or_count = 'count'
+            num_or_count = 'count'
         else:
             sep = string.find('.')
-            number_or_count = 'number'
-        first = string[:sep]
-        second = string[sep + 1:]
-        if '"' in second or "'" in second:
-            if number_or_count == 'number':
+            num_or_count = 'number'
+        arg_num = string[:sep]
+        target = string[sep + 1:]
+        if not target.isalnum():
+            return None, None, None, None
+        if '"' in target or "'" in target:
+            if num_or_count == 'number':
                 atype = 'number_compound'
             else:
                 atype = 'count_compound'
             compound_list = []
-            if '"' in second:
-                second = second.replace('"', '')
+            if '"' in target:
+                target = target.replace('"', '')
             else:
-                second = second.replace("'", "")
-            compound, word = read_word(second, True)
+                target = target.replace("'", "")
+            compound, word = read_word(target, True)
             compound_list.append(word)
             while len(compound) > 0:
                 compound, word = read_word(compound)
                 compound_list.append(word)
-            return atype, number_or_count, first, compound_list
-        if not first.isdigit():
-            first = 1
-        if second.isdigit():
+            return atype, num_or_count, arg_num, compound_list
+        if not arg_num.isdigit():
+            arg_num = 1
+        if target.isdigit():
             atype = 'vnum'
-            return atype, number_or_count, first, second
-        elif second.isalpha():
+            return atype, num_or_count, arg_num, int(target)
+        elif target.isalpha():
             atype = 'word'
-            return atype, number_or_count, first, second
+            return atype, num_or_count, arg_num, target
         else:
             return None, None, None, None
 
     elif string.isdigit():
         atype = 'vnum'
-        return atype, None, first, int(string)
+        return atype, None, arg_num, int(string)
 
     elif string.isalpha():
         atype = 'word'
-        return atype, None, first, string
+        return atype, None, arg_num, string
 
     elif not string.isalnum():
         return None, None, None, None
@@ -269,7 +272,67 @@ def sensing_reader(string):
             compound, word = read_word(compound)
             compound_list.append(word)
         atype = 'compound'
-        return atype, number_or_count, first, compound_list
+        return atype, num_or_count, arg_num, compound_list
 
 
+def object_search(ch, environment, template, obj_type, atype, num_or_count, arg_num, target):
+    if not atype or not target:
+        return None
 
+    count = 0
+    result_list = None
+    contains_id_list = None
+    contents_id_list = None
+
+    if template is True:  # just in case we ever need to 'find' a template..
+        if 'vnum' not in atype:
+            return None
+        if obj_type == 'item':
+            return merc.itemTemplate[target]
+        elif obj_type == 'npc':
+            return merc.characterTemplate[target]
+        elif obj_type == 'room':
+            return merc.roomTemplate[target]
+        else:
+            return None
+
+    if atype == 'vnum':
+        if obj_type == 'item':
+            if ch.contains:
+                contains_id_list = [item_id for item_id in ch.contains if merc.items[item_id].vnum == target]
+                if contains_id_list:
+                    try:
+                        return merc.items[contains_id_list[arg_num - 1]]
+                    except:
+                        contains_id_list = None
+            elif merc.rooms[environment] and not contains_id_list:
+                contents_id_list = [item_id for item_id in environment.contents if merc.items[item_id].vnum == target]
+                if contents_id_list:
+                    try:
+                        return merc.items[contents_id_list[arg_num - 1]]
+                    except:
+                        contents_id_list = None
+            elif not contents_id_list:
+                try:
+                    return merc.instances_by_item[target][arg_num - 1]
+                except:
+                    return None
+            else:
+                return None
+        elif obj_type == 'npc':
+            try:
+                item_id = merc.instances_by_item[target][0]
+                return merc.items[item_id]
+            except:
+                return None
+        elif obj_type == 'room':
+            try:
+                item_id = merc.instances_by_item[target][0]
+                return merc.items[item_id]
+            except:
+                return None
+        else:
+            return None
+    elif atype == 'instance_id':
+
+    elif atype == 'compound' or atype == 'word' or atype == 'number_compound' or atype == 'count_compound':
