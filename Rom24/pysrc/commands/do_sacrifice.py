@@ -21,7 +21,7 @@ def do_sacrifice(ch, argument):
         ch.send("You can't find it.\n")
         return
     if obj.item_type == merc.ITEM_CORPSE_PC:
-        if obj.contains:
+        if obj.contents:
             ch.send("Mota wouldn't like that.\n")
             return
     if not state_checks.CAN_WEAR(obj, merc.ITEM_TAKE) or state_checks.CAN_WEAR(obj, merc.ITEM_NO_SAC):

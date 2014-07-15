@@ -32,6 +32,7 @@
  ************/
 """
 import logging
+import container
 
 logger = logging.getLogger()
 
@@ -47,7 +48,7 @@ import state_checks
 # * One object.
 
 
-class Items(handler.Instancer, location.Location, physical.Physical):
+class Items(handler.Instancer, location.Location, physical.Physical, container.Container):
     def __init__(self, template=None):
         super().__init__()
         self.vnum = 0
@@ -60,7 +61,6 @@ class Items(handler.Instancer, location.Location, physical.Physical):
             self.instance_id = None
             self.count = 0
             self.reset_num = 0
-            self.contains = []
             self.extra_descr = []
             self.affected = []
             self.valid = False
@@ -115,7 +115,7 @@ class Items(handler.Instancer, location.Location, physical.Physical):
     # * Give an obj to a char.
     def to_char(item, ch):
         ch.contents.append(item.instance_id)
-        item.carried_by = ch.instance_id
+        item.in_living = ch.instance_id
         item.in_room = None
         item.in_item = None
         ch.carry_number += item.get_number()
@@ -129,7 +129,7 @@ class Items(handler.Instancer, location.Location, physical.Physical):
             number = 0
         else:
             number = 1
-        contents = item.contains[:]
+        contents = item.contents[:]
         counted = [item.instance_id]
         for content_id in contents:
             content = merc.items[content_id]
@@ -139,7 +139,7 @@ class Items(handler.Instancer, location.Location, physical.Physical):
                              (item.short_descr, item.instance_id, content.short_descr, content.instance_id))
                 break
             counted.append(content)
-            contents.extend(content.contains)
+            contents.extend(content.contents)
 
         return number
 
@@ -147,7 +147,7 @@ class Items(handler.Instancer, location.Location, physical.Physical):
     # * Return weight of an object, including weight of contents.
     def get_weight(item):
         weight = item.weight
-        contents = item.contains[:]
+        contents = item.contents[:]
         counted = [item.instance_id]
         for content_id in contents:
             content = merc.items[content_id]
@@ -158,12 +158,12 @@ class Items(handler.Instancer, location.Location, physical.Physical):
             counted.append(content)
 
             weight += content.weight * state_checks.WEIGHT_MULT(item) / 100
-            contents.extend(content.contains)
+            contents.extend(content.contents)
         return weight
 
     def true_weight(item):
         weight = item.weight
-        for content_id in item.contains:
+        for content_id in item.contents:
             content = merc.items[content_id]
             weight += content.get_weight()
         return weight
@@ -203,8 +203,8 @@ class Items(handler.Instancer, location.Location, physical.Physical):
             print("BUG: Affect_remove_object: no affect.")
             return
 
-        if item.carried_by is not None and item.wear_loc != -1:
-            merc.characters[item.carried_by].affect_modify(paf, False)
+        if item.in_living is not None and item.wear_loc != -1:
+            merc.characters[item.in_living].affect_modify(paf, False)
 
         where = paf.where
         vector = paf.bitvector
@@ -222,8 +222,8 @@ class Items(handler.Instancer, location.Location, physical.Physical):
             return
         item.affected.remove(paf)
         del paf
-        if item.carried_by != 0 and item.wear_loc != -1:
-            merc.characters[item.carried_by].affect_check(where, vector)
+        if item.in_living != 0 and item.wear_loc != -1:
+            merc.characters[item.in_living].affect_check(where, vector)
         return
 
     # * Move an obj out of a room.
@@ -251,23 +251,23 @@ class Items(handler.Instancer, location.Location, physical.Physical):
         room = merc.rooms[room_instance]
         room.contents.append(item.instance_id)
         item.in_room = room.instance_id
-        item.carried_by = None
+        item.in_living = None
         item.in_item = None
         return
 
     # * Move an object into an object.
     def to_item(item, obj_to):
-        obj_to.contains.append(item.instance_id)
+        obj_to.contents.append(item.instance_id)
         item.in_item = obj_to.instance_id
         item.in_room = None
-        item.carried_by = None
+        item.in_living = None
         if obj_to.vnum == merc.OBJ_VNUM_PIT:
             item.cost = 0
 
         while obj_to:
-            if obj_to.carried_by:
-                merc.characters[obj_to.carried_by].carry_number += item.get_number()
-                merc.characters[obj_to.carried_by].carry_weight += \
+            if obj_to.in_living:
+                merc.characters[obj_to.in_living].carry_number += item.get_number()
+                merc.characters[obj_to.in_living].carry_weight += \
                     item.get_weight() * state_checks.WEIGHT_MULT(obj_to) / 100
             obj_to = obj_to.in_item
         return
@@ -286,9 +286,9 @@ class Items(handler.Instancer, location.Location, physical.Physical):
         item.in_item = None
 
         while item_from:
-            if item_from.carried_by:
-                merc.characters[item_from.carried_by].carry_number -= item.get_number()
-                merc.characters[item_from.carried_by].carry_weight -= item.get_weight() * \
+            if item_from.in_living:
+                merc.characters[item_from.in_living].carry_number -= item.get_number()
+                merc.characters[item_from.in_living].carry_weight -= item.get_weight() * \
                                                                       state_checks.WEIGHT_MULT(item_from) / 100
             item_from = merc.items[item_from.in_item]
         return
@@ -297,12 +297,12 @@ class Items(handler.Instancer, location.Location, physical.Physical):
     def extract(item):
         if item.in_room:
             item.from_room()
-        elif item.carried_by:
+        elif item.in_living:
             item.from_char()
         elif item.in_item:
             item.from_item()
 
-        for item_id in item.contains[:]:
+        for item_id in item.contents[:]:
             if item.instance_id not in merc.items:
                 print("Extract_obj: obj %d not found in obj_instance dict." % item.instance_id)
                 return
@@ -311,7 +311,7 @@ class Items(handler.Instancer, location.Location, physical.Physical):
 
     # * Take an obj from its character.
     def from_char(item):
-        ch = merc.characters[item.carried_by]
+        ch = merc.characters[item.in_living]
         if not ch:
             print("BUG: Obj_from_char: null ch.")
             return
@@ -321,7 +321,7 @@ class Items(handler.Instancer, location.Location, physical.Physical):
 
         ch.contents.remove(item.instance_id)
 
-        item.carried_by = None
+        item.in_living = None
         ch.carry_number -= item.get_number()
         ch.carry_weight -= item.get_weight()
         return
@@ -555,7 +555,7 @@ def get_item(ch, item, container):
     if ch.carry_number + item.get_number() > ch.can_carry_n():
         handler_game.act("$d: you can't carry that many items.", ch, None, item.name, merc.TO_CHAR)
         return
-    if (not item.in_item or merc.items[item.in_item].carried_by != ch.instance_id) \
+    if (not item.in_item or merc.items[item.in_item].in_living != ch.instance_id) \
             and (state_checks.get_carry_weight(ch) + item.get_weight() > ch.can_carry_w()):
         handler_game.act("$d: you can't carry that much weight.", ch, None, item.name, merc.TO_CHAR)
         return
@@ -651,7 +651,7 @@ def count_obj_list(itemInstance, contents):
 
 # for clone, to insure that cloning goes many levels deep */
 def recursive_clone(ch, item, clone):
-    for c_item_id in item.contains:
+    for c_item_id in item.contents:
         c_item = merc.items[c_item_id]
         if item_check(ch, c_item):
             t_obj = object_creator.create_item(merc.itemTemplate[c_item.vnum], 0)

@@ -48,8 +48,10 @@ class Npc(living.Living):
             merc.instances_by_character[self.vnum].append(self.instance_id)
 
     def instance_destructor(self):
-        instance_list = merc.instances_by_character[self.vnum]
-        instance_list.remove(self.instance_id)
+        if self.vnum in merc.instances_by_character:
+            instance_list = merc.instances_by_character[self.vnum]
+            if self.instance_id in instance_list:
+                instance_list.remove(self.instance_id)
         if self.instance_id in merc.characters:
             del merc.characters[self.instance_id]
         if self.instance_id in merc.global_instances:

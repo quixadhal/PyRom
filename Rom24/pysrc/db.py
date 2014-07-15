@@ -226,10 +226,10 @@ def reset_area(area):
                     or not item_to \
                     or (item_to.in_room is None and not last) \
                     or (item_template.count >= limit and random.randint(0, 4) != 0) \
-                    or handler_item.count_obj_list(item_to, item_to.contains) > pReset.arg4:
+                    or handler_item.count_obj_list(item_to, item_to.contents) > pReset.arg4:
                 last = False
                 break
-            count = handler_item.count_obj_list(item_template, item_to.contains)
+            count = handler_item.count_obj_list(item_template, item_to.contents)
             while count < pReset.arg4:
                 item = object_creator.create_item(item_template, game_utils.number_fuzzy(item_to.level))
                 item.to_item(item_to)

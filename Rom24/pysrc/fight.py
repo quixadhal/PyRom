@@ -614,17 +614,17 @@ def damage(ch, victim, dam, dt, dam_type, show):
         corpse = merc.items[corpse_id]
 
         if not ch.is_npc() and corpse and corpse.item_type == ITEM_CORPSE_NPC and ch.can_see_item(corpse.instance_id):
-            if ch.act.is_set(PLR_AUTOLOOT) and corpse and corpse.contains:  # exists and not empty */
+            if ch.act.is_set(PLR_AUTOLOOT) and corpse and corpse.contents:  # exists and not empty */
                 ch.do_get("all corpse")
 
-            if ch.act.is_set(PLR_AUTOGOLD) and corpse and corpse.contains and not ch.act.is_set(PLR_AUTOLOOT):
-                coins_id = ch.get_item_list("gcash", corpse.contains)
+            if ch.act.is_set(PLR_AUTOGOLD) and corpse and corpse.contents and not ch.act.is_set(PLR_AUTOLOOT):
+                coins_id = ch.get_item_list("gcash", corpse.contents)
                 coins = merc.items[coins_id]
                 if coins:
                     ch.do_get("all.gcash corpse")
 
             if ch.act.is_set(PLR_AUTOSAC):
-                if ch.act.is_set(PLR_AUTOLOOT) and corpse and corpse.contains:
+                if ch.act.is_set(PLR_AUTOLOOT) and corpse and corpse.contents:
                     return True  # leave if corpse has treasure */
                 else:
                     ch.do_sacrifice("corpse")
@@ -972,9 +972,9 @@ def make_corpse(ch):
             item.extract()
         elif floating:
             if state_checks.is_item_stat(item, ITEM_ROT_DEATH):  # get rid of it! */
-                if item.contains:
+                if item.contents:
                     handler_game.act("$p evaporates,scattering its contents.", ch, item, None, TO_ROOM)
-                    for contents_id in item.contains[:]:
+                    for contents_id in item.contents[:]:
                         contents = merc.items[contents_id]
                         contents.from_item()
                         contents.to_room(ch.in_room)

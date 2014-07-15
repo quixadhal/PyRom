@@ -157,8 +157,8 @@ def fwrite_obj(ch, obj, contained_by=None):
     odict['ExDe'] = {ed.keyword: ed.description for ed in obj.extra_descr}
     if contained_by:
         odict['In'] = contained_by.instance_id
-    if obj.contains:
-        odict['contains'] = [fwrite_obj(ch, o, obj) for o in obj.contains]
+    if obj.contents:
+        odict['contents'] = [fwrite_obj(ch, o, obj) for o in obj.contents]
     return odict
 
 
@@ -230,8 +230,8 @@ def fread_items(contents, objects, contained_by=None):
             item.to_char(contents)
         else:
             item.to_item(contained_by)
-        if 'contains' in odict:
-            fread_items(contents, odict['contains'], item)
+        if 'contents' in odict:
+            fread_items(contents, odict['contents'], item)
 
 
 def fread_item(contents, odict):

@@ -34,7 +34,7 @@ def do_ostat(ch, argument):
     ch.send("In room: %d  In object: %s  Carried by: %s  Wear_loc: %d\n" % (
         0 if not obj.in_room else obj.in_room.vnum,
         "(none)" if not obj.in_item else obj.in_item.short_descr,
-        "(noone)" if not obj.carried_by else "someone" if not ch.can_see(obj.carried_by) else obj.carried_by.name,
+        "(noone)" if not obj.in_living else "someone" if not ch.can_see(obj.in_living) else obj.in_living.name,
         obj.wear_loc ))
     ch.send("Values: %s\n" % [v for v in obj.value])
     # now give out vital statistics as per identify
