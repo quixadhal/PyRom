@@ -216,6 +216,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         self.position = 0
         self.alignment = 0
         self.desc = None
+
     @property
     def race(self):
         try:
@@ -743,7 +744,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
 
     # * Find an obj in the room or in inventory.
     def get_item_here(ch, argument):
-        item_id = ch.get_item_list(argument, merc.rooms[ch.in_room].contents)
+        item_id = ch.get_item_list(argument, merc.rooms[ch.in_room].items)
         if item_id:
             return item_id
         item_id = ch.get_item_carry(argument, ch)
@@ -766,6 +767,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             item_id = merc.items[instance_id[0]]
             return item_id
         return None
+
     # * True if char can drop obj.
     def can_drop_item(self, item_id):
         if not state_checks.IS_SET(merc.items[item_id].extra_flags, merc.ITEM_NODROP):

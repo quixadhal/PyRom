@@ -47,25 +47,23 @@ class Room(handler.Instancer, location.Location, container.Container):
     def __init__(self, template=None):
         super().__init__()
         self.vnum = 0
+        self.extra_descr = []
+        self.area = ""
+        self.exit = [None, None, None, None, None, None]
+        self.old_exit = [None, None, None, None, None, None]
+        self.name = ""
+        self.description = ""
+        self.owner = ""
+        self.room_flags = 0
+        self.light = 0
+        self.sector_type = 0
+        self.heal_rate = 0
+        self.mana_rate = 0
+        self.clan = None
         if template:
-            self = copy.deepcopy(template)
+            [setattr(self, k, v) for k, v in template.__dict__.items()]
             self.instancer()
             self.instance_setup()
-        else:
-            self.instance_id = None
-            self.extra_descr = []
-            self.area = ""
-            self.exit = [None, None, None, None, None, None]
-            self.old_exit = [None, None, None, None, None, None]
-            self.name = ""
-            self.description = ""
-            self.owner = ""
-            self.room_flags = 0
-            self.light = 0
-            self.sector_type = 0
-            self.heal_rate = 0
-            self.mana_rate = 0
-            self.clan = None
 
     def __del__(self):
         if self.instance_id:
@@ -89,6 +87,30 @@ class Room(handler.Instancer, location.Location, container.Container):
         merc.instances_by_room[self.vnum].remove(self.instance_id)
         del merc.rooms[self.instance_id]
         del merc.global_instances[self.instance_id]
+
+    def is_dark(room_instance):
+        if room_instance.light > 0:
+            return False
+        if state_checks.IS_SET(room_instance.room_flags, ROOM_DARK):
+            return True
+        if room_instance.sector_type == SECT_INSIDE or room_instance.sector_type == SECT_CITY:
+            return False
+        if handler_game.weather_info.sunlight == SUN_SET or handler_game.weather_info.sunlight == SUN_DARK:
+            return True
+        return False
+
+    # * True if room is private.
+    def is_private(room_instance):
+        if room_instance.owner:
+            return True
+        count = len(room_instance.people)
+        if state_checks.IS_SET(room_instance.room_flags, ROOM_PRIVATE) and count >= 2:
+            return True
+        if state_checks.IS_SET(room_instance.room_flags, ROOM_SOLITARY) and count >= 1:
+            return True
+        if state_checks.IS_SET(room_instance.room_flags, ROOM_IMP_ONLY):
+            return True
+        return False
 
 def get_random_room(ch):
     room = None
@@ -134,32 +156,3 @@ def find_door(ch, arg):
         ch.send("You can't do that.\n")
         return -1
     return door
-
-class handler_room:
-    def is_dark(room_instance):
-        if room_instance.light > 0:
-            return False
-        if state_checks.IS_SET(room_instance.room_flags, ROOM_DARK):
-            return True
-        if room_instance.sector_type == SECT_INSIDE or room_instance.sector_type == SECT_CITY:
-            return False
-        if handler_game.weather_info.sunlight == SUN_SET or handler_game.weather_info.sunlight == SUN_DARK:
-            return True
-        return False
-    
-    # * True if room is private.
-    def is_private(room_instance):
-        if room_instance.owner:
-            return True
-        count = len(room_instance.people)
-        if state_checks.IS_SET(room_instance.room_flags, ROOM_PRIVATE) and count >= 2:
-            return True
-        if state_checks.IS_SET(room_instance.room_flags, ROOM_SOLITARY) and count >= 1:
-            return True
-        if state_checks.IS_SET(room_instance.room_flags, ROOM_IMP_ONLY):
-            return True
-        return False
-
-methods = {d:f for d,f in handler_room.__dict__.items() if not d.startswith('__')}
-for m,f in methods.items():
-    setattr(Room, m, f)
