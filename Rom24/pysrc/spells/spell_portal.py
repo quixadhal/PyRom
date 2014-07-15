@@ -39,7 +39,7 @@ def spell_portal(sn, level, ch, victim, target):
     portal.timer = 2 + level // 25
     portal.value[3] = victim.in_room.vnum
 
-    portal.to_room(ch.in_room)
+    portal.to_environment(ch.in_room)
 
     handler_game.act("$p rises up from the ground.", ch, portal, None, merc.TO_ROOM)
     handler_game.act("$p rises up before you.", ch, portal, None, merc.TO_CHAR)

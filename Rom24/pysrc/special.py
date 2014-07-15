@@ -489,8 +489,8 @@ def spec_fido( ch ):
             continue
         handler_game.act( "$n savagely devours a corpse.", ch, None, None, merc.TO_ROOM)
         for obj in corpse.contents[:]:
-            obj.from_item()
-            obj.to_room(ch.room_template)
+            obj.from_environment()
+            obj.to_environment(ch.room_template)
 
         corpse.extract()
         return True
@@ -541,8 +541,8 @@ def spec_janitor( ch ):
             continue
         if trash.item_type == merc.ITEM_DRINK_CON or trash.item_type == merc.ITEM_TRASH or trash.cost < 10:
             handler_game.act( "$n picks up some trash.", ch, None, None, merc.TO_ROOM)
-            trash.from_room()
-            trash.to_char(ch)
+            trash.from_environment()
+            trash.to_environment(ch)
             return True
     return False
 

@@ -43,7 +43,7 @@ def spell_nexus(sn, level, ch, victim, target):
     portal.timer = 1 + level // 10
     portal.value[3] = to_room.vnum
 
-    portal.to_room(from_room)
+    portal.to_environment(from_room)
 
     handler_game.act("$p rises up from the ground.", ch, portal, None, merc.TO_ROOM)
     handler_game.act("$p rises up before you.", ch, portal, None, merc.TO_CHAR)
@@ -57,7 +57,7 @@ def spell_nexus(sn, level, ch, victim, target):
     portal.timer = 1 + level // 10
     portal.value[3] = from_room.vnum
 
-    portal.to_room(to_room)
+    portal.to_environment(to_room)
 
     if to_room.people:
         handler_game.act("$p rises up from the ground.", to_room.people[0], portal, None, merc.TO_ROOM)

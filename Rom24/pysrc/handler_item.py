@@ -112,61 +112,7 @@ class Items(handler.Instancer, location.Location, physical.Physical, container.C
         else:
             return item.value[loc]
 
-    # * Give an obj to a char.
-    def to_char(item, ch):
-        ch.contents.append(item.instance_id)
-        item.in_living = ch.instance_id
-        item.in_room = None
-        item.in_item = None
-        ch.carry_number += item.get_number()
-        ch.carry_weight += item.get_weight()
 
-    # * Return # of objects which an object counts as.
-    # * Thanks to Tony Chamberlain for the correct recursive code here.
-    def get_number(item):
-        noweight = [merc.ITEM_CONTAINER, merc.ITEM_MONEY, merc.ITEM_GEM, merc.ITEM_JEWELRY]
-        if item.item_type in noweight:
-            number = 0
-        else:
-            number = 1
-        contents = item.contents[:]
-        counted = [item.instance_id]
-        for content_id in contents:
-            content = merc.items[content_id]
-            number += 1
-            if content.instance_id in counted:
-                logger.debug("BUG: Objects contain eachother. %s(%d) - %s(%d)" %
-                             (item.short_descr, item.instance_id, content.short_descr, content.instance_id))
-                break
-            counted.append(content)
-            contents.extend(content.contents)
-
-        return number
-
-    #
-    # * Return weight of an object, including weight of contents.
-    def get_weight(item):
-        weight = item.weight
-        contents = item.contents[:]
-        counted = [item.instance_id]
-        for content_id in contents:
-            content = merc.items[content_id]
-            if content.instance_id in counted:
-                print("BUG: Objects contain eachother. %s(%d) - %s(%d)" %
-                      (item.short_descr, item.instance_id, content.short_descr, content.instance_id))
-                break
-            counted.append(content)
-
-            weight += content.weight * state_checks.WEIGHT_MULT(item) / 100
-            contents.extend(content.contents)
-        return weight
-
-    def true_weight(item):
-        weight = item.weight
-        for content_id in item.contents:
-            content = merc.items[content_id]
-            weight += content.get_weight()
-        return weight
 
     # enchanted stuff for eq */
     def affect_enchant(item):
@@ -225,82 +171,10 @@ class Items(handler.Instancer, location.Location, physical.Physical, container.C
         if item.in_living != 0 and item.wear_loc != -1:
             merc.characters[item.in_living].affect_check(where, vector)
         return
-
-    # * Move an obj out of a room.
-    def from_room(item):
-        if not item.in_room:
-            print("Bug: obj_from_room: None.")
-            return
-        room = merc.rooms[item.in_room]
-        for ids in room.people:
-            ch = merc.characters[ids]
-            if ch.on:
-                if merc.items[ch.on] == item.instance_id:
-                    merc.items[ch.on] = None
-
-        if item.instance_id not in room.contents:
-            print("Bug: Obj_from_room: obj not found.")
-            return
-
-        item.in_room = None
-        room.contents.remove(item.instance_id)
-        return
-
-    # * Move an obj into a room.
-    def to_room(item, room_instance):
-        room = merc.rooms[room_instance]
-        room.contents.append(item.instance_id)
-        item.in_room = room.instance_id
-        item.in_living = None
-        item.in_item = None
-        return
-
-    # * Move an object into an object.
-    def to_item(item, obj_to):
-        obj_to.contents.append(item.instance_id)
-        item.in_item = obj_to.instance_id
-        item.in_room = None
-        item.in_living = None
-        if obj_to.vnum == merc.OBJ_VNUM_PIT:
-            item.cost = 0
-
-        while obj_to:
-            if obj_to.in_living:
-                merc.characters[obj_to.in_living].carry_number += item.get_number()
-                merc.characters[obj_to.in_living].carry_weight += \
-                    item.get_weight() * state_checks.WEIGHT_MULT(obj_to) / 100
-            obj_to = obj_to.in_item
-        return
-
-    # * Move an object out of an object.
-    def from_item(item):
-        if not merc.items[item.in_item]:
-            print("Bug: Obj_from_obj: null obj_from.")
-            return
-        item_from = merc.items[item.in_item]
-
-        if item.instance_id not in item_from.contents:
-            print("BUG: Obj_from_obj: obj not found.")
-            return
-        item_from.contents.remove(item.instance_id)
-        item.in_item = None
-
-        while item_from:
-            if item_from.in_living:
-                merc.characters[item_from.in_living].carry_number -= item.get_number()
-                merc.characters[item_from.in_living].carry_weight -= item.get_weight() * \
-                                                                      state_checks.WEIGHT_MULT(item_from) / 100
-            item_from = merc.items[item_from.in_item]
-        return
-
     # * Extract an obj from the world.
     def extract(item):
-        if item.in_room:
-            item.from_room()
-        elif item.in_living:
-            item.from_char()
-        elif item.in_item:
-            item.from_item()
+        if item.in_environment:
+            item.from_environment()
 
         for item_id in item.contents[:]:
             if item.instance_id not in merc.items:
@@ -308,23 +182,6 @@ class Items(handler.Instancer, location.Location, physical.Physical, container.C
                 return
             item = merc.items[item_id]
             item.extract()
-
-    # * Take an obj from its character.
-    def from_char(item):
-        ch = merc.characters[item.in_living]
-        if not ch:
-            print("BUG: Obj_from_char: null ch.")
-            return
-
-        if item.wear_loc != merc.WEAR_NONE:
-            ch.unequip(item.instance_id)
-
-        ch.contents.remove(item.instance_id)
-
-        item.in_living = None
-        ch.carry_number -= item.get_number()
-        ch.carry_weight -= item.get_weight()
-        return
 
     # Return the number of players "on" an object.
     def count_users(item):
@@ -580,11 +437,11 @@ def get_item(ch, item, container):
             handler_game.act("You get $p from $P.", ch, item, container, merc.TO_CHAR)
             handler_game.act("$n gets $p from $P.", ch, item, container, merc.TO_ROOM)
             state_checks.REMOVE_BIT(item.extra_flags, merc.ITEM_HAD_TIMER)
-            item.from_item()
+            item.from_environment()
     else:
         handler_game.act("You get $p.", ch, item, container, merc.TO_CHAR)
         handler_game.act("$n gets $p.", ch, item, container, merc.TO_ROOM)
-        item.from_room()
+        item.from_environment()
     if item.item_type == merc.ITEM_MONEY:
         ch.silver += item.value[0]
         ch.gold += item.value[1]
@@ -597,7 +454,7 @@ def get_item(ch, item, container):
                 ch.do_split("%d %d" % (item.value[0], item.value[1]))
         item.extract()
     else:
-        item.to_char(ch)
+        item.to_environment(ch)
     return
 
 
@@ -656,5 +513,5 @@ def recursive_clone(ch, item, clone):
         if item_check(ch, c_item):
             t_obj = object_creator.create_item(merc.itemTemplate[c_item.vnum], 0)
             object_creator.clone_item(c_item, t_obj)
-            t_obj.to_item(clone)
+            t_obj.to_environment(clone)
             recursive_clone(ch, c_item, t_obj)

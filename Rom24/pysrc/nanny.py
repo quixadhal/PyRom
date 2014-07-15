@@ -463,25 +463,25 @@ def con_read_motd(self):
         ch.title = buf
 
         ch.do_outfit("")
-        object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_MAP], 0).to_char(ch)
-        ch.to_room(merc.instances_by_room[merc.ROOM_VNUM_SCHOOL][0])
+        object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_MAP], 0).to_environment(ch)
+        ch.to_environment(merc.instances_by_room[merc.ROOM_VNUM_SCHOOL][0])
         ch.do_help("newbie info")
 
     elif ch.in_room:
-        ch.to_room(ch.in_room)
+        ch.to_environment(ch.in_room)
     elif ch.is_immortal():
         to_instance = merc.instances_by_room[merc.ROOM_VNUM_CHAT][0]
-        ch.to_room(to_instance)
+        ch.to_environment(to_instance)
     else:
         to_instance = merc.instances_by_room[merc.ROOM_VNUM_TEMPLE][0]
-        ch.to_room(to_instance)
+        ch.to_environment(to_instance)
 
     handler_game.act("$n has entered the game.", ch, None, None, merc.TO_ROOM)
     ch.do_look("auto")
 
     handler_game.wiznet("$N has left real life behind.", ch, None, merc.WIZ_LOGINS, merc.WIZ_SITES, ch.trust)
     if ch.pet:
-        ch.pet.to_room(ch.in_room_instance)
+        ch.pet.to_environment(ch.in_room_instance)
         handler_game.act("$n has entered the game.", ch.pet, None, None, merc.TO_ROOM)
 
 

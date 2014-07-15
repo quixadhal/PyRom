@@ -33,9 +33,9 @@ def do_oload(ch, argument):
         return
     obj = object_creator.create_item(merc.itemTemplate[vnum], level)
     if state_checks.CAN_WEAR(obj, merc.ITEM_TAKE):
-        obj.to_char(ch)
+        obj.to_environment(ch)
     else:
-        obj.to_room(ch.in_room)
+        obj.to_environment(ch.in_room)
     act("$n has created $p!", ch, obj, None, merc.TO_ROOM)
     handler_game.wiznet("$N loads $p.", ch, obj, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.trust)
     ch.send("Ok.\n")

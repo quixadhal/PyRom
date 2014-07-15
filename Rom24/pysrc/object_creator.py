@@ -326,7 +326,6 @@ def create_item(item_template, level):
         sys.exit(1)
 
     item = handler_item.Items(item_template)
-    item.in_room = None
     item.enchanted = False
 
     if item_template.new_format is False:

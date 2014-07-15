@@ -313,8 +313,8 @@ def npc_update():
                     top = item.cost
 
             if item_best:
-                item_best.from_room()
-                item_best.to_char(npc.instance_id)
+                item_best.from_environment()
+                item_best.to_environment(npc.instance_id)
                 handler_game.act("$n gets $p.", npc, item_best, None, TO_ROOM)
 
         # Wander */
@@ -486,8 +486,8 @@ def char_update():
                     ch.send("You disappear into the void.\n")
                     if ch.level > 1:
                         save.save_char_obj(ch)
-                    ch.from_room()
-                    ch.to_room(merc.instances_by_room[ROOM_VNUM_LIMBO][0])
+                    ch.from_environment()
+                    ch.to_environment(merc.instances_by_room[ROOM_VNUM_LIMBO][0])
 
             gain_condition(ch, COND_DRUNK, -1)
             gain_condition(ch, COND_FULL, -4 if ch.size > SIZE_MEDIUM else -2)
@@ -637,22 +637,22 @@ def item_update():
             # save the contents */
             for t_item_id in item.contents[:]:
                 t_item = merc.items[t_item_id]
-                t_item.from_item()
+                t_item.from_environment()
 
                 if item.in_item:  # in another object */
-                    t_item.to_item(item.in_item)
+                    t_item.to_environment(item.in_item)
                 elif item.in_living:  # carried */
                     if item.wear_loc == WEAR_FLOAT:
                         if merc.characters[item.in_living].in_room is None:
                             t_item.extract()
                         else:
-                            t_item.to_room(merc.characters[item.in_living].in_room)
+                            t_item.to_environment(merc.characters[item.in_living].in_room)
                     else:
-                        t_item.to_char(item.in_living)
+                        t_item.to_environment(item.in_living)
                 elif not item.in_room:  # destroy it */
                     t_item.extract()
                 else:  # to a room */
-                    t_item.to_room(item.in_room)
+                    t_item.to_environment(item.in_room)
 
         item.extract()
     return

@@ -49,7 +49,7 @@ def do_look(ch, argument):
                 and ch.act.is_set(merc.PLR_AUTOEXIT):
             ch.send("\n")
             ch.do_exits("auto")
-        handler_ch.show_list_to_char(room.contents, ch, False, False)
+        handler_ch.show_list_to_char(room.items, ch, False, False)
         handler_ch.show_char_to_char(room.people, ch)
         return
     if arg1 == "i" or arg1 == "in" or arg1 == "on":
@@ -89,8 +89,8 @@ def do_look(ch, argument):
     if victim:
         handler_ch.show_char_to_char_1(victim, ch)
         return
-    obj_list = ch.contents
-    obj_list.extend(room.contents)
+    obj_list = ch.items
+    obj_list.extend(room.items)
     for obj_id in obj_list:
         obj = merc.items[obj_id]
         if ch.can_see_item(obj.instance_id):

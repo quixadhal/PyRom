@@ -65,7 +65,7 @@ def do_buy(ch, argument):
         if arg:
             pet.name = "%s %s" % (pet.name, arg)
         pet.description = "%sA neck tag says 'I belong to %s'.\n" % (pet.description, ch.name)
-        pet.to_room(ch.in_room)
+        pet.to_environment(ch.in_room)
         merc.add_follower(pet, ch)
         pet.leader = ch
         ch.pet = pet
@@ -137,12 +137,12 @@ def do_buy(ch, argument):
                 items.append(t_obj)
         for t_obj in items[:]:
             if not merc.IS_SET(obj.extra_flags, merc.ITEM_INVENTORY):
-                t_obj.from_char()
+                t_obj.from_environment()
 
             if t_obj.timer > 0 and not merc.IS_OBJ_STAT(t_obj, merc.ITEM_HAD_TIMER):
                 t_obj.timer = 0
             t_obj.extra_flags = merc.REMOVE_BIT(t_obj.extra_flags, merc.ITEM_HAD_TIMER)
-            t_obj.to_char(ch)
+            t_obj.to_environment(ch)
             if cost < t_obj.cost:
                 t_obj.cost = cost
 

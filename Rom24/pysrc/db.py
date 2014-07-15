@@ -178,7 +178,7 @@ def reset_area(area):
             # set area */
             mob.zone = roomInstance.area
 
-            mob.to_room(roomInstance.instance_id)
+            mob.to_environment(roomInstance.instance_id)
             level = max(0, min(mob.level - 2, merc.LEVEL_HERO - 1))
             last = True
 
@@ -193,13 +193,13 @@ def reset_area(area):
                 continue
             pRoomInstanceID = merc.instances_by_room[pReset.arg3][0]
             pRoomInstance = merc.rooms[pRoomInstanceID]
-            if areaInstance.nplayer > 0 or handler_item.count_obj_list(pRoomInstance, pRoomInstance.contents) > 0:
+            if areaInstance.nplayer > 0 or handler_item.count_obj_list(pRoomInstance, pRoomInstance.items) > 0:
                 last = False
                 continue
 
             item = object_creator.create_item(item_template, min(game_utils.number_fuzzy(level), merc.LEVEL_HERO - 1))
             item.cost = 0
-            item.to_room(pRoomInstanceID)
+            item.to_environment(pRoomInstanceID)
             last = True
             continue
 
@@ -232,7 +232,7 @@ def reset_area(area):
             count = handler_item.count_obj_list(item_template, item_to.contents)
             while count < pReset.arg4:
                 item = object_creator.create_item(item_template, game_utils.number_fuzzy(item_to.level))
-                item.to_item(item_to)
+                item.to_environment(item_to)
                 count += 1
                 if item_template.count >= limit:
                     break
@@ -302,7 +302,7 @@ def reset_area(area):
                                  mob.short_descr, mob.instance_id, mob.level)
                 else:
                     continue
-            item.to_char(mob)
+            item.to_environment(mob)
             if pReset.command == 'E':
                 mob.equip(item.instance_id, pReset.arg3)
                 last = True

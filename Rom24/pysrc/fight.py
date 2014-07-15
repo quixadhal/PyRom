@@ -930,7 +930,7 @@ def make_corpse(ch):
         corpse = object_creator.create_item(itemTemplate[OBJ_VNUM_CORPSE_NPC], 0)
         corpse.timer = random.randint(3, 6)
         if ch.gold > 0:
-            object_creator.create_money(ch.gold, ch.silver).to_item(corpse.instance_id)
+            object_creator.create_money(ch.gold, ch.silver).to_environment(corpse.instance_id)
             ch.gold = 0
             ch.silver = 0
         corpse.cost = 0
@@ -944,7 +944,7 @@ def make_corpse(ch):
         else:
             corpse.owner = ""
             if ch.gold > 1 or ch.silver > 1:
-                object_creator.create_money(ch.gold // 2, ch.silver // 2).to_item(corpse.instance_id)
+                object_creator.create_money(ch.gold // 2, ch.silver // 2).to_environment(corpse.instance_id)
                 ch.gold -= ch.gold // 2
                 ch.silver -= ch.silver // 2
         corpse.cost = 0
@@ -957,7 +957,7 @@ def make_corpse(ch):
         floating = False
         if item.wear_loc == WEAR_FLOAT:
             floating = True
-        item.from_char()
+        item.from_environment()
         if item.item_type == ITEM_POTION:
             item.timer = random.randint(500, 1000)
         if item.item_type == ITEM_SCROLL:
@@ -975,17 +975,17 @@ def make_corpse(ch):
                     handler_game.act("$p evaporates,scattering its contents.", ch, item, None, TO_ROOM)
                     for contents_id in item.contents[:]:
                         contents = merc.items[contents_id]
-                        contents.from_item()
-                        contents.to_room(ch.in_room)
+                        contents.from_environment()
+                        contents.to_environment(ch.in_room)
                 else:
                     handler_game.act("$p evaporates.", ch, item, None, TO_ROOM)
                 item.extract()
             else:
                 handler_game.act("$p falls to the floor.", ch, item, None, TO_ROOM)
-                item.to_room(ch.in_room)
+                item.to_environment(ch.in_room)
         else:
-            item.to_item(corpse.instance_id)
-    corpse.to_room(ch.in_room)
+            item.to_environment(corpse.instance_id)
+    corpse.to_environment(ch.in_room)
     return
 
 
@@ -1037,7 +1037,7 @@ def death_cry(ch):
                 obj.value[3] = 1
             elif not ch.form.is_set(FORM_EDIBLE):
                 obj.item_type = ITEM_TRASH
-            obj.to_room(ch.in_room)
+            obj.to_environment(ch.in_room)
 
     if ch.is_npc():
         msg = "You hear something's death cry."
@@ -1124,8 +1124,8 @@ def group_gain(ch, victim):
                     or (state_checks.is_item_stat(item, ITEM_ANTI_NEUTRAL) and ch.is_neutral() ):
                 handler_game.act("You are zapped by $p.", ch, item, None, TO_CHAR)
                 handler_game.act("$n is zapped by $p.", ch, item, None, TO_ROOM)
-                item.from_char()
-                item.to_room(ch.in_room)
+                item.from_environment()
+                item.to_environment(ch.in_room)
 
                 # Compute xp for a kill.
                 # Also adjust alignment of killer.
@@ -1367,11 +1367,11 @@ def disarm(ch, victim):
     handler_game.act("$n DISARMS you and sends your weapon flying!", ch, None, victim, TO_VICT)
     handler_game.act("You disarm $N!", ch, None, victim, TO_CHAR)
     handler_game.act("$n disarms $N!", ch, None, victim, TO_NOTVICT)
-    item.from_char()
+    item.from_environment()
     if state_checks.is_item_stat(item, ITEM_NODROP) or state_checks.is_item_stat(item, ITEM_INVENTORY):
-        item.to_char(victim)
+        item.to_environment(victim)
     else:
-        item.to_room(victim.in_room)
+        item.to_environment(victim.in_room)
         if victim.is_npc() and victim.wait == 0 and victim.can_see_item(item.instance_id):
             handler_item.get_item(victim, item, None)
     return

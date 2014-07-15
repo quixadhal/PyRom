@@ -9,6 +9,13 @@ class Container:
         self.carry_weight = 0
         self.carry_number = 0
 
+    @property
+    def people(self):
+        return [id for id in self.contents if id in merc.characters]
+    @property
+    def items(self):
+        return [id for id in self.contents if id in merc.items]
+
     def can_carry_n(self):
         if not self.is_npc() and self.level >= merc.LEVEL_IMMORTAL:
             return 1000

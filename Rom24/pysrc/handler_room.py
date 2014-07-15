@@ -33,15 +33,17 @@
 """
 import copy
 import random
+import container
 
 import handler
 import handler_game
+import location
 from merc import *
 import merc
 import state_checks
 
 
-class Room(handler.Instancer):
+class Room(handler.Instancer, location.Location, container.Container):
     def __init__(self, template=None):
         super().__init__()
         self.vnum = 0
@@ -51,8 +53,6 @@ class Room(handler.Instancer):
             self.instance_setup()
         else:
             self.instance_id = None
-            self.people = []
-            self.contents = []
             self.extra_descr = []
             self.area = ""
             self.exit = [None, None, None, None, None, None]

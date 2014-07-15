@@ -7,7 +7,7 @@ def spell_create_food(sn, level, ch, victim, target):
     mushroom = instancer.create_object(merc.itemTemplate[merc.OBJ_VNUM_MUSHROOM], 0)
     mushroom.value[0] = level // 2
     mushroom.value[1] = level
-    mushroom.to_room(ch.in_room)
+    mushroom.to_environment(ch.in_room)
     handler_game.act("$p suddenly appears.", ch, mushroom, None, merc.TO_ROOM)
     handler_game.act("$p suddenly appears.", ch, mushroom, None, merc.TO_CHAR)
     return

@@ -112,8 +112,8 @@ def move_char(ch, door, follow):
         ch.move -= move
     if not ch.is_affected(merc.AFF_SNEAK) and (not ch.is_npc() and ch.invis_level < merc.LEVEL_HERO):
         handler_game.act("$n leaves $T.", ch, None, merc.dir_name[door], merc.TO_ROOM)
-    ch.from_room()
-    ch.to_room(to_room.instance_id)
+    ch.from_environment()
+    ch.to_environment(to_room.instance_id)
     if not ch.is_affected(merc.AFF_SNEAK) and (not ch.is_npc() and ch.invis_level < merc.LEVEL_HERO):
         handler_game.act("$n has arrived.", ch, None, None, merc.TO_ROOM)
     ch.do_look("auto")

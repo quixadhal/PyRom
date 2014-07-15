@@ -41,8 +41,8 @@ def do_recall(ch, argument):
         fight.stop_fighting(ch, True)
     ch.move /= 2
     handler_game.act("$n disappears.", ch, None, None, merc.TO_ROOM)
-    ch.from_room()
-    ch.to_room(location)
+    ch.from_environment()
+    ch.to_environment(location)
     handler_game.act("$n appears in the room.", ch, None, None, merc.TO_ROOM)
     ch.do_look("auto")
 

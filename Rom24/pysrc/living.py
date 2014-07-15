@@ -280,8 +280,8 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             # Thanks to Morgenes for the bug fix here!
             handler_game.act("You are zapped by $p and drop it.", self, item, None, merc.TO_CHAR)
             handler_game.act("$n is zapped by $p and drops it.", self, item, None, merc.TO_ROOM)
-            item.from_char()
-            item.to_room(self.in_room)
+            item.from_environment()
+            item.to_environment(self.in_room)
             return
 
         for i in range(4):
@@ -637,12 +637,12 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             item.extract()
 
         if self.in_room:
-            self.from_room()
+            self.from_environment()
 
         # Death room is set in the clan tabe now */
         if not fPull:
             room_id = merc.instances_by_room[self.clan.hall][0]
-            self.to_room(room_id)
+            self.to_environment(room_id)
             return
 
         if self.desc and self.desc.original:

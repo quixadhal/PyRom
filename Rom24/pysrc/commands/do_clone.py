@@ -47,9 +47,9 @@ def do_clone(ch, argument):
         clone = instancer.create_object(obj.pIndexData, 0)
         db.clone_object(obj, clone)
         if obj.in_living:
-            clone.to_char(ch)
+            clone.to_environment(ch)
         else:
-            clone.to_room(ch.in_room)
+            clone.to_environment(ch.in_room)
         handler_item.recursive_clone(ch, obj, clone)
 
         act("$n has created $p.", ch, clone, None, merc.TO_ROOM)
@@ -75,9 +75,9 @@ def do_clone(ch, argument):
                 new_obj = instancer.create_object(obj.pIndexData, 0)
                 db.clone_object(obj, new_obj)
                 handler_item.recursive_clone(ch, obj, new_obj)
-                new_obj.to_char(clone)
+                new_obj.to_environment(clone)
                 new_obj.wear_loc = obj.wear_loc
-        clone.to_room(ch.in_room)
+        clone.to_environment(ch.in_room)
         act("$n has created $N.", ch, None, clone, merc.TO_ROOM)
         act("You clone $N.", ch, None, clone, merc.TO_CHAR)
         handler_game.wiznet("$N clones %s." % clone.short_descr, ch, None, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.trust)
