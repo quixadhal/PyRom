@@ -23,7 +23,7 @@ def do_wear(ch, argument):
         if not item:
             ch.send("You do not have that item.\n")
             return
-        handler_item.wear_item(ch, item, True)
+        ch.wear_item(obj, True)
     return
 
 

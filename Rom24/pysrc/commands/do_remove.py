@@ -17,7 +17,7 @@ def do_remove(ch, argument):
     if not obj:
         ch.send("You do not have that item.\n")
         return
-    handler_item.remove_item(ch, obj.wear_loc, True)
+    ch.remove_item(obj.wear_loc, True)
     return
 
 

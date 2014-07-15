@@ -21,7 +21,7 @@ def do_bash(ch, argument):
         return
     victim = None
     if not arg:
-        victim = ch.fighting
+        victim = merc.global_instances.get(ch.fighting, None)
         if not victim:
             ch.send("But you aren't fighting anyone!\n")
             return
