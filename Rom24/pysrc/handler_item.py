@@ -194,25 +194,6 @@ class Items(handler.Instancer, location.Location, physical.Physical, container.C
         return total
 
 
-
-
-def remove_item(ch, iWear, fReplace):
-    item = merc.items.get(ch.get_eq(iWear), None)
-    if not item:
-        return True
-    if not fReplace:
-        return False
-    if state_checks.IS_SET(item.extra_flags, merc.ITEM_NOREMOVE):
-        handler_game.act("You can't remove $p.", ch, item, None, merc.TO_CHAR)
-        return False
-    ch.unequip(item)
-    handler_game.act("$n stops using $p.", ch, item, None, merc.TO_ROOM)
-    handler_game.act("You stop using $p.", ch, item, None, merc.TO_CHAR)
-    return True
-
-    #
-
-
 def get_item(ch, item, container):
     # variables for AUTOSPLIT */
     if not state_checks.CAN_WEAR(item, merc.ITEM_TAKE):

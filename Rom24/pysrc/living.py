@@ -891,7 +891,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             handler_game.act("$n tries to use $p, but is too inexperienced.", self, item, None, merc.TO_ROOM)
             return
         if item.item_type == merc.ITEM_LIGHT:
-            if not remove_item(self, merc.WEAR_LIGHT, fReplace):
+            if not self.remove_item(merc.WEAR_LIGHT, fReplace):
                 return
             handler_game.act("$n lights $p and holds it.", self, item, None, merc.TO_ROOM)
             handler_game.act("You light $p and hold it.", self, item, None, merc.TO_CHAR)
@@ -899,8 +899,8 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             return
         if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_FINGER):
             if merc.items.get(self.get_eq(merc.WEAR_FINGER_L), None) and merc.items.get(self.get_eq(merc.WEAR_FINGER_R), None) \
-                    and not remove_item(self, merc.WEAR_FINGER_L, fReplace) \
-                    and not remove_item(self, merc.WEAR_FINGER_R, fReplace):
+                    and not self.remove_item(merc.WEAR_FINGER_L, fReplace) \
+                    and not self.remove_item(merc.WEAR_FINGER_R, fReplace):
                 return
             if not merc.items.get(self.get_eq(merc.WEAR_FINGER_L), None):
                 handler_game.act("$n wears $p on $s left finger.", self, item, None, merc.TO_ROOM)
@@ -917,8 +917,8 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             return
         if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_NECK):
             if merc.items.get(self.get_eq(merc.WEAR_NECK_1), None) and merc.items.get(self.get_eq(merc.WEAR_NECK_2), None) \
-                    and not remove_item(self, merc.WEAR_NECK_1, fReplace) \
-                    and not remove_item(self, merc.WEAR_NECK_2, fReplace):
+                    and not self.remove_item(merc.WEAR_NECK_1, fReplace) \
+                    and not self.remove_item(merc.WEAR_NECK_2, fReplace):
                 return
             if not merc.items.get(self.get_eq(merc.WEAR_NECK_1), None):
                 handler_game.act("$n wears $p around $s neck.", self, item, None, merc.TO_ROOM)
@@ -934,56 +934,56 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             self.send("You already wear two neck items.\n")
             return
         if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_BODY):
-            if not remove_item(self, merc.WEAR_BODY, fReplace):
+            if not self.remove_item(merc.WEAR_BODY, fReplace):
                 return
             handler_game.act("$n wears $p on $s torso.", self, item, None, merc.TO_ROOM)
             handler_game.act("You wear $p on your torso.", self, item, None, merc.TO_CHAR)
             self.equip(item, merc.WEAR_BODY)
             return
         if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_HEAD):
-            if not remove_item(self, merc.WEAR_HEAD, fReplace):
+            if not self.remove_item(merc.WEAR_HEAD, fReplace):
                 return
             handler_game.act("$n wears $p on $s head.", self, item, None, merc.TO_ROOM)
             handler_game.act("You wear $p on your head.", self, item, None, merc.TO_CHAR)
             self.equip(item, merc.WEAR_HEAD)
             return
         if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_LEGS):
-            if not remove_item(self, merc.WEAR_LEGS, fReplace):
+            if not self.remove_item(merc.WEAR_LEGS, fReplace):
                 return
             handler_game.act("$n wears $p on $s legs.", self, item, None, merc.TO_ROOM)
             handler_game.act("You wear $p on your legs.", self, item, None, merc.TO_CHAR)
             self.equip(item, merc.WEAR_LEGS)
             return
         if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_FEET):
-            if not remove_item(self, merc.WEAR_FEET, fReplace):
+            if not self.remove_item(merc.WEAR_FEET, fReplace):
                 return
             handler_game.act("$n wears $p on $s feet.", self, item, None, merc.TO_ROOM)
             handler_game.act("You wear $p on your feet.", self, item, None, merc.TO_CHAR)
             self.equip(item, merc.WEAR_FEET)
             return
         if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_HANDS):
-            if not remove_item(self, merc.WEAR_HANDS, fReplace):
+            if not self.remove_item(merc.WEAR_HANDS, fReplace):
                 return
             handler_game.act("$n wears $p on $s hands.", self, item, None, merc.TO_ROOM)
             handler_game.act("You wear $p on your hands.", self, item, None, merc.TO_CHAR)
             self.equip(item, merc.WEAR_HANDS)
             return
         if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_ARMS):
-            if not remove_item(self, merc.WEAR_ARMS, fReplace):
+            if not self.remove_item(merc.WEAR_ARMS, fReplace):
                 return
             handler_game.act("$n wears $p on $s arms.", self, item, None, merc.TO_ROOM)
             handler_game.act("You wear $p on your arms.", self, item, None, merc.TO_CHAR)
             self.equip(item, merc.WEAR_ARMS)
             return
         if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_ABOUT):
-            if not remove_item(self, merc.WEAR_ABOUT, fReplace):
+            if not self.remove_item(merc.WEAR_ABOUT, fReplace):
                 return
             handler_game.act("$n wears $p about $s torso.", self, item, None, merc.TO_ROOM)
             handler_game.act("You wear $p about your torso.", self, item, None, merc.TO_CHAR)
             self.equip(item, merc.WEAR_ABOUT)
             return
         if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_WAIST):
-            if not remove_item(self, merc.WEAR_WAIST, fReplace):
+            if not self.remove_item(merc.WEAR_WAIST, fReplace):
                 return
             handler_game.act("$n wears $p about $s waist.", self, item, None, merc.TO_ROOM)
             handler_game.act("You wear $p about your waist.", self, item, None, merc.TO_CHAR)
@@ -991,7 +991,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             return
         if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_WRIST):
             if merc.items.get(self.get_eq(merc.WEAR_WRIST_L), None) and merc.items.get(self.get_eq(merc.WEAR_WRIST_R), None) \
-                    and not remove_item(self, merc.WEAR_WRIST_L, fReplace) and not remove_item(self, merc.WEAR_WRIST_R, fReplace):
+                    and not self.remove_item(merc.WEAR_WRIST_L, fReplace) and not self.remove_item(merc.WEAR_WRIST_R, fReplace):
                 return
             if not merc.items.get(self.get_eq(merc.WEAR_WRIST_L), None):
                 handler_game.act("$n wears $p around $s left wrist.", self, item, None, merc.TO_ROOM)
@@ -1008,7 +1008,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             self.send("You already wear two wrist items.\n")
             return
         if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_SHIELD):
-            if not remove_item(self, merc.WEAR_SHIELD, fReplace):
+            if not self.remove_item(merc.WEAR_SHIELD, fReplace):
                 return
             weapon = merc.items.get(self.get_eq(merc.WEAR_WIELD), None)
             if weapon and self.size < merc.SIZE_LARGE and state_checks.IS_WEAPON_STAT(weapon, merc.WEAPON_TWO_HANDS):
@@ -1019,7 +1019,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             self.equip(item, merc.WEAR_SHIELD)
             return
         if state_checks.CAN_WEAR(item, merc.ITEM_WIELD):
-            if not remove_item(self, merc.WEAR_WIELD, fReplace):
+            if not self.remove_item(merc.WEAR_WIELD, fReplace):
                 return
             if not self.is_npc() and item.get_weight() > (const.str_app[self.stat(merc.STAT_STR)].wield * 10):
                 self.send("It is too heavy for you to wield.\n")
@@ -1055,14 +1055,14 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                 handler_game.act("You don't even know which end is up on $p.", self, item, None, merc.TO_CHAR)
             return
         if state_checks.CAN_WEAR(item, merc.ITEM_HOLD):
-            if not remove_item(self, merc.WEAR_HOLD, fReplace):
+            if not self.remove_item(merc.WEAR_HOLD, fReplace):
                 return
             handler_game.act("$n holds $p in $s hand.", self, item, None, merc.TO_ROOM)
             handler_game.act("You hold $p in your hand.", self, item, None, merc.TO_CHAR)
             self.equip(item, merc.WEAR_HOLD)
             return
         if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_FLOAT):
-            if not remove_item(self, merc.WEAR_FLOAT, fReplace):
+            if not self.remove_item(merc.WEAR_FLOAT, fReplace):
                 return
             handler_game.act("$n releases $p to float next to $m.", self, item, None, merc.TO_ROOM)
             handler_game.act("You release $p and it floats next to you.", self, item, None, merc.TO_CHAR)
@@ -1071,4 +1071,18 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         if fReplace:
             self.send("You can't wear, wield, or hold that.\n")
         return
+
+    def remove_item(self, iWear, fReplace):
+        item = merc.items.get(self.get_eq(iWear), None)
+        if not item:
+            return True
+        if not fReplace:
+            return False
+        if state_checks.IS_SET(item.extra_flags, merc.ITEM_NOREMOVE):
+            handler_game.act("You can't remove $p.", self, item, None, merc.TO_CHAR)
+            return False
+        self.unequip(item)
+        handler_game.act("$n stops using $p.", self, item, None, merc.TO_ROOM)
+        handler_game.act("You stop using $p.", self, item, None, merc.TO_CHAR)
+        return True
 
