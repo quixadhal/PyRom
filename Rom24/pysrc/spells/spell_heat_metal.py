@@ -29,8 +29,8 @@ def spell_heat_metal(sn, level, ch, victim, target):
                             handler_game.act("You remove and drop $p before it burns you.", victim, obj_lose, None,
                                              merc.TO_CHAR)
                             dam += (random.randint(1, obj_lose.level) // 3)
-                            obj_lose.from_char()
-                            obj_lose.to_room(victim.in_room)
+                            obj_lose.from_environment()
+                            obj_lose.to_environment(victim.in_room)
                             fail = False
                         else:  # stuck on the body!  ouch!  */
                             handler_game.act("Your skin is seared by $p! ",
@@ -44,8 +44,8 @@ def spell_heat_metal(sn, level, ch, victim, target):
                             handler_game.act("You and drop $p before it burns you.", victim, obj_lose, None,
                                              merc.TO_CHAR)
                             dam += (random.randint(1, obj_lose.level) // 6)
-                            obj_lose.from_char()
-                            obj_lose.to_room(victim.in_room)
+                            obj_lose.from_environment()
+                            obj_lose.to_environment(victim.in_room)
                             fail = False
                         else:  # can! drop */
                             handler_game.act("Your skin is seared by $p! ", victim, obj_lose, None, merc.TO_CHAR)
@@ -60,8 +60,8 @@ def spell_heat_metal(sn, level, ch, victim, target):
                                              merc.TO_ROOM)
                             victim.send("You throw your red-hot weapon to the ground! \n")
                             dam += 1
-                            obj_lose.from_char()
-                            obj_lose.to_room(victim.in_room)
+                            obj_lose.from_environment()
+                            obj_lose.to_environment(victim.in_room)
                             fail = False
                         else:  # YOWCH!  */
                             victim.send("Your weapon sears your flesh! \n")
@@ -74,8 +74,8 @@ def spell_heat_metal(sn, level, ch, victim, target):
                             handler_game.act("You and drop $p before it burns you.", victim, obj_lose, None,
                                              merc.TO_CHAR)
                             dam += (random.randint(1, obj_lose.level) // 6)
-                            obj_lose.from_char()
-                            obj_lose.to_room(victim.in_room)
+                            obj_lose.from_environment()
+                            obj_lose.to_environment(victim.in_room)
                             fail = False
                         else:  # can! drop */
                             handler_game.act("Your skin is seared by $p! ", victim, obj_lose, None, merc.TO_CHAR)

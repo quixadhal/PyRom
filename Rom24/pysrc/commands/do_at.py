@@ -22,16 +22,16 @@ def do_at(ch, argument):
         return
     original = ch.in_room
     on = ch.on
-    ch.from_room()
-    ch.to_room(location)
+    ch.from_environment()
+    ch.to_environment(location)
     ch.interpret(argument)
 
     # See if 'ch' still exists before continuing!
     # Handles 'at XXXX quit' case.
     for wch in merc.char_list:
         if wch == ch:
-            ch.from_room()
-            ch.to_room(original)
+            ch.from_environment()
+            ch.to_environment(original)
             ch.on = on
             break
 

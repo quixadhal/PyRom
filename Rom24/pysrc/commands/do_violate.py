@@ -1,4 +1,5 @@
 import logging
+import handler_game
 
 logger = logging.getLogger()
 
@@ -25,18 +26,18 @@ def do_violate(ch, argument):
     for rch in merc.rooms[ch.in_room].people:
         if rch.trust >= ch.invis_level:
             if ch.pcdata and ch.bamfout:
-                act("$t", ch, ch.bamfout, rch, merc.TO_VICT)
+                handler_game.act("$t", ch, ch.bamfout, rch, merc.TO_VICT)
             else:
-                act("$n leaves in a swirling mist.", ch, None, rch, merc.TO_VICT)
-    ch.from_room()
-    ch.to_room(location)
+                handler_game.act("$n leaves in a swirling mist.", ch, None, rch, merc.TO_VICT)
+    ch.from_environment()
+    ch.to_environment(location)
 
     for rch in merc.rooms[ch.in_room].people:
         if rch.trust >= ch.invis_level:
             if ch.pcdata and ch.bamfin:
-                act("$t", ch, ch.bamfin, rch, merc.TO_VICT)
+                handler_game.act("$t", ch, ch.bamfin, rch, merc.TO_VICT)
             else:
-                act("$n appears in a swirling mist.", ch, None, rch, merc.TO_VICT)
+                handler_game.act("$n appears in a swirling mist.", ch, None, rch, merc.TO_VICT)
     ch.do_look("auto")
     return
 

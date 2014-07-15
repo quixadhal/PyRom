@@ -112,8 +112,8 @@ def do_steal(ch, argument):
     if ch.carry_weight + obj.get_weight() > ch.can_carry_w():
         ch.send("You can't carry that much weight.\n")
         return
-    obj.from_char()
-    obj.to_char(ch)
+    obj.from_environment()
+    obj.to_environment(ch)
     act("You pocket $p.", ch, obj, None, merc.TO_CHAR)
     ch.check_improve( "steal", True, 2)
     ch.send("Got it!\n")

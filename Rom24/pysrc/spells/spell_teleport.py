@@ -22,8 +22,8 @@ def spell_teleport(sn, level, ch, victim, target):
         victim.send("You have been teleported! \n")
 
     handler_game.act("$n vanishes! ", victim, None, None, merc.TO_ROOM)
-    victim.from_room()
-    victim.to_room(pRoomIndex)
+    victim.from_environment()
+    victim.to_environment(pRoomIndex)
     handler_game.act("$n slowly fades into existence.", victim, None, None, merc.TO_ROOM)
     victim.do_look("auto")
 

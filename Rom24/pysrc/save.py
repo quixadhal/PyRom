@@ -180,7 +180,7 @@ def fread_char(chdict, ch):
     room = merc.instances_by_room[chdict["Room"]][0]
     if not room:
         room = chdict["Room"]
-    ch.in_room = room
+    ch.in_environment = room
     ch.hit, ch.max_hit, ch.mana, ch.max_mana, ch.move, ch.max_move = chdict["HMV"]
     ch.gold = chdict["Gold"]
     ch.silver = chdict["Silv"]
@@ -227,9 +227,9 @@ def fread_items(contents, objects, contained_by=None):
     for odict in objects:
         item = fread_item(contents, odict)
         if not contained_by:
-            item.to_char(contents)
+            item.to_environment(contents)
         else:
-            item.to_item(contained_by)
+            item.to_environment(contained_by)
         if 'contents' in odict:
             fread_items(contents, odict['contents'], item)
 

@@ -61,7 +61,7 @@ def do_sell(ch, argument):
     if obj.item_type == merc.ITEM_TRASH or state_checks.is_item_stat(obj, merc.ITEM_SELL_EXTRACT):
         obj.extract()
     else:
-        obj.from_char()
+        obj.from_environment()
         if obj.timer:
             obj.extra_flags = state_checks.SET_BIT(obj.extra_flags, merc.ITEM_HAD_TIMER)
         else:

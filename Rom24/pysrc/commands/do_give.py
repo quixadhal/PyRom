@@ -88,8 +88,8 @@ def do_give(ch, argument):
     if not victim.can_see_item(obj):
         act("$N can't see it.", ch, None, victim, merc.TO_CHAR)
         return
-    obj.from_char()
-    obj.to_char(victim)
+    obj.from_environment()
+    obj.to_environment(victim)
     act("$n gives $p to $N.", ch, obj, victim, merc.TO_NOTVICT)
     act("$n gives you $p.", ch, obj, victim, merc.TO_VICT)
     act("You give $p to $N.", ch, obj, victim, merc.TO_CHAR)

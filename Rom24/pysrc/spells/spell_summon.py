@@ -27,8 +27,8 @@ def spell_summon(sn, level, ch, victim, target):
         return
 
     handler_game.act("$n disappears suddenly.", victim, None, None, merc.TO_ROOM)
-    victim.from_room()
-    victim.to_room(ch.in_room)
+    victim.from_environment()
+    victim.to_environment(ch.in_room)
     handler_game.act("$n arrives suddenly.", victim, None, None, merc.TO_ROOM)
     handler_game.act("$n has summoned you! ", ch, None, victim, merc.TO_VICT)
     victim.do_look("auto")

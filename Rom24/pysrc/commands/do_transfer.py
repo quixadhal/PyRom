@@ -1,4 +1,5 @@
 import logging
+import handler_game
 
 logger = logging.getLogger()
 
@@ -45,12 +46,12 @@ def do_transfer(ch, argument):
 
     if victim.fighting:
         fight.stop_fighting(victim, True)
-    act("$n disappears in a mushroom cloud.", victim, None, None, merc.TO_ROOM)
-    victim.from_room()
-    victim.to_room(location)
-    act("$n arrives from a puff of smoke.", victim, None, None, merc.TO_ROOM)
+    handler_game.act("$n disappears in a mushroom cloud.", victim, None, None, merc.TO_ROOM)
+    victim.from_environment()
+    victim.to_environment(location)
+    handler_game.act("$n arrives from a puff of smoke.", victim, None, None, merc.TO_ROOM)
     if ch != victim:
-        act("$n has transferred you.", ch, None, victim, merc.TO_VICT)
+        handler_game.act("$n has transferred you.", ch, None, victim, merc.TO_VICT)
     victim.do_look("auto")
     ch.send("Ok.\n")
 

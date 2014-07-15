@@ -18,14 +18,14 @@ def do_outfit(ch, argument):
     if not obj:
         obj = instancer.create_object(merc.itemTemplate[merc.OBJ_VNUM_SCHOOL_BANNER], 0)
         obj.cost = 0
-        obj.to_char(ch)
+        obj.to_environment(ch)
         ch.equip(obj, merc.WEAR_LIGHT)
 
     obj = ch.get_eq(merc.WEAR_BODY)
     if not obj:
         obj = instancer.create_object(merc.itemTemplate[merc.OBJ_VNUM_SCHOOL_VEST], 0)
         obj.cost = 0
-        obj.to_char(ch)
+        obj.to_environment(ch)
         ch.equip(obj, merc.WEAR_BODY)
 
     # do the weapon thing
@@ -39,7 +39,7 @@ def do_outfit(ch, argument):
                 sn = weapon.gsn
                 vnum = weapon.vnum
         obj = instancer.create_object(merc.itemTemplate[vnum], 0)
-        obj.to_char(ch)
+        obj.to_environment(ch)
         ch.equip(obj, merc.WEAR_WIELD)
 
     obj = ch.get_eq(merc.WEAR_WIELD)
@@ -47,7 +47,7 @@ def do_outfit(ch, argument):
     if (not obj or not state_checks.IS_WEAPON_STAT(obj, merc.WEAPON_TWO_HANDS)) and not shield:
         obj = instancer.create_object(merc.itemTemplate[merc.OBJ_VNUM_SCHOOL_SHIELD], 0)
         obj.cost = 0
-        obj.to_char(ch)
+        obj.to_environment(ch)
         ch.equip(obj, merc.WEAR_SHIELD)
 
     ch.send("You have been equipped by Mota.\n")

@@ -41,6 +41,6 @@ tables = [SaveToken('clan_table', clan_table, clan_type),
           SaveToken('wis_app', wis_app, wis_app_type),
           SaveToken('dex_app', dex_app, dex_app_type),
           SaveToken('con_app', con_app, con_app_type),
-          SaveToken('attack_tabble', attack_table, attack_type),
+          SaveToken('attack_table', attack_table, attack_type),
           SaveToken('wiznet_table', wiznet_table, wiznet_type),
           SaveToken('liq_table', liq_table, liq_type)]

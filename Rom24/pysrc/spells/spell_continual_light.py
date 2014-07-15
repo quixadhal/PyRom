@@ -21,7 +21,7 @@ def spell_continual_light(sn, level, ch, victim, target):
         return
 
     light = instancer.create_object(merc.itemTemplate[merc.OBJ_VNUM_LIGHT_BALL], 0)
-    light.to_room(ch.in_room)
+    light.to_environment(ch.in_room)
     handler_game.act("$n twiddles $s thumbs and $p appears.", ch, light, None, merc.TO_ROOM)
     handler_game.act("You twiddle your thumbs and $p appears.", ch, light, None, merc.TO_CHAR)
 

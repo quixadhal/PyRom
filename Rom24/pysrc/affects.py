@@ -195,8 +195,8 @@ class Affects:
                 depth += 1
                 handler_game.act("You drop $p.", self, wield, None, merc.TO_CHAR)
                 handler_game.act("$n drops $p.", self, wield, None, merc.TO_ROOM)
-                wield.from_char()
-                wield.to_room(self.in_room)
+                wield.from_environment()
+                wield.to_environment(self.in_room)
                 depth -= 1
         return
 

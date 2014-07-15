@@ -29,8 +29,8 @@ def do_goto(ch, argument):
                 act("$t", ch, ch.bamfout, rch, merc.TO_VICT)
             else:
                 act("$n leaves in a swirling mist.", ch, None, rch, merc.TO_VICT)
-    ch.from_room()
-    ch.to_room(location)
+    ch.from_environment()
+    ch.to_environment(location)
 
     for rch in merc.rooms[ch.in_room].people:
         if rch.trust >= ch.invis_level:

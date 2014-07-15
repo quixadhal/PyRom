@@ -20,7 +20,7 @@ def spell_floating_disc(sn, level, ch, victim, target):
 
     handler_game.act("$n has created a floating black disc.", ch, None, None, merc.TO_ROOM)
     ch.send("You create a floating disc.\n")
-    disc.to_char(ch)
+    disc.to_environment(ch)
     handler_item.wear_item(ch, disc, True)
 
 

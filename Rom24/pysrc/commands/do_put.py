@@ -55,8 +55,8 @@ def do_put(ch, argument):
                 obj.extra_flags = state_checks.SET_BIT(obj.extra_flags, merc.ITEM_HAD_TIMER)
             else:
                 obj.timer = random.randint(100, 200)
-        obj.from_char()
-        obj.to_item(container)
+        obj.from_environment()
+        obj.to_environment(container)
 
         if state_checks.IS_SET(container.value[1], merc.CONT_PUT_ON):
             act("$n puts $p on $P.", ch, obj, container, merc.TO_ROOM)
@@ -78,8 +78,8 @@ def do_put(ch, argument):
                         obj.extra_flags = state_checks.SET_BIT(obj.extra_flags, merc.ITEM_HAD_TIMER)
                     else:
                         obj.timer = random.randint(100, 200)
-                obj.from_char()
-                obj.to_item(container)
+                obj.from_environment()
+                obj.to_environment(container)
                 if state_checks.IS_SET(container.value[1], merc.CONT_PUT_ON):
                     act("$n puts $p on $P.", ch, obj, container, merc.TO_ROOM)
                     act("You put $p on $P.", ch, obj, container, merc.TO_CHAR)
