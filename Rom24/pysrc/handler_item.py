@@ -168,7 +168,7 @@ class Items(handler.Instancer, location.Location, physical.Physical, container.C
             return
         item.affected.remove(paf)
         del paf
-        if item.in_living != 0 and item.wear_loc != -1:
+        if item.in_living != None and item.wear_loc != -1:
             merc.characters[item.in_living].affect_check(where, vector)
         return
     # * Extract an obj from the world.
@@ -192,7 +192,6 @@ class Items(handler.Instancer, location.Location, physical.Physical, container.C
                 if person.on == item.instance_id:
                     total += 1
         return total
-
 
 def get_item(ch, item, container):
     # variables for AUTOSPLIT */

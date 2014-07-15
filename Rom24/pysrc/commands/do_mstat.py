@@ -82,7 +82,7 @@ def do_mstat(ch, argument):
         ch.send("Vulnerable: %s\n" % handler.imm_bit_name(victim.vuln_flags))
     ch.send("Form: %s\nParts: %s\n" % (handler.form_bit_name(victim.form), handler.part_bit_name(victim.parts)))
     if victim.affected_by:
-        ch.send("Affected by %s\n" % handler.affect_bit_name(victim.affected_by))
+        ch.send("Affected by %s\n" % victim.affected_by)
     ch.send("Master: %s  Leader: %s  Pet: %s\n" % (
         victim.master.name if victim.master else "(none)",
         victim.leader.name if victim.leader else "(none)",

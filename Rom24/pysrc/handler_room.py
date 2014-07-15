@@ -48,7 +48,7 @@ class Room(handler.Instancer, location.Location, container.Container):
         super().__init__()
         self.vnum = 0
         if template:
-            self = copy.deepcopy(template)
+            [setattr(self, k, v) for k, v in template.__dict__.items()]
             self.instancer()
             self.instance_setup()
         else:
