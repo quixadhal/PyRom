@@ -442,6 +442,7 @@ def char_update():
                     and not ch.is_affected(AFF_CHARM) and random.randint(1, 99) < 5:
                 handler_game.act("$n wanders on home.", ch, None, None, TO_ROOM)
                 ch.extract(True)
+                id_list.remove(character_id)
                 continue
 
         if ch.hit < ch.max_hit:
@@ -463,16 +464,16 @@ def char_update():
             fight.update_pos(ch)
 
         if not ch.is_npc() and ch.level < LEVEL_IMMORTAL:
-            obj = ch.get_eq(WEAR_LIGHT)
-            if obj and obj.item_type == ITEM_LIGHT and obj.value[2] > 0:
-                obj.value[2] -= 1
-                if obj.value[2] == 0 and roomTemplate[ch.in_room] is not None:
-                    roomTemplate[ch.in_room].light -= 1
-                    handler_game.act("$p goes out.", ch, obj, None, TO_ROOM)
-                    handler_game.act("$p flickers and goes out.", ch, obj, None, TO_CHAR)
-                    obj.extract()
-                elif obj.value[2] <= 5 and ch.in_room:
-                    handler_game.act("$p flickers.", ch, obj, None, TO_CHAR)
+            item_id = ch.get_eq(WEAR_LIGHT)
+            if item_id and item_id.item_type == ITEM_LIGHT and item_id.value[2] > 0:
+                item_id.value[2] -= 1
+                if item_id.value[2] == 0 and merc.rooms[ch.in_room] is not None:
+                    merc.rooms[ch.in_room].light -= 1
+                    handler_game.act("$p goes out.", ch, item_id, None, TO_ROOM)
+                    handler_game.act("$p flickers and goes out.", ch, item_id, None, TO_CHAR)
+                    item_id.extract()
+                elif item_id.value[2] <= 5 and ch.in_room:
+                    handler_game.act("$p flickers.", ch, item_id, None, TO_CHAR)
 
             if ch.is_immortal():
                 ch.timer = 0

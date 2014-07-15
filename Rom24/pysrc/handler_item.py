@@ -195,7 +195,8 @@ class Items(handler.Instancer, location.Location, physical.Physical, container.C
 
 
 def remove_item(ch, iWear, fReplace):
-    item = merc.items.get(ch.get_eq(iWear), None)
+    item_id = merc.items.get(ch.get_eq(iWear), None)
+    item = merc.items[item_id]
     if not item:
         return True
     if not fReplace:
@@ -224,7 +225,7 @@ def wear_item(ch, item, fReplace):
             return
         handler_game.act("$n lights $p and holds it.", ch, item, None, merc.TO_ROOM)
         handler_game.act("You light $p and hold it.", ch, item, None, merc.TO_CHAR)
-        ch.equip(item, merc.WEAR_LIGHT)
+        ch.equip(item.instance_id, merc.WEAR_LIGHT)
         return
     if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_FINGER):
         if merc.items.get(ch.get_eq(merc.WEAR_FINGER_L), None) and merc.items.get(ch.get_eq(merc.WEAR_FINGER_R), None) \
@@ -234,12 +235,12 @@ def wear_item(ch, item, fReplace):
         if not merc.items.get(ch.get_eq(merc.WEAR_FINGER_L), None):
             handler_game.act("$n wears $p on $s left finger.", ch, item, None, merc.TO_ROOM)
             handler_game.act("You wear $p on your left finger.", ch, item, None, merc.TO_CHAR)
-            ch.equip(item, merc.WEAR_FINGER_L)
+            ch.equip(item.instance_id, merc.WEAR_FINGER_L)
             return
         if not merc.items.get(ch.get_eq(merc.WEAR_FINGER_R), None):
             handler_game.act("$n wears $p on $s right finger.", ch, item, None, merc.TO_ROOM)
             handler_game.act("You wear $p on your right finger.", ch, item, None, merc.TO_CHAR)
-            ch.equip(item, merc.WEAR_FINGER_R)
+            ch.equip(item.instance_id, merc.WEAR_FINGER_R)
             return
         print("BUG: Wear_obj: no free finger.")
         ch.send("You already wear two rings.\n")
@@ -252,71 +253,71 @@ def wear_item(ch, item, fReplace):
         if not merc.items.get(ch.get_eq(merc.WEAR_NECK_1), None):
             handler_game.act("$n wears $p around $s neck.", ch, item, None, merc.TO_ROOM)
             handler_game.act("You wear $p around your neck.", ch, item, None, merc.TO_CHAR)
-            ch.equip(item, merc.WEAR_NECK_1)
+            ch.equip(item.instance_id, merc.WEAR_NECK_1)
             return
         if not merc.items.get(ch.get_eq(merc.WEAR_NECK_2), None):
             handler_game.act("$n wears $p around $s neck.", ch, item, None, merc.TO_ROOM)
             handler_game.act("You wear $p around your neck.", ch, item, None, merc.TO_CHAR)
-            ch.equip(item, merc.WEAR_NECK_2)
+            ch.equip(item.instance_id, merc.WEAR_NECK_2)
             return
         print("BUG: Wear_obj: no free neck.")
         ch.send("You already wear two neck items.\n")
         return
     if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_BODY):
-        if not remove_item(ch, merc.WEAR_BODY, fReplace):
+        if not remove_item(ch.instance_id, merc.WEAR_BODY, fReplace):
             return
         handler_game.act("$n wears $p on $s torso.", ch, item, None, merc.TO_ROOM)
         handler_game.act("You wear $p on your torso.", ch, item, None, merc.TO_CHAR)
-        ch.equip(item, merc.WEAR_BODY)
+        ch.equip(item.instance_id, merc.WEAR_BODY)
         return
     if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_HEAD):
         if not remove_item(ch, merc.WEAR_HEAD, fReplace):
             return
         handler_game.act("$n wears $p on $s head.", ch, item, None, merc.TO_ROOM)
         handler_game.act("You wear $p on your head.", ch, item, None, merc.TO_CHAR)
-        ch.equip(item, merc.WEAR_HEAD)
+        ch.equip(item.instance_id, merc.WEAR_HEAD)
         return
     if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_LEGS):
         if not remove_item(ch, merc.WEAR_LEGS, fReplace):
             return
         handler_game.act("$n wears $p on $s legs.", ch, item, None, merc.TO_ROOM)
         handler_game.act("You wear $p on your legs.", ch, item, None, merc.TO_CHAR)
-        ch.equip(item, merc.WEAR_LEGS)
+        ch.equip(item.instance_id, merc.WEAR_LEGS)
         return
     if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_FEET):
         if not remove_item(ch, merc.WEAR_FEET, fReplace):
             return
         handler_game.act("$n wears $p on $s feet.", ch, item, None, merc.TO_ROOM)
         handler_game.act("You wear $p on your feet.", ch, item, None, merc.TO_CHAR)
-        ch.equip(item, merc.WEAR_FEET)
+        ch.equip(item.instance_id, merc.WEAR_FEET)
         return
     if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_HANDS):
         if not remove_item(ch, merc.WEAR_HANDS, fReplace):
             return
         handler_game.act("$n wears $p on $s hands.", ch, item, None, merc.TO_ROOM)
         handler_game.act("You wear $p on your hands.", ch, item, None, merc.TO_CHAR)
-        ch.equip(item, merc.WEAR_HANDS)
+        ch.equip(item.instance_id, merc.WEAR_HANDS)
         return
     if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_ARMS):
         if not remove_item(ch, merc.WEAR_ARMS, fReplace):
             return
         handler_game.act("$n wears $p on $s arms.", ch, item, None, merc.TO_ROOM)
         handler_game.act("You wear $p on your arms.", ch, item, None, merc.TO_CHAR)
-        ch.equip(item, merc.WEAR_ARMS)
+        ch.equip(item.instance_id, merc.WEAR_ARMS)
         return
     if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_ABOUT):
         if not remove_item(ch, merc.WEAR_ABOUT, fReplace):
             return
         handler_game.act("$n wears $p about $s torso.", ch, item, None, merc.TO_ROOM)
         handler_game.act("You wear $p about your torso.", ch, item, None, merc.TO_CHAR)
-        ch.equip(item, merc.WEAR_ABOUT)
+        ch.equip(item.instance_id, merc.WEAR_ABOUT)
         return
     if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_WAIST):
         if not remove_item(ch, merc.WEAR_WAIST, fReplace):
             return
         handler_game.act("$n wears $p about $s waist.", ch, item, None, merc.TO_ROOM)
         handler_game.act("You wear $p about your waist.", ch, item, None, merc.TO_CHAR)
-        ch.equip(item, merc.WEAR_WAIST)
+        ch.equip(item.instance_id, merc.WEAR_WAIST)
         return
     if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_WRIST):
         if merc.items.get(ch.get_eq(merc.WEAR_WRIST_L), None) and merc.items.get(ch.get_eq(merc.WEAR_WRIST_R), None) \
@@ -325,12 +326,12 @@ def wear_item(ch, item, fReplace):
         if not merc.items.get(ch.get_eq(merc.WEAR_WRIST_L), None):
             handler_game.act("$n wears $p around $s left wrist.", ch, item, None, merc.TO_ROOM)
             handler_game.act("You wear $p around your left wrist.", ch, item, None, merc.TO_CHAR)
-            ch.equip(item, merc.WEAR_WRIST_L)
+            ch.equip(item.instance_id, merc.WEAR_WRIST_L)
             return
         if not merc.items.get(ch.get_eq(merc.WEAR_WRIST_R), None):
             handler_game.act("$n wears $p around $s right wrist.", ch, item, None, merc.TO_ROOM)
             handler_game.act("You wear $p around your right wrist.", ch, item, None, merc.TO_CHAR)
-            ch.equip(item, merc.WEAR_WRIST_R)
+            ch.equip(item.instance_id, merc.WEAR_WRIST_R)
             return
 
         print("BUG: Wear_obj: no free wrist.")
@@ -345,7 +346,7 @@ def wear_item(ch, item, fReplace):
             return
         handler_game.act("$n wears $p as a shield.", ch, item, None, merc.TO_ROOM)
         handler_game.act("You wear $p as a shield.", ch, item, None, merc.TO_CHAR)
-        ch.equip(item, merc.WEAR_SHIELD)
+        ch.equip(item.instance_id, merc.WEAR_SHIELD)
         return
     if state_checks.CAN_WEAR(item, merc.ITEM_WIELD):
         if not remove_item(ch, merc.WEAR_WIELD, fReplace):
@@ -360,7 +361,7 @@ def wear_item(ch, item, fReplace):
             return
         handler_game.act("$n wields $p.", ch, item, None, merc.TO_ROOM)
         handler_game.act("You wield $p.", ch, item, None, merc.TO_CHAR)
-        ch.equip(item, merc.WEAR_WIELD)
+        ch.equip(item.instance_id, merc.WEAR_WIELD)
 
         sn = ch.get_weapon_sn()
 

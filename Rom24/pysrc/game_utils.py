@@ -334,5 +334,6 @@ def object_search(ch, environment, template, obj_type, atype, num_or_count, arg_
         else:
             return None
     elif atype == 'instance_id':
-
+        pass
     elif atype == 'compound' or atype == 'word' or atype == 'number_compound' or atype == 'count_compound':
+        pass
