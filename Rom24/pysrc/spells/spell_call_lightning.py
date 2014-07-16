@@ -30,7 +30,7 @@ def spell_call_lightning(sn, level, ch, victim, target):
                              merc.DAM_LIGHTNING, True)
             continue
 
-        if vch.in_room.area == merc.rooms[ch.in_room].area and state_checks.IS_OUTSIDE(vch) and state_checks.IS_AWAKE(vch):
+        if vch.in_room.area == ch.in_room.area and state_checks.IS_OUTSIDE(vch) and vch.is_awake():
             vch.send("Lightning flashes in the sky.\n")
 
 

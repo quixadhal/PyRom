@@ -45,7 +45,7 @@ class Location:
         in_environment = merc.global_instances.get(self.in_environment, None)
         while in_environment:
             if isinstance(in_environment, Room):
-                return in_environment.instance_id
+                return in_environment
             in_environment = merc.global_instances.get(in_environment.in_environment, None)
         return None
 

@@ -50,7 +50,7 @@ def do_close(ch, argument):
     door = find_door(ch, arg)
     if find_door(ch, arg) >= 0:
         # 'close door'
-        pexit = merc.rooms[ch.in_room].exit[door]
+        pexit = ch.in_room.exit[door]
         if state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED):
             ch.send("It's already closed.\n")
             return

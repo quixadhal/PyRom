@@ -29,7 +29,7 @@ def do_brandish(ch, argument):
             merc.act("...and nothing happens.", ch, None, None, merc.TO_ROOM)
             ch.check_improve( "staves", False, 2)
         else:
-            for vch_id in merc.rooms[ch.in_room].people[:]:
+            for vch_id in ch.in_room.people:
                 vch = merc.characters[vch_id]
                 target = const.skill_table[sn].target
                 if target == merc.TAR_IGNORE:

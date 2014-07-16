@@ -16,7 +16,7 @@ def spell_calm(sn, level, ch, victim, target):
     count = 0
     mlevel = 0
     high_level = 0
-    for vch in merc.rooms[ch.in_room].people:
+    for vch in ch.in_room.people:
         if vch.position == merc.POS_FIGHTING:
             count = count + 1
         if vch.is_npc():
@@ -32,13 +32,13 @@ def spell_calm(sn, level, ch, victim, target):
         mlevel = 0
 
     if random.randint(0, chance) >= mlevel:  # hard to stop large fights */
-        for vch in merc.rooms[ch.in_room].people:
-            if vch.is_npc() and (state_checks.IS_SET(vch.imm_flags, merc.IMM_MAGIC) \
+        for vch in ch.in_room.people:
+            if vch.is_npc() and (vch.imm_flags.is_set(merc.IMM_MAGIC) \
                                         or vch.act.is_set(merc.ACT_UNDEAD)):
                 return
 
-            if state_checks.IS_AFFECTED(vch, merc.AFF_CALM) or state_checks.IS_AFFECTED(vch, merc.AFF_BERSERK) \
-                    or state_checks.is_affected(vch, const.skill_table['frenzy']):
+            if vch.is_affected(merc.AFF_CALM) or vch.is_affected(merc.AFF_BERSERK) \
+                    or vch.is_affected('frenzy'):
                 return
 
             vch.send("A wave of calm passes over you.\n")

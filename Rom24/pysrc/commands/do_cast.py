@@ -167,7 +167,7 @@ def do_cast(ch, argument):
 
     if (sn.target == merc.TAR_CHAR_OFFENSIVE or (sn.target == merc.TAR_OBJ_CHAR_OFF and target == merc.TARGET_CHAR)) \
             and victim != ch and victim.master != ch:
-        for vch in merc.rooms[ch.in_room].people[:]:
+        for vch in ch.in_room.people:
             if victim == vch and not victim.fighting:
                 fight.check_killer(victim, ch)
                 fight.multi_hit(victim, ch, merc.TYPE_UNDEFINED)

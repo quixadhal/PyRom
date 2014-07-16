@@ -61,14 +61,14 @@ def violence_update():
         if ch:
             if not ch.fighting or not ch.in_room:
                 continue
-            victim = merc.characters[ch.fighting]
+            victim = ch.fighting
             if ch.is_awake() and ch.in_room == victim.in_room:
                 multi_hit(ch, victim, TYPE_UNDEFINED)
             else:
                 stop_fighting(ch, False)
             if not ch.fighting:
                 continue
-            victim = merc.characters[ch.fighting]
+            victim = ch.fighting
             #
             # * Fun for the whole family!
             #*/
@@ -79,7 +79,7 @@ def violence_update():
 
 # for auto assisting */
 def check_assist(ch, victim):
-    for rch_id in merc.rooms[ch.in_room].people[:]:
+    for rch_id in ch.in_room.people[:]:
         rch = merc.characters[rch_id]
         if state_checks.IS_AWAKE(rch) and rch.fighting is None:
             # quick check for ASSIST_PLAYER */
@@ -113,7 +113,7 @@ def check_assist(ch, victim):
 
                 target = None
                 number = 0
-                for vch_id in merc.rooms[ch.in_room].people:
+                for vch_id in ch.in_room.people:
                     vch = merc.characters[vch_id]
                     if rch.can_see(vch) and vch.is_same_group(victim) and random.randint(0, number) == 0:
                         target = vch
@@ -142,13 +142,13 @@ def multi_hit(ch, victim, dt):
 
     one_hit(ch, victim, dt)
 
-    if ch.fighting != victim.instance_id:
+    if ch.fighting != victim:
         return
 
     if ch.is_affected(AFF_HASTE):
         one_hit(ch, victim, dt)
 
-    if ch.fighting != victim.instance_id or dt == 'backstab':
+    if ch.fighting != victim or dt == 'backstab':
         return
 
     chance = ch.get_skill('second attack') // 2
@@ -159,7 +159,7 @@ def multi_hit(ch, victim, dt):
     if random.randint(1, 99) < chance:
         one_hit(ch, victim, dt)
         ch.check_improve('second attack', True, 5)
-        if ch.fighting != victim.instance_id:
+        if ch.fighting != victim:
             return
 
     chance = ch.get_skill('third attack') // 4
@@ -170,7 +170,7 @@ def multi_hit(ch, victim, dt):
     if random.randint(1, 99) < chance:
         one_hit(ch, victim, dt)
         ch.check_improve('third attack', True, 6)
-        if ch.fighting != victim.instance_id:
+        if ch.fighting != victim :
             return
     return
 
@@ -178,13 +178,13 @@ def multi_hit(ch, victim, dt):
 # procedure for all mobile attacks */
 def mob_hit(ch, victim, dt):
     one_hit(ch, victim, dt)
-    if ch.fighting != victim.instance_id:
+    if ch.fighting != victim:
         return
     # Area attack -- BALLS nasty! */
     if ch.off_flags.is_set(OFF_AREA_ATTACK):
-        for vch_id in merc.rooms[ch.in_room].people[:]:
+        for vch_id in ch.in_room.people[:]:
             vch = merc.characters[vch_id]
-            if vch.instance_id != victim.instance_id and vch.fighting == ch.instance_id:
+            if vch != victim and vch.fighting == ch:
                 one_hit(ch, vch, dt)
 
     if ch.is_affected(AFF_HASTE) \
@@ -192,7 +192,7 @@ def mob_hit(ch, victim, dt):
                 and not ch.is_affected(AFF_SLOW)):
         one_hit(ch, victim, dt)
 
-    if ch.fighting != victim.instance_id or dt == 'backstab':
+    if ch.fighting != victim or dt == 'backstab':
         return
 
     chance = ch.get_skill("second attack") // 2
@@ -202,7 +202,7 @@ def mob_hit(ch, victim, dt):
 
     if random.randint(1, 99) < chance:
         one_hit(ch, victim, dt)
-        if ch.fighting != victim.instance_id:
+        if ch.fighting != victim:
             return
     chance = ch.get_skill('third attack') // 4
 
@@ -211,7 +211,7 @@ def mob_hit(ch, victim, dt):
 
     if random.randint(1, 99) < chance:
         one_hit(ch, victim, dt)
-        if ch.fighting != victim.instance_id:
+        if ch.fighting != victim:
             return
 
     # oh boy!  Fun stuff! */
@@ -416,7 +416,7 @@ def one_hit(ch, victim, dt):
     # but do we have a funky weapon? */
     if result and wield is not None:
 
-        if ch.fighting == victim.instance_id and state_checks.IS_WEAPON_STAT(wield, WEAPON_POISON):
+        if ch.fighting == victim and state_checks.IS_WEAPON_STAT(wield, WEAPON_POISON):
             poison = state_checks.affect_find(wield.affected, 'poison')
             if poison:
                 level = wield.level
@@ -442,27 +442,27 @@ def one_hit(ch, victim, dt):
                 if poison.level == 0 or poison.duration == 0:
                     handler_game.act("The poison on $p has worn off.", ch, wield, None, TO_CHAR)
 
-            if ch.fighting == victim.instance_id and state_checks.IS_WEAPON_STAT(wield, WEAPON_VAMPIRIC):
+            if ch.fighting == victim and state_checks.IS_WEAPON_STAT(wield, WEAPON_VAMPIRIC):
                 dam = random.randint(1, wield.level // 5 + 1)
                 handler_game.act("$p draws life from $n.", victim, wield, None, TO_ROOM)
                 handler_game.act("You feel $p drawing your life away.", victim, wield, None, TO_CHAR)
                 damage(ch, victim, dam, 0, DAM_NEGATIVE, False)
                 ch.alignment = max(-1000, ch.alignment - 1)
                 ch.hit += dam // 2
-            if ch.fighting == victim.instance_id and state_checks.IS_WEAPON_STAT(wield, WEAPON_FLAMING):
+            if ch.fighting == victim and state_checks.IS_WEAPON_STAT(wield, WEAPON_FLAMING):
                 dam = random.randint(1, wield.level // 4 + 1)
                 handler_game.act("$n is burned by $p.", victim, wield, None, TO_ROOM)
                 handler_game.act("$p sears your flesh.", victim, wield, None, TO_CHAR)
                 effects.fire_effect(victim, wield.level // 2, dam, TARGET_CHAR)
                 damage(ch, victim, dam, 0, DAM_FIRE, False)
-            if ch.fighting == victim.instance_id and state_checks.IS_WEAPON_STAT(wield, WEAPON_FROST):
+            if ch.fighting == victim and state_checks.IS_WEAPON_STAT(wield, WEAPON_FROST):
                 dam = random.randint(1, wield.level // 6 + 2)
                 handler_game.act("$p freezes $n.", victim, wield, None, TO_ROOM)
                 handler_game.act("The cold touch of $p surrounds you with ice.",
                                  victim, wield, None, TO_CHAR)
                 effects.cold_effect(victim, wield.level // 2, dam, TARGET_CHAR)
                 damage(ch, victim, dam, 0, DAM_COLD, False)
-            if ch.fighting == victim.instance_id and state_checks.IS_WEAPON_STAT(wield, WEAPON_SHOCKING):
+            if ch.fighting == victim and state_checks.IS_WEAPON_STAT(wield, WEAPON_SHOCKING):
                 dam = random.randint(1, wield.level // 5 + 2)
                 handler_game.act("$n is struck by lightning from $p.", victim, wield, None, TO_ROOM)
                 handler_game.act("You are shocked by $p.", victim, wield, None, TO_CHAR)
@@ -586,7 +586,7 @@ def damage(ch, victim, dam, dt, dam_type, show):
 
         if not victim.is_npc():
             logger.warn("%s killed by %s at %d", victim.name, ch.short_descr if ch.is_npc() else ch.name,
-                        merc.rooms[ch.in_room].vnum)
+                        ch.in_room.vnum)
             # Dying penalty:
             # 2/3 way back to previous level.
             if victim.exp > victim.exp_per_level(victim.points) * victim.level:
@@ -595,7 +595,7 @@ def damage(ch, victim, dam, dt, dam_type, show):
 
         log_buf = "%s got toasted by %s at %s [room %d]" % (victim.short_descr if victim.is_npc() else victim.name,
                                                              ch.short_descr if ch.is_npc() else ch.name,
-                                                             merc.rooms[ch.in_room].name, merc.rooms[ch.in_room].vnum)
+                                                             ch.in_room.name, ch.in_room.vnum)
 
         if victim.is_npc():
             handler_game.wiznet(log_buf, None, None, WIZ_MOBDEATHS, 0, 0)
@@ -610,7 +610,7 @@ def damage(ch, victim, dam, dt, dam_type, show):
             else:
                 victim.act.rem_bit(PLR_THIEF)
                 # RT new auto commands */
-        corpse_id = ch.get_item_list("corpse", merc.rooms[ch.in_room].contents)
+        corpse_id = ch.get_item_list("corpse", ch.in_room.items)
         corpse = merc.items[corpse_id]
 
         if not ch.is_npc() and corpse and corpse.item_type == ITEM_CORPSE_NPC and ch.can_see_item(corpse.instance_id):
@@ -655,14 +655,14 @@ def damage(ch, victim, dam, dt, dam_type, show):
 def is_safe(ch, victim):
     if victim.in_room is None or ch.in_room is None:
         return True
-    if victim.fighting == ch.instance_id or victim == ch:
+    if victim.fighting == ch or victim == ch:
         return False
     if ch.is_immortal() and ch.level > LEVEL_IMMORTAL:
         return False
     # killing mobiles */
     if victim.is_npc():
         # safe room? */
-        if state_checks.IS_SET(merc.rooms[victim.in_room].room_flags, ROOM_SAFE):
+        if state_checks.IS_SET(victim.in_room.room_flags, ROOM_SAFE):
             ch.send("Not in this room.\n")
             return True
         if victim.pIndexData.pShop:
@@ -690,13 +690,13 @@ def is_safe(ch, victim):
         # NPC doing the killing */
         if ch.is_npc():
             # safe room check */
-            if state_checks.IS_SET(merc.rooms[victim.in_room].room_flags, ROOM_SAFE):
+            if state_checks.IS_SET(victim.in_room.room_flags, ROOM_SAFE):
                 ch.send("Not in this room.\n")
                 return True
 
             # charmed mobs and pets cannot attack players while owned */
             if ch.is_affected(AFF_CHARM) and ch.master \
-                    and merc.characters[ch.master].fighting != victim.instance_id:
+                    and ch.master.fighting != victim:
                 ch.send("Players are your friends!\n")
                 return True
         # player doing the killing */
@@ -723,14 +723,14 @@ def is_safe_spell(ch, victim, area):
         return True
     if victim == ch and area:
         return True
-    if victim.fighting == ch.instance_id or victim == ch:
+    if victim.fighting == ch or victim == ch:
         return False
     if ch.is_immortal() and ch.level > LEVEL_IMMORTAL and not area:
         return False
     # killing mobiles */
     if victim.is_npc():
         # safe room? */
-        if state_checks.IS_SET(merc.rooms[victim.in_room].room_flags, ROOM_SAFE):
+        if state_checks.IS_SET(victim.in_room.room_flags, ROOM_SAFE):
             return True
         if victim.pShop:
             return True
@@ -745,7 +745,7 @@ def is_safe_spell(ch, victim, area):
             if victim.act.is_set(ACT_PET):
                 return True
             # no charmed creatures unless owner */
-            if victim.is_affected(AFF_CHARM) and (area or ch != victim.master):
+            if victim.is_affected(AFF_CHARM) and (area or ch.instance_id != victim.master):
                 return True
             # legal kill? -- cannot hit mob fighting non-group member */
             if victim.fighting is not None and not ch.is_same_group(victim.fighting):
@@ -763,14 +763,14 @@ def is_safe_spell(ch, victim, area):
         if ch.is_npc():
             # charmed mobs and pets cannot attack players while owned */
             if state_checks.IS_AFFECTED(ch, AFF_CHARM) and ch.master \
-                    and merc.characters[ch.master].fighting != victim.instance_id:
+                    and merc.characters[ch.master].fighting != victim:
                 return True
             # safe room? */
-            if state_checks.IS_SET(merc.rooms[victim.in_room].room_flags, ROOM_SAFE):
+            if state_checks.IS_SET(victim.in_room.room_flags, ROOM_SAFE):
                 return True
 
             # legal kill? -- mobs only hit players grouped with opponent*/
-            if ch.fighting and not merc.characters[ch.fighting].is_same_group(victim):
+            if ch.fighting and not ch.fighting.is_same_group(victim):
                 return True
         # player doing the killing */
         else:
@@ -816,7 +816,7 @@ def check_killer(ch, victim):
         # So is being immortal (Alander's idea).
         # And current killers stay as they are.
     if ch.is_npc() or ch == victim or ch.level >= LEVEL_IMMORTAL \
-            or not ch.is_clan() or ch.act.is_set(PLR_KILLER) or ch.fighting == victim.instance_id:
+            or not ch.is_clan() or ch.act.is_set(PLR_KILLER) or ch.fighting == victim:
         return
 
     ch.send("*** You are now a KILLER!! ***\n")
@@ -909,14 +909,14 @@ def set_fighting(ch, victim):
     if ch.is_affected(AFF_SLEEP):
         ch.affect_strip('sleep')
 
-    ch.fighting = victim.instance_id
+    ch.fighting = victim
     ch.position = POS_FIGHTING
 
 
 # Stop fights.
 def stop_fighting(ch, fBoth):
     for fch in merc.characters.values():
-        if fch.instance_id == ch.instance_id or (fBoth and fch.fighting == ch.instance_id):
+        if fch.instance_id == ch.instance_id or (fBoth and fch.fighting == ch):
             fch.fighting = None
             fch.position = fch.default_pos if fch.is_npc() else POS_STANDING
             update_pos(fch)
@@ -1045,12 +1045,12 @@ def death_cry(ch):
     else:
         msg = "You hear someone's death cry."
 
-    was_in_room = merc.rooms[ch.in_room]
+    was_in_room = ch.in_room
     for pexit in was_in_room.exit:
         if pexit and pexit.to_room and pexit.to_room != was_in_room.instance_id:
-            ch.in_room = pexit.to_room
+            ch.in_environment = pexit.to_room
             handler_game.act(msg, ch, None, None, TO_ROOM)
-    ch.in_room = was_in_room.instance_id
+    ch.in_environment = was_in_room.instance_id
     return
 
 
@@ -1086,7 +1086,7 @@ def group_gain(ch, victim):
         return
     members = 0
     group_levels = 0
-    for gch_id in merc.rooms[ch.in_room].people:
+    for gch_id in ch.in_room.people:
         gch = merc.characters[gch_id]
         if gch.is_same_group(ch):
             members += 1
@@ -1099,7 +1099,7 @@ def group_gain(ch, victim):
 
     lch = ch.leader if ch.leader else ch
 
-    for gch_id in merc.rooms[ch.in_room].people:
+    for gch_id in ch.in_room.people:
         gch = merc.characters[gch_id]
         if not gch.is_same_group(ch) or gch.is_npc():
             continue

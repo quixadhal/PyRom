@@ -1,5 +1,6 @@
 import random
 import logging
+import handler_game
 
 import handler_room
 
@@ -16,14 +17,14 @@ import update
 
 
 def do_flee( ch, argument ):
-    victim = merc.characters[ch.fighting]
+    victim = ch.fighting
     if not victim:
         if ch.position == merc.POS_FIGHTING:
             ch.position = merc.POS_STANDING
         ch.send("You aren't fighting anyone.\n")
         return
 
-    was_in = merc.rooms[ch.in_room]
+    was_in = ch.in_room
     for attempt in range(6):
         door = handler_room.number_door()
         pexit = was_in.exit[door]
@@ -36,12 +37,12 @@ def do_flee( ch, argument ):
             continue
 
         handler_ch.move_char(ch, door, False)
-        now_in = merc.rooms[ch.in_room]
+        now_in = ch.in_room
         if now_in == was_in:
             continue
-        ch.in_room = was_in.instance_id
-        act("$n has fled!", ch, None, None, merc.TO_ROOM)
-        ch.in_room = now_in.instance_id
+        ch.in_environment = was_in
+        handler_game.act("$n has fled!", ch, None, None, merc.TO_ROOM)
+        ch.in_environment = now_in
         if not ch.is_npc():
             ch.send("You flee from combat!\n")
             if ch.guild.name == 'thief' and (random.randint(1, 99) < 3 * (ch.level // 2)):

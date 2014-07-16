@@ -18,7 +18,7 @@ def say_spell(ch, spell):
     buf = "$n utters the words, '%s'." % incantation
     buf2 = "$n utters the words, '%s'." % spell.name
 
-    for rch in merc.rooms[ch.in_room].people:
+    for rch in ch.in_room.people:
         send = buf2 if ch.guild==rch.guild else buf
         handler_game.act(send, ch, None, rch, merc.TO_VICT)
 
@@ -160,7 +160,7 @@ def obj_cast_spell(sn, level, ch, victim, obj):
                 or (sn.target == merc.TAR_OBJ_CHAR_OFF and target == merc.TARGET_CHAR)) \
     and victim != ch \
     and victim.master != ch:
-        for vch in merc.rooms[ch.in_room].people[:]:
+        for vch in ch.in_room.people[:]:
             if victim == vch and not victim.fighting:
                 fight.check_killer(victim, ch)
                 fight.multi_hit(victim, ch, merc.TYPE_UNDEFINED)

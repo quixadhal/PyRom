@@ -16,7 +16,7 @@ def do_rest(self, argument):
         return
         # okay, now that we know we can rest, find an object to rest on
     if argument:
-        obj = ch.get_item_list(argument, merc.rooms[ch.in_room].contents)
+        obj = ch.get_item_list(argument, ch.in_room.items)
         if not obj:
             ch.send("You don't see that here.\n")
             return

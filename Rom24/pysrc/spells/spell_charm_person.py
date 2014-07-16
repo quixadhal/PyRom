@@ -23,7 +23,7 @@ def spell_charm_person(sn, level, ch, victim, target):
                  or handler_magic.saves_spell(level, victim, merc.DAM_CHARM) ):
         return
 
-    if state_checks.IS_SET(merc.rooms[victim.in_room].room_flags, merc.ROOM_LAW):
+    if state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_LAW):
         ch.send("The mayor does not allow charming in the city limits.\n")
         return
 

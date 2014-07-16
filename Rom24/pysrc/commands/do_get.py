@@ -1,4 +1,5 @@
 import logging
+import handler_game
 
 logger = logging.getLogger()
 
@@ -22,14 +23,14 @@ def do_get(ch, argument):
     if not arg2:
         if not arg1.startswith('all'):
             # 'get obj'
-            item = ch.get_item_list(arg1, merc.rooms[ch.in_room].contents)
+            item = ch.get_item_list(arg1, ch.in_room.items)
             if not item:
-                act("I see no $T here.", ch, None, arg1, merc.TO_CHAR)
+                handler_game.act("I see no $T here.", ch, None, arg1, merc.TO_CHAR)
                 return
             handler_item.get_item(ch, item, None)
         else:
             # 'get all' or 'get all.obj'
-            for item_id in merc.rooms[ch.in_room].contents[:]:
+            for item_id in ch.in_room.items:
                 item = merc.items[item_id]
                 if (len(arg1) == 3 or arg1[4:] in item.name) and ch.can_see_item(item_id):
                     found = True
@@ -38,7 +39,7 @@ def do_get(ch, argument):
                 if len(arg1) == 3:
                     ch.send("I see nothing here.\n")
                 else:
-                    act("I see no $T here.", ch, None, arg1[4:], merc.TO_CHAR)
+                    handler_game.act("I see no $T here.", ch, None, arg1[4:], merc.TO_CHAR)
     else:
         # 'get ... container'
         if arg2.startswith("all"):
@@ -46,7 +47,7 @@ def do_get(ch, argument):
             return
         container = ch.get_item_here(arg2)
         if not container:
-            act("I see no $T here.", ch, None, arg2, merc.TO_CHAR)
+            handler_game.act("I see no $T here.", ch, None, arg2, merc.TO_CHAR)
             return
         if container.item_type == merc.ITEM_CONTAINER \
                 or container.item_type == merc.ITEM_CORPSE_NPC:
@@ -59,13 +60,13 @@ def do_get(ch, argument):
             ch.send("That's not a container.\n")
             return
         if state_checks.IS_SET(container.value[1], merc.CONT_CLOSED):
-            act("The $d is closed.", ch, None, container.name, merc.TO_CHAR)
+            handler_game.act("The $d is closed.", ch, None, container.name, merc.TO_CHAR)
             return
         if not arg1.startswith('all'):
             # 'get obj container'
             item = ch.get_item_list(arg1, container.contents)
             if not item is None:
-                act("I see nothing like that in the $T.", ch, None, arg2, merc.TO_CHAR)
+                handler_game.act("I see nothing like that in the $T.", ch, None, arg2, merc.TO_CHAR)
                 return
             handler_item.get_item(ch, item, container)
         else:
@@ -80,9 +81,9 @@ def do_get(ch, argument):
                     handler_item.get_item(ch, item, container)
             if not found:
                 if len(arg1) == 3:
-                    act("I see nothing in the $T.", ch, None, arg2, merc.TO_CHAR)
+                    handler_game.act("I see nothing in the $T.", ch, None, arg2, merc.TO_CHAR)
                 else:
-                    act("I see nothing like that in the $T.", ch, None, arg2, merc.TO_CHAR)
+                    handler_game.act("I see nothing like that in the $T.", ch, None, arg2, merc.TO_CHAR)
 
 
 interp.register_command(interp.cmd_type('get', do_get, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

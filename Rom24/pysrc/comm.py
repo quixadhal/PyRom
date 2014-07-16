@@ -74,7 +74,7 @@ def process_output(self):
     if ch and self.is_connected(nanny.con_playing) and self.send_buffer:
         #/* battle prompt */
         if ch.fighting:
-            victim = merc.characters[ch.fighting]
+            victim = ch.fighting
             if victim and ch.can_see(victim):
                 if victim.max_hit > 0:
                     percent = victim.hit * 100 / victim.max_hit
@@ -169,7 +169,7 @@ def close_socket(d):
 #* coded by Morgenes for Aldara Mud
 def bust_a_prompt(ch):
     dir_name = ["N", "E", "S", "W", "U", "D"]
-    room = merc.rooms[ch.in_room]
+    room = ch.in_room
     doors = ""
     pstr = ch.prompt
     if not pstr:
@@ -212,24 +212,24 @@ def bust_a_prompt(ch):
             if ch.is_evil() \
             else "neutral"
     
-    if merc.rooms[ch.in_room]:
+    if ch.in_room:
         if (not ch.is_npc()
             and ch.act.is_set(merc.PLR_HOLYLIGHT)) \
                 or (not ch.is_affected(merc.AFF_BLIND)
-                    and not merc.rooms[ch.in_room].is_dark()):
-            replace['%r'] = merc.rooms[ch.in_room].name
+                    and not ch.in_room.is_dark()):
+            replace['%r'] = ch.in_room.name
         else: 
             replace['%r'] = "darkness"
     else:
         replace['%r'] = " "
      
     if ch.is_immortal() and ch.in_room:
-        replace['%R'] = "%d" % ch.in_room
+        replace['%R'] = "%d" % ch.in_room.vnum
     else:
         replace['%R'] = " "
     
     if ch.is_immortal() and ch.in_room:
-        replace['%z'] = "%s" % merc.areaTemplate[merc.rooms[ch.in_room].area].name
+        replace['%z'] = "%s" % merc.areaTemplate[ch.in_room.area].name
     else:
         replace['%z'] = " "
         
