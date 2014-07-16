@@ -15,8 +15,7 @@ def spell_word_of_recall(sn, level, ch, victim, target):
         return
     location = merc.roomTemplate[merc.ROOM_VNUM_TEMPLE]
 
-    if state_checks.IS_SET(merc.rooms[victim.in_room].room_flags, merc.ROOM_NO_RECALL) or victim.is_affected(
-                                                                                                       merc.AFF_CURSE):
+    if state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_NO_RECALL) or victim.is_affected(merc.AFF_CURSE):
         victim.send("Spell failed.\n")
         return
 

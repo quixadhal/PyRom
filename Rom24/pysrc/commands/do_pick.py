@@ -24,7 +24,7 @@ def do_pick(self, argument):
     state_checks.WAIT_STATE(ch, const.skill_table["pick lock"].beats)
 
     # look for guards
-    for gch in merc.rooms[ch.in_room].people:
+    for gch in ch.in_room.people:
         if state_checks.IS_NPC(gch) and state_checks.IS_AWAKE(gch) and ch.level + 5 < gch.level:
             act("$N is standing too close to the lock.", ch, None, gch, merc.TO_CHAR)
             return
@@ -80,7 +80,7 @@ def do_pick(self, argument):
         door = handler_room.find_door(ch, arg)
         if door >= 0:
             # 'pick door'
-            pexit = merc.rooms[ch.in_room].exit[door]
+            pexit = ch.in_room.exit[door]
             if not state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED) and not ch.is_immortal():
                 ch.send("It's not closed.\n")
                 return

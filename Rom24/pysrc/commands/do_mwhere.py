@@ -1,4 +1,5 @@
 import logging
+import handler_game
 
 
 logger = logging.getLogger()
@@ -21,23 +22,23 @@ def do_mwhere(ch, argument):
             if d.original:
                 ch.send("%3d) %s (in the body of %s) is in %s [%d]\n" % (
                     count, d.original.name, victim.short_descr,
-                    merc.rooms[victim.in_room].name, merc.rooms[victim.in_room].vnum))
+                    victim.in_room.name, victim.in_room.vnum))
             else:
                 ch.send("%3d) %s is in %s [%d]\n" % (
-                    count, victim.name, merc.rooms[victim.in_room].name, merc.rooms[victim.in_room].vnum))
+                    count, victim.name, victim.in_room.name, victim.in_room.vnum))
         return
     found = False
-    for victim in merc.char_list:
+    for victim in merc.characters.values():
         if victim.in_room and argument in victim.name:
             found = True
             count += 1
             ch.send("%3d) [%5d] %-28s [%5d] %s\n" % (
                 count, 0 if not victim.is_npc() else victim.pIndexData.vnum,
                 victim.short_descr if victim.is_npc() else victim.name,
-                merc.rooms[victim.in_room].vnum,
-                merc.rooms[victim.in_room].name ))
+                victim.in_room.vnum,
+                victim.in_room.name ))
     if found:
-        act("You didn't find any $T.", ch, None, argument, merc.TO_CHAR)
+        handler_game.act("You didn't find any $T.", ch, None, argument, merc.TO_CHAR)
 
 
 interp.register_command(interp.cmd_type('mwhere', do_mwhere, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1))

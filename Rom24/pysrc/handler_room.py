@@ -143,12 +143,12 @@ def find_door(ch, arg):
         door = 5
     else:
         for door in range(0, 5):
-            pexit = merc.rooms[ch.in_room].exit[door]
+            pexit = ch.in_room.exit[door]
             if pexit and state_checks.IS_SET(pexit.exit_info, EX_ISDOOR) and pexit.keyword and arg in pexit.keyword:
                 return door
         handler_game.act("I see no $T here.", ch, None, arg, TO_CHAR)
         return -1
-    pexit = merc.rooms[ch.in_room].exit[door]
+    pexit = ch.in_room.exit[door]
     if not pexit:
         handler_game.act("I see no door $T here.", ch, None, arg, TO_CHAR)
         return -1

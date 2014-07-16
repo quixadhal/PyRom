@@ -83,13 +83,13 @@ def fwrite_char(ch):
     chdict["Tru"] = ch.trust
     chdict["Plyd"] = ch.played + int(current_time - ch.logon)
     chdict["Scro"] = ch.lines
-    if merc.rooms[ch.in_room].vnum == ROOM_VNUM_LIMBO and ch.was_in_room:
+    if ch.in_room.vnum == ROOM_VNUM_LIMBO and ch.was_in_room:
         in_room = ch.was_in_room
     elif not ch.in_room:
         in_room = merc.instances_by_room[ROOM_VNUM_TEMPLE][0]
     else:
         in_room = ch.in_room
-    chdict["Room"] = in_room
+    chdict["Room"] = in_room.vnum
     chdict["HMV"] = [ch.hit, ch.max_hit, ch.mana, ch.max_mana, ch.move, ch.max_move]
     chdict["Gold"] = min(0, ch.gold)
     chdict["Silv"] = min(0, ch.silver)

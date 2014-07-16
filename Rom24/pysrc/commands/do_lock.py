@@ -62,7 +62,7 @@ def do_lock(ch, argument):
     door = handler_room.find_door(ch, arg)
     if door >= 0:
         # 'lock door'
-        pexit = merc.rooms[ch.in_room].exit[door]
+        pexit = ch.in_room.exit[door]
         if not state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED):
             ch.send("It's not closed.\n")
             return

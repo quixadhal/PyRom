@@ -40,7 +40,7 @@ def do_drop(ch, argument):
                 return
             ch.gold -= amount
             gold = amount
-        for item_id in merc.rooms[ch.in_room].contents[:]:
+        for item_id in ch.in_room.items:
             item = merc.items[item_id]
             if item.vnum == merc.OBJ_VNUM_SILVER_ONE:
                 silver += 1

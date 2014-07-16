@@ -8,8 +8,8 @@ import state_checks
 
 def spell_teleport(sn, level, ch, victim, target):
     if victim.in_room == None \
-            or state_checks.IS_SET(merc.rooms[victim.in_room].room_flags, merc.ROOM_NO_RECALL) \
-            or ( victim != ch and state_checks.IS_SET(victim.imm_flags, merc.IMM_SUMMON)) \
+            or state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_NO_RECALL) \
+            or ( victim != ch and victim.imm_flags.is_set(merc.IMM_SUMMON)) \
             or ( not ch.is_npc() and victim.fighting is not None ) \
             or ( victim != ch \
                          and ( handler_magic.saves_spell(level - 5, victim, merc.DAM_OTHER))):

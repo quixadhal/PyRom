@@ -9,7 +9,7 @@ def spell_faerie_fog(sn, level, ch, victim, target):
     handler_game.act("$n conjures a cloud of purple smoke.", ch, None, None, merc.TO_ROOM)
     ch.send("You conjure a cloud of purple smoke.\n")
 
-    for ich in merc.rooms[ch.in_room].people:
+    for ich in ch.in_room.people:
         if ich.invis_level > 0:
             continue
 
@@ -19,9 +19,9 @@ def spell_faerie_fog(sn, level, ch, victim, target):
         ich.affect_strip('invis')
         ich.affect_strip('mass_invis')
         ich.affect_strip('sneak')
-        state_checks.REMOVE_BIT(ich.affected_by, merc.AFF_HIDE)
-        state_checks.REMOVE_BIT(ich.affected_by, merc.AFF_INVISIBLE)
-        state_checks.REMOVE_BIT(ich.affected_by, merc.AFF_SNEAK)
+        ich.affected_by.rem_bit(merc.AFF_HIDE)
+        ich.affected_by.rem_bit(merc.AFF_INVISIBLE)
+        ich.affected_by.rem_bit(merc.AFF_SNEAK)
         handler_game.act("$n is revealed! ", ich, None, None, merc.TO_ROOM)
         ich.send("You are revealed! \n")
 

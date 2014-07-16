@@ -14,14 +14,14 @@ def do_list(ch, argument):
     if state_checks.IS_SET(ch.in_room.room_flags, merc.ROOM_PET_SHOP):
         # hack to make new thalos pets work
         pRoomIndexNext = None
-        if merc.rooms[ch.in_room].vnum == 9621:
+        if ch.in_room.vnum == 9621:
             if 9706 in merc.roomTemplate:
                 pRoomIndexNext = merc.roomTemplate[9706]
         else:
-            if merc.rooms[ch.in_room].vnum + 1 in merc.roomTemplate:
+            if ch.in_room.vnum + 1 in merc.roomTemplate:
                 pRoomIndexNext = merc.roomTemplate[ch.in_room.vnum + 1]
         if not pRoomIndexNext:
-            logger.warn("BUG: Do_list: bad pet shop at vnum %d.", merc.rooms[ch.in_room].vnum)
+            logger.warn("BUG: Do_list: bad pet shop at vnum %d.", ch.in_room.vnum)
             ch.send("You can't do that here.\n")
             return
         found = False

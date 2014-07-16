@@ -66,62 +66,37 @@ class Instancer:
         merc.instance_number += 1
         self.instance_id = merc.instance_number
 
-
-
-
-
 # * Return ascii name of an affect location.
 def affect_loc_name(location):
-    if location == merc.APPLY_NONE:
-        return "none"
-    if location == merc.APPLY_STR:
-        return "strength"
-    if location == merc.APPLY_DEX:
-        return "dexterity"
-    if location == merc.APPLY_INT:
-        return "intelligence"
-    if location == merc.APPLY_WIS:
-        return "wisdom"
-    if location == merc.APPLY_CON:
-        return "constitution"
-    if location == merc.APPLY_SEX:
-        return "sex"
-    if location == merc.APPLY_CLASS:
-        return "class"
-    if location == merc.APPLY_LEVEL:
-        return "level"
-    if location == merc.APPLY_AGE:
-        return "age"
-    if location == merc.APPLY_MANA:
-        return "mana"
-    if location == merc.APPLY_HIT:
-        return "hp"
-    if location == merc.APPLY_MOVE:
-        return "moves"
-    if location == merc.APPLY_GOLD:
-        return "gold"
-    if location == merc.APPLY_EXP:
-        return "experience"
-    if location == merc.APPLY_AC:
-        return "armor class"
-    if location == merc.APPLY_HITROLL:
-        return "hit roll"
-    if location == merc.APPLY_DAMROLL:
-        return "damage roll"
-    if location == merc.APPLY_SAVES:
-        return "saves"
-    if location == merc.APPLY_SAVING_ROD:
-        return "save vs rod"
-    if location == merc.APPLY_SAVING_PETRI:
-        return "save vs petrification"
-    if location == merc.APPLY_SAVING_BREATH:
-        return "save vs breath"
-    if location == merc.APPLY_SAVING_SPELL:
-        return "save vs spell"
-    if location == merc.APPLY_SPELL_AFFECT:
-        return "none"
-    logger.error("Affect_location_name: unknown location %d.", location)
-    return "(unknown)"
+    affect_loc = {merc.APPLY_NONE: "none",
+                  merc.APPLY_STR: "strength",
+                  merc.APPLY_DEX: "dexterity",
+                  merc.APPLY_INT: "intelligence",
+                  merc.APPLY_WIS: "wisdom",
+                  merc.APPLY_CON: "constitution",
+                  merc.APPLY_SEX: "sex",
+                  merc.APPLY_CLASS: "class",
+                  merc.APPLY_LEVEL: "level",
+                  merc.APPLY_AGE: "age",
+                  merc.APPLY_MANA: "mana",
+                  merc.APPLY_HIT: "hp",
+                  merc.APPLY_MOVE: "moves",
+                  merc.APPLY_GOLD: "gold",
+                  merc.APPLY_EXP: "experience",
+                  merc.APPLY_AC: "armor class",
+                  merc.APPLY_HITROLL: "hit roll",
+                  merc.APPLY_DAMROLL: "damage roll",
+                  merc.APPLY_SAVES: "saves",
+                  merc.APPLY_SAVING_ROD: "save vs rod",
+                  merc.APPLY_SAVING_PETRI: "save vs petrification",
+                  merc.APPLY_SAVING_BREATH: "save vs breath",
+                  merc.APPLY_SAVING_SPELL: "save vs spell",
+                  merc.APPLY_SPELL_AFFECT: "none"}
+    location = affect_loc.get(location, None)
+    if not location:
+        logger.error("Affect_location_name: unknown location %d.", location)
+        return "(unknown)"
+    return location
 
 
 # * Return ascii name of an affect bit vector.

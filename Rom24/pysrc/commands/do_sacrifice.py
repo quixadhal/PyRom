@@ -16,7 +16,7 @@ def do_sacrifice(ch, argument):
         act("$n offers $mself to Mota, who graciously declines.", ch, None, None, merc.TO_ROOM)
         ch.send("Mota appreciates your offer and may accept it later.\n")
         return
-    obj = ch.get_item_list(arg, merc.rooms[ch.in_room].contents)
+    obj = ch.get_item_list(arg, ch.in_room.items)
     if obj is None:
         ch.send("You can't find it.\n")
         return
@@ -44,7 +44,7 @@ def do_sacrifice(ch, argument):
     ch.silver += silver
     if ch.act.is_set(merc.PLR_AUTOSPLIT):
         # AUTOSPLIT code
-        members = len([gch for gch in merc.rooms[ch.in_room].people if gch.is_same_group(ch)])
+        members = len([gch for gch in ch.in_room.people if gch.is_same_group(ch)])
         if members > 1 and silver > 1:
             ch.do_split("%d" % silver)
     act("$n sacrifices $p to Mota.", ch, obj, None, merc.TO_ROOM)

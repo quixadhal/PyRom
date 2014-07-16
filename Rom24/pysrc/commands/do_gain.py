@@ -14,7 +14,7 @@ import state_checks
 def do_gain(ch, argument):
     if ch.is_npc():
         return
-    trainer = [t for t in merc.rooms[ch.in_room].people if state_checks.IS_NPC(t) and state_checks.IS_SET(t.act, merc.ACT_GAIN)]
+    trainer = [t for t in ch.in_room.people if t.is_npc() and t.act.is_set(merc.ACT_GAIN)]
     # find a trainer
     if not trainer or not ch.can_see(trainer):
         ch.send("You can't do that here.\n")

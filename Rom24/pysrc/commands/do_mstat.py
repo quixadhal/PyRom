@@ -27,7 +27,7 @@ def do_mstat(ch, argument):
         "pc" if not victim.is_npc() else "new" if victim.pIndexData.new_format else "old",
         victim.race.name,
         0 if not victim.is_npc() else victim.group, tables.sex_table[victim.sex],
-        0 if not victim.in_room else merc.rooms[victim.in_room].vnum ))
+        0 if not victim.in_room else victim.in_room.vnum ))
 
     if victim.is_npc():
         ch.send("Count: %d  Killed: %d\n" % (victim.pIndexData.count, victim.pIndexData.killed))

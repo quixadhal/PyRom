@@ -31,8 +31,8 @@ def do_practice(ch, argument):
             ch.send("In your dreams, or what?\n")
             return
         mob = None
-        prac_mobs = [mob for mob in merc.rooms[ch.in_room].people if state_checks.IS_NPC(mob) and \
-                     state_checks.IS_SET(mob.act, merc.ACT_PRACTICE)][:1]
+        prac_mobs = [mob for mob in ch.in_room.people if mob.is_npc() and \
+                     mob.act.is_set(merc.ACT_PRACTICE)][:1]
         if not prac_mobs:
             ch.send("You can't do that here.\n")
             return

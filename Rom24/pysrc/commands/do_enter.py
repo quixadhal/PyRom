@@ -18,7 +18,7 @@ def do_enter(ch, argument):
     # nifty portal stuff
     if argument:
         old_room = ch.in_room
-        portal = ch.get_item_list(argument, merc.rooms[ch.in_room].contents)
+        portal = ch.get_item_list(argument, ch.in_room.items)
         if not portal:
             ch.send("You don't see that here.\n")
             return

@@ -1,4 +1,5 @@
 import logging
+import handler_game
 
 logger = logging.getLogger()
 
@@ -12,16 +13,16 @@ import state_checks
 def do_purge(ch, argument):
     argument, arg = game_utils.read_word(argument)
     if not arg:
-        for victim_id in merc.rooms[ch.in_room].people[:]:
+        for victim_id in ch.in_room.people:
             victim = merc.characters[victim_id]
             if victim.is_npc() and not state_checks.IS_SET(victim.act,
                                                                        merc.ACT_NOPURGE) and victim != ch:  # safety precaution
                 victim.extract(True)
-        for item_id in merc.rooms[ch.in_room].contents[:]:
+        for item_id in ch.in_room.items:
             item = merc.items[item_id]
             if not state_checks.is_item_stat(item, merc.ITEM_NOPURGE):
                 item.extract()
-        act("$n purges the room!", ch, None, None, merc.TO_ROOM)
+        handler_game.act("$n purges the room!", ch, None, None, merc.TO_ROOM)
         ch.send("Ok.\n")
         return
     victim = ch.get_char_world(arg)
@@ -36,7 +37,7 @@ def do_purge(ch, argument):
             ch.send("Maybe that wasn't a good idea...\n")
             victim.send("%s tried to purge you!\n" % ch.name)
             return
-        act("$n disintegrates $N.", ch, 0, victim, merc.TO_NOTVICT)
+        handler_game.act("$n disintegrates $N.", ch, 0, victim, merc.TO_NOTVICT)
 
         if victim.level > 1:
             save.save_char_obj(victim)
@@ -45,7 +46,7 @@ def do_purge(ch, argument):
         if d:
             comm.close_socket(d)
         return
-    act("$n purges $N.", ch, None, victim, merc.TO_NOTVICT)
+    handler_game.act("$n purges $N.", ch, None, victim, merc.TO_NOTVICT)
     victim.extract(True)
     return
 

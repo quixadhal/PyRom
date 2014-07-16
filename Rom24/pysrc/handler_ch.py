@@ -56,7 +56,7 @@ def move_char(ch, door, follow):
     if door < 0 or door > 5:
         logger.error("BUG: Do_move: bad door %d." % door)
         return
-    in_room = merc.rooms[ch.in_room]
+    in_room = ch.in_room
     pexit = in_room.exit[door]
     if not pexit or not pexit.to_room or not ch.can_see_room(pexit.to_room):
         ch.send("Alas, you cannot go that way.\n")
@@ -127,7 +127,7 @@ def move_char(ch, door, follow):
 
         if fch.master == ch.instance_id and fch.position == merc.POS_STANDING \
                 and fch.can_see_room(to_room.instance_id):
-            if state_checks.IS_SET(merc.rooms[ch.in_room].room_flags, merc.ROOM_LAW) \
+            if state_checks.IS_SET(ch.in_room.room_flags, merc.ROOM_LAW) \
                     and (fch.is_npc()
                          and fch.act.is_set(merc.ACT_AGGRESSIVE)):
                 handler_game.act("You can't bring $N into the city.", ch, None, fch, merc.TO_CHAR)
@@ -320,10 +320,10 @@ def show_char_to_char_0(victim, ch):
         buf += " is here, fighting "
         if not victim.fighting:
             buf += "thin air??"
-        elif victim.fighting == ch.instance_id:
+        elif victim.fighting == ch:
             buf += "YOU!"
-        elif victim.in_room == merc.characters[victim.fighting].in_room:
-            buf += "%s." % state_checks.PERS(merc.characters[victim.fighting], ch)
+        elif victim.in_room == victim.fighting.in_room:
+            buf += "%s." % state_checks.PERS(victim.fighting, ch)
         else:
             buf += "someone who left??"
     buf = buf.capitalize()

@@ -147,7 +147,7 @@ def hit_gain(ch):
         if not ch.condition[COND_THIRST]:
             gain //= 2
 
-    gain = gain * merc.rooms[ch.in_room].heal_rate // 100
+    gain = gain * ch.in_room.heal_rate // 100
 
     if ch.on and merc.items[ch.on].item_type == ITEM_FURNITURE:
         gain = gain * ch.on.value[3] // 100
@@ -203,7 +203,7 @@ def mana_gain(ch):
         if not ch.condition[COND_THIRST]:
             gain //= 2
 
-    gain = gain * merc.rooms[ch.in_room].mana_rate // 100
+    gain = gain * ch.in_room.mana_rate // 100
 
     if ch.on and merc.items[ch.on].item_type == ITEM_FURNITURE:
         gain = gain * ch.on.value[4] // 100
@@ -240,7 +240,7 @@ def move_gain(ch):
         if not ch.condition[COND_THIRST]:
             gain //= 2
 
-    gain = gain * merc.rooms[ch.in_room].heal_rate // 100
+    gain = gain * ch.in_room.heal_rate // 100
 
     if ch.on and merc.items[ch.on].item_type == ITEM_FURNITURE:
         gain = gain * ch.on.value[3] // 100
@@ -285,7 +285,7 @@ def npc_update():
         if not npc.is_npc() or npc.in_room is None or npc.is_affected(AFF_CHARM):
             continue
 
-        if merc.areaTemplate[merc.rooms[npc.in_room].area] and not npc.act.is_set(ACT_UPDATE_ALWAYS):
+        if merc.areaTemplate[npc.in_room.area] and not npc.act.is_set(ACT_UPDATE_ALWAYS):
             continue
 
         # Examine call for special procedure */
@@ -303,10 +303,10 @@ def npc_update():
             continue
 
         # Scavenge */
-        if npc.act.is_set(ACT_SCAVENGER) and merc.rooms[npc.in_room].contents is not None and random.randint(0, 6) == 0:
+        if npc.act.is_set(ACT_SCAVENGER) and npc.in_room.items is not None and random.randint(0, 6) == 0:
             top = 1
             item_best = None
-            for item_id in merc.rooms[npc.in_room].contents:
+            for item_id in npc.in_room.items:
                 item = merc.items[item_id]
                 if state_checks.CAN_WEAR(item, ITEM_TAKE) and npc.can_loot(item) and item.cost > top and item.cost > 0:
                     item_best = item
@@ -319,7 +319,7 @@ def npc_update():
 
         # Wander */
         door = random.randint(0, 5)
-        pexit = merc.rooms[npc.in_room].exit[door]
+        pexit = npc.in_room.exit[door]
 
         if not npc.act.is_set(ACT_SENTINEL) \
                 and random.randint(0, 3) == 0 \
@@ -328,7 +328,7 @@ def npc_update():
                 and not state_checks.IS_SET(pexit.exit_info, EX_CLOSED) \
                 and not state_checks.IS_SET(merc.rooms[pexit.to_room].room_flags, ROOM_NO_MOB) \
                 and (not npc.act.is_set(ACT_STAY_AREA)
-                     or merc.rooms[pexit.to_room].area == merc.rooms[npc.in_room].area) \
+                     or merc.rooms[pexit.to_room].area == npc.in_room.area) \
                 and (not npc.act.is_set(ACT_OUTDOORS)
                      or not state_checks.IS_SET(merc.rooms[pexit.to_room].room_flags, ROOM_INDOORS)) \
                 and (not npc.act.is_set(ACT_INDOORS)
@@ -479,7 +479,7 @@ def char_update():
             ch.timer += 1
             if ch.timer >= 12:
                 if not ch.was_in_room and ch.in_room:
-                    merc.rooms[ch.was_in_room] = merc.rooms[ch.in_room]
+                    ch.was_in_room = ch.in_room
                     if ch.fighting:
                         fight.stop_fighting(ch, True)
                     handler_game.act("$n disappears into the void.", ch, None, None, TO_ROOM)
@@ -535,7 +535,7 @@ def char_update():
             plague.modifier = -5
             plague.bitvector = AFF_PLAGUE
 
-            for vch_id in merc.rooms[ch.in_room].people:
+            for vch_id in ch.in_room.people:
                 vch = merc.characters[vch_id]
                 if not handler_magic.saves_spell(plague.level - 2, vch, DAM_DISEASE) and not vch.is_immmortal() \
                         and not vch.is_affected(AFF_PLAGUE) and random.randint(0, 4) == 0:
@@ -589,9 +589,9 @@ def item_update():
                         rch = merc.characters[item.in_living]
                         handler_game.act(const.skill_table[paf.type].msg_obj, rch, item, None, TO_CHAR)
 
-                    if merc.rooms[item.in_room] is not None and merc.rooms[item.in_room].people:
+                    if item.in_room is not None and item.in_room.people:
                         handler_game.act(const.skill_table[paf.type].msg_obj,
-                                         merc.rooms[item.in_room].people, item, None, TO_ALL)
+                                         item.in_room.people, item, None, TO_ALL)
                 item.affect_remove(paf)
         item.timer -= 1
         if item.timer <= 0 or item.timer > 0:
@@ -627,11 +627,11 @@ def item_update():
                 handler_game.act(message, merc.characters[item.in_living], item, None, TO_CHAR)
                 if item.wear_loc == WEAR_FLOAT:
                     handler_game.act(message, merc.characters[item.in_living], item, None, TO_ROOM)
-        elif item.in_room and merc.rooms[item.in_room].people:
+        elif item.in_room and item.in_room.people:
             if not (item.in_item and merc.items[item.in_item].vnum == OBJ_VNUM_PIT
                     and not state_checks.CAN_WEAR(merc.items[item.in_item], ITEM_TAKE)):
-                handler_game.act(message, merc.rooms[item.in_room].people[:1], item, None, TO_ROOM)
-                handler_game.act(message, merc.rooms[item.in_room].people[:1], item, None, TO_CHAR)
+                handler_game.act(message, item.in_room.people[:1], item, None, TO_ROOM)
+                handler_game.act(message, item.in_room.people[:1], item, None, TO_CHAR)
 
         if (item.item_type == ITEM_CORPSE_PC or item.wear_loc == WEAR_FLOAT) and item.contents:
             # save the contents */
@@ -677,14 +677,14 @@ def aggr_update():
         if wch.is_npc() \
                 or wch.level >= LEVEL_IMMORTAL \
                 or wch.in_room is None \
-                or merc.areaTemplate[merc.rooms[wch.in_room].area].empty:
+                or merc.areaTemplate[wch.in_room.area].empty:
             continue
 
-        for ch_id in merc.rooms[wch.in_room].people[:]:
+        for ch_id in wch.in_room.people:
             ch = merc.characters[ch_id]
             if not ch.is_npc() \
                     or not ch.act.is_set(ACT_AGGRESSIVE) \
-                    or state_checks.IS_SET(merc.rooms[ch.in_room].room_flags, ROOM_SAFE) \
+                    or state_checks.IS_SET(ch.in_room.room_flags, ROOM_SAFE) \
                     or ch.is_affected(AFF_CALM) \
                     or ch.fighting is not None \
                     or ch.is_affected(AFF_CHARM) \
@@ -700,7 +700,7 @@ def aggr_update():
             # *   giving each 'vch' an equal chance of selection.
             count = 0
             victim = None
-            for vch_id in merc.rooms[wch.in_room].people[:]:
+            for vch_id in wch.in_room.people:
                 vch = merc.characters[vch_id]
                 if not vch.is_npc() \
                         and vch.level < LEVEL_IMMORTAL \

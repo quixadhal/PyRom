@@ -53,7 +53,7 @@ def do_open(ch, argument):
     door = handler_room.find_door(ch, arg)
     if door >= 0:
         # 'open door'
-        pexit = merc.rooms[ch.in_room].exit[door]
+        pexit = ch.in_room.exit[door]
         if not state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED):
             ch.send("It's already open.\n")
             return

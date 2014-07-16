@@ -23,9 +23,9 @@ def do_look(ch, argument):
         return
     if not ch.check_blind():
         return
-    room = merc.rooms[ch.in_room]
+    room = ch.in_room
     if not ch.is_npc() and not ch.act.is_set(merc.PLR_HOLYLIGHT) \
-            and merc.rooms[ch.in_room].is_dark():
+            and ch.in_room.is_dark():
         ch.send("It is pitch black ... \n")
         handler_ch.show_char_to_char(room.people, ch)
         return

@@ -187,7 +187,7 @@ class Items(handler.Instancer, location.Location, physical.Physical, container.C
     def count_users(item):
         total = 0
         if item.in_room:
-            for person_id in merc.rooms[item.in_room].people:
+            for person_id in item.in_room.people:
                 person = merc.characters[person_id]
                 if person.on == item.instance_id:
                     total += 1
@@ -209,7 +209,7 @@ def get_item(ch, item, container):
         handler_game.act("Corpse looting is not permitted.", ch, None, None, merc.TO_CHAR)
         return
     if item.in_room:
-        for gch_id in merc.rooms[item.in_room].people:
+        for gch_id in item.in_room.people:
             gch = merc.characters[gch_id]
             if gch.on:
                 if merc.items[gch.on] == item.instance_id:
@@ -236,7 +236,7 @@ def get_item(ch, item, container):
         ch.gold += item.value[1]
         if ch.act.is_set(merc.PLR_AUTOSPLIT):
             # AUTOSPLIT code */
-            members = len([gch for gch in merc.rooms[ch.in_room].people
+            members = len([gch for gch in ch.in_room.people
                            if not state_checks.IS_AFFECTED(merc.characters[gch], merc.AFF_CHARM)
                            and merc.characters[gch].is_same_group(ch)])
             if members > 1 and (item.value[0] > 1 or item.value[1]):

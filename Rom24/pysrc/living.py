@@ -105,7 +105,7 @@ class Grouping:
 class Fight:
     def __init__(self):
         super().__init__()
-        self.fighting = None
+        self._fighting = None
         self.hitroll = 0
         self.damroll = 0
         self.dam_type = 17
@@ -120,6 +120,20 @@ class Fight:
         self.imm_flags = bit.Bit(flags=tables.imm_flags)
         self.res_flags = bit.Bit(flags=tables.imm_flags)
         self.vuln_flags = bit.Bit(flags=tables.imm_flags)
+    @property
+    def fighting(self):
+        return merc.characters.get(self._fighting, None)
+
+    @fighting.setter
+    def fighting(self, value):
+        if type(value) is int:
+            value = merc.characters.get(value, None) #Ensure fighting exists.
+        if value and not isinstance(value, Fight):
+            logger.error("Instance fighting non combat. %s fighting %s", self.name, value.name)
+            return
+        if value:
+            value = value.instance_id
+        self._fighting = value #None or instance_id
 
     def check_immune(self, dam_type):
         immune = -1
@@ -324,8 +338,8 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             else:
                 self.affect_modify(paf, True)
 
-        if item.item_type == merc.ITEM_LIGHT and item.value[2] != 0 and merc.rooms[self.in_room] is not None:
-            merc.rooms[self.in_room].light += 1
+        if item.item_type == merc.ITEM_LIGHT and item.value[2] != 0 and self.in_room is not None:
+            self.in_room.light += 1
         return
 
     # * Unequip a char with an obj.
@@ -366,9 +380,9 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
 
         if item.item_type == merc.ITEM_LIGHT \
                 and item.value[2] != 0 \
-                and merc.rooms[self.in_room] \
-                and merc.rooms[self.in_room].light > 0:
-            merc.rooms[self.in_room].light -= 1
+                and self.in_room \
+                and self.in_room.light > 0:
+            self.in_room.light -= 1
         return
 
 
@@ -556,7 +570,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             return True
         if self.is_affected(merc.AFF_BLIND):
             return False
-        if merc.rooms[self.in_room].is_dark() and not self.is_affected(merc.AFF_INFRARED):
+        if self.in_room.is_dark() and not self.is_affected(merc.AFF_INFRARED):
             return False
         if victim.is_affected(merc.AFF_INVISIBLE) \
                 and not self.is_affected(merc.AFF_DETECT_INVIS):
@@ -600,7 +614,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             return False
         if state_checks.is_item_stat(item, merc.ITEM_GLOW):
             return True
-        if merc.rooms[self.in_room].is_dark() \
+        if self.in_room.is_dark() \
                 and not self.is_affected(merc.AFF_DARK_VISION):
             return False
         return True
@@ -670,7 +684,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         word = word.lower()
         if word == "self":
             return ch
-        for rch_id in merc.rooms[ch.in_room].people:
+        for rch_id in ch.in_room.people:
             rch = merc.characters[rch_id]
             if not ch.can_see(rch):
                 continue
@@ -710,7 +724,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         count = 0
         for item_id in contents:
             item = merc.items[item_id]
-            if ch.can_see_item(item) and game_utils.is_name(arg, item.name.lower()):
+            if ch.can_see_item(item_id) and game_utils.is_name(arg, item.name.lower()):
                 count += 1
                 if count == number:
                     return item.instance_id
@@ -744,7 +758,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
 
     # * Find an obj in the room or in inventory.
     def get_item_here(ch, argument):
-        item_id = ch.get_item_list(argument, merc.rooms[ch.in_room].items)
+        item_id = ch.get_item_list(argument, ch.in_room.items)
         if item_id:
             return item_id
         item_id = ch.get_item_carry(argument, ch)

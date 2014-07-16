@@ -93,7 +93,7 @@ def acid_effect(vo, level, dam, target):
             return
         if obj.in_living is not None:
             handler_game.act(msg,obj.in_living,obj,None,TO_ALL)
-        elif obj.in_room and merc.rooms[obj.in_room].people is not None:
+        elif obj.in_room and obj.in_room.people is not None:
             handler_game.act(msg,obj.in_room.people,obj,None,TO_ALL)
         if obj.item_type == ITEM_ARMOR:  # etch it */
             af_found = False

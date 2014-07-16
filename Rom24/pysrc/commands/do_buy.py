@@ -20,20 +20,20 @@ def do_buy(ch, argument):
         argument, arg = merc.read_word(argument)
         pRoomIndexNext = None
         # hack to make new thalos pets work
-        if merc.rooms[ch.in_room].vnum == 9621:
+        if ch.in_room.vnum == 9621:
             if 9706 in merc.roomTemplate:
                 pRoomIndexNext = merc.roomTemplate[9706]
         else:
-            if merc.rooms[ch.in_room].vnum + 1 in merc.roomTemplate:
+            if ch.in_room.vnum + 1 in merc.roomTemplate:
                 pRoomIndexNext = merc.roomTemplate[ch.in_room.vnum + 1]
         if not pRoomIndexNext:
-            logger.warn("BUG: Do_buy: bad pet shop at vnum %d.", merc.rooms[ch.in_room].vnum)
+            logger.warn("BUG: Do_buy: bad pet shop at vnum %d.", ch.in_room.vnum)
             ch.send("Sorry, you can't buy that here.\n")
             return
         in_room = ch.in_room
-        ch.in_room = pRoomIndexNext
+        ch.in_environment = pRoomIndexNext
         pet = ch.get_char_room(arg)
-        ch.in_room = in_room
+        ch.in_environment = in_room
 
         if not pet or not merc.IS_SET(pet.act, merc.ACT_PET):
             ch.send("Sorry, you can't buy that here.\n")

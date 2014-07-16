@@ -45,7 +45,7 @@ def do_berserk(ch, argument):
         ch.hit += ch.level * 2
         ch.hit = min(ch.hit, ch.max_hit)
         ch.send("Your pulse races as you are consumed by rage!\n")
-        act("$n gets a wild look in $s eyes.", ch, None, None, merc.TO_ROOM)
+        handler_game.act("$n gets a wild look in $s eyes.", ch, None, None, merc.TO_ROOM)
         ch.check_improve( 'berserk', True, 2)
         af = handler_game.AFFECT_DATA()
         af.where = merc.TO_AFFECTS
@@ -70,7 +70,8 @@ def do_berserk(ch, argument):
         ch.move //= 2
 
         ch.send("Your pulse speeds up, but nothing happens.\n")
-        fight.check_improve(ch, 'berserk', False, 2)
+        if not ch.is_npc():
+            ch.check_improve('berserk', False, 2)
 
 
 interp.register_command(interp.cmd_type('berserk', do_berserk, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1))

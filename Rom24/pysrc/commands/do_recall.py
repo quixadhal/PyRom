@@ -23,7 +23,7 @@ def do_recall(ch, argument):
         return
     if ch.in_room == location:
         return
-    if state_checks.IS_SET(merc.rooms[ch.in_room].room_flags, merc.ROOM_NO_RECALL) or ch.is_affected(merc.AFF_CURSE):
+    if state_checks.IS_SET(ch.in_room.room_flags, merc.ROOM_NO_RECALL) or ch.is_affected(merc.AFF_CURSE):
         ch.send("Mota has forsaken you.\n")
         return
     victim = ch.fighting

@@ -73,7 +73,7 @@ def get_cost(keeper, obj, fBuy):
 #* Shopping commands.
 def find_keeper(ch):
     pShop = None
-    for keeper in merc.rooms[ch.in_room].people:
+    for keeper in ch.in_room.people:
         if state_checks.IS_NPC(keeper) and keeper.pIndexData.pShop:
             pShop = keeper.pIndexData.pShop
             break

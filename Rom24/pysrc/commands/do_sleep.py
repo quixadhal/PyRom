@@ -23,7 +23,7 @@ def do_sleep(ch, argument):
             if not argument:
                 obj = ch.on
             else:
-                obj = ch.get_item_list(argument, merc.rooms[ch.in_room].contents)
+                obj = ch.get_item_list(argument, ch.in_room.items)
 
             if obj is None:
                 ch.send("You don't see that here.\n")

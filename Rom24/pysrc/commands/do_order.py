@@ -1,4 +1,5 @@
 import logging
+import handler_game
 
 
 logger = logging.getLogger()
@@ -41,12 +42,12 @@ def do_order(ch, argument):
             ch.send("Do it yourself!\n")
             return
     found = False
-    for och in merc.rooms[ch.in_room].people[:]:
+    for och in ch.in_room.people:
         if state_checks.IS_AFFECTED(och, merc.AFF_CHARM) \
                 and och.master == ch \
                 and (fAll or och == victim):
             found = True
-            act("$n orders you to '%s'." % argument, ch, None, och, merc.TO_VICT)
+            handler_game.act("$n orders you to '%s'." % argument, ch, None, och, merc.TO_VICT)
             och.interpret(argument)
 
     if found:
