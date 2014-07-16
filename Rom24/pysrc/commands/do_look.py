@@ -94,7 +94,7 @@ def do_look(ch, argument):
     obj_list.extend(room.items)
     for obj_id in obj_list:
         obj = merc.items[obj_id]
-        if ch.can_see_item(obj.instance_id):
+        if ch.can_see_item(obj):
             # player can see object
             pdesc = game_utils.get_extra_descr(arg3, obj.extra_descr)
             if pdesc:
@@ -102,17 +102,9 @@ def do_look(ch, argument):
                 if count == number:
                     ch.send(pdesc)
                     return
-            else:
-                continue
-            pdesc = game_utils.get_extra_descr(arg3, obj.extra_descr)
-            if pdesc:
-                count += 1
-                if count == number:
-                    ch.send(pdesc)
-                    return
-            else:
-                continue
-            if arg3.lower() in obj.name.lower:
+                else:
+                    continue
+            if game_utils.is_name(arg3, obj.name.lower()):
                 count += 1
                 if count == number:
                     ch.send("%s\n" % obj.description)

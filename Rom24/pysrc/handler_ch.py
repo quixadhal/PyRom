@@ -261,7 +261,7 @@ def show_char_to_char_0(victim, ch):
 
     buf += state_checks.PERS(victim, ch)
     if not victim.is_npc() and not ch.comm.is_set(merc.COMM_BRIEF) \
-            and victim.position == merc.POS_STANDING and not merc.items[ch.on]:
+            and victim.position == merc.POS_STANDING and not ch.on:
         buf += victim.title
 
     if victim.position == merc.POS_DEAD:
@@ -394,6 +394,5 @@ def show_char_to_char(plist, ch):
         if ch.can_see(character):
             show_char_to_char_0(character, ch)
             ch.send("\n")
-        elif merc[ch.in_room].is_dark() and character.is_affected(merc.AFF_INFRARED):
+        elif ch.in_room.is_dark() and character.is_affected(merc.AFF_INFRARED):
             ch.send("You see glowing red eyes watching YOU!\n")
-

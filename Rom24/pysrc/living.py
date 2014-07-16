@@ -596,11 +596,12 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         return True
 
     # * True if char can see obj.
-    def can_see_item(self, item_id):
+    def can_see_item(self, item):
         if not self.is_npc() \
                 and self.act.is_set(merc.PLR_HOLYLIGHT):
             return True
-        item = merc.items.get(item_id, None)
+        if type(item) == int:
+            item = merc.items.get(item, None)
         if state_checks.IS_SET(item.extra_flags, merc.ITEM_VIS_DEATH):
             return False
         if self.is_affected(merc.AFF_BLIND) \
@@ -724,49 +725,51 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         count = 0
         for item_id in contents:
             item = merc.items[item_id]
-            if ch.can_see_item(item_id) and game_utils.is_name(arg, item.name.lower()):
+            if ch.can_see_item(item) and game_utils.is_name(arg, item.name.lower()):
                 count += 1
                 if count == number:
-                    return item.instance_id
+                    return item
         return None
 
     # * Find an obj in player's inventory.
     def get_item_carry(ch, argument, viewer):
         number, arg = game_utils.number_argument(argument)
         count = 0
-        item_instance_id = [item_id for item_id in ch.contents if merc.items[item_id].wear_loc != merc.WEAR_NONE
-                            and viewer.can_see_item(item_id)
-                            and game_utils.is_name(arg, merc.items[item_id].name.lower())]
-        if item_instance_id:
+        for item_id in ch.items:
+            item = merc.items.get(item_id, None)
+            if item.wear_loc == merc.WEAR_NONE and viewer.can_see_item(item) \
+                    and game_utils.is_name(arg, item.name.lower()):
                 count += 1
                 if count == number:
-                    return item_instance_id[0]
+                    return item
         return None
 
     # * Find an obj in player's equipment.
     def get_item_wear(ch, argument):
         number, arg = game_utils.number_argument(argument)
         count = 0
-        item_instance_id = [item_id for item_id in ch.contents if merc.items[item_id].wear_loc != merc.WEAR_NONE
-                            and ch.can_see_item(merc.items[item_id])
-                            and game_utils.is_name(arg, merc.items[item_id].name.lower())]
-        if item_instance_id:
-            count += 1
-            if count == number:
-                return item_instance_id[0]
+        found = False
+        for item_id in ch.items:
+            item = merc.items.get(item_id, None)
+            if item.wear_loc != merc.WEAR_NONE and ch.can_see_item(item) \
+                    and game_utils.is_name(arg, item.name.lower()):
+                count += 1
+                found = True
+                if count == number:
+                    return found
         return None
 
     # * Find an obj in the room or in inventory.
     def get_item_here(ch, argument):
-        item_id = ch.get_item_list(argument, ch.in_room.items)
-        if item_id:
-            return item_id
-        item_id = ch.get_item_carry(argument, ch)
-        if item_id:
-            return item_id
-        item_id = ch.get_item_wear(argument)
-        if item_id:
-            return item_id
+        item = ch.get_item_list(argument, merc.rooms[ch.in_room].items)
+        if item:
+            return item
+        item = ch.get_item_carry(argument, ch)
+        if item:
+            return item
+        item = ch.get_item_wear(argument)
+        if item:
+            return item
         return None
 
     # * Find an obj in the world.
@@ -776,15 +779,21 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             return item_id
         number, arg = game_utils.number_argument(argument)
         arg = arg.lower()
-        instance_id = game_utils.find_name_instance('obj', number, arg)
-        if instance_id:
-            item_id = merc.items[instance_id[0]]
-            return item_id
+        count = 0
+        item_ids = sorted(merc.items.keys())
+        for item_id in item_ids:
+            item = merc.items[item_id]
+            if ch.can_see_item(item) and game_utils.is_name(arg, item.name.lower()):
+                count += 1
+                if count == number:
+                    return item
         return None
 
     # * True if char can drop obj.
-    def can_drop_item(self, item_id):
-        if not state_checks.IS_SET(merc.items[item_id].extra_flags, merc.ITEM_NODROP):
+    def can_drop_item(self, item):
+        if type(item) is int:
+            item = merc.items.get(item, None)
+        if not state_checks.IS_SET(item.extra_flags, merc.ITEM_NODROP):
             return True
         if not self.is_npc() \
                 and self.level >= merc.LEVEL_IMMORTAL:
@@ -928,7 +937,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                 handler_game.act("You wear $p on your right finger.", self, item, None, merc.TO_CHAR)
                 self.equip(item, merc.WEAR_FINGER_R)
                 return
-            print("BUG: Wear_obj: no free finger.")
+            logger.error("BUG: Wear_obj: no free finger.")
             self.send("You already wear two rings.\n")
             return
         if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_NECK):
@@ -946,7 +955,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                 handler_game.act("You wear $p around your neck.", self, item, None, merc.TO_CHAR)
                 self.equip(item, merc.WEAR_NECK_2)
                 return
-            print("BUG: Wear_obj: no free neck.")
+            logger.error("BUG: Wear_obj: no free neck.")
             self.send("You already wear two neck items.\n")
             return
         if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_BODY):
@@ -1020,7 +1029,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                 self.equip(item, merc.WEAR_WRIST_R)
                 return
 
-            print("BUG: Wear_obj: no free wrist.")
+            logger.error("BUG: Wear_obj: no free wrist.")
             self.send("You already wear two wrist items.\n")
             return
         if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_SHIELD):
@@ -1089,15 +1098,16 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         return
 
     def remove_item(self, iWear, fReplace):
-        if not iWear:
+        item = merc.items.get(self.get_eq(iWear), None)
+        if not item:
             return True
         if not fReplace:
             return False
-        if state_checks.IS_SET(iWear.extra_flags, merc.ITEM_NOREMOVE):
-            handler_game.act("You can't remove $p.", self, iWear.instance_id, None, merc.TO_CHAR)
+        if state_checks.IS_SET(item.extra_flags, merc.ITEM_NOREMOVE):
+            handler_game.act("You can't remove $p.", self, item, None, merc.TO_CHAR)
             return False
-        self.unequip(iWear.instance_id)
-        handler_game.act("$n stops using $p.", self, iWear, None, merc.TO_ROOM)
-        handler_game.act("You stop using $p.", self, iWear, None, merc.TO_CHAR)
+        self.unequip(item)
+        handler_game.act("$n stops using $p.", self, item, None, merc.TO_ROOM)
+        handler_game.act("You stop using $p.", self, item, None, merc.TO_CHAR)
         return True
 
