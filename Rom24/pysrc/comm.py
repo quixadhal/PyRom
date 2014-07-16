@@ -258,11 +258,23 @@ def game_loop(server):
 
     db.boot_db()
 
+    boot_time = time.time()
+    #sys_mem = psutil.virtual_memory()
+    #proc = psutil.Process()
+    #proc_io = proc.io_counters()
+    #proc_mem = proc.memory_info()
 
-
+    #logger.debug('System booted at: %s', datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%d %H:%M:%S"))
+    #logger.debug('System has %dM of %dM available (%.3f%% used)', sys_mem.available // (1024 * 1024),
+    #            sys_mem.total // (1024 * 1024), sys_mem.percent)
+    #logger.debug('Pyom started at: %s', datetime.fromtimestamp(proc.create_time()).strftime("%Y-%m-%d %H:%M:%S"))
+    #logger.debug('Pyom is currently using %dM of RAM', proc_mem.rss // (1024*1024))
+    #logger.debug('Pyom has performed %d read and %d write I/O operations', proc_io.read_count, proc_io.write_count)
+    #logger.debug('Pyom database booted in %.3f seconds', (boot_time - proc.create_time()))
+    logger.debug('Pyom database booted in %.3f seconds', (boot_time - startup_time))
     logger.info("Pyom is ready to rock on port %d", server.port)
 
-    while True: 
+    while True:
         server.poll()
         process_input()
         update_handler()

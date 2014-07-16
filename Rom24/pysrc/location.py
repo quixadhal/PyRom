@@ -81,7 +81,7 @@ class Location:
             item = instance
 
         try:  # see if item is a light.
-            if item and item.item_type == ITEM_LIGHT and item.value[2] != 0 and room.light > 0:
+            if item and item.item_type == ITEM_LIGHT and item.value[2] != 0 and instance.light > 0:
                 instance.light -= 1
             if self.wear_loc != merc.WEAR_NONE:
                 instance.unequip(self.instance_id)
@@ -91,7 +91,7 @@ class Location:
             pass
 
         if self.instance_id not in instance.contents:
-            logger.error("BUG: from_environment: %s ch not found in instance %d.", self.name, room.instance_id)
+            logger.error("BUG: from_environment: %s ch not found in instance %d.", self.name, instance.instance_id)
             return
         instance.contents.remove(self.instance_id)
 

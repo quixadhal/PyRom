@@ -191,8 +191,9 @@ class Items(handler.Instancer, location.Location, physical.Physical, container.C
                     total += 1
         return total
 
-def get_item(ch, item, container):
+def get_item(ch, item_id, container):
     # variables for AUTOSPLIT */
+    item = merc.items[item_id]
     if not state_checks.CAN_WEAR(item, merc.ITEM_TAKE):
         ch.send("You can't take that.\n")
         return

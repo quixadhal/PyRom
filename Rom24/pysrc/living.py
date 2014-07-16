@@ -247,7 +247,6 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
 
     @property
     def guild(self):
-        __repr__
         return const.guild_table.get(self._guild, None)
 
     @guild.setter
@@ -707,7 +706,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         number, arg = game_utils.number_argument(argument)
         count = 0
         for wch in merc.characters.values():
-            if wch.in_room is 0 or not ch.can_see(wch):
+            if not wch.in_room or not ch.can_see(wch):
                 continue
             if not wch.is_npc() and not game_utils.is_name(arg, wch.name.lower()):
                 continue
@@ -741,7 +740,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         if item_instance_id:
                 count += 1
                 if count == number:
-                    return item_instance_id
+                    return item_instance_id[0]
         return None
 
     # * Find an obj in player's equipment.
@@ -1090,16 +1089,15 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         return
 
     def remove_item(self, iWear, fReplace):
-        item = merc.items.get(self.get_eq(iWear), None)
-        if not item:
+        if not iWear:
             return True
         if not fReplace:
             return False
-        if state_checks.IS_SET(item.extra_flags, merc.ITEM_NOREMOVE):
-            handler_game.act("You can't remove $p.", self, item, None, merc.TO_CHAR)
+        if state_checks.IS_SET(iWear.extra_flags, merc.ITEM_NOREMOVE):
+            handler_game.act("You can't remove $p.", self, iWear.instance_id, None, merc.TO_CHAR)
             return False
-        self.unequip(item)
-        handler_game.act("$n stops using $p.", self, item, None, merc.TO_ROOM)
-        handler_game.act("You stop using $p.", self, item, None, merc.TO_CHAR)
+        self.unequip(iWear.instance_id)
+        handler_game.act("$n stops using $p.", self, iWear, None, merc.TO_ROOM)
+        handler_game.act("You stop using $p.", self, iWear, None, merc.TO_CHAR)
         return True
 

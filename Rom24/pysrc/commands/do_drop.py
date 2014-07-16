@@ -64,11 +64,12 @@ def do_drop(ch, argument):
         return
     if not arg.startswith("all"):
         # 'drop obj'
-        item = ch.get_item_carry(arg, ch)
+        item_id = ch.get_item_carry(arg, ch)
+        item = merc.items[item_id]
         if not item:
             ch.send("You do not have that item.\n")
             return
-        if not ch.can_drop_item(item):
+        if not ch.can_drop_item(item.instance_id):
             ch.send("You can't let go of it.\n")
             return
         item.from_environment()

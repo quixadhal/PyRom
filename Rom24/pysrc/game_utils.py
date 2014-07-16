@@ -112,7 +112,7 @@ def find_location(ch, arg):
             return merc.rooms[room_instance]
     victim = ch.get_char_world(arg)
     if victim:
-        return victim.in_room
+        return merc.rooms[victim.in_room]
     item = ch.get_item_world(arg)
     if item:
         return item.in_room
