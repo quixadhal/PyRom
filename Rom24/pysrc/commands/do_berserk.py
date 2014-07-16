@@ -46,7 +46,8 @@ def do_berserk(ch, argument):
         ch.hit = min(ch.hit, ch.max_hit)
         ch.send("Your pulse races as you are consumed by rage!\n")
         handler_game.act("$n gets a wild look in $s eyes.", ch, None, None, merc.TO_ROOM)
-        ch.check_improve( 'berserk', True, 2)
+        if not ch.is_npc():
+            ch.check_improve( 'berserk', True, 2)
         af = handler_game.AFFECT_DATA()
         af.where = merc.TO_AFFECTS
         af.type = 'berserk'
