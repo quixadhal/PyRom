@@ -64,8 +64,7 @@ def do_drop(ch, argument):
         return
     if not arg.startswith("all"):
         # 'drop obj'
-        item_id = ch.get_item_carry(arg, ch)
-        item = merc.items[item_id]
+        item = ch.get_item_carry(arg, ch)
         if not item:
             ch.send("You do not have that item.\n")
             return

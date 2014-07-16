@@ -343,8 +343,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         return
 
     # * Unequip a char with an obj.
-    def unequip(self, item_id):
-        item = merc.items.get(item_id, None)
+    def unequip(self, item):
         if item.wear_loc == merc.WEAR_NONE:
             logger.warning("Unequip_char: already unequipped.")
             return
@@ -748,15 +747,13 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
     def get_item_wear(ch, argument):
         number, arg = game_utils.number_argument(argument)
         count = 0
-        found = False
         for item_id in ch.items:
             item = merc.items.get(item_id, None)
             if item.wear_loc != merc.WEAR_NONE and ch.can_see_item(item) \
                     and game_utils.is_name(arg, item.name.lower()):
                 count += 1
-                found = True
                 if count == number:
-                    return found
+                    return item
         return None
 
     # * Find an obj in the room or in inventory.

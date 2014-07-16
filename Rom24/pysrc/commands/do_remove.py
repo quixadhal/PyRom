@@ -12,8 +12,7 @@ def do_remove(ch, argument):
     if not arg:
         ch.send("Remove what?\n")
         return
-    item_id = ch.get_item_wear(arg)
-    item = merc.items[item_id]
+    item = ch.get_item_wear(arg)
     if not item:
         ch.send("You do not have that item.\n")
         return
