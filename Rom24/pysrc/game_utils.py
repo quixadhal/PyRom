@@ -298,8 +298,8 @@ def object_search(ch, environment, template, obj_type, atype, num_or_count, arg_
 
     if atype == 'vnum':
         if obj_type == 'item':
-            if ch.contains:
-                contains_id_list = [item_id for item_id in ch.contains if merc.items[item_id].vnum == target]
+            if ch.contents:
+                contains_id_list = [item_id for item_id in ch.contents if merc.items[item_id].vnum == target]
                 if contains_id_list:
                     try:
                         return merc.items[contains_id_list[arg_num - 1]]

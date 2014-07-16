@@ -10,7 +10,8 @@ import random
 import game_utils
 import handler_game
 from handler_magic import saves_spell
-import merc
+from merc import ROOM_VNUM_TEMPLE, WEAR_LIGHT, ITEM_LIGHT, AFF_PLAGUE, TO_AFFECTS, APPLY_STR, \
+    DAM_DISEASE, TO_ROOM, areaTemplate, rooms, instances_by_room
 
 
 class Location:
@@ -18,21 +19,52 @@ class Location:
         #Location
         super().__init__()
         self.room_template = 0
-        self.environment = None
-        self.in_living = None
-        self.in_room = None
-        self.in_item = None
+        self.in_environment = None
         self.was_in_template = 0
         self.was_in_room = None
+
         self.on_template = 0
         self.on = None
         self.zone_template = ""
         self.zone = 0
+        self.area = None
+        self.light = 0
+    @property
+    def in_living(self):
+        from living import Living
+        in_environment = merc.global_instances.get(self.in_environment, None)
+        while in_environment:
+            if isinstance(in_environment, Living):
+                return in_environment.instance_id
+            in_environment = merc.global_instances.get(in_environment.in_environment, None)
+        return None
+
+    @property
+    def in_room(self):
+        from handler_room import Room
+        in_environment = merc.global_instances.get(self.in_environment, None)
+        while in_environment:
+            if isinstance(in_environment, Room):
+                return in_environment.instance_id
+            in_environment = merc.global_instances.get(in_environment.in_environment, None)
+        return None
+
+    @property
+    def in_item(self):
+        from handler_item import Items
+        in_environment = merc.global_instances.get(self.in_environment, None)
+        while in_environment:
+            if isinstance(in_environment, Items):
+                return in_environment.instance_id
+            in_environment = merc.global_instances.get(in_environment.in_environment, None)
+        return None
 
     def is_room_owner(self, room):
         if not room.owner:
             return False
         return True if game_utils.is_name(self.name, room.owner) else False
+
+
 
     # * Move an instance from a location
     def from_environment(self):
@@ -41,15 +73,15 @@ class Location:
             return
         instance = merc.global_instances[self.in_environment]
         try:  # For characters only
-            if not self.is_npc() and instance.area in merc.areaTemplate:
-                merc.areaTemplate[instance.area].nplayer -= 1
-            item = merc.items.get(self.get_eq(merc.WEAR_LIGHT), None)
+            if not self.is_npc() and instance.area in areaTemplate:
+                areaTemplate[instance.area].nplayer -= 1
+            item = merc.items.get(self.get_eq(WEAR_LIGHT), None)
 
         except AttributeError:
             item = instance
 
         try:  # see if item is a light.
-            if item and item.item_type == merc.ITEM_LIGHT and item.value[2] != 0 and room.light > 0:
+            if item and item.item_type == ITEM_LIGHT and item.value[2] != 0 and room.light > 0:
                 instance.light -= 1
             if self.wear_loc != merc.WEAR_NONE:
                 instance.unequip(self.instance_id)
@@ -75,6 +107,7 @@ class Location:
         self.on = None  # sanity check!
         return
 
+
     # * Give an obj to a char.
     def to_environment(self, instance):
         if type(instance) is int:
@@ -90,42 +123,42 @@ class Location:
         try: # if a player leaves a room.
             if not self.is_npc():
                 #TODO change to area instances
-                if merc.areaTemplate[instance.area].empty:
-                    merc.areaTemplate[instance.area].empty = False
-                    merc.areaTemplate[instance.area].age = 0
+                if areaTemplate[instance.area].empty:
+                    areaTemplate[instance.area].empty = False
+                    areaTemplate[instance.area].age = 0
 
-                merc.areaTemplate[instance.area].nplayer += 1
+                areaTemplate[instance.area].nplayer += 1
 
-            item = merc.items.get(self.get_eq(merc.WEAR_LIGHT), None)
+            item = merc.items.get(self.get_eq(WEAR_LIGHT), None)
 
-            if item and item.item_type == merc.ITEM_LIGHT and item.value[2] != 0:
+            if item and item.item_type == ITEM_LIGHT and item.value[2] != 0:
                 instance.light += 1
 
-            if self.is_affected(merc.AFF_PLAGUE):
+            if self.is_affected(AFF_PLAGUE):
                 af = [af for af in self.affected if af.type == 'plague']
                 if not af:
-                    self.affected_by.rem_bit(merc.AFF_PLAGUE)
+                    self.affected_by.rem_bit(AFF_PLAGUE)
                     return
                 af = af[0]
 
                 if af.level == 1:
                     return
                 plague = handler_game.AFFECT_DATA()
-                plague.where = merc.TO_AFFECTS
+                plague.where = TO_AFFECTS
                 plague.type = "plague"
                 plague.level = af.level - 1
                 plague.duration = random.randint(1, 2 * plague.level)
-                plague.location = merc.APPLY_STR
+                plague.location = APPLY_STR
                 plague.modifier = -5
-                plague.bitvector = merc.AFF_PLAGUE
+                plague.bitvector = AFF_PLAGUE
 
                 for vch_id in instance.people[:]:
                     vch = merc.characters[vch_id]
-                    if not saves_spell(plague.level - 2, vch, merc.DAM_DISEASE) \
-                            and not vch.is_immortal() and not vch.is_affected(merc.AFF_PLAGUE) \
+                    if not saves_spell(plague.level - 2, vch, DAM_DISEASE) \
+                            and not vch.is_immortal() and not vch.is_affected(AFF_PLAGUE) \
                             and random.randint(0, 5) == 0:
                         vch.send("You feel hot and feverish.\n\r")
-                        handler_game.act("$n shivers and looks very ill.", vch, None, None, merc.TO_ROOM)
+                        handler_game.act("$n shivers and looks very ill.", vch, None, None, TO_ROOM)
                         vch.affect_join(plague)
         except AttributeError:
             pass

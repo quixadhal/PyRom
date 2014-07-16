@@ -233,6 +233,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
 
     @property
     def guild(self):
+        __repr__
         return const.guild_table.get(self._guild, None)
 
     @guild.setter
