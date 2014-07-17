@@ -61,7 +61,7 @@ from miniboa.colors import TERMINAL_TYPES, COLOR_MAP
 _PARA_BREAK = re.compile(r"(\n\s*\n)", re.MULTILINE)
 
 
-def word_wrap(text, columns=80, indent=4, padding=2):
+def word_wrap(text: str, columns=80, indent=4, padding=2):
     """
     Given a block of text, breaks into a list of lines wrapped to
     length.
@@ -74,8 +74,9 @@ def word_wrap(text, columns=80, indent=4, padding=2):
             continue
         line = ' ' * indent
         linelen = len(line)
-        for word in para.split():
-            bareword = color_convert(word, 'rom', None)
+        words = para.split()
+        for word in words:
+            bareword = color_convert(word, 'pyom', None)
             if (linelen + 1 + len(bareword)) > columns:
                 lines.append(line)
                 line = ' ' * padding
@@ -107,14 +108,14 @@ class Xlator(dict):
         return self._make_regex().sub(self, text)
 
 
-def color_convert(text: str, input_type: str='rom', output_type: str='ansi'):
+def color_convert(text: str, input_type='pyom', output_type='ansi'):
     """
     Given a chunk of text, replace color tokens of the specified input type
     with the appropriate color codes for the given output terminal type
     """
     if text is None or len(text) < 1:
         return text
-    if input_type is None or input_type not in COLOR_MAP:
+    if input_type is None or input_type == 'unknown' or input_type not in COLOR_MAP:
         return text
     if output_type is not None and output_type not in TERMINAL_TYPES:
         output_type = None
@@ -134,6 +135,8 @@ def color_convert(text: str, input_type: str='rom', output_type: str='ansi'):
                 words[i] = COLOR_MAP[input_type][word][o]
         return ''.join(words)
     else:
+        if output_type is None:
+            output_type = 'unknown'
         o = TERMINAL_TYPES.index(output_type)
         xl = Xlator(COLOR_MAP[input_type])
         return xl.xlat(text, o)
