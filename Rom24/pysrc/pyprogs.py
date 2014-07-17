@@ -28,8 +28,7 @@ def emit_signal(signal, actor=None, victim=None, argument=None, audience=None):
         victim.absorb(signal, actor, victim, argument)
 
     if audience:
-        [a.absorb(signal, actor, victim, argument, audience) for a in audience
-         if a != actor and a != victim]
+        [merc.global_instances[a].absorb(signal, actor, victim, argument, audience) for a in audience if a != actor and a != victim]
     for prog in signals[signal]:
         prog.execute(actor, victim, argument, audience)
     actor.dampen = False

@@ -5,6 +5,7 @@ logger = logging.getLogger()
 import merc
 import interp
 import pyprogs
+from handler_game import act
 
 def do_say(ch, argument):
     if not argument:
