@@ -55,7 +55,7 @@ class Pc(living.Living):
         self.dampen = False
 
     def __del__(self):
-        self.instance_destructor()
+        logger.debug("Freeing %s", str(self))
 
     def __repr__(self):
         return "<PC: %s ID %d>" % (self.name, self.instance_id)
