@@ -66,7 +66,7 @@ def load_char_obj(d, name):
 
 def fwrite_char(ch):
     chdict = OrderedDict()
-    chdict['instance_id'] = ch.instace_id
+    chdict['instance_id'] = ch.instance_id
     chdict['name'] = ch.name
     chdict['id'] = ch.id
     chdict['logo'] = time.time()
@@ -136,22 +136,23 @@ def get_if_diff(s1, s2):
 
 def fwrite_obj(ch, obj, contained_by=None):
     odict = OrderedDict()
-    odict['Vnum'] = obj.pIndexData.vnum
+    obj = merc.items[obj]
+    odict['Vnum'] = obj.vnum
     odict['Enchanted'] = obj.enchanted
-    odict['Name'] = get_if_diff(obj.name, obj.pIndexData.name)
-    odict['ShD'] = get_if_diff(obj.short_descr, obj.pIndexData.short_descr)
-    odict['Desc'] = get_if_diff(obj.description, obj.pIndexData.description)
-    odict['ExtF'] = get_if_diff(obj.extra_flags, obj.pIndexData.extra_flags)
-    odict['WeaF'] = get_if_diff(obj.wear_flags, obj.pIndexData.wear_flags)
-    odict['Ityp'] = get_if_diff(obj.item_type, obj.pIndexData.item_type)
-    odict['Wt'] = get_if_diff(obj.weight, obj.pIndexData.weight)
-    odict['Cond'] = get_if_diff(obj.condition, obj.pIndexData.condition)
+    odict['Name'] = obj.name
+    odict['ShD'] = obj.short_descr
+    odict['Desc'] = obj.description
+    odict['ExtF'] = obj.extra_flags
+    odict['WeaF'] = obj.wear_flags
+    odict['Ityp'] = obj.item_type
+    odict['Wt'] = obj.weight
+    odict['Cond'] = obj.condition
     
     odict['Wear'] = obj.wear_loc
     odict['Lev'] = obj.level
     odict['timer'] = obj.timer
     odict['cost'] = obj.cost
-    odict['Val'] = get_if_diff(obj.value, obj.pIndexData.value)
+    odict['Val'] = obj.value
 
     odict['affected'] = [a for a in obj.affected if a.type >= 0]
     odict['ExDe'] = {ed.keyword: ed.description for ed in obj.extra_descr}
