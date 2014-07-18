@@ -1,4 +1,5 @@
 from collections import OrderedDict
+import game_utils
 import state_checks
 
 
@@ -36,6 +37,12 @@ class Bit:
     def is_set(self, bit):
         return self.bits & self.from_name(bit)
 
+    def read_bits(self, area, default=0):
+        area, bits = game_utils.read_flags(area)
+        self.set_bit(bits)
+        self.set_bit(default)
+        return area
+
     #lets you chose the flag table. so act/plr flags will save correctly.
     def print_flags(self, flags):
         holder = self._flags
@@ -49,6 +56,8 @@ class Bit:
             return name
         elif type(name) is list or type(name) is tuple:
             bitstring = name
+        elif isinstance(name, Bit):
+            bitstring = repr(name)
         else:
             name = name.strip()
             bitstring = name.split(' ')

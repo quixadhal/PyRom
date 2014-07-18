@@ -676,6 +676,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
 
         if self.desc:
             self.desc.character = None
+        self.instance_destructor()
         return
 
     # * Find a char in the room.

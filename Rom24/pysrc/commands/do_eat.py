@@ -26,8 +26,8 @@ def do_eat(ch, argument):
         if not ch.is_npc() and ch.condition[merc.COND_FULL] > 40:
             ch.send("You are too full to eat more.\n")
             return
-    act("$n eats $p.", ch, obj, None, merc.TO_ROOM)
-    act("You eat $p.", ch, obj, None, merc.TO_CHAR)
+    handler_game.act("$n eats $p.", ch, obj, None, merc.TO_ROOM)
+    handler_game.act("You eat $p.", ch, obj, None, merc.TO_CHAR)
     if obj.item_type == merc.ITEM_FOOD:
         if not ch.is_npc():
             condition = ch.condition[merc.COND_HUNGER]

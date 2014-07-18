@@ -23,14 +23,14 @@ def do_mstat(ch, argument):
         return
     ch.send("Name: %s\n" % victim.name)
     ch.send("Vnum: %d  Format: %s  Race: %s  Group: %d  Sex: %s  Room: %d\n" % (
-        0 if not victim.is_npc() else victim.pIndexData.vnum,
-        "pc" if not victim.is_npc() else "new" if victim.pIndexData.new_format else "old",
+        0 if not victim.is_npc() else victim.vnum,
+        "pc" if not victim.is_npc() else "new",
         victim.race.name,
         0 if not victim.is_npc() else victim.group, tables.sex_table[victim.sex],
         0 if not victim.in_room else victim.in_room.vnum ))
 
     if victim.is_npc():
-        ch.send("Count: %d  Killed: %d\n" % (victim.pIndexData.count, victim.pIndexData.killed))
+        ch.send("Count: %d  Killed: %d\n" % (victim.count, victim.killed))
     ch.send("Str: %d(%d)  Int: %d(%d)  Wis: %d(%d)  Dex: %d(%d)  Con: %d(%d)\n" % (
         victim.perm_stat[merc.STAT_STR], victim.stat(merc.STAT_STR),
         victim.perm_stat[merc.STAT_INT], victim.stat(merc.STAT_INT),
@@ -41,7 +41,7 @@ def do_mstat(ch, argument):
         victim.hit, victim.max_hit,
         victim.mana, victim.max_mana,
         victim.move, victim.max_move,
-        0 if ch.is_npc() else victim.practice ))
+        0 if victim.is_npc() else victim.practice ))
     ch.send("Lv: %d  Class: %s  Align: %d  Gold: %ld  Silver: %ld  Exp: %d\n" % (
         victim.level,
         "mobile" if victim.is_npc() else victim.guild.name,
@@ -53,7 +53,7 @@ def do_mstat(ch, argument):
         state_checks.GET_HITROLL(victim), state_checks.GET_DAMROLL(victim), victim.saving_throw,
         tables.size_table[victim.size], tables.position_table[victim.position].name,
         victim.wimpy ))
-    if victim.is_npc() and victim.pIndexData.new_format:
+    if victim.is_npc():
         ch.send("Damage: %dd%d  Message:  %s\n" % (
             victim.damage[merc.DICE_NUMBER], victim.damage[merc.DICE_TYPE],
             const.attack_table[victim.dam_type].noun))
@@ -69,20 +69,20 @@ def do_mstat(ch, argument):
         ch.send("Age: %d  Played: %d  Last Level: %d  Timer: %d\n",
                 victim.get_age(), (int)(victim.played + time.time() - victim.logon) // 3600,
                 victim.last_level, victim.timer)
-    ch.send("Act: %s\n" % handler.act_bit_name(victim.act))
+    ch.send("Act: %s\n" %repr(victim.act))
     if victim.comm:
-        ch.send("Comm: %s\n" % handler.comm_bit_name(victim.comm))
+        ch.send("Comm: %s\n" % repr(victim.comm))
     if victim.is_npc() and victim.off_flags:
-        ch.send("Offense: %s\n" % handler.off_bit_name(victim.off_flags))
+        ch.send("Offense: %s\n" % repr(victim.off_flags))
     if victim.imm_flags:
-        ch.send("Immune: %s\n" % handler.imm_bit_name(victim.imm_flags))
+        ch.send("Immune: %s\n" % repr(victim.imm_flags))
     if victim.res_flags:
-        ch.send("Resist: %s\n" % handler.imm_bit_name(victim.res_flags))
+        ch.send("Resist: %s\n" % repr(victim.res_flags))
     if victim.vuln_flags:
-        ch.send("Vulnerable: %s\n" % handler.imm_bit_name(victim.vuln_flags))
-    ch.send("Form: %s\nParts: %s\n" % (handler.form_bit_name(victim.form), handler.part_bit_name(victim.parts)))
+        ch.send("Vulnerable: %s\n" % repr(victim.vuln_flags))
+    ch.send("Form: %s\nParts: %s\n" % (repr(victim.form), repr(victim.parts)))
     if victim.affected_by:
-        ch.send("Affected by %s\n" % victim.affected_by)
+        ch.send("Affected by %s\n" % repr(victim.affected_by))
     ch.send("Master: %s  Leader: %s  Pet: %s\n" % (
         victim.master.name if victim.master else "(none)",
         victim.leader.name if victim.leader else "(none)",

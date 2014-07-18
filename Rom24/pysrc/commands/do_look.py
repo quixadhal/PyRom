@@ -2,6 +2,7 @@ import logging
 
 import game_utils
 import handler_ch
+import handler_game
 import state_checks
 
 
@@ -79,7 +80,7 @@ def do_look(ch, argument):
             if state_checks.IS_SET(obj.value[1], merc.CONT_CLOSED):
                 ch.send("It is closed.\n")
                 return
-            act("$p holds:", ch, obj, None, merc.TO_CHAR)
+            handler_game.act("$p holds:", ch, obj, None, merc.TO_CHAR)
             handler_ch.show_list_to_char(obj.contents, ch, True, True)
             return
         else:
@@ -148,9 +149,9 @@ def do_look(ch, argument):
         ch.send("Nothing special there.\n")
     if pexit.keyword and pexit.keyword.strip():
         if state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED):
-            act("The $d is closed.", ch, None, pexit.keyword, merc.TO_CHAR)
+            handler_game.act("The $d is closed.", ch, None, pexit.keyword, merc.TO_CHAR)
         elif state_checks.IS_SET(pexit.exit_info, merc.EX_ISDOOR):
-            act("The $d is open.", ch, None, pexit.keyword, merc.TO_CHAR)
+            handler_game.act("The $d is open.", ch, None, pexit.keyword, merc.TO_CHAR)
     return
 
 
