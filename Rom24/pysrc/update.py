@@ -463,7 +463,7 @@ def char_update():
             fight.update_pos(ch)
 
         if not ch.is_npc() and ch.level < LEVEL_IMMORTAL:
-            obj = ch.get_eq(WEAR_LIGHT)
+            obj = merc.items.get(ch.get_eq(WEAR_LIGHT), None)
             if obj and obj.item_type == ITEM_LIGHT and obj.value[2] > 0:
                 obj.value[2] -= 1
                 if obj.value[2] == 0 and roomTemplate[ch.in_room] is not None:

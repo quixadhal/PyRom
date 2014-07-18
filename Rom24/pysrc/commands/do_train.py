@@ -1,4 +1,5 @@
 import logging
+import handler_game
 
 logger = logging.getLogger()
 
@@ -12,10 +13,13 @@ def do_train(ch, argument):
     pOutput = ""
     if ch.is_npc():
         return
+    trainer = None
+    for mob_id in ch.in_room.people:
+        mob = merc.characters[mob_id]
+        if mob.is_npc() and mob.act.is_set(merc.ACT_TRAIN):
+            trainer = mob
 
-        # Check for trainer.
-    trainers = [mob for mob in ch.in_room.people if mob.is_npc() and mob.act.is_set(merc.ACT_TRAIN)]
-    if not trainers:
+    if not trainer:
         ch.send("You can't do that here.\n")
         return
     if not argument:
@@ -59,8 +63,8 @@ def do_train(ch, argument):
         ch.perm_hit += 10
         ch.max_hit += 10
         ch.hit += 10
-        act("Your durability increases!", ch, None, None, merc.TO_CHAR)
-        act("$n's durability increases!", ch, None, None, merc.TO_ROOM)
+        handler_game.act("Your durability increases!", ch, None, None, merc.TO_CHAR)
+        handler_game.act("$n's durability increases!", ch, None, None, merc.TO_ROOM)
         return
     elif "mana" == argument:
         if cost > ch.train:
@@ -70,8 +74,8 @@ def do_train(ch, argument):
         ch.perm_mana += 10
         ch.max_mana += 10
         ch.mana += 10
-        act("Your power increases!", ch, None, None, merc.TO_CHAR)
-        act("$n's power increases!", ch, None, None, merc.TO_ROOM)
+        handler_game.act("Your power increases!", ch, None, None, merc.TO_CHAR)
+        handler_game.act("$n's power increases!", ch, None, None, merc.TO_ROOM)
         return
     else:
         ch.send("You can train:")
@@ -83,15 +87,15 @@ def do_train(ch, argument):
         ch.send(" hp mana")
         return
     if ch.perm_stat[stat] >= ch.get_max_train(stat):
-        act("Your $T is already at maximum.", ch, None, pOutput, merc.TO_CHAR)
+        handler_game.act("Your $T is already at maximum.", ch, None, pOutput, merc.TO_CHAR)
         return
     if cost > ch.train:
         ch.send("You don't have enough training sessions.\n")
         return
     ch.train -= cost
     ch.perm_stat[stat] += 1
-    act("Your $T increases!", ch, None, pOutput, merc.TO_CHAR)
-    act("$n's $T increases!", ch, None, pOutput, merc.TO_ROOM)
+    handler_game.act("Your $T increases!", ch, None, pOutput, merc.TO_CHAR)
+    handler_game.act("$n's $T increases!", ch, None, pOutput, merc.TO_ROOM)
     return
 
 
