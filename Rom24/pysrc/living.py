@@ -308,11 +308,12 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         return item_id[0]
     # * Equip a char with an obj.
 
-    def equip(self, item_id, iWear):
+    def equip(self, item, iWear):
         if self.get_eq(iWear):
             logger.warning("Equip_char: already equipped (%d)." % iWear)
             return
-        item = merc.items.get(item_id, None)
+        if type(item) is int:
+            item = merc.items.get(item, None)
         if (state_checks.is_item_stat(item, merc.ITEM_ANTI_EVIL) and self.is_evil()) \
                 or (state_checks.is_item_stat(item, merc.ITEM_ANTI_GOOD) and self.is_good()) \
                 or (state_checks.is_item_stat(item, merc.ITEM_ANTI_NEUTRAL) and self.is_neutral()):
@@ -343,8 +344,10 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         return
 
     # * Unequip a char with an obj.
-    def unequip(self, item_id):
-        item = merc.items.get(item_id, None)
+    def unequip(self, item):
+        if type(item) is int:
+            item = merc.items.get(item, None)
+
         if item.wear_loc == merc.WEAR_NONE:
             logger.warning("Unequip_char: already unequipped.")
             return
