@@ -1,0 +1,163 @@
+Welcome to Pyom!
+
+In our efforts to convert the venerable Rom DikuMUD derivative from a legacy C
+codebase to a more modern object-oriented Python codebase, we've had to make
+some fairly major changes to the infrastructure, as well as to the data format
+itself.
+
+Because this is just a few of us volunteering our time, documentation tends to
+lag well behind the actual code, as is sadly typical in almost every open
+source project.  I'm going to make some effort to rectify that situation here.
+
+This is a work in progress, so some things described here will not be
+finished,  and some may in fact be abandoned or changed by the time you read
+this.  Eventually, we'll get this all tidied up into a proper API document and
+the expected builders documents, but for now... this is a rough description of
+the general concepts we're following, and some ideas of how things might
+proceed.
+
+Currently, Pyom boots by importing all the original ROM area files from their
+original file formats.  This is not ideal, because those formats were designed
+for hand editing with a text editor, usually over a slow dialup modem link.
+
+We've chosen to use JSON to store our data natively, and as we expand this
+coverage we'll likely change the directory structure several times to organize
+it.  I'd like to put forth an idea for that layout here.
+
+
+I would propose that our native file structure be composed of subdirectories
+that contain JSON objects for each individual item.  These items should be
+organized in a hierarchy to make locating any individual file quick and easy,
+both for the game driver AND for the human admin who might want to inspect or
+hand-edit them.
+
+As a top level, we currently have ../data/ which holds a variety of .json
+files, created at boot time after the legacy formats have been loaded.  Some
+of these might also be created from built-in data tables, allowing data
+editing to expand what used to require code changes.
+
+I propose the following layout:
+
+data/
+    system/
+    messages/
+    docs/
+    world/
+        state/
+        areas/
+            000-areaname/
+                area.json
+                rooms/
+                    000000.json
+                items/
+                    000000.json
+                npcs/
+                    000000.json
+        instances/
+            000000000.json
+    players/
+        a/ b/ c/ ... z/
+    immortals/
+    logs/
+
+The system directory would contain various in-game data tables and
+configuration settings which are loaded at boot time, and are required for
+normal game operations.  Most of what's currently in the data directory would
+be moved into system.
+
+The messages directory would contain various text files that are used to avoid
+placing hard-coded text into the codebase directly.  Typically, this would
+include the login banners, various readmes, license files, and possibly other
+data the admin may wish to edit outside of the code system.
+
+Docs would contain all the help files that are file-based.  I expect the help
+system to also include in-code documentation directly accessed from the game,
+so that various API calls are self-documenting... but that will come later.
+
+Players simply stores the player data, as you'd expect.  I would break this up
+into subdirectories for ease of navigation.
+
+Immortals stores the same player data as players, but for immortal characters.
+By specifically moving them to a different directory, we provide a small
+amount of added security AND make it easier to see who is an immortal.
+
+At some point in the future, there may also be an account/ directory so that
+multiple players and immortals can be grouped under a single login system.
+
+Logs is a directory to hold logfiles, nothing special here.
+
+The world directory is the meat of the game.  It has several subdirectories
+and may have others as we see the need for them over time.
+
+world/state is to hold state information that pertains to the entire game
+world, but is saved and/or generated from the game data, NOT configuration
+values such as you'd find in system/.  Examples of this would be the state
+information for the game's weather system.
+
+world/areas/ holds the game data in the native .json format.  Inside areas/
+you should find a directory for each game area.  Each area directory will
+contain an area.json file that has the basic area information, as well as
+resets and anything else that's relevant at the zone level.  This should also
+include the vnum ranges.
+
+The rooms directory stores the template data for all the rooms in the area,
+stored one room per file in JSON format.  The filename should be the vnum,
+perhaps zero-padded to a fixed width to make sorting natural.
+
+The items and npcs directories likewise contain tempalte data for all the
+items and npcs in the area, in JSON format, likewise padded (or not).
+
+One of the core concepts we've added to Pyom is a clear distinction between a
+template and an instance of tha template.  While both share the same Class,
+and the same overall data, Every object you see in the game world is actually
+an instance, having a unique instance_id.
+
+The instances/ directory saves a copy of every room, item, or npc's data,
+referenced by instance_id.  This gives us the ability to not only simplify
+inventory management, but provide full game snapshots, if desired.
+
+The basic idea is simple enough... All rooms, items, and npc's have a
+destructor which gets called whenever the code object in question is
+destroyed, either by the code itself, or by the game shutting down.  If the
+object in question does not have a "no_save" flag set, the destructor will
+proceed to save the object's data to the appropriate file in the instances
+directory.  Objects which contain other objects (such as an NPC that has a set
+of gear and loot) hold those inventories as lists of instance_id's, which can
+be restored easily.
+
+At boot time, the game should first load any instanced objects which have save
+files.  THEN the reset cycle will be run, thus allowing you to restore a
+snapshot of the game.  If the zone reset says you need 5 orcs in the zone, and
+there were 3 alive when it was shutdown, those three will be reloaded and the
+reset wil only need to create 2 new ones.
+
+Because of the large values instance_id will obtain over time, I suggest
+making subdirectories inside instances/ to help manage the large volume of
+files.  A common way to do this is to take an MD5 hash as hexadecimal and
+use the first 2 characters, and then the first 4 characters....
+
+So, instance_id 7436732 has an MD5 checksum of
+5f58ac0b74b61bc91aae27d10926a647.  This would mean you'd store the instance
+file with the pathname of data/instances/5f/58/7436732.json
+
+I know that's counter-intuitive, as you'd LIKE to put it in
+74/36/7436732.json, but to keep the filename length the same, you'd have to
+zero-pad to a potentially large number of digits, and that means your files
+would all clump together.  The MD5 process spreads things out more-or-less
+evently.
+
+Exmaples:
+
+quixadhal@lenin:~/PyRom/Rom24/pysrc$ echo 7436732 | md5sum
+5f58ac0b74b61bc91aae27d10926a647  -
+quixadhal@lenin:~/PyRom/Rom24/pysrc$ echo 7436733 | md5sum
+8148250f437f4c86f92a99555ee8bf5f  -
+quixadhal@lenin:~/PyRom/Rom24/pysrc$ echo 7436734 | md5sum
+d83398881afdf4ee7ba14cb69ff507eb  -
+quixadhal@lenin:~/PyRom/Rom24/pysrc$ echo 7436735 | md5sum
+b23ee8144c7a900c205950f214f0411c  -
+
+Even though the id's are sequential, the checksums are widely spread out.
+
+Comments?
+
