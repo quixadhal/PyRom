@@ -120,8 +120,8 @@ def do_buy(ch, argument):
             ch.check_improve( "haggle", True, 4)
 
         if number > 1:
-            merc.act("$n buys $p[%d]." % number, ch, obj, None, merc.TO_ROOM)
-            merc.act("You buy $p[%d] for %d silver." % (number, cost * number), ch, obj, None, merc.TO_CHAR)
+            merc.act("$n buys $p[[%d]]." % number, ch, obj, None, merc.TO_ROOM)
+            merc.act("You buy $p[[%d]] for %d silver." % (number, cost * number), ch, obj, None, merc.TO_CHAR)
         else:
             merc.act("$n buys $p.", ch, obj, None, merc.TO_ROOM)
             merc.act("You buy $p for %d silver." % cost, ch, obj, None, merc.TO_CHAR)

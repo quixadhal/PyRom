@@ -41,7 +41,7 @@ def do_look(ch, argument):
                 and (ch.is_npc()
                      or (ch.act.is_set(merc.PLR_HOLYLIGHT)
                          or ch.act.is_set(merc.PLR_OMNI))):
-            ch.send(" [Room %d]" % room.instance_id)
+            ch.send(" [[Room %d]]" % room.instance_id)
         ch.send("\n")
         if not arg1 or (not ch.is_npc()
                         and not ch.comm.is_set(merc.COMM_BRIEF)):

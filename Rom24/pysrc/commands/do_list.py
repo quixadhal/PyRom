@@ -30,7 +30,7 @@ def do_list(ch, argument):
                 if not found:
                     found = True
                     ch.send("Pets for sale:\n")
-                ch.send("[%2d] %8d - %s\n" % (pet.level, 10 * pet.level * pet.level, pet.short_descr))
+                ch.send("[[%2d]] %8d - %s\n" % (pet.level, 10 * pet.level * pet.level, pet.short_descr))
         if not found:
             ch.send("Sorry, we're out of pets right now.\n")
         return
@@ -55,11 +55,11 @@ def do_list(ch, argument):
         if not items:
             ch.send("You can't buy anything here.\n")
             return
-        ch.send("[Lv Price Qty] Item\n")
+        ch.send("[[Lv Price Qty]] Item\n")
         for k, p in items.items():
             obj, count = p
             cost = shop_utils.get_cost(keeper, obj, True)
-            ch.send("[%2d %5d %2s ] %s" % (obj.level, cost, ("--" if count == -1 else count), obj.short_descr))
+            ch.send("[[%2d %5d %2s ]] %s" % (obj.level, cost, ("--" if count == -1 else count), obj.short_descr))
             if ch.act.is_set(merc.PLR_OMNI):
                 ch.send("(%d)" % obj.pIndexData.vnum)
             ch.send("\n")

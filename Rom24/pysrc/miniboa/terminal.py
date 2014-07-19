@@ -152,12 +152,27 @@ def color_convert(text: str, input_type='pyom', output_type='ansi'):
         # return text
 
 
-def escape(text):
+def escape(text: str, input_type='pyom'):
     """
     Escape all the color tokens in the given text chunk, so they
     can be safely printed through the color parser
     """
     if text is None or text == '':
         return text
-    text = text.replace('%^', '%%^^')
+    if input_type == 'i3':
+        text = text.replace('%^', '%%^^')
+    elif input_type == 'pyom':
+        text = text.replace('[', '[[')
+        text = text.replace(']', ']]')
+    elif input_type == 'rom':
+        text = text.replace('{', '{{')
+        text = text.replace('}', '}}')
+    elif input_type == 'smaug':
+        text = text.replace('&', '&&')
+        text = text.replace('^', '^^')
+        text = text.replace('}', '}}')
+    elif input_type == 'imc2':
+        text = text.replace('~', '~~')
+        text = text.replace('^', '^^')
+        text = text.replace('`', '``')
     return text

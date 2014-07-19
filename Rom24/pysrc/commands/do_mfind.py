@@ -22,7 +22,7 @@ def do_mfind(ch, argument):
     for pMobIndex in merc.characterTemplate.values():
         if fAll or game_utils.is_name(arg, pMobIndex.player_name):
             found = True
-            ch.send("[%5d] %s\n" % (pMobIndex.vnum, pMobIndex.short_descr))
+            ch.send("[[%5d]] %s\n" % (pMobIndex.vnum, pMobIndex.short_descr))
     if not found:
         ch.send("No mobiles by that name.\n")
     return

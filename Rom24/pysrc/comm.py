@@ -49,6 +49,8 @@ import handler_ch
 import state_checks
 
 
+done = False
+
 def process_input():
     for d in merc.descriptor_list:
         if d.active and d.cmd_ready and d.connected:
@@ -253,6 +255,7 @@ def game_loop(server):
     from pyom import startup_time
     #import psutil
     #from datetime import datetime
+    global done
 
     db.boot_db()
 
@@ -272,7 +275,8 @@ def game_loop(server):
     logger.debug('Pyom database booted in %.3f seconds', (boot_time - startup_time))
     logger.info("Pyom is ready to rock on port %d", server.port)
 
-    while True: 
+    done = False
+    while not done:
         server.poll()
         process_input()
         update_handler()

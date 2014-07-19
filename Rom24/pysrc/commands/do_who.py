@@ -105,14 +105,14 @@ def do_who(ch, argument):
         elif wch.level == merc.MAX_LEVEL - 8:
             guild = "AVA"
         # a little formatting
-        ch.send("[%2d %6s %s] %s%s%s%s%s%s%s%s\n" % (
+        ch.send("[[%2d %6s %s]] %s%s%s%s%s%s%s%s\n" % (
                 wch.level,
                 const.pc_race_table[wch.race.name].who_name if wch.race.name in const.pc_race_table else "     ",
                 guild,
                 "(Incog) " if wch.incog_level >= merc.LEVEL_HERO else "",
                 "(Wizi) " if wch.invis_level >= merc.LEVEL_HERO else "",
                 wch.clan.who_name,
-                "[AFK] " if wch.comm.is_set(merc.COMM_AFK) else "",
+                "[[AFK]] " if wch.comm.is_set(merc.COMM_AFK) else "",
                 "(KILLER) " if wch.act.is_set(merc.PLR_KILLER) else "",
                 "(THIEF) " if wch.act.is_set(merc.PLR_THIEF) else "",
                 wch.name,
