@@ -40,9 +40,10 @@ def do_flee( ch, argument ):
         now_in = ch.in_room
         if now_in == was_in:
             continue
-        ch.in_environment = was_in
+        ch.in_environment = was_in.instance_id
         handler_game.act("$n has fled!", ch, None, None, merc.TO_ROOM)
-        ch.in_environment = now_in
+        ch.in_environment = now_in.instance_id
+
         if not ch.is_npc():
             ch.send("You flee from combat!\n")
             if ch.guild.name == 'thief' and (random.randint(1, 99) < 3 * (ch.level // 2)):

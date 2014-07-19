@@ -103,7 +103,7 @@ def load_mobiles(area, pArea):
     w = w[1:]  # strip the pound
 
     while w != '0':
-        mob = npc_handler.Npc(None, None)
+        mob = npc_handler.Npc()
         mob.vnum = int(w)
         merc.characterTemplate[mob.vnum] = mob
         mob.area = pArea.name
@@ -111,12 +111,9 @@ def load_mobiles(area, pArea):
         area, mob.short_descr = game_utils.read_string(area)
         area, mob.long_descr = game_utils.read_string(area)
         area, mob.description = game_utils.read_string(area)
-        area, race_name = game_utils.read_string(area)
-        mob.race = race_name
-        area, mob.act = game_utils.read_flags(area)
-        mob.act = mob.act | merc.ACT_IS_NPC | mob.race.act
-        area, mob.affected_by = game_utils.read_flags(area)
-        mob.affected_by = mob.affected_by | mob.race.aff
+        area, mob.race = game_utils.read_string(area)
+        area = mob.act.read_bits(area, default=merc.ACT_IS_NPC | mob.race.act)
+        area = mob.affected_by.read_bits(area, default=mob.race.aff)
         area, mob.alignment = game_utils.read_int(area)
         area, mob.group = game_utils.read_int(area)
         area, mob.level = game_utils.read_int(area)
@@ -142,14 +139,10 @@ def load_mobiles(area, pArea):
         area, mob.armor[1] = game_utils.read_int(area)
         area, mob.armor[2] = game_utils.read_int(area)
         area, mob.armor[3] = game_utils.read_int(area)
-        area, mob.off_flags = game_utils.read_flags(area)
-        mob.off_flags = mob.off_flags | mob.race.off
-        area, mob.imm_flags = game_utils.read_flags(area)
-        mob.imm_flags = mob.imm_flags | mob.race.imm
-        area, mob.res_flags = game_utils.read_flags(area)
-        mob.res_flags = mob.res_flags | mob.race.res
-        area, mob.vuln_flags = game_utils.read_flags(area)
-        mob.vuln_flags = mob.vuln_flags | mob.race.vuln
+        area = mob.off_flags.read_bits(area, default=mob.race.off)
+        area = mob.imm_flags.read_bits(area, default=mob.race.imm)
+        area = mob.res_flags.read_bits(area, default=mob.race.res)
+        area = mob.vuln_flags.read_bits(area, default=mob.race.vuln)
         area, mob.start_pos = game_utils.read_word(area, False)
         area, mob.default_pos = game_utils.read_word(area, False)
         mob.start_pos = state_checks.name_lookup(tables.position_table, mob.start_pos, 'short_name')
@@ -157,10 +150,8 @@ def load_mobiles(area, pArea):
         area, sex = game_utils.read_word(area, False)
         mob.sex = state_checks.value_lookup(tables.sex_table, sex)
         area, mob.wealth = game_utils.read_int(area)
-        area, mob.form = game_utils.read_flags(area)
-        mob.form = mob.form | mob.race.form
-        area, mob.parts = game_utils.read_flags(area)
-        mob.parts = mob.parts | mob.race.parts
+        area = mob.form.read_bits(area, default=mob.race.form)
+        area = mob.parts.read_bits(area, default=mob.race.parts)
         area, mob.size = game_utils.read_word(area, False)
         area, mob.material = game_utils.read_word(area, False)
         area, w = game_utils.read_word(area, False)

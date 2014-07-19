@@ -1,4 +1,5 @@
 import logging
+import object_creator
 
 logger = logging.getLogger()
 
@@ -16,14 +17,14 @@ def do_outfit(ch, argument):
 
     obj = ch.get_eq(merc.WEAR_LIGHT)
     if not obj:
-        obj = instancer.create_object(merc.itemTemplate[merc.OBJ_VNUM_SCHOOL_BANNER], 0)
+        obj = object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_SCHOOL_BANNER], 0)
         obj.cost = 0
         obj.to_environment(ch)
         ch.equip(obj, merc.WEAR_LIGHT)
 
     obj = ch.get_eq(merc.WEAR_BODY)
     if not obj:
-        obj = instancer.create_object(merc.itemTemplate[merc.OBJ_VNUM_SCHOOL_VEST], 0)
+        obj = object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_SCHOOL_VEST], 0)
         obj.cost = 0
         obj.to_environment(ch)
         ch.equip(obj, merc.WEAR_BODY)
@@ -38,14 +39,14 @@ def do_outfit(ch, argument):
                     weapon.gsn in ch.learned and ch.learned[sn] < ch.learned[weapon.gsn]):
                 sn = weapon.gsn
                 vnum = weapon.vnum
-        obj = instancer.create_object(merc.itemTemplate[vnum], 0)
+        obj = object_creator.create_item(merc.itemTemplate[vnum], 0)
         obj.to_environment(ch)
         ch.equip(obj, merc.WEAR_WIELD)
 
-    obj = ch.get_eq(merc.WEAR_WIELD)
-    shield = ch.get_eq(merc.WEAR_SHIELD)
+    obj = merc.items.get(ch.get_eq(merc.WEAR_WIELD), None)
+    shield = merc.items.get(ch.get_eq(merc.WEAR_SHIELD), None)
     if (not obj or not state_checks.IS_WEAPON_STAT(obj, merc.WEAPON_TWO_HANDS)) and not shield:
-        obj = instancer.create_object(merc.itemTemplate[merc.OBJ_VNUM_SCHOOL_SHIELD], 0)
+        obj = object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_SCHOOL_SHIELD], 0)
         obj.cost = 0
         obj.to_environment(ch)
         ch.equip(obj, merc.WEAR_SHIELD)

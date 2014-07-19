@@ -20,7 +20,7 @@ def do_quit(ch, argument):
         ch.send("You're not DEAD yet.\n")
         return
     ch.send("Alas, all good things must come to an end.\n")
-    act("$n has left the game.", ch, None, None, merc.TO_ROOM)
+    handler_game.act("$n has left the game.", ch, None, None, merc.TO_ROOM)
     logger.info("%s has quit.", ch.name)
     handler_game.wiznet("$N rejoins the real world.", ch, None, merc.WIZ_LOGINS, 0, ch.trust)
     # After extract_char the ch is no longer valid!

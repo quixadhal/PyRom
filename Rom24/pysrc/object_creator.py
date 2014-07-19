@@ -1,3 +1,4 @@
+import copy
 import random
 import sys
 
@@ -75,7 +76,10 @@ def create_mobile(npc_template):
         logger.critical("Create_mobile: None pMobIndex.")
         sys.exit(1)
 
-    npc = npc_handler.Npc(npc_template.vnum, 'npc')
+    npc = npc_handler.Npc()
+    npc.vnum = npc_template.vnum
+    npc.instancer()
+    npc.instance_setup()
     npc.name = npc_template.name
     npc.id = game_utils.get_mob_id()
     npc.short_descr = npc_template.short_descr
@@ -97,9 +101,9 @@ def create_mobile(npc_template):
         # load in new style */
         # read from prototype */
         npc.group = npc_template.group
-        npc.act.set_bit(npc_template.act)
+        npc.act.bits = npc_template.act.bits
         npc.comm.set_bit(merc.COMM_NOCHANNELS | merc.COMM_NOSHOUT | merc.COMM_NOTELL)
-        npc.affected_by.set_bit(npc_template.affected_by)
+        npc.affected_by.bits = npc_template.affected_by.bits
         npc.alignment = npc_template.alignment
         npc.level = npc_template.level
         npc.hitroll = npc_template.hitroll
@@ -123,18 +127,18 @@ def create_mobile(npc_template):
                 npc.dam_type = 11  # pierce */
         for i in range(4):
             npc.armor[i] = npc_template.armor[i]
-        npc.off_flags.set_bit(npc_template.off_flags)
-        npc.imm_flags.set_bit(npc_template.imm_flags)
-        npc.res_flags.set_bit(npc_template.res_flags)
-        npc.vuln_flags.set_bit(npc_template.vuln_flags)
+        npc.off_flags.bits = npc_template.off_flags.bits
+        npc.imm_flags.bits = npc_template.imm_flags.bits
+        npc.res_flags.bits = npc_template.res_flags.bits
+        npc.vuln_flags.bits = npc_template.vuln_flags.bits
         npc.start_pos = npc_template.start_pos
         npc.default_pos = npc_template.default_pos
         npc.sex = npc_template.sex
         if type(npc_template.sex) != int or npc.sex == 3:  # random sex */
             npc.sex = random.randint(1, 2)
         npc.race = npc_template.race
-        npc.form.set_bit(npc_template.form)
-        npc.parts.set_bit(npc_template.parts)
+        npc.form.bits = npc_template.form.bits
+        npc.parts.bits = npc_template.parts.bits
         npc.size = int(npc_template.size)
         npc.material = npc_template.material
 
@@ -209,8 +213,8 @@ def create_mobile(npc_template):
             af.bitvector = merc.AFF_PROTECT_GOOD
             npc.affect_add(af)
     else:  # read in old format and convert */
-        npc.act.set_bit(npc_template.act)
-        npc.affected_by.set_bit(npc_template.affected_by)
+        npc.act.bits = npc_template.act.bits
+        npc.affected_by.bits = npc_template.affected_by.bits
         npc.alignment = npc_template.alignment
         npc.level = npc_template.level
         npc.hitroll = npc_template.hitroll
@@ -231,15 +235,15 @@ def create_mobile(npc_template):
             npc.armor[i] = game_utils.interpolate(npc.level, 100, -100)
         npc.armor[3] = game_utils.interpolate(npc.level, 100, 0)
         npc.race = npc_template.race
-        npc.off_flags.set_bit(npc_template.off_flags)
-        npc.imm_flags.set_bit(npc_template.imm_flags)
-        npc.res_flags.set_bit(npc_template.res_flags)
-        npc.vuln_flags.set_bit(npc_template.vuln_flags)
+        npc.off_flags.bits = npc_template.off_flags.bits
+        npc.imm_flags.bits = npc_template.imm_flags.bits
+        npc.res_flags.bits = npc_template.res_flags.bits
+        npc.vuln_flags.bits = npc_template.vuln_flags.bits
         npc.start_pos = npc_template.start_pos
         npc.default_pos = npc_template.default_pos
         npc.sex = npc_template.sex
-        npc.form.set_bit(npc_template.form)
-        npc.parts.set_bit(npc_template.parts)
+        npc.form.bits = npc_template.form.bits
+        npc.parts.bits = npc_template.parts.bits
         npc.size = merc.SIZE_MEDIUM
         npc.material = ""
 
@@ -325,7 +329,10 @@ def create_item(item_template, level):
         logger.critical("Create_object: No objTemplate.")
         sys.exit(1)
 
-    item = handler_item.Items(item_template)
+    item = handler_item.Items()
+    item.__dict__.update(item_template.__dict__)
+    item.instancer()
+    item.instance_setup()
     item.enchanted = False
 
     if item_template.new_format is False:

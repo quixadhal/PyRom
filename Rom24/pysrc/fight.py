@@ -609,16 +609,14 @@ def damage(ch, victim, dam, dt, dam_type, show):
             else:
                 victim.act.rem_bit(PLR_THIEF)
                 # RT new auto commands */
-        corpse_id = ch.get_item_list("corpse", ch.in_room.items)
-        corpse = merc.items[corpse_id]
+        corpse = ch.get_item_list("corpse", ch.in_room.items)
 
         if not ch.is_npc() and corpse and corpse.item_type == ITEM_CORPSE_NPC and ch.can_see_item(corpse.instance_id):
             if ch.act.is_set(PLR_AUTOLOOT) and corpse and corpse.contents:  # exists and not empty */
                 ch.do_get("all corpse")
 
             if ch.act.is_set(PLR_AUTOGOLD) and corpse and corpse.contents and not ch.act.is_set(PLR_AUTOLOOT):
-                coins_id = ch.get_item_list("gcash", corpse.contents)
-                coins = merc.items[coins_id]
+                coins = ch.get_item_list("gcash", corpse.contents)
                 if coins:
                     ch.do_get("all.gcash corpse")
 
@@ -664,7 +662,7 @@ def is_safe(ch, victim):
         if state_checks.IS_SET(victim.in_room.room_flags, ROOM_SAFE):
             ch.send("Not in this room.\n")
             return True
-        if victim.pIndexData.pShop:
+        if victim.pShop:
             ch.send("The shopkeeper wouldn't like that.\n")
             return True
         # no killing healers, trainers, etc */
