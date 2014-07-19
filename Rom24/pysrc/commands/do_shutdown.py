@@ -12,7 +12,7 @@ import interp
 def do_shutdown(ch, argument):
     if ch.invis_level < merc.LEVEL_HERO:
         ch.do_echo("Shutdown by %s." % ch.name)
-    merc_down = True  # TODO:  fix this at some point
+    comm.done = True
     for d in merc.descriptor_list[:]:
         vch = handler_ch.CH(d)
         if vch:

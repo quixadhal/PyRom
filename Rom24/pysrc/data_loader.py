@@ -14,6 +14,7 @@ import merc
 import settings
 import state_checks
 import tables
+import miniboa.terminal
 
 
 logger = logging.getLogger()
@@ -90,6 +91,7 @@ def load_helps(area):
             break
 
         area, nhelp.text = game_utils.read_string(area)
+        nhelp.text = miniboa.terminal.escape(nhelp.text, 'pyom')
 
         if nhelp.keyword == "GREETING":
             merc.greeting_list.append(nhelp)
@@ -109,8 +111,12 @@ def load_mobiles(area, pArea):
         mob.area = pArea.name
         area, mob.name = game_utils.read_string(area)
         area, mob.short_descr = game_utils.read_string(area)
+
         area, mob.long_descr = game_utils.read_string(area)
+        mob.long_descr = miniboa.terminal.escape(mob.long_descr, 'pyom')
         area, mob.description = game_utils.read_string(area)
+        mob.description = miniboa.terminal.escape(mob.description, 'pyom')
+
         area, mob.race = game_utils.read_string(area)
         area = mob.act.read_bits(area, default=merc.ACT_IS_NPC | mob.race.act)
         area = mob.affected_by.read_bits(area, default=mob.race.aff)
@@ -176,6 +182,8 @@ def load_objects(area, pArea):
         area, obj.short_descr = game_utils.read_string(area)
 
         area, obj.description = game_utils.read_string(area)
+        obj.description = miniboa.terminal.escape(obj.description, 'pyom')
+
         area, obj.material = game_utils.read_string(area)
         area, obj.item_type = game_utils.read_word(area, False)
         area, obj.extra_flags = game_utils.read_flags(area)
@@ -300,7 +308,10 @@ def load_rooms(area, pArea):
         merc.roomTemplate[room.vnum] = room
         room.area = pArea.name
         area, room.name = game_utils.read_string(area)
+
         area, room.description = game_utils.read_string(area)
+        room.description = miniboa.terminal.escape(room.description, 'pyom')
+
         area, number = game_utils.read_int(area)  # area number
         area, room.room_flags = game_utils.read_flags(area)
         area, room.sector_type = game_utils.read_int(area)

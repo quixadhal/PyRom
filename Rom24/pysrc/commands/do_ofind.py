@@ -23,7 +23,7 @@ def do_ofind(ch, argument):
     for objTemplate in merc.itemTemplate.values():
         if fAll or game_utils.is_name(arg, objTemplate.name):
             found = True
-            ch.send("[%5d] %s(%s)\n" % (objTemplate.vnum, objTemplate.short_descr, objTemplate.name))
+            ch.send("[[%5d]] %s(%s)\n" % (objTemplate.vnum, objTemplate.short_descr, objTemplate.name))
     if not found:
         ch.send("No objects by that name.\n")
     return

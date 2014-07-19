@@ -15,7 +15,7 @@ def do_group(ch, argument):
 
         for gch in merc.char_list:
             if gch.is_same_group(ch):
-                ch.send("[%2d %s] %-16s %4d/%4d hp %4d/%4d mana %4d/%4d mv %5d xp\n" % (
+                ch.send("[[%2d %s]] %-16s %4d/%4d hp %4d/%4d mana %4d/%4d mv %5d xp\n" % (
                     gch.level,
                     "Mob" if state_checks.IS_NPC(gch) else gch.guild.who_name,
                     state_checks.PERS(gch, ch),

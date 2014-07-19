@@ -20,11 +20,11 @@ def do_mwhere(ch, argument):
                 victim = d.character
                 count += 1
             if d.original:
-                ch.send("%3d) %s (in the body of %s) is in %s [%d]\n" % (
+                ch.send("%3d) %s (in the body of %s) is in %s [[%d]]\n" % (
                     count, d.original.name, victim.short_descr,
                     victim.in_room.name, victim.in_room.vnum))
             else:
-                ch.send("%3d) %s is in %s [%d]\n" % (
+                ch.send("%3d) %s is in %s [[%d]]\n" % (
                     count, victim.name, victim.in_room.name, victim.in_room.vnum))
         return
     found = False
@@ -32,7 +32,7 @@ def do_mwhere(ch, argument):
         if victim.in_room and argument in victim.name:
             found = True
             count += 1
-            ch.send("%3d) [%5d] %-28s [%5d] %s\n" % (
+            ch.send("%3d) [[%5d]] %-28s [[%5d]] %s\n" % (
                 count, 0 if not victim.is_npc() else victim.pIndexData.vnum,
                 victim.short_descr if victim.is_npc() else victim.name,
                 victim.in_room.vnum,
