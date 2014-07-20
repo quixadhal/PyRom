@@ -1,5 +1,13 @@
+import os
+import hashlib
+import json
+import logging
+
+logger = logging.getLogger()
+
 from handler import Instancer
 import merc
+import settings
 
 __author__ = 'venom'
 
@@ -7,7 +15,9 @@ __author__ = 'venom'
 class Area(Instancer):
     def __init__(self, template=None):
         super().__init__()
+        self.index = 0
         self.name = ""
+        self.no_save = False  # TODO: This should be true for instances
         if template:
             [setattr(self, k, v) for k, v in template.__dict__.items() if k not in merc.not_to_instance]
             self.instancer()
@@ -28,14 +38,15 @@ class Area(Instancer):
             self.empty = False
 
     def __del__(self):
+        self.save()
         if self.instance_id:
             self.instance_destructor()
 
     def __repr__(self):
-        return "<%s(%s): %d-%d>" % (self.name,
-                                    self.file_name,
-                                    self.min_vnum,
-                                    self.max_vnum)
+        return "<%d %s(%s): %d-%d>" % (self.index, self.name,
+                                       self.file_name,
+                                       self.min_vnum,
+                                       self.max_vnum)
 
     def instance_setup(self):
         merc.global_instances[self.instance_id] = self
@@ -49,6 +60,38 @@ class Area(Instancer):
         merc.instances_by_area[self.name].remove(self.instance_id)
         del merc.areas[self.instance_id]
         del merc.global_instances[self.instance_id]
+
+    def to_json(self, obj):
+        if isinstance(obj, Area):
+            special_keys = []
+            result = {k: v for k, v in obj.__dict__.items() if k not in special_keys}
+            result['__type__'] = 'Area'
+            return result
+        return obj
+
+    def save(self):
+        if not self.no_save:
+            filename = '%03d_%s' % (self.index, self.name.replace(' ', '_'))
+            if self.instance_id is None:
+                pathname = os.path.join(settings.DUMP_DIR, 'world', 'areas', filename)
+                os.makedirs(pathname, 0o755, True)
+                filename = os.path.join(pathname, 'area.json')
+            else:
+                md5 = hashlib.md5(filename.encode()).hexdigest()
+                pathname = os.path.join(settings.DUMP_DIR, 'world', 'instances', md5[0:2], md5[2:4])
+                os.makedirs(pathname, 0o755, True)
+                filename = os.path.join(pathname, '%d.json' % (self.instance_id))
+            logger.info('Area save file: %s', filename)
+            if os.path.isfile(filename):
+                os.replace(filename, filename + 'bkp')
+            fp = open(filename, 'w')
+            json.dump(self, fp, default=self.to_json)
+            fp.close()
+        return
+
+    def restore(self):
+        pass
+
 
 class ExtraDescrData:
     def __init__(self):
