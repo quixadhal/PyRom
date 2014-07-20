@@ -24,12 +24,14 @@ __author__ = 'venom'
 
 def load_areas():
     logger.info('Loading Areas...')
+    index = 0
     narea_list = os.path.join(settings.AREA_DIR, settings.AREA_LIST)
     fp = open(narea_list, 'r')
     area = fp.readline().strip()
     while area != "$":
         afp = open(os.path.join(settings.AREA_DIR, area), 'r')
-        load_area(afp.read())
+        index += 1
+        load_area(afp.read(), index)
         area = fp.readline().strip()
         afp.close()
     fp.close()
@@ -37,7 +39,7 @@ def load_areas():
     logger.info('Done. (loading areas)')
 
 
-def load_area(area):
+def load_area(area, index):
     if not area.strip():
         return
 
@@ -46,6 +48,7 @@ def load_area(area):
     while area:
         if w == "#AREA":
             pArea = world_classes.Area(None)
+            pArea.index = index
             area, pArea.file_name = game_utils.read_string(area)
             area, pArea.name = game_utils.read_string(area)
             area, pArea.credits = game_utils.read_string(area)
