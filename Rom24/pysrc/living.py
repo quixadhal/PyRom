@@ -303,16 +303,21 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         if not self:
             return None
         item_id = [eid for eid in self.contents if merc.items[eid].wear_loc == iWear]
-        if not item_id:
+        if item_id:
+            item = merc.items[item_id[0]]
+        else:
+            item = None
+        if not item:
             return None
-        return item_id[0]
+        return item
     # * Equip a char with an obj.
 
-    def equip(self, item_id, iWear):
+    def equip(self, item, iWear):
         if self.get_eq(iWear):
             logger.warning("Equip_char: already equipped (%d)." % iWear)
             return
-        item = merc.items.get(item_id, None)
+        if type(item) == int:
+            item = merc.items.get(item, None)
         if (state_checks.is_item_stat(item, merc.ITEM_ANTI_EVIL) and self.is_evil()) \
                 or (state_checks.is_item_stat(item, merc.ITEM_ANTI_GOOD) and self.is_good()) \
                 or (state_checks.is_item_stat(item, merc.ITEM_ANTI_NEUTRAL) and self.is_neutral()):
@@ -350,7 +355,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
 
         for i in range(4):
             self.armor[i] += item.apply_ac(item.wear_loc, i)
-        item.wear_loc = -1
+        item.wear_loc = merc.WEAR_NONE
 
         if not item.enchanted:
             for paf in item.affected:

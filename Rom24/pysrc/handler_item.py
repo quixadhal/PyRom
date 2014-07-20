@@ -258,9 +258,10 @@ def item_check(ch, obj):
         return False
 
 
-def format_item_to_char(item_id, ch, fShort):
+def format_item_to_char(item, ch, fShort):
+    if type(item) == int:
+        item = merc.items[item]
     buf = ''
-    item = merc.items[item_id]
     if (fShort and not item.short_descr) or not item.description:
         return buf
 

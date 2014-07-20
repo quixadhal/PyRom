@@ -665,7 +665,7 @@ def is_safe(ch, victim):
         if state_checks.IS_SET(victim.in_room.room_flags, ROOM_SAFE):
             ch.send("Not in this room.\n")
             return True
-        if victim.pIndexData.pShop:
+        if victim.pShop:
             ch.send("The shopkeeper wouldn't like that.\n")
             return True
         # no killing healers, trainers, etc */

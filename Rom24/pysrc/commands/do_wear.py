@@ -13,14 +13,13 @@ def do_wear(ch, argument):
         ch.send("Wear, wield, or hold what?\n")
         return
     if arg == "all":
-        for item_id in ch.contents[:]:
-            item = merc.items[item_id]
+        for item_id in ch.items:
+            item = merc.items.get(item_id, None)
             if item.wear_loc == merc.WEAR_NONE and ch.can_see_item(item):
                 ch.equip(item.instance_id, item.wear_loc)
         return
     else:
-        item_id = ch.get_item_carry(arg, ch)
-        item = merc.items[item_id]
+        item = ch.get_item_carry(arg, ch)
         if not item:
             ch.send("You do not have that item.\n")
             return

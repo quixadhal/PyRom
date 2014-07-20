@@ -120,7 +120,7 @@ class Location:
         self.in_environment = instance.instance_id
         instance.carry_number += self.get_number()
         instance.carry_weight += self.get_weight()
-        try: # if a player leaves a room.
+        try:  # if a player leaves a room.
             if not self.is_npc():
                 #TODO change to area instances
                 if areaTemplate[instance.area].empty:
@@ -129,7 +129,7 @@ class Location:
 
                 areaTemplate[instance.area].nplayer += 1
 
-            item = merc.items.get(self.get_eq(WEAR_LIGHT), None)
+            item = self.get_eq(WEAR_LIGHT)
 
             if item and item.item_type == ITEM_LIGHT and item.value[2] != 0:
                 instance.light += 1

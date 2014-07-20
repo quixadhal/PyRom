@@ -41,7 +41,7 @@ def do_look(ch, argument):
                 and (ch.is_npc()
                      or (ch.act.is_set(merc.PLR_HOLYLIGHT)
                          or ch.act.is_set(merc.PLR_OMNI))):
-            ch.send(" {room.instance_id}".format(room=room))
+            ch.send(" Room[{room.instance_id}] Template[{room.vnum}]".format(room=room))
         ch.send("\n")
         if not arg1 or (not ch.is_npc()
                         and not ch.comm.is_set(merc.COMM_BRIEF)):
@@ -58,30 +58,30 @@ def do_look(ch, argument):
         if not arg2:
             ch.send("Look in what?\n")
             return
-        obj = ch.get_item_here(arg2)
-        if not obj:
+        item = ch.get_item_here(arg2)
+        if not item:
             ch.send("You do not see that here.\n")
             return
-        item_type = obj.item_type
+        item_type = item.item_type
         if item_type == merc.ITEM_DRINK_CON:
-            if obj.value[1] <= 0:
+            if item.value[1] <= 0:
                 ch.send("It is empty.\n")
                 return
-            if obj.value[1] < obj.value[0] // 4:
+            if item.value[1] < item.value[0] // 4:
                 amnt = "less than half-"
-            elif obj.value[1] < 3 * obj.value[0] // 4:
+            elif item.value[1] < 3 * item.value[0] // 4:
                 amnt = "abount half-"
             else:
                 amnt = "more than half-"
             ch.send("It's %sfilled with a %s liquid.\n" % (
-                amnt, liq_table[obj.value[2]].liq_color))
+                amnt, liq_table[item.value[2]].liq_color))
         elif item_type == merc.ITEM_CONTAINER or item_type == merc.ITEM_CORPSE_NPC \
                 or item_type == merc.ITEM_CORPSE_PC:
-            if state_checks.IS_SET(obj.value[1], merc.CONT_CLOSED):
+            if state_checks.IS_SET(item.value[1], merc.CONT_CLOSED):
                 ch.send("It is closed.\n")
                 return
-            handler_game.act("$p holds:", ch, obj, None, merc.TO_CHAR)
-            handler_ch.show_list_to_char(obj.contents, ch, True, True)
+            handler_game.act("$p holds:", ch, item, None, merc.TO_CHAR)
+            handler_ch.show_list_to_char(item.contents, ch, True, True)
             return
         else:
             ch.send("That is not a container.\n")
@@ -90,13 +90,13 @@ def do_look(ch, argument):
     if victim:
         handler_ch.show_char_to_char_1(victim, ch)
         return
-    obj_list = ch.items
-    obj_list.extend(room.items)
-    for obj_id in obj_list:
-        obj = merc.items[obj_id]
-        if ch.can_see_item(obj):
+    item_list = ch.items
+    item_list.extend(room.items)
+    for obj_id in item_list:
+        item = merc.items[obj_id]
+        if ch.can_see_item(item):
             # player can see object
-            pdesc = game_utils.get_extra_descr(arg3, obj.extra_descr)
+            pdesc = game_utils.get_extra_descr(arg3, item.extra_descr)
             if pdesc:
                 count += 1
                 if count == number:
@@ -104,10 +104,10 @@ def do_look(ch, argument):
                     return
                 else:
                     continue
-            if game_utils.is_name(arg3, obj.name.lower()):
+            if game_utils.is_name(arg3, item.name.lower()):
                 count += 1
                 if count == number:
-                    ch.send("%s\n" % obj.description)
+                    ch.send("%s\n" % item.description)
                     return
     pdesc = game_utils.get_extra_descr(arg3, room.extra_descr)
     if pdesc:

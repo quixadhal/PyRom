@@ -11,10 +11,10 @@ class Container:
 
     @property
     def people(self):
-        return [id for id in self.contents if id in merc.characters]
+        return [char_id for char_id in self.contents if char_id in merc.characters]
     @property
     def items(self):
-        return [id for id in self.contents if id in merc.items]
+        return [item_id for item_id in self.contents if item_id in merc.items]
 
     def can_carry_n(self):
         if not self.is_npc() and self.level >= merc.LEVEL_IMMORTAL:
