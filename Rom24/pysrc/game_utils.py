@@ -196,3 +196,10 @@ def get_extra_descr(name, edlist):
         if name.lower() in ed.keyword:
             return ed.description
     return None
+
+
+def to_integer(s: str):
+    try:
+        return int(s)
+    except ValueError:
+        return int(float(s))

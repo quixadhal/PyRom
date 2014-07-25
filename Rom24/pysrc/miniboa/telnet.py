@@ -300,7 +300,7 @@ class TelnetClient(object):
                 #convert to ansi before sending
                 sent = self.sock.send(bytes(self.send_buffer, "cp1252"))
             except socket.error as err:
-                logging.error("SEND error '{}' from {}".format(err, self.addrport()))
+                logger.error("SEND error '{}' from {}".format(err, self.addrport()))
                 self.active = False
                 return
             self.bytes_sent += sent
@@ -316,13 +316,13 @@ class TelnetClient(object):
             #Encode recieved bytes in ansi
             data = str(self.sock.recv(2048), "cp1252")
         except socket.error as err:
-            logging.error("RECIEVE socket error '{}' from {}".format(err, self.addrport()))
+            logger.error("RECIEVE socket error '{}' from {}".format(err, self.addrport()))
             raise ConnectionLost()
 
         ## Did they close the connection?
         size = len(data)
         if size == 0:
-            logging.debug("No data recieved, client closed connection")
+            logger.debug("No data recieved, client closed connection")
             raise ConnectionLost()
 
         ## Update some trackers
@@ -438,7 +438,7 @@ class TelnetClient(object):
         """
         Handle incoming Telnet commands that are two bytes long.
         """
-        logging.debug("Got two byte cmd '{}'".format(ord(cmd)))
+        logger.debug("Got two byte cmd '{}'".format(ord(cmd)))
 
         if cmd == SB:
             ## Begin capturing a sub-negotiation string
@@ -475,7 +475,7 @@ class TelnetClient(object):
             pass
 
         else:
-            logging.warning("Send an invalid 2 byte command")
+            logger.warning("Send an invalid 2 byte command")
 
         self.telnet_got_iac = False
         self.telnet_got_cmd = None
@@ -485,7 +485,7 @@ class TelnetClient(object):
         Handle incoming Telnet commmands that are three bytes long.
         """
         cmd = self.telnet_got_cmd
-        logging.debug("Got three byte cmd {}:{}".format(ord(cmd), ord(option)))
+        logger.debug("Got three byte cmd {}:{}".format(ord(cmd), ord(option)))
 
         ## Incoming DO's and DONT's refer to the status of this end
         if cmd == DO:
@@ -581,7 +581,7 @@ class TelnetClient(object):
                 ## All other options = Default to ignoring
                 pass
         else:
-            logging.warning("Send an invalid 3 byte command")
+            logger.warning("Send an invalid 3 byte command")
 
         self.telnet_got_iac = False
         self.telnet_got_cmd = None
@@ -594,17 +594,17 @@ class TelnetClient(object):
         if len(bloc) > 2:
 
             if bloc[0] == TTYPE and bloc[1] == IS:
-                self.terminal_type = bloc[2:]
-                logging.debug("Terminal type = '{}'".format(self.terminal_type))
+                self.terminal_type = bloc[2:].lower()
+                logger.info("Terminal type = '{}'".format(self.terminal_type))
 
             if bloc[0] == NAWS:
                 if len(bloc) != 5:
-                    logging.warning("Bad length on NAWS SB: " + str(len(bloc)))
+                    logger.warning("Bad length on NAWS SB: " + str(len(bloc)))
                 else:
                     self.columns = (256 * ord(bloc[1])) + ord(bloc[2])
                     self.rows = (256 * ord(bloc[3])) + ord(bloc[4])
 
-                logging.info("Screen is {} x {}".format(self.columns, self.rows))
+                logger.info("Screen is {} x {}".format(self.columns, self.rows))
 
         self.telnet_sb_buffer = ''
 
@@ -666,3 +666,6 @@ class TelnetClient(object):
     def _iac_wont(self, option):
         """Send a Telnet IAC "WONT" sequence."""
         self.send("{}{}{}".format(IAC, WONT, option))
+
+    def send_ga(self):
+        self.send('{}{}'.format(IAC, GA))
