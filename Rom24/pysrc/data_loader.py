@@ -97,6 +97,7 @@ def load_helps(area):
         nhelp.text = miniboa.terminal.escape(nhelp.text, 'pyom')
 
         if nhelp.keyword == "GREETING":
+            nhelp.text += ' '
             merc.greeting_list.append(nhelp)
 
         merc.help_list.append(nhelp)

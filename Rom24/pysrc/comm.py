@@ -119,6 +119,8 @@ def init_descriptor(d):
     d.miniboa_send = d.socket_send
     d.socket_send = MethodType(process_output, d)
     merc.descriptor_list.append(d)
+    d.request_terminal_type()
+    d.request_naws()
 
 
 #Check if already playing.
@@ -240,6 +242,8 @@ def bust_a_prompt(ch):
     ch.send(prompt)
     if ch.prefix:
         ch.send(ch.prefix)
+
+    ch.desc.send_ga()
     return
 
 
