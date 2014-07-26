@@ -71,7 +71,7 @@ class Bit:
     def __repr__(self):
         buf = ""
         if not self.flags:
-            return
+            return buf
         flags = self.flags
         for k, fl in flags.items():
             if self.is_set(fl.bit):
