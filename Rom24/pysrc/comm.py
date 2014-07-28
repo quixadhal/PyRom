@@ -276,8 +276,8 @@ def game_loop(server):
     #logger.debug('Pyom is currently using %dM of RAM', proc_mem.rss // (1024*1024))
     #logger.debug('Pyom has performed %d read and %d write I/O operations', proc_io.read_count, proc_io.write_count)
     #logger.debug('Pyom database booted in %.3f seconds', (boot_time - proc.create_time()))
-    logger.debug('Pyom database booted in %.3f seconds', (boot_time - startup_time))
-    logger.info("Pyom is ready to rock on port %d", server.port)
+    logger.boot('Pyom database booted in %.3f seconds', (boot_time - startup_time))
+    logger.boot("Pyom is ready to rock on port %d", server.port)
 
     done = False
     while not done:
