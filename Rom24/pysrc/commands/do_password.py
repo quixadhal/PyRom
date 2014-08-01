@@ -26,8 +26,9 @@ def do_password(ch, argument):
         return
 
     if settings.ENCRYPT_PASSWORD:
-        arg1 = hashlib.sha512(arg1).hexdigest()
-        arg2 = hashlib.sha512(arg2).hexdigest()
+        # Had to add .encode() for unicode text input.
+        arg1 = hashlib.sha512(arg1.encode()).hexdigest()
+        arg2 = hashlib.sha512(arg2.encode()).hexdigest()
 
     if arg1 == ch.pwd:
         state_checks.WAIT_STATE(ch, 40)

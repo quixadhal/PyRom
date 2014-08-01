@@ -110,7 +110,7 @@ class TwoFactorAuth:
         :return: Secret key token
         :rtype: str
         """
-        token = self._raw_secret
+        token = self._raw_secret.lower()
         return '-'.join((token[0:4], token[4:8], token[8:12], token[12:16]))
 
 
