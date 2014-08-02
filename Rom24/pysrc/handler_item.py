@@ -73,7 +73,7 @@ class Items(handler.Instancer, location.Location, physical.Physical, container.C
         self.value = [0, 0, 0, 0, 0]
 
     def __del__(self):
-        logger.debug("Freeing %s" % str(self))
+        logger.trace("Freeing %s" % str(self))
 
     def __repr__(self):
         if not self.instance_id:

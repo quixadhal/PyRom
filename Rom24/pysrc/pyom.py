@@ -36,12 +36,21 @@ import logging
 
 
 def boot_log(self, message, *args, **kws):
-    self._log(21, message, args, **kws)
+    if self.level <= 21:
+        self._log(21, message, args, **kws)
+
+
+def trace_log(self, message, *args, **kws):
+    if self.level <= 5:
+        self._log(5, message, args, **kws)
+
 
 sys.path.append(os.getcwd())
-logging.basicConfig(format='%(asctime)s %(levelname)-8s %(module)16s| %(message)s', level=logging.DEBUG)
 logging.addLevelName(21, 'BOOT')
 logging.Logger.boot = boot_log
+logging.addLevelName(5, 'TRACE')
+logging.Logger.trace = trace_log
+logging.basicConfig(format='%(asctime)s %(levelname)-8s %(module)16s| %(message)s', level=logging.DEBUG)
 logger = logging.getLogger()
 
 from miniboa import TelnetServer

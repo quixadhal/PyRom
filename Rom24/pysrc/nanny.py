@@ -375,18 +375,63 @@ def con_get_old_password(self):
     argument = self.get_command()
     ch = self.character
     ch.desc.password_mode_off()
-    ch.send("\n")
     if settings.ENCRYPT_PASSWORD:
         argument = argument.encode('utf8')
         pwdcmp = hashlib.sha512(argument).hexdigest()
     else:
         pwdcmp = argument
     if pwdcmp != ch.pwd:
-        ch.send("Wrong password.\n")
-        comm.close_socket(self)
+        ch.send("\nWrong password.\n")
+        ch.failed_attempts += 1
+        if ch.failed_attempts > 3:
+            comm.close_socket(self)
+        else:
+            ch.send("Password: ")
+            ch.desc.password_mode_on()
+            self.set_connected(con_get_old_password)
         return
     #write_to_buffer( d, echo_on_str, 0 );
 
+    if ch.auth:
+        ch.failed_attempts = 0
+        ch.send('\nAuthenticator code: ')
+        self.set_connected(con_get_timecode)
+        return
+
+    ch.send("\n")
+    if comm.check_playing(self, ch.name):
+        return
+
+    if comm.check_reconnect(self, ch.name, True):
+        return
+
+    log_buf = "%s@%s has connected." % (ch.name, self.addrport())
+    logger.info(log_buf)
+    handler_game.wiznet(log_buf, None, None, merc.WIZ_SITES, 0, ch.trust)
+    if ch.is_immortal():
+        ch.do_help("imotd")
+        self.set_connected(con_read_imotd)
+    else:
+        ch.do_help("motd")
+        self.set_connected(con_read_motd)
+    return
+
+
+def con_get_timecode(self):
+    argument = self.get_command()
+    ch = self.character
+
+    if not ch.auth.verify(argument):
+        ch.send('\nWrong timecode.\n')
+        ch.failed_attempts += 1
+        if ch.failed_attempts > 3:
+            comm.close_socket(self)
+        else:
+            ch.send("Password: ")
+            self.set_connected(con_get_timecode)
+        return
+
+    ch.send("\n")
     if comm.check_playing(self, ch.name):
         return
 

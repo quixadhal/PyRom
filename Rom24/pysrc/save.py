@@ -9,6 +9,7 @@ import world_classes
 import merc
 import settings
 import pc
+import auth
 
 
 def area_pickler():
@@ -115,6 +116,8 @@ def fwrite_char(ch):
         chdict["Vnum"] = ch.vnum
     else:
         chdict["Pass"] = ch.pwd
+        if ch.auth:
+            chdict["Auth"] = ch.auth.secret
     chdict["Bin"] = ch.bamfin
     chdict["Bout"] = ch.bamfout
     chdict["Titl"] = ch.title
@@ -207,6 +210,8 @@ def fread_char(chdict, ch):
         ch.vnum = chdict["Vnum"]
     else:
         ch.pwd = chdict["Pass"]
+        if "Auth" in chdict:
+            ch.auth = auth.TwoFactorAuth(chdict["Auth"])
     ch.bamfin = chdict["Bin"]
     ch.bamfout = chdict["Bout"]
     ch.title = chdict["Titl"]

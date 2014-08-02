@@ -33,7 +33,7 @@ class Npc(living.Living):
         self.listeners = {}
 
     def __del__(self):
-        logger.debug("Freeing %s" % str(self))
+        logger.trace("Freeing %s" % str(self))
 
     def __repr__(self):
         if self.instance_id:
