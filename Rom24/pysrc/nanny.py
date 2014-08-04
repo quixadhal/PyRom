@@ -427,7 +427,7 @@ def con_get_timecode(self):
         if ch.failed_attempts > 3:
             comm.close_socket(self)
         else:
-            ch.send("Password: ")
+            ch.send('Authenticator code: ')
             self.set_connected(con_get_timecode)
         return
 

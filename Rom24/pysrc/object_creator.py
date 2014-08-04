@@ -13,7 +13,7 @@ import handler_item
 import handler_room
 import world_classes
 import merc
-import npc_handler
+import handler_npc
 import special
 import state_checks
 __author__ = 'venom'
@@ -76,7 +76,7 @@ def create_mobile(npc_template):
         logger.critical("Create_mobile: None pMobIndex.")
         sys.exit(1)
 
-    npc = npc_handler.Npc()
+    npc = handler_npc.Npc()
     npc.vnum = npc_template.vnum
     npc.instancer()
     npc.instance_setup()
