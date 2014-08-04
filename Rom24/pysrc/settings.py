@@ -27,3 +27,5 @@ SOCIAL_DIR = os.path.join(AREA_DIR, 'socials')
 HELP_DIR = os.path.join(AREA_DIR, 'help_files')
 PLAYER_DIR = os.path.join('..', 'player')
 DUMP_DIR = os.path.join('..', 'data')
+
+INSTANCE_DIR = os.path.join('..', 'data', 'world', 'instances')

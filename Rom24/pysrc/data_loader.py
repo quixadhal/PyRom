@@ -7,7 +7,7 @@ import object_creator
 import game_utils
 import handler_game
 import handler_item
-import npc_handler
+import handler_npc
 import world_classes
 import handler_room
 import merc
@@ -109,7 +109,7 @@ def load_mobiles(area, pArea):
     w = w[1:]  # strip the pound
 
     while w != '0':
-        mob = npc_handler.Npc()
+        mob = handler_npc.Npc()
         mob.vnum = int(w)
         merc.characterTemplate[mob.vnum] = mob
         mob.area = pArea.name
