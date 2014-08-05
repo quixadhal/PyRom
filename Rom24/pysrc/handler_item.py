@@ -38,16 +38,14 @@ logger = logging.getLogger()
 
 import physical
 import location
-import const
 import handler_game
 import handler
 import object_creator
 import merc
 import state_checks
 
-# * One object.
 
-
+# One object.
 class Items(handler.Instancer, location.Location, physical.Physical, container.Container):
     def __init__(self, template=None):
         super().__init__()
@@ -93,27 +91,28 @@ class Items(handler.Instancer, location.Location, physical.Physical, container.C
         merc.instances_by_item[self.vnum].remove(self.instance_id)
         del merc.items[self.instance_id]
         del merc.global_instances[self.instance_id]
-            # * Remove an object.
-    def apply_ac(item, iWear, loc):
-        if item.item_type != merc.ITEM_ARMOR:
+        # Remove an object.
+
+    def apply_ac(self, iWear, loc):
+        if self.item_type != merc.ITEM_ARMOR:
             return 0
 
         multi = {merc.WEAR_BODY: 3, merc.WEAR_HEAD: 2, merc.WEAR_LEGS: 2, merc.WEAR_ABOUT: 2}
         if iWear in multi:
-            return multi[iWear] * item.value[loc]
+            return multi[iWear] * self.value[loc]
         else:
-            return item.value[loc]
+            return self.value[loc]
 
 
 
     # enchanted stuff for eq */
-    def affect_enchant(item):
-        # okay, move all the old flags into new vectors if we have to */
-        if not item.enchanted:
-            item.enchanted = True
-            for paf in merc.itemTemplate[item.vnum].affected:
+    def affect_enchant(self):
+        # okay, move all the old flags into new vectors if we have to
+        if not self.enchanted:
+            self.enchanted = True
+            for paf in merc.itemTemplate[self.vnum].affected:
                 af_new = handler_game.AFFECT_DATA()
-                item.affected.append(af_new)
+                self.affected.append(af_new)
 
                 af_new.where = paf.where
                 af_new.type = max(0, paf.type)
@@ -125,24 +124,24 @@ class Items(handler.Instancer, location.Location, physical.Physical, container.C
 
     # give an affect to an object */
 
-    def affect_add(item, paf):
+    def affect_add(self, paf):
         paf_new = handler_game.AFFECT_DATA()
-        item.affected.append(paf_new)
-        # apply any affect vectors to the object's extra_flags */
+        self.affected.append(paf_new)
+        # apply any affect vectors to the object's extra_flags
         if paf.bitvector:
             if paf.where == merc.TO_OBJECT:
-                state_checks.SET_BIT(item.extra_flags, paf.bitvector)
+                state_checks.SET_BIT(self.extra_flags, paf.bitvector)
             elif paf.where == merc.TO_WEAPON:
-                if item.item_type == merc.ITEM_WEAPON:
-                    state_checks.SET_BIT(item.value[4], paf.bitvector)
+                if self.item_type == merc.ITEM_WEAPON:
+                    state_checks.SET_BIT(self.value[4], paf.bitvector)
 
-    def affect_remove(item, paf):
-        if not item.affected:
+    def affect_remove(self, paf):
+        if not self.affected:
             print("BUG: Affect_remove_object: no affect.")
             return
 
-        if item.in_living is not None and item.wear_loc != -1:
-            merc.characters[item.in_living].affect_modify(paf, False)
+        if self.in_living is not None and self.wear_loc != -1:
+            merc.characters[self.in_living].affect_modify(paf, False)
 
         where = paf.where
         vector = paf.bitvector
@@ -150,44 +149,45 @@ class Items(handler.Instancer, location.Location, physical.Physical, container.C
         # remove flags from the object if needed */
         if paf.bitvector:
             if paf.where == merc.TO_OBJECT:
-                state_checks.REMOVE_BIT(item.extra_flags, paf.bitvector)
+                state_checks.REMOVE_BIT(self.extra_flags, paf.bitvector)
             elif paf.where == merc.TO_WEAPON:
-                if item.item_type == merc.ITEM_WEAPON:
-                    state_checks.REMOVE_BIT(item.value[4], paf.bitvector)
+                if self.item_type == merc.ITEM_WEAPON:
+                    state_checks.REMOVE_BIT(self.value[4], paf.bitvector)
 
-        if paf not in item.affected:
+        if paf not in self.affected:
             print("BUG: Affect_remove_object: cannot find paf.")
             return
-        item.affected.remove(paf)
+        self.affected.remove(paf)
         del paf
-        if item.in_living != None and item.wear_loc != -1:
-            merc.characters[item.in_living].affect_check(where, vector)
+        if self.in_living is not None and self.wear_loc != -1:
+            merc.characters[self.in_living].affect_check(where, vector)
         return
-    # * Extract an obj from the world.
-    def extract(item):
-        if item.in_environment:
-            item.from_environment()
 
-        for item_id in item.contents[:]:
-            if item.instance_id not in merc.items:
-                print("Extract_obj: obj %d not found in obj_instance dict." % item.instance_id)
+    # Extract an obj from the world.
+    def extract(self):
+        if self.in_environment:
+            self.from_environment()
+
+        for item_id in self.contents[:]:
+            if self.instance_id not in merc.items:
+                logger.error("Extract_obj: obj %d not found in obj_instance dict." % self.instance_id)
                 return
-            item = merc.items[item_id]
-            item.extract()
-        item.instance_destructor()
+            tmp = merc.items[item_id]
+            tmp.extract()
+        self.instance_destructor()
 
     # Return the number of players "on" an object.
-    def count_users(item):
+    def count_users(self):
         total = 0
-        if item.in_room:
-            for person_id in item.in_room.people:
+        if self.in_room:
+            for person_id in self.in_room.people:
                 person = merc.characters[person_id]
-                if person.on == item.instance_id:
+                if person.on == self.instance_id:
                     total += 1
         return total
 
-def get_item(ch, item, container):
-    # variables for AUTOSPLIT */
+def get_item(ch, item, this_container):
+    # variables for AUTOSPLIT
     if not state_checks.CAN_WEAR(item, merc.ITEM_TAKE):
         ch.send("You can't take that.\n")
         return
@@ -208,27 +208,27 @@ def get_item(ch, item, container):
                 if merc.items[gch.on] == item.instance_id:
                     handler_game.act("$N appears to be using $p.", ch, item, gch, merc.TO_CHAR)
                     return
-    if container:
-        if container.vnum == merc.OBJ_VNUM_PIT and ch.trust < item.level:
+    if this_container:
+        if this_container.vnum == merc.OBJ_VNUM_PIT and ch.trust < item.level:
             ch.send("You are not powerful enough to use it.\n")
             return
-        if container.vnum == merc.OBJ_VNUM_PIT \
-                and not state_checks.CAN_WEAR(container, merc.ITEM_TAKE) \
+        if this_container.vnum == merc.OBJ_VNUM_PIT \
+                and not state_checks.CAN_WEAR(this_container, merc.ITEM_TAKE) \
                 and not state_checks.is_item_stat(item, merc.ITEM_HAD_TIMER):
             item.timer = 0
-            handler_game.act("You get $p from $P.", ch, item, container, merc.TO_CHAR)
-            handler_game.act("$n gets $p from $P.", ch, item, container, merc.TO_ROOM)
+            handler_game.act("You get $p from $P.", ch, item, this_container, merc.TO_CHAR)
+            handler_game.act("$n gets $p from $P.", ch, item, this_container, merc.TO_ROOM)
             state_checks.REMOVE_BIT(item.extra_flags, merc.ITEM_HAD_TIMER)
             item.from_environment()
     else:
-        handler_game.act("You get $p.", ch, item, container, merc.TO_CHAR)
-        handler_game.act("$n gets $p.", ch, item, container, merc.TO_ROOM)
+        handler_game.act("You get $p.", ch, item, this_container, merc.TO_CHAR)
+        handler_game.act("$n gets $p.", ch, item, this_container, merc.TO_ROOM)
         item.from_environment()
     if item.item_type == merc.ITEM_MONEY:
         ch.silver += item.value[0]
         ch.gold += item.value[1]
         if ch.act.is_set(merc.PLR_AUTOSPLIT):
-            # AUTOSPLIT code */
+            # AUTOSPLIT code
             members = len([gch for gch in ch.in_room.people
                            if not state_checks.IS_AFFECTED(merc.characters[gch], merc.AFF_CHARM)
                            and merc.characters[gch].is_same_group(ch)])
@@ -240,7 +240,7 @@ def get_item(ch, item, container):
     return
 
 
-# trust levels for load and clone */
+# trust levels for load and clone
 def item_check(ch, obj):
     #TODO add real values, just guessed for now
     if state_checks.IS_TRUSTED(ch, 60) \
@@ -253,10 +253,10 @@ def item_check(ch, obj):
         return False
 
 
-def format_item_to_char(item_id, ch, fShort):
+def format_item_to_char(item_id, ch, use_short):
     buf = ''
     item = merc.items[item_id]
-    if (fShort and not item.short_descr) or not item.description:
+    if (use_short and not item.short_descr) or not item.description:
         return buf
 
     if state_checks.is_item_stat(item, merc.ITEM_INVIS):
@@ -272,7 +272,7 @@ def format_item_to_char(item_id, ch, fShort):
     if state_checks.is_item_stat(item, merc.ITEM_HUM):
         buf += "(Humming) "
 
-    if fShort:
+    if use_short:
         if item.short_descr:
             buf += item.short_descr
     else:
@@ -283,12 +283,12 @@ def format_item_to_char(item_id, ch, fShort):
     return buf
 
 
-# * Count occurrences of an obj in a list.
+# Count occurrences of an obj in a list.
 def count_obj_list(itemInstance, contents):
     return len([item for item in contents if merc.items[item].vnum == itemInstance.vnum])
 
 
-# for clone, to insure that cloning goes many levels deep */
+# for clone, to insure that cloning goes many levels deep
 def recursive_clone(ch, item, clone):
     for c_item_id in item.contents:
         c_item = merc.items[c_item_id]
