@@ -3,6 +3,7 @@ import random
 import container
 
 import handler_game
+from instance import Instancer
 import physical
 
 
@@ -18,7 +19,7 @@ import game_utils
 import immortal
 import location
 import state_checks
-import handler
+
 
 class Grouping:
     def __init__(self):
@@ -206,7 +207,7 @@ class Communication:
 
 class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
              location.Location, affects.Affects, Communication,
-             container.Container, handler.Instancer):
+             container.Container, Instancer):
     def __init__(self):
         super().__init__()
         self.id = 0

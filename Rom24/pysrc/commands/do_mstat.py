@@ -1,4 +1,5 @@
 import logging
+from merc import affect_loc_name, affect_bit_name
 
 logger = logging.getLogger()
 
@@ -6,7 +7,6 @@ import time
 import merc
 import interp
 import tables
-import handler
 import const
 import game_utils
 import state_checks
@@ -95,10 +95,10 @@ def do_mstat(ch, argument):
     for paf in victim.affected:
         ch.send("Spell: '%s' modifies %s by %d for %d hours with bits %s, level %d.\n" % (
             paf.type,
-            handler.affect_loc_name(paf.location),
+            affect_loc_name(paf.location),
             paf.modifier,
             paf.duration,
-            handler.affect_bit_name(paf.bitvector),
+            affect_bit_name(paf.bitvector),
             paf.level))
 
 

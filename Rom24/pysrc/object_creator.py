@@ -1,13 +1,12 @@
-import copy
+__author__ = 'venom'
+
 import random
 import sys
-
 import logging
 
 logger = logging.getLogger()
 
 import game_utils
-import handler
 import handler_game
 import handler_item
 import handler_room
@@ -16,7 +15,6 @@ import merc
 import handler_npc
 import special
 import state_checks
-__author__ = 'venom'
 
 
 def create_room(room_template):
