@@ -1,13 +1,13 @@
 import const
-import handler
 import merc
+from merc import affect_loc_name, affect_bit_name, extra_bit_name, imm_bit_name, weapon_bit_name, cont_bit_name
 
 
 def spell_identify(sn, level, ch, victim, target):
     obj = victim
     ch.send("Object '%s' is type %s, extra flags %s.\nWeight is %d, value is %d, level is %d.\n" % ( obj.name,
                                                                                                      obj.item_type,
-                                                                                                     handler.extra_bit_name(
+                                                                                                     extra_bit_name(
                                                                                                          obj.extra_flags),
                                                                                                      obj.weight // 10,
                                                                                                      obj.cost,
@@ -28,7 +28,7 @@ def spell_identify(sn, level, ch, victim, target):
         ch.send("It holds %s-colored %s.\n" % ( const.liq_table[obj.value[2]].liq_color, const.liq_table[obj.value[2]].liq_name))
     elif obj.item_type == merc.ITEM_CONTAINER:
         ch.send("Capacity: %d#  Maximum weight: %d#  flags: %s\n" % (
-            obj.value[0], obj.value[3], handler.cont_bit_name(obj.value[1])))
+            obj.value[0], obj.value[3], cont_bit_name(obj.value[1])))
         if obj.value[4] != 100:
             ch.send("Weight multiplier: %d%%\n" % obj.value[4])
     elif obj.item_type == merc.ITEM_WEAPON:
@@ -57,7 +57,7 @@ def spell_identify(sn, level, ch, victim, target):
                 obj.value[1], obj.value[2], ( obj.value[1] + obj.value[2] ) // 2 ))
 
         if obj.value[4]:  # weapon flags */
-            ch.send("Weapons flags: %s\n" % handler.weapon_bit_name(obj.value[4]))
+            ch.send("Weapons flags: %s\n" % weapon_bit_name(obj.value[4]))
     elif obj.item_type == merc.ITEM_ARMOR:
         ch.send("Armor class is %d pierce, %d bash, %d slash, and %d vs. magic.\n" % ( obj.value[0],
                                                                                        obj.value[1], obj.value[2],
@@ -69,18 +69,18 @@ def spell_identify(sn, level, ch, victim, target):
 
     for paf in affected:
         if paf.location != merc.APPLY_NONE and paf.modifier != 0:
-            ch.send("Affects %s by %d.\n" % ( handler.affect_loc_name(paf.location), paf.modifier ))
+            ch.send("Affects %s by %d.\n" % ( affect_loc_name(paf.location), paf.modifier ))
             if paf.bitvector:
                 if paf.where == merc.TO_AFFECTS:
-                    ch.send("Adds %s affect.\n" % handler.affect_bit_name(paf.bitvector))
+                    ch.send("Adds %s affect.\n" % affect_bit_name(paf.bitvector))
                 elif paf.where == merc.TO_OBJECT:
-                    ch.send("Adds %s object flag.\n" % handler.extra_bit_name(paf.bitvector))
+                    ch.send("Adds %s object flag.\n" % extra_bit_name(paf.bitvector))
                 elif paf.where == merc.TO_IMMUNE:
-                    ch.send("Adds immunity to %s.\n" % handler.imm_bit_name(paf.bitvector))
+                    ch.send("Adds immunity to %s.\n" % imm_bit_name(paf.bitvector))
                 elif paf.where == merc.TO_RESIST:
-                    ch.send("Adds resistance to %s.\n" % handler.imm_bit_name(paf.bitvector))
+                    ch.send("Adds resistance to %s.\n" % imm_bit_name(paf.bitvector))
                 elif paf.where == merc.TO_VULN:
-                    ch.send("Adds vulnerability to %s.\n" % handler.imm_bit_name(paf.bitvector))
+                    ch.send("Adds vulnerability to %s.\n" % imm_bit_name(paf.bitvector))
                 else:
                     ch.send("Unknown bit %d: %d\n" % (paf.where, paf.bitvector))
 

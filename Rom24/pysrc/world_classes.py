@@ -2,10 +2,10 @@ import os
 import hashlib
 import json
 import logging
+from instance import Instancer
 
 logger = logging.getLogger()
 
-from handler import Instancer
 import merc
 import settings
 

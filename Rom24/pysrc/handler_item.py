@@ -33,20 +33,20 @@
 """
 import logging
 import container
+from instance import Instancer
 
 logger = logging.getLogger()
 
 import physical
 import location
 import handler_game
-import handler
 import object_creator
 import merc
 import state_checks
 
 
 # One object.
-class Items(handler.Instancer, location.Location, physical.Physical, container.Container):
+class Items(Instancer, location.Location, physical.Physical, container.Container):
     def __init__(self, template=None):
         super().__init__()
         self.vnum = 0

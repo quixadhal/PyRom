@@ -1,4 +1,5 @@
 __author__ = 'quixadhal'
+
 import os
 import json
 from collections import OrderedDict, namedtuple
@@ -7,6 +8,7 @@ import logging
 logger = logging.getLogger()
 
 import settings
+import merc
 
 
 # NOTE:  This is nowhere near finished, just a WIP at the moment, ideas to be explored.
@@ -78,3 +80,29 @@ class Instance:
             }
         raise TypeError(repr(self) + " is not JSON serializable")
 
+
+class Instancer:
+    def __init__(self):
+        """Here is the backbone of our instancing. This function takes the global instance
+        number and increments it. After dealing with the dicts for our objects, we will save
+        the global instance number to a file, which will be important later when persistence
+         is, or if someone wants to, be implemented.
+
+        It is passed the object instance, for which we will make an identification.
+
+        First we match the type we need to make, then add that to each dict that it needs to be in.
+
+        As we are using just a single pointer between all of these dicts, we populate global_instances
+        first, with a pointer to the object. The following dicts 'alias' their value to the value
+        represented in global_instances[instance_id].
+
+        This lets us maintain a single pointer, with windows to that single pointer from our sub dicts,
+        allowing for a saner environment.
+
+        This means that the destructor should destruct in reverse order, just in case."""
+        super().__init__()
+        self.instance_id = None
+
+    def instancer(self):
+        merc.instance_number += 1
+        self.instance_id = merc.instance_number

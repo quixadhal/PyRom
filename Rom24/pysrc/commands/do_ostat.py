@@ -1,13 +1,14 @@
 import logging
 import game_utils
 import merc
+from merc import affect_loc_name, affect_bit_name, extra_bit_name, imm_bit_name, wear_bit_name, weapon_bit_name, \
+    cont_bit_name
 
 logger = logging.getLogger()
 
 
 import const
 import interp
-import handler
 
 
 def do_ostat(ch, argument):
@@ -25,8 +26,8 @@ def do_ostat(ch, argument):
         obj.pIndexData.vnum, "new" if obj.pIndexData.new_format else "old",
         obj.item_type, obj.pIndexData.reset_num ))
     ch.send("Short description: %s\nLong description: %s\n" % (obj.short_descr, obj.description ))
-    ch.send("Wear bits: %s\nExtra bits: %s\n" % (handler.wear_bit_name(obj.wear_flags),
-                                                 handler.extra_bit_name(obj.extra_flags)))
+    ch.send("Wear bits: %s\nExtra bits: %s\n" % (wear_bit_name(obj.wear_flags),
+                                                 extra_bit_name(obj.extra_flags)))
     ch.send("Number: 1/%d  Weight: %d/%d/%d (10th pounds)\n" % ( obj.get_number(),
                                                                  obj.weight, obj.get_weight(), obj.true_weight() ))
     ch.send("Level: %d  Cost: %d  Condition: %d  Timer: %d\n" % (obj.level, obj.cost, obj.condition, obj.timer ))
@@ -78,13 +79,13 @@ def do_ostat(ch, argument):
         ch.send("Damage noun is %s.\n" % (
         const.attack_table[obj.value[3]].noun if obj.value[3] in const.attack_table else "undefined"))
         if obj.value[4] > 0:  # weapon flags
-            ch.send("Weapons flags: %s\n" % handler.weapon_bit_name(obj.value[4]))
+            ch.send("Weapons flags: %s\n" % weapon_bit_name(obj.value[4]))
     elif obj.item_type == merc.ITEM_ARMOR:
         ch.send("Armor class is %d pierce, %d bash, %d slash, and %d vs. magic\n" % (
             obj.value[0], obj.value[1], obj.value[2], obj.value[3] ))
     elif obj.item_type == merc.ITEM_CONTAINER:
         ch.send("Capacity: %d#  Maximum weight: %d#  flags: %s\n" % (
-        obj.value[0], obj.value[3], handler.cont_bit_name(obj.value[1])))
+        obj.value[0], obj.value[3], cont_bit_name(obj.value[1])))
         if obj.value[4] != 100:
             ch.send("Weight multiplier: %d%%\n" % obj.value[4])
 
@@ -99,24 +100,24 @@ def do_ostat(ch, argument):
     if not obj.enchanted:
         affected.extend(obj.pIndexData.affected)
     for paf in affected:
-        ch.send("Affects %s by %d, level %d" % (handler.affect_loc_name(paf.location), paf.modifier, paf.level))
+        ch.send("Affects %s by %d, level %d" % (affect_loc_name(paf.location), paf.modifier, paf.level))
         if paf.duration > -1:
             ch.send(", %d hours.\n" % paf.duration)
         else:
             ch.send(".\n")
         if paf.bitvector:
             if paf.where == merc.TO_AFFECTS:
-                ch.send("Adds %s affect.\n" % handler.affect_bit_name(paf.bitvector))
+                ch.send("Adds %s affect.\n" % affect_bit_name(paf.bitvector))
             elif paf.where == merc.TO_WEAPON:
-                ch.send("Adds %s weapon flags.\n" % handler.weapon_bit_name(paf.bitvector))
+                ch.send("Adds %s weapon flags.\n" % weapon_bit_name(paf.bitvector))
             elif paf.where == merc.TO_OBJECT:
-                ch.send("Adds %s object flag.\n" % handler.extra_bit_name(paf.bitvector))
+                ch.send("Adds %s object flag.\n" % extra_bit_name(paf.bitvector))
             elif paf.where == merc.TO_IMMUNE:
-                ch.send("Adds immunity to %s.\n" % handler.imm_bit_name(paf.bitvector))
+                ch.send("Adds immunity to %s.\n" % imm_bit_name(paf.bitvector))
             elif paf.where == merc.TO_RESIST:
-                ch.send("Adds resistance to %s.\n" % handler.imm_bit_name(paf.bitvector))
+                ch.send("Adds resistance to %s.\n" % imm_bit_name(paf.bitvector))
             elif paf.where == merc.TO_VULN:
-                ch.send("Adds vulnerability to %s.\n" % handler.imm_bit_name(paf.bitvector))
+                ch.send("Adds vulnerability to %s.\n" % imm_bit_name(paf.bitvector))
             else:
                 ch.send("Unknown bit %d: %d\n" % paf.where, paf.bitvector)
 
