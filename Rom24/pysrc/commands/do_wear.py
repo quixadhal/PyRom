@@ -13,7 +13,8 @@ def do_wear(ch, argument):
         ch.send("Wear, wield, or hold what?\n")
         return
     if arg == "all":
-        for obj in ch.contents[:]:
+        for obj_id in ch.contents[:]:
+            obj = merc.items.get(obj_id, None)
             if obj.wear_loc == merc.WEAR_NONE and ch.can_see_item(obj):
                 ch.wear_item(obj, False)
         return
@@ -23,7 +24,7 @@ def do_wear(ch, argument):
             ch.send("You do not have that item.\n")
             return
         ch.wear_item(obj, True)
-    return
+        return
 
 
 interp.register_command(interp.cmd_type('wield', do_wear, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
