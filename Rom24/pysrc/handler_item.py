@@ -28,7 +28,7 @@
 #***********
  * Ported to Python by Davion of MudBytes.net
  * Using Miniboa https://code.google.com/p/miniboa/
- * Now using Python 3 version https://code.google.com/p/miniboa-py3/ 
+ * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
 import logging
@@ -63,7 +63,7 @@ class Items(Instancer, location.Location, physical.Physical, container.Container
         self.item_type = 0
         self.extra_flags = 0
         self.wear_flags = 0
-        self.wear_loc = 0
+        self.wear_loc = merc.WEAR_NONE
         self.cost = 0
         self.level = 0
         self.condition = 0
