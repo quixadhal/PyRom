@@ -759,7 +759,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                     and game_utils.is_name(arg, item.name.lower()):
                 count += 1
                 if count == number:
-                    return found
+                    return item
         return None
 
     # * Find an obj in the room or in inventory.
