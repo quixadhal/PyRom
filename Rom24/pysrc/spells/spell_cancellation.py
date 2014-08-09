@@ -33,7 +33,7 @@ def spell_cancellation(sn, level, ch, victim, target):
               'giant strength': "$n no longer looks so mighty.",
               'haste': '$n is no longer moving so quickly',
               'infravision': None,
-              'invis': '$n fades into existence.',
+              'invisibility': '$n fades into existence.',
               'mass invis': '$n fades into existence',
               'pass door': None,
               'protection evil': None,

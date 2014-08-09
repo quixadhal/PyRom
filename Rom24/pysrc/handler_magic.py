@@ -60,7 +60,7 @@ def check_dispel(dis_level, victim, skill):
                 if not saves_dispel(dis_level,af.level,af.duration):
                     victim.affect_strip(skill)
                     if skill.msg_off:
-                        victim.send(skill_table[skill].msg_off + "\n")
+                        victim.send(skill_table[skill.name].msg_off + "\n")
                     return True
                 else:
                     af.level -= 1

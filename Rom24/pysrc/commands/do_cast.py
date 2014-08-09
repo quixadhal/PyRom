@@ -18,6 +18,7 @@ def do_cast(ch, argument):
 
     argument, arg1 = game_utils.read_word(argument)
     argument, arg2 = game_utils.read_word(argument)
+    handler_magic.target_name = arg2
 
     if not arg1:
         ch.send("Cast which what where?\n")
@@ -57,18 +58,18 @@ def do_cast(ch, argument):
             # if ch == victim:
             # ch.send("You can't do that to yourself.\n")
             # return
-            if not ch.is_npc():
-                if fight.is_safe(ch, victim) and victim != ch:
-                    ch.send("Not on that target.\n")
-                    return
-
-                fight.check_killer(ch, victim)
-
-            if ch.is_affected(merc.AFF_CHARM) and ch.master == victim:
-                ch.send("You can't do that on your own follower.\n")
+        if not ch.is_npc():
+            if fight.is_safe(ch, victim) and victim != ch:
+                ch.send("Not on that target.\n")
                 return
-            vo = victim
-            target = merc.TARGET_CHAR
+
+            fight.check_killer(ch, victim)
+
+        if ch.is_affected(merc.AFF_CHARM) and ch.master == victim:
+            ch.send("You can't do that on your own follower.\n")
+            return
+        vo = victim
+        target = merc.TARGET_CHAR
     elif sn.target == merc.TAR_CHAR_DEFENSIVE:
         if not arg2:
             victim = ch
