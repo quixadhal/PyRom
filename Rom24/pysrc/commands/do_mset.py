@@ -12,7 +12,7 @@ import state_checks
 def do_mset(ch, argument):
     argument, arg1 = game_utils.read_word(argument)
     argument, arg2 = game_utils.read_word(argument)
-    arg3 = argument
+    argument, arg3 = game_utils.read_word(argument)
 
     if not arg1 or not arg2 or not arg3:
         ch.send("Syntax:\n")

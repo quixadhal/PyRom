@@ -28,7 +28,7 @@ def do_at(ch, argument):
 
     # See if 'ch' still exists before continuing!
     # Handles 'at XXXX quit' case.
-    for wch in merc.char_list:
+    for wch in merc.characters.values():
         if wch == ch:
             ch.from_environment()
             ch.to_environment(original)

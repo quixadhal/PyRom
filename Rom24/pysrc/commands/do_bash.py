@@ -61,7 +61,7 @@ def do_bash(ch, argument):
     # speed */
     if (ch.is_npc() and ch.off_flags.is_set(merc.OFF_FAST)) or ch.is_affected(merc.AFF_HASTE):
         chance += 10
-    if (victim.is_npc and victim.off_flags.is_set(merc.OFF_FAST)) or victim.is_affected(merc.AFF_HASTE):
+    if (victim.is_npc() and victim.off_flags.is_set(merc.OFF_FAST)) or victim.is_affected(merc.AFF_HASTE):
         chance -= 30
     # level
     chance += (ch.level - victim.level)
@@ -77,7 +77,8 @@ def do_bash(ch, argument):
         handler_game.act("$n sends you sprawling with a powerful bash!", ch,None,victim, merc.TO_VICT)
         handler_game.act("You slam into $N, and send $M flying!",ch,None,victim, merc.TO_CHAR)
         handler_game.act("$n sends $N sprawling with a powerful bash.", ch,None,victim, merc.TO_NOTVICT)
-        ch.check_improve('bash',True,1)
+        if not ch.is_npc():
+            ch.check_improve('bash',True,1)
         state_checks.DAZE_STATE(victim, 3 * merc.PULSE_VIOLENCE)
         state_checks.WAIT_STATE(ch,const.skill_table['bash'].beats)
         victim.position = merc.POS_RESTING
@@ -87,7 +88,8 @@ def do_bash(ch, argument):
         handler_game.act("You fall flat on your face!", ch, None, victim, merc.TO_CHAR)
         handler_game.act("$n falls flat on $s face.", ch, None, victim, merc.TO_NOTVICT)
         handler_game.act("You evade $n's bash, causing $m to fall flat on $s face.", ch, None, victim, merc.TO_VICT)
-        ch.check_improve('bash',False,1)
+        if not ch.is_npc():
+            ch.check_improve('bash',False,1)
         ch.position = merc.POS_RESTING
         state_checks.WAIT_STATE(ch, const.skill_table['bash'].beats * 3 // 2)
     fight.check_killer(ch,victim)

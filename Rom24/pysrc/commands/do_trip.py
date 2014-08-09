@@ -58,9 +58,9 @@ def do_trip(ch, argument):
     chance -= victim.stat(merc.STAT_DEX) * 3 // 2
 
     # speed */
-    if ch.off_flags.is_set(merc.OFF_FAST) or ch.is_affected(merc.AFF_HASTE):
+    if (ch.is_npc() and ch.off_flags.is_set(merc.OFF_FAST)) or ch.is_affected(merc.AFF_HASTE):
         chance += 10
-    if victim.off_flags.is_set(merc.OFF_FAST) or victim.is_affected( merc.AFF_HASTE):
+    if (victim.is_npc() and victim.off_flags.is_set(merc.OFF_FAST)) or victim.is_affected( merc.AFF_HASTE):
         chance -= 20
     # level */
     chance += (ch.level - victim.level) * 2
@@ -70,7 +70,6 @@ def do_trip(ch, argument):
         act("You trip $N and $N goes down!",ch,None,victim, merc.TO_CHAR)
         act("$n trips $N, sending $M to the ground.",ch,None,victim, merc.TO_NOTVICT)
         ch.check_improve('trip',True,1)
-
         state_checks.DAZE_STATE(victim,2 * merc.PULSE_VIOLENCE)
         state_checks.WAIT_STATE(ch,const.skill_table['trip'].beats)
         victim.position = merc.POS_RESTING

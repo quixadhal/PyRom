@@ -13,7 +13,8 @@ def do_restore(ch, argument):
     junky, arg = game_utils.read_word(argument)
     if not arg or arg == "room":
         # cure room
-        for vch in ch.in_room.people:
+        for vch_id in ch.in_room.people:
+            vch = merc.characters[vch_id]
             vch.affect_strip("plague")
             vch.affect_strip("poison")
             vch.affect_strip("blindness")
@@ -23,9 +24,8 @@ def do_restore(ch, argument):
             vch.mana = vch.max_mana
             vch.move = vch.max_move
             fight.update_pos(vch)
-            act("$n has restored you.", ch, None, vch, merc.TO_VICT)
-        handler_game.wiznet("$N restored room %d." % ch.in_room.vnum, ch, None, merc.WIZ_RESTORE, merc.WIZ_SECURE,
-                    ch.trust)
+            handler_game.act("$n has restored you.", ch, None, vch, merc.TO_VICT)
+        handler_game.wiznet("$N restored room %d." % ch.in_room.vnum, ch, None, merc.WIZ_RESTORE, merc.WIZ_SECURE, ch.trust)
         ch.send("Room restored.\n")
         return
     if ch.trust >= merc.MAX_LEVEL - 1 and arg == "all":

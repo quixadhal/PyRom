@@ -13,7 +13,7 @@ def do_gtell(ch, argument):
     if ch.comm.is_set(merc.COMM_NOTELL):
         ch.send("Your message didn't get through!\n")
         return
-    for gch in merc.char_list[:]:
+    for gch in merc.characters.values():
         if gch.is_same_group(ch):
             act("$n tells the group '$t'", ch, argument, gch, merc.TO_VICT, merc.POS_SLEEPING)
     return

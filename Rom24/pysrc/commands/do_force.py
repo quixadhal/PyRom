@@ -24,7 +24,7 @@ def do_force(ch, argument):
         if ch.trust < merc.MAX_LEVEL - 3:
             ch.send("Not at your level!\n")
             return
-        for vch in merc.char_list[:]:
+        for vch in merc.characters.values():
             if not vch.is_npc() and vch.trust < ch.trust:
                 act(buf, ch, None, vch, merc.TO_VICT)
                 vch.interpret( argument)
@@ -32,7 +32,7 @@ def do_force(ch, argument):
         if ch.trust < merc.MAX_LEVEL - 2:
             ch.send("Not at your level!\n")
             return
-        for vch in merc.char_list[:]:
+        for vch in merc.characters.values():
             if not vch.is_npc() and vch.trust < ch.trust and vch.level < merc.LEVEL_HERO:
                 act(buf, ch, None, vch, merc.TO_VICT)
                 vch.interpret(argument)
@@ -40,7 +40,7 @@ def do_force(ch, argument):
         if ch.trust < merc.MAX_LEVEL - 2:
             ch.send("Not at your level!\n")
             return
-        for vch in merc.char_list[:]:
+        for vch in merc.characters.values():
             if not vch.is_npc() and vch.trust < ch.trust and vch.level >= merc.LEVEL_HERO:
                 act(buf, ch, None, vch, merc.TO_VICT)
                 vch.interpret(argument)

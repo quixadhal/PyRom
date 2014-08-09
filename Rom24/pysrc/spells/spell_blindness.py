@@ -5,7 +5,7 @@ import merc
 
 
 def spell_blindness(sn, level, ch, victim, target):
-    if victim.is_affected( merc.AFF_BLIND) or handler_magic.saves_spell(level, victim, merc.DAM_OTHER):
+    if victim.is_affected(merc.AFF_BLIND) or handler_magic.saves_spell(level, victim, merc.DAM_OTHER):
         return
 
     af = handler_game.AFFECT_DATA()
@@ -18,7 +18,7 @@ def spell_blindness(sn, level, ch, victim, target):
     af.bitvector = merc.AFF_BLIND
     victim.affect_add(af)
     victim.send("You are blinded! \n")
-    handler_game.act("$n appears to be blinded.", victim, target=merc.TO_ROOM)
+    handler_game.act("$n appears to be blinded.", victim, send_to=merc.TO_ROOM)
 
 
 const.register_spell(const.skill_type("blindness",
