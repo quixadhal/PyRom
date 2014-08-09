@@ -6,6 +6,7 @@ import merc
 import interp
 import comm
 import game_utils
+import handler_game
 
 
 def do_disconnect(ch, argument):

@@ -5,6 +5,7 @@ logger = logging.getLogger()
 import merc
 import interp
 import state_checks
+import handler_game
 
 def do_protect(ch, argument):
     if not argument:

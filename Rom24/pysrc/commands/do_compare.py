@@ -7,6 +7,7 @@ logger = logging.getLogger()
 
 import merc
 import interp
+import handler_game
 
 
 def do_compare(ch, argument):

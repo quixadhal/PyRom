@@ -6,6 +6,7 @@ import random
 import merc
 import interp
 import game_utils
+import handler_game
 import handler_magic
 
 

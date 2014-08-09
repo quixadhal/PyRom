@@ -9,6 +9,7 @@ import const
 import fight
 import interp
 import game_utils
+import handler_game
 import state_checks
 
 

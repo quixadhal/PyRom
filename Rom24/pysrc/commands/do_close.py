@@ -10,6 +10,7 @@ from interp import cmd_type
 import merc
 import game_utils
 import state_checks
+import handler_game
 
 
 def do_close(ch, argument):

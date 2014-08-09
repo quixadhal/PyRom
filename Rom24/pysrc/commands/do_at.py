@@ -5,6 +5,7 @@ logger = logging.getLogger()
 import game_utils
 import merc
 import interp
+import handler_game
 
 
 def do_at(ch, argument):

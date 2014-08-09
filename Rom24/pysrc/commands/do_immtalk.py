@@ -7,6 +7,7 @@ import merc
 import interp
 import nanny
 import state_checks
+import handler_game
 
 
 def do_immtalk(ch, argument):

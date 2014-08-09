@@ -6,6 +6,7 @@ logger = logging.getLogger()
 import merc
 import interp
 import game_utils
+import handler_game
 
 
 def do_incognito(ch, argument):

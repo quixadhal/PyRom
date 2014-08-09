@@ -5,6 +5,7 @@ logger = logging.getLogger()
 import merc
 import interp
 import game_utils
+import handler_game
 import state_checks
 
 # 'Split' originally by Gnort, God of Chaos.

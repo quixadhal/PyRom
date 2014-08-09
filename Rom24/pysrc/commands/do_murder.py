@@ -6,6 +6,7 @@ import merc
 import interp
 import fight
 import game_utils
+import handler_game
 import state_checks
 
 

@@ -7,6 +7,7 @@ import fight
 import interp
 import game_utils
 import state_checks
+import handler_game
 
 
 def do_kill(ch, argument):

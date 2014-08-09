@@ -8,6 +8,7 @@ logger = logging.getLogger()
 import merc
 import interp
 import fight
+import handler_game
 
 
 def do_consider(ch, argument):

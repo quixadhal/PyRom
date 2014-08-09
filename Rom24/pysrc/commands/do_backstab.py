@@ -10,6 +10,7 @@ import fight
 import const
 import state_checks
 import interp
+import handler_game
 
 
 def do_backstab(ch, argument):

@@ -5,6 +5,7 @@ logger = logging.getLogger()
 import interp
 import merc
 import game_utils
+import handler_game
 import handler_room
 import state_checks
 

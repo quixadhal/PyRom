@@ -6,6 +6,7 @@ import merc
 import interp
 import nanny
 import handler_ch
+import handler_game
 
 
 # RT chat replaced with ROM gossip

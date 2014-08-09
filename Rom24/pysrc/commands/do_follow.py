@@ -6,6 +6,7 @@ import merc
 import interp
 import game_utils
 import handler_ch
+import handler_game
 
 
 def do_follow(ch, argument):

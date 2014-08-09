@@ -2,6 +2,7 @@ import logging
 
 logger = logging.getLogger()
 
+import handler_game
 import handler_room
 import interp
 import game_utils

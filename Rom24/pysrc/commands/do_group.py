@@ -6,6 +6,7 @@ import merc
 import interp
 import game_utils
 import state_checks
+import handler_game
 
 def do_group(ch, argument):
     argument, arg = game_utils.read_word(argument)

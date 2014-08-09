@@ -7,6 +7,7 @@ import merc
 import const
 import interp
 import game_utils
+import handler_game
 
 
 def do_pour(ch, argument):

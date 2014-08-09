@@ -3,6 +3,7 @@ import logging
 logger = logging.getLogger()
 
 import game_utils
+import handler_game
 import handler_room
 import interp
 import merc

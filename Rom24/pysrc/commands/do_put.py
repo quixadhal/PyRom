@@ -6,6 +6,7 @@ import random
 import merc
 import interp
 import game_utils
+import handler_game
 import state_checks
 
 def do_put(ch, argument):

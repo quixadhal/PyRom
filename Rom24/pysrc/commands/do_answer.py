@@ -8,6 +8,7 @@ logger = logging.getLogger()
 import merc
 import interp
 import nanny
+import handler_game
 
 
 # RT answer channel - uses same line as questions */

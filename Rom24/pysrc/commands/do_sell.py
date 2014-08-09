@@ -1,6 +1,7 @@
 import logging
 
 import game_utils
+import handler_game
 import shop_utils
 import state_checks
 

@@ -5,6 +5,7 @@ import random
 logger = logging.getLogger()
 
 import game_utils
+import handler_game
 import handler_magic
 import state_checks
 import merc

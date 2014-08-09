@@ -8,6 +8,7 @@ import skills
 import const
 import magic
 import game_utils
+import handler_game
 import state_checks
 
 

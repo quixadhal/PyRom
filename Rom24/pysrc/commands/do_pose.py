@@ -6,6 +6,7 @@ logger = logging.getLogger()
 import random
 import merc
 import interp
+import handler_game
 
 
 # All the posing stuff.

@@ -9,6 +9,7 @@ import interp
 import merc
 import const
 import game_utils
+import handler_game
 import handler_room
 import state_checks
 
