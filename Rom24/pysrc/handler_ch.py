@@ -28,7 +28,7 @@
 #***********
  * Ported to Python by Davion of MudBytes.net
  * Using Miniboa https://code.google.com/p/miniboa/
- * Now using Python 3 version https://code.google.com/p/miniboa-py3/ 
+ * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
 import logging
@@ -203,7 +203,7 @@ def show_list_to_char(clist, ch, fShort, fShowNothing):
     item_dict = collections.OrderedDict()
     for item_id in clist:
         item = merc.items[item_id]
-        if item.wear_loc <= 0 and ch.can_see_item(item.instance_id):
+        if item.wear_loc <= -1 and ch.can_see_item(item.instance_id):
                 logger.debug("Showing an item")
                 frmt = handler_item.format_item_to_char(item.instance_id, ch, fShort)
                 if frmt not in item_dict:
