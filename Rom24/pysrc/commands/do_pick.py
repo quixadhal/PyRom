@@ -26,7 +26,7 @@ def do_pick(self, argument):
     # look for guards
     for gch in ch.in_room.people:
         if state_checks.IS_NPC(gch) and state_checks.IS_AWAKE(gch) and ch.level + 5 < gch.level:
-            act("$N is standing too close to the lock.", ch, None, gch, merc.TO_CHAR)
+            handler_game.act("$N is standing too close to the lock.", ch, None, gch, merc.TO_CHAR)
             return
         if not ch.is_npc() and random.randint(1, 99) > ch.get_skill("pick lock"):
             ch.send("You failed.\n")
@@ -49,8 +49,8 @@ def do_pick(self, argument):
                     ch.send("You failed.\n")
                     return
                 state_checks.REMOVE_BIT(obj.value[1], merc.EX_LOCKED)
-                act("You pick the lock on $p.", ch, obj, None, merc.TO_CHAR)
-                act("$n picks the lock on $p.", ch, obj, None, merc.TO_ROOM)
+                handler_game.act("You pick the lock on $p.", ch, obj, None, merc.TO_CHAR)
+                handler_game.act("$n picks the lock on $p.", ch, obj, None, merc.TO_ROOM)
                 ch.check_improve( "pick lock", True, 2)
                 return
 
@@ -73,8 +73,8 @@ def do_pick(self, argument):
                 return
 
             state_checks.REMOVE_BIT(obj.value[1], merc.CONT_LOCKED)
-            act("You pick the lock on $p.", ch, obj, None, merc.TO_CHAR)
-            act("$n picks the lock on $p.", ch, obj, None, merc.TO_ROOM)
+            handler_game.act("You pick the lock on $p.", ch, obj, None, merc.TO_CHAR)
+            handler_game.act("$n picks the lock on $p.", ch, obj, None, merc.TO_ROOM)
             ch.check_improve( "pick lock", True, 2)
             return
         door = handler_room.find_door(ch, arg)
@@ -95,7 +95,7 @@ def do_pick(self, argument):
                 return
             state_checks.REMOVE_BIT(pexit.exit_info, merc.EX_LOCKED)
             ch.send("*Click*\n")
-            act("$n picks the $d.", ch, None, pexit.keyword, merc.TO_ROOM)
+            handler_game.act("$n picks the $d.", ch, None, pexit.keyword, merc.TO_ROOM)
             ch.check_improve( "pick_lock", True, 2)
 
             # unlock the other side

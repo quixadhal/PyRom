@@ -19,7 +19,7 @@ def do_follow(ch, argument):
         ch.send("They aren't here.\n")
         return
     if ch.is_affected(merc.AFF_CHARM) and ch.master:
-        act("But you'd rather follow $N!", ch, None, ch.master, merc.TO_CHAR)
+        handler_game.act("But you'd rather follow $N!", ch, None, ch.master, merc.TO_CHAR)
         return
     if victim == ch:
         if ch.master is None:
@@ -30,7 +30,7 @@ def do_follow(ch, argument):
     if not victim.is_npc() \
             and victim.act.is_set(merc.PLR_NOFOLLOW) \
             and not ch.is_immortal():
-        act("$N doesn't seem to want any followers.\n", ch, None, victim, merc.TO_CHAR)
+        handler_game.act("$N doesn't seem to want any followers.\n", ch, None, victim, merc.TO_CHAR)
         return
     ch.act.rem_bit(merc.PLR_NOFOLLOW)
     if ch.master:

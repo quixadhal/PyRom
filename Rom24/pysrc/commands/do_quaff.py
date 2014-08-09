@@ -23,8 +23,8 @@ def do_quaff(ch, argument):
     if ch.level < obj.level:
         ch.send("This liquid is too powerful for you to drink.\n")
         return
-    act("$n quaffs $p.", ch, obj, None, merc.TO_ROOM)
-    act("You quaff $p.", ch, obj, None, merc.TO_CHAR)
+    handler_game.act("$n quaffs $p.", ch, obj, None, merc.TO_ROOM)
+    handler_game.act("You quaff $p.", ch, obj, None, merc.TO_CHAR)
 
     handler_magic.obj_cast_spell(obj.value[1], obj.value[0], ch, ch, None)
     handler_magic.obj_cast_spell(obj.value[2], obj.value[0], ch, ch, None)

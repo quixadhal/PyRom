@@ -34,19 +34,19 @@ def do_trip(ch, argument):
         ch.send("Kill stealing is not permitted.\n\r")
         return
     if victim.is_affected( merc.AFF_FLYING):
-        act("$S feet aren't on the ground.",ch,None,victim, merc.TO_CHAR)
+        handler_game.act("$S feet aren't on the ground.",ch,None,victim, merc.TO_CHAR)
         return
     if victim.position < merc.POS_FIGHTING:
-        act("$N is already down.",ch,None,victim, merc.TO_CHAR)
+        handler_game.act("$N is already down.",ch,None,victim, merc.TO_CHAR)
         return
     if victim == ch:
         ch.send("You fall flat on your face!\n\r")
         state_checks.WAIT_STATE(ch,2 * const.skill_table['trip'].beats)
-        act("$n trips over $s own feet!",ch,None,None, merc.TO_ROOM)
+        handler_game.act("$n trips over $s own feet!",ch,None,None, merc.TO_ROOM)
         return
 
     if ch.is_affected(merc.AFF_CHARM) and ch.master == victim:
-        act("$N is your beloved master.",ch,None,victim, merc.TO_CHAR)
+        handler_game.act("$N is your beloved master.",ch,None,victim, merc.TO_CHAR)
         return
     # modifiers */
     # size */
@@ -66,9 +66,9 @@ def do_trip(ch, argument):
     chance += (ch.level - victim.level) * 2
     # now the attack */
     if random.randint(1,99) < chance:
-        act("$n trips you and you go down!",ch,None,victim, merc.TO_VICT)
-        act("You trip $N and $N goes down!",ch,None,victim, merc.TO_CHAR)
-        act("$n trips $N, sending $M to the ground.",ch,None,victim, merc.TO_NOTVICT)
+        handler_game.act("$n trips you and you go down!",ch,None,victim, merc.TO_VICT)
+        handler_game.act("You trip $N and $N goes down!",ch,None,victim, merc.TO_CHAR)
+        handler_game.act("$n trips $N, sending $M to the ground.",ch,None,victim, merc.TO_NOTVICT)
         ch.check_improve('trip',True,1)
         state_checks.DAZE_STATE(victim,2 * merc.PULSE_VIOLENCE)
         state_checks.WAIT_STATE(ch,const.skill_table['trip'].beats)

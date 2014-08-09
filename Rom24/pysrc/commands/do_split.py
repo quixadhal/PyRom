@@ -62,7 +62,7 @@ def do_split(ch, argument):
 
     for gch in ch.in_room.people:
         if gch != ch and gch.is_same_group(ch) and not state_checks.IS_AFFECTED(gch, merc.AFF_CHARM):
-            act(buf, ch, None, gch, merc.TO_VICT)
+            handler_game.act(buf, ch, None, gch, merc.TO_VICT)
             gch.gold += share_gold
             gch.silver += share_silver
     return

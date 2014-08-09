@@ -40,7 +40,7 @@ def do_backstab(ch, argument):
             ch.send("You need to wield a weapon to backstab.\n")
             return
         if victim.hit < victim.max_hit // 3:
-            act("$N is hurt and suspicious ... you can't sneak up.", ch, None, victim, merc.TO_CHAR)
+            handler_game.act("$N is hurt and suspicious ... you can't sneak up.", ch, None, victim, merc.TO_CHAR)
             return
         fight.check_killer(ch, victim)
         state_checks.WAIT_STATE( ch, const.skill_table['backstab'].beats )

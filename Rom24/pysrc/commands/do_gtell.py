@@ -15,7 +15,7 @@ def do_gtell(ch, argument):
         return
     for gch in merc.characters.values():
         if gch.is_same_group(ch):
-            act("$n tells the group '$t'", ch, argument, gch, merc.TO_VICT, merc.POS_SLEEPING)
+            handler_game.act("$n tells the group '$t'", ch, argument, gch, merc.TO_VICT, merc.POS_SLEEPING)
     return
 
 

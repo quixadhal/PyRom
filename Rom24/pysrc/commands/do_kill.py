@@ -34,7 +34,7 @@ def do_kill(ch, argument):
         ch.send("Kill stealing is not permitted.\n")
         return
     if ch.is_affected(merc.AFF_CHARM) and ch.master == victim:
-        act("$N is your beloved master.", ch, None, victim, merc.TO_CHAR)
+        handler_game.act("$N is your beloved master.", ch, None, victim, merc.TO_CHAR)
         return
     if ch.position == merc.POS_FIGHTING:
         ch.send("You do the best you can!\n")

@@ -43,9 +43,9 @@ def do_rescue(ch, argument):
         ch.send("You fail the rescue.\n")
         ch.check_improve( 'rescue', False, 1)
         return
-    act("You rescue $N!", ch, None, victim, merc.TO_CHAR)
-    act("$n rescues you!", ch, None, victim, merc.TO_VICT)
-    act("$n rescues $N!", ch, None, victim, merc.TO_NOTVICT)
+    handler_game.act("You rescue $N!", ch, None, victim, merc.TO_CHAR)
+    handler_game.act("$n rescues you!", ch, None, victim, merc.TO_VICT)
+    handler_game.act("$n rescues $N!", ch, None, victim, merc.TO_NOTVICT)
     ch.check_improve( 'rescue', True, 1)
 
     fight.stop_fighting(fch, False)

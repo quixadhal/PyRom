@@ -28,9 +28,9 @@ def do_pour(ch, argument):
             return
         out.value[1] = 0
         out.value[3] = 0
-        act("You invert $p, spilling %s all over the ground." % const.liq_table[out.value[2]].liq_name, ch, out,
+        handler_game.act("You invert $p, spilling %s all over the ground." % const.liq_table[out.value[2]].liq_name, ch, out,
                  None, merc.TO_CHAR)
-        act("$n inverts $p, spilling %s all over the ground." % const.liq_table[out.value[2]].liq_name, ch, out,
+        handler_game.act("$n inverts $p, spilling %s all over the ground." % const.liq_table[out.value[2]].liq_name, ch, out,
                  None, merc.TO_ROOM)
         return
     into = ch.get_item_here(argument)
@@ -55,10 +55,10 @@ def do_pour(ch, argument):
         ch.send("They don't hold the same liquid.\n")
         return
     if out.value[1] == 0:
-        act("There's nothing in $p to pour.", ch, out, None, merc.TO_CHAR)
+        handler_game.act("There's nothing in $p to pour.", ch, out, None, merc.TO_CHAR)
         return
     if into.value[1] >= into.value[0]:
-        act("$p is already filled to the top.", ch, into, None, merc.TO_CHAR)
+        handler_game.act("$p is already filled to the top.", ch, into, None, merc.TO_CHAR)
         return
     amount = min(out.value[1], into.value[0] - into.value[1])
 
@@ -67,15 +67,15 @@ def do_pour(ch, argument):
     into.value[2] = out.value[2]
 
     if not vch:
-        act("You pour %s from $p into $P." % const.liq_table[out.value[2]].liq_name, ch, out, into,
+        handler_game.act("You pour %s from $p into $P." % const.liq_table[out.value[2]].liq_name, ch, out, into,
                          merc.TO_CHAR)
-        act("$n pours %s from $p into $P." % const.liq_table[out.value[2]].liq_name, ch, out, into,
+        handler_game.act("$n pours %s from $p into $P." % const.liq_table[out.value[2]].liq_name, ch, out, into,
                          merc.TO_ROOM)
     else:
-        act("You pour some %s for $N." % const.liq_table[out.value[2]].liq_name, ch, None, vch,
+        handler_game.act("You pour some %s for $N." % const.liq_table[out.value[2]].liq_name, ch, None, vch,
                          merc.TO_CHAR)
-        act("$n pours you some %s." % const.liq_table[out.value[2]].liq_name, ch, None, vch, merc.TO_VICT)
-        act("$n pours some %s for $N." % const.liq_table[out.value[2]].liq_name, ch, None, vch,
+        handler_game.act("$n pours you some %s." % const.liq_table[out.value[2]].liq_name, ch, None, vch, merc.TO_VICT)
+        handler_game.act("$n pours some %s for $N." % const.liq_table[out.value[2]].liq_name, ch, None, vch,
                          merc.TO_NOTVICT)
 
 

@@ -53,8 +53,8 @@ def do_steal(ch, argument):
         ch.send("Oops.\n")
         ch.affect_strip("sneak")
         ch.affected_by = ch.affected_by.rem_bit(merc.AFF_SNEAK)
-        act("$n tried to steal from you.\n", ch, None, victim, merc.TO_VICT)
-        act("$n tried to steal from $N.\n", ch, None, victim, merc.TO_NOTVICT)
+        handler_game.act("$n tried to steal from you.\n", ch, None, victim, merc.TO_VICT)
+        handler_game.act("$n tried to steal from $N.\n", ch, None, victim, merc.TO_NOTVICT)
         outcome = random.randint(0, 3)
         buf = ''
         if outcome == 0:
@@ -114,7 +114,7 @@ def do_steal(ch, argument):
         return
     obj.from_environment()
     obj.to_environment(ch)
-    act("You pocket $p.", ch, obj, None, merc.TO_CHAR)
+    handler_game.act("You pocket $p.", ch, obj, None, merc.TO_CHAR)
     ch.check_improve( "steal", True, 2)
     ch.send("Got it!\n")
     return

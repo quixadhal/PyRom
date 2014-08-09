@@ -34,7 +34,7 @@ def do_answer(ch, argument):
             victim = handler_ch.CH(d)
             if d.is_connected(nanny.con_playing) and d.character != ch \
             and not victim.comm.is_set(merc.COMM_NOQUESTION) and not victim.comm.is_set(merc.COMM_QUIET):
-                act("$n answers '$t'", ch, argument, d.character, merc.TO_VICT, merc.POS_SLEEPING)
+                handler_game.act("$n answers '$t'", ch, argument, d.character, merc.TO_VICT, merc.POS_SLEEPING)
 
 
 interp.register_command(interp.cmd_type('answer', do_answer, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1))

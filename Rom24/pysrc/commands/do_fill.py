@@ -31,9 +31,9 @@ def do_fill(ch, argument):
     if obj.value[1] >= obj.value[0]:
         ch.send("Your container is full.\n")
         return
-    act("You fill $p with %s from $P." % const.liq_table[fountain.value[2]].liq_name, ch, obj, fountain,
+    handler_game.act("You fill $p with %s from $P." % const.liq_table[fountain.value[2]].liq_name, ch, obj, fountain,
                      merc.TO_CHAR)
-    act("$n fills $p with %s from $P." % const.liq_table[fountain.value[2]].liq_name, ch, obj, fountain,
+    handler_game.act("$n fills $p with %s from $P." % const.liq_table[fountain.value[2]].liq_name, ch, obj, fountain,
                      merc.TO_ROOM)
     obj.value[2] = fountain.value[2]
     obj.value[1] = obj.value[0]

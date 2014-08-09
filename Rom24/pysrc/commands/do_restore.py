@@ -44,7 +44,7 @@ def do_restore(ch, argument):
             victim.move = victim.max_move
             fight.update_pos(victim)
             if victim.in_room:
-                act("$n has restored you.", ch, None, victim, merc.TO_VICT)
+                handler_game.act("$n has restored you.", ch, None, victim, merc.TO_VICT)
         ch.send("All active players restored.\n")
         return
     victim = ch.get_char_world(arg)
@@ -60,7 +60,7 @@ def do_restore(ch, argument):
     victim.mana = victim.max_mana
     victim.move = victim.max_move
     fight.update_pos(victim)
-    act("$n has restored you.", ch, None, victim, merc.TO_VICT)
+    handler_game.act("$n has restored you.", ch, None, victim, merc.TO_VICT)
     buf = "$N restored %s", (victim.short_descr if victim.is_npc() else victim.name)
     handler_game.wiznet(buf, ch, None, merc.WIZ_RESTORE, merc.WIZ_SECURE, ch.trust)
     ch.send("Ok.\n")

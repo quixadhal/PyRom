@@ -32,8 +32,8 @@ def do_recite(ch, argument):
         if not victim and not obj:
             ch.send("You can't find it.\n")
             return
-        act("$n recites $p.", ch, scroll, None, merc.TO_ROOM)
-        act("You recite $p.", ch, scroll, None, merc.TO_CHAR)
+        handler_game.act("$n recites $p.", ch, scroll, None, merc.TO_ROOM)
+        handler_game.act("You recite $p.", ch, scroll, None, merc.TO_CHAR)
 
     if random.randint(1, 99) >= 20 + ch.get_skill("scrolls") * 4 // 5:
         ch.send("You mispronounce a syllable.\n")
