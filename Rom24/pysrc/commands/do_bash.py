@@ -78,7 +78,8 @@ def do_bash(ch, argument):
         handler_game.act("You slam into $N, and send $M flying!",ch,None,victim, merc.TO_CHAR)
         handler_game.act("$n sends $N sprawling with a powerful bash.", ch,None,victim, merc.TO_NOTVICT)
         if not ch.is_npc():
-            ch.check_improve('bash',True,1)
+            if ch.is_pc():
+                ch.check_improve('bash',True,1)
         state_checks.DAZE_STATE(victim, 3 * merc.PULSE_VIOLENCE)
         state_checks.WAIT_STATE(ch,const.skill_table['bash'].beats)
         victim.position = merc.POS_RESTING
@@ -89,7 +90,8 @@ def do_bash(ch, argument):
         handler_game.act("$n falls flat on $s face.", ch, None, victim, merc.TO_NOTVICT)
         handler_game.act("You evade $n's bash, causing $m to fall flat on $s face.", ch, None, victim, merc.TO_VICT)
         if not ch.is_npc():
-            ch.check_improve('bash',False,1)
+            if ch.is_pc():
+                ch.check_improve('bash',False,1)
         ch.position = merc.POS_RESTING
         state_checks.WAIT_STATE(ch, const.skill_table['bash'].beats * 3 // 2)
     fight.check_killer(ch,victim)

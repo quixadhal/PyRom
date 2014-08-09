@@ -31,7 +31,8 @@ def do_pick(self, argument):
             return
         if not ch.is_npc() and random.randint(1, 99) > ch.get_skill("pick lock"):
             ch.send("You failed.\n")
-            ch.check_improve( "pick lock", False, 2)
+            if ch.is_pc():
+                ch.check_improve( "pick lock", False, 2)
             return
         obj = ch.get_item_here(arg)
         if obj:
@@ -52,7 +53,8 @@ def do_pick(self, argument):
                 state_checks.REMOVE_BIT(obj.value[1], merc.EX_LOCKED)
                 handler_game.act("You pick the lock on $p.", ch, obj, None, merc.TO_CHAR)
                 handler_game.act("$n picks the lock on $p.", ch, obj, None, merc.TO_ROOM)
-                ch.check_improve( "pick lock", True, 2)
+                if ch.is_pc():
+                    ch.check_improve( "pick lock", True, 2)
                 return
 
 
@@ -76,7 +78,8 @@ def do_pick(self, argument):
             state_checks.REMOVE_BIT(obj.value[1], merc.CONT_LOCKED)
             handler_game.act("You pick the lock on $p.", ch, obj, None, merc.TO_CHAR)
             handler_game.act("$n picks the lock on $p.", ch, obj, None, merc.TO_ROOM)
-            ch.check_improve( "pick lock", True, 2)
+            if ch.is_pc():
+                ch.check_improve( "pick lock", True, 2)
             return
         door = handler_room.find_door(ch, arg)
         if door >= 0:
@@ -97,7 +100,8 @@ def do_pick(self, argument):
             state_checks.REMOVE_BIT(pexit.exit_info, merc.EX_LOCKED)
             ch.send("*Click*\n")
             handler_game.act("$n picks the $d.", ch, None, pexit.keyword, merc.TO_ROOM)
-            ch.check_improve( "pick_lock", True, 2)
+            if ch.is_pc():
+                ch.check_improve( "pick_lock", True, 2)
 
             # unlock the other side
             to_room = pexit.to_room

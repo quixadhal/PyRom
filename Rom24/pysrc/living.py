@@ -263,6 +263,9 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
     def is_npc(self):
         return self.act.is_set(merc.ACT_IS_NPC)
 
+    def is_pc(self):
+        return not self.act.is_set(merc.ACT_IS_NPC)
+
     def is_good(self):
         return self.alignment >= 350
 
