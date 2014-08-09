@@ -40,7 +40,7 @@ def do_eat(ch, argument):
         if obj.value[3] != 0:
             # The food was poisoned!
             af = handler_game.AFFECT_DATA()
-            act("$n chokes and gags.", ch, 0, 0, merc.TO_ROOM)
+            handler_game.act("$n chokes and gags.", ch, 0, 0, merc.TO_ROOM)
             ch.send("You choke and gag.\n")
             af.where = merc.TO_AFFECTS
             af.type = "poison"

@@ -8,6 +8,7 @@ logger = logging.getLogger()
 import merc
 import interp
 import fight
+import handler_game
 
 
 def do_consider(ch, argument):
@@ -37,7 +38,7 @@ def do_consider(ch, argument):
         msg = "$N laughs at you mercilessly."
     else:
         msg = "Death will thank you for your gift."
-    act(msg, ch, None, victim, merc.TO_CHAR)
+    handler_game.act(msg, ch, None, victim, merc.TO_CHAR)
     return
 
 

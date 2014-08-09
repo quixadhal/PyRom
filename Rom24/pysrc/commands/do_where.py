@@ -8,6 +8,7 @@ import interp
 import nanny
 import state_checks
 import handler_ch
+import handler_game
 
 
 def do_where(ch, argument):
@@ -32,7 +33,7 @@ def do_where(ch, argument):
 
     else:
         found = False
-        for victim in merc.char_list[:]:
+        for victim in merc.characters.values():
             if victim.in_room \
             and victim.in_room.area == ch.in_room.area \
             and not victim.is_affected( merc.AFF_HIDE) \
@@ -43,7 +44,7 @@ def do_where(ch, argument):
                 ch.send("%-28s %s\n" % (state_checks.PERS(victim, ch), victim.in_room.name))
                 break
         if not found:
-            act("You didn't find any $T.", ch, None, arg, merc.TO_CHAR)
+            handler_game.act("You didn't find any $T.", ch, None, arg, merc.TO_CHAR)
     return
 
 

@@ -2,6 +2,7 @@ import logging
 
 logger = logging.getLogger()
 
+import handler_game
 import handler_room
 import interp
 import game_utils
@@ -35,8 +36,8 @@ def do_unlock(ch, argument):
                 ch.send("It's already unlocked.\n")
                 return
             state_checks.REMOVE_BIT(obj.value[1], merc.EX_LOCKED)
-            act("You unlock $p.", ch, obj, None, merc.TO_CHAR)
-            act("$n unlocks $p.", ch, obj, None, merc.TO_ROOM)
+            handler_game.act("You unlock $p.", ch, obj, None, merc.TO_CHAR)
+            handler_game.act("$n unlocks $p.", ch, obj, None, merc.TO_ROOM)
             return
             # 'unlock object'
         if obj.item_type != merc.ITEM_CONTAINER:
@@ -56,8 +57,8 @@ def do_unlock(ch, argument):
             return
 
         state_checks.REMOVE_BIT(obj.value[1], merc.CONT_LOCKED)
-        act("You unlock $p.", ch, obj, None, merc.TO_CHAR)
-        act("$n unlocks $p.", ch, obj, None, merc.TO_ROOM)
+        handler_game.act("You unlock $p.", ch, obj, None, merc.TO_CHAR)
+        handler_game.act("$n unlocks $p.", ch, obj, None, merc.TO_ROOM)
         return
 
     door = handler_room.find_door(ch, arg)
@@ -78,7 +79,7 @@ def do_unlock(ch, argument):
             return
         state_checks.REMOVE_BIT(pexit.exit_info, merc.EX_LOCKED)
         ch.send("*Click*\n")
-        act("$n unlocks the $d.", ch, None, pexit.keyword, merc.TO_ROOM)
+        handler_game.act("$n unlocks the $d.", ch, None, pexit.keyword, merc.TO_ROOM)
 
         # unlock the other side */
         to_room = pexit.to_room

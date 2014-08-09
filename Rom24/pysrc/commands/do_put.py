@@ -6,6 +6,7 @@ import random
 import merc
 import interp
 import game_utils
+import handler_game
 import state_checks
 
 def do_put(ch, argument):
@@ -22,13 +23,13 @@ def do_put(ch, argument):
         return
     container = ch.get_item_here(arg2)
     if not container:
-        act("I see no $T here.", ch, None, arg2, merc.TO_CHAR)
+        handler_game.act("I see no $T here.", ch, None, arg2, merc.TO_CHAR)
         return
     if container.item_type != merc.ITEM_CONTAINER:
         ch.send("That's not a container.\n")
         return
     if state_checks.IS_SET(container.value[1], merc.CONT_CLOSED):
-        act("The $d is closed.", ch, None, container.name, merc.TO_CHAR)
+        handler_game.act("The $d is closed.", ch, None, container.name, merc.TO_CHAR)
         return
     if arg1 != "all" and not arg1.startswith("all."):
         # 'put obj container'
@@ -59,11 +60,11 @@ def do_put(ch, argument):
         obj.to_environment(container)
 
         if state_checks.IS_SET(container.value[1], merc.CONT_PUT_ON):
-            act("$n puts $p on $P.", ch, obj, container, merc.TO_ROOM)
-            act("You put $p on $P.", ch, obj, container, merc.TO_CHAR)
+            handler_game.act("$n puts $p on $P.", ch, obj, container, merc.TO_ROOM)
+            handler_game.act("You put $p on $P.", ch, obj, container, merc.TO_CHAR)
         else:
-            act("$n puts $p in $P.", ch, obj, container, merc.TO_ROOM)
-            act("You put $p in $P.", ch, obj, container, merc.TO_CHAR)
+            handler_game.act("$n puts $p in $P.", ch, obj, container, merc.TO_ROOM)
+            handler_game.act("You put $p in $P.", ch, obj, container, merc.TO_CHAR)
     else:
         # 'put all container' or 'put all.obj container'
         for obj in ch.contents[:]:
@@ -81,11 +82,11 @@ def do_put(ch, argument):
                 obj.from_environment()
                 obj.to_environment(container)
                 if state_checks.IS_SET(container.value[1], merc.CONT_PUT_ON):
-                    act("$n puts $p on $P.", ch, obj, container, merc.TO_ROOM)
-                    act("You put $p on $P.", ch, obj, container, merc.TO_CHAR)
+                    handler_game.act("$n puts $p on $P.", ch, obj, container, merc.TO_ROOM)
+                    handler_game.act("You put $p on $P.", ch, obj, container, merc.TO_CHAR)
                 else:
-                    act("$n puts $p in $P.", ch, obj, container, merc.TO_ROOM)
-                    act("You put $p in $P.", ch, obj, container, merc.TO_CHAR)
+                    handler_game.act("$n puts $p in $P.", ch, obj, container, merc.TO_ROOM)
+                    handler_game.act("You put $p in $P.", ch, obj, container, merc.TO_CHAR)
 
 
 interp.register_command(interp.cmd_type('put', do_put, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

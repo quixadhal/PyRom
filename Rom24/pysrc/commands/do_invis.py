@@ -5,6 +5,7 @@ logger = logging.getLogger()
 import merc
 import interp
 import game_utils
+import handler_game
 
 # New routines by Dionysos.
 def do_invis(ch, argument):
@@ -14,11 +15,11 @@ def do_invis(ch, argument):
         # take the default path
         if ch.invis_level:
             ch.invis_level = 0
-            act("$n slowly fades into existence.", ch, None, None, merc.TO_ROOM)
+            handler_game.act("$n slowly fades into existence.", ch, None, None, merc.TO_ROOM)
             ch.send("You slowly fade back into existence.\n")
         else:
             ch.invis_level = ch.trust
-            act("$n slowly fades into thin air.", ch, None, None, merc.TO_ROOM)
+            handler_game.act("$n slowly fades into thin air.", ch, None, None, merc.TO_ROOM)
             ch.send("You slowly vanish into thin air.\n")
     else:
         # do the level thing
@@ -29,7 +30,7 @@ def do_invis(ch, argument):
         else:
             ch.reply = None
             ch.invis_level = level
-            act("$n slowly fades into thin air.", ch, None, None, merc.TO_ROOM)
+            handler_game.act("$n slowly fades into thin air.", ch, None, None, merc.TO_ROOM)
             ch.send("You slowly vanish into thin air.\n")
             return
 

@@ -6,6 +6,7 @@ import merc
 import interp
 import game_utils
 import state_checks
+import handler_game
 
 def do_group(ch, argument):
     argument, arg = game_utils.read_word(argument)
@@ -13,7 +14,7 @@ def do_group(ch, argument):
         leader = ch.leader if ch.leader else ch
         ch.send("%s's group:\n" % state_checks.PERS(leader, ch))
 
-        for gch in merc.char_list:
+        for gch in merc.characters.values():
             if gch.is_same_group(ch):
                 ch.send("[[%2d %s]] %-16s %4d/%4d hp %4d/%4d mana %4d/%4d mv %5d xp\n" % (
                     gch.level,
@@ -32,25 +33,25 @@ def do_group(ch, argument):
         ch.send("But you are following someone else:!\n")
         return
     if victim.master != ch and ch != victim:
-        act("$N isn't following you.", ch, None, victim, merc.TO_CHAR, merc.POS_SLEEPING)
+        handler_game.act("$N isn't following you.", ch, None, victim, merc.TO_CHAR, merc.POS_SLEEPING)
         return
     if victim.is_affected( merc.AFF_CHARM):
         ch.send("You can't remove charmed mobs from your group.\n")
         return
     if ch.is_affected(merc.AFF_CHARM):
-        act("You like your master too much to leave $m!", ch, None, victim, merc.TO_VICT,
+        handler_game.act("You like your master too much to leave $m!", ch, None, victim, merc.TO_VICT,
                          merc.POS_SLEEPING)
         return
     if victim.is_same_group(ch) and ch != victim:
         victim.leader = None
-        act("$n removes $N from $s group.", ch, None, victim, merc.TO_NOTVICT, merc.POS_RESTING)
-        act("$n removes you from $s group.", ch, None, victim, merc.TO_VICT, merc.POS_SLEEPING)
-        act("You remove $N from your group.", ch, None, victim, merc.TO_CHAR, merc.POS_SLEEPING)
+        handler_game.act("$n removes $N from $s group.", ch, None, victim, merc.TO_NOTVICT, merc.POS_RESTING)
+        handler_game.act("$n removes you from $s group.", ch, None, victim, merc.TO_VICT, merc.POS_SLEEPING)
+        handler_game.act("You remove $N from your group.", ch, None, victim, merc.TO_CHAR, merc.POS_SLEEPING)
         return
     victim.leader = ch
-    act("$N joins $n's group.", ch, None, victim, merc.TO_NOTVICT, merc.POS_RESTING)
-    act("You join $n's group.", ch, None, victim, merc.TO_VICT, merc.POS_SLEEPING)
-    act("$N joins your group.", ch, None, victim, merc.TO_CHAR, merc.POS_SLEEPING)
+    handler_game.act("$N joins $n's group.", ch, None, victim, merc.TO_NOTVICT, merc.POS_RESTING)
+    handler_game.act("You join $n's group.", ch, None, victim, merc.TO_VICT, merc.POS_SLEEPING)
+    handler_game.act("$N joins your group.", ch, None, victim, merc.TO_CHAR, merc.POS_SLEEPING)
     return
 
 
