@@ -10,7 +10,7 @@ def spell_bless(sn, level, ch, victim, target):
     if target == merc.TARGET_OBJ:
         obj = victim
         if state_checks.is_item_stat(obj, merc.ITEM_BLESS):
-            handler_game.act("$p is already blessed.", ch, obj, target=merc.TO_CHAR)
+            handler_game.act("$p is already blessed.", ch, obj, send_to=merc.TO_CHAR)
             return
         if state_checks.is_item_stat(obj, merc.ITEM_EVIL):
             paf = state_checks.affect_find(obj.affected, "curse")
@@ -24,7 +24,7 @@ def spell_bless(sn, level, ch, victim, target):
                     obj.extra_bits = state_checks.REMOVE_BIT(obj.extra_flags, merc.ITEM_EVIL)
                     return
                 else:
-                    handler_game.act("The evil of $p is too powerful for you to overcome.", ch, obj, target=merc.TO_CHAR)
+                    handler_game.act("The evil of $p is too powerful for you to overcome.", ch, obj, send_to=merc.TO_CHAR)
                     return
         af = handler_game.AFFECT_DATA()
         af.where = merc.TO_OBJECT
@@ -35,7 +35,7 @@ def spell_bless(sn, level, ch, victim, target):
         af.modifier = -1
         af.bitvector = merc.ITEM_BLESS
         obj.affect_add(af)
-        handler_game.act("$p glows with a holy aura.", ch, obj, target=merc.TO_ALL)
+        handler_game.act("$p glows with a holy aura.", ch, obj, send_to=merc.TO_ALL)
         if obj.wear_loc != merc.WEAR_NONE:
             ch.saving_throw = ch.saving_throw - 1
         return
