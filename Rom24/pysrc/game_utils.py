@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import time
 
 __author__ = 'venom'
@@ -21,8 +25,12 @@ def read_word(pstr, lower=True):
     locate = len(pstr)
     if pstr[0] == "'":
         locate = pstr.find("'", 1)+1
+        if locate == 0:
+            locate = len(pstr)-1
     elif pstr[0] == '"':
         locate = pstr.find('"', 1)+1
+        if locate == 0:
+            locate = len(pstr)-1
     else:
         for i, c in enumerate(pstr):
             if c.isspace():
