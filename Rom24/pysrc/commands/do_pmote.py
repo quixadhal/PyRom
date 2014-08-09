@@ -17,7 +17,8 @@ def do_pmote(ch, argument):
         ch.send("Emote what?\n")
         return
     handler_game.act("$n $t", ch, argument, None, merc.TO_CHAR)
-    for vch in ch.in_room.people:
+    for vch_id in ch.in_room.people:
+        vch = merc.characters[vch_id]
         if vch.desc is None or vch == ch:
             continue
         if vch.name not in argument:

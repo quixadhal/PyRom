@@ -28,7 +28,8 @@ def do_sacrifice(ch, argument):
         handler_game.act("$p is not an acceptable sacrifice.", ch, obj, 0, merc.TO_CHAR)
         return
     if obj.in_room:
-        for gch in obj.in_room.people:
+        for gch_id in obj.in_room.people:
+            gch = merc.characters[gch_id]
             gch = merc.characters[gch]
             if gch.on == obj:
                 handler_game.act("$N appears to be using $p.", ch, obj, gch, merc.TO_CHAR)
