@@ -18,7 +18,8 @@ def say_spell(ch, spell):
     buf = "$n utters the words, '%s'." % incantation
     buf2 = "$n utters the words, '%s'." % spell.name
 
-    for rch in ch.in_room.people:
+    for rch_id in ch.in_room.people:
+        rch = merc.characters[rch_id]
         send = buf2 if ch.guild==rch.guild else buf
         handler_game.act(send, ch, None, rch, merc.TO_VICT)
 

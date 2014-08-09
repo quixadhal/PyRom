@@ -26,7 +26,7 @@ def do_cast(ch, argument):
     if not sn or sn.spell_fun is None \
             or (not ch.is_npc()
                 and (ch.level < sn.skill_level[ch.guild.name]
-                     or ch.learned[sn.name] == 0)):
+                     or ch.learned.get(sn.name, 0) == 0)):
         ch.send("You don't know any spells of that name.\n")
         return
     if ch.position < sn.minimum_position:

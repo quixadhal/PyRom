@@ -55,7 +55,7 @@ def OPERS(looker, item):
 
 
 def IS_NPC(ch):
-    return IS_SET(ch.act, merc.ACT_IS_NPC)
+    return ch.act.is_set(merc.ACT_IS_NPC)
 
 
 def IS_IMMORTAL(ch):
