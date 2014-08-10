@@ -111,6 +111,10 @@ class Room(Instancer, location.Location, container.Container):
             return True
         return False
 
+def get_room_by_vnum(vnum):
+    room_id = merc.instances_by_room[vnum][0]
+    return merc.rooms[room_id]
+
 def get_random_room(ch):
     room = None
     while True:
