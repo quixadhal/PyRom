@@ -564,6 +564,8 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
     # * True if char can see victim.
     def can_see(self, victim):
         # RT changed so that WIZ_INVIS has levels */
+        if type(victim) is int:
+            victim = merc.characters[victim]
         if self == victim:
             return True
         if self.trust < victim.invis_level:

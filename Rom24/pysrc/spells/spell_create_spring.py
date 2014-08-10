@@ -1,10 +1,11 @@
 import const
 import handler_game
 import merc
+import object_creator
 
 
 def spell_create_spring(sn, level, ch, victim, target):
-    spring = instancer.create_object(merc.itemTemplate[merc.OBJ_VNUM_SPRING], 0)
+    spring = object_creator.create_object(merc.itemTemplate[merc.OBJ_VNUM_SPRING], 0)
     spring.timer = level
     spring.to_environment(ch.in_room)
     handler_game.act("$p flows from the ground.", ch, spring, None, merc.TO_ROOM)

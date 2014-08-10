@@ -279,13 +279,19 @@ def one_hit(ch, victim, dt):
         else:
             dt += ch.dam_type
 
-    if dt < TYPE_HIT:
+    if type(dt) is int:
+        if dt < TYPE_HIT:
+            if wield:
+                dam_type = const.attack_table[wield.value[3]].damage
+            else:
+                dam_type = const.attack_table[ch.dam_type].damage
+        else:
+            dam_type = const.attack_table[dt - TYPE_HIT].damage
+    else:
         if wield:
             dam_type = const.attack_table[wield.value[3]].damage
         else:
-            dam_type = const.attack_table[ch.dam_type].damage
-    else:
-        dam_type = const.attack_table[dt - TYPE_HIT].damage
+            dam_type = -1
 
     if dam_type == -1:
         dam_type = DAM_BASH

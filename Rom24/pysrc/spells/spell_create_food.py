@@ -1,10 +1,10 @@
 import const
 import handler_game
 import merc
-
+import object_creator
 
 def spell_create_food(sn, level, ch, victim, target):
-    mushroom = instancer.create_object(merc.itemTemplate[merc.OBJ_VNUM_MUSHROOM], 0)
+    mushroom = object_creator.create_object(merc.itemTemplate[merc.OBJ_VNUM_MUSHROOM], 0)
     mushroom.value[0] = level // 2
     mushroom.value[1] = level
     mushroom.to_environment(ch.in_room)

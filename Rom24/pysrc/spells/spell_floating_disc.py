@@ -4,6 +4,7 @@ import const
 import handler_game
 import handler_item
 import merc
+import object_creator
 import state_checks
 
 
@@ -13,7 +14,7 @@ def spell_floating_disc(sn, level, ch, victim, target):
         handler_game.act("You can't remove $p.", ch, floating, None, merc.TO_CHAR)
         return
 
-    disc = instancer.create_object(merc.itemTemplate[merc.OBJ_VNUM_DISC], 0)
+    disc = object_creator.create_object(merc.itemTemplate[merc.OBJ_VNUM_DISC], 0)
     disc.value[0] = ch.level * 10  # 10 pounds per level capacity */
     disc.value[3] = ch.level * 5  # 5 pounds per level max per item */
     disc.timer = ch.level * 2 - random.randint(0, level // 2)
