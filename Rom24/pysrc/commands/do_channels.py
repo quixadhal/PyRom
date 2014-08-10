@@ -4,7 +4,7 @@ logger = logging.getLogger()
 
 import merc
 import interp
-
+import state_checks
 
 # RT code to display channel status
 def do_channels(ch, argument):
@@ -12,60 +12,60 @@ def do_channels(ch, argument):
     ch.send("   channel     status\n")
     ch.send("---------------------\n")
     ch.send("gossip         ")
-    if not merc.IS_SET(ch.comm, merc.COMM_NOGOSSIP):
+    if not state_checks.IS_SET(ch.comm, merc.COMM_NOGOSSIP):
         ch.send("ON\n")
     else:
         ch.send("OFF\n")
     ch.send("auction        ")
-    if not merc.IS_SET(ch.comm, merc.COMM_NOAUCTION):
+    if not state_checks.IS_SET(ch.comm, merc.COMM_NOAUCTION):
         ch.send("ON\n")
     else:
         ch.send("OFF\n")
     ch.send("music          ")
-    if not merc.IS_SET(ch.comm, merc.COMM_NOMUSIC):
+    if not state_checks.IS_SET(ch.comm, merc.COMM_NOMUSIC):
         ch.send("ON\n")
     else:
         ch.send("OFF\n")
     ch.send("Q/A            ")
-    if not merc.IS_SET(ch.comm, merc.COMM_NOQUESTION):
+    if not state_checks.IS_SET(ch.comm, merc.COMM_NOQUESTION):
         ch.send("ON\n")
     else:
         ch.send("OFF\n")
     ch.send("Quote          ")
-    if not merc.IS_SET(ch.comm, merc.COMM_NOQUOTE):
+    if not state_checks.IS_SET(ch.comm, merc.COMM_NOQUOTE):
         ch.send("ON\n")
     else:
         ch.send("OFF\n")
     ch.send("grats          ")
-    if not merc.IS_SET(ch.comm, merc.COMM_NOGRATS):
+    if not state_checks.IS_SET(ch.comm, merc.COMM_NOGRATS):
         ch.send("ON\n")
     else:
         ch.send("OFF\n")
 
     if merc.IS_IMMORTAL(ch):
         ch.send("god channel    ")
-        if not merc.IS_SET(ch.comm, merc.COMM_NOWIZ):
+        if not state_checks.IS_SET(ch.comm, merc.COMM_NOWIZ):
             ch.send("ON\n")
         else:
             ch.send("OFF\n")
     ch.send("shouts         ")
-    if not merc.IS_SET(ch.comm, merc.COMM_SHOUTSOFF):
+    if not state_checks.IS_SET(ch.comm, merc.COMM_SHOUTSOFF):
         ch.send("ON\n")
     else:
         ch.send("OFF\n")
     ch.send("tells          ")
-    if not merc.IS_SET(ch.comm, merc.COMM_DEAF):
+    if not state_checks.IS_SET(ch.comm, merc.COMM_DEAF):
         ch.send("ON\n")
     else:
         ch.send("OFF\n")
     ch.send("quiet mode     ")
-    if merc.IS_SET(ch.comm, merc.COMM_QUIET):
+    if state_checks.IS_SET(ch.comm, merc.COMM_QUIET):
         ch.send("ON\n")
     else:
         ch.send("OFF\n")
-    if merc.IS_SET(ch.comm, merc.COMM_AFK):
+    if state_checks.IS_SET(ch.comm, merc.COMM_AFK):
         ch.send("You are AFK.\n")
-    if merc.IS_SET(ch.comm, merc.COMM_SNOOP_PROOF):
+    if state_checks.IS_SET(ch.comm, merc.COMM_SNOOP_PROOF):
         ch.send("You are immune to snooping.\n")
     if ch.lines != merc.PAGELEN:
         if ch.lines:
@@ -74,13 +74,13 @@ def do_channels(ch, argument):
             ch.send("Scroll buffering is off.\n")
     if ch.prompt:
         ch.send("Your current prompt is: %s\n" % ch.prompt)
-    if merc.IS_SET(ch.comm, merc.COMM_NOSHOUT):
+    if state_checks.IS_SET(ch.comm, merc.COMM_NOSHOUT):
         ch.send("You cannot shout.\n")
-    if merc.IS_SET(ch.comm, merc.COMM_NOTELL):
+    if state_checks.IS_SET(ch.comm, merc.COMM_NOTELL):
         ch.send("You cannot use tell.\n")
-    if merc.IS_SET(ch.comm, merc.COMM_NOCHANNELS):
+    if state_checks.IS_SET(ch.comm, merc.COMM_NOCHANNELS):
         ch.send("You cannot use channels.\n")
-    if merc.IS_SET(ch.comm, merc.COMM_NOEMOTE):
+    if state_checks.IS_SET(ch.comm, merc.COMM_NOEMOTE):
         ch.send("You cannot show emotions.\n")
 
 

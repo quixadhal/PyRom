@@ -7,14 +7,14 @@ import merc
 import handler_room
 import interp
 import object_creator
-
+import state_checks
 
 def do_buy(ch, argument):
     if not argument:
         ch.send("Buy what?\n")
         return
-    if merc.IS_SET(ch.in_room.room_flags, merc.ROOM_PET_SHOP):
-        if merc.IS_NPC(ch):
+    if state_checks.IS_SET(ch.in_room.room_flags, merc.ROOM_PET_SHOP):
+        if ch.is_npc():
             return
         argument, arg = merc.read_word(argument)
         pRoomIndexNext = None
@@ -34,7 +34,7 @@ def do_buy(ch, argument):
         pet = ch.get_char_room(arg)
         ch.in_environment = in_room
 
-        if not pet or not merc.IS_SET(pet.act, merc.ACT_PET):
+        if not pet or not state_checks.IS_SET(pet.act, merc.ACT_PET):
             ch.send("Sorry, you can't buy that here.\n")
             return
         if ch.pet:
@@ -57,8 +57,8 @@ def do_buy(ch, argument):
                 ch.check_improve( "haggle", True, 4)
         ch.deduct_cost(cost)
         pet = object_creator.create_mobile(pet.pIndexData)
-        pet.act = merc.SET_BIT(pet.act, merc.ACT_PET)
-        pet.affected_by = merc.SET_BIT(pet.affected_by, merc.AFF_CHARM)
+        pet.act = state_checks.SET_BIT(pet.act, merc.ACT_PET)
+        pet.affected_by = state_checks.SET_BIT(pet.affected_by, merc.AFF_CHARM)
         pet.comm = merc.COMM_NOTELL | merc.COMM_NOSHOUT | merc.COMM_NOCHANNELS
 
         argument, arg = merc.read_word(argument)
@@ -131,18 +131,18 @@ def do_buy(ch, argument):
         keeper.gold += cost * number / 100
         keeper.silver += cost * number - (cost * number / 100) * 100
         t_obj = None
-        if merc.IS_SET(obj.extra_flags, merc.ITEM_INVENTORY):
+        if state_checks.IS_SET(obj.extra_flags, merc.ITEM_INVENTORY):
             items = []
             for count in range(number):
                 t_obj = object_creator.create_item(obj.pIndexData, obj.level)
                 items.append(t_obj)
         for t_obj in items[:]:
-            if not merc.IS_SET(obj.extra_flags, merc.ITEM_INVENTORY):
+            if not state_checks.IS_SET(obj.extra_flags, merc.ITEM_INVENTORY):
                 t_obj.from_environment()
 
             if t_obj.timer > 0 and not merc.IS_OBJ_STAT(t_obj, merc.ITEM_HAD_TIMER):
                 t_obj.timer = 0
-            t_obj.extra_flags = merc.REMOVE_BIT(t_obj.extra_flags, merc.ITEM_HAD_TIMER)
+            t_obj.extra_flags = state_checks.REMOVE_BIT(t_obj.extra_flags, merc.ITEM_HAD_TIMER)
             t_obj.to_environment(ch)
             if cost < t_obj.cost:
                 t_obj.cost = cost
