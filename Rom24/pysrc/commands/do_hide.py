@@ -16,9 +16,11 @@ def do_hide(ch, argument):
 
     if random.randint(1, 99) < ch.get_skill("hide"):
         ch.affected_by.set_bit(merc.AFF_HIDE)
-        ch.check_improve( "hide", True, 3)
+        if ch.is_pc():
+            ch.check_improve( "hide", True, 3)
     else:
-        ch.check_improve( "hide", False, 3)
+        if ch.is_pc():
+            ch.check_improve( "hide", False, 3)
     return
 
 

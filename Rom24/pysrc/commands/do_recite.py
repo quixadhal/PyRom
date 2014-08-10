@@ -38,12 +38,14 @@ def do_recite(ch, argument):
 
     if random.randint(1, 99) >= 20 + ch.get_skill("scrolls") * 4 // 5:
         ch.send("You mispronounce a syllable.\n")
-        ch.check_improve( "scrolls", False, 2)
+        if ch.is_pc():
+            ch.check_improve( "scrolls", False, 2)
     else:
         handler_magic.obj_cast_spell(scroll.value[1], scroll.value[0], ch, victim, obj)
         handler_magic.obj_cast_spell(scroll.value[2], scroll.value[0], ch, victim, obj)
         handler_magic.obj_cast_spell(scroll.value[3], scroll.value[0], ch, victim, obj)
-        ch.check_improve( "scrolls", True, 2)
+        if ch.is_pc():
+            ch.check_improve( "scrolls", True, 2)
     scroll.extract()
     return
 
