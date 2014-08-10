@@ -72,7 +72,7 @@ class TelnetServer(object):
 
     def __init__(self, port=23, address='', on_connect=_on_connect,
                  on_disconnect=_on_disconnect, max_connections=MAX_CONNECTIONS,
-                 timeout=0.1):
+                 timeout=0.05):
         """
         Create a new Telnet Server.
 

@@ -813,7 +813,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         elif sn not in const.skill_table:
             logger.error("BUG: Bad sn %s in get_skill." % sn)
             skill = 0
-        elif not self.is_npc():
+        elif self.is_pc():
             if self.level < const.skill_table[sn].skill_level[self.guild.name] \
                     or sn not in self.learned:
                 skill = 0
@@ -864,7 +864,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                 skill //= 2
             else:
                 skill = 2 * skill // 3
-        if not self.is_npc() \
+        if self.is_pc() \
                 and self.condition[merc.COND_DRUNK] > 10:
             skill = 9 * skill // 10
 
