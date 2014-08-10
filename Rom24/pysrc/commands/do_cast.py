@@ -16,8 +16,8 @@ def do_cast(ch, argument):
     if ch.is_npc() and not ch.desc:
         return
 
-    handler_magic.target_name, arg1 = game_utils.read_word(argument)
-    holder, arg2 = game_utils.read_word(handler_magic.target_name)
+    argument, arg1 = game_utils.read_word(argument)
+    argument, arg2 = game_utils.read_word(argument)
 
     if not arg1:
         ch.send("Cast which what where?\n")
@@ -26,7 +26,7 @@ def do_cast(ch, argument):
     if not sn or sn.spell_fun is None \
             or (not ch.is_npc()
                 and (ch.level < sn.skill_level[ch.guild.name]
-                     or ch.learned[sn.name] == 0)):
+                     or ch.learned.get(sn.name, 0) == 0)):
         ch.send("You don't know any spells of that name.\n")
         return
     if ch.position < sn.minimum_position:
@@ -50,7 +50,7 @@ def do_cast(ch, argument):
                 ch.send("Cast the spell on whom?\n")
                 return
         else:
-            victim = ch.get_char_room(handler_magic.target_name)
+            victim = ch.get_char_room(arg2)
             if not victim:
                 ch.send("They aren't here.\n")
                 return

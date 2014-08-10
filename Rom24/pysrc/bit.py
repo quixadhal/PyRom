@@ -1,6 +1,7 @@
 from collections import OrderedDict
 import game_utils
 import state_checks
+import tables
 
 
 class Bit:
@@ -71,9 +72,55 @@ class Bit:
     def __repr__(self):
         buf = ""
         if not self.flags:
-            return
+            return buf
         flags = self.flags
         for k, fl in flags.items():
             if self.is_set(fl.bit):
                 buf += " %s" % fl.name
         return buf
+
+
+def to_json(b):
+    """
+    A Bit() object can be serialized to json data by
+    js = json.dumps(b, default=bit.to_json)
+
+    :param b:
+    :return:
+    """
+    if isinstance(b, Bit):
+        return {'__Bit__': True, 'flags': b.flags, 'bits': b.bits}
+    raise TypeError(repr(b) + " is not JSON serializable")
+
+
+def from_json(js):
+    """
+    A Bit() object can be reconstructed from json data by
+    b = json.loads(js, object_pairs_hook=bit.from_json)
+
+    :param js:
+    :return:
+    """
+    ok = False
+    for i in js:
+        if i[0] == '__Bit__':
+            ok = True
+    if ok:
+        d_bits = 0
+        for i in js:
+            if i[0] == '__Bit__':
+                continue
+            elif i[0] == 'bits':
+                d_bits = i[1]
+            elif i[0] == 'flags':
+                d_flags = OrderedDict()
+                for j in i[1]:
+                    k = j[0]
+                    v = j[1]
+                    d_flags[k] = tables.flag_type._make(v)
+                b = Bit(flags=d_flags)
+                b.set_bit(d_bits)
+                return b
+            else:
+                raise TypeError(repr(js) + " is not a valid Bit serialization")
+    return js

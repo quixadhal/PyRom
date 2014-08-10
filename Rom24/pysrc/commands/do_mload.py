@@ -19,7 +19,7 @@ def do_mload(ch, argument):
     pMobIndex = merc.characterTemplate[vnum]
     victim = instancer.create_mobile(pMobIndex)
     victim.to_environment(ch.in_room)
-    act("$n has created $N!", ch, None, victim, merc.TO_ROOM)
+    handler_game.act("$n has created $N!", ch, None, victim, merc.TO_ROOM)
     handler_game.wiznet("$N loads %s." % victim.short_descr, ch, None, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.trust)
     ch.send("Ok.\n")
     return

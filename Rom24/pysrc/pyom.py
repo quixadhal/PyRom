@@ -33,6 +33,23 @@
 """
 import os, sys
 import logging
+
+
+def boot_log(self, message, *args, **kws):
+    if self.level <= 21:
+        self._log(21, message, args, **kws)
+
+
+def trace_log(self, message, *args, **kws):
+    if self.level <= 5:
+        self._log(5, message, args, **kws)
+
+
+sys.path.append(os.getcwd())
+logging.addLevelName(21, 'BOOT')
+logging.Logger.boot = boot_log
+logging.addLevelName(5, 'TRACE')
+logging.Logger.trace = trace_log
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(module)16s| %(message)s', level=logging.DEBUG)
 logger = logging.getLogger()
 
@@ -46,16 +63,15 @@ startup_time = time.time()
 
 def Pyom():
     sys.path.append(os.getcwd())
-    logger.info('Logging system initialized.')
+    logger.boot('Logging system initialized.')
     server = TelnetServer(port=PORT)
     server.on_connect = init_descriptor
     server.on_disconnect = close_socket
 
     init_monitoring()
-    logging.info('Entering Game Loop')
+    logger.boot('Entering Game Loop')
     game_loop(server)
     logger.critical('System halted.')
 
 if __name__ == "__main__":
     Pyom()
-

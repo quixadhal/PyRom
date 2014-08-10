@@ -6,6 +6,7 @@ import merc
 import interp
 import nanny
 import handler_ch
+import handler_game
 
 
 # RT chat replaced with ROM gossip
@@ -32,7 +33,7 @@ def do_gossip(ch, argument):
                     and d.character != ch \
                     and not victim.comm.is_set(merc.COMM_NOGOSSIP) \
                     and not victim.comm.is_set(merc.COMM_QUIET):
-                act("$n gossips '$t'", ch, argument, d.character, merc.TO_VICT, merc.POS_SLEEPING)
+                handler_game.act("$n gossips '$t'", ch, argument, d.character, merc.TO_VICT, merc.POS_SLEEPING)
 
 
 interp.register_command(interp.cmd_type('.', do_gossip, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 0))

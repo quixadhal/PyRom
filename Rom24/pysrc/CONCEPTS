@@ -161,3 +161,123 @@ Even though the id's are sequential, the checksums are widely spread out.
 
 Comments?
 
+----
+
+So, Syn and I had a google docs thing about the whole equipment system.
+
+I'll paste that here... it's changed a little bit, but the basic outline
+may still be useful.
+
+On living objects:
+
+equipment is a dictionary of equipment slots
+Each slot is either an integer, being the instance_id of the object equipped,
+or None, meaning the slot is empty.
+
+On items:
+
+equips_to is a named tuple which contains information about where the item
+may be equipped.
+
+It contains a set called slots which contains the valid equipment slots to
+which the item can be equipped.
+
+It contains a list called additional, which contains zero or more slot sets
+which are also used when equipping the item.
+
+It contains a number of other property flags which may affect the behavior
+of the item when equipped or being equipped.
+
+So, here’s a couple of examples:
+
+A dagger may be equipped to either the main hand or offhand slots.
+
+dagger.slots = {‘main hand’, ‘off hand’}
+dagger.additional = {}
+#dagger.anti_good = True
+#dagger.no_drop = False
+dagger.properties = Bit(‘anti_good no_drop’) # name the various bits for
+                                            # ‘anti_good’, ‘no_drop’, etc.
+dagger.affects = [] # a list of spell affects which are active on the item
+
+A maul is a two-handed weapon that is equipped to the main hand but requires
+the offhand to be free.
+
+maul.slots = {‘main hand’}
+maul.additional = {‘off hand’}
+maul.anti_mage = True
+
+When equipping an item that has additional slots, the equipping action should
+set the instance_id of the item in ALL slots that are involved, so in this case,
+the same item is equipped to both the ‘main hand’ and ‘off hand’ slots.
+
+As a consequence, when removing an item, you only actually remove it when no other
+slots match its instance_id.  This comes into play with disarm, for example.  It’s
+traditional (in AD&D rules) to require two successful disarm attempts to disarm
+someone using a two-handed weapon.  The first disarm would clear the instance_id
+from the item’s additional slots (until all in the set are now empty in the equipment
+list).  If all are empty, it would finally actually disarm the target.
+
+----
+
+I've been planning some changes to the instance system, and am still in the planning
+stage, even though I did check in a file that will eventually hold some of that
+code.
+
+Right now, we have a couple of (evil!) global variables that live in (evil!) merc.py.
+The main one is global_instances[], which is a dict mapping instance_id to object
+references for ALL in-game entities that can have instances.  Currently, none of these
+objects persist, unless they are stored in the inventory code of something else.
+
+The result is that we currently "waste" our time by loading up the old world data from
+the original ROM format files, creating new instances (template AND instance) for each
+and every thing, then at shutdown all those get thrown away and we repeat the same
+process at next boot.
+
+So, my goal is to allow the game to more fully save state.  That is, once we've done
+that work, we don't want to read in the original area format files again, unless we
+explicitly want to import them, either by a new import command, or by a flag given
+to the driver at boot time to say "fresh install, import now".
+
+To handle this, the logical first step is to save the global_instances list off to
+disk, so it can be restored, and so each item in that list can be restored.
+
+My current thinking is to create an instance.py module which will hold the
+global_instances dict (as well as any of the ancillary dicts that index it by
+type), and the max_instance_id value.  It will also have a new Instance() class,
+which is what the global dict will now contain, instead of direct references.
+
+The class will hold the instance_id, as well as type (and module) information,
+and a reference that serves the old purpose of allowing access to the object from
+the id reference.
+
+On save, the max_id and global dict will be serialized to JSON and stored on disk,
+minus the reference pointer.
+
+During the save operation, it would be wise to also have the code iterate over
+the list and call the save() method on every object present.  This save() method
+will open the appropriate file (determined by the method above) and call the
+to_json() method on the object to serialize its data.
+
+On load, they will be reloaded, and then code will walk the list and use the
+type/module information to reload the instance objects and restore their reference
+pointers.  Essentially, we'll create a new object of the appropriate type by calling
+the class method load() on the appropriate class, and passing the instance_id
+as an argument.
+
+Each class will be expected to have a load() method that can accept either an
+instance_id, or None (to signify the template), or possibly a string that it can
+use as JSON data.  This method will, in turn call a from_json() class method to
+restore the object's data into a new class instance.
+
+Of course, for this to work, every entity in the list must be able to load and
+save itself to JSON, so that's probably going to end up happening at the same
+time.
+
+The end result, if successful, will be to have the game save ALL objects (items,
+npcs, players, areas, etc) and the list itself, so that it can be restored after
+a reboot.  The area reset system will need to be tested against this scenario,
+to ensure that it properly handles resets being called when their state is
+already at goal.  (IE: code that says "ensure 4 orcs are in area foo" needs to
+be able to see those 4 orcs are already there, even though they weren't added
+by the reset itself this time).

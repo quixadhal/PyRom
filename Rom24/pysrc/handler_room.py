@@ -31,19 +31,18 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/ 
  ************/
 """
-import copy
 import random
 import container
 
-import handler
 import handler_game
+from instance import Instancer
 import location
 from merc import *
 import merc
 import state_checks
 
 
-class Room(handler.Instancer, location.Location, container.Container):
+class Room(Instancer, location.Location, container.Container):
     def __init__(self, template=None):
         super().__init__()
         self.vnum = 0

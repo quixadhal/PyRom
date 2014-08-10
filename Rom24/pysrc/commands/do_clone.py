@@ -52,8 +52,8 @@ def do_clone(ch, argument):
             clone.to_environment(ch.in_room)
         handler_item.recursive_clone(ch, obj, clone)
 
-        act("$n has created $p.", ch, clone, None, merc.TO_ROOM)
-        act("You clone $p.", ch, clone, None, merc.TO_CHAR)
+        handler_game.act("$n has created $p.", ch, clone, None, merc.TO_ROOM)
+        handler_game.act("You clone $p.", ch, clone, None, merc.TO_CHAR)
         handler_game.wiznet("$N clones $p.", ch, clone, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.trust)
         return
     elif mob:
@@ -78,8 +78,8 @@ def do_clone(ch, argument):
                 new_obj.to_environment(clone)
                 new_obj.wear_loc = obj.wear_loc
         clone.to_environment(ch.in_room)
-        act("$n has created $N.", ch, None, clone, merc.TO_ROOM)
-        act("You clone $N.", ch, None, clone, merc.TO_CHAR)
+        handler_game.act("$n has created $N.", ch, None, clone, merc.TO_ROOM)
+        handler_game.act("You clone $N.", ch, None, clone, merc.TO_CHAR)
         handler_game.wiznet("$N clones %s." % clone.short_descr, ch, None, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.trust)
         return
 

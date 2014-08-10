@@ -1,11 +1,13 @@
 import collections
 import random
-import logging
 import type_bypass
+import logging
 
 logger = logging.getLogger()
 
 import merc
+import handler_game
+import physical
 import container
 import handler_game
 import physical
@@ -250,7 +252,6 @@ class Living(type_bypass.ObjectType, immortal.Immortal, Fight, Grouping, physica
              container.Container, handler.Instancer):
     def __init__(self):
         super().__init__()
-        self.is_living = True
         self.id = 0
         self.version = 5
         self.level = 0
@@ -801,12 +802,12 @@ class Living(type_bypass.ObjectType, immortal.Immortal, Fight, Grouping, physica
                     and game_utils.is_name(arg, item.name.lower()):
                 count += 1
                 if count == number:
-                    return item
+                    return found
         return None
 
     # * Find an obj in the room or in inventory.
     def get_item_here(ch, argument):
-        item = ch.get_item_list(argument, merc.rooms[ch.in_room].items)
+        item = ch.get_item_list(argument, ch.in_room.items)
         if item:
             return item
         item = ch.get_item_carry(argument, ch)
@@ -833,6 +834,7 @@ class Living(type_bypass.ObjectType, immortal.Immortal, Fight, Grouping, physica
                 if count == number:
                     return item
         return None
+
 
     # * True if char can drop obj.
     def can_drop_item(self, item):

@@ -25,6 +25,8 @@ class Pc(living.Living):
         self.buffer = None
         self.valid = False
         self.pwd = ""
+        self.auth = None
+        self.failed_attempts = 0
         self.bamfin = ""
         self.bamfout = ""
         self._title = ""
@@ -55,7 +57,7 @@ class Pc(living.Living):
         self.dampen = False
 
     def __del__(self):
-        logger.debug("Freeing %s", str(self))
+        logger.trace("Freeing %s", str(self))
 
     def __repr__(self):
         return "<PC: %s ID %d>" % (self.name, self.instance_id)

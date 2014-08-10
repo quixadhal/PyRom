@@ -7,6 +7,7 @@ import merc
 import interp
 import nanny
 import state_checks
+import handler_game
 
 
 def do_immtalk(ch, argument):
@@ -20,11 +21,11 @@ def do_immtalk(ch, argument):
         return
 
     ch.comm.rem_bit(merc.COMM_NOWIZ)
-    act("$n: $t", ch, argument, None, merc.TO_CHAR, merc.POS_DEAD)
+    handler_game.act("$n: $t", ch, argument, None, merc.TO_CHAR, merc.POS_DEAD)
     for d in merc.descriptor_list:
         if d.is_connected(nanny.con_playing) and state_checks.IS_IMMORTAL(d.character) \
                 and not state_checks.IS_SET(d.character.comm, merc.COMM_NOWIZ):
-            act("$n: $t", ch, argument, d.character, merc.TO_VICT, merc.POS_DEAD)
+            handler_game.act("$n: $t", ch, argument, d.character, merc.TO_VICT, merc.POS_DEAD)
 
 
 interp.register_command(interp.cmd_type('immtalk', do_immtalk, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1))

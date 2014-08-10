@@ -6,6 +6,7 @@ logger = logging.getLogger()
 import random
 import merc
 import interp
+import handler_game
 
 
 # All the posing stuff.
@@ -176,8 +177,8 @@ def do_pose(ch, argument):
     level = min(ch.level, merc.LEVEL_HERO) // band
     choice = random.randint(0, level)
 
-    act(pose_table['to_ch'][ch.guild.name][choice], ch, None, None, merc.TO_CHAR)
-    act(pose_table['to_others'][ch.guild.name][choice], ch, None, None, merc.TO_ROOM)
+    handler_game.act(pose_table['to_ch'][ch.guild.name][choice], ch, None, None, merc.TO_CHAR)
+    handler_game.act(pose_table['to_others'][ch.guild.name][choice], ch, None, None, merc.TO_ROOM)
     return
 
 

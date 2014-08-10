@@ -1,4 +1,3 @@
-import collections
 import time
 
 __author__ = 'venom'
@@ -242,7 +241,7 @@ def find_location(ch, arg):
             return merc.rooms[room_instance]
     victim = ch.get_char_world(arg)
     if victim:
-        return merc.rooms[victim.in_room]
+        return victim.in_room
     item = ch.get_item_world(arg)
     if item:
         return item.in_room
@@ -467,3 +466,10 @@ def object_search(ch, environment, template, obj_type, atype, num_or_count, arg_
         pass
     elif atype == 'compound' or atype == 'word' or atype == 'number_compound' or atype == 'count_compound':
         pass
+
+
+def to_integer(s: str):
+    try:
+        return int(s)
+    except ValueError:
+        return int(float(s))

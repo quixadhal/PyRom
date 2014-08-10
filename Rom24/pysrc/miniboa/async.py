@@ -32,6 +32,8 @@ import select
 import sys
 import logging
 
+logger = logging.getLogger()
+
 from miniboa.telnet import TelnetClient
 from miniboa.telnet import ConnectionLost
 
@@ -51,7 +53,7 @@ def _on_connect(client):
     """
     Placeholder new connection handler.
     """
-    logging.info("++ Opened connection to {}, sending greeting...".format(client.addrport()))
+    logger.info("++ Opened connection to {}, sending greeting...".format(client.addrport()))
     client.send("Greetings from Miniboa-py3!\n")
 
 
@@ -60,7 +62,7 @@ def _on_disconnect(client):
     """
     Placeholder lost connection handler.
     """
-    logging.info("-- Lost connection to %s".format(client.addrport()))
+    logger.info("-- Lost connection to %s".format(client.addrport()))
 
 
 class TelnetServer(object):
@@ -108,7 +110,7 @@ class TelnetServer(object):
             server_socket.bind((address, port))
             server_socket.listen(5)
         except socket.error as err:
-            logging.critical("Unable to create the server socket: " + str(err))
+            logger.critical("Unable to create the server socket: " + str(err))
             raise
 
         self.server_socket = server_socket
@@ -175,7 +177,7 @@ class TelnetServer(object):
                                                 self.timeout)
         except select.error as err:
             ## If we can't even use select(), game over man, game over
-            logging.critical("SELECT socket error '{}'".format(str(err)))
+            logger.critical("SELECT socket error '{}'".format(str(err)))
             raise
 
         ## Process socket file descriptors with data to receive
@@ -188,12 +190,12 @@ class TelnetServer(object):
                 try:
                     sock, addr_tup = self.server_socket.accept()
                 except socket.error as err:
-                    logging.error("ACCEPT socket error '{}:{}'.".format(err[0], err[1]))
+                    logger.error("ACCEPT socket error '{}:{}'.".format(err[0], err[1]))
                     continue
 
                 #Check for maximum connections
                 if self.client_count() >= self.max_connections:
-                    logging.warning("Refusing new connection, maximum already in use.")
+                    logger.warning("Refusing new connection, maximum already in use.")
                     sock.close()
                     continue
 

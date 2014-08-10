@@ -5,6 +5,7 @@ logger = logging.getLogger()
 import interp
 import merc
 import game_utils
+import handler_game
 import handler_room
 import state_checks
 
@@ -29,8 +30,8 @@ def do_open(ch, argument):
                 ch.send("It's locked.\n")
                 return
             state_checks.REMOVE_BIT(obj.value[1], merc.EX_CLOSED)
-            act("You open $p.", ch, obj, None, merc.TO_CHAR)
-            act("$n opens $p.", ch, obj, None, merc.TO_ROOM)
+            handler_game.act("You open $p.", ch, obj, None, merc.TO_CHAR)
+            handler_game.act("$n opens $p.", ch, obj, None, merc.TO_ROOM)
             return
             # 'open object'
         if obj.item_type != merc.ITEM_CONTAINER:
@@ -46,8 +47,8 @@ def do_open(ch, argument):
             ch.send("It's locked.\n")
             return
         state_checks.REMOVE_BIT(obj.value[1], merc.CONT_CLOSED)
-        act("You open $p.", ch, obj, None, merc.TO_CHAR)
-        act("$n opens $p.", ch, obj, None, merc.TO_ROOM)
+        handler_game.act("You open $p.", ch, obj, None, merc.TO_CHAR)
+        handler_game.act("$n opens $p.", ch, obj, None, merc.TO_ROOM)
         return
 
     door = handler_room.find_door(ch, arg)
@@ -61,7 +62,7 @@ def do_open(ch, argument):
             ch.send("It's locked.\n")
             return
         state_checks.REMOVE_BIT(pexit.exit_info, merc.EX_CLOSED)
-        act("$n opens the $d.", ch, None, pexit.keyword, merc.TO_ROOM)
+        handler_game.act("$n opens the $d.", ch, None, pexit.keyword, merc.TO_ROOM)
         ch.send("Ok.\n")
 
         # open the other side
@@ -70,7 +71,7 @@ def do_open(ch, argument):
             pexit_rev = to_room.exit[merc.rev_dir[door]]
             state_checks.REMOVE_BIT(pexit_rev.exit_info, merc.EX_CLOSED)
             for rch in to_room.people:
-                act("The $d opens.", rch, None, pexit_rev.keyword, merc.TO_CHAR)
+                handler_game.act("The $d opens.", rch, None, pexit_rev.keyword, merc.TO_CHAR)
 
 
 interp.register_command(interp.cmd_type('open', do_open, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

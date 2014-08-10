@@ -106,6 +106,7 @@ def con_get_name(self):
 
     if found:
         ch.send("Password: ")
+        ch.desc.password_mode_on()
         self.set_connected(con_get_old_password)
         return
 
@@ -119,6 +120,7 @@ def con_confirm_new_name(self):
     ch = self.character
     if argument == 'y':
         ch.send("New character.\nGive me a password for %s: " % ch.name)
+        ch.desc.password_mode_on()
         self.set_connected(con_get_new_password)
     elif argument == 'n':
         ch.send("Ok, what IS it, then? ")
@@ -144,6 +146,7 @@ def con_get_new_password(self):
     ch.pwd = pwdnew
     
     ch.send("Please retype password: ")
+    ch.desc.password_mode_on()
     self.set_connected(con_confirm_new_password)
 
 
@@ -157,9 +160,11 @@ def con_confirm_new_password(self):
 
     if argument != ch.pwd:
         ch.send("Passwords don't match.\nRetype password: ")
+        ch.desc.password_mode_on()
         self.set_connected(con_get_new_password)
         return
 
+    ch.desc.password_mode_off()
     ch.send("The following races are available:\n  ")
     for race in const.pc_race_table:
         ch.send("%s " % const.race_table[race].name )
@@ -369,18 +374,64 @@ def con_gen_groups(self):
 def con_get_old_password(self):
     argument = self.get_command()
     ch = self.character
-    ch.send("\n")
+    ch.desc.password_mode_off()
     if settings.ENCRYPT_PASSWORD:
         argument = argument.encode('utf8')
         pwdcmp = hashlib.sha512(argument).hexdigest()
     else:
         pwdcmp = argument
     if pwdcmp != ch.pwd:
-        ch.send("Wrong password.\n")
-        comm.close_socket(self)
+        ch.send("\nWrong password.\n")
+        ch.failed_attempts += 1
+        if ch.failed_attempts > 3:
+            comm.close_socket(self)
+        else:
+            ch.send("Password: ")
+            ch.desc.password_mode_on()
+            self.set_connected(con_get_old_password)
         return
     #write_to_buffer( d, echo_on_str, 0 );
 
+    if ch.auth:
+        ch.failed_attempts = 0
+        ch.send('\nAuthenticator code: ')
+        self.set_connected(con_get_timecode)
+        return
+
+    ch.send("\n")
+    if comm.check_playing(self, ch.name):
+        return
+
+    if comm.check_reconnect(self, ch.name, True):
+        return
+
+    log_buf = "%s@%s has connected." % (ch.name, self.addrport())
+    logger.info(log_buf)
+    handler_game.wiznet(log_buf, None, None, merc.WIZ_SITES, 0, ch.trust)
+    if ch.is_immortal():
+        ch.do_help("imotd")
+        self.set_connected(con_read_imotd)
+    else:
+        ch.do_help("motd")
+        self.set_connected(con_read_motd)
+    return
+
+
+def con_get_timecode(self):
+    argument = self.get_command()
+    ch = self.character
+
+    if not ch.auth.verify(argument):
+        ch.send('\nWrong timecode.\n')
+        ch.failed_attempts += 1
+        if ch.failed_attempts > 3:
+            comm.close_socket(self)
+        else:
+            ch.send('Authenticator code: ')
+            self.set_connected(con_get_timecode)
+        return
+
+    ch.send("\n")
     if comm.check_playing(self, ch.name):
         return
 
@@ -478,6 +529,8 @@ def con_read_motd(self):
 
     handler_game.act("$n has entered the game.", ch, None, None, merc.TO_ROOM)
     ch.do_look("auto")
+    ch.send("\n\n")
+    ch.do_term("")
 
     handler_game.wiznet("$N has left real life behind.", ch, None, merc.WIZ_LOGINS, merc.WIZ_SITES, ch.trust)
     if ch.pet:

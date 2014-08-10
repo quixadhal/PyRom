@@ -57,6 +57,9 @@ import re
 
 from miniboa.colors import TERMINAL_TYPES, COLOR_MAP
 
+_TTYPE_MAP = {
+    'tinyfugue': 'ansi',
+}
 
 _PARA_BREAK = re.compile(r"(\n\s*\n)", re.MULTILINE)
 
@@ -180,3 +183,17 @@ def escape(text: str, input_type='pyom'):
         text = text.replace('^', '^^')
         text = text.replace('`', '``')
     return text
+
+
+def remap_ttype(ttype: str):
+    """
+    Remap known terminal types for mud clients and other common terminals
+    into one of the supported color mappings, even though we may lose
+    information (that we don't use).
+
+    :param ttype:
+    :return:
+    """
+    if ttype in _TTYPE_MAP:
+        return _TTYPE_MAP[ttype]
+    return ttype

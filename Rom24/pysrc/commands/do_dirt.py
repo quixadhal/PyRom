@@ -30,7 +30,7 @@ def do_dirt(ch, argument):
             ch.send("They aren't here.\n")
             return
     if victim.is_affected( merc.AFF_BLIND):
-        act("$E's already been blinded.", ch, None, victim, merc.TO_CHAR)
+        handler_game.act("$E's already been blinded.", ch, None, victim, merc.TO_CHAR)
         return
     if victim == ch:
         ch.send("Very funny.\n")
@@ -41,7 +41,7 @@ def do_dirt(ch, argument):
         ch.send("Kill stealing is not permitted.\n")
         return
     if ch.is_affected(merc.AFF_CHARM) and ch.master == victim:
-        act("But $N is such a good friend!", ch, None, victim, merc.TO_CHAR)
+        handler_game.act("But $N is such a good friend!", ch, None, victim, merc.TO_CHAR)
         return
 
     # modifiers
@@ -78,8 +78,8 @@ def do_dirt(ch, argument):
         return
     # now the attack
     if random.randint(1, 99) < chance:
-        act("$n is blinded by the dirt in $s eyes!", victim, None, None, merc.TO_ROOM)
-        act("$n kicks dirt in your eyes!", ch, None, victim, merc.TO_VICT)
+        handler_game.act("$n is blinded by the dirt in $s eyes!", victim, None, None, merc.TO_ROOM)
+        handler_game.act("$n kicks dirt in your eyes!", ch, None, victim, merc.TO_VICT)
         fight.damage(ch, victim, random.randint(2, 5), 'dirt kicking', merc.DAM_NONE, False)
         victim.send("You can't see a thing!\n")
         ch.check_improve( 'dirt kicking', True, 2)

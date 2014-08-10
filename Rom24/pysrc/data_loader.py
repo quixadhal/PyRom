@@ -8,7 +8,7 @@ import object_creator
 import game_utils
 import handler_game
 import handler_item
-import npc_handler
+import handler_npc
 import world_classes
 import handler_room
 import merc
@@ -25,12 +25,14 @@ __author__ = 'venom'
 
 def load_areas():
     logger.info('Loading Areas...')
+    index = 0
     narea_list = os.path.join(settings.AREA_DIR, settings.AREA_LIST)
     fp = open(narea_list, 'r')
     area = fp.readline().strip()
     while area != "$":
         afp = open(os.path.join(settings.AREA_DIR, area), 'r')
-        load_area(afp.read())
+        index += 1
+        load_area(afp.read(), index)
         area = fp.readline().strip()
         afp.close()
     fp.close()
@@ -38,7 +40,7 @@ def load_areas():
     logger.info('Done. (loading areas)')
 
 
-def load_area(area):
+def load_area(area, index):
     if not area.strip():
         return
 
@@ -47,6 +49,7 @@ def load_area(area):
     while area:
         if w == "#AREA":
             pArea = world_classes.Area(None)
+            pArea.index = index
             area, pArea.file_name = game_utils.read_string(area)
             area, pArea.name = game_utils.read_string(area)
             area, pArea.credits = game_utils.read_string(area)
@@ -95,6 +98,7 @@ def load_helps(area):
         nhelp.text = miniboa.terminal.escape(nhelp.text, 'pyom')
 
         if nhelp.keyword == "GREETING":
+            nhelp.text += ' '
             merc.greeting_list.append(nhelp)
 
         merc.help_list.append(nhelp)
@@ -106,7 +110,7 @@ def load_mobiles(area, pArea):
     w = w[1:]  # strip the pound
 
     while w != '0':
-        mob = npc_handler.Npc()
+        mob = handler_npc.Npc()
         mob.vnum = int(w)
         merc.characterTemplate[mob.vnum] = mob
         mob.area = pArea.name

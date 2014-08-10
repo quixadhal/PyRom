@@ -21,7 +21,7 @@ def spell_call_lightning(sn, level, ch, victim, target):
     ch.send("Mota's lightning strikes your foes! \n")
     handler_game.act("$n calls Mota's lightning to strike $s foes! ", ch, None, None, merc.TO_ROOM)
 
-    for vch in merc.char_list[:]:
+    for vch in merc.characters.values():
         if vch.in_room == None:
             continue
         if vch.in_room == ch.in_room:
