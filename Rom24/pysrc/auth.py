@@ -93,7 +93,7 @@ class TwoFactorAuth:
         """
         if isinstance(token, int):
             token = '%06d' % token
-        trials = [self.time_code(time.time() + offset) for offset in range(-30, 31, 30)]
+        trials = [self.time_code(time.time() + offset) for offset in (-30, 0, 30)]
         if token in trials:
             return True
         return False
