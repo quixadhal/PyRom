@@ -124,13 +124,6 @@ def check_assist(ch, victim):
 
 # * Do one group of attacks.
 def multi_hit(ch, victim, dt):
-    # decrement the wait */
-    if ch.desc is None:
-        ch.wait = max(0, ch.wait - PULSE_VIOLENCE)
-
-    if ch.desc is None:
-        ch.daze = max(0, ch.daze - PULSE_VIOLENCE)
-
         # no attacks for stunnies -- just a check */
     if ch.position < POS_RESTING:
         return
