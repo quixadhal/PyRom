@@ -203,7 +203,7 @@ def show_list_to_char(clist, ch, fShort, fShowNothing):
     item_dict = collections.OrderedDict()
     for item_id in clist:
         item = merc.items[item_id]
-        if item.wear_loc <= 0 and ch.can_see_item(item.instance_id):
+        if not item.equipped_to and ch.can_see_item(item.instance_id):
                 logger.debug("Showing an item")
                 frmt = handler_item.format_item_to_char(item.instance_id, ch, fShort)
                 if frmt not in item_dict:
@@ -367,14 +367,11 @@ def show_char_to_char_1(victim, ch):
         buf += " is bleeding to death.\n"
     buf = buf.capitalize()
     ch.send(buf)
-    found = False
-    for iWear in range(merc.MAX_WEAR):
-        item = merc.items.get(victim.get_eq(iWear), None)
+    handler_game.act("$N is using:", ch, None, victim, merc.TO_CHAR)
+    for location, instance_id in victim.equipped.items():
+        item = merc.items[instance_id]
         if item and ch.can_see_item(item.instance_id):
-            if not found:
-                handler_game.act("$N is using:", ch, None, victim, merc.TO_CHAR)
-                found = True
-            ch.send(merc.where_name[iWear])
+            ch.send(victim.eq_slot_strings[location])
             ch.send(handler_item.format_item_to_char(item, ch, True) + "\n")
     if victim != ch and not ch.is_npc() \
             and random.randint(1, 99) < ch.get_skill("peek"):

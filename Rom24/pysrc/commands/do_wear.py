@@ -3,9 +3,9 @@ import logging
 logger = logging.getLogger()
 
 import game_utils
-
 import merc
 import interp
+
 
 def do_wear(ch, argument):
     argument, arg = game_utils.read_word(argument)

@@ -1,3 +1,4 @@
+import collections
 import time
 
 __author__ = 'venom'
@@ -101,6 +102,135 @@ def read_flags(pstr):
         flags += flag
     return pstr, flags
 
+
+def read_equipment_flags(item, pstr):
+    ret_set = {''}
+    if not pstr:
+        return None, None
+    pstr, w = read_word(pstr, False)
+    if w == '0' or w == 0:
+        return pstr, ret_set
+    if w.isdigit():
+        return pstr, ret_set
+
+    for l in w:
+        if l.isupper():
+            ret_set.add(merc.rom_wear_flag_map[l])
+        else:
+            l.upper()
+            ret_set.add(merc.rom_wear_flag_map[l])
+
+    x = [item.equips_to[str(location)] for location in ret_set if location]
+
+    return pstr, ret_set
+
+
+def item_flags_from_bits(bits: int, out_data: collections.namedtuple, in_type='wear flags'):
+    if not out_data or not bits or not in_type:
+        return None
+    if bits == 0:
+        return None
+    if 'wear flags' in in_type:
+        if bits & merc.ITEM_TAKE:
+            out_data.attributes.update({'Take'})
+        if bits & merc.ITEM_WEAR_FINGER:
+            out_data.slots.update({'Left Finger', 'Right Finger'})
+        if bits & merc.ITEM_WEAR_NECK:
+            out_data.slots.update({'Neck', 'Collar'})
+        if bits & merc.ITEM_WEAR_BODY:
+            out_data.slots.update({'Torso'})
+        if bits & merc.ITEM_WEAR_HEAD:
+            out_data.slots.update({'Head'})
+        if bits & merc.ITEM_WEAR_LEGS:
+            out_data.slots.update({'Legs'})
+        if bits & merc.ITEM_WEAR_FEET:
+            out_data.slots.update({'Feet'})
+        if bits & merc.ITEM_WEAR_HANDS:
+            out_data.slots.update({'Hands'})
+        if bits & merc.ITEM_WEAR_ARMS:
+            out_data.slots.update({'Arms'})
+        if bits & merc.ITEM_WEAR_SHIELD:
+            out_data.slots.update({'Off Hand'})
+        if bits & merc.ITEM_WEAR_ABOUT:
+            out_data.slots.update({'About'})
+        if bits & merc.ITEM_WEAR_WAIST:
+            out_data.slots.update({'Wasit'})
+        if bits & merc.ITEM_WEAR_WRIST:
+            out_data.slots.update({'Left Wrist', 'Right Wrist'})
+        if bits & merc.ITEM_WIELD:
+            out_data.slots.update({'Main Hand'})
+        if bits & merc.ITEM_HOLD:
+            out_data.slots.update({'Hold'})
+        if bits & merc.ITEM_NO_SAC:
+            out_data.restrictions.update({'No Sacrifice'})
+        if bits & merc.ITEM_WEAR_FLOAT:
+            out_data.slots.update({'Float'})
+    if 'extra flags' in in_type:
+        if bits & merc.ITEM_GLOW:
+            out_data.attributes.update({'glow'})
+        if bits & merc.ITEM_HUM:
+            out_data.attributes.update({'hum'})
+        if bits & merc.ITEM_DARK:
+            out_data.attributes.update({'dark'})
+        if bits & merc.ITEM_LOCK:
+            out_data.attributes.update({'lock'})
+        if bits & merc.ITEM_EVIL:
+            out_data.attributes.update({'evil'})
+        if bits & merc.ITEM_INVIS:
+            out_data.attributes.update({'invis'})
+        if bits & merc.ITEM_MAGIC:
+            out_data.attributes.update({'magic'})
+        if bits & merc.ITEM_NODROP:
+            out_data.restrictions.update({'no drop'})
+        if bits & merc.ITEM_BLESS:
+            out_data.attributes.update({'bless'})
+        if bits & merc.ITEM_ANTI_GOOD:
+            out_data.restrictions.update({'anti good'})
+        if bits & merc.ITEM_ANTI_EVIL:
+            out_data.restrictions.update({'anti evil'})
+        if bits & merc.ITEM_ANTI_NEUTRAL:
+            out_data.restrictions.update({'anti neutral'})
+        if bits & merc.ITEM_NOREMOVE:
+            out_data.restrictions.update({'no remove'})
+        if bits & merc.ITEM_INVENTORY:
+            out_data.restrictions.update({'inventory only'})
+        if bits & merc.ITEM_NOPURGE:
+            out_data.restrictions.update({'no purge'})
+        if bits & merc.ITEM_ROT_DEATH:
+            out_data.attributes.update({'rot death'})
+        if bits & merc.ITEM_VIS_DEATH:
+            out_data.attributes.update({'vis death'})
+        if bits & merc.ITEM_NONMETAL:
+            out_data.attributes.update({'non metal'})
+        if bits & merc.ITEM_NOLOCATE:
+            out_data.restrictions.update({'no locate'})
+        if bits & merc.ITEM_MELT_DROP:
+            out_data.attributes.update({'melt drop'})
+        if bits & merc.ITEM_HAD_TIMER:
+            out_data.attributes.update({'had timer'})
+        if bits & merc.ITEM_SELL_EXTRACT:
+            out_data.attributes.update({'sell extract'})
+        if bits & merc.ITEM_BURN_PROOF:
+            out_data.attributes.update({'burn proof'})
+        if bits & merc.ITEM_NOUNCURSE:
+            out_data.restrictions.update({'no uncurse'})
+    if 'weapon flags' in in_type:
+        if bits & merc.WEAPON_FLAMING:
+            out_data.weapon.update({'flaming'})
+        if bits & merc.WEAPON_FROST:
+            out_data.weapon.update({'frost'})
+        if bits & merc.WEAPON_VAMPIRIC:
+            out_data.weapon.update({'vampiric'})
+        if bits & merc.WEAPON_SHARP:
+            out_data.weapon.update({'sharp'})
+        if bits & merc.WEAPON_VORPAL:
+            out_data.weapon.update({'vorpal'})
+        if bits & merc.WEAPON_TWO_HANDS:
+            out_data.weapon.update({'two handed'})
+        if bits & merc.WEAPON_SHOCKING:
+            out_data.weapon.update({'shocking'})
+        if bits & merc.WEAPON_POISON:
+            out_data.weapon.update({'poison'})
 
 def find_location(ch, arg):
     if arg.isdigit():

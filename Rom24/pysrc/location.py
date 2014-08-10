@@ -22,7 +22,6 @@ class Location:
         self.in_environment = None
         self.was_in_template = 0
         self.was_in_room = None
-
         self.on_template = 0
         self.on = None
         self.zone_template = ""

@@ -1,14 +1,14 @@
-import logging
+import collections
 import random
-import container
-
-import handler_game
-import physical
-
+import logging
+import type_bypass
 
 logger = logging.getLogger()
 
 import merc
+import container
+import handler_game
+import physical
 import tables
 import affects
 import bit
@@ -19,6 +19,47 @@ import immortal
 import location
 import state_checks
 import handler
+
+''' Char wear slots'''
+character_wear_slots = {'light': None,
+                        'left_finger': None,
+                        'right_finger': None,
+                        'neck': None,
+                        'collar': None,
+                        'body': None,
+                        'head': None,
+                        'legs': None,
+                        'feet': None,
+                        'hands': None,
+                        'arms': None,
+                        'about_body': None,
+                        'waist': None,
+                        'left_wrist': None,
+                        'right_wrist': None,
+                        'main_hand': None,
+                        'off_hand': None,
+                        'float': None}
+
+''' Equipment Slot Strings - for use with displaying EQ to characters '''
+eq_slot_strings = collections.OrderedDict([('light', '[[Light Source]]         :  '),
+                                           ('left_finger', '[[Worn on Left Finger]]   :  '),
+                                           ('right_finger', '[[Worn on Right Finger]]  :  '),
+                                           ('neck', '[[Worn around Neck]]     :  '),
+                                           ('collar', '[[Worn around Collar]]     :  '),
+                                           ('body', '[[Worn on Torso]]        :  '),
+                                           ('head', '[[Worn on Head]]        :  '),
+                                           ('legs', '[[Worn on Legs]]        :  '),
+                                           ('feet', '[[Worn on Feet]]        :  '),
+                                           ('hands', '[[Worn on Hands]]       :  '),
+                                           ('arms', '[[Worn on Arms]]        :  '),
+                                           ('about_body', '[[Worn about Body]]    :  '),
+                                           ('waist', '[[Worn around Waist]]   :  '),
+                                           ('left_wrist', '[[Worn on Left Wrist]]  :  '),
+                                           ('right_wrist', '[[Worn on Right Wrist]] :  '),
+                                           ('main_hand', '[[Main Hand]]           :  '),
+                                           ('off_hand', '[[Off Hand]]            :  '),
+                                           ('float', '[[Floating Nearby]]     :  ')])
+
 
 class Grouping:
     def __init__(self):
@@ -109,7 +150,7 @@ class Fight:
         self.hitroll = 0
         self.damroll = 0
         self.dam_type = 17
-        self.armor = [100, 100, 100, 100]
+        self.armor = [100] * 4
         self.wimpy = 0
         self.saving_throw = 0
         self.timer = 0
@@ -204,11 +245,12 @@ class Communication:
         self.comm = bit.Bit(merc.COMM_COMBINE | merc.COMM_PROMPT, tables.comm_flags)
 
 
-class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
+class Living(type_bypass.ObjectType, immortal.Immortal, Fight, Grouping, physical.Physical,
              location.Location, affects.Affects, Communication,
              container.Container, handler.Instancer):
     def __init__(self):
         super().__init__()
+        self.is_living = True
         self.id = 0
         self.version = 5
         self.level = 0
@@ -218,8 +260,8 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         self.sex = 0
         self.level = 0
         # stats */
-        self.perm_stat = [13 for x in range(merc.MAX_STATS)]
-        self.mod_stat = [0 for x in range(merc.MAX_STATS)]
+        self.perm_stat = [13] * merc.MAX_STATS
+        self.mod_stat = [0] * merc.MAX_STATS
         self.mana = 100
         self.max_mana = 100
         self.move = 100
@@ -302,7 +344,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
     def get_eq(self, iWear):
         if not self:
             return None
-        item_id = [eid for eid in self.contents if merc.items[eid].wear_loc == iWear]
+        item_id = {loc: eid for loc, eid in self.equipped.items() if merc.items[eid].equip_check().locations == iWear}
         if item_id:
             item = merc.items[item_id[0]]
         else:
@@ -318,9 +360,8 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             return
         if type(item) is int:
             item = merc.items.get(item, None)
-        if (state_checks.is_item_stat(item, merc.ITEM_ANTI_EVIL) and self.is_evil()) \
-                or (state_checks.is_item_stat(item, merc.ITEM_ANTI_GOOD) and self.is_good()) \
-                or (state_checks.is_item_stat(item, merc.ITEM_ANTI_NEUTRAL) and self.is_neutral()):
+        if (item.anti_evil and self.is_evil()) or (item.anti_good and self.is_good()) or (item.anti_neutral
+                                                                                          and self.is_neutral()):
             # Thanks to Morgenes for the bug fix here!
             handler_game.act("You are zapped by $p and drop it.", self, item, None, merc.TO_CHAR)
             handler_game.act("$n is zapped by $p and drops it.", self, item, None, merc.TO_ROOM)
@@ -609,18 +650,16 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             return True
         if type(item) == int:
             item = merc.items.get(item, None)
-        if state_checks.IS_SET(item.extra_flags, merc.ITEM_VIS_DEATH):
+        if item.vis_death:
             return False
         if self.is_affected(merc.AFF_BLIND) \
                 and item.item_type != merc.ITEM_POTION:
             return False
-        if item.item_type == merc.ITEM_LIGHT \
-                and item.value[2] != 0:
+        if item.light and item.value[2] != 0:
             return True
-        if state_checks.IS_SET(item.extra_flags, merc.ITEM_INVIS) \
-                and not self.is_affected(merc.AFF_DETECT_INVIS):
+        if item.invis and not self.is_affected(merc.AFF_DETECT_INVIS):
             return False
-        if state_checks.is_item_stat(item, merc.ITEM_GLOW):
+        if item.glow:
             return True
         if self.in_room.is_dark() \
                 and not self.is_affected(merc.AFF_DARK_VISION):
@@ -799,7 +838,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
     def can_drop_item(self, item):
         if type(item) is int:
             item = merc.items.get(item, None)
-        if not state_checks.IS_SET(item.extra_flags, merc.ITEM_NODROP):
+        if not item.no_drop:
             return True
         if not self.is_npc() \
                 and self.level >= merc.LEVEL_IMMORTAL:
