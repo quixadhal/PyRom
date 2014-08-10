@@ -26,7 +26,7 @@ def do_list(ch, argument):
             return
         found = False
         for pet in pRoomIndexNext.people:
-            if state_checks.IS_SET(pet.act, merc.ACT_PET):
+            if pet.act.is_set(merc.ACT_PET):
                 if not found:
                     found = True
                     ch.send("Pets for sale:\n")
