@@ -7,6 +7,7 @@ import merc
 import handler_room
 import interp
 import object_creator
+import state_checks
 
 def do_buy(ch, argument):
     if not argument:
