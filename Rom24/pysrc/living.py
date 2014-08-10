@@ -316,7 +316,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         if self.get_eq(iWear):
             logger.warning("Equip_char: already equipped (%d)." % iWear)
             return
-        if type(item) == int:
+        if type(item) is int:
             item = merc.items.get(item, None)
         if (state_checks.is_item_stat(item, merc.ITEM_ANTI_EVIL) and self.is_evil()) \
                 or (state_checks.is_item_stat(item, merc.ITEM_ANTI_GOOD) and self.is_good()) \
@@ -349,6 +349,9 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
 
     # * Unequip a char with an obj.
     def unequip(self, item):
+        if type(item) is int:
+            item = merc.items.get(item, None)
+
         if item.wear_loc == merc.WEAR_NONE:
             logger.warning("Unequip_char: already unequipped.")
             return
@@ -680,6 +683,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
 
         if self.desc:
             self.desc.character = None
+        self.instance_destructor()
         return
 
     # * Find a char in the room.

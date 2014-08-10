@@ -52,34 +52,28 @@ class Items(handler.Instancer, location.Location, physical.Physical, container.C
     def __init__(self, template=None):
         super().__init__()
         self.vnum = 0
-        if template:
-            [setattr(self, k, v) for k, v in template.__dict__.items()]
-            self.instancer()
-            self.instance_setup()
-        else:
-            self.template = True
-            self.instance_id = None
-            self.count = 0
-            self.reset_num = 0
-            self.extra_descr = []
-            self.affected = []
-            self.valid = False
-            self.enchanted = False
-            self.new_format = True
-            self.owner = ""
-            self.item_type = 0
-            self.extra_flags = 0
-            self.wear_flags = 0
-            self.wear_loc = 0
-            self.cost = 0
-            self.level = 0
-            self.condition = 0
-            self.timer = 0
-            self.value = [0, 0, 0, 0, 0]
+        self.template = True
+        self.instance_id = None
+        self.count = 0
+        self.reset_num = 0
+        self.extra_descr = []
+        self.affected = []
+        self.valid = False
+        self.enchanted = False
+        self.new_format = True
+        self.owner = ""
+        self.item_type = 0
+        self.extra_flags = 0
+        self.wear_flags = 0
+        self.wear_loc = 0
+        self.cost = 0
+        self.level = 0
+        self.condition = 0
+        self.timer = 0
+        self.value = [0, 0, 0, 0, 0]
 
     def __del__(self):
-        if self.instance_id:
-            self.instance_destructor()
+        logger.debug("Freeing %s" % str(self))
 
     def __repr__(self):
         if not self.instance_id:

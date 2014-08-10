@@ -228,10 +228,10 @@ def con_get_new_sex(self):
         ch.send("That's not a sex.\nWhat IS your sex? ")
         return
 
-    ch.send("Select a class [")
+    ch.send("Select a class [[")
     for name, guild in const.guild_table.items():
         ch.send("%s " % guild.name)
-    ch.send("]: ")
+    ch.send("]]: ")
     self.set_connected(con_get_new_class)
     return
 

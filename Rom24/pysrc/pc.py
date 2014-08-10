@@ -55,7 +55,7 @@ class Pc(living.Living):
         self.dampen = False
 
     def __del__(self):
-        self.instance_destructor()
+        logger.debug("Freeing %s", str(self))
 
     def __repr__(self):
         return "<PC: %s ID %d>" % (self.name, self.instance_id)
@@ -94,6 +94,16 @@ class Pc(living.Living):
 
     def get_age(self):
             return 17 + (self.played + int(time.time() - self.logon)) // 72000
+
+    # command for returning max training score
+    def get_max_train(self, stat):
+        max = const.pc_race_table[self.race.name].max_stats[stat]
+        if self.guild.attr_prime == stat:
+            if self.race.name == "human":
+                max += 3
+            else:
+                max += 2
+        return min(max,25)
 
     # recursively adds a group given its number -- uses group_add */
     def gn_add(self, gn):
@@ -502,7 +512,7 @@ class Pc(living.Living):
         if cmd.default_arg:
             cmd.do_fun(self, cmd.default_arg)
             return
-        cmd.do_fun(self, argument)
+        cmd.do_fun(self, argument.lstrip())
 
 
 

@@ -593,9 +593,9 @@ def damage(ch, victim, dam, dt, dam_type, show):
                 update.gain_exp(victim, (
                 2 * (victim.exp_per_level(victim.points) * victim.level - victim.exp) // 3) + 50)
 
-        log_buf = "%s got toasted by %s at %s [room %d]" % (victim.short_descr if victim.is_npc() else victim.name,
-                                                             ch.short_descr if ch.is_npc() else ch.name,
-                                                             ch.in_room.name, ch.in_room.vnum)
+        log_buf = "%s got toasted by %s at %s [[room %d]]" % (victim.short_descr if victim.is_npc() else victim.name,
+                                                              ch.short_descr if ch.is_npc() else ch.name,
+                                                              ch.in_room.name, ch.in_room.vnum)
 
         if victim.is_npc():
             handler_game.wiznet(log_buf, None, None, WIZ_MOBDEATHS, 0, 0)
@@ -610,16 +610,14 @@ def damage(ch, victim, dam, dt, dam_type, show):
             else:
                 victim.act.rem_bit(PLR_THIEF)
                 # RT new auto commands */
-        corpse_id = ch.get_item_list("corpse", ch.in_room.items)
-        corpse = merc.items[corpse_id]
+        corpse = ch.get_item_list("corpse", ch.in_room.items)
 
         if not ch.is_npc() and corpse and corpse.item_type == ITEM_CORPSE_NPC and ch.can_see_item(corpse.instance_id):
             if ch.act.is_set(PLR_AUTOLOOT) and corpse and corpse.contents:  # exists and not empty */
                 ch.do_get("all corpse")
 
             if ch.act.is_set(PLR_AUTOGOLD) and corpse and corpse.contents and not ch.act.is_set(PLR_AUTOLOOT):
-                coins_id = ch.get_item_list("gcash", corpse.contents)
-                coins = merc.items[coins_id]
+                coins = ch.get_item_list("gcash", corpse.contents)
                 if coins:
                     ch.do_get("all.gcash corpse")
 

@@ -1,4 +1,5 @@
 import logging
+import handler_game
 
 logger = logging.getLogger()
 
@@ -17,7 +18,7 @@ def do_sleep(ch, argument):
             or ch.position == merc.POS_STANDING:
         if not argument and not ch.on:
             ch.send("You go to sleep.\n")
-            act("$n goes to sleep.", ch, None, None, merc.TO_ROOM)
+            handler_game.act("$n goes to sleep.", ch, None, None, merc.TO_ROOM)
             ch.position = merc.POS_SLEEPING
         else:  # find an object and sleep on it
             if not argument:
@@ -35,18 +36,18 @@ def do_sleep(ch, argument):
                 ch.send("You can't sleep on that!\n")
                 return
             if ch.on != obj and obj.count_users() >= obj.value[0]:
-                act("There is no room on $p for you.", ch, obj, None, merc.TO_CHAR, merc.POS_DEAD)
+                handler_game.act("There is no room on $p for you.", ch, obj, None, merc.TO_CHAR, merc.POS_DEAD)
                 return
             ch.on = obj
             if state_checks.IS_SET(obj.value[2], merc.SLEEP_AT):
-                act("You go to sleep at $p.", ch, obj, None, merc.TO_CHAR)
-                act("$n goes to sleep at $p.", ch, obj, None, merc.TO_ROOM)
+                handler_game.act("You go to sleep at $p.", ch, obj, None, merc.TO_CHAR)
+                handler_game.act("$n goes to sleep at $p.", ch, obj, None, merc.TO_ROOM)
             elif state_checks.IS_SET(obj.value[2], merc.SLEEP_ON):
-                act("You go to sleep on $p.", ch, obj, None, merc.TO_CHAR)
-                act("$n goes to sleep on $p.", ch, obj, None, merc.TO_ROOM)
+                handler_game.act("You go to sleep on $p.", ch, obj, None, merc.TO_CHAR)
+                handler_game.act("$n goes to sleep on $p.", ch, obj, None, merc.TO_ROOM)
             else:
-                act("You go to sleep in $p.", ch, obj, None, merc.TO_CHAR)
-                act("$n goes to sleep in $p.", ch, obj, None, merc.TO_ROOM)
+                handler_game.act("You go to sleep in $p.", ch, obj, None, merc.TO_CHAR)
+                handler_game.act("$n goes to sleep in $p.", ch, obj, None, merc.TO_ROOM)
             ch.position = merc.POS_SLEEPING
         return
     elif ch.position == merc.POS_FIGHTING:

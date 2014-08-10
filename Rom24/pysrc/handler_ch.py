@@ -228,7 +228,7 @@ def show_list_to_char(clist, ch, fShort, fShowNothing):
 def show_char_to_char_0(victim, ch):
     buf = ''
     if victim.comm.is_set(merc.COMM_AFK):
-        buf += "[AFK] "
+        buf += "[[AFK]] "
     if victim.is_affected(merc.AFF_INVISIBLE):
         buf += "(Invis) "
     if victim.invis_level >= merc.LEVEL_HERO:

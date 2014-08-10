@@ -1,3 +1,9 @@
+import logging
+
+
+logger = logging.getLogger()
+
+
 from bit import Bit
 import living
 import merc
@@ -6,13 +12,9 @@ from tables import off_flags
 
 
 class Npc(living.Living):
-    def __init__(self, template=None, itype=None):
+    def __init__(self):
         super().__init__()
         self.vnum = 0  # Needs to come before the template to setup the instance
-        if template:
-            self.vnum = template
-            self.instancer()
-            self.instance_setup()
         self.memory = None
         self.spec_fun = None
         self.new_format = True
@@ -31,7 +33,7 @@ class Npc(living.Living):
         self.listeners = {}
 
     def __del__(self):
-        self.instance_destructor()
+        logger.debug("Freeing %s" % str(self))
 
     def __repr__(self):
         if self.instance_id:

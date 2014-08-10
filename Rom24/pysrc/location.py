@@ -80,7 +80,7 @@ class Location:
         except AttributeError:
             item = instance
 
-        try:  # see if item is a light.
+        try:  #see if item is a light.
             if item and item.item_type == ITEM_LIGHT and item.value[2] != 0 and instance.light > 0:
                 instance.light -= 1
             if self.wear_loc != merc.WEAR_NONE:

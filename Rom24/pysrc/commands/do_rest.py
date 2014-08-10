@@ -1,4 +1,5 @@
 import logging
+import handler_game
 
 
 logger = logging.getLogger()
@@ -31,7 +32,7 @@ def do_rest(self, argument):
                 ch.send("You can't rest on that.\n")
                 return
             if obj and ch.on != obj and obj.count_users() >= obj.value[0]:
-                act("There's no more room on $p.", ch, obj, None, merc.TO_CHAR, merc.POS_DEAD)
+                handler_game.act("There's no more room on $p.", ch, obj, None, merc.TO_CHAR, merc.POS_DEAD)
                 return
             ch.on = obj
 
@@ -41,16 +42,16 @@ def do_rest(self, argument):
             return
         if not obj:
             ch.send("You wake up and start resting.\n")
-            act("$n wakes up and starts resting.", ch, None, None, merc.TO_ROOM)
+            handler_game.act("$n wakes up and starts resting.", ch, None, None, merc.TO_ROOM)
         elif state_checks.IS_SET(obj.value[2], merc.REST_AT):
-            act("You wake up and rest at $p.", ch, obj, None, merc.TO_CHAR, merc.POS_SLEEPING)
-            act("$n wakes up and rests at $p.", ch, obj, None, merc.TO_ROOM)
+            handler_game.act("You wake up and rest at $p.", ch, obj, None, merc.TO_CHAR, merc.POS_SLEEPING)
+            handler_game.act("$n wakes up and rests at $p.", ch, obj, None, merc.TO_ROOM)
         elif state_checks.IS_SET(obj.value[2], merc.REST_ON):
-            act("You wake up and rest on $p.", ch, obj, None, merc.TO_CHAR, merc.POS_SLEEPING)
-            act("$n wakes up and rests on $p.", ch, obj, None, merc.TO_ROOM)
+            handler_game.act("You wake up and rest on $p.", ch, obj, None, merc.TO_CHAR, merc.POS_SLEEPING)
+            handler_game.act("$n wakes up and rests on $p.", ch, obj, None, merc.TO_ROOM)
         else:
-            act("You wake up and rest in $p.", ch, obj, None, merc.TO_CHAR, merc.POS_SLEEPING)
-            act("$n wakes up and rests in $p.", ch, obj, None, merc.TO_ROOM)
+            handler_game.act("You wake up and rest in $p.", ch, obj, None, merc.TO_CHAR, merc.POS_SLEEPING)
+            handler_game.act("$n wakes up and rests in $p.", ch, obj, None, merc.TO_ROOM)
         ch.position = merc.POS_RESTING
         return
     elif ch.position == merc.POS_RESTING:
@@ -59,31 +60,31 @@ def do_rest(self, argument):
     elif ch.position == merc.POS_STANDING:
         if obj is None:
             ch.send("You rest.\n")
-            act("$n sits down and rests.", ch, None, None, merc.TO_ROOM)
+            handler_game.act("$n sits down and rests.", ch, None, None, merc.TO_ROOM)
         elif state_checks.IS_SET(obj.value[2], merc.REST_AT):
-            act("You sit down at $p and rest.", ch, obj, None, merc.TO_CHAR)
-            act("$n sits down at $p and rests.", ch, obj, None, merc.TO_ROOM)
+            handler_game.act("You sit down at $p and rest.", ch, obj, None, merc.TO_CHAR)
+            handler_game.act("$n sits down at $p and rests.", ch, obj, None, merc.TO_ROOM)
         elif state_checks.IS_SET(obj.value[2], merc.REST_ON):
-            act("You sit on $p and rest.", ch, obj, None, merc.TO_CHAR)
-            act("$n sits on $p and rests.", ch, obj, None, merc.TO_ROOM)
+            handler_game.act("You sit on $p and rest.", ch, obj, None, merc.TO_CHAR)
+            handler_game.act("$n sits on $p and rests.", ch, obj, None, merc.TO_ROOM)
         else:
-            act("You rest in $p.", ch, obj, None, merc.TO_CHAR)
-            act("$n rests in $p.", ch, obj, None, merc.TO_ROOM)
+            handler_game.act("You rest in $p.", ch, obj, None, merc.TO_CHAR)
+            handler_game.act("$n rests in $p.", ch, obj, None, merc.TO_ROOM)
         ch.position = merc.POS_RESTING
         return
     elif ch.position == merc.POS_SITTING:
         if not obj:
             ch.send("You rest.\n")
-            act("$n rests.", ch, None, None, merc.TO_ROOM)
+            handler_game.act("$n rests.", ch, None, None, merc.TO_ROOM)
         elif state_checks.IS_SET(obj.value[2], merc.REST_AT):
-            act("You rest at $p.", ch, obj, None, merc.TO_CHAR)
-            act("$n rests at $p.", ch, obj, None, merc.TO_ROOM)
+            handler_game.act("You rest at $p.", ch, obj, None, merc.TO_CHAR)
+            handler_game.act("$n rests at $p.", ch, obj, None, merc.TO_ROOM)
         elif state_checks.IS_SET(obj.value[2], merc.REST_ON):
-            act("You rest on $p.", ch, obj, None, merc.TO_CHAR)
-            act("$n rests on $p.", ch, obj, None, merc.TO_ROOM)
+            handler_game.act("You rest on $p.", ch, obj, None, merc.TO_CHAR)
+            handler_game.act("$n rests on $p.", ch, obj, None, merc.TO_ROOM)
         else:
-            act("You rest in $p.", ch, obj, None, merc.TO_CHAR)
-            act("$n rests in $p.", ch, obj, None, merc.TO_ROOM)
+            handler_game.act("You rest in $p.", ch, obj, None, merc.TO_CHAR)
+            handler_game.act("$n rests in $p.", ch, obj, None, merc.TO_ROOM)
         ch.position = merc.POS_RESTING
         return
 

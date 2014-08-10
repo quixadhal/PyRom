@@ -14,7 +14,7 @@ def do_exits(ch, argument):
     if not ch.check_blind():
         return
     if fAuto:
-        buf += "[Exits:"
+        buf += "[[Exits:"
     elif ch.is_immortal():
         buf += "Obvious exits from room %d:\n" % ch.in_room.vnum
     else:
@@ -28,7 +28,7 @@ def do_exits(ch, argument):
             found = True
             if fAuto:
                 if state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED):
-                    buf += " [%s]" % (merc.dir_name[door])
+                    buf += " [[%s]]" % (merc.dir_name[door])
                 else:
                     buf += " %s" % merc.dir_name[door]
                 if ch.act.is_set(merc.PLR_OMNI):
@@ -43,7 +43,7 @@ def do_exits(ch, argument):
     if not found:
         buf += " none" if fAuto else "None.\n"
     if fAuto:
-        buf += "]\n"
+        buf += "]]\n"
     ch.send(buf)
     return
 
