@@ -37,7 +37,7 @@ def do_enter(ch, argument):
         elif state_checks.IS_SET(portal.value[2], merc.GATE_BUGGY) and (random.randint(1, 99) < 5):
             location = handler_room.get_random_room(ch)
         else:
-            location = merc.roomTemplate[portal.value[3]]
+            location = handler_room.get_room_by_vnum(portal.value[3])
         if not location or location == old_room \
                 or not ch.can_see_room(location) \
                 or (location.is_private() and not state_checks.IS_TRUSTED(ch, merc.MAX_LEVEL)):

@@ -7,6 +7,7 @@ import interp
 import merc
 import random
 import fight
+import handler_room
 import state_checks
 import update
 
@@ -17,7 +18,7 @@ def do_recall(ch, argument):
         ch.send("Only players can recall.\n")
         return
     handler_game.act("$n prays for transportation!", ch, 0, 0, merc.TO_ROOM)
-    location = merc.roomTemplate[merc.ROOM_VNUM_TEMPLE]
+    location = handler_room.get_room_by_vnum(merc.ROOM_VNUM_TEMPLE)
     if not location:
         ch.send("You are completely lost.\n")
         return

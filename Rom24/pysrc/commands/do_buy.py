@@ -1,13 +1,12 @@
 import logging
 
-import object_creator
-
-
 logger = logging.getLogger()
 
 import random
 import merc
+import handler_room
 import interp
+import object_creator
 
 
 def do_buy(ch, argument):
@@ -22,10 +21,10 @@ def do_buy(ch, argument):
         # hack to make new thalos pets work
         if ch.in_room.vnum == 9621:
             if 9706 in merc.roomTemplate:
-                pRoomIndexNext = merc.roomTemplate[9706]
+                pRoomIndexNext = handler_room.get_room_by_vnum(9706)
         else:
             if ch.in_room.vnum + 1 in merc.roomTemplate:
-                pRoomIndexNext = merc.roomTemplate[ch.in_room.vnum + 1]
+                pRoomIndexNext = handler_room.get_room_by_vnum(ch.in_room.vnum + 1)
         if not pRoomIndexNext:
             logger.warn("BUG: Do_buy: bad pet shop at vnum %d.", ch.in_room.vnum)
             ch.send("Sorry, you can't buy that here.\n")

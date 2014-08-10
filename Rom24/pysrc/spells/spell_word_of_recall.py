@@ -1,6 +1,7 @@
 import const
 import fight
 import handler_game
+import handler_room
 import merc
 import state_checks
 
@@ -10,10 +11,10 @@ def spell_word_of_recall(sn, level, ch, victim, target):
     if victim.is_npc():
         return
 
-    if merc.ROOM_VNUM_TEMPLE not in merc.roomTemplate:
+    location = handler_room.get_room_by_vnum(merc.ROOM_VNUM_TEMPLE)
+    if not location:
         victim.send("You are completely lost.\n")
         return
-    location = merc.roomTemplate[merc.ROOM_VNUM_TEMPLE]
 
     if state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_NO_RECALL) or victim.is_affected(merc.AFF_CURSE):
         victim.send("Spell failed.\n")
