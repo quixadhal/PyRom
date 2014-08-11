@@ -2,19 +2,21 @@ import os
 import hashlib
 import json
 import logging
-from instance import Instancer
 
 logger = logging.getLogger()
 
 import merc
+import instance
 import settings
+import type_bypass
 
 __author__ = 'venom'
 
 
-class Area(Instancer):
+class Area(instance.Instancer, type_bypass.ObjectType):
     def __init__(self, template=None):
         super().__init__()
+        self.is_area = True
         self.index = 0
         self.name = ""
         self.no_save = False  # TODO: This should be true for instances

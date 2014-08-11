@@ -1,13 +1,13 @@
 import collections
 import random
-import type_bypass
 import logging
+import equipment
 
 logger = logging.getLogger()
 
 import merc
-import handler_game
-import physical
+import instance
+import type_bypass
 import container
 import handler_game
 import physical
@@ -20,7 +20,6 @@ import game_utils
 import immortal
 import location
 import state_checks
-import handler
 
 ''' Char wear slots'''
 character_wear_slots = {'light': None,
@@ -40,6 +39,7 @@ character_wear_slots = {'light': None,
                         'right_wrist': None,
                         'main_hand': None,
                         'off_hand': None,
+                        'held': None,
                         'float': None}
 
 ''' Equipment Slot Strings - for use with displaying EQ to characters '''
@@ -60,6 +60,7 @@ eq_slot_strings = collections.OrderedDict([('light', '[[Light Source]]         :
                                            ('right_wrist', '[[Worn on Right Wrist]] :  '),
                                            ('main_hand', '[[Main Hand]]           :  '),
                                            ('off_hand', '[[Off Hand]]            :  '),
+                                           ('held', '[[Held]]                :  '),
                                            ('float', '[[Floating Nearby]]     :  ')])
 
 
@@ -163,6 +164,7 @@ class Fight:
         self.imm_flags = bit.Bit(flags=tables.imm_flags)
         self.res_flags = bit.Bit(flags=tables.imm_flags)
         self.vuln_flags = bit.Bit(flags=tables.imm_flags)
+
     @property
     def fighting(self):
         return merc.characters.get(self._fighting, None)
@@ -170,13 +172,13 @@ class Fight:
     @fighting.setter
     def fighting(self, value):
         if type(value) is int:
-            value = merc.characters.get(value, None) #Ensure fighting exists.
+            value = merc.characters.get(value, None)  # Ensure fighting exists.
         if value and not isinstance(value, Fight):
             logger.error("Instance fighting non combat. %s fighting %s", self.name, value.name)
             return
         if value:
             value = value.instance_id
-        self._fighting = value #None or instance_id
+        self._fighting = value  # None or instance_id
 
     def check_immune(self, dam_type):
         immune = -1
@@ -247,11 +249,12 @@ class Communication:
         self.comm = bit.Bit(merc.COMM_COMBINE | merc.COMM_PROMPT, tables.comm_flags)
 
 
-class Living(type_bypass.ObjectType, immortal.Immortal, Fight, Grouping, physical.Physical,
+class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
              location.Location, affects.Affects, Communication,
-             container.Container, handler.Instancer):
+             container.Container, instance.Instancer, type_bypass.ObjectType, equipment.Equipment):
     def __init__(self):
         super().__init__()
+        self.is_living = True
         self.id = 0
         self.version = 5
         self.level = 0
@@ -273,6 +276,24 @@ class Living(type_bypass.ObjectType, immortal.Immortal, Fight, Grouping, physica
         self.position = 0
         self.alignment = 0
         self.desc = None
+        self._equipped = character_wear_slots
+
+    @property
+    def equipped(self):
+        if self.is_living:
+            return self._equipped
+        else:
+            return None
+
+    @equipped.setter
+    def equipped(self, slot, occupied_by):
+        if slot in self.equipped.keys():
+            if merc.global_instances[occupied_by].is_item:
+                self._equipped[slot] = occupied_by
+            else:
+                raise TypeError('Living class member trying to equip non item object %r' % type(occupied_by))
+        else:
+            raise KeyError('Unknown slot passed to ch.equipped %s' % slot)
 
     @property
     def race(self):
@@ -340,100 +361,6 @@ class Living(type_bypass.ObjectType, immortal.Immortal, Fight, Grouping, physica
                 stat_max += 1
             stat_max = min(stat_max, 25);
         return max(3, min(self.perm_stat[stat] + self.mod_stat[stat], stat_max))
-
-    # Find a piece of eq on a character.
-    def get_eq(self, iWear):
-        if not self:
-            return None
-        item_id = {loc: eid for loc, eid in self.equipped.items() if merc.items[eid].equip_check().locations == iWear}
-        if item_id:
-            item = merc.items[item_id[0]]
-        else:
-            item = None
-        if not item:
-            return None
-        return item
-    # * Equip a char with an obj.
-
-    def equip(self, item, iWear):
-        if self.get_eq(iWear):
-            logger.warning("Equip_char: already equipped (%d)." % iWear)
-            return
-        if type(item) is int:
-            item = merc.items.get(item, None)
-        if (item.anti_evil and self.is_evil()) or (item.anti_good and self.is_good()) or (item.anti_neutral
-                                                                                          and self.is_neutral()):
-            # Thanks to Morgenes for the bug fix here!
-            handler_game.act("You are zapped by $p and drop it.", self, item, None, merc.TO_CHAR)
-            handler_game.act("$n is zapped by $p and drops it.", self, item, None, merc.TO_ROOM)
-            item.from_environment()
-            item.to_environment(self.in_room)
-            return
-
-        for i in range(4):
-            self.armor[i] -= item.apply_ac(iWear, i)
-        item.wear_loc = iWear
-
-        if not item.enchanted:
-            for paf in item.affected:
-                if paf.location != merc.APPLY_SPELL_AFFECT:
-                    self.affect_modify(paf, True)
-
-        for paf in item.affected:
-            if paf.location == merc.APPLY_SPELL_AFFECT:
-                self.affect_add(self, paf)
-            else:
-                self.affect_modify(paf, True)
-
-        if item.item_type == merc.ITEM_LIGHT and item.value[2] != 0 and self.in_room is not None:
-            self.in_room.light += 1
-        return
-
-    # * Unequip a char with an obj.
-    def unequip(self, item):
-        if type(item) is int:
-            item = merc.items.get(item, None)
-
-        if item.wear_loc == merc.WEAR_NONE:
-            logger.warning("Unequip_char: already unequipped.")
-            return
-
-        for i in range(4):
-            self.armor[i] += item.apply_ac(item.wear_loc, i)
-        item.wear_loc = merc.WEAR_NONE
-
-        if not item.enchanted:
-            for paf in item.affected:
-                if paf.location == merc.APPLY_SPELL_AFFECT:
-                    for lpaf in self.affected[:]:
-                        if lpaf.type == paf.type and lpaf.level == paf.level \
-                                and lpaf.location == merc.APPLY_SPELL_AFFECT:
-                            self.affect_remove(lpaf)
-                            break
-                else:
-                    self.affect_modify(paf, False)
-                    self.affect_check(paf.where, paf.bitvector)
-
-        for paf in item.affected:
-            if paf.location == merc.APPLY_SPELL_AFFECT:
-                logger.error("Bug: Norm-Apply")
-                for lpaf in self.affected:
-                    if lpaf.type == paf.type and lpaf.level == paf.level and lpaf.location == merc.APPLY_SPELL_AFFECT:
-                        logger.error("bug: location = %d" % lpaf.location)
-                        logger.error("bug: type = %d" % lpaf.type)
-                        self.affect_remove(lpaf)
-                        break
-            else:
-                self.affect_modify(paf, False)
-                self.affect_check(paf.where, paf.bitvector)
-
-        if item.item_type == merc.ITEM_LIGHT \
-                and item.value[2] != 0 \
-                and self.in_room \
-                and self.in_room.light > 0:
-            self.in_room.light -= 1
-        return
-
 
     def exp_per_level(self, points):
         if self.is_npc():
@@ -785,8 +712,7 @@ class Living(type_bypass.ObjectType, immortal.Immortal, Fight, Grouping, physica
         count = 0
         for item_id in ch.items:
             item = merc.items.get(item_id, None)
-            if item.wear_loc == merc.WEAR_NONE and viewer.can_see_item(item) \
-                    and game_utils.is_name(arg, item.name.lower()):
+            if viewer.can_see_item(item) and game_utils.is_name(arg, item.name.lower()):
                 count += 1
                 if count == number:
                     return item
@@ -796,13 +722,15 @@ class Living(type_bypass.ObjectType, immortal.Immortal, Fight, Grouping, physica
     def get_item_wear(ch, argument):
         number, arg = game_utils.number_argument(argument)
         count = 0
-        for item_id in ch.items:
-            item = merc.items.get(item_id, None)
-            if item.wear_loc != merc.WEAR_NONE and ch.can_see_item(item) \
-                    and game_utils.is_name(arg, item.name.lower()):
-                count += 1
-                if count == number:
-                    return found
+        for loc, item_id in ch.equipped.items():
+            if item_id:
+                item = merc.items[item_id]
+                if ch.can_see_item(item) and game_utils.is_name(arg, item.name.lower()):
+                    count += 1
+                    if count == number:
+                        return loc, item
+            else:
+                continue
         return None
 
     # * Find an obj in the room or in inventory.
@@ -835,11 +763,8 @@ class Living(type_bypass.ObjectType, immortal.Immortal, Fight, Grouping, physica
                     return item
         return None
 
-
     # * True if char can drop obj.
     def can_drop_item(self, item):
-        if type(item) is int:
-            item = merc.items.get(item, None)
         if not item.no_drop:
             return True
         if not self.is_npc() \
@@ -912,7 +837,7 @@ class Living(type_bypass.ObjectType, immortal.Immortal, Fight, Grouping, physica
 
     # for returning weapon information */
     def get_weapon_sn(self):
-        wield = merc.items.get(self.get_eq(merc.WEAR_WIELD), None)
+        wield = self.get_eq('main_hand')
         if not wield or wield.item_type != merc.ITEM_WEAPON:
             sn = "hand to hand"
             return sn
@@ -938,6 +863,12 @@ class Living(type_bypass.ObjectType, immortal.Immortal, Fight, Grouping, physica
 
     # deduct cost from a character */
     def deduct_cost(self, cost):
+        """
+        :param cost:
+        :type cost:
+        :return:
+        :rtype:
+        """
         silver = min(self.silver, cost)
         gold = 0
         if silver < cost:
@@ -953,163 +884,289 @@ class Living(type_bypass.ObjectType, immortal.Immortal, Fight, Grouping, physica
             logger.error("BUG: deduct costs: silver %d < 0" % self.silver)
             self.silver = 0
 
+# Find a piece of eq on a character.
+    def get_eq(self, check_loc):
+        """
+        :param check_loc:
+        :type check_loc:
+        :return:
+        :rtype:
+        """
+        if not self:
+            return None
+        found = False
+        if self.equipped[check_loc]:
+            found = True
+        if not found:
+            return None
+        else:
+            return merc.items[self.equipped[check_loc]]
 
-    # * Wear one object.
-    # * Optional replacement of existing objects.
-    # * Big repetitive code, ick.
-    def wear_item(self, item, fReplace):
-        if self.level < item.level:
-            self.send("You must be level %d to use this object.\n" % item.level)
-            handler_game.act("$n tries to use $p, but is too inexperienced.", self, item, None, merc.TO_ROOM)
-            return
-        if item.item_type == merc.ITEM_LIGHT:
-            if not self.remove_item(merc.WEAR_LIGHT, fReplace):
+    def apply_affect(self, aff_object):
+        """
+        :param aff_object:
+        :type aff_object:
+        :return: no return
+        :rtype: nothing
+        This was taken from the equip code, to shorten its length, checks for Affects, and applies as needed
+        """
+        if not aff_object.enchanted:
+            for paf in merc.itemTemplate[aff_object.vnum].affected:
+                if paf.location != merc.APPLY_SPELL_AFFECT:
+                    self.affect_modify(paf, True)
+
+        for paf in aff_object.affected:
+            if paf.location == merc.APPLY_SPELL_AFFECT:
+                self.affect_add(self, paf)
+            else:
+                self.affect_modify(paf, True)
+
+    # * Equip a char with an obj.
+    def equip(self, item, replace: bool=False, verbose: bool=True, to_loc: str=None):
+        """
+        :type item: Items
+        :param replace:
+        :type replace:
+        :param verbose:
+        :type verbose:
+        :param to_loc:
+        :type to_loc:
+        :return: nothing
+        :rtype: nothing
+        """
+        if to_loc:
+            pass
+        now_wearing = False
+
+        def wear(ch, item_to_wear, loc, should_replace: bool=False):
+            if (item_to_wear.anti_evil and self.is_evil()) or (item_to_wear.anti_good and self.is_good()) \
+                    or (item_to_wear.anti_neutral and self.is_neutral()):
+                handler_game.act("You are zapped by $p and drop it.", self, item_to_wear, None, merc.TO_CHAR)
+                handler_game.act("$n is zapped by $p and drops it.", self, item_to_wear, None, merc.TO_ROOM)
+                item_to_wear.from_environment()
+                item_to_wear.to_environment(self.in_room)
+                return False
+            if should_replace:
+                if not ch.unequip(loc):
+                    return False
+            if not ch.is_npc():
+                if loc == 'main_hand':
+                    if item_to_wear.get_weight() > (const.str_app[self.stat(merc.STAT_STR)].wield * 10):
+                        ch.send('That weapon is too heavy for you to wield.\n')
+                        return False
+                    elif item_to_wear.two_handed:
+                        if ch.equipped['off_hand'] and ch.size < merc.SIZE_LARGE:
+                            ch.send('You need two hands free for that weapon.\n')
+                            return False
+                        elif ch.size < merc.SIZE_LARGE:
+                            ch.send('That weapon is too large for you to wield.\n')
+                            return False
+                        else:
+                            ch.equipped[loc] = item_to_wear.instance_id
+                            if ch.size == merc.SIZE_LARGE:
+                                ch.equipped['off_hand'] = item_to_wear.instance_id
+                            return True
+                    else:
+                        ch.equipped[loc] = item_to_wear.instance_id
+                        return True
+                elif loc == 'off_hand':
+                    if ch.equipped['main_hand'] and item_to_wear.two_handed and ch.size < merc.SIZE_LARGE:
+                        ch.send('Your hands are tied up with your weapon!\n')
+                        return False
+                    else:
+                        ch.equipped[loc] = item_to_wear.instance_id
+                        return True
+                else:
+                    ch.equipped[loc] = item_to_wear.instance_id
+                    return True
+            else:
+                ch.equipped[loc] = item_to_wear.instance_id
+                return True
+
+        open_slots = {k for k in self.equipped if self.equipped[k] is None}
+        possible_slots = item.equips_to & open_slots
+
+        if len(possible_slots) > 0:
+            success = wear(self, item, [k for k in possible_slots][0], False)
+            if not success:
                 return
+            else:
+                if verbose:
+                            self.verbose_wear_strings(item, [k for k in possible_slots][0])
+                now_wearing = True
+                self.contents.remove(item.instance_id)
+        else:
+            if replace:
+                all_slots = {k for k in self.equipped.keys()}
+                overlap = item.equips_to & all_slots
+                if len(overlap) > 0:
+                    success = wear(self, item, [k for k in overlap][0], True)
+                    if not success:
+                        return
+                    else:
+                        if verbose:
+                            self.verbose_wear_strings(item, [k for k in overlap][0])
+                        now_wearing = True
+                        self.contents.remove(item.instance_id)
+                else:
+                    self.send("You can't wear, wield, or hold that.\n")
+                    return
+            else:
+                if verbose:
+                    self.send("You are already wearing something like that!\n")
+                return
+        if now_wearing:
+
+            for i in range(4):
+                self.armor[i] -= item.apply_ac(i)
+            self.apply_affect(item)
+            if item.light and item.value[2] != 0 and self.in_room:
+                self.in_room.light += 1
+        return
+
+    def remove_affect(self, aff_object):
+        """
+        :param aff_object:
+        :type aff_object:
+        :return: Nothing
+        :rtype: none
+        Taken from unequip to shorten it, searches for Affects, and removes as needed
+        """
+        if aff_object.is_item and not aff_object.is_enchanted:
+            #No idea why ROM was going back to the template for this one.. but to make it accurate, for now.
+            for paf in merc.itemTemplate[aff_object.vnum].affected:
+                    if paf.location == merc.APPLY_SPELL_AFFECT:
+                        for lpaf in self.affected[:]:
+                            if lpaf.type == paf.type and lpaf.level == paf.level \
+                                    and lpaf.location == merc.APPLY_SPELL_AFFECT:
+                                self.affect_remove(lpaf)
+                                break
+                    else:
+                        self.affect_modify(paf, False)
+                        self.affect_check(paf.where, paf.bitvector)
+        for paf in aff_object.affected:
+            if paf.location == merc.APPLY_SPELL_AFFECT:
+                logger.error("Bug: Norm-Apply")
+                for lpaf in self.affected:
+                    if lpaf.type == paf.type and lpaf.level == paf.level and lpaf.location == merc.APPLY_SPELL_AFFECT:
+                        logger.error("bug: location = %d" % lpaf.location)
+                        logger.error("bug: type = %d" % lpaf.type)
+                        self.affect_remove(lpaf)
+                        break
+            else:
+                self.affect_modify(paf, False)
+                self.affect_check(paf.where, paf.bitvector)
+
+    # * Unequip a char with an obj.
+    def unequip(self, unequip_from, replace: bool=True):
+        """
+        :param unequip_from:
+        :type unequip_from:
+        :param replace:
+        :type replace:
+        :return:
+        :rtype:
+        """
+        item = self.get_eq(unequip_from)
+        if not item.is_item:
+            raise TypeError('Expected item on unequip, got %r' % type(item))
+        if not item:
+            raise ValueError("Unequip_char: already unequipped.")
+        if not replace:
+            return False
+        if item.no_remove:
+            handler_game.act("You can't remove $p.", self, item, None, merc.TO_CHAR)
+            return False
+        self.equipped[unequip_from] = None
+        self.contents += [item.instance_id]
+        for i in range(4):
+            self.armor[i] += item.apply_ac(item, i)
+        self.remove_affect(item)
+        if item.light and item.value[2] != 0 and self.in_room and self.in_room.light > 0:
+            self.in_room.light -= 1
+        handler_game.act("$n stops using $p.", self, item, None, merc.TO_ROOM)
+        handler_game.act("You stop using $p.", self, item, None, merc.TO_CHAR)
+        return True
+
+    def verbose_wear_strings(self, item, slot):
+        """
+        :param item:
+        :type item:
+        :param slot:
+        :type slot:
+        :return:
+        :rtype:
+        """
+        if slot == 'light':
             handler_game.act("$n lights $p and holds it.", self, item, None, merc.TO_ROOM)
             handler_game.act("You light $p and hold it.", self, item, None, merc.TO_CHAR)
-            self.equip(item, merc.WEAR_LIGHT)
             return
-        if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_FINGER):
-            if merc.items.get(self.get_eq(merc.WEAR_FINGER_L), None) and merc.items.get(self.get_eq(merc.WEAR_FINGER_R), None) \
-                    and not self.remove_item(merc.WEAR_FINGER_L, fReplace) \
-                    and not self.remove_item(merc.WEAR_FINGER_R, fReplace):
-                return
-            if not merc.items.get(self.get_eq(merc.WEAR_FINGER_L), None):
-                handler_game.act("$n wears $p on $s left finger.", self, item, None, merc.TO_ROOM)
-                handler_game.act("You wear $p on your left finger.", self, item, None, merc.TO_CHAR)
-                self.equip(item, merc.WEAR_FINGER_L)
-                return
-            if not merc.items.get(self.get_eq(merc.WEAR_FINGER_R), None):
-                handler_game.act("$n wears $p on $s right finger.", self, item, None, merc.TO_ROOM)
-                handler_game.act("You wear $p on your right finger.", self, item, None, merc.TO_CHAR)
-                self.equip(item, merc.WEAR_FINGER_R)
-                return
-            logger.error("BUG: Wear_obj: no free finger.")
-            self.send("You already wear two rings.\n")
+        elif slot == 'left_finger':
+            handler_game.act("$n wears $p on $s left finger.", self, item, None, merc.TO_ROOM)
+            handler_game.act("You wear $p on your left finger.", self, item, None, merc.TO_CHAR)
             return
-        if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_NECK):
-            if merc.items.get(self.get_eq(merc.WEAR_NECK_1), None) and merc.items.get(self.get_eq(merc.WEAR_NECK_2), None) \
-                    and not self.remove_item(merc.WEAR_NECK_1, fReplace) \
-                    and not self.remove_item(merc.WEAR_NECK_2, fReplace):
-                return
-            if not merc.items.get(self.get_eq(merc.WEAR_NECK_1), None):
-                handler_game.act("$n wears $p around $s neck.", self, item, None, merc.TO_ROOM)
-                handler_game.act("You wear $p around your neck.", self, item, None, merc.TO_CHAR)
-                self.equip(item, merc.WEAR_NECK_1)
-                return
-            if not merc.items.get(self.get_eq(merc.WEAR_NECK_2), None):
-                handler_game.act("$n wears $p around $s neck.", self, item, None, merc.TO_ROOM)
-                handler_game.act("You wear $p around your neck.", self, item, None, merc.TO_CHAR)
-                self.equip(item, merc.WEAR_NECK_2)
-                return
-            logger.error("BUG: Wear_obj: no free neck.")
-            self.send("You already wear two neck items.\n")
+        elif slot == 'right_finger':
+            handler_game.act("$n wears $p on $s right finger.", self, item, None, merc.TO_ROOM)
+            handler_game.act("You wear $p on your right finger.", self, item, None, merc.TO_CHAR)
             return
-        if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_BODY):
-            if not self.remove_item(merc.WEAR_BODY, fReplace):
-                return
+        elif slot == 'neck':
+            handler_game.act("$n wears $p around $s neck.", self, item, None, merc.TO_ROOM)
+            handler_game.act("You wear $p around your neck.", self, item, None, merc.TO_CHAR)
+            return
+        elif slot == 'collar':
+            handler_game.act("$n wears $p around $s collar.", self, item, None, merc.TO_ROOM)
+            handler_game.act("You wear $p around your collar.", self, item, None, merc.TO_CHAR)
+            return
+        elif slot == 'body':
             handler_game.act("$n wears $p on $s torso.", self, item, None, merc.TO_ROOM)
             handler_game.act("You wear $p on your torso.", self, item, None, merc.TO_CHAR)
-            self.equip(item, merc.WEAR_BODY)
             return
-        if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_HEAD):
-            if not self.remove_item(merc.WEAR_HEAD, fReplace):
-                return
+        elif slot == 'head':
             handler_game.act("$n wears $p on $s head.", self, item, None, merc.TO_ROOM)
             handler_game.act("You wear $p on your head.", self, item, None, merc.TO_CHAR)
-            self.equip(item, merc.WEAR_HEAD)
             return
-        if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_LEGS):
-            if not self.remove_item(merc.WEAR_LEGS, fReplace):
-                return
+        elif slot == 'legs':
             handler_game.act("$n wears $p on $s legs.", self, item, None, merc.TO_ROOM)
             handler_game.act("You wear $p on your legs.", self, item, None, merc.TO_CHAR)
-            self.equip(item, merc.WEAR_LEGS)
             return
-        if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_FEET):
-            if not self.remove_item(merc.WEAR_FEET, fReplace):
-                return
+        elif slot == 'feet':
             handler_game.act("$n wears $p on $s feet.", self, item, None, merc.TO_ROOM)
             handler_game.act("You wear $p on your feet.", self, item, None, merc.TO_CHAR)
-            self.equip(item, merc.WEAR_FEET)
             return
-        if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_HANDS):
-            if not self.remove_item(merc.WEAR_HANDS, fReplace):
-                return
+        elif slot == 'hands':
             handler_game.act("$n wears $p on $s hands.", self, item, None, merc.TO_ROOM)
             handler_game.act("You wear $p on your hands.", self, item, None, merc.TO_CHAR)
-            self.equip(item, merc.WEAR_HANDS)
             return
-        if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_ARMS):
-            if not self.remove_item(merc.WEAR_ARMS, fReplace):
-                return
+        elif slot == 'arms':
             handler_game.act("$n wears $p on $s arms.", self, item, None, merc.TO_ROOM)
             handler_game.act("You wear $p on your arms.", self, item, None, merc.TO_CHAR)
-            self.equip(item, merc.WEAR_ARMS)
             return
-        if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_ABOUT):
-            if not self.remove_item(merc.WEAR_ABOUT, fReplace):
-                return
+        elif slot == 'about':
             handler_game.act("$n wears $p about $s torso.", self, item, None, merc.TO_ROOM)
             handler_game.act("You wear $p about your torso.", self, item, None, merc.TO_CHAR)
-            self.equip(item, merc.WEAR_ABOUT)
             return
-        if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_WAIST):
-            if not self.remove_item(merc.WEAR_WAIST, fReplace):
-                return
+        elif slot == 'waist':
             handler_game.act("$n wears $p about $s waist.", self, item, None, merc.TO_ROOM)
             handler_game.act("You wear $p about your waist.", self, item, None, merc.TO_CHAR)
-            self.equip(item, merc.WEAR_WAIST)
             return
-        if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_WRIST):
-            if merc.items.get(self.get_eq(merc.WEAR_WRIST_L), None) and merc.items.get(self.get_eq(merc.WEAR_WRIST_R), None) \
-                    and not self.remove_item(merc.WEAR_WRIST_L, fReplace) and not self.remove_item(merc.WEAR_WRIST_R, fReplace):
-                return
-            if not merc.items.get(self.get_eq(merc.WEAR_WRIST_L), None):
-                handler_game.act("$n wears $p around $s left wrist.", self, item, None, merc.TO_ROOM)
-                handler_game.act("You wear $p around your left wrist.", self, item, None, merc.TO_CHAR)
-                self.equip(item, merc.WEAR_WRIST_L)
-                return
-            if not merc.items.get(self.get_eq(merc.WEAR_WRIST_R), None):
-                handler_game.act("$n wears $p around $s right wrist.", self, item, None, merc.TO_ROOM)
-                handler_game.act("You wear $p around your right wrist.", self, item, None, merc.TO_CHAR)
-                self.equip(item, merc.WEAR_WRIST_R)
-                return
-
-            logger.error("BUG: Wear_obj: no free wrist.")
-            self.send("You already wear two wrist items.\n")
+        elif slot == 'left_wrist':
+            handler_game.act("$n wears $p around $s left wrist.", self, item, None, merc.TO_ROOM)
+            handler_game.act("You wear $p around your left wrist.", self, item, None, merc.TO_CHAR)
             return
-        if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_SHIELD):
-            if not self.remove_item(merc.WEAR_SHIELD, fReplace):
-                return
-            weapon = merc.items.get(self.get_eq(merc.WEAR_WIELD), None)
-            if weapon and self.size < merc.SIZE_LARGE and state_checks.IS_WEAPON_STAT(weapon, merc.WEAPON_TWO_HANDS):
-                self.send("Your hands are tied up with your weapon!\n")
-                return
+        elif slot == 'right_wrist':
+            handler_game.act("$n wears $p around $s right wrist.", self, item, None, merc.TO_ROOM)
+            handler_game.act("You wear $p around your right wrist.", self, item, None, merc.TO_CHAR)
+            return
+        elif slot == 'off_hand':
             handler_game.act("$n wears $p as a shield.", self, item, None, merc.TO_ROOM)
             handler_game.act("You wear $p as a shield.", self, item, None, merc.TO_CHAR)
-            self.equip(item, merc.WEAR_SHIELD)
             return
-        if state_checks.CAN_WEAR(item, merc.ITEM_WIELD):
-            if not self.remove_item(merc.WEAR_WIELD, fReplace):
-                return
-            if not self.is_npc() and item.get_weight() > (const.str_app[self.stat(merc.STAT_STR)].wield * 10):
-                self.send("It is too heavy for you to wield.\n")
-                return
-            if not self.is_npc() and self.size < merc.SIZE_LARGE \
-                    and state_checks.IS_WEAPON_STAT(item, merc.WEAPON_TWO_HANDS) \
-                    and merc.items.get(self.get_eq(merc.WEAR_SHIELD), None) is not None:
-                self.send("You need two hands free for that weapon.\n")
-                return
+        elif slot == 'main_hand':
             handler_game.act("$n wields $p.", self, item, None, merc.TO_ROOM)
             handler_game.act("You wield $p.", self, item, None, merc.TO_CHAR)
-            self.equip(item, merc.WEAR_WIELD)
-
             sn = self.get_weapon_sn()
-
             if sn == "hand to hand":
                 return
-
             skill = self.get_weapon_skill(sn)
             if skill >= 100:
                 handler_game.act("$p feels like a part of you!", self, item, None, merc.TO_CHAR)
@@ -1126,35 +1183,15 @@ class Living(type_bypass.ObjectType, immortal.Immortal, Fight, Grouping, physica
             else:
                 handler_game.act("You don't even know which end is up on $p.", self, item, None, merc.TO_CHAR)
             return
-        if state_checks.CAN_WEAR(item, merc.ITEM_HOLD):
-            if not self.remove_item(merc.WEAR_HOLD, fReplace):
-                return
+        elif slot == 'held':
             handler_game.act("$n holds $p in $s hand.", self, item, None, merc.TO_ROOM)
             handler_game.act("You hold $p in your hand.", self, item, None, merc.TO_CHAR)
-            self.equip(item, merc.WEAR_HOLD)
             return
-        if state_checks.CAN_WEAR(item, merc.ITEM_WEAR_FLOAT):
-            if not self.remove_item(merc.WEAR_FLOAT, fReplace):
-                return
+        elif slot == 'float':
             handler_game.act("$n releases $p to float next to $m.", self, item, None, merc.TO_ROOM)
             handler_game.act("You release $p and it floats next to you.", self, item, None, merc.TO_CHAR)
-            self.equip(item, merc.WEAR_FLOAT)
             return
-        if fReplace:
-            self.send("You can't wear, wield, or hold that.\n")
-        return
+        else:
+            raise LookupError('Unable to find verbose wear string for %s' % slot)
 
-    def remove_item(self, iWear, fReplace):
-        item = merc.items.get(self.get_eq(iWear), None)
-        if not item:
-            return True
-        if not fReplace:
-            return False
-        if state_checks.IS_SET(item.extra_flags, merc.ITEM_NOREMOVE):
-            handler_game.act("You can't remove $p.", self, item, None, merc.TO_CHAR)
-            return False
-        self.unequip(item)
-        handler_game.act("$n stops using $p.", self, item, None, merc.TO_ROOM)
-        handler_game.act("You stop using $p.", self, item, None, merc.TO_CHAR)
-        return True
 

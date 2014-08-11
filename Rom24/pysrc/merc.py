@@ -34,6 +34,7 @@
 
 import time
 import logging
+import collections
 
 logger = logging.getLogger()
 
@@ -667,6 +668,12 @@ rom_wear_loc_map = {-1: None,
 
 # * Equpiment wear locations.
 # * Used in #RESETS.
+
+wear_num_to_str = collections.OrderedDict([(-1, 'none'), (0, 'light'), (1, 'left_finger'), (2, 'right_finger'),
+                                           (3, 'neck'), (4, 'collar'), (5, 'body'), (6, 'head'), (7, 'legs'),
+                                           (8, 'feet'), (9, 'hands'), (10, 'arms'), (11, 'unused'), (12, 'about'),
+                                           (13, 'waist'), (14, 'left_wrist'), (15, 'right_wrist'), (16, 'main_hand'),
+                                           (17, 'off_hand'), (18, 'float')])
 
 WEAR_NONE = -1
 WEAR_LIGHT = 0

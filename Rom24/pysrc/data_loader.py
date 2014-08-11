@@ -202,9 +202,9 @@ def load_objects(area, pArea):
         game_utils.item_flags_from_bits(wear_bits, flag_data, 'wear flags')
         if 'light' == item.item_type:
             flag_data.slots.update({'Light'})
-        item.equips_to(flag_data.slots)
-        item.item_restrictions(flag_data.restrictions)
-        item.item_attributes(flag_data.attributes)
+        item.equips_to = flag_data.slots
+        item.item_restrictions = flag_data.restrictions
+        item.item_attributes = flag_data.attributes
 
         if item.item_type == merc.ITEM_WEAPON:
             area, item.value[0] = game_utils.read_word(area, False)
@@ -214,7 +214,7 @@ def load_objects(area, pArea):
             item.value[3] = state_checks.name_lookup(const.attack_table, item.value[3])
             area, item.value[4] = game_utils.read_flags(area)
             game_utils.item_flags_from_bits(item.value[4], flag_data, 'weapon flags')
-            item.weapon_attributes(flag_data.weapon)
+            item.weapon_attributes = flag_data.weapon
         elif item.item_type == merc.ITEM_CONTAINER:
             area, item.value[0] = game_utils.read_int(area)
             area, item.value[1] = game_utils.read_flags(area)

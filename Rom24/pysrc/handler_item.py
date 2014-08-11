@@ -36,13 +36,12 @@ import logging
 
 logger = logging.getLogger()
 
+import instance
 import type_bypass
 import container
 import physical
 import location
-import const
 import handler_game
-import handler
 import object_creator
 import merc
 import state_checks
@@ -50,29 +49,28 @@ import item_flags
 
 # * One object.
 
-'''Equip "Flags", replacing wear_flags
-    Key - Location
-    Values
-        Equipped to this slot? T/F
-        Multiple Slots Required? T/F'''
+'''Equip "Flags":
+Keyword: internal identifier
+Value: String Representation'''
 equips_to_strings = {'left_finger': 'Left Finger',
-                  'right_finger': 'Right Finger',
-                  'neck': 'Neck',
-                  'collar': 'Collar',
-                  'body': 'Body',
-                  'head': 'Head',
-                  'legs': 'Legs',
-                  'feet': 'Feet',
-                  'hands': 'Hands',
-                  'arms': 'Arms',
-                  'about': 'About Body',
-                  'left_wrist': 'Left Wrist',
-                  'right_wrist': 'Right Wrist',
-                  'waist': 'Waist',
-                  'main_hand': 'Main Hand',
-                  'off_hand': 'Off Hand',
-                  'float': 'Float',
-                  'light': 'Light'}
+                     'right_finger': 'Right Finger',
+                     'neck': 'Neck',
+                     'collar': 'Collar',
+                     'body': 'Body',
+                     'head': 'Head',
+                     'legs': 'Legs',
+                     'feet': 'Feet',
+                     'hands': 'Hands',
+                     'arms': 'Arms',
+                     'about': 'About Body',
+                     'left_wrist': 'Left Wrist',
+                     'right_wrist': 'Right Wrist',
+                     'waist': 'Waist',
+                     'main_hand': 'Main Hand',
+                     'off_hand': 'Off Hand',
+                     'held': 'Held',
+                     'float': 'Float',
+                     'light': 'Light'}
 
 item_restriction_strings = {'no_drop': 'No Drop',
                             'no_remove': 'No Remove',
@@ -111,7 +109,8 @@ weapon_attribute_strings = {'flaming': 'Flaming',
                             'poison': 'Poison'}
 
 
-class Items(type_bypass.ObjectType, handler.Instancer, location.Location, physical.Physical, container.Container, item_flags.ItemFlags):
+class Items(instance.Instancer, location.Location, physical.Physical, container.Container,
+            item_flags.ItemFlags, type_bypass.ObjectType):
     def __init__(self, template=None):
         super().__init__()
         self.is_item = True
@@ -309,17 +308,15 @@ class Items(type_bypass.ObjectType, handler.Instancer, location.Location, physic
         del merc.global_instances[self.instance_id]
         # Remove an object.
 
-    def apply_ac(self, iWear, loc):
+    def apply_ac(self, loc):
         if self.item_type != merc.ITEM_ARMOR:
             return 0
-
-        multi = {merc.WEAR_BODY: 3, merc.WEAR_HEAD: 2, merc.WEAR_LEGS: 2, merc.WEAR_ABOUT: 2}
-        if iWear in multi:
-            return multi[iWear] * self.value[loc]
+        multi = {'body': 3, 'head': 2, 'legs': 2, 'about': 2}
+        for worn_on in self.equipped_to:
+            if worn_on in multi.keys():
+                return multi[worn_on] * self.value[loc]
         else:
             return self.value[loc]
-
-
 
     # enchanted stuff for eq */
     def affect_enchant(self):
@@ -401,6 +398,7 @@ class Items(type_bypass.ObjectType, handler.Instancer, location.Location, physic
                 if person.on == self.instance_id:
                     total += 1
         return total
+
 
 def get_item(ch, item, this_container):
     # variables for AUTOSPLIT
@@ -489,7 +487,7 @@ def format_item_to_char(item, ch, fShort):
     if item.hum:
         buf += "(Humming) "
 
-    if use_short:
+    if fShort:
         if item.short_descr:
             buf += item.short_descr
     else:

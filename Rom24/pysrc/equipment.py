@@ -13,9 +13,3 @@ class Equipment:
 
     def unequip(self):
         pass
-
-    def apply_paf(self):
-        pass
-
-    def remove_paf(self):
-        pass

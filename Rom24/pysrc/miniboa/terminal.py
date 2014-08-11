@@ -111,7 +111,7 @@ class Xlator(dict):
         return self._make_regex().sub(self, text)
 
 
-def color_convert(text: str, input_type='pyom', output_type='ansi'):
+def color_convert(text: str or None, input_type='pyom', output_type='ansi'):
     """
     Given a chunk of text, replace color tokens of the specified input type
     with the appropriate color codes for the given output terminal type

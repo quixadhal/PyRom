@@ -278,7 +278,7 @@ def reset_area(area):
                         olevel = random.randint(10, 20)
 
                 item = object_creator.create_item(item_template, olevel)
-                item.extra_flags = state_checks.SET_BIT(item.extra_flags, merc.ITEM_INVENTORY)
+                item.inventory = True
             else:
                 if pReset.arg2 > 50:  # old format */
                     limit = 6
@@ -304,7 +304,7 @@ def reset_area(area):
                     continue
             item.to_environment(mob)
             if pReset.command == 'E':
-                mob.equip(item.instance_id, pReset.arg3)
+                mob.equip(item, True, False)
                 last = True
                 continue
 

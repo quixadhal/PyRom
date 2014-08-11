@@ -186,7 +186,7 @@ class Affects:
         #
         # * Check for weapon wielding.
         # * Guard against recursion (for weapons with affects).
-        wield = merc.items.get(self.get_eq(merc.WEAR_WIELD), None)
+        wield = self.get_eq('main_hand')
         if not self.is_npc() and wield \
                 and wield.get_weight() > (const.str_app[self.stat(merc.STAT_STR)].wield * 10):
             global depth

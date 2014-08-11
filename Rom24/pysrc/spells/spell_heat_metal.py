@@ -4,7 +4,6 @@ import const
 import fight
 import handler_game
 import handler_magic
-import handler_item
 import merc
 import state_checks
 
@@ -12,74 +11,76 @@ import state_checks
 def spell_heat_metal(sn, level, ch, victim, target):
     fail = True
 
-    if not handler_magic.saves_spell(level + 2, victim, merc.DAM_FIRE) and not state_checks.IS_SET(victim.imm_flags,
-                                                                                                   merc.IMM_FIRE):
-        for obj_lose in victim.contents[:]:
-            if random.randint(1, 2 * level) > obj_lose.level \
+    if not handler_magic.saves_spell(level + 2, victim, merc.DAM_FIRE) \
+            and not state_checks.IS_SET(victim.imm_flags, merc.IMM_FIRE):
+        total_items = set({})
+        total_items.update([an_item for an_item in victim.equipped.values()])
+        total_items.update(victim.contents)
+        for item_id in total_items:
+            item = merc.items[item_id]
+            if random.randint(1, 2 * level) > item.level \
                     and not handler_magic.saves_spell(level, victim, merc.DAM_FIRE) \
-                    and not state_checks.is_item_stat(obj_lose, merc.ITEM_NONMETAL) \
-                    and not state_checks.is_item_stat(obj_lose, merc.ITEM_BURN_PROOF):
-                if obj_lose.item_type == merc.ITEM_ARMOR:
-                    if obj_lose.wear_loc != -1:  # remove the item */
-                        if victim.can_drop_item(obj_lose) \
-                                and (obj_lose.weight // 10) < random.randint(1, 2 * victim.stat(merc.STAT_DEX)) \
-                                and victim.remove_item(obj_lose.wear_loc, True):
-                            handler_game.act("$n yelps and throws $p to the ground! ", victim, obj_lose, None,
+                    and not item.non_metal and not item.burn_proof:
+                if item.item_type == merc.ITEM_ARMOR:
+                    if item.equipped_to:  # remove the item */
+                        if victim.can_drop_item(item) \
+                                and (item.weight // 10) < random.randint(1, 2 * victim.stat(merc.STAT_DEX)) \
+                                and victim.unequip(item.equipped_to, True):
+                            handler_game.act("$n yelps and throws $p to the ground! ", victim, item, None,
                                              merc.TO_ROOM)
-                            handler_game.act("You remove and drop $p before it burns you.", victim, obj_lose, None,
+                            handler_game.act("You remove and drop $p before it burns you.", victim, item, None,
                                              merc.TO_CHAR)
-                            dam += (random.randint(1, obj_lose.level) // 3)
-                            obj_lose.from_environment()
-                            obj_lose.to_environment(victim.in_room)
+                            dam += (random.randint(1, item.level) // 3)
+                            item.from_environment()
+                            item.to_environment(victim.in_room)
                             fail = False
                         else:  # stuck on the body!  ouch!  */
-                            handler_game.act("Your skin is seared by $p! ",
-                                victim, obj_lose, None, merc.TO_CHAR)
-                            dam += (random.randint(1, obj_lose.level))
+                            handler_game.act("Your skin is seared by $p! ", victim, item, None, merc.TO_CHAR)
+                            dam += (random.randint(1, item.level))
                             fail = False
                     else:  # drop it if we can */
-                        if victim.can_drop_item(obj_lose):
-                            handler_game.act("$n yelps and throws $p to the ground! ", victim, obj_lose, None,
+                        if victim.can_drop_item(item):
+                            handler_game.act("$n yelps and throws $p to the ground! ", victim, item, None,
                                              merc.TO_ROOM)
-                            handler_game.act("You and drop $p before it burns you.", victim, obj_lose, None,
+                            handler_game.act("You and drop $p before it burns you.", victim, item, None,
                                              merc.TO_CHAR)
-                            dam += (random.randint(1, obj_lose.level) // 6)
-                            obj_lose.from_environment()
-                            obj_lose.to_environment(victim.in_room)
+                            dam += (random.randint(1, item.level) // 6)
+                            item.from_environment()
+                            item.to_environment(victim.in_room)
                             fail = False
                         else:  # can! drop */
-                            handler_game.act("Your skin is seared by $p! ", victim, obj_lose, None, merc.TO_CHAR)
-                            dam += (random.randint(1, obj_lose.level) // 2)
+                            handler_game.act("Your skin is seared by $p! ", victim, item, None, merc.TO_CHAR)
+                            dam += (random.randint(1, item.level) // 2)
                             fail = False
-                if obj_lose.item_type == merc.ITEM_WEAPON:
-                    if obj_lose.wear_loc != -1:  # try to drop it */
-                        if state_checks.IS_WEAPON_STAT(obj_lose, merc.WEAPON_FLAMING):
+                if item.item_type == merc.ITEM_WEAPON:
+                    if item.equipped_to:  # try to drop it */
+                        if item.flaming:
                             continue
-                        if victim.can_drop_item(obj_lose) and victim.remove_item(obj_lose.wear_loc, True):
-                            handler_game.act("$n is burned by $p, and throws it to the ground.", victim, obj_lose, None,
+                        if victim.can_drop_item(item) and victim.unequip(item.equipped_to, True):
+                            handler_game.act("$n is burned by $p, and throws it to the ground.", victim, item, None,
                                              merc.TO_ROOM)
                             victim.send("You throw your red-hot weapon to the ground! \n")
                             dam += 1
-                            obj_lose.from_environment()
-                            obj_lose.to_environment(victim.in_room)
+                            item.from_environment()
+                            item.to_environment(victim.in_room)
                             fail = False
                         else:  # YOWCH!  */
                             victim.send("Your weapon sears your flesh! \n")
-                            dam += random.randint(1, obj_lose.level)
+                            dam += random.randint(1, item.level)
                             fail = False
                     else:  # drop it if we can */
-                        if victim.can_drop_item(obj_lose):
-                            handler_game.act("$n throws a burning hot $p to the ground! ", victim, obj_lose, None,
+                        if victim.can_drop_item(item):
+                            handler_game.act("$n throws a burning hot $p to the ground! ", victim, item, None,
                                              merc.TO_ROOM)
-                            handler_game.act("You and drop $p before it burns you.", victim, obj_lose, None,
+                            handler_game.act("You and drop $p before it burns you.", victim, item, None,
                                              merc.TO_CHAR)
-                            dam += (random.randint(1, obj_lose.level) // 6)
-                            obj_lose.from_environment()
-                            obj_lose.to_environment(victim.in_room)
+                            dam += (random.randint(1, item.level) // 6)
+                            item.from_environment()
+                            item.to_environment(victim.in_room)
                             fail = False
                         else:  # can! drop */
-                            handler_game.act("Your skin is seared by $p! ", victim, obj_lose, None, merc.TO_CHAR)
-                            dam += (random.randint(1, obj_lose.level) // 2)
+                            handler_game.act("Your skin is seared by $p! ", victim, item, None, merc.TO_CHAR)
+                            dam += (random.randint(1, item.level) // 2)
                             fail = False
     if fail:
         ch.send("Your spell had no effect.\n")
@@ -90,8 +91,7 @@ def spell_heat_metal(sn, level, ch, victim, target):
         fight.damage(ch, victim, dam, sn, merc.DAM_FIRE, True)
 
 
-const.register_spell(const.skill_type("heat metal",
-                          {'mage': 53, 'cleric': 16, 'thief': 53, 'warrior': 23},
-                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_heat_metal, merc.TAR_CHAR_OFFENSIVE, merc.POS_FIGHTING,
-                          None, const.SLOT(516), 25, 18, "spell", "!Heat Metal!", ""))
+const.register_spell(const.skill_type("heat metal", {'mage': 53, 'cleric': 16, 'thief': 53, 'warrior': 23},
+                                      {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
+                                      spell_heat_metal, merc.TAR_CHAR_OFFENSIVE, merc.POS_FIGHTING,
+                                      None, const.SLOT(516), 25, 18, "spell", "!Heat Metal!", ""))

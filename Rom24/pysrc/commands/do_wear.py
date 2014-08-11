@@ -15,15 +15,15 @@ def do_wear(ch, argument):
     if arg == "all":
         for item_id in ch.items:
             item = merc.items.get(item_id, None)
-            if item.wear_loc == merc.WEAR_NONE and ch.can_see_item(item):
-                ch.equip(item.instance_id, item.wear_loc)
+            if ch.can_see_item(item):
+                ch.wear_item(item, False)
         return
     else:
         item = ch.get_item_carry(arg, ch)
         if not item:
             ch.send("You do not have that item.\n")
             return
-        ch.equip(item.instance_id, item.wear_loc)
+        ch.wear_item(item, True)
     return
 
 

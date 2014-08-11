@@ -31,6 +31,7 @@ class ItemFlags(equipment.Equipment):
         self._main_hand = False
         self._float = False
         self._body = False
+        self._held = False
         # Item Attribute Flags
         self._melt_drop = False
         self._rot_death = False
@@ -74,7 +75,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.equips_to.set else False
+        return func_name if func_name in self.equips_to else False
 
     @head.setter
     def head(self, is_equippable):
@@ -83,9 +84,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if is_equippable:
-            self.equips_to.set.add(func_name)
+            self.equips_to |= {func_name}
         else:
-            self.equips_to.set.discard(func_name)
+            self.equips_to -= {func_name}
 
     @property
     def legs(self):
@@ -93,7 +94,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.equips_to.set else False
+        return func_name if func_name in self.equips_to else False
 
     @legs.setter
     def legs(self, is_equippable):
@@ -102,9 +103,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if is_equippable:
-            self.equips_to.set.add(func_name)
+            self.equips_to |= {func_name}
         else:
-            self.equips_to.set.discard(func_name)
+            self.equips_to -= {func_name}
 
     @property
     def feet(self):
@@ -112,7 +113,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.equips_to.set else False
+        return func_name if func_name in self.equips_to else False
 
     @feet.setter
     def feet(self, is_equippable):
@@ -121,9 +122,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if is_equippable:
-            self.equips_to.set.add(func_name)
+            self.equips_to |= {func_name}
         else:
-            self.equips_to.set.discard(func_name)
+            self.equips_to -= {func_name}
 
     @property
     def hands(self):
@@ -131,7 +132,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.equips_to.set else False
+        return func_name if func_name in self.equips_to else False
 
     @hands.setter
     def hands(self, is_equippable):
@@ -140,9 +141,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if is_equippable:
-            self.equips_to.set.add(func_name)
+            self.equips_to |= {func_name}
         else:
-            self.equips_to.set.discard(func_name)
+            self.equips_to -= {func_name}
 
     @property
     def float(self):
@@ -150,7 +151,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.equips_to.set else False
+        return func_name if func_name in self.equips_to else False
 
     @float.setter
     def float(self, is_equippable):
@@ -159,9 +160,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if is_equippable:
-            self.equips_to.set.add(func_name)
+            self.equips_to |= {func_name}
         else:
-            self.equips_to.set.discard(func_name)
+            self.equips_to -= {func_name}
 
     @property
     def left_finger(self):
@@ -169,7 +170,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.equips_to.set else False
+        return func_name if func_name in self.equips_to else False
 
     @left_finger.setter
     def left_finger(self, is_equippable):
@@ -178,9 +179,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if is_equippable:
-            self.equips_to.set.add(func_name)
+            self.equips_to |= {func_name}
         else:
-            self.equips_to.set.discard(func_name)
+            self.equips_to -= {func_name}
 
     @property
     def right_finger(self):
@@ -188,7 +189,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.equips_to.set else False
+        return func_name if func_name in self.equips_to else False
 
     @right_finger.setter
     def right_finger(self, is_equippable):
@@ -197,9 +198,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if is_equippable:
-            self.equips_to.set.add(func_name)
+            self.equips_to |= {func_name}
         else:
-            self.equips_to.set.discard(func_name)
+            self.equips_to -= {func_name}
 
     @property
     def right_wrist(self):
@@ -207,7 +208,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.equips_to.set else False
+        return func_name if func_name in self.equips_to else False
 
     @right_wrist.setter
     def right_wrist(self, is_equippable):
@@ -216,9 +217,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if is_equippable:
-            self.equips_to.set.add(func_name)
+            self.equips_to |= {func_name}
         else:
-            self.equips_to.set.discard(func_name)
+            self.equips_to -= {func_name}
 
     @property
     def left_wrist(self):
@@ -226,7 +227,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.equips_to.set else False
+        return func_name if func_name in self.equips_to else False
 
     @left_wrist.setter
     def left_wrist(self, is_equippable):
@@ -235,9 +236,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if is_equippable:
-            self.equips_to.set.add(func_name)
+            self.equips_to |= {func_name}
         else:
-            self.equips_to.set.discard(func_name)
+            self.equips_to -= {func_name}
 
     @property
     def waist(self):
@@ -245,7 +246,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.equips_to.set else False
+        return func_name if func_name in self.equips_to else False
 
     @waist.setter
     def waist(self, is_equippable):
@@ -254,9 +255,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if is_equippable:
-            self.equips_to.set.add(func_name)
+            self.equips_to |= {func_name}
         else:
-            self.equips_to.set.discard(func_name)
+            self.equips_to -= {func_name}
 
     @property
     def about_body(self):
@@ -264,7 +265,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.equips_to.set else False
+        return func_name if func_name in self.equips_to else False
 
     @about_body.setter
     def about_body(self, is_equippable):
@@ -273,9 +274,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if is_equippable:
-            self.equips_to.set.add(func_name)
+            self.equips_to |= {func_name}
         else:
-            self.equips_to.set.discard(func_name)
+            self.equips_to -= {func_name}
 
     @property
     def light(self):
@@ -283,7 +284,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.equips_to.set else False
+        return func_name if func_name in self.equips_to else False
 
     @light.setter
     def light(self, is_equippable):
@@ -292,9 +293,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if is_equippable:
-            self.equips_to.set.add(func_name)
+            self.equips_to |= {func_name}
         else:
-            self.equips_to.set.discard(func_name)
+            self.equips_to -= {func_name}
 
     @property
     def body(self):
@@ -302,7 +303,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.equips_to.set else False
+        return func_name if func_name in self.equips_to else False
 
     @body.setter
     def body(self, is_equippable):
@@ -311,9 +312,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if is_equippable:
-            self.equips_to.set.add(func_name)
+            self.equips_to |= {func_name}
         else:
-            self.equips_to.set.discard(func_name)
+            self.equips_to -= {func_name}
 
     @property
     def neck(self):
@@ -321,7 +322,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.equips_to.set else False
+        return func_name if func_name in self.equips_to else False
 
     @neck.setter
     def neck(self, is_equippable):
@@ -330,9 +331,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if is_equippable:
-            self.equips_to.set.add(func_name)
+            self.equips_to |= {func_name}
         else:
-            self.equips_to.set.discard(func_name)
+            self.equips_to -= {func_name}
 
     @property
     def collar(self):
@@ -340,7 +341,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.equips_to.set else False
+        return func_name if func_name in self.equips_to else False
 
     @collar.setter
     def collar(self, is_equippable):
@@ -349,9 +350,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if is_equippable:
-            self.equips_to.set.add(func_name)
+            self.equips_to |= {func_name}
         else:
-            self.equips_to.set.discard(func_name)
+            self.equips_to -= {func_name}
 
     @property
     def arms(self):
@@ -359,7 +360,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.equips_to.set else False
+        return func_name if func_name in self.equips_to else False
 
     @arms.setter
     def arms(self, is_equippable):
@@ -368,9 +369,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if is_equippable:
-            self.equips_to.set.add(func_name)
+            self.equips_to |= {func_name}
         else:
-            self.equips_to.set.discard(func_name)
+            self.equips_to -= {func_name}
 
     @property
     def off_hand(self):
@@ -378,7 +379,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.equips_to.set else False
+        return func_name if func_name in self.equips_to else False
 
     @off_hand.setter
     def off_hand(self, is_equippable):
@@ -387,9 +388,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if is_equippable:
-            self.equips_to.set.add(func_name)
+            self.equips_to |= {func_name}
         else:
-            self.equips_to.set.discard(func_name)
+            self.equips_to -= {func_name}
 
     @property
     def main_hand(self):
@@ -397,7 +398,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.equips_to.set else False
+        return func_name if func_name in self.equips_to else False
 
     @main_hand.setter
     def main_hand(self, is_equippable):
@@ -406,9 +407,28 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if is_equippable:
-            self.equips_to.set.add(func_name)
+            self.equips_to |= {func_name}
         else:
-            self.equips_to.set.discard(func_name)
+            self.equips_to -= {func_name}
+
+    @property
+    def held(self):
+        """
+       TODO: write documentation
+       """
+        func_name = sys._getframe().f_code.co_name
+        return func_name if func_name in self.equips_to else False
+
+    @main_hand.setter
+    def held(self, is_equippable):
+        """
+       TODO: write documentation
+       """
+        func_name = sys._getframe().f_code.co_name
+        if is_equippable:
+            self.equips_to |= {func_name}
+        else:
+            self.equips_to -= {func_name}
 
     # Item Attribute Flags
     @property
@@ -417,7 +437,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_attributes.set else False
+        return func_name if func_name in self.item_attributes else False
 
     @melt_drop.setter
     def melt_drop(self, has_attr):
@@ -426,9 +446,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_attr:
-            self.item_attributes.set.add(func_name)
+            self.item_attributes |= {func_name}
         else:
-            self.item_attributes.set.discard(func_name)
+            self.item_attributes -= {func_name}
 
     @property
     def rot_death(self):
@@ -436,7 +456,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_attributes.set else False
+        return func_name if func_name in self.item_attributes else False
 
     @rot_death.setter
     def rot_death(self, has_attr):
@@ -445,9 +465,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_attr:
-            self.item_attributes.set.add(func_name)
+            self.item_attributes |= {func_name}
         else:
-            self.item_attributes.set.discard(func_name)
+            self.item_attributes -= {func_name}
 
     @property
     def vis_death(self):
@@ -455,7 +475,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_attributes.set else False
+        return func_name if func_name in self.item_attributes else False
 
     @vis_death.setter
     def vis_death(self, has_attr):
@@ -464,9 +484,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_attr:
-            self.item_attributes.set.add(func_name)
+            self.item_attributes |= {func_name}
         else:
-            self.item_attributes.set.discard(func_name)
+            self.item_attributes -= {func_name}
 
     @property
     def sell_extract(self):
@@ -474,7 +494,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_attributes.set else False
+        return func_name if func_name in self.item_attributes else False
 
     @sell_extract.setter
     def sell_extract(self, has_attr):
@@ -483,9 +503,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_attr:
-            self.item_attributes.set.add(func_name)
+            self.item_attributes |= {func_name}
         else:
-            self.item_attributes.set.discard(func_name)
+            self.item_attributes -= {func_name}
 
     @property
     def magic(self):
@@ -493,7 +513,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_attributes.set else False
+        return func_name if func_name in self.item_attributes else False
 
     @magic.setter
     def magic(self, has_attr):
@@ -502,9 +522,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_attr:
-            self.item_attributes.set.add(func_name)
+            self.item_attributes |= {func_name}
         else:
-            self.item_attributes.set.discard(func_name)
+            self.item_attributes -= {func_name}
 
     @property
     def glow(self):
@@ -512,7 +532,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_attributes.set else False
+        return func_name if func_name in self.item_attributes else False
 
     @glow.setter
     def glow(self, has_attr):
@@ -521,9 +541,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_attr:
-            self.item_attributes.set.add(func_name)
+            self.item_attributes |= {func_name}
         else:
-            self.item_attributes.set.discard(func_name)
+            self.item_attributes -= {func_name}
 
     @property
     def hum(self):
@@ -531,7 +551,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_attributes.set else False
+        return func_name if func_name in self.item_attributes else False
 
     @hum.setter
     def hum(self, has_attr):
@@ -540,9 +560,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_attr:
-            self.item_attributes.set.add(func_name)
+            self.item_attributes |= {func_name}
         else:
-            self.item_attributes.set.discard(func_name)
+            self.item_attributes -= {func_name}
 
     @property
     def dark(self):
@@ -550,7 +570,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_attributes.set else False
+        return func_name if func_name in self.item_attributes else False
 
     @dark.setter
     def dark(self, has_attr):
@@ -559,9 +579,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_attr:
-            self.item_attributes.set.add(func_name)
+            self.item_attributes |= {func_name}
         else:
-            self.item_attributes.set.discard(func_name)
+            self.item_attributes -= {func_name}
 
     @property
     def lock(self):
@@ -569,7 +589,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_attributes.set else False
+        return func_name if func_name in self.item_attributes else False
 
     @lock.setter
     def lock(self, has_attr):
@@ -578,9 +598,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_attr:
-            self.item_attributes.set.add(func_name)
+            self.item_attributes |= {func_name}
         else:
-            self.item_attributes.set.discard(func_name)
+            self.item_attributes -= {func_name}
 
     @property
     def evil(self):
@@ -588,7 +608,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_attributes.set else False
+        return func_name if func_name in self.item_attributes else False
 
     @evil.setter
     def evil(self, has_attr):
@@ -597,9 +617,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_attr:
-            self.item_attributes.set.add(func_name)
+            self.item_attributes |= {func_name}
         else:
-            self.item_attributes.set.discard(func_name)
+            self.item_attributes -= {func_name}
 
     @property
     def invis(self):
@@ -607,7 +627,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_attributes.set else False
+        return func_name if func_name in self.item_attributes else False
 
     @invis.setter
     def invis(self, has_attr):
@@ -616,9 +636,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_attr:
-            self.item_attributes.set.add(func_name)
+            self.item_attributes |= {func_name}
         else:
-            self.item_attributes.set.discard(func_name)
+            self.item_attributes -= {func_name}
 
     @property
     def bless(self):
@@ -626,7 +646,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_attributes.set else False
+        return func_name if func_name in self.item_attributes else False
 
     @bless.setter
     def bless(self, has_attr):
@@ -635,9 +655,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_attr:
-            self.item_attributes.set.add(func_name)
+            self.item_attributes |= {func_name}
         else:
-            self.item_attributes.set.discard(func_name)
+            self.item_attributes -= {func_name}
 
     @property
     def non_metal(self):
@@ -645,7 +665,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_attributes.set else False
+        return func_name if func_name in self.item_attributes else False
 
     @non_metal.setter
     def non_metal(self, has_attr):
@@ -654,9 +674,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_attr:
-            self.item_attributes.set.add(func_name)
+            self.item_attributes |= {func_name}
         else:
-            self.item_attributes.set.discard(func_name)
+            self.item_attributes -= {func_name}
 
     @property
     def had_timer(self):
@@ -664,7 +684,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_attributes.set else False
+        return func_name if func_name in self.item_attributes else False
 
     @had_timer.setter
     def had_timer(self, has_attr):
@@ -673,9 +693,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_attr:
-            self.item_attributes.set.add(func_name)
+            self.item_attributes |= {func_name}
         else:
-            self.item_attributes.set.discard(func_name)
+            self.item_attributes -= {func_name}
 
     @property
     def burn_proof(self):
@@ -683,7 +703,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_attributes.set else False
+        return func_name if func_name in self.item_attributes else False
 
     @burn_proof.setter
     def burn_proof(self, has_attr):
@@ -692,9 +712,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_attr:
-            self.item_attributes.set.add(func_name)
+            self.item_attributes |= {func_name}
         else:
-            self.item_attributes.set.discard(func_name)
+            self.item_attributes -= {func_name}
 
     @property
     def take(self):
@@ -702,7 +722,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_attributes.set else False
+        return func_name if func_name in self.item_attributes else False
 
     @take.setter
     def take(self, has_attr):
@@ -711,9 +731,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_attr:
-            self.item_attributes.set.add(func_name)
+            self.item_attributes |= {func_name}
         else:
-            self.item_attributes.set.discard(func_name)
+            self.item_attributes -= {func_name}
 
     # Item Restriction Flags
     @property
@@ -722,7 +742,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_restrictions.set else False
+        return func_name if func_name in self.item_restrictions else False
 
     @no_remove.setter
     def no_remove(self, has_restr):
@@ -731,9 +751,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_restr:
-            self.item_restrictions.set.add(func_name)
+            self.item_restrictions |= {func_name}
         else:
-            self.item_restrictions.set.discard(func_name)
+            self.item_restrictions -= {func_name}
 
     @property
     def no_uncurse(self):
@@ -741,7 +761,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_restrictions.set else False
+        return func_name if func_name in self.item_restrictions else False
 
     @no_uncurse.setter
     def no_uncurse(self, has_restr):
@@ -750,9 +770,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_restr:
-            self.item_restrictions.set.add(func_name)
+            self.item_restrictions |= {func_name}
         else:
-            self.item_restrictions.set.discard(func_name)
+            self.item_restrictions -= {func_name}
 
     @property
     def no_purge(self):
@@ -760,7 +780,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_restrictions.set else False
+        return func_name if func_name in self.item_restrictions else False
 
     @no_purge.setter
     def no_purge(self, has_restr):
@@ -769,9 +789,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_restr:
-            self.item_restrictions.set.add(func_name)
+            self.item_restrictions |= {func_name}
         else:
-            self.item_restrictions.set.discard(func_name)
+            self.item_restrictions -= {func_name}
 
     @property
     def anti_good(self):
@@ -779,7 +799,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_restrictions.set else False
+        return func_name if func_name in self.item_restrictions else False
 
     @anti_good.setter
     def anti_good(self, has_restr):
@@ -788,9 +808,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_restr:
-            self.item_restrictions.set.add(func_name)
+            self.item_restrictions |= {func_name}
         else:
-            self.item_restrictions.set.discard(func_name)
+            self.item_restrictions -= {func_name}
 
     @property
     def anti_evil(self):
@@ -798,7 +818,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_restrictions.set else False
+        return func_name if func_name in self.item_restrictions else False
 
     @anti_evil.setter
     def anti_evil(self, has_restr):
@@ -807,9 +827,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_restr:
-            self.item_restrictions.set.add(func_name)
+            self.item_restrictions |= {func_name}
         else:
-            self.item_restrictions.set.discard(func_name)
+            self.item_restrictions -= {func_name}
 
     @property
     def anti_neutral(self):
@@ -817,7 +837,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_restrictions.set else False
+        return func_name if func_name in self.item_restrictions else False
 
     @anti_neutral.setter
     def anti_neutral(self, has_restr):
@@ -826,9 +846,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_restr:
-            self.item_restrictions.set.add(func_name)
+            self.item_restrictions |= {func_name}
         else:
-            self.item_restrictions.set.discard(func_name)
+            self.item_restrictions -= {func_name}
 
     @property
     def inventory(self):
@@ -836,7 +856,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_restrictions.set else False
+        return func_name if func_name in self.item_restrictions else False
 
     @inventory.setter
     def inventory(self, has_restr):
@@ -845,9 +865,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_restr:
-            self.item_restrictions.set.add(func_name)
+            self.item_restrictions |= {func_name}
         else:
-            self.item_restrictions.set.discard(func_name)
+            self.item_restrictions -= {func_name}
 
     @property
     def no_locate(self):
@@ -855,7 +875,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_restrictions.set else False
+        return func_name if func_name in self.item_restrictions else False
 
     @no_locate.setter
     def no_locate(self, has_restr):
@@ -864,9 +884,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_restr:
-            self.item_restrictions.set.add(func_name)
+            self.item_restrictions |= {func_name}
         else:
-            self.item_restrictions.set.discard(func_name)
+            self.item_restrictions -= {func_name}
 
     # Weapon Attributes
     @property
@@ -875,7 +895,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_restrictions.set else False
+        return func_name if func_name in self.item_restrictions else False
 
     @no_remove.setter
     def no_remove(self, has_restr):
@@ -884,9 +904,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_restr:
-            self.item_restrictions.set.add(func_name)
+            self.item_restrictions |= {func_name}
         else:
-            self.item_restrictions.set.discard(func_name)
+            self.item_restrictions -= {func_name}
 
     @property
     def no_uncurse(self):
@@ -894,7 +914,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_restrictions.set else False
+        return func_name if func_name in self.item_restrictions else False
 
     @no_uncurse.setter
     def no_uncurse(self, has_restr):
@@ -903,9 +923,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_restr:
-            self.item_restrictions.set.add(func_name)
+            self.item_restrictions |= {func_name}
         else:
-            self.item_restrictions.set.discard(func_name)
+            self.item_restrictions -= {func_name}
 
     @property
     def no_purge(self):
@@ -913,7 +933,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.item_restrictions.set else False
+        return func_name if func_name in self.item_restrictions else False
 
     @no_purge.setter
     def no_purge(self, has_restr):
@@ -922,9 +942,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if has_restr:
-            self.item_restrictions.set.add(func_name)
+            self.item_restrictions |= {func_name}
         else:
-            self.item_restrictions.set.discard(func_name)
+            self.item_restrictions -= {func_name}
     
     @property
     def two_handed(self):
@@ -932,7 +952,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.weapon_attributes.set else False
+        return func_name if func_name in self.weapon_attributes else False
         
     @two_handed.setter
     def two_handed(self, weap_attr):
@@ -941,9 +961,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if weap_attr:
-            self.weapon_attributes.set.add(func_name)
+            self.weapon_attributes |= {func_name}
         else:
-            self.weapon_attributes.set.discard(func_name)
+            self.weapon_attributes -= {func_name}
         
     @property
     def flaming(self):
@@ -951,7 +971,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.weapon_attributes.set else False
+        return func_name if func_name in self.weapon_attributes else False
     
     @flaming.setter
     def flaming(self, weap_attr):
@@ -960,9 +980,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if weap_attr:
-            self.weapon_attributes.set.add(func_name)
+            self.weapon_attributes |= {func_name}
         else:
-            self.weapon_attributes.set.discard(func_name)
+            self.weapon_attributes -= {func_name}
         
     @property
     def sharp(self):
@@ -970,7 +990,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.weapon_attributes.set else False
+        return func_name if func_name in self.weapon_attributes else False
         
     @sharp.setter
     def sharp(self, weap_attr):
@@ -979,9 +999,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if weap_attr:
-            self.weapon_attributes.set.add(func_name)
+            self.weapon_attributes |= {func_name}
         else:
-            self.weapon_attributes.set.discard(func_name)
+            self.weapon_attributes -= {func_name}
         
     @property
     def frost(self):
@@ -989,7 +1009,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.weapon_attributes.set else False
+        return func_name if func_name in self.weapon_attributes else False
         
     @frost.setter
     def frost(self, weap_attr):
@@ -998,9 +1018,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if weap_attr:
-            self.weapon_attributes.set.add(func_name)
+            self.weapon_attributes |= {func_name}
         else:
-            self.weapon_attributes.set.discard(func_name)
+            self.weapon_attributes -= {func_name}
         
     @property
     def vampiric(self):
@@ -1008,7 +1028,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.weapon_attributes.set else False
+        return func_name if func_name in self.weapon_attributes else False
         
     @vampiric.setter
     def vampiric(self, weap_attr):
@@ -1017,9 +1037,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if weap_attr:
-            self.weapon_attributes.set.add(func_name)
+            self.weapon_attributes |= {func_name}
         else:
-            self.weapon_attributes.set.discard(func_name)
+            self.weapon_attributes -= {func_name}
         
     @property
     def vorpal(self):
@@ -1027,7 +1047,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.weapon_attributes.set else False
+        return func_name if func_name in self.weapon_attributes else False
         
     @vorpal.setter
     def vorpal(self, weap_attr):
@@ -1036,9 +1056,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if weap_attr:
-            self.weapon_attributes.set.add(func_name)
+            self.weapon_attributes |= {func_name}
         else:
-            self.weapon_attributes.set.discard(func_name)
+            self.weapon_attributes -= {func_name}
         
     @property
     def shocking(self):
@@ -1046,7 +1066,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.weapon_attributes.set else False
+        return func_name if func_name in self.weapon_attributes else False
         
     @shocking.setter
     def shocking(self, weap_attr):
@@ -1055,9 +1075,9 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if weap_attr:
-            self.weapon_attributes.set.add(func_name)
+            self.weapon_attributes |= {func_name}
         else:
-            self.weapon_attributes.set.discard(func_name)
+            self.weapon_attributes -= {func_name}
         
     @property
     def poison(self):
@@ -1065,7 +1085,7 @@ class ItemFlags(equipment.Equipment):
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return True if func_name in self.weapon_attributes.set else False
+        return func_name if func_name in self.weapon_attributes else False
         
     @poison.setter
     def poison(self, weap_attr):
@@ -1074,6 +1094,6 @@ class ItemFlags(equipment.Equipment):
        """
         func_name = sys._getframe().f_code.co_name
         if weap_attr:
-            self.weapon_attributes.set.add(func_name)
+            self.weapon_attributes |= {func_name}
         else:
-            self.weapon_attributes.set.discard(func_name)
+            self.weapon_attributes -= {func_name}

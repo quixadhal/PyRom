@@ -1,4 +1,5 @@
 import time
+import collections
 
 __author__ = 'venom'
 import merc
@@ -131,39 +132,39 @@ def item_flags_from_bits(bits: int, out_data: collections.namedtuple, in_type='w
         return None
     if 'wear flags' in in_type:
         if bits & merc.ITEM_TAKE:
-            out_data.attributes.update({'Take'})
+            out_data.attributes.update({'take'})
         if bits & merc.ITEM_WEAR_FINGER:
-            out_data.slots.update({'Left Finger', 'Right Finger'})
+            out_data.slots.update({'left_finger', 'right_finger'})
         if bits & merc.ITEM_WEAR_NECK:
-            out_data.slots.update({'Neck', 'Collar'})
+            out_data.slots.update({'neck', 'collar'})
         if bits & merc.ITEM_WEAR_BODY:
-            out_data.slots.update({'Torso'})
+            out_data.slots.update({'torso'})
         if bits & merc.ITEM_WEAR_HEAD:
-            out_data.slots.update({'Head'})
+            out_data.slots.update({'head'})
         if bits & merc.ITEM_WEAR_LEGS:
-            out_data.slots.update({'Legs'})
+            out_data.slots.update({'legs'})
         if bits & merc.ITEM_WEAR_FEET:
-            out_data.slots.update({'Feet'})
+            out_data.slots.update({'feet'})
         if bits & merc.ITEM_WEAR_HANDS:
-            out_data.slots.update({'Hands'})
+            out_data.slots.update({'hands'})
         if bits & merc.ITEM_WEAR_ARMS:
-            out_data.slots.update({'Arms'})
+            out_data.slots.update({'arms'})
         if bits & merc.ITEM_WEAR_SHIELD:
-            out_data.slots.update({'Off Hand'})
+            out_data.slots.update({'off_hand'})
         if bits & merc.ITEM_WEAR_ABOUT:
-            out_data.slots.update({'About'})
+            out_data.slots.update({'about'})
         if bits & merc.ITEM_WEAR_WAIST:
-            out_data.slots.update({'Wasit'})
+            out_data.slots.update({'waist'})
         if bits & merc.ITEM_WEAR_WRIST:
-            out_data.slots.update({'Left Wrist', 'Right Wrist'})
+            out_data.slots.update({'left_wrist', 'right_wrist'})
         if bits & merc.ITEM_WIELD:
-            out_data.slots.update({'Main Hand'})
+            out_data.slots.update({'main_hand'})
         if bits & merc.ITEM_HOLD:
-            out_data.slots.update({'Hold'})
+            out_data.slots.update({'held'})
         if bits & merc.ITEM_NO_SAC:
-            out_data.restrictions.update({'No Sacrifice'})
+            out_data.restrictions.update({'no_sac'})
         if bits & merc.ITEM_WEAR_FLOAT:
-            out_data.slots.update({'Float'})
+            out_data.slots.update({'float'})
     if 'extra flags' in in_type:
         if bits & merc.ITEM_GLOW:
             out_data.attributes.update({'glow'})
@@ -180,39 +181,39 @@ def item_flags_from_bits(bits: int, out_data: collections.namedtuple, in_type='w
         if bits & merc.ITEM_MAGIC:
             out_data.attributes.update({'magic'})
         if bits & merc.ITEM_NODROP:
-            out_data.restrictions.update({'no drop'})
+            out_data.restrictions.update({'no_drop'})
         if bits & merc.ITEM_BLESS:
             out_data.attributes.update({'bless'})
         if bits & merc.ITEM_ANTI_GOOD:
-            out_data.restrictions.update({'anti good'})
+            out_data.restrictions.update({'anti_good'})
         if bits & merc.ITEM_ANTI_EVIL:
-            out_data.restrictions.update({'anti evil'})
+            out_data.restrictions.update({'anti_evil'})
         if bits & merc.ITEM_ANTI_NEUTRAL:
-            out_data.restrictions.update({'anti neutral'})
+            out_data.restrictions.update({'anti_neutral'})
         if bits & merc.ITEM_NOREMOVE:
-            out_data.restrictions.update({'no remove'})
+            out_data.restrictions.update({'no_remove'})
         if bits & merc.ITEM_INVENTORY:
-            out_data.restrictions.update({'inventory only'})
+            out_data.restrictions.update({'inventory'})
         if bits & merc.ITEM_NOPURGE:
-            out_data.restrictions.update({'no purge'})
+            out_data.restrictions.update({'no_purge'})
         if bits & merc.ITEM_ROT_DEATH:
-            out_data.attributes.update({'rot death'})
+            out_data.attributes.update({'rot_death'})
         if bits & merc.ITEM_VIS_DEATH:
-            out_data.attributes.update({'vis death'})
+            out_data.attributes.update({'vis_death'})
         if bits & merc.ITEM_NONMETAL:
-            out_data.attributes.update({'non metal'})
+            out_data.attributes.update({'non_metal'})
         if bits & merc.ITEM_NOLOCATE:
-            out_data.restrictions.update({'no locate'})
+            out_data.restrictions.update({'no_locate'})
         if bits & merc.ITEM_MELT_DROP:
-            out_data.attributes.update({'melt drop'})
+            out_data.attributes.update({'melt_drop'})
         if bits & merc.ITEM_HAD_TIMER:
-            out_data.attributes.update({'had timer'})
+            out_data.attributes.update({'had_timer'})
         if bits & merc.ITEM_SELL_EXTRACT:
-            out_data.attributes.update({'sell extract'})
+            out_data.attributes.update({'sell_extract'})
         if bits & merc.ITEM_BURN_PROOF:
-            out_data.attributes.update({'burn proof'})
+            out_data.attributes.update({'burn_proof'})
         if bits & merc.ITEM_NOUNCURSE:
-            out_data.restrictions.update({'no uncurse'})
+            out_data.restrictions.update({'no_uncurse'})
     if 'weapon flags' in in_type:
         if bits & merc.WEAPON_FLAMING:
             out_data.weapon.update({'flaming'})
@@ -225,7 +226,7 @@ def item_flags_from_bits(bits: int, out_data: collections.namedtuple, in_type='w
         if bits & merc.WEAPON_VORPAL:
             out_data.weapon.update({'vorpal'})
         if bits & merc.WEAPON_TWO_HANDS:
-            out_data.weapon.update({'two handed'})
+            out_data.weapon.update({'two_handed'})
         if bits & merc.WEAPON_SHOCKING:
             out_data.weapon.update({'shocking'})
         if bits & merc.WEAPON_POISON:

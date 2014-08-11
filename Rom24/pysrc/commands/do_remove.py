@@ -5,7 +5,6 @@ logger = logging.getLogger()
 import merc
 import interp
 import game_utils
-import handler_item
 
 
 def do_remove(ch, argument):
@@ -14,17 +13,16 @@ def do_remove(ch, argument):
         ch.send("Remove what?\n")
         return
     if arg == "all":
-        for obj_id in ch.items:
-            obj = merc.items.get(obj_id, None)
-            if obj.wear_loc != merc.WEAR_NONE:
-                ch.remove_item(obj.wear_loc, True)
+        for loc, item_id in ch.equipped.items():
+            if item_id:
+                ch.unequip(loc, True)
         return
     else:
-        obj = ch.get_item_wear(arg)
-        if not obj:
-            ch.send("You do not have that item.\n")
+        loc, item = ch.get_item_wear(arg)
+        if not item:
+            ch.send("You are not wearing %s.\n" % arg)
             return
-        ch.remove_item(obj.wear_loc, True)
+        ch.unequip(loc, True)
         return
 
 
