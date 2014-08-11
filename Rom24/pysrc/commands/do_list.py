@@ -7,6 +7,7 @@ import shop_utils
 import state_checks
 import collections
 import merc
+import handler_room
 import interp
 
 
@@ -16,17 +17,17 @@ def do_list(ch, argument):
         pRoomIndexNext = None
         if ch.in_room.vnum == 9621:
             if 9706 in merc.roomTemplate:
-                pRoomIndexNext = merc.roomTemplate[9706]
+                pRoomIndexNext = handler_room.get_room_by_vnum(9706)
         else:
             if ch.in_room.vnum + 1 in merc.roomTemplate:
-                pRoomIndexNext = merc.roomTemplate[ch.in_room.vnum + 1]
+                pRoomIndexNext = handler_room.get_room_by_vnum(ch.in_room.vnum + 1)
         if not pRoomIndexNext:
             logger.warn("BUG: Do_list: bad pet shop at vnum %d.", ch.in_room.vnum)
             ch.send("You can't do that here.\n")
             return
         found = False
         for pet in pRoomIndexNext.people:
-            if state_checks.IS_SET(pet.act, merc.ACT_PET):
+            if pet.act.is_set(merc.ACT_PET):
                 if not found:
                     found = True
                     ch.send("Pets for sale:\n")

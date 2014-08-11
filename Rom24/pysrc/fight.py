@@ -125,13 +125,6 @@ def check_assist(ch, victim):
 
 # * Do one group of attacks.
 def multi_hit(ch, victim, dt):
-    # decrement the wait */
-    if ch.desc is None:
-        ch.wait = max(0, ch.wait - PULSE_VIOLENCE)
-
-    if ch.desc is None:
-        ch.daze = max(0, ch.daze - PULSE_VIOLENCE)
-
         # no attacks for stunnies -- just a check */
     if ch.position < POS_RESTING:
         return
@@ -158,7 +151,8 @@ def multi_hit(ch, victim, dt):
 
     if random.randint(1, 99) < chance:
         one_hit(ch, victim, dt)
-        ch.check_improve('second attack', True, 5)
+        if ch.is_pc():
+            ch.check_improve('second attack', True, 5)
         if ch.fighting != victim:
             return
 
@@ -169,7 +163,8 @@ def multi_hit(ch, victim, dt):
 
     if random.randint(1, 99) < chance:
         one_hit(ch, victim, dt)
-        ch.check_improve('third attack', True, 6)
+        if ch.is_pc():
+            ch.check_improve('third attack', True, 6)
         if ch.fighting != victim :
             return
     return
@@ -368,7 +363,8 @@ def one_hit(ch, victim, dt):
             dam = game_utils.dice(ch.damage[DICE_NUMBER], ch.damage[DICE_TYPE])
     else:
         if sn != -1:
-            ch.check_improve( sn, True, 5)
+            if ch.is_pc():
+                ch.check_improve( sn, True, 5)
         if wield:
             if wield.new_format:
                 dam = game_utils.dice(wield.value[1], wield.value[2]) * skill // 100
@@ -394,7 +390,8 @@ def one_hit(ch, victim, dt):
     if ch.get_skill('enhanced damage') > 0:
         diceroll = random.randint(1, 99)
         if diceroll <= ch.get_skill('enhanced damage'):
-            ch.check_improve('enhanced damage', True, 6)
+            if ch.is_pc():
+                ch.check_improve('enhanced damage', True, 6)
             dam += 2 * (dam * diceroll // 300)
     if not state_checks.IS_AWAKE(victim):
         dam *= 2
@@ -1317,6 +1314,8 @@ def dam_message(ch, victim, dam, dt, immune):
     else:
         if type(dt) == const.skill_type:
             attack = dt.noun_damage
+        elif isinstance(dt, str):
+            attack = dt
         elif TYPE_HIT <= dt < TYPE_HIT + len(const.attack_table):
             attack = const.attack_table[dt - TYPE_HIT].noun
         else:

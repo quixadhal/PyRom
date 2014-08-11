@@ -45,7 +45,7 @@ def do_look(ch, argument):
         ch.send("\n")
         if not arg1 or (not ch.is_npc()
                         and not ch.comm.is_set(merc.COMM_BRIEF)):
-            ch.send("  %s" % room.description)
+            ch.send("  %s\n" % room.description)
         if not ch.is_npc() \
                 and ch.act.is_set(merc.PLR_AUTOEXIT):
             ch.send("\n")

@@ -52,10 +52,12 @@ def do_zap(ch, argument):
                 or random.randint(1, 99) >= 20 + ch.get_skill("wands") * 4 // 5:
             handler_game.act("Your efforts with $p produce only smoke and sparks.", ch, wand, None, merc.TO_CHAR)
             handler_game.act("$n's efforts with $p produce only smoke and sparks.", ch, wand, None, merc.TO_ROOM)
-            ch.check_improve( "wands", False, 2)
+            if ch.is_pc():
+                ch.check_improve( "wands", False, 2)
         else:
             handler_magic.obj_cast_spell(wand.value[3], wand.value[0], ch, victim, obj)
-            ch.check_improve( "wands", True, 2)
+            if ch.is_pc():
+                ch.check_improve( "wands", True, 2)
     wand.value[2] -= 1
     if wand.value[2] <= 0:
         handler_game.act("$n's $p explodes into fragments.", ch, wand, None, merc.TO_ROOM)

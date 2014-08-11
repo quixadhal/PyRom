@@ -17,7 +17,8 @@ def do_sneak(ch, argument):
         return
 
     if random.randint(1, 99) < ch.get_skill("sneak"):
-        ch.check_improve( "sneak", True, 3)
+        if ch.is_pc():
+            ch.check_improve( "sneak", True, 3)
         af = handler_game.AFFECT_DATA()
         af.where = merc.TO_AFFECTS
         af.type = "sneak"
@@ -28,7 +29,8 @@ def do_sneak(ch, argument):
         af.bitvector = merc.AFF_SNEAK
         ch.affect_add(af)
     else:
-        ch.check_improve( "sneak", False, 3)
+        if ch.is_pc():
+            ch.check_improve( "sneak", False, 3)
     return
 
 

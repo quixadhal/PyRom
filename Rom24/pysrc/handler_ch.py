@@ -376,7 +376,8 @@ def show_char_to_char_1(victim, ch):
     if victim != ch and not ch.is_npc() \
             and random.randint(1, 99) < ch.get_skill("peek"):
         ch.send("\nYou peek at the inventory:\n")
-        ch.check_improve('peek', True, 4)
+        if ch.is_pc():
+            ch.check_improve('peek', True, 4)
         show_list_to_char(victim.contents, ch, True, True)
     return
 

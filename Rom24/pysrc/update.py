@@ -130,7 +130,8 @@ def hit_gain(ch):
         if number < ch.get_skill('fast healing'):
             gain += number * gain // 100
             if ch.hit < ch.max_hit:
-                ch.check_improve('fast healing', True, 8)
+                if ch.is_pc():
+                    ch.check_improve('fast healing', True, 8)
 
         if ch.position == POS_SLEEPING:
             pass
@@ -184,7 +185,8 @@ def mana_gain(ch):
         if number < ch.get_skill('meditation'):
             gain += number * gain // 100
             if ch.mana < ch.max_mana:
-                ch.check_improve( 'meditation', True, 8)
+                if ch.is_pc():
+                    ch.check_improve( 'meditation', True, 8)
 
         if not ch.guild.fMana:
             gain //= 2
@@ -732,6 +734,7 @@ def instance_number_save():
 # * Called once per pulse from game loop.
 # * Random times to defeat tick-timing clients and players.
 # */
+previous_pulse = -1
 pulse_area = 0
 pulse_npc = 0
 pulse_violence = 0
@@ -739,32 +742,49 @@ pulse_point = 0
 
 
 def update_handler():
+    global previous_pulse
     global pulse_area
     global pulse_npc
     global pulse_violence
     global pulse_point
 
-    pulse_area -= 1
-    pulse_npc -= 1
-    pulse_violence -= 1
-    pulse_point -= 1
+    current_time = get_precise_time()
+    if previous_pulse == -1:
+        previous_pulse = current_time-1
 
-    if pulse_area <= 0:
-        pulse_area = PULSE_AREA
-        db.area_update()
-        instance_number_save()  # Piggyback on area updates to save the instance number.
+    while current_time >= previous_pulse + MILLISECONDS_PER_PULSE:
+        previous_pulse += MILLISECONDS_PER_PULSE
 
-    if pulse_npc <= 0:
-        pulse_npc = PULSE_MOBILE
-        npc_update()
-    if pulse_violence <= 0:
-        hotfix.poll_files()
-        pulse_violence = PULSE_VIOLENCE
-        fight.violence_update()
-    if pulse_point <= 0:
-        handler_game.wiznet("TICK!", None, None, WIZ_TICKS, 0, 0)
-        pulse_point = PULSE_TICK
-        # weather_update  ( )
-        char_update()
-        item_update()
-    aggr_update()
+        pulse_area -= 1
+        pulse_npc -= 1
+        pulse_violence -= 1
+        pulse_point -= 1
+
+        for ch in merc.characters.values():
+            if ch.daze > 0:
+                ch.daze -= 1
+            if ch.wait > 0:
+                ch.wait -= 1
+
+        if pulse_area <= 0:
+            pulse_area = PULSE_AREA
+            db.area_update()
+            instance_number_save()  # Piggyback on area updates to save the instance number.
+
+        if pulse_npc <= 0:
+            pulse_npc = PULSE_MOBILE
+            npc_update()
+        if pulse_violence <= 0:
+            hotfix.poll_files()
+            pulse_violence = PULSE_VIOLENCE
+            fight.violence_update()
+        if pulse_point <= 0:
+            handler_game.wiznet("TICK!", None, None, WIZ_TICKS, 0, 0)
+            pulse_point = PULSE_TICK
+            # weather_update  ( )
+            char_update()
+            item_update()
+        aggr_update()
+
+def get_precise_time():
+    return int(round(time.time()*1000))

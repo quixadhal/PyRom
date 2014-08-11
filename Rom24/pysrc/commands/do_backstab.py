@@ -47,10 +47,12 @@ def do_backstab(ch, argument):
         state_checks.WAIT_STATE( ch, const.skill_table['backstab'].beats )
         if random.randint(1,99) < ch.get_skill('backstab') \
         or ( ch.get_skill('backstab') >= 2 and not state_checks.IS_AWAKE(victim) ):
-            ch.check_improve('backstab',True,1)
+            if ch.is_pc():
+                ch.check_improve('backstab',True,1)
             fight.multi_hit( ch, victim, 'backstab' )
         else:
-            ch.check_improve( 'backstab', False, 1)
+            if ch.is_pc():
+                ch.check_improve( 'backstab', False, 1)
             fight.damage(ch, victim, 0, 'backstab', merc.DAM_NONE, True)
     return
 

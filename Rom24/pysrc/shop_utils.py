@@ -75,8 +75,8 @@ def find_keeper(ch):
     pShop = None
     for keeper_id in ch.in_room.people:
         keeper = merc.characters[keeper_id]
-        if state_checks.IS_NPC(keeper) and keeper.pIndexData.pShop:
-            pShop = keeper.pIndexData.pShop
+        if keeper.is_npc() and keeper.pShop:
+            pShop = keeper.pShop
             break
     if not pShop:
         ch.send("You can't do that here.\n")

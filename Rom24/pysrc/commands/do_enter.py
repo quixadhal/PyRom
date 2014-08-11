@@ -37,7 +37,7 @@ def do_enter(ch, argument):
         elif state_checks.IS_SET(portal.value[2], merc.GATE_BUGGY) and (random.randint(1, 99) < 5):
             location = handler_room.get_random_room(ch)
         else:
-            location = merc.roomTemplate[portal.value[3]]
+            location = handler_room.get_room_by_vnum(portal.value[3])
         if not location or location == old_room \
                 or not ch.can_see_room(location) \
                 or (location.is_private() and not state_checks.IS_TRUSTED(ch, merc.MAX_LEVEL)):
@@ -81,7 +81,7 @@ def do_enter(ch, argument):
                 fch.do_stand("")
             if fch.master == ch and fch.position == merc.POS_STANDING:
                 if state_checks.IS_SET(ch.in_room.room_flags, merc.ROOM_LAW) \
-                        and (state_checks.IS_NPC(fch) and state_checks.IS_SET(fch.act, merc.ACT_AGGRESSIVE)):
+                        and (state_checks.IS_NPC(fch) and fch.act.is_set(merc.ACT_AGGRESSIVE)):
                     handler_game.act("You can't bring $N into the city.", ch, None, fch, merc.TO_CHAR)
                     handler_game.act("You aren't allowed in the city.", fch, None, None, merc.TO_CHAR)
                     continue

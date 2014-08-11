@@ -4,13 +4,14 @@ logger = logging.getLogger()
 
 import merc
 import interp
+import state_checks
 
 
 def do_autogold(ch, argument):
     if ch.is_npc():
         return
 
-    if merc.IS_SET(ch.act, merc.PLR_AUTOGOLD):
+    if state_checks.IS_SET(ch.act, merc.PLR_AUTOGOLD):
         ch.send("Autogold removed.\n")
         ch.act.rem_bit(merc.PLR_AUTOGOLD)
     else:

@@ -33,12 +33,14 @@ def do_envenom(ch, argument):
             handler_game.act("You treat $p with deadly poison.", ch, obj, None, merc.TO_CHAR)
             if not obj.value[3]:
                 obj.value[3] = 1
-                ch.check_improve( "envenom", True, 4)
+                if ch.is_pc():
+                    ch.check_improve( "envenom", True, 4)
             state_checks.WAIT_STATE(ch, const.skill_table["envenom"].beats)
             return
         handler_game.act("You fail to poison $p.", ch, obj, None, merc.TO_CHAR)
         if not obj.value[3]:
-            ch.check_improve( "envenom", False, 4)
+            if ch.is_pc():
+                ch.check_improve( "envenom", False, 4)
             state_checks.WAIT_STATE(ch, const.skill_table["envenom"].beats)
             return
     if obj.item_type == merc.ITEM_WEAPON:
@@ -71,12 +73,14 @@ def do_envenom(ch, argument):
 
             handler_game.act("$n coats $p with deadly venom.", ch, obj, None, merc.TO_ROOM)
             handler_game.act("You coat $p with venom.", ch, obj, None, merc.TO_CHAR)
-            ch.check_improve( "envenom", True, 3)
+            if ch.is_pc():
+                ch.check_improve( "envenom", True, 3)
             state_checks.WAIT_STATE(ch, const.skill_table["envenom"].beats)
             return
         else:
             handler_game.act("You fail to envenom $p.", ch, obj, None, merc.TO_CHAR)
-            ch.check_improve( "envenom", False, 3)
+            if ch.is_pc():
+                ch.check_improve( "envenom", False, 3)
             state_checks.WAIT_STATE(ch, const.skill_table["envenom"].beats)
             return
     handler_game.act("You can't poison $p.", ch, obj, None, merc.TO_CHAR)

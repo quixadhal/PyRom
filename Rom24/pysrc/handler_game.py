@@ -64,7 +64,7 @@ class weather_data:
 time_info = time_info_data()
 weather_info = weather_data()
 
-def act(format, ch, arg1, arg2, send_to, min_pos=POS_RESTING):
+def act(format, ch, arg1=None, arg2=None, send_to=TO_ROOM, min_pos=POS_RESTING):
     if not format:
         return
     if not ch or not ch.in_room:
