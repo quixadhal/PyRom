@@ -1,31 +1,30 @@
 import logging
 
-import object_creator
-
-
 logger = logging.getLogger()
 
 import random
 import merc
+import handler_room
 import interp
-
+import object_creator
+import state_checks
 
 def do_buy(ch, argument):
     if not argument:
         ch.send("Buy what?\n")
         return
-    if merc.IS_SET(ch.in_room.room_flags, merc.ROOM_PET_SHOP):
-        if merc.IS_NPC(ch):
+    if state_checks.IS_SET(ch.in_room.room_flags, merc.ROOM_PET_SHOP):
+        if ch.is_npc():
             return
         argument, arg = merc.read_word(argument)
         pRoomIndexNext = None
         # hack to make new thalos pets work
         if ch.in_room.vnum == 9621:
             if 9706 in merc.roomTemplate:
-                pRoomIndexNext = merc.roomTemplate[9706]
+                pRoomIndexNext = handler_room.get_room_by_vnum(9706)
         else:
             if ch.in_room.vnum + 1 in merc.roomTemplate:
-                pRoomIndexNext = merc.roomTemplate[ch.in_room.vnum + 1]
+                pRoomIndexNext = handler_room.get_room_by_vnum(ch.in_room.vnum + 1)
         if not pRoomIndexNext:
             logger.warn("BUG: Do_buy: bad pet shop at vnum %d.", ch.in_room.vnum)
             ch.send("Sorry, you can't buy that here.\n")
@@ -35,7 +34,7 @@ def do_buy(ch, argument):
         pet = ch.get_char_room(arg)
         ch.in_environment = in_room
 
-        if not pet or not merc.IS_SET(pet.act, merc.ACT_PET):
+        if not pet or not state_checks.IS_SET(pet.act, merc.ACT_PET):
             ch.send("Sorry, you can't buy that here.\n")
             return
         if ch.pet:
@@ -54,11 +53,12 @@ def do_buy(ch, argument):
         if roll < ch.get_skill("haggle"):
             cost -= cost // 2 * roll // 100
             ch.send("You haggle the price down to %d coins.\n" % cost)
-            ch.check_improve( "haggle", True, 4)
+            if ch.is_pc():
+                ch.check_improve( "haggle", True, 4)
         ch.deduct_cost(cost)
         pet = object_creator.create_mobile(pet.pIndexData)
-        pet.act = merc.SET_BIT(pet.act, merc.ACT_PET)
-        pet.affected_by = merc.SET_BIT(pet.affected_by, merc.AFF_CHARM)
+        pet.act = state_checks.SET_BIT(pet.act, merc.ACT_PET)
+        pet.affected_by = state_checks.SET_BIT(pet.affected_by, merc.AFF_CHARM)
         pet.comm = merc.COMM_NOTELL | merc.COMM_NOSHOUT | merc.COMM_NOCHANNELS
 
         argument, arg = merc.read_word(argument)
@@ -117,7 +117,8 @@ def do_buy(ch, argument):
         if not merc.IS_OBJ_STAT(obj, merc.ITEM_SELL_EXTRACT) and roll < ch.get_skill("haggle"):
             cost -= obj.cost // 2 * roll // 100
             merc.act("You haggle with $N.", ch, None, keeper, merc.TO_CHAR)
-            ch.check_improve( "haggle", True, 4)
+            if ch.is_pc():
+                ch.check_improve( "haggle", True, 4)
 
         if number > 1:
             merc.act("$n buys $p[[%d]]." % number, ch, obj, None, merc.TO_ROOM)
@@ -130,18 +131,18 @@ def do_buy(ch, argument):
         keeper.gold += cost * number / 100
         keeper.silver += cost * number - (cost * number / 100) * 100
         t_obj = None
-        if merc.IS_SET(obj.extra_flags, merc.ITEM_INVENTORY):
+        if obj.inventory:
             items = []
             for count in range(number):
-                t_obj = object_creator.create_item(obj.pIndexData, obj.level)
+                t_obj = object_creator.create_item(obj.vnum, obj.level)
                 items.append(t_obj)
         for t_obj in items[:]:
-            if not merc.IS_SET(obj.extra_flags, merc.ITEM_INVENTORY):
+            if not obj.inventory:
                 t_obj.from_environment()
 
-            if t_obj.timer > 0 and not merc.IS_OBJ_STAT(t_obj, merc.ITEM_HAD_TIMER):
+            if t_obj.timer > 0 and not t_obj.had_timer:
                 t_obj.timer = 0
-            t_obj.extra_flags = merc.REMOVE_BIT(t_obj.extra_flags, merc.ITEM_HAD_TIMER)
+            t_obj.extra_flags = t_obj.had_timer = False
             t_obj.to_environment(ch)
             if cost < t_obj.cost:
                 t_obj.cost = cost

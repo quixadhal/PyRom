@@ -34,6 +34,7 @@
 
 import time
 import logging
+import collections
 
 logger = logging.getLogger()
 
@@ -103,7 +104,7 @@ Likewise you can effect a change TO mob from accessing either dict:
 '''
 areas = {}  # Currently areas are singleton, making them both a template and instance
 items = {}
-rooms = {}  # Currently rooms are singleton, making them both a template and instance
+rooms = {}
 characters = {}
 shops = {}
 player_characters = {}
@@ -122,22 +123,23 @@ instances_by_character = {}
 instances_by_shop = {}
 instances_by_player = {}
 
+resets = {}
 
 descriptor_list = []
 
 area_list = []
 help_list = []
 greeting_list = []
-reset_list = []
 shop_list = []
 social_list = []
 
-GDCF = False
-GDF = False
+GDCF = True
+GDF = True
 
 #Global Constants
-PULSE_PER_SECOND = 12
-PULSE_VIOLENCE = (1 * PULSE_PER_SECOND)
+PULSE_PER_SECOND = 4
+MILLISECONDS_PER_PULSE = float(1000.0/PULSE_PER_SECOND)
+PULSE_VIOLENCE = (3 * PULSE_PER_SECOND)
 PULSE_MOBILE = (4 * PULSE_PER_SECOND)
 PULSE_MUSIC = (6 * PULSE_PER_SECOND)
 PULSE_TICK = (60 * PULSE_PER_SECOND)
@@ -168,38 +170,6 @@ DIR_SOUTH = 2
 DIR_WEST = 3
 DIR_UP = 4
 DIR_DOWN = 5
-
-
-#Item types
-ITEM_LIGHT = 'light'
-ITEM_SCROLL = 'scroll'
-ITEM_WAND = 'wand'
-ITEM_STAFF = 'staff'
-ITEM_WEAPON = 'weapon'
-ITEM_TREASURE = 'treasure'
-ITEM_ARMOR = 'armor'
-ITEM_POTION = 'potion'
-ITEM_CLOTHING = 'clothing'
-ITEM_FURNITURE = 'furniture'
-ITEM_TRASH = 'trash'
-ITEM_CONTAINER = 'container'
-ITEM_DRINK_CON = 'drink'
-ITEM_KEY = 'key'
-ITEM_FOOD = 'food'
-ITEM_MONEY = 'money'
-ITEM_BOAT = 'boat'
-ITEM_CORPSE_NPC = 'npc_corpse'
-ITEM_CORPSE_PC = 'pc_corpse'
-ITEM_FOUNTAIN = 'fountain'
-ITEM_PILL = 'pill'
-ITEM_PROTECT = 'protect'
-ITEM_MAP = 'map'
-ITEM_PORTAL = 'portal'
-ITEM_WARP_STONE = 'warp_stone'
-ITEM_ROOM_KEY = 'room_key'
-ITEM_GEM = 'gem'
-ITEM_JEWELRY = 'jewelry'
-ITEM_JUKEBOX = 'jukebox'
 
 
 #Sexes
@@ -236,7 +206,7 @@ TAR_OBJ_CHAR_DEF = 5
 TAR_OBJ_CHAR_OFF = 6
 
 TARGET_CHAR = 0
-TARGET_OBJ = 1
+TARGET_ITEM = 1
 TARGET_ROOM = 2
 TARGET_NONE = 3
 
@@ -311,33 +281,6 @@ WEAPON_AXE = 5
 WEAPON_FLAIL = 6
 WEAPON_WHIP = 7
 WEAPON_POLEARM = 8
-
-
-# * Equpiment wear locations.
-# * Used in #RESETS.
-
-WEAR_NONE = -1
-WEAR_LIGHT = 0
-WEAR_FINGER_L = 1
-WEAR_FINGER_R = 2
-WEAR_NECK_1 = 3
-WEAR_NECK_2 = 4
-WEAR_BODY = 5
-WEAR_HEAD = 6
-WEAR_LEGS = 7
-WEAR_FEET = 8
-WEAR_HANDS = 9
-WEAR_ARMS = 10
-WEAR_SHIELD = 11
-WEAR_ABOUT = 12
-WEAR_WAIST = 13
-WEAR_WRIST_L = 14
-WEAR_WRIST_R = 15
-WEAR_WIELD = 16
-WEAR_HOLD = 17
-WEAR_FLOAT = 18
-MAX_WEAR = 19
-
 
 # * Conditions.
 
@@ -472,7 +415,7 @@ zz = 1 << 51
 #  Used in #MOBILES.
 
 ACT_IS_NPC = A  # Auto set for mobs    */
-ACT_SENTINEL = B #  Stays in one room    */
+ACT_SENTINEL = B  # Stays in one room    */
 ACT_SCAVENGER = C  # Picks up objects */
 ACT_AGGRESSIVE = F   # Attacks PC's     */
 ACT_STAY_AREA = G    # Won't leave area */
@@ -682,6 +625,109 @@ AFF_SWIM = bb
 AFF_REGENERATION = cc
 AFF_SLOW = dd
 
+# Items
+
+rom_wear_flag_map = {'A': 'Take',
+                     'B': 'Finger',
+                     'C': 'Neck',
+                     'D': 'Body',
+                     'E': 'Head',
+                     'F': 'Legs',
+                     'G': 'Feet',
+                     'H': 'Hands',
+                     'I': 'Arms',
+                     'J': 'Shield',
+                     'K': 'About',
+                     'L': 'Waist',
+                     'M': 'Wrist',
+                     'N': 'Main Hand',
+                     'O': 'Off Hand',
+                     'P': 'No Sac',
+                     'Q': 'Float'}
+
+rom_wear_loc_map = {-1: None,
+                    0: 'Light',
+                    1: 'Left Finger',
+                    2: 'Right Finger',
+                    3: 'Neck',
+                    4: 'Collar',
+                    5: 'Body',
+                    6: 'Head',
+                    7: 'Legs',
+                    8: 'Feet',
+                    9: 'Hands',
+                    10: 'Arms',
+                    11: 'Off Hand',
+                    12: 'About',
+                    13: 'Waist',
+                    14: 'Left Wrist',
+                    15: 'Right Wrist',
+                    16: 'Main Hand',
+                    17: 'Held',
+                    #TODO Remove held.
+                    18: 'Float'}
+
+# * Equpiment wear locations.
+# * Used in #RESETS.
+
+wear_num_to_str = collections.OrderedDict([(-1, 'none'), (0, 'light'), (1, 'left_finger'), (2, 'right_finger'),
+                                           (3, 'neck'), (4, 'collar'), (5, 'body'), (6, 'head'), (7, 'legs'),
+                                           (8, 'feet'), (9, 'hands'), (10, 'arms'), (11, 'unused'), (12, 'about'),
+                                           (13, 'waist'), (14, 'left_wrist'), (15, 'right_wrist'), (16, 'main_hand'),
+                                           (17, 'off_hand'), (18, 'float')])
+
+WEAR_NONE = -1
+WEAR_LIGHT = 0
+WEAR_FINGER_L = 1
+WEAR_FINGER_R = 2
+WEAR_NECK_1 = 3
+WEAR_NECK_2 = 4
+WEAR_BODY = 5
+WEAR_HEAD = 6
+WEAR_LEGS = 7
+WEAR_FEET = 8
+WEAR_HANDS = 9
+WEAR_ARMS = 10
+WEAR_SHIELD = 11
+WEAR_ABOUT = 12
+WEAR_WAIST = 13
+WEAR_WRIST_L = 14
+WEAR_WRIST_R = 15
+WEAR_WIELD = 16
+WEAR_HOLD = 17
+WEAR_FLOAT = 18
+MAX_WEAR = 19
+
+#Item types
+ITEM_LIGHT = 'light'
+ITEM_SCROLL = 'scroll'
+ITEM_WAND = 'wand'
+ITEM_STAFF = 'staff'
+ITEM_WEAPON = 'weapon'
+ITEM_TREASURE = 'treasure'
+ITEM_ARMOR = 'armor'
+ITEM_POTION = 'potion'
+ITEM_CLOTHING = 'clothing'
+ITEM_FURNITURE = 'furniture'
+ITEM_TRASH = 'trash'
+ITEM_CONTAINER = 'container'
+ITEM_DRINK_CON = 'drink'
+ITEM_KEY = 'key'
+ITEM_FOOD = 'food'
+ITEM_MONEY = 'money'
+ITEM_BOAT = 'boat'
+ITEM_CORPSE_NPC = 'npc_corpse'
+ITEM_CORPSE_PC = 'pc_corpse'
+ITEM_FOUNTAIN = 'fountain'
+ITEM_PILL = 'pill'
+ITEM_PROTECT = 'protect'
+ITEM_MAP = 'map'
+ITEM_PORTAL = 'portal'
+ITEM_WARP_STONE = 'warp_stone'
+ITEM_ROOM_KEY = 'room_key'
+ITEM_GEM = 'gem'
+ITEM_JEWELRY = 'jewelry'
+ITEM_JUKEBOX = 'jukebox'
 
 # Extra flags.
 # Used in #OBJECTS.

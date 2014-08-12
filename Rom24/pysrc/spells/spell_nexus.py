@@ -2,6 +2,7 @@ import const
 import handler_game
 import handler_magic
 import merc
+import object_creator
 import state_checks
 
 
@@ -28,8 +29,8 @@ def spell_nexus(sn, level, ch, victim, target):
         ch.send("You failed.\n")
         return
 
-    stone = ch.get_eq(merc.WEAR_HOLD)
-    if not ch.is_immortal() and (stone == None or stone.item_type != merc.ITEM_WARP_STONE):
+    stone = ch.get_eq('held')
+    if not ch.is_immortal() and (stone is None or stone.item_type != merc.ITEM_WARP_STONE):
         ch.send("You lack the proper component for this spell.\n")
         return
 
@@ -39,7 +40,7 @@ def spell_nexus(sn, level, ch, victim, target):
         stone.extract()
 
     # portal one */
-    portal = instancer.create_object(merc.itemTemplate[merc.OBJ_VNUM_PORTAL], 0)
+    portal = object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_PORTAL], 0)
     portal.timer = 1 + level // 10
     portal.value[3] = to_room.vnum
 
@@ -53,7 +54,7 @@ def spell_nexus(sn, level, ch, victim, target):
         return
 
     # portal two */
-    portal = instancer.create_object(merc.itemTemplate[merc.OBJ_VNUM_PORTAL], 0)
+    portal = object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_PORTAL], 0)
     portal.timer = 1 + level // 10
     portal.value[3] = from_room.vnum
 

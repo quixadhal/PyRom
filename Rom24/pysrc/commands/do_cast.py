@@ -18,6 +18,7 @@ def do_cast(ch, argument):
 
     argument, arg1 = game_utils.read_word(argument)
     argument, arg2 = game_utils.read_word(argument)
+    handler_magic.target_name = arg2
 
     if not arg1:
         ch.send("Cast which what where?\n")
@@ -57,18 +58,18 @@ def do_cast(ch, argument):
             # if ch == victim:
             # ch.send("You can't do that to yourself.\n")
             # return
-            if not ch.is_npc():
-                if fight.is_safe(ch, victim) and victim != ch:
-                    ch.send("Not on that target.\n")
-                    return
-
-                fight.check_killer(ch, victim)
-
-            if ch.is_affected(merc.AFF_CHARM) and ch.master == victim:
-                ch.send("You can't do that on your own follower.\n")
+        if not ch.is_npc():
+            if fight.is_safe(ch, victim) and victim != ch:
+                ch.send("Not on that target.\n")
                 return
-            vo = victim
-            target = merc.TARGET_CHAR
+
+            fight.check_killer(ch, victim)
+
+        if ch.is_affected(merc.AFF_CHARM) and ch.master == victim:
+            ch.send("You can't do that on your own follower.\n")
+            return
+        vo = victim
+        target = merc.TARGET_CHAR
     elif sn.target == merc.TAR_CHAR_DEFENSIVE:
         if not arg2:
             victim = ch
@@ -95,7 +96,7 @@ def do_cast(ch, argument):
             ch.send("You are not carrying that.\n")
             return
         vo = obj
-        target = merc.TARGET_OBJ
+        target = merc.TARGET_ITEM
     elif sn.target == merc.TAR_OBJ_CHAR_OFF:
         if not arg2:
             victim = ch.fighting
@@ -120,7 +121,7 @@ def do_cast(ch, argument):
                 vo = victim
             elif obj:
                 vo = obj
-                target = merc.TARGET_OBJ
+                target = merc.TARGET_ITEM
             else:
                 ch.send("You don't see that here.\n")
                 return
@@ -136,7 +137,7 @@ def do_cast(ch, argument):
                 target = merc.TARGET_CHAR
             elif not obj:
                 vo = obj
-                target = merc.TARGET_OBJ
+                target = merc.TARGET_ITEM
             else:
                 ch.send("You don't see that here.\n")
                 return
@@ -154,7 +155,8 @@ def do_cast(ch, argument):
 
     if random.randint(1, 99) > ch.get_skill(sn.name):
         ch.send("You lost your concentration.\n")
-        ch.check_improve( sn, False, 1)
+        if ch.is_pc():
+            ch.check_improve( sn, False, 1)
         ch.mana -= mana // 2
     else:
         ch.mana -= mana
@@ -163,11 +165,13 @@ def do_cast(ch, argument):
             sn.spell_fun(sn, ch.level, ch, vo, target)
         else:
             sn.spell_fun(sn, 3 * ch.level // 4, ch, vo, target)
-            ch.check_improve( sn, True, 1)
+            if ch.is_pc():
+                ch.check_improve( sn, True, 1)
 
     if (sn.target == merc.TAR_CHAR_OFFENSIVE or (sn.target == merc.TAR_OBJ_CHAR_OFF and target == merc.TARGET_CHAR)) \
             and victim != ch and victim.master != ch:
-        for vch in ch.in_room.people:
+        for vch_id in ch.in_room.people:
+            vch = merc.characters[vch_id]
             if victim == vch and not victim.fighting:
                 fight.check_killer(victim, ch)
                 fight.multi_hit(victim, ch, merc.TYPE_UNDEFINED)

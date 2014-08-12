@@ -82,7 +82,8 @@ def do_dirt(ch, argument):
         handler_game.act("$n kicks dirt in your eyes!", ch, None, victim, merc.TO_VICT)
         fight.damage(ch, victim, random.randint(2, 5), 'dirt kicking', merc.DAM_NONE, False)
         victim.send("You can't see a thing!\n")
-        ch.check_improve( 'dirt kicking', True, 2)
+        if ch.is_pc():
+            ch.check_improve( 'dirt kicking', True, 2)
         state_checks.WAIT_STATE(ch, const.skill_table['dirt kicking'].beats)
         af = handler_game.AFFECT_DATA()
         af.where = merc.TO_AFFECTS
@@ -95,7 +96,8 @@ def do_dirt(ch, argument):
         victim.affect_add(af)
     else:
         fight.damage(ch, victim, 0, 'dirt kicking', merc.DAM_NONE, True)
-        ch.check_improve( 'dirt kicking', False, 2)
+        if ch.is_pc():
+            ch.check_improve( 'dirt kicking', False, 2)
         state_checks.WAIT_STATE(ch, const.skill_table['dirt kicking'].beats)
     fight.check_killer(ch, victim)
 

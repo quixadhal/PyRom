@@ -7,6 +7,7 @@ import interp
 import merc
 import random
 import fight
+import handler_room
 import state_checks
 import update
 
@@ -17,7 +18,7 @@ def do_recall(ch, argument):
         ch.send("Only players can recall.\n")
         return
     handler_game.act("$n prays for transportation!", ch, 0, 0, merc.TO_ROOM)
-    location = merc.roomTemplate[merc.ROOM_VNUM_TEMPLE]
+    location = handler_room.get_room_by_vnum(merc.ROOM_VNUM_TEMPLE)
     if not location:
         ch.send("You are completely lost.\n")
         return
@@ -30,13 +31,15 @@ def do_recall(ch, argument):
     if victim:
         skill = ch.get_skill("recall")
         if random.randint(1, 99) < 80 * skill / 100:
-            ch.check_improve( "recall", False, 6)
+            if ch.is_pc():
+                ch.check_improve( "recall", False, 6)
             state_checks.WAIT_STATE(ch, 4)
             ch.send("You failed!.\n")
             return
         lose = 25 if ch.desc else 50
         update.gain_exp(ch, 0 - lose)
-        ch.check_improve( "recall", True, 4)
+        if ch.is_pc():
+            ch.check_improve( "recall", True, 4)
         ch.send("You recall from combat!  You lose %d exps.\n" % lose)
         fight.stop_fighting(ch, True)
     ch.move /= 2

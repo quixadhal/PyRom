@@ -76,10 +76,11 @@ class Affects:
                     self.vuln_flags.set_bit(vector)
                 return
 
-        for obj in self.contents:
-            if obj.wear_loc == -1:
+        for item_id in self.contents:
+            item = merc.items[item_id]
+            if not item.equipped_to:
                 continue
-            for paf in obj.affected:
+            for paf in item.affected:
                 if paf.where == where and paf.bitvector == vector:
                     if where == merc.TO_AFFECTS:
                         self.affected_by.set_bit(vector)
@@ -90,9 +91,9 @@ class Affects:
                     elif where == merc.TO_VULN:
                         self.vuln_flags.set_bit(vector)
                     return
-            if obj.enchanted:
+            if item.enchanted:
                 continue
-            for paf in obj.pIndexData.affected:
+            for paf in item.pIndexData.affected:
                 if paf.where == where and paf.bitvector == vector:
                     if where == merc.TO_AFFECTS:
                         self.affected_by.set_bit(vector)
@@ -186,7 +187,7 @@ class Affects:
         #
         # * Check for weapon wielding.
         # * Guard against recursion (for weapons with affects).
-        wield = merc.items.get(self.get_eq(merc.WEAR_WIELD), None)
+        wield = self.get_eq('main_hand')
         if not self.is_npc() and wield \
                 and wield.get_weight() > (const.str_app[self.stat(merc.STAT_STR)].wield * 10):
             global depth

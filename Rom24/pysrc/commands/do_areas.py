@@ -7,6 +7,7 @@ import interp
 
 
 def do_areas(ch, argument):
+    ch.send("Known not working. TODO: Make this work\n")
     if argument:
         ch.send("No argument is used with this command.\n")
         return

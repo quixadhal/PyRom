@@ -22,19 +22,18 @@ class Location:
         self.in_environment = None
         self.was_in_template = 0
         self.was_in_room = None
-
         self.on_template = 0
         self.on = None
         self.zone_template = ""
         self.zone = 0
         self.area = None
-        self.light = 0
+        self.available_light = 0
+
     @property
     def in_living(self):
-        from living import Living
         in_environment = merc.global_instances.get(self.in_environment, None)
         while in_environment:
-            if isinstance(in_environment, Living):
+            if in_environment.is_living:
                 return in_environment.instance_id
             in_environment = merc.global_instances.get(in_environment.in_environment, None)
         return None
@@ -64,27 +63,25 @@ class Location:
             return False
         return True if game_utils.is_name(self.name, room.owner) else False
 
-
-
     # * Move an instance from a location
     def from_environment(self):
-        if self.in_environment not in merc.global_instances:
-            logger.error("BUG: form_environment: %s No instance %d.", self.name, self.in_environemnt)
+        if self.in_environment not in merc.global_instances.keys():
+            logger.error("BUG: from_environment: %s No instance %d.", self.name, self.in_environment)
             return
         instance = merc.global_instances[self.in_environment]
         try:  #For characters only
             if not self.is_npc() and instance.area in areaTemplate:
                 areaTemplate[instance.area].nplayer -= 1
-            item = merc.items.get(self.get_eq(WEAR_LIGHT), None)
+            item = self.get_eq('light')
 
         except AttributeError:
             item = instance
 
         try:  #see if item is a light.
-            if item and item.item_type == ITEM_LIGHT and item.value[2] != 0 and instance.light > 0:
+            if item and item.light and item.value[2] != 0 and instance.light > 0:
                 instance.light -= 1
-            if self.wear_loc != merc.WEAR_NONE:
-                instance.unequip(self.instance_id)
+            if self.equipped_to:
+                instance.unequip(self)
             instance.carry_number -= self.get_number()
             instance.carry_weight -= self.get_weight()
         except AttributeError:
@@ -113,14 +110,14 @@ class Location:
         if type(instance) is int:
             instance = merc.global_instances.get(instance, None)
         if not instance:
-            logger.error(In)
+            logger.error(instance)
             return
 
         instance.contents.append(self.instance_id)
         self.in_environment = instance.instance_id
         instance.carry_number += self.get_number()
         instance.carry_weight += self.get_weight()
-        try: # if a player leaves a room.
+        try:  # if a player leaves a room.
             if not self.is_npc():
                 #TODO change to area instances
                 if areaTemplate[instance.area].empty:
@@ -129,10 +126,10 @@ class Location:
 
                 areaTemplate[instance.area].nplayer += 1
 
-            item = merc.items.get(self.get_eq(WEAR_LIGHT), None)
+            item = self.get_eq('light')
 
-            if item and item.item_type == ITEM_LIGHT and item.value[2] != 0:
-                instance.light += 1
+            if item and item.light and item.value[2] != 0:
+                instance.available_light += 1
 
             if self.is_affected(AFF_PLAGUE):
                 af = [af for af in self.affected if af.type == 'plague']
@@ -163,7 +160,7 @@ class Location:
         except AttributeError:
             pass
 
-        try: #if instance is an item
+        try:  # if instance is an item
             if instance.vnum == merc.OBJ_VNUM_PIT:
                 self.cost = 0
 
@@ -188,7 +185,7 @@ class Location:
     # * Return # of objects which an object counts as.
     # * Thanks to Tony Chamberlain for the correct recursive code here.
     def get_number(self):
-        try: #  if self is an item.
+        try:  # if self is an item.
             noweight = [merc.ITEM_CONTAINER, merc.ITEM_MONEY, merc.ITEM_GEM, merc.ITEM_JEWELRY]
             if self.item_type in noweight:
                 number = 0
@@ -225,7 +222,7 @@ class Location:
                 break
             counted.append(content)
             contents.extend(content.contents)
-            try: #  For items in containers
+            try:  # For items in containers
                 weight += content.weight * state_checks.WEIGHT_MULT(item) // 100
             except AttributeError:
                 pass

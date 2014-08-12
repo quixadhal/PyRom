@@ -34,17 +34,18 @@
 import random
 import container
 
-import handler_game
-from instance import Instancer
-import location
-from merc import *
 import merc
+import handler_game
+import instance
+import location
 import state_checks
+import type_bypass
 
 
-class Room(Instancer, location.Location, container.Container):
+class Room(instance.Instancer, location.Location, container.Container, type_bypass.ObjectType):
     def __init__(self, template=None):
         super().__init__()
+        self.is_room = True
         self.vnum = 0
         self.extra_descr = []
         self.area = ""
@@ -54,7 +55,7 @@ class Room(Instancer, location.Location, container.Container):
         self.description = ""
         self.owner = ""
         self.room_flags = 0
-        self.light = 0
+        self.available_light = 0
         self.sector_type = 0
         self.heal_rate = 0
         self.mana_rate = 0
@@ -88,13 +89,13 @@ class Room(Instancer, location.Location, container.Container):
         del merc.global_instances[self.instance_id]
 
     def is_dark(room_instance):
-        if room_instance.light > 0:
+        if room_instance.available_light > 0:
             return False
-        if state_checks.IS_SET(room_instance.room_flags, ROOM_DARK):
+        if state_checks.IS_SET(room_instance.room_flags, merc.ROOM_DARK):
             return True
-        if room_instance.sector_type == SECT_INSIDE or room_instance.sector_type == SECT_CITY:
+        if room_instance.sector_type == merc.SECT_INSIDE or room_instance.sector_type == merc.SECT_CITY:
             return False
-        if handler_game.weather_info.sunlight == SUN_SET or handler_game.weather_info.sunlight == SUN_DARK:
+        if handler_game.weather_info.sunlight == merc.SUN_SET or handler_game.weather_info.sunlight == merc.SUN_DARK:
             return True
         return False
 
@@ -103,24 +104,28 @@ class Room(Instancer, location.Location, container.Container):
         if room_instance.owner:
             return True
         count = len(room_instance.people)
-        if state_checks.IS_SET(room_instance.room_flags, ROOM_PRIVATE) and count >= 2:
+        if state_checks.IS_SET(room_instance.room_flags, merc.ROOM_PRIVATE) and count >= 2:
             return True
-        if state_checks.IS_SET(room_instance.room_flags, ROOM_SOLITARY) and count >= 1:
+        if state_checks.IS_SET(room_instance.room_flags, merc.ROOM_SOLITARY) and count >= 1:
             return True
-        if state_checks.IS_SET(room_instance.room_flags, ROOM_IMP_ONLY):
+        if state_checks.IS_SET(room_instance.room_flags, merc.ROOM_IMP_ONLY):
             return True
         return False
+
+def get_room_by_vnum(vnum):
+    room_id = merc.instances_by_room[vnum][0]
+    return merc.rooms[room_id]
 
 def get_random_room(ch):
     room = None
     while True:
-        room = random.choice(rooms.values())
+        room = random.choice(merc.rooms.values())
         if ch.can_see_room(room) and not room.is_private() \
-            and not state_checks.IS_SET(room.room_flags, ROOM_PRIVATE) \
-            and not state_checks.IS_SET(room.room_flags, ROOM_SOLITARY) \
-            and not state_checks.IS_SET(room.room_flags, ROOM_SAFE) \
-            and (ch.is_npc() or ch.act.is_set(ACT_AGGRESSIVE)
-                 or not state_checks.IS_SET(room.room_flags, ROOM_LAW)):
+            and not state_checks.IS_SET(room.room_flags, merc.ROOM_PRIVATE) \
+            and not state_checks.IS_SET(room.room_flags, merc.ROOM_SOLITARY) \
+            and not state_checks.IS_SET(room.room_flags, merc.ROOM_SAFE) \
+            and (ch.is_npc() or ch.act.is_set(merc.ACT_AGGRESSIVE)
+                 or not state_checks.IS_SET(room.room_flags, merc.ROOM_LAW)):
             break
     return room
 
@@ -128,6 +133,7 @@ def number_door(self=None):
     return random.randint(0, 5)
 
 def find_door(ch, arg):
+    print(arg)
     if arg == "n" or arg == "north":
         door = 0
     elif arg == "e" or arg == "east":
@@ -143,15 +149,19 @@ def find_door(ch, arg):
     else:
         for door in range(0, 5):
             pexit = ch.in_room.exit[door]
-            if pexit and state_checks.IS_SET(pexit.exit_info, EX_ISDOOR) and pexit.keyword and arg in pexit.keyword:
+            print(pexit)
+            if pexit and pexit.exit_info.is_set(merc.EX_ISDOOR) and pexit.keyword \
+                    and arg in pexit.keyword:
                 return door
-        handler_game.act("I see no $T here.", ch, None, arg, TO_CHAR)
+        handler_game.act("I see no $T here.", ch, None, arg, merc.TO_CHAR)
         return -1
     pexit = ch.in_room.exit[door]
+    print(pexit)
+    print(pexit.exit_info)
     if not pexit:
-        handler_game.act("I see no door $T here.", ch, None, arg, TO_CHAR)
+        handler_game.act("I see no door $T here.", ch, None, arg, merc.TO_CHAR)
         return -1
-    if not state_checks.IS_SET(pexit.exit_info, EX_ISDOOR):
+    if not pexit.exit_info.is_set(merc.EX_ISDOOR):
         ch.send("You can't do that.\n")
         return -1
     return door

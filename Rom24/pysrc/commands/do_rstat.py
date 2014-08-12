@@ -10,7 +10,7 @@ import state_checks
 
 def do_rstat(ch, argument):
     argument, arg = game_utils.read_word(argument)
-    location = ch.in_room if not arg else game_utils.find_location(ch, arg)
+    location = merc.rooms[ch.in_room] if not arg else game_utils.find_location(ch, arg)
     if not location:
         ch.send("No such location.\n")
         return

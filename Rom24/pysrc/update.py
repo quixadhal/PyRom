@@ -130,7 +130,8 @@ def hit_gain(ch):
         if number < ch.get_skill('fast healing'):
             gain += number * gain // 100
             if ch.hit < ch.max_hit:
-                ch.check_improve('fast healing', True, 8)
+                if ch.is_pc():
+                    ch.check_improve('fast healing', True, 8)
 
         if ch.position == POS_SLEEPING:
             pass
@@ -184,7 +185,8 @@ def mana_gain(ch):
         if number < ch.get_skill('meditation'):
             gain += number * gain // 100
             if ch.mana < ch.max_mana:
-                ch.check_improve( 'meditation', True, 8)
+                if ch.is_pc():
+                    ch.check_improve( 'meditation', True, 8)
 
         if not ch.guild.fMana:
             gain //= 2
@@ -308,7 +310,7 @@ def npc_update():
             item_best = None
             for item_id in npc.in_room.items:
                 item = merc.items[item_id]
-                if state_checks.CAN_WEAR(item, ITEM_TAKE) and npc.can_loot(item) and item.cost > top and item.cost > 0:
+                if item.take and npc.can_loot(item) and item.cost > top and item.cost > 0:
                     item_best = item
                     top = item.cost
 
@@ -325,7 +327,7 @@ def npc_update():
                 and random.randint(0, 3) == 0 \
                 and pexit \
                 and pexit.to_room \
-                and not state_checks.IS_SET(pexit.exit_info, EX_CLOSED) \
+                and not pexit.exit_info.is_set(merc.EX_CLOSED) \
                 and not state_checks.IS_SET(merc.rooms[pexit.to_room].room_flags, ROOM_NO_MOB) \
                 and (not npc.act.is_set(ACT_STAY_AREA)
                      or merc.rooms[pexit.to_room].area == npc.in_room.area) \
@@ -442,6 +444,7 @@ def char_update():
                     and not ch.is_affected(AFF_CHARM) and random.randint(1, 99) < 5:
                 handler_game.act("$n wanders on home.", ch, None, None, TO_ROOM)
                 ch.extract(True)
+                id_list.remove(character_id)
                 continue
 
         if ch.hit < ch.max_hit:
@@ -463,16 +466,16 @@ def char_update():
             fight.update_pos(ch)
 
         if not ch.is_npc() and ch.level < LEVEL_IMMORTAL:
-            obj = merc.items.get(ch.get_eq(WEAR_LIGHT), None)
-            if obj and obj.item_type == ITEM_LIGHT and obj.value[2] > 0:
-                obj.value[2] -= 1
-                if obj.value[2] == 0 and roomTemplate[ch.in_room] is not None:
-                    roomTemplate[ch.in_room].light -= 1
-                    handler_game.act("$p goes out.", ch, obj, None, TO_ROOM)
-                    handler_game.act("$p flickers and goes out.", ch, obj, None, TO_CHAR)
-                    obj.extract()
-                elif obj.value[2] <= 5 and ch.in_room:
-                    handler_game.act("$p flickers.", ch, obj, None, TO_CHAR)
+            item = ch.get_eq('light')
+            if item and item.item_type == ITEM_LIGHT and item.value[2] > 0:
+                item.value[2] -= 1
+                if item.value[2] == 0 and ch.in_room is not None:
+                    ch.in_room.light -= 1
+                    handler_game.act("$p goes out.", ch, item, None, TO_ROOM)
+                    handler_game.act("$p flickers and goes out.", ch, item, None, TO_CHAR)
+                    item.extract()
+                elif item.value[2] <= 5 and ch.in_room:
+                    handler_game.act("$p flickers.", ch, item, None, TO_CHAR)
 
             if ch.is_immortal():
                 ch.timer = 0
@@ -610,7 +613,7 @@ def item_update():
         elif item.item_type == ITEM_PORTAL:
             message = "$p fades out of existence."
         elif item.item_type == ITEM_CONTAINER:
-            if state_checks.CAN_WEAR(item, ITEM_WEAR_FLOAT):
+            if item.float:
                 if item.contents:
                     message = "$p flickers and vanishes, spilling its contents on the floor."
                 else:
@@ -625,15 +628,15 @@ def item_update():
                 merc.characters[item.in_living].silver += item.cost // 5
             else:
                 handler_game.act(message, merc.characters[item.in_living], item, None, TO_CHAR)
-                if item.wear_loc == WEAR_FLOAT:
+                if 'float' in item.equipped_to:
                     handler_game.act(message, merc.characters[item.in_living], item, None, TO_ROOM)
         elif item.in_room and item.in_room.people:
             if not (item.in_item and merc.items[item.in_item].vnum == OBJ_VNUM_PIT
-                    and not state_checks.CAN_WEAR(merc.items[item.in_item], ITEM_TAKE)):
+                    and not item.take):
                 handler_game.act(message, item.in_room.people[:1], item, None, TO_ROOM)
                 handler_game.act(message, item.in_room.people[:1], item, None, TO_CHAR)
 
-        if (item.item_type == ITEM_CORPSE_PC or item.wear_loc == WEAR_FLOAT) and item.contents:
+        if (item.item_type == ITEM_CORPSE_PC or 'float' in item.equipped_to) and item.contents:
             # save the contents */
             for t_item_id in item.contents[:]:
                 t_item = merc.items[t_item_id]
@@ -642,7 +645,7 @@ def item_update():
                 if item.in_item:  # in another object */
                     t_item.to_environment(item.in_item)
                 elif item.in_living:  # carried */
-                    if item.wear_loc == WEAR_FLOAT:
+                    if 'float' in item.equipped_to:
                         if merc.characters[item.in_living].in_room is None:
                             t_item.extract()
                         else:
@@ -731,6 +734,7 @@ def instance_number_save():
 # * Called once per pulse from game loop.
 # * Random times to defeat tick-timing clients and players.
 # */
+previous_pulse = -1
 pulse_area = 0
 pulse_npc = 0
 pulse_violence = 0
@@ -738,32 +742,49 @@ pulse_point = 0
 
 
 def update_handler():
+    global previous_pulse
     global pulse_area
     global pulse_npc
     global pulse_violence
     global pulse_point
 
-    pulse_area -= 1
-    pulse_npc -= 1
-    pulse_violence -= 1
-    pulse_point -= 1
+    current_time = get_precise_time()
+    if previous_pulse == -1:
+        previous_pulse = current_time-1
 
-    if pulse_area <= 0:
-        pulse_area = PULSE_AREA
-        db.area_update()
-        instance_number_save()  # Piggyback on area updates to save the instance number.
+    while current_time >= previous_pulse + MILLISECONDS_PER_PULSE:
+        previous_pulse += MILLISECONDS_PER_PULSE
 
-    if pulse_npc <= 0:
-        pulse_npc = PULSE_MOBILE
-        npc_update()
-    if pulse_violence <= 0:
-        hotfix.poll_files()
-        pulse_violence = PULSE_VIOLENCE
-        fight.violence_update()
-    if pulse_point <= 0:
-        handler_game.wiznet("TICK!", None, None, WIZ_TICKS, 0, 0)
-        pulse_point = PULSE_TICK
-        # weather_update  ( )
-        char_update()
-        item_update()
-    aggr_update()
+        pulse_area -= 1
+        pulse_npc -= 1
+        pulse_violence -= 1
+        pulse_point -= 1
+
+        for ch in merc.characters.values():
+            if ch.daze > 0:
+                ch.daze -= 1
+            if ch.wait > 0:
+                ch.wait -= 1
+
+        if pulse_area <= 0:
+            pulse_area = PULSE_AREA
+            db.area_update()
+            instance_number_save()  # Piggyback on area updates to save the instance number.
+
+        if pulse_npc <= 0:
+            pulse_npc = PULSE_MOBILE
+            npc_update()
+        if pulse_violence <= 0:
+            hotfix.poll_files()
+            pulse_violence = PULSE_VIOLENCE
+            fight.violence_update()
+        if pulse_point <= 0:
+            handler_game.wiznet("TICK!", None, None, WIZ_TICKS, 0, 0)
+            pulse_point = PULSE_TICK
+            # weather_update  ( )
+            char_update()
+            item_update()
+        aggr_update()
+
+def get_precise_time():
+    return int(round(time.time()*1000))

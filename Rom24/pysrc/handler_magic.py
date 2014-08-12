@@ -60,7 +60,7 @@ def check_dispel(dis_level, victim, skill):
                 if not saves_dispel(dis_level,af.level,af.duration):
                     victim.affect_strip(skill)
                     if skill.msg_off:
-                        victim.send(skill_table[skill].msg_off + "\n")
+                        victim.send(skill_table[skill.name].msg_off + "\n")
                     return True
                 else:
                     af.level -= 1
@@ -125,7 +125,7 @@ def obj_cast_spell(sn, level, ch, victim, obj):
             ch.send("You can't do that.\n")
             return
         vo = obj
-        target = merc.TARGET_OBJ
+        target = merc.TARGET_ITEM
     elif sn.target == merc.TAR_OBJ_CHAR_OFF:
         if not victim and not obj:
             if ch.fighting:
@@ -141,7 +141,7 @@ def obj_cast_spell(sn, level, ch, victim, obj):
             target = merc.TARGET_CHAR
         else:
             vo = obj
-            target = merc.TARGET_OBJ
+            target = merc.TARGET_ITEM
     elif sn.target == merc.TAR_OBJ_CHAR_DEF:
         if not victim and not obj:
             vo = ch
@@ -151,7 +151,7 @@ def obj_cast_spell(sn, level, ch, victim, obj):
             target = merc.TARGET_CHAR
         else:
             vo = obj
-            target = merc.TARGET_OBJ
+            target = merc.TARGET_ITEM
     else:
         print("BUG: Obj_cast_spell: bad target for sn %s." % sn.name)
         return

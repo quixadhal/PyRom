@@ -9,7 +9,9 @@ def spell_faerie_fog(sn, level, ch, victim, target):
     handler_game.act("$n conjures a cloud of purple smoke.", ch, None, None, merc.TO_ROOM)
     ch.send("You conjure a cloud of purple smoke.\n")
 
-    for ich in ch.in_room.people:
+    for ich_id in ch.in_room.people:
+
+        ich = merc.characters[ich_id]
         if ich.invis_level > 0:
             continue
 

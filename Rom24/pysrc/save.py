@@ -138,6 +138,7 @@ def get_if_diff(s1, s2):
 
 
 def fwrite_obj(ch, obj, contained_by=None):
+    #TODO make this eq-ified
     odict = OrderedDict()
     obj = merc.items[obj]
     odict['Vnum'] = obj.vnum
@@ -146,7 +147,7 @@ def fwrite_obj(ch, obj, contained_by=None):
     odict['ShD'] = obj.short_descr
     odict['Desc'] = obj.description
     odict['ExtF'] = obj.extra_flags
-    odict['WeaF'] = obj.wear_flags
+    odict['WeaF'] = obj.equips_to
     odict['Ityp'] = obj.item_type
     odict['Wt'] = obj.weight
     odict['Cond'] = obj.condition

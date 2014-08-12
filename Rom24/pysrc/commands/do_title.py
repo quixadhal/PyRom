@@ -15,6 +15,7 @@ def do_title(ch, argument):
         return
     if len(argument) > 45:
         argument = argument[:45]
+    argument = argument.strip()
     game_utils.set_title(ch, argument)
     ch.send("Ok.\n")
 

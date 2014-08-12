@@ -31,15 +31,17 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
+import datetime
 import logging
 
 logger = logging.getLogger()
 
+import psutil
 from collections import OrderedDict
+import pdb
 import random
 from types import MethodType
 import time
-
 import db
 import game_utils
 import handler_game
@@ -186,7 +188,7 @@ def bust_a_prompt(ch):
         if pexit and (ch.can_see_room(pexit.to_room)
                       or (ch.is_affected(merc.AFF_INFRARED)
                           and not ch.is_affected(merc.AFF_BLIND))) \
-                and not state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED):
+                and not pexit.exit_info.is_set(merc.EX_CLOSED):
             found = True
             doors += dir_name[door]
         if not found:

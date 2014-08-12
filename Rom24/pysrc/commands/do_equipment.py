@@ -3,6 +3,7 @@ import logging
 logger = logging.getLogger()
 
 import merc
+import living
 import interp
 import handler_item
 
@@ -10,14 +11,14 @@ import handler_item
 def do_equipment(ch, argument):
     ch.send("You are using:\n")
     found = False
-    for iWear in range(merc.MAX_WEAR):
-        obj = ch.get_eq(iWear)
-        if not obj:
+    for slot, item_id in ch.equipped.items():
+        item = ch.get_eq(slot)
+        if not item:
             continue
 
-        ch.send(merc.where_name[iWear])
-        if ch.can_see_item(obj):
-            ch.send(handler_item.format_item_to_char(obj, ch, True) + "\n")
+        ch.send(living.eq_slot_strings[slot])
+        if ch.can_see_item(item):
+            ch.send(handler_item.format_item_to_char(item, ch, True) + "\n")
         else:
             ch.send("something.\n")
         found = True

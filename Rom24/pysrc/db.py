@@ -67,7 +67,7 @@ def boot_db():
     logger.info('    Loaded %d Npc Templates', len(merc.characterTemplate))
     logger.info('    Loaded %d Item Templates', len(merc.itemTemplate))
     logger.info('    Loaded %d Room Templates', len(merc.roomTemplate))
-    logger.info('    Loaded %d Resets', len(merc.reset_list))
+    # TODO logger.info('    Loaded %d Resets', len(merc.reset_list))  Fix this
     logger.info('    Loaded %d Shops', len(merc.shop_list))
     logger.info('    Loaded %d Socials', len(merc.social_list))
 
@@ -278,7 +278,7 @@ def reset_area(area):
                         olevel = random.randint(10, 20)
 
                 item = object_creator.create_item(item_template, olevel)
-                item.extra_flags = state_checks.SET_BIT(item.extra_flags, merc.ITEM_INVENTORY)
+                item.inventory = True
             else:
                 if pReset.arg2 > 50:  # old format */
                     limit = 6
@@ -304,7 +304,7 @@ def reset_area(area):
                     continue
             item.to_environment(mob)
             if pReset.command == 'E':
-                mob.equip(item.instance_id, pReset.arg3)
+                mob.equip(item, True, False)
                 last = True
                 continue
 
@@ -318,16 +318,16 @@ def reset_area(area):
                 continue
 
             if pReset.arg3 == 0:
-                pexit.exit_info = state_checks.REMOVE_BIT(pexit.exit_info, merc.EX_CLOSED)
-                pexit.exit_info = state_checks.REMOVE_BIT(pexit.exit_info, merc.EX_LOCKED)
+                pexit.exit_info.rem_bit(merc.EX_CLOSED)
+                pexit.exit_info.rem_bit(merc.EX_LOCKED)
                 continue
             elif pReset.arg3 == 1:
-                pexit.exit_info = state_checks.SET_BIT(pexit.exit_info, merc.EX_CLOSED)
-                pexit.exit_info = state_checks.REMOVE_BIT(pexit.exit_info, merc.EX_LOCKED)
+                pexit.exit_info.set_bit(merc.EX_CLOSED)
+                pexit.exit_info.rem_bit(merc.EX_LOCKED)
                 continue
             elif pReset.arg3 == 2:
-                pexit.exit_info = state_checks.SET_BIT(pexit.exit_info, merc.EX_CLOSED)
-                pexit.exit_info = state_checks.SET_BIT(pexit.exit_info, merc.EX_LOCKED)
+                pexit.exit_info.set_bit(merc.EX_CLOSED)
+                pexit.exit_info.set_bit(merc.EX_LOCKED)
                 continue
             last = True
             continue

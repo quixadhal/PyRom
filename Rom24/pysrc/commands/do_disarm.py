@@ -19,7 +19,7 @@ def do_disarm(ch, argument):
         ch.send("You don't know how to disarm opponents.\n")
         return
     hth = ch.get_skill('hand to hand')
-    if not ch.get_eq(merc.WEAR_WIELD) \
+    if not ch.get_eq('main_hand') \
             and hth == 0 or (ch.is_npc() and not ch.off_flags.is_set(merc.OFF_DISARM)):
         ch.send("You must wield a weapon to disarm.\n")
         return
@@ -27,8 +27,8 @@ def do_disarm(ch, argument):
     if not victim:
         ch.send("You aren't fighting anyone.\n")
         return
-    obj = victim.get_eq(merc.WEAR_WIELD)
-    if not obj:
+    item = victim.get_eq('main_hand')
+    if not item:
         ch.send("Your opponent is not wielding a weapon.\n")
         return
 
@@ -40,7 +40,7 @@ def do_disarm(ch, argument):
     # modifiers
 
     # skill
-    if ch.get_eq(merc.WEAR_WIELD) is None:
+    if not ch.get_eq('main_hand'):
         chance = chance * hth // 150
     else:
         chance = chance * ch_weapon // 100
@@ -58,13 +58,15 @@ def do_disarm(ch, argument):
     if random.randint(1, 99) < chance:
         state_checks.WAIT_STATE(ch, const.skill_table['disarm'].beats)
         fight.disarm(ch, victim)
-        ch.check_improve( 'disarm', True, 1)
+        if ch.is_pc():
+            ch.check_improve('disarm', True, 1)
     else:
         state_checks.WAIT_STATE(ch, const.skill_table['disarm'].beats)
         handler_game.act("You fail to disarm $N.", ch, None, victim, merc.TO_CHAR)
         handler_game.act("$n tries to disarm you, but fails.", ch, None, victim, merc.TO_VICT)
         handler_game.act("$n tries to disarm $N, but fails.", ch, None, victim, merc.TO_NOTVICT)
-        ch.check_improve( 'disarm', False, 1)
+        if ch.is_pc():
+            ch.check_improve('disarm', False, 1)
     fight.check_killer(ch, victim)
     return
 

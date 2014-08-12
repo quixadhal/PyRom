@@ -30,7 +30,7 @@ def do_flee( ch, argument ):
         pexit = was_in.exit[door]
         if not pexit \
                 or not pexit.to_room \
-                or state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED) \
+                or pexit.exit_info.is_set(merc.EX_CLOSED) \
                 or random.randint(0, ch.daze) != 0 \
                 or (ch.is_npc()
                     and state_checks.IS_SET(merc.rooms[pexit.to_room].room_flags, merc.ROOM_NO_MOB)):
