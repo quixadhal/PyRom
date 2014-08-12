@@ -37,7 +37,7 @@ def do_backstab(ch, argument):
             ch.send("Kill stealing is not permitted.\n")
             return
         obj = ch.get_eq(merc.WEAR_WIELD)
-        if obj:
+        if not obj:
             ch.send("You need to wield a weapon to backstab.\n")
             return
         if victim.hit < victim.max_hit // 3:

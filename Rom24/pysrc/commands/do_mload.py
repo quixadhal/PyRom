@@ -6,6 +6,7 @@ import merc
 import interp
 import game_utils
 import handler_game
+import object_creator
 
 def do_mload(ch, argument):
     argument, arg = game_utils.read_word(argument)
@@ -17,7 +18,7 @@ def do_mload(ch, argument):
         ch.send("No mob has that vnum.\n")
         return
     pMobIndex = merc.characterTemplate[vnum]
-    victim = instancer.create_mobile(pMobIndex)
+    victim = object_creator.create_mobile(pMobIndex)
     victim.to_environment(ch.in_room)
     handler_game.act("$n has created $N!", ch, None, victim, merc.TO_ROOM)
     handler_game.wiznet("$N loads %s." % victim.short_descr, ch, None, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.trust)

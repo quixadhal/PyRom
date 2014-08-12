@@ -132,8 +132,8 @@ reset_list = []
 shop_list = []
 social_list = []
 
-GDCF = False
-GDF = False
+GDCF = True
+GDF = True
 
 #Global Constants
 PULSE_PER_SECOND = 4

@@ -2,6 +2,7 @@ import const
 import handler_game
 import handler_magic
 import merc
+import object_creator
 import state_checks
 
 
@@ -39,7 +40,7 @@ def spell_nexus(sn, level, ch, victim, target):
         stone.extract()
 
     # portal one */
-    portal = instancer.create_object(merc.itemTemplate[merc.OBJ_VNUM_PORTAL], 0)
+    portal = object_creator.create_object(merc.itemTemplate[merc.OBJ_VNUM_PORTAL], 0)
     portal.timer = 1 + level // 10
     portal.value[3] = to_room.vnum
 
@@ -53,7 +54,7 @@ def spell_nexus(sn, level, ch, victim, target):
         return
 
     # portal two */
-    portal = instancer.create_object(merc.itemTemplate[merc.OBJ_VNUM_PORTAL], 0)
+    portal = object_creator.create_object(merc.itemTemplate[merc.OBJ_VNUM_PORTAL], 0)
     portal.timer = 1 + level // 10
     portal.value[3] = from_room.vnum
 

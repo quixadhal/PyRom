@@ -11,6 +11,7 @@ logger = logging.getLogger()
 import db
 import merc
 import interp
+import object_creator
 
 
 # command that is similar to load
@@ -44,7 +45,7 @@ def do_clone(ch, argument):
         if not handler_item.item_check(ch, obj):
             ch.send("Your powers are not great enough for such a task.\n")
             return
-        clone = instancer.create_object(obj.pIndexData, 0)
+        clone = object_creator.create_object(obj.pIndexData, 0)
         db.clone_object(obj, clone)
         if obj.in_living:
             clone.to_environment(ch)
@@ -67,12 +68,12 @@ def do_clone(ch, argument):
                 or not state_checks.IS_TRUSTED(ch, merc.L8):
             ch.send("Your powers are not great enough for such a task.\n")
             return
-        clone = instancer.create_mobile(mob.pIndexData)
+        clone = object_creator.create_mobile(mob.pIndexData)
         db.clone_mobile(mob, clone)
 
         for obj in mob.contents:
             if handler_item.item_check(ch, obj):
-                new_obj = instancer.create_object(obj.pIndexData, 0)
+                new_obj = object_creator.create_object(obj.pIndexData, 0)
                 db.clone_object(obj, new_obj)
                 handler_item.recursive_clone(ch, obj, new_obj)
                 new_obj.to_environment(clone)

@@ -30,7 +30,6 @@ def do_sacrifice(ch, argument):
     if obj.in_room:
         for gch_id in obj.in_room.people:
             gch = merc.characters[gch_id]
-            gch = merc.characters[gch]
             if gch.on == obj:
                 handler_game.act("$N appears to be using $p.", ch, obj, gch, merc.TO_CHAR)
                 return
