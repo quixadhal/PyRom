@@ -22,7 +22,10 @@ def do_authenticator(ch, argument):
         ch.send('Authenticator %s.\n' % ('active' if ch.auth else 'disabled'))
         ch.send('Usage:  authenticator <on|off> <password> [token]\n')
         if ch.auth:
-            ch.send('DEBUG: %s, %s\n' % (ch.auth.secret, ch.auth.time_code()))
+            import time
+            import sys_utils
+            trials = [ch.auth.time_code(time.time() + offset) for offset in (-30, 0, 30)]
+            ch.send('DEBUG: %s - %s, %r\n' % (sys_utils.sysTimeStamp(time.time()), ch.auth.secret, trials))
         return
 
     arg1 = arg1.lower()
