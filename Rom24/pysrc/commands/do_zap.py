@@ -35,7 +35,7 @@ def do_zap(ch, argument):
     else:
         victim = ch.get_char_room(arg)
         obj = ch.get_item_here(arg)
-        if not victim or not obj:
+        if not victim and not obj:
             ch.send("You can't find it.\n")
             return
         state_checks.WAIT_STATE(ch, 2 * merc.PULSE_VIOLENCE)

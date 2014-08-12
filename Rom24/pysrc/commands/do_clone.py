@@ -1,5 +1,10 @@
 import logging
 
+logger = logging.getLogger()
+
+import db
+import merc
+import interp
 import game_utils
 import handler_game
 import handler_item
@@ -7,16 +12,8 @@ import object_creator
 import state_checks
 
 
-logger = logging.getLogger()
-
-import db
-import merc
-import interp
-
-
 # command that is similar to load
 def do_clone(ch, argument):
-    #TODO fix this
     rest, arg = game_utils.read_word(argument)
     mob = None
     obj = None
@@ -46,8 +43,8 @@ def do_clone(ch, argument):
         if not handler_item.item_check(ch, obj):
             ch.send("Your powers are not great enough for such a task.\n")
             return
-        clone = instancer.create_object(obj.pIndexData, 0)
-        db.clone_object(obj, clone)
+        clone = object_creator.create_item(obj.vnum, 0)
+        object_creator.clone_item(obj, clone)
         if obj.in_living:
             clone.to_environment(ch)
         else:
@@ -69,13 +66,13 @@ def do_clone(ch, argument):
                 or not state_checks.IS_TRUSTED(ch, merc.L8):
             ch.send("Your powers are not great enough for such a task.\n")
             return
-        clone = object_creator.create_mobile(mob.pIndexData)
+        clone = object_creator.create_mobile(mob.vnum)
         object_creator.clone_mobile(mob, clone)
 
         for obj in mob.contents:
             if handler_item.item_check(ch, obj):
-                new_obj = object_creator.create_item(obj.pIndexData, 0)
-                object_creator.create_item(obj, new_obj)
+                new_obj = object_creator.create_item(obj.vnum, 0)
+                object_creator.clone_item(obj, new_obj)
                 handler_item.recursive_clone(ch, obj, new_obj)
                 new_obj.to_environment(clone)
                 new_obj.equips_to = obj.equips_to

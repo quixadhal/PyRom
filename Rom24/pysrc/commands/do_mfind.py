@@ -20,7 +20,7 @@ def do_mfind(ch, argument):
     # Do you?
     # -- Furey
     for pMobIndex in merc.characterTemplate.values():
-        if fAll or game_utils.is_name(arg, pMobIndex.player_name):
+        if fAll or game_utils.is_name(arg, pMobIndex.name):
             found = True
             ch.send("[[%5d]] %s\n" % (pMobIndex.vnum, pMobIndex.short_descr))
     if not found:

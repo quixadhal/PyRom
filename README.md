@@ -31,6 +31,18 @@ The original C source and data files are included for comparison.  The root
 of the python project itself is in **./Rom24/pysrc/**, and this should be used as
 the source directory for any IDE you might use.
 
+## Installation and Usage ##
+
+### Windows ###
+
+1. Grab and install a copy of the latest version of Python3 (currently tested on 3.4.x)
+1. Ensure that the Python directory is available on your PATH environment variable
+1. Open a new command prompt window
+1. Navigate to "~/pyom/Rom24/pysrc/"
+1. Run "python pyom.py"
+
+If all went well, you should be seeing a barrage of initialization messages and the MUD will be booting up. By default the MUD uses port 1337. You can connect to localhost:1337 and login.
+
 A basic interactive shell is available in **shell.py**.  Various configuration
 options can be adjusted in **settings.py**.  If you're running from a command
 line, 
@@ -41,6 +53,19 @@ cd ./Rom24/pysrc && python3 ./pyom.py
 ```
  should get things started.  If
 you're using an IDE, make sure you set **pyom.py** as the start file.
+
+## Configuring an Implementor Character ##
+
+An Implementor is a superadmin/root/GM/immortal that has all privilages. To set your first character up as an Implementor:
+
+1. Create a character
+1. Get to level 2
+1. Save and log out
+1. Locate your character file in "~pyom/Rom24/player/<yourname>.json"
+1. Open and modify the Trust (Tru) and Level (Levl) variables to 60
+1. Save the file
+1. Log back into your character
+1. If you have access to commands like "load" "restore" and "vnum" then you are an implementor
 
 This isn't finished, and we're still learning python, so things may be
 flat-out broken, or done in a really inefficient or silly way, as we unlearn

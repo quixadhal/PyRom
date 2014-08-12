@@ -23,8 +23,8 @@ def do_ostat(ch, argument):
 
     ch.send("Name(s): %s\n" % obj.name)
     ch.send("Vnum: %d  Format: %s  Type: %s  Resets: %d\n" % (
-        obj.pIndexData.vnum, "new" if obj.pIndexData.new_format else "old",
-        obj.item_type, obj.pIndexData.reset_num ))
+        obj.vnum, "new" if obj.new_format else "old",
+        obj.item_type, obj.reset_num ))
     ch.send("Short description: %s\nLong description: %s\n" % (obj.short_descr, obj.description ))
     ch.send("Wear bits: %s\nExtra bits: %s\n" % (wear_bit_name(obj.wear_flags),
                                                  extra_bit_name(obj.extra_flags)))
@@ -32,10 +32,12 @@ def do_ostat(ch, argument):
                                                                  obj.weight, obj.get_weight(), obj.true_weight() ))
     ch.send("Level: %d  Cost: %d  Condition: %d  Timer: %d\n" % (obj.level, obj.cost, obj.condition, obj.timer ))
 
+    if obj.in_living:
+        obj_holder = merc.characters[obj.in_living]
     ch.send("In room: %d  In object: %s  Carried by: %s  Wear_loc: %d\n" % (
         0 if not obj.in_room else obj.in_room.vnum,
         "(none)" if not obj.in_item else obj.in_item.short_descr,
-        "(noone)" if not obj.in_living else "someone" if not ch.can_see(obj.in_living) else obj.in_living.name,
+        "(noone)" if not obj_holder else "someone" if not ch.can_see(obj_holder) else obj_holder.name,
         obj.wear_loc ))
     ch.send("Values: %s\n" % [v for v in obj.value])
     # now give out vital statistics as per identify
@@ -70,7 +72,7 @@ def do_ostat(ch, argument):
             ch.send("unknown\n")
         else:
             ch.send(const.weapon_table[obj.value[0]] + "\n")
-        if obj.pIndexData.new_format:
+        if obj.new_format:
             ch.send(
                 "Damage is %dd%d (average %d)\n" % (obj.value[1], obj.value[2], (1 + obj.value[2]) * obj.value[1] // 2))
         else:
@@ -89,16 +91,16 @@ def do_ostat(ch, argument):
         if obj.value[4] != 100:
             ch.send("Weight multiplier: %d%%\n" % obj.value[4])
 
-    if obj.extra_descr or obj.pIndexData.extra_descr:
+    if obj.extra_descr or obj.extra_descr:
         ch.send("Extra description keywords: '")
         extra_descr = obj.extra_descr
-        extra_descr.extend(obj.pIndexData.extra_descr)
+        extra_descr.extend(obj.extra_descr)
         for ed in extra_descr:
             ch.send(ed.keyword)
             ch.send(" ")
     affected = obj.affected
     if not obj.enchanted:
-        affected.extend(obj.pIndexData.affected)
+        affected.extend(obj.affected)
     for paf in affected:
         ch.send("Affects %s by %d, level %d" % (affect_loc_name(paf.location), paf.modifier, paf.level))
         if paf.duration > -1:
