@@ -2,6 +2,7 @@ import os
 import hashlib
 import json
 import logging
+import tables
 
 logger = logging.getLogger()
 
@@ -9,6 +10,7 @@ import merc
 import instance
 import settings
 import type_bypass
+import bit
 
 __author__ = 'venom'
 
@@ -115,7 +117,7 @@ class Exit:
             self.name = ""
             self.to_room_vnum = None
             self.to_room = None
-            self.exit_info = 0
+            self.exit_info = bit.Bit(flags=tables.exit_flags)
             self.key = None
             self.key_vnum = None
             self.keyword = ""

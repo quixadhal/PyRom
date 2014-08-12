@@ -133,6 +133,119 @@ def read_equipment_flags(item, pstr):
     return pstr, ret_set
 
 
+def item_bitvector_flag_str(bits: int, in_type='extra flags'):
+    if not bits or in_type:
+        return None
+    if bits == 0:
+        return None
+    if 'wear flags' in in_type:
+        if bits & merc.ITEM_TAKE:
+            return 'take'
+        elif bits & merc.ITEM_WEAR_FINGER:
+            return 'left_finger, right_finger'
+        elif bits & merc.ITEM_WEAR_NECK:
+            return 'neck, collar'
+        elif bits & merc.ITEM_WEAR_BODY:
+            return 'body'
+        elif bits & merc.ITEM_WEAR_HEAD:
+            return 'head'
+        elif bits & merc.ITEM_WEAR_LEGS:
+            return 'legs'
+        elif bits & merc.ITEM_WEAR_FEET:
+            return 'feet'
+        elif bits & merc.ITEM_WEAR_HANDS:
+            return 'hands'
+        elif bits & merc.ITEM_WEAR_ARMS:
+            return 'arms'
+        elif bits & merc.ITEM_WEAR_SHIELD:
+            return 'off_hand'
+        elif bits & merc.ITEM_WEAR_ABOUT:
+            return 'about'
+        elif bits & merc.ITEM_WEAR_WAIST:
+            return 'waist'
+        elif bits & merc.ITEM_WEAR_WRIST:
+            return 'left_wrist, right_wrist'
+        elif bits & merc.ITEM_WIELD:
+            return 'main_hand'
+        elif bits & merc.ITEM_HOLD:
+            return 'held'
+        elif bits & merc.ITEM_NO_SAC:
+            return 'no_sac'
+        elif bits & merc.ITEM_WEAR_FLOAT:
+            return 'float'
+        else:
+            return None
+    if 'extra flags' in in_type:
+        if bits & merc.ITEM_GLOW:
+            return 'glow'
+        elif bits & merc.ITEM_HUM:
+            return 'hum'
+        elif bits & merc.ITEM_DARK:
+            return 'dark'
+        elif bits & merc.ITEM_LOCK:
+            return 'lock'
+        elif bits & merc.ITEM_EVIL:
+            return 'evil'
+        elif bits & merc.ITEM_INVIS:
+            return 'invis'
+        elif bits & merc.ITEM_MAGIC:
+            return 'magic'
+        elif bits & merc.ITEM_NODROP:
+            return 'no_drop'
+        elif bits & merc.ITEM_BLESS:
+            return 'bless'
+        elif bits & merc.ITEM_ANTI_GOOD:
+            return 'anti_good'
+        elif bits & merc.ITEM_ANTI_EVIL:
+            return 'anti_evil'
+        elif bits & merc.ITEM_ANTI_NEUTRAL:
+            return 'anti_neutral'
+        elif bits & merc.ITEM_NOREMOVE:
+            return 'no_remove'
+        elif bits & merc.ITEM_INVENTORY:
+            return 'inventory'
+        elif bits & merc.ITEM_NOPURGE:
+            return 'no_purge'
+        elif bits & merc.ITEM_ROT_DEATH:
+            return 'rot_death'
+        elif bits & merc.ITEM_VIS_DEATH:
+            return 'vis_death'
+        elif bits & merc.ITEM_NONMETAL:
+            return 'non_metal'
+        elif bits & merc.ITEM_NOLOCATE:
+            return 'no_locate'
+        elif bits & merc.ITEM_MELT_DROP:
+            return 'melt_drop'
+        elif bits & merc.ITEM_HAD_TIMER:
+            return 'had_timer'
+        elif bits & merc.ITEM_SELL_EXTRACT:
+            return 'sell_extract'
+        elif bits & merc.ITEM_BURN_PROOF:
+            return 'burn_proof'
+        elif bits & merc.ITEM_NOUNCURSE:
+            return 'no_uncurse'
+        else:
+            return None
+    if 'weapon flags' in in_type:
+        if bits & merc.WEAPON_FLAMING:
+            return 'flaming'
+        elif bits & merc.WEAPON_FROST:
+            return 'frost'
+        elif bits & merc.WEAPON_VAMPIRIC:
+            return 'vampiric'
+        elif bits & merc.WEAPON_SHARP:
+            return 'sharp'
+        elif bits & merc.WEAPON_VORPAL:
+            return 'vorpal'
+        elif bits & merc.WEAPON_TWO_HANDS:
+            return 'two_handed'
+        elif bits & merc.WEAPON_SHOCKING:
+            return 'shocking'
+        elif bits & merc.WEAPON_POISON:
+            return 'poison'
+        else:
+            return None
+
 def item_flags_from_bits(bits: int, out_data: collections.namedtuple, in_type='wear flags'):
     if not out_data or not bits or not in_type:
         return None
@@ -146,7 +259,7 @@ def item_flags_from_bits(bits: int, out_data: collections.namedtuple, in_type='w
         if bits & merc.ITEM_WEAR_NECK:
             out_data.slots.update({'neck', 'collar'})
         if bits & merc.ITEM_WEAR_BODY:
-            out_data.slots.update({'torso'})
+            out_data.slots.update({'body'})
         if bits & merc.ITEM_WEAR_HEAD:
             out_data.slots.update({'head'})
         if bits & merc.ITEM_WEAR_LEGS:

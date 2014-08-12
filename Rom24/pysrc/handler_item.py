@@ -33,6 +33,7 @@
 """
 import collections
 import logging
+import game_utils
 
 logger = logging.getLogger()
 
@@ -152,11 +153,12 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
     #Equipped/Equips To
     @property
     def equipped_to(self):
-        try:
-            for k, v in self.environment.equipped:
+        if self.in_living:
+            character = merc.characters[self.in_living]
+            for k, v in character.equipped.items():
                 if v == self.instance_id:
                     return k
-        except:
+        else:
             return None
 
     @property
@@ -308,15 +310,15 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
         del merc.global_instances[self.instance_id]
         # Remove an object.
 
-    def apply_ac(self, loc):
+    def apply_ac(self, ac_position):
         if self.item_type != merc.ITEM_ARMOR:
             return 0
         multi = {'body': 3, 'head': 2, 'legs': 2, 'about': 2}
         for worn_on in self.equipped_to:
             if worn_on in multi.keys():
-                return multi[worn_on] * self.value[loc]
+                return multi[worn_on] * self.value[ac_position]
         else:
-            return self.value[loc]
+            return self.value[ac_position]
 
     # enchanted stuff for eq */
     def affect_enchant(self):
@@ -343,17 +345,27 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
         # apply any affect vectors to the object's extra_flags
         if paf.bitvector:
             if paf.where == merc.TO_OBJECT:
-                state_checks.SET_BIT(self.extra_flags, paf.bitvector)
+                ret_str = game_utils.item_bitvector_flag_str(paf.bitvector, 'extra flags')
+                if self.item_attribute_names.intersection(ret_str):
+                    self.item_attributes |= {ret_str}
+                elif self.restriction_names.intersection(ret_str):
+                    self.item_restrictions |= {ret_str}
+                else:
+                    raise ValueError('paf set attempt failed, unable to find flag %s' % ret_str)
             elif paf.where == merc.TO_WEAPON:
                 if self.item_type == merc.ITEM_WEAPON:
-                    state_checks.SET_BIT(self.value[4], paf.bitvector)
+                    ret_str = game_utils.item_bitvector_flag_str(paf.bitvector, 'weapon flags')
+                    if self.weapon_attribute_names.intersection(ret_str):
+                        self.weapon_attributes |= {ret_str}
+                    else:
+                        raise ValueError('paf set attempt failed, unable to find flag %s' % ret_str)
 
     def affect_remove(self, paf):
         if not self.affected:
             print("BUG: Affect_remove_object: no affect.")
             return
 
-        if self.in_living is not None and self.wear_loc != -1:
+        if self.in_living is not None and self.equipped_to:
             merc.characters[self.in_living].affect_modify(paf, False)
 
         where = paf.where
@@ -362,17 +374,27 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
         # remove flags from the object if needed */
         if paf.bitvector:
             if paf.where == merc.TO_OBJECT:
-                state_checks.REMOVE_BIT(self.extra_flags, paf.bitvector)
+                ret_str = game_utils.item_bitvector_flag_str(paf.bitvector, 'extra flags')
+                if self.item_attribute_names.intersection(ret_str):
+                    self.item_attributes -= {ret_str}
+                elif self.restriction_names.intersection(ret_str):
+                    self.item_restrictions -= {ret_str}
+                else:
+                    raise ValueError('paf removal attempt failed, unable to find flag %s' % ret_str)
             elif paf.where == merc.TO_WEAPON:
                 if self.item_type == merc.ITEM_WEAPON:
-                    state_checks.REMOVE_BIT(self.value[4], paf.bitvector)
+                    ret_str = game_utils.item_bitvector_flag_str(paf.bitvector, 'weapon flags')
+                    if self.weapon_attribute_names.intersection(ret_str):
+                        self.weapon_attributes -= {ret_str}
+                    else:
+                        raise ValueError('paf removal attempt failed, unable to find flag %s' % ret_str)
 
         if paf not in self.affected:
             print("BUG: Affect_remove_object: cannot find paf.")
             return
         self.affected.remove(paf)
         del paf
-        if self.in_living is not None and self.wear_loc != -1:
+        if self.in_living is not None and self.equipped_to:
             merc.characters[self.in_living].affect_check(where, vector)
         return
 
@@ -402,7 +424,7 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
 
 def get_item(ch, item, this_container):
     # variables for AUTOSPLIT
-    if not state_checks.CAN_WEAR(item, merc.ITEM_TAKE):
+    if not item.take:
         ch.send("You can't take that.\n")
         return
     if ch.carry_number + item.get_number() > ch.can_carry_n():
@@ -426,13 +448,11 @@ def get_item(ch, item, this_container):
         if this_container.vnum == merc.OBJ_VNUM_PIT and ch.trust < item.level:
             ch.send("You are not powerful enough to use it.\n")
             return
-        if this_container.vnum == merc.OBJ_VNUM_PIT \
-                and not state_checks.CAN_WEAR(this_container, merc.ITEM_TAKE) \
-                and not state_checks.is_item_stat(item, merc.ITEM_HAD_TIMER):
+        if this_container.vnum == merc.OBJ_VNUM_PIT and not item.take and not item.had_timer:
             item.timer = 0
             handler_game.act("You get $p from $P.", ch, item, this_container, merc.TO_CHAR)
             handler_game.act("$n gets $p from $P.", ch, item, this_container, merc.TO_ROOM)
-            state_checks.REMOVE_BIT(item.extra_flags, merc.ITEM_HAD_TIMER)
+            item.had_timer = False
             item.from_environment()
     else:
         handler_game.act("You get $p.", ch, item, this_container, merc.TO_CHAR)

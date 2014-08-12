@@ -65,7 +65,7 @@ def do_unlock(ch, argument):
     if door >= 0:
         # 'unlock door'
         pexit = ch.in_room.exit[door]
-        if not state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED):
+        if not pexit.exit_info.is_set(merc.EX_CLOSED):
             ch.send("It's not closed.\n")
             return
         if pexit.key < 0:
@@ -74,10 +74,10 @@ def do_unlock(ch, argument):
         if not ch.has_key(pexit.key):
             ch.send("You lack the key.\n")
             return
-        if not state_checks.IS_SET(pexit.exit_info, merc.EX_LOCKED):
+        if not pexit.exit_info.is_set(merc.EX_LOCKED):
             ch.send("It's already unlocked.\n")
             return
-        state_checks.REMOVE_BIT(pexit.exit_info, merc.EX_LOCKED)
+        pexit.exit_info.rem_bit(merc.EX_LOCKED)
         ch.send("*Click*\n")
         handler_game.act("$n unlocks the $d.", ch, None, pexit.keyword, merc.TO_ROOM)
 
@@ -85,7 +85,7 @@ def do_unlock(ch, argument):
         to_room = pexit.to_room
         if to_room and to_room.exit[merc.rev_dir[door]] != 0 \
                 and to_room.exit[merc.rev_dir[door]].to_room == ch.in_room:
-            state_checks.REMOVE_BIT(to_room.exit[merc.rev_dir[door]].exit_info, merc.EX_LOCKED)
+            to_room.exit[merc.rev_dir[door]].exit_info.rem_bit(merc.EX_LOCKED)
 
 
 interp.register_command(interp.cmd_type('unlock', do_unlock, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

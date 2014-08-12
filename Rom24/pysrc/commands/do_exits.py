@@ -24,10 +24,10 @@ def do_exits(ch, argument):
         if pexit and pexit.to_room \
                 and (ch.act.is_set(merc.PLR_OMNI)
                      or (ch.can_see_room(pexit.to_room)
-                         and not state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED))):
+                         and not pexit.exit_info.is_set(merc.EX_CLOSED))):
             found = True
             if fAuto:
-                if state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED):
+                if pexit.exit_info.is_set(merc.EX_CLOSED):
                     buf += " [[%s]]" % (merc.dir_name[door])
                 else:
                     buf += " %s" % merc.dir_name[door]

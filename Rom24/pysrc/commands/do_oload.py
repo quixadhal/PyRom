@@ -31,13 +31,13 @@ def do_oload(ch, argument):
     if vnum not in merc.itemTemplate:
         ch.send("No object has that vnum.\n")
         return
-    obj = object_creator.create_item(merc.itemTemplate[vnum], level)
-    if state_checks.CAN_WEAR(obj, merc.ITEM_TAKE):
-        obj.to_environment(ch)
+    item = object_creator.create_item(merc.itemTemplate[vnum], level)
+    if item.take:
+        item.to_environment(ch)
     else:
-        obj.to_environment(ch.in_room)
-    handler_game.act("$n has created $p!", ch, obj, None, merc.TO_ROOM)
-    handler_game.wiznet("$N loads $p.", ch, obj, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.trust)
+        item.to_environment(ch.in_room)
+    handler_game.act("$n has created $p!", ch, item, None, merc.TO_ROOM)
+    handler_game.wiznet("$N loads $p.", ch, item, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.trust)
     ch.send("Ok.\n")
     return
 

@@ -68,14 +68,14 @@ def do_drop(ch, argument):
         if not item:
             ch.send("You do not have that item.\n")
             return
-        if not ch.can_drop_item(item.instance_id):
+        if not ch.can_drop_item(item):
             ch.send("You can't let go of it.\n")
             return
         item.from_environment()
         item.to_environment(ch.in_room)
         handler_game.act("$n drops $p.", ch, item, None, merc.TO_ROOM)
         handler_game.act("You drop $p.", ch, item, None, merc.TO_CHAR)
-        if state_checks.is_item_stat(item, merc.ITEM_MELT_DROP):
+        if item.melt_drop:
             handler_game.act("$p dissolves into smoke.", ch, item, None, merc.TO_ROOM)
             handler_game.act("$p dissolves into smoke.", ch, item, None, merc.TO_CHAR)
             item.extract()
@@ -85,15 +85,15 @@ def do_drop(ch, argument):
         for item_id in ch.contents[:]:
             item = merc.items[item_id]
             if (len(arg) == 3 or arg[4:] in item.name) \
-                    and ch.can_see_item(item.instance_id) \
-                    and item.wear_loc == merc.WEAR_NONE \
-                    and ch.can_drop_item(item.instance_id):
+                    and ch.can_see_item(item) \
+                    and not item.equipped_to \
+                    and ch.can_drop_item(item):
                 found = True
                 item.from_environment()
                 item.to_environment(ch.in_room)
                 handler_game.act("$n drops $p.", ch, item, None, merc.TO_ROOM)
                 handler_game.act("You drop $p.", ch, item, None, merc.TO_CHAR)
-                if state_checks.is_item_stat(item, merc.ITEM_MELT_DROP):
+                if item.melt_drop:
                     handler_game.act("$p dissolves into smoke.", ch, item, None, merc.TO_ROOM)
                     handler_game.act("$p dissolves into smoke.", ch, item, None, merc.TO_CHAR)
                     item.extract()

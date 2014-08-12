@@ -96,7 +96,7 @@ def do_cast(ch, argument):
             ch.send("You are not carrying that.\n")
             return
         vo = obj
-        target = merc.TARGET_OBJ
+        target = merc.TARGET_ITEM
     elif sn.target == merc.TAR_OBJ_CHAR_OFF:
         if not arg2:
             victim = ch.fighting
@@ -121,7 +121,7 @@ def do_cast(ch, argument):
                 vo = victim
             elif obj:
                 vo = obj
-                target = merc.TARGET_OBJ
+                target = merc.TARGET_ITEM
             else:
                 ch.send("You don't see that here.\n")
                 return
@@ -137,7 +137,7 @@ def do_cast(ch, argument):
                 target = merc.TARGET_CHAR
             elif not obj:
                 vo = obj
-                target = merc.TARGET_OBJ
+                target = merc.TARGET_ITEM
             else:
                 ch.send("You don't see that here.\n")
                 return

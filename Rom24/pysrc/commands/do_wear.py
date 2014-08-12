@@ -16,14 +16,14 @@ def do_wear(ch, argument):
         for item_id in ch.items:
             item = merc.items.get(item_id, None)
             if ch.can_see_item(item):
-                ch.wear_item(item, False)
+                ch.equip(item, False)
         return
     else:
         item = ch.get_item_carry(arg, ch)
         if not item:
             ch.send("You do not have that item.\n")
             return
-        ch.wear_item(item, True)
+        ch.equip(item, True)
     return
 
 

@@ -31,10 +31,9 @@ class Location:
 
     @property
     def in_living(self):
-        from living import Living
         in_environment = merc.global_instances.get(self.in_environment, None)
         while in_environment:
-            if isinstance(in_environment, Living):
+            if in_environment.is_living:
                 return in_environment.instance_id
             in_environment = merc.global_instances.get(in_environment.in_environment, None)
         return None
@@ -66,38 +65,40 @@ class Location:
 
     # * Move an instance from a location
     def from_environment(self):
-        #TODO fix this.
-        if self.in_environment not in merc.global_instances:
-            logger.error("BUG: form_environment: %s No instance %d.", self.name, self.in_environemnt)
+        if self.in_environment not in merc.global_instances.keys():
+            logger.error("BUG: from_environment: %s No instance %d.", self.name, self.in_environment)
             return
-        instance = self.in_environment
-        if self.is_living:
+        instance = merc.global_instances[self.in_environment]
+        try:  #For characters only
             if not self.is_npc() and instance.area in areaTemplate:
                 areaTemplate[instance.area].nplayer -= 1
             item = self.get_eq('light')
+
+        except AttributeError:
+            item = instance
+
+        try:  #see if item is a light.
             if item and item.light and item.value[2] != 0 and instance.light > 0:
                 instance.light -= 1
-        elif self.is_item:
-            if instance.is_living:
-                if self.equipped_to:
-                    instance.unequip(self.equipped_to)
-                elif self.instance_id in instance.contents:
-                    instance.carry_number -= self.get_number()
-                instance.carry_weight -= self.get_weight() * state_checks.WEIGHT_MULT(instance) // 100
-            elif instance.is_item:
-                instance.carry_number -= self.get_number()
-                instance.carry_weight -= self.get_weight()
-        elif self.is_room:
-            raise TypeError('from_environment called on a room! %s' % self.name)
+            if self.equipped_to:
+                instance.unequip(self)
+            instance.carry_number -= self.get_number()
+            instance.carry_weight -= self.get_weight()
+        except AttributeError:
+            pass
 
         if self.instance_id not in instance.contents:
-            if instance.is_living:
-                if self.instance_id not in instance.equipped.values():
-                    raise ValueError('Unable to find item in ch equipped dict - from_environment')
-                return
-            else:
-                logger.error("BUG: from_environment: %s ch not found in instance %d.", self.name, instance.instance_id)
-                return
+            logger.error("BUG: from_environment: %s ch not found in instance %d.", self.name, instance.instance_id)
+            return
+        instance.contents.remove(self.instance_id)
+
+        while instance:
+            if instance.in_living:
+                merc.characters[instance.in_living].carry_number -= self.get_number()
+                merc.characters[instance.in_living].carry_weight -= self.get_weight() * \
+                                                                      state_checks.WEIGHT_MULT(instance) // 100
+            instance = merc.global_instances.get(instance.in_environment, None)
+
         self.in_environment = None
         self.room_template = 0
         self.on = None  # sanity check!

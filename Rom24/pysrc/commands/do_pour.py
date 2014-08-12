@@ -42,7 +42,7 @@ def do_pour(ch, argument):
         if vch is None:
             ch.send("Pour into what?\n")
             return
-        into = vch.get_eq(merc.WEAR_HOLD)
+        into = vch.get_eq('held')
         if not into:
             ch.send("They aren't holding anything.")
 

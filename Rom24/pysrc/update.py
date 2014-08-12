@@ -310,7 +310,7 @@ def npc_update():
             item_best = None
             for item_id in npc.in_room.items:
                 item = merc.items[item_id]
-                if state_checks.CAN_WEAR(item, ITEM_TAKE) and npc.can_loot(item) and item.cost > top and item.cost > 0:
+                if item.take and npc.can_loot(item) and item.cost > top and item.cost > 0:
                     item_best = item
                     top = item.cost
 
@@ -327,7 +327,7 @@ def npc_update():
                 and random.randint(0, 3) == 0 \
                 and pexit \
                 and pexit.to_room \
-                and not state_checks.IS_SET(pexit.exit_info, EX_CLOSED) \
+                and not pexit.exit_info.is_set(merc.EX_CLOSED) \
                 and not state_checks.IS_SET(merc.rooms[pexit.to_room].room_flags, ROOM_NO_MOB) \
                 and (not npc.act.is_set(ACT_STAY_AREA)
                      or merc.rooms[pexit.to_room].area == npc.in_room.area) \
@@ -466,16 +466,16 @@ def char_update():
             fight.update_pos(ch)
 
         if not ch.is_npc() and ch.level < LEVEL_IMMORTAL:
-            item_id = ch.get_eq(WEAR_LIGHT)
-            if item_id and item_id.item_type == ITEM_LIGHT and item_id.value[2] > 0:
-                item_id.value[2] -= 1
-                if item_id.value[2] == 0 and merc.rooms[ch.in_room] is not None:
-                    merc.rooms[ch.in_room].light -= 1
-                    handler_game.act("$p goes out.", ch, item_id, None, TO_ROOM)
-                    handler_game.act("$p flickers and goes out.", ch, item_id, None, TO_CHAR)
-                    item_id.extract()
-                elif item_id.value[2] <= 5 and ch.in_room:
-                    handler_game.act("$p flickers.", ch, item_id, None, TO_CHAR)
+            item = ch.get_eq('light')
+            if item and item.item_type == ITEM_LIGHT and item.value[2] > 0:
+                item.value[2] -= 1
+                if item.value[2] == 0 and ch.in_room is not None:
+                    ch.in_room.light -= 1
+                    handler_game.act("$p goes out.", ch, item, None, TO_ROOM)
+                    handler_game.act("$p flickers and goes out.", ch, item, None, TO_CHAR)
+                    item.extract()
+                elif item.value[2] <= 5 and ch.in_room:
+                    handler_game.act("$p flickers.", ch, item, None, TO_CHAR)
 
             if ch.is_immortal():
                 ch.timer = 0
@@ -613,7 +613,7 @@ def item_update():
         elif item.item_type == ITEM_PORTAL:
             message = "$p fades out of existence."
         elif item.item_type == ITEM_CONTAINER:
-            if state_checks.CAN_WEAR(item, ITEM_WEAR_FLOAT):
+            if item.float:
                 if item.contents:
                     message = "$p flickers and vanishes, spilling its contents on the floor."
                 else:
@@ -628,15 +628,15 @@ def item_update():
                 merc.characters[item.in_living].silver += item.cost // 5
             else:
                 handler_game.act(message, merc.characters[item.in_living], item, None, TO_CHAR)
-                if item.wear_loc == WEAR_FLOAT:
+                if 'float' in item.equipped_to:
                     handler_game.act(message, merc.characters[item.in_living], item, None, TO_ROOM)
         elif item.in_room and item.in_room.people:
             if not (item.in_item and merc.items[item.in_item].vnum == OBJ_VNUM_PIT
-                    and not state_checks.CAN_WEAR(merc.items[item.in_item], ITEM_TAKE)):
+                    and not item.take):
                 handler_game.act(message, item.in_room.people[:1], item, None, TO_ROOM)
                 handler_game.act(message, item.in_room.people[:1], item, None, TO_CHAR)
 
-        if (item.item_type == ITEM_CORPSE_PC or item.wear_loc == WEAR_FLOAT) and item.contents:
+        if (item.item_type == ITEM_CORPSE_PC or 'float' in item.equipped_to) and item.contents:
             # save the contents */
             for t_item_id in item.contents[:]:
                 t_item = merc.items[t_item_id]
@@ -645,7 +645,7 @@ def item_update():
                 if item.in_item:  # in another object */
                     t_item.to_environment(item.in_item)
                 elif item.in_living:  # carried */
-                    if item.wear_loc == WEAR_FLOAT:
+                    if 'float' in item.equipped_to:
                         if merc.characters[item.in_living].in_room is None:
                             t_item.extract()
                         else:

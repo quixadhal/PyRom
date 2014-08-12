@@ -131,12 +131,12 @@ def spec_patrolman(ch):
 
     if victim is None or (victim.is_npc() and victim.spec_fun == ch.spec_fun):
         return False
-    neck1 = ch.get_eq(merc.WEAR_NECK_1)
-    neck2 = ch.get_eq(merc.WEAR_NECK_2)
-    if (neck1 and neck1.vnum == merc.OBJ_VNUM_WHISTLE) \
-            or (neck2 and neck2.vnum == merc.OBJ_VNUM_WHISTLE):
-        handler_game.act("You blow down hard on $p.", ch, merc.items[neck1.instance_id], None, merc.TO_CHAR)
-        handler_game.act("$n blows on $p, ***WHEEEEEEEEEEEET***", ch, merc.items[neck1.instance_id], None, merc.TO_ROOM)
+    neck = ch.get_eq('neck')
+    collar = ch.get_eq('collar')
+    if (neck and neck.vnum == merc.OBJ_VNUM_WHISTLE) \
+            or (collar and collar.vnum == merc.OBJ_VNUM_WHISTLE):
+        handler_game.act("You blow down hard on $p.", ch, merc.items[neck.instance_id], None, merc.TO_CHAR)
+        handler_game.act("$n blows on $p, ***WHEEEEEEEEEEEET***", ch, merc.items[neck.instance_id], None, merc.TO_ROOM)
 
         for vch in merc.characters.values():
             if vch.in_room is None:
@@ -571,11 +571,12 @@ def spec_janitor(ch):
     if not ch.is_awake():
         return False
 
-    for trash in merc.rooms[ch.in_room].contents:
-        if not state_checks.IS_SET(trash.wear_flags, merc.ITEM_TAKE) or not ch.can_loot(trash):
+    for trash_id in ch.in_room.contents:
+        trash = merc.items[trash_id]
+        if not trash.take or not ch.can_loot(trash):
             continue
         if trash.item_type == merc.ITEM_DRINK_CON or trash.item_type == merc.ITEM_TRASH or trash.cost < 10:
-            handler_game.act( "$n picks up some trash.", ch, None, None, merc.TO_ROOM)
+            handler_game.act("$n picks up some trash.", ch, None, None, merc.TO_ROOM)
             trash.from_environment()
             trash.to_environment(ch)
             return True

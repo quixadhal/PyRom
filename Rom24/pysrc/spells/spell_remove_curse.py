@@ -8,7 +8,7 @@ import state_checks
 def spell_remove_curse(sn, level, ch, victim, target):
     found = False
     # do object cases first */
-    if target == merc.TARGET_OBJ:
+    if target == merc.TARGET_ITEM:
         obj = victim
 
         if state_checks.is_item_stat(obj, merc.ITEM_NODROP) or state_checks.is_item_stat(obj, merc.ITEM_NOREMOVE):

@@ -180,10 +180,10 @@ def load_objects(area, pArea):
     w = w[1:]  # strip the pound
     while w != '0':
         flag_data = collections.namedtuple('item_flags', ('slots', 'restrictions', 'attributes', 'weapon'))
-        flag_data.slots = {''}
-        flag_data.restrictions = {''}
-        flag_data.weapon = {''}
-        flag_data.attributes = {''}
+        flag_data.slots = set({})
+        flag_data.restrictions = set({})
+        flag_data.weapon = set({})
+        flag_data.attributes = set({})
         item = handler_item.Items(None)
         item.vnum = int(w)
         merc.itemTemplate[item.vnum] = item
@@ -351,7 +351,8 @@ def load_rooms(area, pArea):
                 area, door = game_utils.read_int(area)
                 area, nexit.description = game_utils.read_string(area)
                 area, nexit.keyword = game_utils.read_string(area)
-                area, locks = game_utils.read_int(area)
+                #Replaced Locks code
+                area = nexit.exit_info.read_bits(area)
                 area, nexit.key = game_utils.read_int(area)
                 area, nexit.to_room_vnum = game_utils.read_int(area)
                 nexit.name = "Exit %s %d to %d" % \

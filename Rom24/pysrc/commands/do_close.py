@@ -52,10 +52,10 @@ def do_close(ch, argument):
     if find_door(ch, arg) >= 0:
         # 'close door'
         pexit = ch.in_room.exit[door]
-        if state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED):
+        if pexit.exit_info.is_set(merc.EX_CLOSED):
             ch.send("It's already closed.\n")
             return
-        state_checks.SET_BIT(pexit.exit_info, merc.EX_CLOSED)
+        pexit.exit_info.set_bit(merc.EX_CLOSED)
         handler_game.act("$n closes the $d.", ch, None, pexit.keyword, merc.TO_ROOM)
         ch.send("Ok.\n")
 
@@ -63,7 +63,7 @@ def do_close(ch, argument):
         to_room = pexit.to_room
         pexit_rev = to_room.exit[merc.rev_dir[door]] if pexit.to_room else None
         if to_room and pexit_rev and pexit_rev.to_room == ch.in_room:
-            state_checks.SET_BIT(pexit_rev.exit_info, merc.EX_CLOSED)
+            pexit_rev.exit_info.set_bit(merc.EX_CLOSED)
             for rch in to_room.people:
                 handler_game.act("The $d closes.", rch, None, pexit_rev.keyword, merc.TO_CHAR)
 

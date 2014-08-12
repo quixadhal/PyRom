@@ -7,7 +7,7 @@ import state_checks
 
 def spell_bless(sn, level, ch, victim, target):
     # deal with the object case first */
-    if target == merc.TARGET_OBJ:
+    if target == merc.TARGET_ITEM:
         obj = victim
         if state_checks.is_item_stat(obj, merc.ITEM_BLESS):
             handler_game.act("$p is already blessed.", ch, obj, send_to=merc.TO_CHAR)

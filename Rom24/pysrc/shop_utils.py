@@ -17,57 +17,59 @@ def get_obj_keeper(ch, keeper, argument):
     return None
 
 # insert an object at the right spot for the keeper */
-def obj_to_keeper(obj, ch):
+def obj_to_keeper(item, ch):
     # see if any duplicates are found */
-    n_obj = None
+    n_item = None
     spot = -1
-    for i, t_obj in enumerate(ch.contents):
-        if obj.pIndexData == t_obj.pIndexData \
-                and obj.short_descr == t_obj.short_descr:
+    for i, t_item_id in enumerate(ch.contents):
+        t_item = merc.items[t_item_id]
+        if item.vnum == t_item.vnum \
+                and item.short_descr == t_item.short_descr:
             # if this is an unlimited item, destroy the new one */
-            if state_checks.is_item_stat(t_obj, merc.ITEM_INVENTORY):
-                obj.extract()
+            if t_item.inventory:
+                item.extract()
                 return
-            obj.cost = t_obj.cost  # keep it standard */
-            n_obj = t_obj
+            item.cost = t_item.cost  # keep it standard */
+            n_item = t_item
             spot = i
             break
 
-    if n_obj is None or spot == -1:
-        ch.contents.remove(obj)
+    if n_item is None or spot == -1:
+        ch.contents.remove(item)
     else:
-        ch.contents.insert(spot, t_obj)
-    obj.in_living = ch
-    obj.in_room = None
-    obj.in_item = None
-    ch.carry_number += obj.get_number()
-    ch.carry_weight += obj.get_weight()
+        ch.contents.insert(spot, t_item)
+    item.in_environment = ch.instance_id
+    item.in_room = None
+    item.in_item = None
+    ch.carry_number += item.get_number()
+    ch.carry_weight += item.get_weight()
 
-def get_cost(keeper, obj, fBuy):
-    if not obj or not keeper.pIndexData.pShop:
+def get_cost(keeper, item, fBuy):
+    if not item or not keeper.vnum.pShop:
         return 0
-    pShop = keeper.pIndexData.pShop
+    pShop = keeper.vnum.pShop
     if fBuy:
-        cost = obj.cost * pShop.profit_buy // 100
+        cost = item.cost * pShop.profit_buy // 100
     else:
         cost = 0
         for itype in pShop.buy_type:
-            if obj.item_type == itype:
-                cost = obj.cost * pShop.profit_sell // 100
+            if item.item_type == itype:
+                cost = item.cost * pShop.profit_sell // 100
                 break
 
-        if not state_checks.is_item_stat(obj, merc.ITEM_SELL_EXTRACT):
-            for obj2 in keeper.contents:
-                if obj.pIndexData == obj2.pIndexData and obj.short_descr == obj2.short_descr:
-                    if state_checks.is_item_stat(obj2, merc.ITEM_INVENTORY):
+        if not item.sell_extract:
+            for item2_id in keeper.contents:
+                item2 = merc.items[item2_id]
+                if item.vnum == item2_id.vnum and item.short_descr == item2_id.short_descr:
+                    if item.inventory:
                         cost /= 2
                     else:
                         cost = cost * 3 / 4
-    if obj.item_type == merc.ITEM_STAFF or obj.item_type == merc.ITEM_WAND:
-        if obj.value[1] == 0:
+    if item.item_type == merc.ITEM_STAFF or item.item_type == merc.ITEM_WAND:
+        if item.value[1] == 0:
             cost /= 4
         else:
-            cost = cost * obj.value[2] / obj.value[1]
+            cost = cost * item.value[2] / item.value[1]
     return cost
 
 #* Shopping commands.

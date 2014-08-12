@@ -18,11 +18,11 @@ def do_remove(ch, argument):
                 ch.unequip(loc, True)
         return
     else:
-        loc, item = ch.get_item_wear(arg)
+        item = ch.get_item_wear(arg)
         if not item:
             ch.send("You are not wearing %s.\n" % arg)
             return
-        ch.unequip(loc, True)
+        ch.unequip(item.equipped_to, True)
         return
 
 

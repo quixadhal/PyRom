@@ -3,6 +3,7 @@ import logging
 import game_utils
 import handler_game
 import handler_item
+import object_creator
 import state_checks
 
 
@@ -15,6 +16,7 @@ import interp
 
 # command that is similar to load
 def do_clone(ch, argument):
+    #TODO fix this
     rest, arg = game_utils.read_word(argument)
     mob = None
     obj = None
@@ -67,16 +69,16 @@ def do_clone(ch, argument):
                 or not state_checks.IS_TRUSTED(ch, merc.L8):
             ch.send("Your powers are not great enough for such a task.\n")
             return
-        clone = instancer.create_mobile(mob.pIndexData)
-        db.clone_mobile(mob, clone)
+        clone = object_creator.create_mobile(mob.pIndexData)
+        object_creator.clone_mobile(mob, clone)
 
         for obj in mob.contents:
             if handler_item.item_check(ch, obj):
-                new_obj = instancer.create_object(obj.pIndexData, 0)
-                db.clone_object(obj, new_obj)
+                new_obj = object_creator.create_item(obj.pIndexData, 0)
+                object_creator.create_item(obj, new_obj)
                 handler_item.recursive_clone(ch, obj, new_obj)
                 new_obj.to_environment(clone)
-                new_obj.wear_loc = obj.wear_loc
+                new_obj.equips_to = obj.equips_to
         clone.to_environment(ch.in_room)
         handler_game.act("$n has created $N.", ch, None, clone, merc.TO_ROOM)
         handler_game.act("You clone $N.", ch, None, clone, merc.TO_CHAR)

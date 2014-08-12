@@ -22,25 +22,25 @@ import location
 import state_checks
 
 ''' Char wear slots'''
-character_wear_slots = {'light': None,
-                        'left_finger': None,
-                        'right_finger': None,
-                        'neck': None,
-                        'collar': None,
-                        'body': None,
-                        'head': None,
-                        'legs': None,
-                        'feet': None,
-                        'hands': None,
-                        'arms': None,
-                        'about_body': None,
-                        'waist': None,
-                        'left_wrist': None,
-                        'right_wrist': None,
-                        'main_hand': None,
-                        'off_hand': None,
-                        'held': None,
-                        'float': None}
+character_wear_slots = collections.OrderedDict([('light', None),
+                                                ('left_finger', None),
+                                                ('right_finger', None),
+                                                ('neck', None),
+                                                ('collar', None),
+                                                ('body', None),
+                                                ('head', None),
+                                                ('legs', None),
+                                                ('feet', None),
+                                                ('hands', None),
+                                                ('arms', None),
+                                                ('about_body', None),
+                                                ('waist', None),
+                                                ('left_wrist', None),
+                                                ('right_wrist', None),
+                                                ('main_hand', None),
+                                                ('off_hand', None),
+                                                ('held', None),
+                                                ('float', None)])
 
 ''' Equipment Slot Strings - for use with displaying EQ to characters '''
 eq_slot_strings = collections.OrderedDict([('light', '[[Light Source]]         :  '),
@@ -58,10 +58,10 @@ eq_slot_strings = collections.OrderedDict([('light', '[[Light Source]]         :
                                            ('waist', '[[Worn around Waist]]   :  '),
                                            ('left_wrist', '[[Worn on Left Wrist]]  :  '),
                                            ('right_wrist', '[[Worn on Right Wrist]] :  '),
-                                           ('main_hand', '[[Main Hand]]           :  '),
-                                           ('off_hand', '[[Off Hand]]            :  '),
-                                           ('held', '[[Held]]                :  '),
-                                           ('float', '[[Floating Nearby]]     :  ')])
+                                           ('main_hand', '[[Main Hand]]            :  '),
+                                           ('off_hand', '[[Off Hand]]             :  '),
+                                           ('held', '[[Held]]                 :  '),
+                                           ('float', '[[Floating Nearby]]      :  ')])
 
 
 class Grouping:
@@ -396,13 +396,13 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                 or self.perm_move == 0 \
                 or self.last_level == 0:
             # do a FULL reset */
-            for loc in range(merc.MAX_WEAR):
-                item = merc.items.get(self.get_eq(loc), None)
+            for loc in self.equipped.keys():
+                item = self.get_eq(loc)
                 if not item:
                     continue
                 affected = item.affected
                 if not item.enchanted:
-                    affected.extend(merc.global_instances[item.instance_id].affected)
+                    affected.extend(item.affected)
                 for af in affected:
                     mod = af.modifier
                     if af.location == merc.APPLY_SEX:
@@ -445,15 +445,15 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         self.saving_throw = 0
 
         # now start adding back the effects */
-        for loc in range(merc.MAX_WEAR):
-            item = merc.items.get(self.get_eq(loc), None)
+        for loc in self.equipped.keys():
+            item = self.get_eq(loc)
             if not item:
                 continue
             for i in range(4):
-                self.armor[i] -= item.apply_ac(loc, i)
+                self.armor[i] -= item.apply_ac(i)
             affected = item.affected
             if not item.enchanted:
-                affected.extend(merc.global_instances[item.instance_id].affected)
+                affected.extend(item.affected)
 
             for af in affected:
                 mod = af.modifier
@@ -731,7 +731,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                 if ch.can_see_item(item) and game_utils.is_name(arg, item.name.lower()):
                     count += 1
                     if count == number:
-                        return loc, item
+                        return item
             else:
                 continue
         return None
@@ -1019,7 +1019,6 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                     self.send("You are already wearing something like that!\n")
                 return
         if now_wearing:
-
             for i in range(4):
                 self.armor[i] -= item.apply_ac(i)
             self.apply_affect(item)
@@ -1035,7 +1034,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         :rtype: none
         Taken from unequip to shorten it, searches for Affects, and removes as needed
         """
-        if aff_object.is_item and not aff_object.is_enchanted:
+        if aff_object.is_item and not aff_object.enchanted:
             #No idea why ROM was going back to the template for this one.. but to make it accurate, for now.
             for paf in merc.itemTemplate[aff_object.vnum].affected:
                     if paf.location == merc.APPLY_SPELL_AFFECT:
@@ -1080,10 +1079,13 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         if item.no_remove:
             handler_game.act("You can't remove $p.", self, item, None, merc.TO_CHAR)
             return False
+        #AC Removal preceeds the actual clearing of the item from the character equipped dict, and list
+        #This is because, apply_ac relies on the item being equipped to figure out its position on the character
+        #To determine what to actually apply, or remove.
+        for i in range(4):
+            self.armor[i] += item.apply_ac(i)
         self.equipped[unequip_from] = None
         self.contents += [item.instance_id]
-        for i in range(4):
-            self.armor[i] += item.apply_ac(item, i)
         self.remove_affect(item)
         if item.light and item.value[2] != 0 and self.in_room and self.in_room.light > 0:
             self.in_room.light -= 1

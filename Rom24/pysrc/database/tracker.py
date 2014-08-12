@@ -3,7 +3,7 @@ from const import liq_table, wiznet_table, attack_table, con_app, dex_app, wis_a
     wiznet_type, attack_type, dex_app_type, wis_app_type, int_app_type, str_app_type, weapon_type, guild_type, \
     group_type, skill_type, con_app_type
 from tables import comm_flags, part_flags, form_flags, imm_flags, off_flags, affect_flags, plr_flags, act_flags, \
-    size_table, sex_table, position_table, clan_table, clan_type, position_type, flag_type
+    size_table, sex_table, position_table, clan_table, clan_type, position_type, flag_type, exit_flags
 
 
 def skill_filter(table):
@@ -43,4 +43,5 @@ tables = [SaveToken('clan_table', clan_table, clan_type),
           SaveToken('con_app', con_app, con_app_type),
           SaveToken('attack_table', attack_table, attack_type),
           SaveToken('wiznet_table', wiznet_table, wiznet_type),
-          SaveToken('liq_table', liq_table, liq_type)]
+          SaveToken('liq_table', liq_table, liq_type),
+          SaveToken('exit_flags', exit_flags, flag_type)]

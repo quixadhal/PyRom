@@ -1,4 +1,5 @@
 import logging
+import object_creator
 
 logger = logging.getLogger()
 
@@ -14,22 +15,22 @@ def do_outfit(ch, argument):
         ch.send("Find it yourself!\n")
         return
 
-    item = ch.get_eq(merc.WEAR_LIGHT)
+    item = ch.get_eq('light')
     if not item:
         item = object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_SCHOOL_BANNER], 0)
         item.cost = 0
         item.to_environment(ch)
-        ch.equip(item, merc.WEAR_LIGHT)
+        ch.equip(item, True, False)
 
-    item = ch.get_eq(merc.WEAR_BODY)
+    item = ch.get_eq('body')
     if not item:
         item = object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_SCHOOL_VEST], 0)
         item.cost = 0
         item.to_environment(ch)
-        ch.equip(item, merc.WEAR_BODY)
+        ch.equip(item, True, False)
 
     # do the weapon thing
-    item = ch.get_eq(merc.WEAR_WIELD)
+    item = ch.get_eq('main_hand')
     if not item:
         sn = 'dagger'
         vnum = merc.OBJ_VNUM_SCHOOL_SWORD  # just in case!
@@ -40,15 +41,15 @@ def do_outfit(ch, argument):
                 vnum = weapon.vnum
         item = object_creator.create_item(merc.itemTemplate[vnum], 0)
         item.to_environment(ch)
-        ch.equip(item, merc.WEAR_WIELD)
+        ch.equip(item, True, False)
 
-    item = ch.get_eq(merc.WEAR_WIELD)
-    shield = ch.get_eq(merc.WEAR_SHIELD)
-    if (not item or not state_checks.IS_WEAPON_STAT(item, merc.WEAPON_TWO_HANDS)) and not shield:
+    item = ch.get_eq('main_hand')
+    shield = ch.get_eq('off_hand')
+    if (not item or not item.two_handed) and not shield:
         item = object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_SCHOOL_SHIELD], 0)
         item.cost = 0
         item.to_environment(ch)
-        ch.equip(item, merc.WEAR_SHIELD)
+        ch.equip(item, True, False)
 
     ch.send("You have been equipped by Mota.\n")
 

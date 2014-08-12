@@ -62,9 +62,9 @@ def move_char(ch, door, follow):
         ch.send("Alas, you cannot go that way.\n")
         return
     to_room = merc.rooms[pexit.to_room]
-    if state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED) \
+    if pexit.exit_info.is_set(merc.EX_CLOSED) \
             and (not ch.is_affected(merc.AFF_PASS_DOOR)
-                 or state_checks.IS_SET(pexit.exit_info, merc.EX_NOPASS)) \
+                 or pexit.exit_info.is_set(merc.EX_NOPASS)) \
             and not state_checks.IS_TRUSTED(ch, merc.L7):
         handler_game.act("The $d is closed.", ch, None, pexit.keyword, merc.TO_CHAR)
         return

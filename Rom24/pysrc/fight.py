@@ -272,7 +272,7 @@ def one_hit(ch, victim, dt):
         return
 
         #* Figure out the type of damage message.
-    wield = merc.items.get(ch.get_eq(WEAR_WIELD), None)
+    wield = ch.get_eq('main_hand')
     if dt == TYPE_UNDEFINED:
         dt = TYPE_HIT
         if wield and wield.item_type == ITEM_WEAPON:
@@ -371,10 +371,10 @@ def one_hit(ch, victim, dt):
             else:
                 dam = random.randint(wield.value[1] * skill // 100, wield.value[2] * skill // 100)
 
-            if merc.items.get(ch.get_eq(WEAR_SHIELD), None) is None:  # no shield = more */
+            if not ch.get_eq('off_hand'):  # no shield = more */
                 dam = dam * 11 // 10
             # sharpness! */
-            if state_checks.IS_WEAPON_STAT(wield, WEAPON_SHARP):
+            if wield.sharp:
                 percent = random.randint(1, 99)
                 if percent <= (skill // 8):
                     dam = 2 * dam + (dam * 2 * percent // 100)
@@ -413,7 +413,7 @@ def one_hit(ch, victim, dt):
     # but do we have a funky weapon? */
     if result and wield is not None:
 
-        if ch.fighting == victim and state_checks.IS_WEAPON_STAT(wield, WEAPON_POISON):
+        if ch.fighting == victim and wield.poison:
             poison = state_checks.affect_find(wield.affected, 'poison')
             if poison:
                 level = wield.level
@@ -439,27 +439,27 @@ def one_hit(ch, victim, dt):
                 if poison.level == 0 or poison.duration == 0:
                     handler_game.act("The poison on $p has worn off.", ch, wield, None, TO_CHAR)
 
-            if ch.fighting == victim and state_checks.IS_WEAPON_STAT(wield, WEAPON_VAMPIRIC):
+            if ch.fighting == victim and wield.vampiric:
                 dam = random.randint(1, wield.level // 5 + 1)
                 handler_game.act("$p draws life from $n.", victim, wield, None, TO_ROOM)
                 handler_game.act("You feel $p drawing your life away.", victim, wield, None, TO_CHAR)
                 damage(ch, victim, dam, 0, DAM_NEGATIVE, False)
                 ch.alignment = max(-1000, ch.alignment - 1)
                 ch.hit += dam // 2
-            if ch.fighting == victim and state_checks.IS_WEAPON_STAT(wield, WEAPON_FLAMING):
+            if ch.fighting == victim and wield.flaming:
                 dam = random.randint(1, wield.level // 4 + 1)
                 handler_game.act("$n is burned by $p.", victim, wield, None, TO_ROOM)
                 handler_game.act("$p sears your flesh.", victim, wield, None, TO_CHAR)
                 effects.fire_effect(victim, wield.level // 2, dam, TARGET_CHAR)
                 damage(ch, victim, dam, 0, DAM_FIRE, False)
-            if ch.fighting == victim and state_checks.IS_WEAPON_STAT(wield, WEAPON_FROST):
+            if ch.fighting == victim and wield.frost:
                 dam = random.randint(1, wield.level // 6 + 2)
                 handler_game.act("$p freezes $n.", victim, wield, None, TO_ROOM)
                 handler_game.act("The cold touch of $p surrounds you with ice.",
                                  victim, wield, None, TO_CHAR)
                 effects.cold_effect(victim, wield.level // 2, dam, TARGET_CHAR)
                 damage(ch, victim, dam, 0, DAM_COLD, False)
-            if ch.fighting == victim and state_checks.IS_WEAPON_STAT(wield, WEAPON_SHOCKING):
+            if ch.fighting == victim and wield.shocking:
                 dam = random.randint(1, wield.level // 5 + 2)
                 handler_game.act("$n is struck by lightning from $p.", victim, wield, None, TO_ROOM)
                 handler_game.act("You are shocked by $p.", victim, wield, None, TO_CHAR)
@@ -478,7 +478,7 @@ def damage(ch, victim, dam, dt, dam_type, show):
         logger.warn("BUG: Damage: %d: more than 1200 points!", dam)
         dam = 1200
         if not ch.is_immortal():
-            item = merc.items.get(ch.get_eq(WEAR_WIELD), None)
+            item = ch.get_eq('main_hand')
             ch.send("You really shouldn't cheat.\n")
             if item:
                 item.extract()
@@ -827,7 +827,7 @@ def check_parry(ch, victim):
         return False
     chance = victim.get_skill('parry') // 2
 
-    if merc.items.get(victim.get_eq(WEAR_WIELD), None) is None:
+    if not ch.get_eq('main_hand'):
         if victim.is_npc():
             chance //= 2
         else:
@@ -849,7 +849,7 @@ def check_shield_block(ch, victim):
     if not state_checks.IS_AWAKE(victim):
         return False
     chance = victim.get_skill('shield block') // 5 + 3
-    if merc.items.get(victim.get_eq(WEAR_SHIELD), None) is None:
+    if not ch.get_eq('off_hand'):
         return False
     if random.randint(1, 99) >= chance + victim.level - ch.level:
         return False
@@ -951,22 +951,22 @@ def make_corpse(ch):
     for item_id in ch.contents[:]:
         item = merc.items[item_id]
         floating = False
-        if item.wear_loc == WEAR_FLOAT:
+        if item.float:
             floating = True
         item.from_environment()
         if item.item_type == ITEM_POTION:
             item.timer = random.randint(500, 1000)
         if item.item_type == ITEM_SCROLL:
             item.timer = random.randint(1000, 2500)
-        if state_checks.IS_SET(item.extra_flags, ITEM_ROT_DEATH) and not floating:
+        if item.rot_death and not floating:
             item.timer = random.randint(5, 10)
-            state_checks.REMOVE_BIT(item.extra_flags, ITEM_ROT_DEATH)
-        state_checks.REMOVE_BIT(item.extra_flags, ITEM_VIS_DEATH)
+            item.rot_death = False
+        item.vis_death = False
 
-        if state_checks.IS_SET(item.extra_flags, ITEM_INVENTORY):
+        if item.inventory:
             item.extract()
         elif floating:
-            if state_checks.is_item_stat(item, ITEM_ROT_DEATH):  # get rid of it! */
+            if item.rot_death:  # get rid of it! */
                 if item.contents:
                     handler_game.act("$p evaporates,scattering its contents.", ch, item, None, TO_ROOM)
                     for contents_id in item.contents[:]:
@@ -1113,11 +1113,10 @@ def group_gain(ch, victim):
         update.gain_exp(gch, xp)
         for item_id in ch.contents[:]:
             item = merc.items[item_id]
-            if item.wear_loc == WEAR_NONE:
+            if not item.equipped_to:
                 continue
-            if (state_checks.is_item_stat(item, ITEM_ANTI_EVIL) and ch.is_evil() ) \
-                    or (state_checks.is_item_stat(item, ITEM_ANTI_GOOD) and ch.is_good() ) \
-                    or (state_checks.is_item_stat(item, ITEM_ANTI_NEUTRAL) and ch.is_neutral() ):
+            if (item.anti_evil and ch.is_evil()) or (item.anti_good and ch.is_good()) \
+                    or (item.anti_neutral and ch.is_neutral()):
                 handler_game.act("You are zapped by $p.", ch, item, None, TO_CHAR)
                 handler_game.act("$n is zapped by $p.", ch, item, None, TO_ROOM)
                 item.from_environment()
@@ -1352,12 +1351,12 @@ def dam_message(ch, victim, dam, dt, immune):
 # * Disarm a creature.
 # * Caller must check for successful attack.
 def disarm(ch, victim):
-    item = merc.items.get(victim.get_eq(WEAR_WIELD), None)
+    item = victim.get_eq('main_hand')
     if not item:
         ch.send("I think you're taking disarm a little too literally")
         return
 
-    if state_checks.is_item_stat(item, ITEM_NOREMOVE):
+    if item.no_remove:
         handler_game.act("$S weapon won't budge!", ch, None, victim, TO_CHAR)
         handler_game.act("$n tries to disarm you, but your weapon won't budge!", ch, None, victim, TO_VICT)
         handler_game.act("$n tries to disarm $N, but fails.", ch, None, victim, TO_NOTVICT)
@@ -1366,7 +1365,7 @@ def disarm(ch, victim):
     handler_game.act("You disarm $N!", ch, None, victim, TO_CHAR)
     handler_game.act("$n disarms $N!", ch, None, victim, TO_NOTVICT)
     item.from_environment()
-    if state_checks.is_item_stat(item, ITEM_NODROP) or state_checks.is_item_stat(item, ITEM_INVENTORY):
+    if item.no_drop or item.inventory:
         item.to_environment(victim)
     else:
         item.to_environment(victim.in_room)

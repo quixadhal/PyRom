@@ -43,20 +43,20 @@ import const
 
 
 def acid_effect(vo, level, dam, target):
-    if target == TARGET_ROOM: # nail objects on the floor */
-        for obj in vo.contents[:]:
-            acid_effect(obj,level,dam,TARGET_OBJ)
+    if target == TARGET_ROOM:  # nail objects on the floor */
+        for item_id in vo.contents[:]:
+            item = merc.items[item_id]
+            acid_effect(item, level, dam, TARGET_ITEM)
         return
     if target == TARGET_CHAR:  # do the effect on a victim */
         # let's toast some gear */
-        for obj in vo.contents[:]:
-            acid_effect(obj,level,dam,TARGET_OBJ)
+        for item_id in vo.contents[:]:
+            item = merc.items[item_id]
+            acid_effect(item, level, dam, TARGET_ITEM)
         return
-    if target == TARGET_OBJ: # toast an object */
-        obj = vo
-        if state_checks.is_item_stat(obj,ITEM_BURN_PROOF) \
-                or state_checks.is_item_stat(obj,ITEM_NOPURGE) \
-                or random.randint(0,4) == 0:
+    if target == TARGET_ITEM:  # toast an object */
+        item = vo
+        if item.burn_proof or item.no_purge or random.randint(0, 4) == 0:
             return
         chance = level / 4 + dam / 10
         if chance > 25:
@@ -64,48 +64,45 @@ def acid_effect(vo, level, dam, target):
         if chance > 50:
             chance = (chance - 50) // 2 + 50
 
-        if state_checks.is_item_stat(obj,ITEM_BLESS):
+        if item.bless:
             chance -= 5
 
-        chance -= obj.level * 2
+        chance -= item.level * 2
 
-        if obj.item_type == ITEM_CONTAINER \
-        or obj.item_type == ITEM_CORPSE_PC \
-        or obj.item_type == ITEM_CORPSE_NPC:
+        if item.item_type == ITEM_CONTAINER or item.item_type == ITEM_CORPSE_PC or item.item_type == ITEM_CORPSE_NPC:
             msg = "$p fumes and dissolves."
-        elif obj.item_type == ITEM_ARMOR:
+        elif item.item_type == ITEM_ARMOR:
             msg = "$p is pitted and etched."
-        elif obj.item_type == ITEM_CLOTHING:
+        elif item.item_type == ITEM_CLOTHING:
             msg = "$p is corroded into scrap."
-        elif obj.item_type == ITEM_STAFF \
-        or obj.item_type == ITEM_WAND:
+        elif item.item_type == ITEM_STAFF or item.item_type == ITEM_WAND:
             chance -= 10
             msg = "$p corrodes and breaks."
-        elif obj.item_type == ITEM_SCROLL:
+        elif item.item_type == ITEM_SCROLL:
             chance += 10
             msg = "$p is burned into waste."
         else:
             return
 
-        chance = max(5, min(chance,95))
+        chance = max(5, min(chance, 95))
 
-        if random.randint(1,99) > chance:
+        if random.randint(1, 99) > chance:
             return
-        if obj.in_living is not None:
-            handler_game.act(msg,obj.in_living,obj,None,TO_ALL)
-        elif obj.in_room and obj.in_room.people is not None:
-            handler_game.act(msg,obj.in_room.people,obj,None,TO_ALL)
-        if obj.item_type == ITEM_ARMOR:  # etch it */
+        if item.in_living:
+            handler_game.act(msg, item.in_living, item, None, TO_ALL)
+        elif item.in_room and item.in_room.people is not None:
+            handler_game.act(msg, item.in_room.people, item, None, TO_ALL)
+        if item.item_type == ITEM_ARMOR:  # etch it */
             af_found = False
-            obj.affect_enchant()
-            for paf in obj.affected:
+            item.affect_enchant()
+            for paf in item.affected:
                 if paf.location == APPLY_AC:
                     af_found = True
                     paf.type = -1
                     paf.modifier += 1
-                    paf.level = max(paf.level,level)
+                    paf.level = max(paf.level, level)
                     break
-     
+
             if not af_found:
                 # needs a new affect */
                 paf = handler_game.AFFECT_DATA()
@@ -113,63 +110,66 @@ def acid_effect(vo, level, dam, target):
                 paf.level = level
                 paf.duration = -1
                 paf.location = APPLY_AC
-                paf.modifier =  1
+                paf.modifier = 1
                 paf.bitvector = 0
-                obj.affected.append(paf)
+                item.affected.append(paf)
 
-            if obj.in_living and obj.wear_loc != WEAR_NONE:
-                obj.in_living.armor[i] = [ i+1 for i in obj.in_living.armor ]
+            if item.in_living and item.equipped_to:
+                for i in range(4):
+                    item.in_living.armor[i] = [i + 1 for i in item.in_living.armor]
                 return
         # get rid of the object */
-        if obj.contents:  # dump contents */
-            for t_obj in obj.contents[:]:
-                t_obj.from_environment()
-                if obj.in_room :
-                    t_obj.to_environment(obj.in_room)
-                elif obj.in_living:
-                    t_obj.to_environment(obj.in_living.in_room)
+        if item.contents:  # dump contents */
+            for t_item_id in item.contents[:]:
+                t_item = merc.items[t_item_id]
+                t_item.from_environment()
+                if item.in_room:
+                    t_item.to_environment(item.in_room)
+                elif item.in_living:
+                    t_item.to_environment(item.in_living.in_room)
                 else:
-                    t_obj.extract()
+                    t_item.extract()
                     continue
-                acid_effect(t_obj,level/2,dam/2,TARGET_OBJ)
-            obj.extract()
+                acid_effect(t_item, level // 2, dam // 2, TARGET_ITEM)
+            item.extract()
 
 
-def cold_effect( vo, level, dam, target):
-    if target == TARGET_ROOM: # nail objects on the floor */
+def cold_effect(vo, level, dam, target):
+    if target == TARGET_ROOM:  # nail objects on the floor */
         room = vo
-        for obj in room.contents[:]:
-            cold_effect(obj,level,dam,TARGET_OBJ)
+        for item_id in room.contents[:]:
+            item = merc.items[item_id]
+            cold_effect(item, level, dam, TARGET_ITEM)
         return
-    if target == TARGET_CHAR: # whack a character */
+    if target == TARGET_CHAR:  # whack a character */
         victim = vo
         # chill touch effect */
-        if not handler_magic.saves_spell(level/4 + dam / 20, victim, DAM_COLD):
+        if not handler_magic.saves_spell(level / 4 + dam / 20, victim, DAM_COLD):
             af = handler_game.AFFECT_DATA()
-            handler_game.act("$n turns blue and shivers.",victim,None,None,TO_ROOM)
-            handler_game.act("A chill sinks deep into your bones.",victim,None,None,TO_CHAR)
-            af.where     = TO_AFFECTS
-            af.type      = const.skill_table["chill touch"]
-            af.level     = level
-            af.duration  = 6
-            af.location  = APPLY_STR
-            af.modifier  = -1
+            handler_game.act("$n turns blue and shivers.", victim, None, None, TO_ROOM)
+            handler_game.act("A chill sinks deep into your bones.", victim, None, None, TO_CHAR)
+            af.where = TO_AFFECTS
+            af.type = const.skill_table["chill touch"]
+            af.level = level
+            af.duration = 6
+            af.location = APPLY_STR
+            af.modifier = -1
             af.bitvector = 0
             victim.affect_join(af)
 
         # hunger! (warmth sucked out */
         if not victim.is_npc():
-            gain_condition(victim,COND_HUNGER,dam/20)
+            gain_condition(victim, COND_HUNGER, dam / 20)
 
         # let's toast some gear */
-        for obj in victim.contents[:]:
-            cold_effect(obj,level,dam,TARGET_OBJ)
+        for item in victim.contents[:]:
+            cold_effect(item, level, dam, TARGET_ITEM)
         return
-    if target == TARGET_OBJ: # toast an object */
-        obj = vo
-        if state_checks.is_item_stat(obj,ITEM_BURN_PROOF) \
-                or state_checks.is_item_stat(obj,ITEM_NOPURGE) \
-                or random.randint(0,4) == 0:
+    if target == TARGET_ITEM:  # toast an object */
+        item = vo
+        if item.burn_proof \
+                or item.no_purge \
+                or random.randint(0, 4) == 0:
             return
         chance = level // 4 + dam // 10
         if chance > 25:
@@ -177,155 +177,161 @@ def cold_effect( vo, level, dam, target):
         if chance > 50:
             chance = (chance - 50) // 2 + 50
 
-        if state_checks.is_item_stat(obj,ITEM_BLESS):
+        if item.bless:
             chance -= 5
 
-        chance -= obj.level * 2
-        msg = ""
-        if obj.item_type == ITEM_POTION:
+        chance -= item.level * 2
+        if item.item_type == ITEM_POTION:
             msg = "$p freezes and shatters!"
             chance += 25
-        elif obj.item_type == ITEM_DRINK_CON:
+        elif item.item_type == ITEM_DRINK_CON:
             msg = "$p freezes and shatters!"
             chance += 5
         else:
             return
 
-        chance = max(5, min(chance,95))
+        chance = max(5, min(chance, 95))
 
-        if random.randint(1,99) > chance:
+        if random.randint(1, 99) > chance:
             return
 
-        if obj.in_living is not None:
-            handler_game.act(msg,obj.in_living,obj,None,TO_ALL)
-        elif obj.in_room and obj.in_room.people:
-            handler_game.act(msg,obj.in_room.people,obj,None,TO_ALL)
-        obj.extract()
+        if item.in_living is not None:
+            handler_game.act(msg, item.in_living, item, None, TO_ALL)
+        elif item.in_room and item.in_room.people:
+            handler_game.act(msg, item.in_room.people, item, None, TO_ALL)
+        item.extract()
         return
+
 
 def fire_effect(vo, level, dam, target):
     if target == TARGET_ROOM:  # nail objects on the floor */
         room = vo
-        for obj in room.contents[:]:
-            fire_effect(obj,level,dam,TARGET_OBJ)
+        for item_id in room.contents[:]:
+            item = merc.items[item_id]
+            fire_effect(item, level, dam, TARGET_ITEM)
         return
-    if target == TARGET_CHAR:   # do the effect on a victim */
+    if target == TARGET_CHAR:  # do the effect on a victim */
         victim = vo
         # chance of blindness */
-        if not victim.is_affected(AFF_BLIND) and not handler_magic.saves_spell(level / 4 + dam / 20, victim,DAM_FIRE):
-            handler_game.act("$n is blinded by smoke!",victim,None,None,TO_ROOM)
-            handler_game.act("Your eyes tear up from smoke...you can't see a thing!", victim,None,None,TO_CHAR)
+        if not victim.is_affected(AFF_BLIND) and not handler_magic.saves_spell(level / 4 + dam / 20, victim, DAM_FIRE):
+            handler_game.act("$n is blinded by smoke!", victim, None, None, TO_ROOM)
+            handler_game.act("Your eyes tear up from smoke...you can't see a thing!", victim, None, None, TO_CHAR)
             af = handler_game.AFFECT_DATA()
-            af.where        = TO_AFFECTS
-            af.type         = const.skill_table["fire breath"]
-            af.level        = level
-            af.duration     = random.randint(0,level/10)
-            af.location     = APPLY_HITROLL
-            af.modifier     = -4
-            af.bitvector    = AFF_BLIND
+            af.where = TO_AFFECTS
+            af.type = const.skill_table["fire breath"]
+            af.level = level
+            af.duration = random.randint(0, level / 10)
+            af.location = APPLY_HITROLL
+            af.modifier = -4
+            af.bitvector = AFF_BLIND
             victim.affect_add(af)
         # getting thirsty */
         if not victim.is_npc():
-            gain_condition(victim,COND_THIRST,dam/20)
+            gain_condition(victim, COND_THIRST, dam / 20)
 
         # let's toast some gear! */
-        for obj in victim.contents[:]:
-            fire_effect(obj,level,dam,TARGET_OBJ)
+        for item_id in victim.contents[:]:
+            item = merc.items[item_id]
+            fire_effect(item, level, dam, TARGET_ITEM)
         return
-    
-    if target == TARGET_OBJ:  # toast an object */
-        obj = vo
 
-        if state_checks.is_item_stat(obj,ITEM_BURN_PROOF) or state_checks.is_item_stat(obj,ITEM_NOPURGE) or random.randint(0,4) == 0:
+    if target == TARGET_ITEM:  # toast an object */
+        item = vo
+
+        if item.burn_proof or item.no_purge or random.randint(0, 4) == 0:
             return
- 
+
         chance = level // 4 + dam // 10
- 
+
         if chance > 25:
             chance = (chance - 25) // 2 + 25
         if chance > 50:
             chance = (chance - 50) // 2 + 50
 
-        if state_checks.is_item_stat(obj,ITEM_BLESS):
+        if item.bless:
             chance -= 5
-        chance -= obj.level * 2
+        chance -= item.level * 2
 
-        if obj.item_type == ITEM_CONTAINER:
+        if item.item_type == ITEM_CONTAINER:
             msg = "$p ignites and burns!"
-        elif obj.item_type == ITEM_POTION:
+        elif item.item_type == ITEM_POTION:
             chance += 25
             msg = "$p bubbles and boils!"
-        elif obj.item_type == ITEM_SCROLL:
+        elif item.item_type == ITEM_SCROLL:
             chance += 50
             msg = "$p crackles and burns!"
-        elif obj.item_type == ITEM_STAFF:
+        elif item.item_type == ITEM_STAFF:
             chance += 10
             msg = "$p smokes and chars!"
-        elif obj.item_type == ITEM_WAND:
+        elif item.item_type == ITEM_WAND:
             msg = "$p sparks and sputters!"
-        elif obj.item_type == ITEM_FOOD:
+        elif item.item_type == ITEM_FOOD:
             msg = "$p blackens and crisps!"
-        elif obj.item_type == ITEM_PILL:
+        elif item.item_type == ITEM_PILL:
             msg = "$p melts and drips!"
         else:
             return
-        chance = max(5, min(chance,95))
+        chance = max(5, min(chance, 95))
 
-        if random.randint(1,99) > chance:
+        if random.randint(1, 99) > chance:
             return
- 
-        if obj.in_living:
-            handler_game.act( msg, obj.in_living, obj, None, TO_ALL )
-        elif obj.in_room and obj.in_room.people:
-            handler_game.act(msg,obj.in_room.people,obj,None,TO_ALL)
 
-        if obj.contents:
+        if item.in_living:
+            handler_game.act(msg, item.in_living, item, None, TO_ALL)
+        elif item.in_room and item.in_room.people:
+            handler_game.act(msg, item.in_room.people, item, None, TO_ALL)
+
+        if item.contents:
             # dump the contents */
-            for t_obj in obj.contents[:]:
-                t_obj.from_environment()
-                if obj.in_room:
-                    t_obj.to_environment(obj.in_room)
-                elif obj.in_living:
-                    t_obj.to_environment(obj.in_living.in_room)
+            for t_item_id in item.contents[:]:
+                t_item = merc.items[t_item_id]
+                t_item.from_environment()
+                if item.in_room:
+                    t_item.to_environment(item.in_room)
+                elif item.in_living:
+                    t_item.to_environment(item.in_living.in_room)
                 else:
-                    t_obj.extract()
+                    t_item.extract()
                     continue
-                fire_effect(t_obj,level/2,dam/2,TARGET_OBJ)
+                fire_effect(t_item, level / 2, dam / 2, TARGET_ITEM)
 
-        obj.extract()
+        item.extract()
         return
 
-def poison_effect( vo, level, dam, target):
+
+def poison_effect(vo, level, dam, target):
     if target == TARGET_ROOM:  # nail objects on the floor */
         room = vo
-        for obj in room.contents[:]:
-            poison_effect(obj,level,dam,TARGET_OBJ)
+        for item_id in room.contents[:]:
+            item = merc.items[item_id]
+            poison_effect(item, level, dam, TARGET_ITEM)
         return
 
-    if target == TARGET_CHAR:   # do the effect on a victim */
+    if target == TARGET_CHAR:  # do the effect on a victim */
         victim = vo
         # chance of poisoning */
-        if not handler_magic.saves_spell(level // 4 + dam // 20,victim,DAM_POISON):
+        if not handler_magic.saves_spell(level // 4 + dam // 20, victim, DAM_POISON):
             af = handler_game.AFFECT_DATA()
 
             victim.send("You feel poison coursing through your veins.\n\r")
-            handler_game.act("$n looks very ill.",victim,None,None,TO_ROOM)
+            handler_game.act("$n looks very ill.", victim, None, None, TO_ROOM)
 
-            af.where     = TO_AFFECTS
-            af.type      = gsn_poison
-            af.level     = level
-            af.duration  = level // 2
-            af.location  = APPLY_STR
-            af.modifier  = -1
+            af.where = TO_AFFECTS
+            af.type = const.skill_table["poison"]
+            af.level = level
+            af.duration = level // 2
+            af.location = APPLY_STR
+            af.modifier = -1
             af.bitvector = AFF_POISON
             victim.affect_join(af)
-    # equipment */
-        for obj in victim.contents[:]:
-            poison_effect(obj,level,dam,TARGET_OBJ)
+            # equipment */
+        for item_id in victim.contents[:]:
+            item = merc.items[item_id]
+            poison_effect(item, level, dam, TARGET_ITEM)
         return
-    if target == TARGET_OBJ:  # do some poisoning */
-        obj = vo
-        if state_checks.is_item_stat(obj,ITEM_BURN_PROOF) or state_checks.is_item_stat(obj,ITEM_BLESS) or random.randint(0,4) == 0:
+    if target == TARGET_ITEM:  # do some poisoning */
+        item = vo
+        if item.burn_proof or item.bless or random.randint(0, 4) == 0:
             return
 
         chance = level // 4 + dam // 10
@@ -334,46 +340,46 @@ def poison_effect( vo, level, dam, target):
         if chance > 50:
             chance = (chance - 50) // 2 + 50
 
-        chance -= obj.level * 2
+        chance -= item.level * 2
 
-
-        if obj.item_type ==  ITEM_FOOD:
+        if item.item_type == ITEM_FOOD:
             pass
-        if obj.item_type == ITEM_DRINK_CON:
-            if obj.value[0] == obj.value[1]:
+        if item.item_type == ITEM_DRINK_CON:
+            if item.value[0] == item.value[1]:
                 return
         else:
             return
-        chance = max(5, min(chance,95))
+        chance = max(5, min(chance, 95))
 
-        if random.randint(1,99) > chance:
+        if random.randint(1, 99) > chance:
             return
 
-        obj.value[3] = 1
+        item.value[3] = 1
         return
 
-def shock_effect( vo, level, dam, target):
+
+def shock_effect(vo, level, dam, target):
     if target == TARGET_ROOM:
         room = vo
-        for obj in room.contents[:]:
-            shock_effect(obj,level,dam,TARGET_OBJ)
+        for item_id in room.contents[:]:
+            item = merc.items[item_id]
+            shock_effect(item, level, dam, TARGET_ITEM)
         return
 
     if target == TARGET_CHAR:
         victim = vo
         # daze and confused? */
-        if not handler_magic.saves_spell(level // 4 + dam // 20,victim,DAM_LIGHTNING):
+        if not handler_magic.saves_spell(level // 4 + dam // 20, victim, DAM_LIGHTNING):
             victim.send("Your muscles stop responding.\n\r")
-            state_checks.DAZE_STATE(victim,max(12,level // 4 + dam/20))
+            state_checks.DAZE_STATE(victim, max(12, level // 4 + dam / 20))
         # toast some gear */
-        for obj in victim.contents[:]:
-            shock_effect(obj,level,dam,TARGET_OBJ)
+        for item_id in victim.contents[:]:
+            item = merc.items[item_id]
+            shock_effect(item, level, dam, TARGET_ITEM)
         return
-    if target == TARGET_OBJ:
-        obj = vo
-        if state_checks.is_item_stat(obj,ITEM_BURN_PROOF) \
-                or state_checks.is_item_stat(obj,ITEM_NOPURGE) \
-                or random.randint(0,4) == 0:
+    if target == TARGET_ITEM:
+        item = vo
+        if item.burn_proof or item.no_purge or random.randint(0, 4) == 0:
             return
 
         chance = level // 4 + dam // 10
@@ -383,29 +389,29 @@ def shock_effect( vo, level, dam, target):
         if chance > 50:
             chance = (chance - 50) // 2 + 50
 
-        if state_checks.is_item_stat(obj,ITEM_BLESS):
+        if item.bless:
             chance -= 5
 
-        chance -= obj.level * 2
+        chance -= item.level * 2
 
-        if obj.item_type == ITEM_WAND \
-        or obj.item_type == ITEM_STAFF:
+        if item.item_type == ITEM_WAND \
+                or item.item_type == ITEM_STAFF:
             chance += 10
             msg = "$p overloads and explodes!"
-        elif obj.item_type == ITEM_JEWELRY:
+        elif item.item_type == ITEM_JEWELRY:
             chance -= 10
             msg = "$p is fused into a worthless lump."
         else:
             return
-        chance = max(5, min(chance,95))
+        chance = max(5, min(chance, 95))
 
-        if random.randint(1,99) > chance:
+        if random.randint(1, 99) > chance:
             return
 
-        if obj.in_living:
-            handler_game.act(msg,obj.in_living,obj,None,TO_ALL)
-        elif obj.in_room and obj.in_room.people:
-            handler_game.act(msg,obj.in_room.people,obj,None,TO_ALL)
+        if item.in_living:
+            handler_game.act(msg, item.in_living, item, None, TO_ALL)
+        elif item.in_room and item.in_room.people:
+            handler_game.act(msg, item.in_room.people, item, None, TO_ALL)
 
-        obj.extract()
+        item.extract()
         return

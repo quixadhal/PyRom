@@ -735,6 +735,19 @@ class ItemFlags(equipment.Equipment):
         else:
             self.item_attributes -= {func_name}
 
+    @property
+    def no_drop(self):
+        func_name = sys._getframe().f_code.co_name
+        return func_name if func_name in self.item_restrictions else False
+
+    @no_drop.setter
+    def no_drop(self, has_restr):
+        func_name = sys._getframe().f_code.co_name
+        if has_restr:
+            self.item_restrictions |= {func_name}
+        else:
+            self.item_restrictions -= {func_name}
+
     # Item Restriction Flags
     @property
     def no_remove(self):

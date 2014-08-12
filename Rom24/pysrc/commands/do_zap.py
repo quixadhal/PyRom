@@ -17,7 +17,7 @@ def do_zap(ch, argument):
     if not arg and not ch.fighting:
         ch.send("Zap whom or what?\n")
         return
-    wand = ch.get_eq(merc.WEAR_HOLD)
+    wand = ch.get_eq('held')
     if not wand:
         ch.send("You hold nothing in your hand.\n")
         return

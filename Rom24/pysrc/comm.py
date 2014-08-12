@@ -188,7 +188,7 @@ def bust_a_prompt(ch):
         if pexit and (ch.can_see_room(pexit.to_room)
                       or (ch.is_affected(merc.AFF_INFRARED)
                           and not ch.is_affected(merc.AFF_BLIND))) \
-                and not state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED):
+                and not pexit.exit_info.is_set(merc.EX_CLOSED):
             found = True
             doors += dir_name[door]
         if not found:

@@ -148,9 +148,9 @@ def do_look(ch, argument):
     else:
         ch.send("Nothing special there.\n")
     if pexit.keyword and pexit.keyword.strip():
-        if state_checks.IS_SET(pexit.exit_info, merc.EX_CLOSED):
+        if pexit.exit_info.is_set(merc.EX_CLOSED):
             handler_game.act("The $d is closed.", ch, None, pexit.keyword, merc.TO_CHAR)
-        elif state_checks.IS_SET(pexit.exit_info, merc.EX_ISDOOR):
+        elif pexit.exit_info.is_set(merc.EX_ISDOOR):
             handler_game.act("The $d is open.", ch, None, pexit.keyword, merc.TO_CHAR)
     return
 

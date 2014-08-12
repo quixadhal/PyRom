@@ -7,7 +7,7 @@ import state_checks
 
 def spell_curse(sn, level, ch, victim, target):
     # deal with the object case first */
-    if target == merc.TARGET_OBJ:
+    if target == merc.TARGET_ITEM:
         obj = victim
         if state_checks.is_item_stat(obj, merc.ITEM_EVIL):
             handler_game.act("$p is already filled with evil.", ch, obj, None, merc.TO_CHAR)

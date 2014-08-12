@@ -133,6 +133,7 @@ def number_door(self=None):
     return random.randint(0, 5)
 
 def find_door(ch, arg):
+    print(arg)
     if arg == "n" or arg == "north":
         door = 0
     elif arg == "e" or arg == "east":
@@ -148,16 +149,19 @@ def find_door(ch, arg):
     else:
         for door in range(0, 5):
             pexit = ch.in_room.exit[door]
-            if pexit and state_checks.IS_SET(pexit.exit_info, merc.EX_ISDOOR) and pexit.keyword \
+            print(pexit)
+            if pexit and pexit.exit_info.is_set(merc.EX_ISDOOR) and pexit.keyword \
                     and arg in pexit.keyword:
                 return door
         handler_game.act("I see no $T here.", ch, None, arg, merc.TO_CHAR)
         return -1
     pexit = ch.in_room.exit[door]
+    print(pexit)
+    print(pexit.exit_info)
     if not pexit:
         handler_game.act("I see no door $T here.", ch, None, arg, merc.TO_CHAR)
         return -1
-    if not state_checks.IS_SET(pexit.exit_info, merc.EX_ISDOOR):
+    if not pexit.exit_info.is_set(merc.EX_ISDOOR):
         ch.send("You can't do that.\n")
         return -1
     return door

@@ -8,7 +8,7 @@ import state_checks
 
 
 def spell_floating_disc(sn, level, ch, victim, target):
-    floating = ch.get_eq(merc.WEAR_FLOAT)
+    floating = ch.get_eq('float')
     if floating and state_checks.is_item_stat(floating, merc.ITEM_NOREMOVE):
         handler_game.act("You can't remove $p.", ch, floating, None, merc.TO_CHAR)
         return
