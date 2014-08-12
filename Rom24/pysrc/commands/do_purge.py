@@ -20,7 +20,7 @@ def do_purge(ch, argument):
                 victim.extract(True)
         for item_id in ch.in_room.items:
             item = merc.items[item_id]
-            if not state_checks.is_item_stat(item, merc.ITEM_NOPURGE):
+            if not item.no_purge:
                 item.extract()
         handler_game.act("$n purges the room!", ch, None, None, merc.TO_ROOM)
         ch.send("Ok.\n")

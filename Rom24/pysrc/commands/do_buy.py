@@ -131,18 +131,18 @@ def do_buy(ch, argument):
         keeper.gold += cost * number / 100
         keeper.silver += cost * number - (cost * number / 100) * 100
         t_obj = None
-        if state_checks.IS_SET(obj.extra_flags, merc.ITEM_INVENTORY):
+        if obj.inventory:
             items = []
             for count in range(number):
-                t_obj = object_creator.create_item(obj.pIndexData, obj.level)
+                t_obj = object_creator.create_item(obj.vnum, obj.level)
                 items.append(t_obj)
         for t_obj in items[:]:
-            if not state_checks.IS_SET(obj.extra_flags, merc.ITEM_INVENTORY):
+            if not obj.inventory:
                 t_obj.from_environment()
 
-            if t_obj.timer > 0 and not merc.IS_OBJ_STAT(t_obj, merc.ITEM_HAD_TIMER):
+            if t_obj.timer > 0 and not t_obj.had_timer:
                 t_obj.timer = 0
-            t_obj.extra_flags = state_checks.REMOVE_BIT(t_obj.extra_flags, merc.ITEM_HAD_TIMER)
+            t_obj.extra_flags = t_obj.had_timer = False
             t_obj.to_environment(ch)
             if cost < t_obj.cost:
                 t_obj.cost = cost

@@ -16,27 +16,27 @@ def do_sacrifice(ch, argument):
         handler_game.act("$n offers $mself to Mota, who graciously declines.", ch, None, None, merc.TO_ROOM)
         ch.send("Mota appreciates your offer and may accept it later.\n")
         return
-    obj = ch.get_item_list(arg, ch.in_room.items)
-    if obj is None:
+    item = ch.get_item_list(arg, ch.in_room.items)
+    if item is None:
         ch.send("You can't find it.\n")
         return
-    if obj.item_type == merc.ITEM_CORPSE_PC:
-        if obj.contents:
+    if item.item_type == merc.ITEM_CORPSE_PC:
+        if item.contents:
             ch.send("Mota wouldn't like that.\n")
             return
-    if not state_checks.CAN_WEAR(obj, merc.ITEM_TAKE) or state_checks.CAN_WEAR(obj, merc.ITEM_NO_SAC):
-        handler_game.act("$p is not an acceptable sacrifice.", ch, obj, 0, merc.TO_CHAR)
+    if not item.take or item.no_sac:
+        handler_game.act("$p is not an acceptable sacrifice.", ch, item, 0, merc.TO_CHAR)
         return
-    if obj.in_room:
-        for gch_id in obj.in_room.people:
+    if item.in_room:
+        for gch_id in item.in_room.people:
             gch = merc.characters[gch_id]
-            if gch.on == obj:
-                handler_game.act("$N appears to be using $p.", ch, obj, gch, merc.TO_CHAR)
+            if gch.on == item.instance_id:
+                handler_game.act("$N appears to be using $p.", ch, item, gch, merc.TO_CHAR)
                 return
 
-    silver = max(1, obj.level * 3)
-    if obj.item_type != merc.ITEM_CORPSE_NPC and obj.item_type != merc.ITEM_CORPSE_PC:
-        silver = min(silver, obj.cost)
+    silver = max(1, item.level * 3)
+    if item.item_type != merc.ITEM_CORPSE_NPC and item.item_type != merc.ITEM_CORPSE_PC:
+        silver = min(silver, item.cost)
 
     if silver == 1:
         ch.send("Mota gives you one silver coin for your sacrifice.\n")
@@ -48,9 +48,9 @@ def do_sacrifice(ch, argument):
         members = len([gch for gch in ch.in_room.people if gch.is_same_group(ch)])
         if members > 1 and silver > 1:
             ch.do_split("%d" % silver)
-    handler_game.act("$n sacrifices $p to Mota.", ch, obj, None, merc.TO_ROOM)
-    handler_game.wiznet("$N sends up $p as a burnt offering.", ch, obj, merc.WIZ_SACCING, 0, 0)
-    obj.extract()
+    handler_game.act("$n sacrifices $p to Mota.", ch, item, None, merc.TO_ROOM)
+    handler_game.wiznet("$N sends up $p as a burnt offering.", ch, item, merc.WIZ_SACCING, 0, 0)
+    item.extract()
     return
 
 

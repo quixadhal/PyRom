@@ -31,24 +31,90 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
+import collections
 import logging
-import container
-from instance import Instancer
+import game_utils
 
 logger = logging.getLogger()
 
+import instance
+import type_bypass
+import container
 import physical
 import location
 import handler_game
 import object_creator
 import merc
 import state_checks
+import item_flags
+
+# * One object.
+
+'''Equip "Flags":
+Keyword: internal identifier
+Value: String Representation'''
+equips_to_strings = {'left_finger': 'Left Finger',
+                     'right_finger': 'Right Finger',
+                     'neck': 'Neck',
+                     'collar': 'Collar',
+                     'body': 'Body',
+                     'head': 'Head',
+                     'legs': 'Legs',
+                     'feet': 'Feet',
+                     'hands': 'Hands',
+                     'arms': 'Arms',
+                     'about': 'About Body',
+                     'left_wrist': 'Left Wrist',
+                     'right_wrist': 'Right Wrist',
+                     'waist': 'Waist',
+                     'main_hand': 'Main Hand',
+                     'off_hand': 'Off Hand',
+                     'held': 'Held',
+                     'float': 'Float',
+                     'light': 'Light'}
+
+item_restriction_strings = {'no_drop': 'No Drop',
+                            'no_remove': 'No Remove',
+                            'no_uncurse': 'No Uncurse',
+                            'no_purge': 'No Purge',
+                            'anti_good': 'Anti-Good',
+                            'anti_evil': 'Anti-Evil',
+                            'anti_neutral': 'Anti-Neutral',
+                            'inventory': 'Inventory Only',
+                            'no_locate': 'No Locate'}
+
+item_attribute_strings = {'magic': 'Magic',
+                          'glow': 'Glowing',
+                          'hum': 'Humming',
+                          'dark': 'Dark',
+                          'lock': 'Lock',
+                          'evil': 'Evil',
+                          'invis': 'Invisible',
+                          'bless': 'Bless',
+                          'non_metal': 'Non Metal',
+                          'had_timer': 'Had Timer',
+                          'burn_proof': 'Burn Proof',
+                          'melt_drop': 'Melt Drop',
+                          'rot_death': 'Rot Death',
+                          'vis_death': 'Vis Death',
+                          'sell_extract': 'Sell Extract',
+                          'take': 'Take'}
+
+weapon_attribute_strings = {'flaming': 'Flaming',
+                            'frost': 'Frost',
+                            'vampiric': 'Vampiric',
+                            'sharp': 'Sharp',
+                            'vorpal': 'Vorpal',
+                            'two_hands': 'Two-Handed',
+                            'shocking': 'Shocking',
+                            'poison': 'Poison'}
 
 
-# One object.
-class Items(Instancer, location.Location, physical.Physical, container.Container):
+class Items(instance.Instancer, location.Location, physical.Physical, container.Container,
+            item_flags.ItemFlags, type_bypass.ObjectType):
     def __init__(self, template=None):
         super().__init__()
+        self.is_item = True
         self.vnum = 0
         self.template = True
         self.instance_id = None
@@ -61,14 +127,19 @@ class Items(Instancer, location.Location, physical.Physical, container.Container
         self.new_format = True
         self.owner = ""
         self.item_type = 0
-        self.extra_flags = 0
-        self.wear_flags = 0
-        self.wear_loc = merc.WEAR_NONE
         self.cost = 0
         self.level = 0
         self.condition = 0
         self.timer = 0
-        self.value = [0, 0, 0, 0, 0]
+        self.value = [0] * 5
+        self._equips_to = set({})
+        self._item_attributes = set({})
+        self._item_restrictions = set({})
+        self._weapon_attributes = set({})
+        self._equips_to_names = equips_to_strings
+        self._restriction_names = item_restriction_strings
+        self._item_attribute_names = item_attribute_strings
+        self._weapon_attribute_names = weapon_attribute_strings
 
     def __del__(self):
         logger.trace("Freeing %s" % str(self))
@@ -78,6 +149,152 @@ class Items(Instancer, location.Location, physical.Physical, container.Container
             return "<Item Template: %s : %d>" % (self.short_descr, self.vnum)
         else:
             return "<Item Instance: %s : ID %d>" % (self.short_descr, self.instance_id)
+
+    #Equipped/Equips To
+    @property
+    def equipped_to(self):
+        if self.in_living:
+            character = merc.characters[self.in_living]
+            for k, v in character.equipped.items():
+                if v == self.instance_id:
+                    return k
+        else:
+            return None
+
+    @property
+    def equips_to_names(self, check_occupied=False):
+        things = set({})
+        used = self.equipped_to if check_occupied else None
+        for name in self.equips_to:
+            if used == name:
+                continue
+            things.add(self._equips_to_names[name])
+        return ', '.join(name for name in things)
+
+    @property
+    def equips_to(self):
+        #Equips To getter
+        #Will return a named tuple with the equips_to set or a formatted string
+        #Access with item.equips_to.set or item.equips_to.string format
+        if self.is_item:
+            return self._equips_to
+        else:
+            return None
+
+    @equips_to.setter
+    # Default of the equippable flag is True, because the
+    # caller will either want to set or clear that status.
+    def equips_to(self, slot, is_equippable=True):
+        if not self.is_item:
+            raise TypeError('equips_to is not valid for any non-Item class object.')
+        if type(slot) is set:
+            if is_equippable:
+                self._equips_to |= slot
+            else:
+                self._equips_to -= slot
+        elif type(slot) is str:
+            if slot in equips_to_strings.keys():
+                if is_equippable:
+                    self._equips_to.add(slot)
+                else:
+                    self._equips_to.discard(slot)
+            else:
+                raise ValueError('Invalid slot name %r for %r' % (slot, self))
+        else:
+            raise TypeError('slot must be a set or a string, not %r' % type(slot))
+
+    #Item Attributes
+    @property
+    def item_attribute_names(self):
+        attributes = set({})
+        for astring in self.item_attributes:
+            attributes.add(self._restriction_names[astring])
+        return ', '.join(name for name in attributes)
+
+    @property
+    def item_attributes(self):
+        #Item Attribute getter
+        return self._item_attributes
+
+    @item_attributes.setter
+    def item_attributes(self, attr_set, has_attr=True):
+        if type(attr_set) is set:
+            if has_attr:
+                self._item_attributes |= attr_set
+            else:
+                self._item_attributes -= attr_set
+        elif type(attr_set) is str:
+            if attr_set in item_attribute_strings.keys():
+                if has_attr:
+                    self._item_attributes.add(attr_set)
+                else:
+                    self._item_attributes.discard(attr_set)
+            else:
+                raise ValueError('Invalid attr_set name %r for %r' % (attr_set, self))
+        else:
+            raise TypeError('attr_set must be a set or a string, not %r' % type(attr_set))
+
+    #Restrictions
+    @property
+    def restriction_names(self):
+        restrictions = set({})
+        for rstring in self.item_restrictions:
+            restrictions.add(self._restriction_names[rstring])
+        return ', '.join(name for name in restrictions)
+
+    @property
+    def item_restrictions(self):
+        #Item Restrictions getter
+        return self._item_restrictions
+
+    @item_restrictions.setter
+    def item_restrictions(self, restrictions, has_restr=True):
+        if type(restrictions) is set:
+            if has_restr:
+                self._item_restrictions |= restrictions
+            else:
+                self._item_restrictions -= restrictions
+        elif type(restrictions) is str:
+            if restrictions in item_restriction_strings.keys():
+                if has_restr:
+                    self._item_restrictions.add(restrictions)
+                else:
+                    self._item_restrictions.discard(restrictions)
+            else:
+                raise ValueError('Invalid restrictions name %r for %r' % (restrictions, self))
+        else:
+            raise TypeError('restrictions must be a set or a string, not %r' % type(restrictions))
+
+    #Weapons
+    @property
+    def weapon_attribute_names(self):
+        attributes = set({})
+        for wstring in self.item_restrictions:
+            attributes.add(self._restriction_names[wstring])
+        return ', '.join(name for name in attributes)
+
+    @property
+    def weapon_attributes(self):
+        #Weapon Attribute getter
+        return self._weapon_attributes
+
+    @weapon_attributes.setter
+    def weapon_attributes(self, weap_attr, has_attr=True):
+        if type(weap_attr) is set:
+            if has_attr:
+                self._weapon_attributes |= weap_attr
+            else:
+                self._weapon_attributes -= weap_attr
+        elif type(weap_attr) is str:
+            if weap_attr in weapon_attribute_strings.keys():
+                if has_attr:
+                    self._weapon_attributes.add(weap_attr)
+                else:
+                    self._weapon_attributes.discard(weap_attr)
+            else:
+                raise ValueError('Invalid weap_attr name %r for %r' % (weap_attr, self))
+        else:
+            raise TypeError('weap_attr must be a set or a string, not %r' % type(weap_attr))
 
     def instance_setup(self):
         merc.global_instances[self.instance_id] = self
@@ -93,17 +310,15 @@ class Items(Instancer, location.Location, physical.Physical, container.Container
         del merc.global_instances[self.instance_id]
         # Remove an object.
 
-    def apply_ac(self, iWear, loc):
+    def apply_ac(self, ac_position):
         if self.item_type != merc.ITEM_ARMOR:
             return 0
-
-        multi = {merc.WEAR_BODY: 3, merc.WEAR_HEAD: 2, merc.WEAR_LEGS: 2, merc.WEAR_ABOUT: 2}
-        if iWear in multi:
-            return multi[iWear] * self.value[loc]
+        multi = {'body': 3, 'head': 2, 'legs': 2, 'about': 2}
+        for worn_on in self.equipped_to:
+            if worn_on in multi.keys():
+                return multi[worn_on] * self.value[ac_position]
         else:
-            return self.value[loc]
-
-
+            return self.value[ac_position]
 
     # enchanted stuff for eq */
     def affect_enchant(self):
@@ -130,17 +345,27 @@ class Items(Instancer, location.Location, physical.Physical, container.Container
         # apply any affect vectors to the object's extra_flags
         if paf.bitvector:
             if paf.where == merc.TO_OBJECT:
-                state_checks.SET_BIT(self.extra_flags, paf.bitvector)
+                ret_str = game_utils.item_bitvector_flag_str(paf.bitvector, 'extra flags')
+                if self.item_attribute_names.intersection(ret_str):
+                    self.item_attributes |= {ret_str}
+                elif self.restriction_names.intersection(ret_str):
+                    self.item_restrictions |= {ret_str}
+                else:
+                    raise ValueError('paf set attempt failed, unable to find flag %s' % ret_str)
             elif paf.where == merc.TO_WEAPON:
                 if self.item_type == merc.ITEM_WEAPON:
-                    state_checks.SET_BIT(self.value[4], paf.bitvector)
+                    ret_str = game_utils.item_bitvector_flag_str(paf.bitvector, 'weapon flags')
+                    if self.weapon_attribute_names.intersection(ret_str):
+                        self.weapon_attributes |= {ret_str}
+                    else:
+                        raise ValueError('paf set attempt failed, unable to find flag %s' % ret_str)
 
     def affect_remove(self, paf):
         if not self.affected:
             print("BUG: Affect_remove_object: no affect.")
             return
 
-        if self.in_living is not None and self.wear_loc != -1:
+        if self.in_living is not None and self.equipped_to:
             merc.characters[self.in_living].affect_modify(paf, False)
 
         where = paf.where
@@ -149,17 +374,27 @@ class Items(Instancer, location.Location, physical.Physical, container.Container
         # remove flags from the object if needed */
         if paf.bitvector:
             if paf.where == merc.TO_OBJECT:
-                state_checks.REMOVE_BIT(self.extra_flags, paf.bitvector)
+                ret_str = game_utils.item_bitvector_flag_str(paf.bitvector, 'extra flags')
+                if self.item_attribute_names.intersection(ret_str):
+                    self.item_attributes -= {ret_str}
+                elif self.restriction_names.intersection(ret_str):
+                    self.item_restrictions -= {ret_str}
+                else:
+                    raise ValueError('paf removal attempt failed, unable to find flag %s' % ret_str)
             elif paf.where == merc.TO_WEAPON:
                 if self.item_type == merc.ITEM_WEAPON:
-                    state_checks.REMOVE_BIT(self.value[4], paf.bitvector)
+                    ret_str = game_utils.item_bitvector_flag_str(paf.bitvector, 'weapon flags')
+                    if self.weapon_attribute_names.intersection(ret_str):
+                        self.weapon_attributes -= {ret_str}
+                    else:
+                        raise ValueError('paf removal attempt failed, unable to find flag %s' % ret_str)
 
         if paf not in self.affected:
             print("BUG: Affect_remove_object: cannot find paf.")
             return
         self.affected.remove(paf)
         del paf
-        if self.in_living is not None and self.wear_loc != -1:
+        if self.in_living is not None and self.equipped_to:
             merc.characters[self.in_living].affect_check(where, vector)
         return
 
@@ -186,9 +421,10 @@ class Items(Instancer, location.Location, physical.Physical, container.Container
                     total += 1
         return total
 
+
 def get_item(ch, item, this_container):
     # variables for AUTOSPLIT
-    if not state_checks.CAN_WEAR(item, merc.ITEM_TAKE):
+    if not item.take:
         ch.send("You can't take that.\n")
         return
     if ch.carry_number + item.get_number() > ch.can_carry_n():
@@ -212,13 +448,11 @@ def get_item(ch, item, this_container):
         if this_container.vnum == merc.OBJ_VNUM_PIT and ch.trust < item.level:
             ch.send("You are not powerful enough to use it.\n")
             return
-        if this_container.vnum == merc.OBJ_VNUM_PIT \
-                and not state_checks.CAN_WEAR(this_container, merc.ITEM_TAKE) \
-                and not state_checks.is_item_stat(item, merc.ITEM_HAD_TIMER):
+        if this_container.vnum == merc.OBJ_VNUM_PIT and not item.take and not item.had_timer:
             item.timer = 0
             handler_game.act("You get $p from $P.", ch, item, this_container, merc.TO_CHAR)
             handler_game.act("$n gets $p from $P.", ch, item, this_container, merc.TO_ROOM)
-            state_checks.REMOVE_BIT(item.extra_flags, merc.ITEM_HAD_TIMER)
+            item.had_timer = False
             item.from_environment()
     else:
         handler_game.act("You get $p.", ch, item, this_container, merc.TO_CHAR)
@@ -253,26 +487,27 @@ def item_check(ch, obj):
         return False
 
 
-def format_item_to_char(item_id, ch, use_short):
+def format_item_to_char(item, ch, fShort):
+    if type(item) == int:
+        item = merc.items[item]
     buf = ''
-    item = merc.items[item_id]
-    if (use_short and not item.short_descr) or not item.description:
+    if (fShort and not item.short_descr) or not item.description:
         return buf
 
-    if state_checks.is_item_stat(item, merc.ITEM_INVIS):
+    if item.invis:
         buf += "(Invis) "
-    if ch.is_affected(merc.AFF_DETECT_EVIL) and state_checks.is_item_stat(item, merc.ITEM_EVIL):
+    if ch.is_affected(merc.AFF_DETECT_EVIL) and item.evil:
         buf += "(Red Aura) "
-    if ch.is_affected(merc.AFF_DETECT_GOOD) and state_checks.is_item_stat(item, merc.ITEM_BLESS):
+    if ch.is_affected(merc.AFF_DETECT_GOOD) and item.bless:
         buf += "(Blue Aura) "
-    if ch.is_affected(merc.AFF_DETECT_MAGIC) and state_checks.is_item_stat(item, merc.ITEM_MAGIC):
+    if ch.is_affected(merc.AFF_DETECT_MAGIC) and item.magic:
         buf += "(Magical) "
-    if state_checks.is_item_stat(item, merc.ITEM_GLOW):
+    if item.glow:
         buf += "(Glowing) "
-    if state_checks.is_item_stat(item, merc.ITEM_HUM):
+    if item.hum:
         buf += "(Humming) "
 
-    if use_short:
+    if fShort:
         if item.short_descr:
             buf += item.short_descr
     else:
@@ -285,7 +520,7 @@ def format_item_to_char(item_id, ch, use_short):
 
 # Count occurrences of an obj in a list.
 def count_obj_list(itemInstance, contents):
-    return len([item for item in contents if merc.items[item].vnum == itemInstance.vnum])
+    return len([item_id for item_id in contents if merc.items[item_id].name == itemInstance.name])
 
 
 # for clone, to insure that cloning goes many levels deep

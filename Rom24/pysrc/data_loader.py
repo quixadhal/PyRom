@@ -1,6 +1,7 @@
 import os
 import sys
 import logging
+import collections
 
 import const
 import object_creator
@@ -178,79 +179,93 @@ def load_objects(area, pArea):
     area, w = game_utils.read_word(area, False)
     w = w[1:]  # strip the pound
     while w != '0':
-        obj = handler_item.Items(None)
-        obj.vnum = int(w)
-        merc.itemTemplate[obj.vnum] = obj
-        obj.area = pArea.name
-        area, obj.name = game_utils.read_string(area)
-        area, obj.short_descr = game_utils.read_string(area)
+        flag_data = collections.namedtuple('item_flags', ('slots', 'restrictions', 'attributes', 'weapon'))
+        flag_data.slots = set({})
+        flag_data.restrictions = set({})
+        flag_data.weapon = set({})
+        flag_data.attributes = set({})
+        item = handler_item.Items(None)
+        item.vnum = int(w)
+        merc.itemTemplate[item.vnum] = item
+        item.area = pArea.name
+        area, item.name = game_utils.read_string(area)
+        area, item.short_descr = game_utils.read_string(area)
 
-        area, obj.description = game_utils.read_string(area)
-        obj.description = miniboa.terminal.escape(obj.description, 'pyom')
+        area, item.description = game_utils.read_string(area)
+        item.description = miniboa.terminal.escape(item.description, 'pyom')
 
-        area, obj.material = game_utils.read_string(area)
-        area, obj.item_type = game_utils.read_word(area, False)
-        area, obj.extra_flags = game_utils.read_flags(area)
-        area, obj.wear_flags = game_utils.read_flags(area)
+        area, item.material = game_utils.read_string(area)
+        area, item.item_type = game_utils.read_word(area, False)
+        area, extra_bits = game_utils.read_flags(area)
+        game_utils.item_flags_from_bits(extra_bits, flag_data, 'extra flags')
+        area, wear_bits = game_utils.read_flags(area)
+        game_utils.item_flags_from_bits(wear_bits, flag_data, 'wear flags')
+        if 'light' == item.item_type:
+            flag_data.slots.update({'Light'})
+        item.equips_to = flag_data.slots
+        item.item_restrictions = flag_data.restrictions
+        item.item_attributes = flag_data.attributes
 
-        if obj.item_type == merc.ITEM_WEAPON:
-            area, obj.value[0] = game_utils.read_word(area, False)
-            area, obj.value[1] = game_utils.read_int(area)
-            area, obj.value[2] = game_utils.read_int(area)
-            area, obj.value[3] = game_utils.read_word(area, False)
-            obj.value[3] = state_checks.name_lookup(const.attack_table, obj.value[3])
-            area, obj.value[4] = game_utils.read_flags(area)
-        elif obj.item_type == merc.ITEM_CONTAINER:
-            area, obj.value[0] = game_utils.read_int(area)
-            area, obj.value[1] = game_utils.read_flags(area)
-            area, obj.value[2] = game_utils.read_int(area)
-            area, obj.value[3] = game_utils.read_int(area)
-            area, obj.value[4] = game_utils.read_int(area)
-        elif obj.item_type == merc.ITEM_DRINK_CON or obj.item_type == merc.ITEM_FOUNTAIN:
-            area, obj.value[0] = game_utils.read_int(area)
-            area, obj.value[1] = game_utils.read_int(area)
-            area, obj.value[2] = game_utils.read_word(area, False)
-            area, obj.value[3] = game_utils.read_int(area)
-            area, obj.value[4] = game_utils.read_int(area)
-        elif obj.item_type == merc.ITEM_WAND or obj.item_type == merc.ITEM_STAFF:
-            area, obj.value[0] = game_utils.read_int(area)
-            area, obj.value[1] = game_utils.read_int(area)
-            area, obj.value[2] = game_utils.read_int(area)
-            area, obj.value[3] = game_utils.read_word(area, False)
-            area, obj.value[4] = game_utils.read_int(area)
-        elif obj.item_type == merc.ITEM_POTION or obj.item_type == merc.ITEM_SCROLL or obj.item_type == merc.ITEM_PILL:
-            area, obj.value[0] = game_utils.read_int(area)
-            area, obj.value[1] = game_utils.read_word(area, False)
-            area, obj.value[2] = game_utils.read_word(area, False)
-            area, obj.value[3] = game_utils.read_word(area, False)
-            area, obj.value[4] = game_utils.read_word(area, False)
+        if item.item_type == merc.ITEM_WEAPON:
+            area, item.value[0] = game_utils.read_word(area, False)
+            area, item.value[1] = game_utils.read_int(area)
+            area, item.value[2] = game_utils.read_int(area)
+            area, item.value[3] = game_utils.read_word(area, False)
+            item.value[3] = state_checks.name_lookup(const.attack_table, item.value[3])
+            area, item.value[4] = game_utils.read_flags(area)
+            game_utils.item_flags_from_bits(item.value[4], flag_data, 'weapon flags')
+            item.weapon_attributes = flag_data.weapon
+        elif item.item_type == merc.ITEM_CONTAINER:
+            area, item.value[0] = game_utils.read_int(area)
+            area, item.value[1] = game_utils.read_flags(area)
+            area, item.value[2] = game_utils.read_int(area)
+            area, item.value[3] = game_utils.read_int(area)
+            area, item.value[4] = game_utils.read_int(area)
+        elif item.item_type == merc.ITEM_DRINK_CON or item.item_type == merc.ITEM_FOUNTAIN:
+            area, item.value[0] = game_utils.read_int(area)
+            area, item.value[1] = game_utils.read_int(area)
+            area, item.value[2] = game_utils.read_word(area, False)
+            area, item.value[3] = game_utils.read_int(area)
+            area, item.value[4] = game_utils.read_int(area)
+        elif item.item_type == merc.ITEM_WAND or item.item_type == merc.ITEM_STAFF:
+            area, item.value[0] = game_utils.read_int(area)
+            area, item.value[1] = game_utils.read_int(area)
+            area, item.value[2] = game_utils.read_int(area)
+            area, item.value[3] = game_utils.read_word(area, False)
+            area, item.value[4] = game_utils.read_int(area)
+        elif item.item_type == merc.ITEM_POTION or item.item_type == merc.ITEM_SCROLL or item.item_type == merc.ITEM_PILL:
+            area, item.value[0] = game_utils.read_int(area)
+            area, item.value[1] = game_utils.read_word(area, False)
+            area, item.value[2] = game_utils.read_word(area, False)
+            area, item.value[3] = game_utils.read_word(area, False)
+            area, item.value[4] = game_utils.read_word(area, False)
         else:
-            area, obj.value[0] = game_utils.read_flags(area)
-            area, obj.value[1] = game_utils.read_flags(area)
-            area, obj.value[2] = game_utils.read_flags(area)
-            area, obj.value[3] = game_utils.read_flags(area)
-            area, obj.value[4] = game_utils.read_flags(area)
+            area, item.value[0] = game_utils.read_flags(area)
+            area, item.value[1] = game_utils.read_flags(area)
+            area, item.value[2] = game_utils.read_flags(area)
+            area, item.value[3] = game_utils.read_flags(area)
+            area, item.value[4] = game_utils.read_flags(area)
 
-        area, obj.level = game_utils.read_int(area)
-        area, obj.weight = game_utils.read_int(area)
-        area, obj.cost = game_utils.read_int(area)
-        area, obj.condition = game_utils.read_word(area, False)
-        if obj.condition == 'P':
-            obj.condition = 100
-        elif obj.condition == 'G':
-            obj.condition = 90
-        elif obj.condition == 'A':
-            obj.condition = 75
-        elif obj.condition == 'W':
-            obj.condition = 50
-        elif obj.condition == 'D':
-            obj.condition = 25
-        elif obj.condition == 'B':
-            obj.condition = 10
-        elif obj.condition == 'R':
-            obj.condition = 0
+        area, item.level = game_utils.read_int(area)
+        area, item.weight = game_utils.read_int(area)
+        area, item.cost = game_utils.read_int(area)
+        area, item.condition = game_utils.read_word(area, False)
+        if item.condition == 'P':
+            item.condition = 100
+        elif item.condition == 'G':
+            item.condition = 90
+        elif item.condition == 'A':
+            item.condition = 75
+        elif item.condition == 'W':
+            item.condition = 50
+        elif item.condition == 'D':
+            item.condition = 25
+        elif item.condition == 'B':
+            item.condition = 10
+        elif item.condition == 'R':
+            item.condition = 0
         else:
-            obj.condition = 100
+            item.condition = 100
 
         area, w = game_utils.read_word(area, False)
 
@@ -267,7 +282,7 @@ def load_objects(area, pArea):
                 ed = world_classes.ExtraDescrData()
                 area, ed.keyword = game_utils.read_string(area)
                 area, ed.description = game_utils.read_string(area)
-                obj.extra_descr.append(ed)
+                item.extra_descr.append(ed)
 
             area, w = game_utils.read_word(area, False)
         w = w[1:]  # strip the pound
@@ -288,14 +303,15 @@ def load_resets(area, pArea):
 
         reset = world_classes.Reset(None)
         reset.command = letter
-        reset.template_area = pArea.name
-        reset.template_name = pArea.name + " Reset " + str(count)
+        reset.area = pArea.name
+        reset.name = pArea.name + " Reset " + str(count)
         area, number = game_utils.read_int(area)  # if_flag
         area, reset.arg1 = game_utils.read_int(area)
         area, reset.arg2 = game_utils.read_int(area)
         area, reset.arg3 = (area, 0) if letter == 'G' or letter == 'R' else game_utils.read_int(area)
         area, reset.arg4 = game_utils.read_int(area) if letter == 'P' or letter == 'M' else (area, 0)
         area, t = game_utils.read_to_eol(area)
+        merc.resets[reset.name] = reset
         pArea.reset_list.append(reset)
     return area
 
@@ -335,7 +351,8 @@ def load_rooms(area, pArea):
                 area, door = game_utils.read_int(area)
                 area, nexit.description = game_utils.read_string(area)
                 area, nexit.keyword = game_utils.read_string(area)
-                area, locks = game_utils.read_int(area)
+                #Replaced Locks code
+                area = nexit.exit_info.read_bits(area)
                 area, nexit.key = game_utils.read_int(area)
                 area, nexit.to_room_vnum = game_utils.read_int(area)
                 nexit.name = "Exit %s %d to %d" % \

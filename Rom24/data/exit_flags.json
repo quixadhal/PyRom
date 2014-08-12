@@ -1,0 +1,52 @@
+{
+    "isdoor": [
+        "isdoor",
+        1,
+        false
+    ],
+    "closed": [
+        "closed",
+        4,
+        false
+    ],
+    "locked": [
+        "locked",
+        8,
+        false
+    ],
+    "pickproof": [
+        "pickproof",
+        16,
+        false
+    ],
+    "nopass": [
+        "nopass",
+        32,
+        false
+    ],
+    "easy": [
+        "easy",
+        64,
+        false
+    ],
+    "hard": [
+        "hard",
+        128,
+        false
+    ],
+    "infuriating": [
+        "infuriating",
+        8192,
+        false
+    ],
+    "noclose": [
+        "noclose",
+        32768,
+        false
+    ],
+    "nolock": [
+        "nolock",
+        65536,
+        false
+    ]
+}

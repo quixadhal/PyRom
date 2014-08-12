@@ -71,7 +71,7 @@ def do_trip(ch, argument):
         handler_game.act("You trip $N and $N goes down!",ch,None,victim, merc.TO_CHAR)
         handler_game.act("$n trips $N, sending $M to the ground.",ch,None,victim, merc.TO_NOTVICT)
         if ch.is_pc():
-            ch.check_improve('trip',True,1)
+            ch.check_improve('trip', True, 1)
         state_checks.DAZE_STATE(victim,2 * merc.PULSE_VIOLENCE)
         state_checks.WAIT_STATE(ch,const.skill_table['trip'].beats)
         victim.position = merc.POS_RESTING
@@ -80,7 +80,7 @@ def do_trip(ch, argument):
         fight.damage(ch,victim,0,'trip', merc.DAM_BASH,True)
         state_checks.WAIT_STATE(ch,const.skill_table['trip'].beats*2 // 3)
         if ch.is_pc():
-            ch.check_improve('trip',False,1)
+            ch.check_improve('trip', False, 1)
     fight.check_killer(ch,victim)
 
 interp.register_command(interp.cmd_type('trip', do_trip, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1))

@@ -41,16 +41,17 @@ def do_list(ch, argument):
             return
         argument, arg = game_utils.read_word(argument)
         items = collections.OrderedDict()
-        for obj in keeper.contents:
-            cost = shop_utils.get_cost(keeper, obj, True)
-            if obj.wear_loc == merc.WEAR_NONE and ch.can_see_item(obj) and cost > 0 \
-                    and ( not arg or arg in obj.name.lower()):
-                if state_checks.is_item_stat(obj, merc.ITEM_INVENTORY):
-                    items[(obj.pIndexData, obj.short_descr)] = (obj, -1)
+        for item_id in keeper.contents:
+            item = merc.items[item_id]
+            cost = shop_utils.get_cost(keeper, item, True)
+            if not item.equipped_to and ch.can_see_item(item) and cost > 0 \
+                    and (not arg or arg in item.name.lower()):
+                if item.inventory:
+                    items[(item.vnum, item.short_descr)] = (item.vnum, -1)
                 else:
-                    k = (obj.pIndexData, obj.short_descr)
+                    k = (item.vnum, item.short_descr)
                     if k not in items:
-                        items[k] = (obj, 1)
+                        items[k] = (item, 1)
                     else:
                         items[k][1] += 1
         if not items:
@@ -58,11 +59,11 @@ def do_list(ch, argument):
             return
         ch.send("[[Lv Price Qty]] Item\n")
         for k, p in items.items():
-            obj, count = p
-            cost = shop_utils.get_cost(keeper, obj, True)
-            ch.send("[[%2d %5d %2s ]] %s" % (obj.level, cost, ("--" if count == -1 else count), obj.short_descr))
+            item, count = p
+            cost = shop_utils.get_cost(keeper, item, True)
+            ch.send("[[%2d %5d %2s ]] %s" % (item.level, cost, ("--" if count == -1 else count), item.short_descr))
             if ch.act.is_set(merc.PLR_OMNI):
-                ch.send("(%d)" % obj.pIndexData.vnum)
+                ch.send("(%d)" % item.vnum)
             ch.send("\n")
 
 

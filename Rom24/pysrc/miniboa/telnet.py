@@ -438,7 +438,7 @@ class TelnetClient(object):
         """
         Handle incoming Telnet commands that are two bytes long.
         """
-        logger.debug("Got two byte cmd '{}'".format(ord(cmd)))
+        #logger.debug("Got two byte cmd '{}'".format(ord(cmd)))
 
         if cmd == SB:
             ## Begin capturing a sub-negotiation string
@@ -485,7 +485,7 @@ class TelnetClient(object):
         Handle incoming Telnet commmands that are three bytes long.
         """
         cmd = self.telnet_got_cmd
-        logger.debug("Got three byte cmd {}:{}".format(ord(cmd), ord(option)))
+        #logger.debug("Got three byte cmd {}:{}".format(ord(cmd), ord(option)))
 
         ## Incoming DO's and DONT's refer to the status of this end
         if cmd == DO:

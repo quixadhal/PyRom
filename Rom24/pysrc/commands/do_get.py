@@ -75,7 +75,7 @@ def do_get(ch, argument):
             for item in container.contents[:]:
                 if (len(arg1) == 3 or arg1[4:] in item.name) and ch.can_see_item(item):
                     found = True
-                    if container.pIndexData.vnum == merc.OBJ_VNUM_PIT and not ch.is_immortal():
+                    if container.vnum == merc.OBJ_VNUM_PIT and not ch.is_immortal():
                         ch.send("Don't be so greedy!\n")
                         return
                     handler_item.get_item(ch, item, container)

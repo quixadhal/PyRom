@@ -6,7 +6,7 @@ import state_checks
 
 
 def spell_poison(sn, level, ch, victim, target):
-    if target == merc.TARGET_OBJ:
+    if target == merc.TARGET_ITEM:
         obj = victim
 
         if obj.item_type == merc.ITEM_FOOD or obj.item_type == merc.ITEM_DRINK_CON:

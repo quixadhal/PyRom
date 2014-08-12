@@ -62,38 +62,38 @@ def do_give(ch, argument):
                 handler_game.act("$n tells you 'Thank you, come again.'", victim, None, ch, merc.TO_VICT)
                 ch.reply = victim
         return
-    obj = ch.get_item_carry(arg1, ch)
-    if not obj:
+    item = ch.get_item_carry(arg1, ch)
+    if not item:
         ch.send("You do not have that item.\n")
         return
-    if obj.wear_loc != merc.WEAR_NONE:
+    if item.equipped_to:
         ch.send("You must remove it first.\n")
         return
     victim = ch.get_char_room(arg2)
     if not victim:
         ch.send("They aren't here.\n")
         return
-    if victim.is_npc() and victim.pIndexData.pShop is not None:
+    if victim.is_npc() and victim.pShop is not None:
         handler_game.act("$N tells you 'Sorry, you'll have to sell that.'", ch, None, victim, merc.TO_CHAR)
         ch.reply = victim
         return
-    if not ch.can_drop_item(obj):
+    if not ch.can_drop_item(item):
         ch.send("You can't let go of it.\n")
         return
-    if victim.carry_number + obj.get_number() > victim.can_carry_n():
+    if victim.carry_number + item.get_number() > victim.can_carry_n():
         handler_game.act("$N has $S hands full.", ch, None, victim, merc.TO_CHAR)
         return
-    if state_checks.get_carry_weight(victim) + obj.get_weight() > victim.can_carry_w():
+    if state_checks.get_carry_weight(victim) + item.get_weight() > victim.can_carry_w():
         handler_game.act("$N can't carry that much weight.", ch, None, victim, merc.TO_CHAR)
         return
-    if not victim.can_see_item(obj):
+    if not victim.can_see_item(item):
         handler_game.act("$N can't see it.", ch, None, victim, merc.TO_CHAR)
         return
-    obj.from_environment()
-    obj.to_environment(victim)
-    handler_game.act("$n gives $p to $N.", ch, obj, victim, merc.TO_NOTVICT)
-    handler_game.act("$n gives you $p.", ch, obj, victim, merc.TO_VICT)
-    handler_game.act("You give $p to $N.", ch, obj, victim, merc.TO_CHAR)
+    item.from_environment()
+    item.to_environment(victim)
+    handler_game.act("$n gives $p to $N.", ch, item, victim, merc.TO_NOTVICT)
+    handler_game.act("$n gives you $p.", ch, item, victim, merc.TO_VICT)
+    handler_game.act("You give $p to $N.", ch, item, victim, merc.TO_CHAR)
     return
 
 

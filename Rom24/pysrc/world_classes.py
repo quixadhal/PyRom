@@ -2,19 +2,23 @@ import os
 import hashlib
 import json
 import logging
-from instance import Instancer
+import tables
 
 logger = logging.getLogger()
 
 import merc
+import instance
 import settings
+import type_bypass
+import bit
 
 __author__ = 'venom'
 
 
-class Area(Instancer):
+class Area(instance.Instancer, type_bypass.ObjectType):
     def __init__(self, template=None):
         super().__init__()
+        self.is_area = True
         self.index = 0
         self.name = ""
         self.no_save = False  # TODO: This should be true for instances
@@ -113,7 +117,7 @@ class Exit:
             self.name = ""
             self.to_room_vnum = None
             self.to_room = None
-            self.exit_info = 0
+            self.exit_info = bit.Bit(flags=tables.exit_flags)
             self.key = None
             self.key_vnum = None
             self.keyword = ""
@@ -126,6 +130,8 @@ class Reset:
             [setattr(self, k, v) for k, v in template.__dict__.items()]
             self.room = merc.instances_by_room[self.room][0]
         else:
+            self.name = ""
+            self.area = ""
             self.instance_id = None
             self.room = None
             self.command = ""

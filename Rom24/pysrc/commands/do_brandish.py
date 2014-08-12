@@ -9,7 +9,7 @@ import const
 
 
 def do_brandish(ch, argument):
-    staff = ch.get_eq(merc.WEAR_HOLD)
+    staff = ch.get_eq('held')
     if not staff:
         ch.send("You hold nothing in your hand.\n")
         return
