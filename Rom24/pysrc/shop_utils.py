@@ -1,4 +1,4 @@
-__author__ = 'venom'
+__author__ = 'syn'
 import merc
 import state_checks
 import handler_game

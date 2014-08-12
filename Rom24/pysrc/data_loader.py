@@ -20,7 +20,7 @@ import miniboa.terminal
 
 logger = logging.getLogger()
 
-__author__ = 'venom'
+__author__ = 'syn'
 
 
 def load_areas():

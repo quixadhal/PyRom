@@ -80,7 +80,6 @@ item_restriction_strings = {'no_drop': 'No Drop',
                             'anti_good': 'Anti-Good',
                             'anti_evil': 'Anti-Evil',
                             'anti_neutral': 'Anti-Neutral',
-                            'inventory': 'Inventory Only',
                             'no_locate': 'No Locate'}
 
 item_attribute_strings = {'magic': 'Magic',
@@ -97,6 +96,7 @@ item_attribute_strings = {'magic': 'Magic',
                           'melt_drop': 'Melt Drop',
                           'rot_death': 'Rot Death',
                           'vis_death': 'Vis Death',
+                          'inventory': 'Inventory',
                           'sell_extract': 'Sell Extract',
                           'take': 'Take'}
 
@@ -105,7 +105,7 @@ weapon_attribute_strings = {'flaming': 'Flaming',
                             'vampiric': 'Vampiric',
                             'sharp': 'Sharp',
                             'vorpal': 'Vorpal',
-                            'two_hands': 'Two-Handed',
+                            'two_handed': 'Two-Handed',
                             'shocking': 'Shocking',
                             'poison': 'Poison'}
 

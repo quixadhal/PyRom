@@ -5,7 +5,7 @@ logger = logging.getLogger()
 import time
 import collections
 
-__author__ = 'venom'
+__author__ = 'syn'
 import merc
 import random
 
@@ -246,6 +246,7 @@ def item_bitvector_flag_str(bits: int, in_type='extra flags'):
         else:
             return None
 
+
 def item_flags_from_bits(bits: int, out_data: collections.namedtuple, in_type='wear flags'):
     if not out_data or not bits or not in_type:
         return None
@@ -314,7 +315,7 @@ def item_flags_from_bits(bits: int, out_data: collections.namedtuple, in_type='w
         if bits & merc.ITEM_NOREMOVE:
             out_data.restrictions.update({'no_remove'})
         if bits & merc.ITEM_INVENTORY:
-            out_data.restrictions.update({'inventory'})
+            out_data.attributes.update({'inventory'})
         if bits & merc.ITEM_NOPURGE:
             out_data.restrictions.update({'no_purge'})
         if bits & merc.ITEM_ROT_DEATH:

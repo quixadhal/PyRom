@@ -4,7 +4,7 @@ import merc
 import save
 import settings
 
-__author__ = 'venom'
+__author__ = 'syn'
 import logging
 
 logger = logging.getLogger()
