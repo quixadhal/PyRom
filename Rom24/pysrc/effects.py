@@ -162,8 +162,9 @@ def cold_effect(vo, level, dam, target):
             gain_condition(victim, COND_HUNGER, dam / 20)
 
         # let's toast some gear */
-        for item in victim.contents[:]:
-            cold_effect(item, level, dam, TARGET_ITEM)
+        for item_id in victim.contents[:]:
+            item = merc.items[item_id]
+            cold_effect(item,level,dam,TARGET_OBJ)
         return
     if target == TARGET_ITEM:  # toast an object */
         item = vo
@@ -234,6 +235,8 @@ def fire_effect(vo, level, dam, target):
             item = merc.items[item_id]
             fire_effect(item, level, dam, TARGET_ITEM)
         return
+        if type(obj) is int:
+            obj = merc.items[obj]
 
     if target == TARGET_ITEM:  # toast an object */
         item = vo

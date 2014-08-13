@@ -359,6 +359,16 @@ def load_rooms(area, pArea):
                              (nexit.keyword,
                               room.vnum,
                               nexit.to_room_vnum)
+
+                if locks == 1:
+                    nexit.exit_info = merc.EX_ISDOOR
+                elif locks == 2:
+                    nexit.exit_info = merc.EX_ISDOOR | merc.EX_PICKPROOF
+                elif locks == 3:
+                    nexit.exit_info = merc.EX_ISDOOR | merc.EX_NOPASS
+                elif locks == 4:
+                    nexit.exit_info = merc.EX_ISDOOR | merc.EX_NOPASS | merc.EX_PICKPROOF
+
                 room.exit[door] = nexit
             elif letter == 'E':
                 ed = world_classes.ExtraDescrData()

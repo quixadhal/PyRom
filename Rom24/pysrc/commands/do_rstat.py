@@ -19,7 +19,7 @@ def do_rstat(ch, argument):
             and location.is_private() and not state_checks.IS_TRUSTED(ch, merc.MAX_LEVEL):
         ch.send("That room is private right now.\n")
         return
-    ch.send("Name: '%s'\nArea: '%s'\n" % (location.name, location.area.name))
+    ch.send("Name: '%s'\nArea: '%s'\n" % (location.name, location.area))
     ch.send("Vnum: %d  Sector: %d  Light: %d  Healing: %d  Mana: %d\n" % (
         location.vnum,
         location.sector_type,
@@ -33,19 +33,21 @@ def do_rstat(ch, argument):
         ch.send("'.\n")
 
     ch.send("Characters:")
-    for rch in location.people:
+    for rch_id in location.people:
+        rch = merc.characters[rch_id]
         if ch.can_see(rch):
             ch.send("%s " % rch.name if not rch.is_npc() else rch.short_descr)
     ch.send(".\nObjects:   ")
-    for obj in location.contents:
+    for obj_id in location.contents:
+        obj = merc.global_instances[obj_id]
         ch.send("'%s' " % obj.name)
     ch.send(".\n")
     for door, pexit in enumerate(location.exit):
         if pexit:
             ch.send("Door: %d.  To: %d.  Key: %d.  Exit flags: %d.\nKeyword: '%s'.  Description: %s" % (
                 door,  # TODO:  come back and fix this
-                -1 if pexit.to_room is None else pexit.to_room.vnum,
-                pexit.key,
+                -1 if pexit.to_room is None else merc.rooms[pexit.to_room].vnum,
+                -1 if pexit.key is None else pexit.key,
                 pexit.exit_info,
                 pexit.keyword,
                 pexit.description if pexit.description else "(none).\n" ))
