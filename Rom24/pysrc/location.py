@@ -1,12 +1,11 @@
 import logging
 
-import merc
-import state_checks
-
-
 logger = logging.getLogger()
 
 import random
+
+import merc
+import state_checks
 import game_utils
 import handler_game
 from handler_magic import saves_spell

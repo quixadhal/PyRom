@@ -1,6 +1,4 @@
-import collections
-
-__author__ = 'venom'
+__author__ = 'syn'
 
 import logging
 
@@ -49,6 +47,7 @@ class ItemFlags(equipment.Equipment):
         self._had_timer = False
         self._burn_proof = False
         self._take = False
+        self._inventory = False
         # Item Restriction Flags
         self._no_drop = False
         self._no_remove = False
@@ -57,7 +56,6 @@ class ItemFlags(equipment.Equipment):
         self._anti_good = False
         self._anti_evil = False
         self._anti_neutral = False
-        self._inventory = False
         self._no_locate = False
         # Weapon Attributes
         self._two_handed = False
@@ -736,6 +734,26 @@ class ItemFlags(equipment.Equipment):
             self.item_attributes -= {func_name}
 
     @property
+    def inventory(self):
+        """
+       TODO: write documentation
+       """
+        func_name = sys._getframe().f_code.co_name
+        return func_name if func_name in self.item_restrictions else False
+
+    @inventory.setter
+    def inventory(self, has_restr):
+        """
+       TODO: write documentation
+       """
+        func_name = sys._getframe().f_code.co_name
+        if has_restr:
+            self.item_attributes |= {func_name}
+        else:
+            self.item_attributes -= {func_name}
+
+    # Item Restriction Flags
+    @property
     def no_drop(self):
         func_name = sys._getframe().f_code.co_name
         return func_name if func_name in self.item_restrictions else False
@@ -748,7 +766,6 @@ class ItemFlags(equipment.Equipment):
         else:
             self.item_restrictions -= {func_name}
 
-    # Item Restriction Flags
     @property
     def no_remove(self):
         """
@@ -854,25 +871,6 @@ class ItemFlags(equipment.Equipment):
 
     @anti_neutral.setter
     def anti_neutral(self, has_restr):
-        """
-       TODO: write documentation
-       """
-        func_name = sys._getframe().f_code.co_name
-        if has_restr:
-            self.item_restrictions |= {func_name}
-        else:
-            self.item_restrictions -= {func_name}
-
-    @property
-    def inventory(self):
-        """
-       TODO: write documentation
-       """
-        func_name = sys._getframe().f_code.co_name
-        return func_name if func_name in self.item_restrictions else False
-
-    @inventory.setter
-    def inventory(self, has_restr):
         """
        TODO: write documentation
        """

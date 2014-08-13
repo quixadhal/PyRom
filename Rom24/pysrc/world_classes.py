@@ -12,7 +12,7 @@ import settings
 import type_bypass
 import bit
 
-__author__ = 'venom'
+__author__ = 'syn'
 
 
 class Area(instance.Instancer, type_bypass.ObjectType):

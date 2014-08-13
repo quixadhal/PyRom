@@ -1,4 +1,4 @@
-__author__ = 'venom'
+__author__ = 'syn'
 
 class ObjectType:
     def __init__(self):

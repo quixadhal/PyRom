@@ -70,7 +70,7 @@ class AREA_SERIALIZER:
                 ref.close()
 
 
-__author__ = 'venom'
+__author__ = 'syn'
 def do_apickle(ch, argument):
     ch.send("Saving areas to pickle format..\n\n")
     save.area_pickler(ch)

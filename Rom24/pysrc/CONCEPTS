@@ -108,7 +108,7 @@ The items and npcs directories likewise contain tempalte data for all the
 items and npcs in the area, in JSON format, likewise padded (or not).
 
 One of the core concepts we've added to Pyom is a clear distinction between a
-template and an instance of tha template.  While both share the same Class,
+template and an instance of the template.  While both share the same Class,
 and the same overall data, Every object you see in the game world is actually
 an instance, having a unique instance_id.
 
@@ -168,9 +168,24 @@ So, Syn and I had a google docs thing about the whole equipment system.
 I'll paste that here... it's changed a little bit, but the basic outline
 may still be useful.
 
+Equipment code layout - Syn:
+
+Module:
+equipment
+
+Class:
+Equipment
+
+Inheritors:
+Module: living
+Class: Living - PC and NPC
+
+Module: item_flags
+
 On living objects:
 
-equipment is a dictionary of equipment slots
+
+equipped is a dictionary of equipment slots
 Each slot is either an integer, being the instance_id of the object equipped,
 or None, meaning the slot is empty.
 
