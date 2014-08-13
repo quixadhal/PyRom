@@ -8,8 +8,8 @@ class Equipment:
         self._equips_to = None
         self._equipped_to = None
 
-    def equip(self):
+    def equip(self, item, replace: bool=False, verbose: bool=True, verbose_all: bool=True, to_loc: str=None):
         pass
 
-    def unequip(self):
+    def unequip(self, unequip_from, replace: bool=True):
         pass

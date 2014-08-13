@@ -903,7 +903,7 @@ def update_pos(victim):
 
 # Start fights.
 def set_fighting(ch, victim):
-    if ch.fighting is not None:
+    if ch.fighting:
         logger.warn("BUG: Set_fighting: already fighting")
         return
 

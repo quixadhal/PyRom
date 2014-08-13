@@ -470,7 +470,7 @@ def char_update():
             if item and item.item_type == ITEM_LIGHT and item.value[2] > 0:
                 item.value[2] -= 1
                 if item.value[2] == 0 and ch.in_room is not None:
-                    ch.in_room.light -= 1
+                    ch.in_room.available_light -= 1
                     handler_game.act("$p goes out.", ch, item, None, TO_ROOM)
                     handler_game.act("$p flickers and goes out.", ch, item, None, TO_CHAR)
                     item.extract()
