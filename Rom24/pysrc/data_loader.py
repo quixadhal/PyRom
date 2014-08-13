@@ -200,8 +200,8 @@ def load_objects(area, pArea):
         game_utils.item_flags_from_bits(extra_bits, flag_data, 'extra flags')
         area, wear_bits = game_utils.read_flags(area)
         game_utils.item_flags_from_bits(wear_bits, flag_data, 'wear flags')
-        if 'light' == item.item_type:
-            flag_data.slots.update({'Light'})
+        if merc.ITEM_LIGHT == item.item_type:
+            flag_data.slots.update({'light'})
         item.equips_to = flag_data.slots
         item.item_restrictions = flag_data.restrictions
         item.item_attributes = flag_data.attributes
@@ -233,7 +233,8 @@ def load_objects(area, pArea):
             area, item.value[2] = game_utils.read_int(area)
             area, item.value[3] = game_utils.read_word(area, False)
             area, item.value[4] = game_utils.read_int(area)
-        elif item.item_type == merc.ITEM_POTION or item.item_type == merc.ITEM_SCROLL or item.item_type == merc.ITEM_PILL:
+        elif item.item_type == merc.ITEM_POTION or item.item_type == merc.ITEM_SCROLL \
+                or item.item_type == merc.ITEM_PILL:
             area, item.value[0] = game_utils.read_int(area)
             area, item.value[1] = game_utils.read_word(area, False)
             area, item.value[2] = game_utils.read_word(area, False)

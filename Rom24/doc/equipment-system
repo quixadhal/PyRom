@@ -156,7 +156,8 @@ along with re-naming them.
 
 That code is found in game_utils.py : item_flags_from_bits
 
-Now the loading code takes in the data, adds it to a named tuple, of the following construction:
+Now the loading code takes in the data to pass to item_flags_from_bits, then it creates a named tuple,
+of the following construction:
         flag_data = collections.namedtuple('item_flags', ('slots', 'restrictions', 'attributes', 'weapon'))
         flag_data.slots = set({})
         flag_data.restrictions = set({})
@@ -186,9 +187,9 @@ Value: None or instance_id of equipped item
 
 When equip is called, it will:
 
-* Take the item, and remove it from the inventory.
-* Find the open location it can go to in the dict
-* Place the instance_id of the item in the dict, at that slot
+    * Take the item, and remove it from the inventory.
+    * Find the open location it can go to in the dict
+    * Place the instance_id of the item in the dict, at that slot
 
 From the item's perspective, we can find out what slot it is currently in, by using .equipped_to
 

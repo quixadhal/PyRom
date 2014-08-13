@@ -318,16 +318,6 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         else:
             return None
 
-    @equipped.setter
-    def equipped(self, slot, occupied_by):
-        if slot in self.equipped.keys():
-            if merc.global_instances[occupied_by].is_item:
-                self._equipped[slot] = occupied_by
-            else:
-                raise TypeError('Living class member trying to equip non item object %r' % type(occupied_by))
-        else:
-            raise KeyError('Unknown slot passed to ch.equipped %s' % slot)
-
     @property
     def race(self):
         try:
@@ -942,11 +932,12 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
 
     def apply_affect(self, aff_object):
         """
+        This was taken from the equip code, to shorten its length, checks for Affects, and applies as needed
+
         :param aff_object:
         :type aff_object:
         :return: no return
         :rtype: nothing
-        This was taken from the equip code, to shorten its length, checks for Affects, and applies as needed
         """
         if not aff_object.enchanted:
             for paf in merc.itemTemplate[aff_object.vnum].affected:
@@ -960,23 +951,21 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                 self.affect_modify(paf, True)
 
     # * Equip a char with an obj.
-    def equip(self, item, replace: bool=False, verbose: bool=True, to_loc: str=None):
+    def equip(self, item, replace: bool=False, verbose: bool=False, verbose_all: bool=False, to_loc: str=None):
         """
-        :type item: Items
-        :param replace:
-        :type replace:
-        :param verbose:
-        :type verbose:
-        :param to_loc:
-        :type to_loc:
-        :return: nothing
-        :rtype: nothing
+
+        :type item: int or Items
+        :type replace: bool
+        :type verbose: bool
+        :param verbose_all:
+        :type to_loc: builtins.NoneType
+        :return: :rtype:
         """
         if to_loc:
             pass
         now_wearing = False
 
-        def wear(ch, item_to_wear, loc, should_replace: bool=False):
+        def wear(ch, item_to_wear, loc, should_replace: bool=False, wverbose: bool=False):
             if (item_to_wear.anti_evil and self.is_evil()) or (item_to_wear.anti_good and self.is_good()) \
                     or (item_to_wear.anti_neutral and self.is_neutral()):
                 handler_game.act("You are zapped by $p and drop it.", self, item_to_wear, None, merc.TO_CHAR)
@@ -990,14 +979,17 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             if not ch.is_npc():
                 if loc == 'main_hand':
                     if item_to_wear.get_weight() > (const.str_app[self.stat(merc.STAT_STR)].wield * 10):
-                        ch.send('That weapon is too heavy for you to wield.\n')
+                        if wverbose:
+                            ch.send('That weapon is too heavy for you to wield.\n')
                         return False
                     elif item_to_wear.two_handed:
                         if ch.equipped['off_hand'] and ch.size < merc.SIZE_LARGE:
-                            ch.send('You need two hands free for that weapon.\n')
+                            if wverbose:
+                                ch.send('You need two hands free for that weapon.\n')
                             return False
                         elif ch.size < merc.SIZE_LARGE:
-                            ch.send('That weapon is too large for you to wield.\n')
+                            if wverbose:
+                                ch.send('That weapon is too large for you to wield.\n')
                             return False
                         else:
                             ch.equipped[loc] = item_to_wear.instance_id
@@ -1009,7 +1001,8 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                         return True
                 elif loc == 'off_hand':
                     if ch.equipped['main_hand'] and item_to_wear.two_handed and ch.size < merc.SIZE_LARGE:
-                        ch.send('Your hands are tied up with your weapon!\n')
+                        if wverbose:
+                            ch.send('Your hands are tied up with your weapon!\n')
                         return False
                     else:
                         ch.equipped[loc] = item_to_wear.instance_id
@@ -1021,16 +1014,23 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                 ch.equipped[loc] = item_to_wear.instance_id
                 return True
 
+        if not item.equips_to:
+            if verbose:
+                self.send("You can't wear, wield, or hold that.\n")
+            return
         open_slots = {k for k in self.equipped if self.equipped[k] is None}
         possible_slots = item.equips_to & open_slots
 
         if len(possible_slots) > 0:
-            success = wear(self, item, [k for k in possible_slots][0], False)
+            if not verbose:
+                success = wear(self, item, [k for k in possible_slots][0], False, False)
+            else:
+                success = wear(self, item, [k for k in possible_slots][0], False, True)
             if not success:
                 return
             else:
-                if verbose:
-                            self.verbose_wear_strings(item, [k for k in possible_slots][0])
+                if verbose_all:
+                    self.verbose_wear_strings(item, [k for k in possible_slots][0])
                 now_wearing = True
                 self.contents.remove(item.instance_id)
         else:
@@ -1038,16 +1038,20 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                 all_slots = {k for k in self.equipped.keys()}
                 overlap = item.equips_to & all_slots
                 if len(overlap) > 0:
-                    success = wear(self, item, [k for k in overlap][0], True)
+                    if not verbose:
+                        success = wear(self, item, [k for k in overlap][0], True, False)
+                    else:
+                        success = wear(self, item, [k for k in overlap][0], True)
                     if not success:
                         return
                     else:
-                        if verbose:
+                        if verbose_all:
                             self.verbose_wear_strings(item, [k for k in overlap][0])
                         now_wearing = True
                         self.contents.remove(item.instance_id)
                 else:
-                    self.send("You can't wear, wield, or hold that.\n")
+                    if verbose:
+                        self.send("You can't wear, wield, or hold that.\n")
                     return
             else:
                 if verbose:
@@ -1058,7 +1062,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                 self.armor[i] -= item.apply_ac(i)
             self.apply_affect(item)
             if item.light and item.value[2] != 0 and self.in_room:
-                self.in_room.light += 1
+                self.in_room.available_light += 1
         return
 
     def remove_affect(self, aff_object):
@@ -1122,8 +1126,8 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         self.equipped[unequip_from] = None
         self.contents += [item.instance_id]
         self.remove_affect(item)
-        if item.light and item.value[2] != 0 and self.in_room and self.in_room.light > 0:
-            self.in_room.light -= 1
+        if item.light and item.value[2] != 0 and self.in_room and self.in_room.available_light > 0:
+            self.in_room.available_light -= 1
         handler_game.act("$n stops using $p.", self, item, None, merc.TO_ROOM)
         handler_game.act("You stop using $p.", self, item, None, merc.TO_CHAR)
         return True

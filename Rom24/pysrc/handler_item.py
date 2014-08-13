@@ -31,13 +31,12 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
-import collections
 import logging
-import game_utils
 
 logger = logging.getLogger()
 
 import instance
+import game_utils
 import type_bypass
 import container
 import physical
@@ -153,6 +152,11 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
     #Equipped/Equips To
     @property
     def equipped_to(self):
+        """
+        Find the slot this item is equipped to on a character and return str name, or return None
+
+        :return: :rtype: str or None
+        """
         if self.in_living:
             character = merc.characters[self.in_living]
             for k, v in character.equipped.items():
@@ -163,6 +167,12 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
 
     @property
     def equips_to_names(self, check_occupied=False):
+        """
+        return equips_to flags as string
+
+        :param check_occupied:
+        :return: :rtype: str
+        """
         things = set({})
         used = self.equipped_to if check_occupied else None
         for name in self.equips_to:
@@ -173,9 +183,12 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
 
     @property
     def equips_to(self):
-        #Equips To getter
-        #Will return a named tuple with the equips_to set or a formatted string
-        #Access with item.equips_to.set or item.equips_to.string format
+        """
+        Equips To getter
+
+        :return: equips_to set, current slot list it can equip to
+        :rtype: set
+        """
         if self.is_item:
             return self._equips_to
         else:
@@ -184,28 +197,24 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
     @equips_to.setter
     # Default of the equippable flag is True, because the
     # caller will either want to set or clear that status.
-    def equips_to(self, slot, is_equippable=True):
-        if not self.is_item:
-            raise TypeError('equips_to is not valid for any non-Item class object.')
-        if type(slot) is set:
-            if is_equippable:
-                self._equips_to |= slot
-            else:
-                self._equips_to -= slot
-        elif type(slot) is str:
-            if slot in equips_to_strings.keys():
-                if is_equippable:
-                    self._equips_to.add(slot)
-                else:
-                    self._equips_to.discard(slot)
-            else:
-                raise ValueError('Invalid slot name %r for %r' % (slot, self))
-        else:
-            raise TypeError('slot must be a set or a string, not %r' % type(slot))
+    def equips_to(self, slots):
+        """
+        Clear, and re-set wear slot(s)
+
+        :param slots: iterable
+        """
+        if self._equips_to:
+            self._equips_to.clear()
+        self._equips_to |= set(slots)
 
     #Item Attributes
     @property
     def item_attribute_names(self):
+        """
+        return item_attributes flags as string
+
+        :return: :rtype: str
+        """
         attributes = set({})
         for astring in self.item_attributes:
             attributes.add(self._restriction_names[astring])
@@ -214,29 +223,33 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
     @property
     def item_attributes(self):
         #Item Attribute getter
+        """
+        return the item_attributes set
+
+        :return: :rtype: set
+        """
         return self._item_attributes
 
     @item_attributes.setter
-    def item_attributes(self, attr_set, has_attr=True):
-        if type(attr_set) is set:
-            if has_attr:
-                self._item_attributes |= attr_set
-            else:
-                self._item_attributes -= attr_set
-        elif type(attr_set) is str:
-            if attr_set in item_attribute_strings.keys():
-                if has_attr:
-                    self._item_attributes.add(attr_set)
-                else:
-                    self._item_attributes.discard(attr_set)
-            else:
-                raise ValueError('Invalid attr_set name %r for %r' % (attr_set, self))
-        else:
-            raise TypeError('attr_set must be a set or a string, not %r' % type(attr_set))
+    def item_attributes(self, attr_set):
+        """
+        Clear and re-set the attribute set.
+
+        :param attr_set:
+        :raise TypeError:
+        """
+        if self._item_attributes:
+            self._item_attributes.clear()
+        self._item_attributes |= set(attr_set)
 
     #Restrictions
     @property
     def restriction_names(self):
+        """
+        return restriction flags as string
+
+        :return: :rtype: str
+        """
         restrictions = set({})
         for rstring in self.item_restrictions:
             restrictions.add(self._restriction_names[rstring])
@@ -245,29 +258,32 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
     @property
     def item_restrictions(self):
         #Item Restrictions getter
+        """
+        return item_restriction flags as set
+
+        :return: :rtype: set
+        """
         return self._item_restrictions
 
     @item_restrictions.setter
-    def item_restrictions(self, restrictions, has_restr=True):
-        if type(restrictions) is set:
-            if has_restr:
-                self._item_restrictions |= restrictions
-            else:
-                self._item_restrictions -= restrictions
-        elif type(restrictions) is str:
-            if restrictions in item_restriction_strings.keys():
-                if has_restr:
-                    self._item_restrictions.add(restrictions)
-                else:
-                    self._item_restrictions.discard(restrictions)
-            else:
-                raise ValueError('Invalid restrictions name %r for %r' % (restrictions, self))
-        else:
-            raise TypeError('restrictions must be a set or a string, not %r' % type(restrictions))
+    def item_restrictions(self, restrictions):
+        """
+        clear and re-set the restriction set
+
+        :param restrictions: input flags
+        """
+        if self._item_restrictions:
+            self._item_restrictions.clear()
+        self._item_restrictions |= set(restrictions)
 
     #Weapons
     @property
     def weapon_attribute_names(self):
+        """
+        return weapon_attribute flags as str
+
+        :return: :rtype: str
+        """
         attributes = set({})
         for wstring in self.item_restrictions:
             attributes.add(self._restriction_names[wstring])
@@ -275,26 +291,23 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
 
     @property
     def weapon_attributes(self):
-        #Weapon Attribute getter
+        """
+        return weapon_attributes flags as set
+
+        :return: :rtype: set
+        """
         return self._weapon_attributes
 
     @weapon_attributes.setter
-    def weapon_attributes(self, weap_attr, has_attr=True):
-        if type(weap_attr) is set:
-            if has_attr:
-                self._weapon_attributes |= weap_attr
-            else:
-                self._weapon_attributes -= weap_attr
-        elif type(weap_attr) is str:
-            if weap_attr in weapon_attribute_strings.keys():
-                if has_attr:
-                    self._weapon_attributes.add(weap_attr)
-                else:
-                    self._weapon_attributes.discard(weap_attr)
-            else:
-                raise ValueError('Invalid weap_attr name %r for %r' % (weap_attr, self))
-        else:
-            raise TypeError('weap_attr must be a set or a string, not %r' % type(weap_attr))
+    def weapon_attributes(self, weap_attr):
+        """
+        Clear and re-set weapon_attribute flags
+
+        :param weap_attr: input data
+        """
+        if self._weapon_attributes:
+            self._weapon_attributes.clear()
+        self._weapon_attributes |= set(weap_attr)
 
     def instance_setup(self):
         merc.global_instances[self.instance_id] = self
