@@ -65,14 +65,13 @@ def do_open(ch, argument):
         handler_game.act("$n opens the $d.", ch, None, pexit.keyword, merc.TO_ROOM)
         ch.send("Ok.\n")
 
-        # TODO: This ain't work.
         # open the other side
-        to_room = merc.rooms[pexit.to_room]
+        to_room = pexit.to_room
         if to_room:
             to_room = merc.rooms[to_room]
             pexit_rev = to_room.exit[merc.rev_dir[door]] if pexit.to_room else None
             if pexit_rev and pexit_rev.to_room == ch.in_room.instance_id:
-                pexit.exit_info.rem_bit(merc.EX_ISDOOR)
+                pexit_rev.exit_info.rem_bit(merc.EX_CLOSED)
                 for rch_id in to_room.people:
                     rch = merc.characters[rch_id]
                     handler_game.act("The $d opens.", rch, None, pexit_rev.keyword, merc.TO_CHAR)
