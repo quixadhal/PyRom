@@ -360,6 +360,7 @@ def load_rooms(area, pArea):
                              (nexit.keyword,
                               room.vnum,
                               nexit.to_room_vnum)
+
                 room.exit[door] = nexit
             elif letter == 'E':
                 ed = world_classes.ExtraDescrData()

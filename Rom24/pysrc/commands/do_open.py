@@ -29,7 +29,7 @@ def do_open(ch, argument):
             if state_checks.IS_SET(item.value[1], merc.EX_LOCKED):
                 ch.send("It's locked.\n")
                 return
-            state_checks.REMOVE_BIT(item.value[1], merc.EX_CLOSED)
+            item.value[1] = state_checks.REMOVE_BIT(item.value[1], merc.EX_CLOSED)
             handler_game.act("You open $p.", ch, item, None, merc.TO_CHAR)
             handler_game.act("$n opens $p.", ch, item, None, merc.TO_ROOM)
             return
@@ -46,7 +46,7 @@ def do_open(ch, argument):
         if state_checks.IS_SET(item.value[1], merc.CONT_LOCKED):
             ch.send("It's locked.\n")
             return
-        state_checks.REMOVE_BIT(item.value[1], merc.CONT_CLOSED)
+        item.value[1] = state_checks.REMOVE_BIT(item.value[1], merc.CONT_CLOSED)
         handler_game.act("You open $p.", ch, item, None, merc.TO_CHAR)
         handler_game.act("$n opens $p.", ch, item, None, merc.TO_ROOM)
         return
@@ -66,12 +66,15 @@ def do_open(ch, argument):
         ch.send("Ok.\n")
 
         # open the other side
-        to_room = merc.rooms[pexit.to_room]
-        if to_room and to_room.exit[merc.rev_dir[door]] and to_room.exit[merc.rev_dir[door]].to_room == ch.in_room:
-            pexit_rev = to_room.exit[merc.rev_dir[door]]
-            pexit.exit_info.rem_bit(merc.EX_ISDOOR)
-            for rch in to_room.people:
-                handler_game.act("The $d opens.", rch, None, pexit_rev.keyword, merc.TO_CHAR)
+        to_room = pexit.to_room
+        if to_room:
+            to_room = merc.rooms[to_room]
+            pexit_rev = to_room.exit[merc.rev_dir[door]] if pexit.to_room else None
+            if pexit_rev and pexit_rev.to_room == ch.in_room.instance_id:
+                pexit_rev.exit_info.rem_bit(merc.EX_CLOSED)
+                for rch_id in to_room.people:
+                    rch = merc.characters[rch_id]
+                    handler_game.act("The $d opens.", rch, None, pexit_rev.keyword, merc.TO_CHAR)
 
 
 interp.register_command(interp.cmd_type('open', do_open, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
