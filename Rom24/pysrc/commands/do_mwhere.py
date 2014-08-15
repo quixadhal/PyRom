@@ -16,7 +16,7 @@ def do_mwhere(ch, argument):
         for d in merc.descriptor_list:
             if d.character and d.is_connected(nanny.con_playing) \
                     and d.character.in_room and ch.can_see(d.character) \
-                    and ch.can_see_room(d.character.in_room):
+                    and ch.can_see_room(d.character.in_room.instance_id):
                 victim = d.character
                 count += 1
             if d.original:

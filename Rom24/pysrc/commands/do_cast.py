@@ -82,7 +82,7 @@ def do_cast(ch, argument):
         target = merc.TARGET_CHAR
     elif sn.target == merc.TAR_CHAR_SELF:
         if arg2 and handler_magic.target_name not in ch.name.lower():
-            ch.send("You can! cast this spell on a!her.\n")
+            ch.send("You can't cast this spell on another.\n")
             return
 
         vo = ch
