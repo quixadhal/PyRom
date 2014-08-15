@@ -290,7 +290,29 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         self.position = 0
         self.alignment = 0
         self.desc = None
+<<<<<<< HEAD
         self.slots = equipment.Equipped()
+=======
+        self._equipped = collections.OrderedDict([('light', None),
+                                                ('left_finger', None),
+                                                ('right_finger', None),
+                                                ('neck', None),
+                                                ('collar', None),
+                                                ('body', None),
+                                                ('head', None),
+                                                ('legs', None),
+                                                ('feet', None),
+                                                ('hands', None),
+                                                ('arms', None),
+                                                ('about_body', None),
+                                                ('waist', None),
+                                                ('left_wrist', None),
+                                                ('right_wrist', None),
+                                                ('main_hand', None),
+                                                ('off_hand', None),
+                                                ('held', None),
+                                                ('float', None)])
+>>>>>>> c3b7d38... Many more command fixes.
 
     @property
     def equipped(self):

@@ -4,8 +4,11 @@ logger = logging.getLogger()
 
 import random
 import merc
+import handler_game
+import handler_magic
 import interp
 import const
+import state_checks
 
 
 def do_brandish(ch, argument):
@@ -17,16 +20,16 @@ def do_brandish(ch, argument):
         ch.send("You can brandish only with a staff.\n")
         return
     sn = staff.value[3]
-    if sn < 0 or not const.skill_table[sn].spell_fun:
+    if not sn or not const.skill_table[sn].spell_fun:
         logger.error("BUG: Do_brandish: bad sn %s.", sn)
         return
-    merc.WAIT_STATE(ch, 2 * merc.PULSE_VIOLENCE)
+    state_checks.WAIT_STATE(ch, 2 * merc.PULSE_VIOLENCE)
     if staff.value[2] > 0:
-        merc.act("$n brandishes $p.", ch, staff, None, merc.TO_ROOM)
-        merc.act("You brandish $p.", ch, staff, None, merc.TO_CHAR)
+        handler_game.act("$n brandishes $p.", ch, staff, None, merc.TO_ROOM)
+        handler_game.act("You brandish $p.", ch, staff, None, merc.TO_CHAR)
         if ch.level < staff.level or random.randint(1, 99) >= 20 + ch.get_skill("staves") * 4 / 5:
-            merc.act("You fail to invoke $p.", ch, staff, None, merc.TO_CHAR)
-            merc.act("...and nothing happens.", ch, None, None, merc.TO_ROOM)
+            handler_game.act("You fail to invoke $p.", ch, staff, None, merc.TO_CHAR)
+            handler_game.act("...and nothing happens.", ch, None, None, merc.TO_ROOM)
             if ch.is_pc():
                 ch.check_improve( "staves", False, 2)
         else:
@@ -37,10 +40,10 @@ def do_brandish(ch, argument):
                     if vch != ch:
                         continue
                 elif target == merc.TAR_CHAR_OFFENSIVE:
-                    if merc.IS_NPC(vch) if merc.IS_NPC(ch) else not merc.IS_NPC(vch):
+                    if vch.is_npc() if ch.is_npc() else not vch.is_npc():
                         continue
                 elif target == merc.TAR_CHAR_DEFENSIVE:
-                    if not merc.IS_NPC(vch) if merc.IS_NPC(ch) else merc.IS_NPC(vch):
+                    if not vch.is_npc() if ch.is_npc() else vch.is_npc():
                         continue
                 elif target == merc.TAR_CHAR_SELF:
                     if vch != ch:
@@ -48,13 +51,13 @@ def do_brandish(ch, argument):
                 else:
                     logger.error("BUG: Do_brandish: bad target for sn %s.", sn)
                     return
-                merc.obj_cast_spell(staff.value[3], staff.value[0], ch, vch, None)
+                handler_magic.obj_cast_spell(staff.value[3], staff.value[0], ch, vch, None)
                 if ch.is_pc():
                     ch.check_improve("staves", True, 2)
     staff.value[2] -= 1
     if staff.value[2] <= 0:
-        merc.act("$n's $p blazes bright and is gone.", ch, staff, None, merc.TO_ROOM)
-        merc.act("Your $p blazes bright and is gone.", ch, staff, None, merc.TO_CHAR)
+        handler_game.act("$n's $p blazes bright and is gone.", ch, staff, None, merc.TO_ROOM)
+        handler_game.act("Your $p blazes bright and is gone.", ch, staff, None, merc.TO_CHAR)
         staff.extract()
 
 

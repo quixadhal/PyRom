@@ -33,11 +33,11 @@ def do_mwhere(ch, argument):
             found = True
             count += 1
             ch.send("%3d) [[%5d]] %-28s [[%5d]] %s\n" % (
-                count, 0 if not victim.is_npc() else victim.pIndexData.vnum,
+                count, 0 if not victim.is_npc() else victim.vnum,
                 victim.short_descr if victim.is_npc() else victim.name,
                 victim.in_room.vnum,
                 victim.in_room.name ))
-    if found:
+    if not found:
         handler_game.act("You didn't find any $T.", ch, None, argument, merc.TO_CHAR)
 
 
