@@ -7,7 +7,7 @@ import merc
 
 # Contributed by Alander.
 def do_visible(ch, argument):
-    ch.affect_strip("invis")
+    ch.affect_strip("invisibility")
     ch.affect_strip("mass invis")
     ch.affect_strip("sneak")
     ch.affected_by.rem_bit(merc.AFF_HIDE)

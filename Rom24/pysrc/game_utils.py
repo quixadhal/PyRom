@@ -387,6 +387,7 @@ def find_location(ch, arg):
 
 
 def append_file(ch, fp, pstr):
+    pstr = "[%5d] %s: %s" % (ch.in_room.vnum, ch.name, pstr)
     with open(fp, "a") as f:
         f.write(pstr + "\n")
 

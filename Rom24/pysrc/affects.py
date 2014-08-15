@@ -235,5 +235,7 @@ class Affects:
 
     # * Strip all affects of a given sn.
     def affect_strip(self, sn):
-        [self.affect_remove(paf) for paf in self.affected[:] if paf.type == sn]
+        for paf in self.affected[:]:
+            if paf.type.name == sn:
+                self.affect_remove(paf)
         return

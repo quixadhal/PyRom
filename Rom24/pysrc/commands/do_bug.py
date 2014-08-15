@@ -3,12 +3,13 @@ import logging
 logger = logging.getLogger()
 
 import merc
+import game_utils
 import interp
 import settings
 
 
 def do_bug(ch, argument):
-    merc.append_file(ch, settings.BUG_FILE, argument)
+    game_utils.append_file(ch, settings.BUG_FILE, argument)
     ch.send("Bug logged.\n")
     return
 
