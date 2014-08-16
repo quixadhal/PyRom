@@ -303,8 +303,31 @@ class Bit:
                 buf += " %s" % fl.name
         return buf
 
+    def to_json(self, outer_encoder=None):
+        if outer_encoder is None:
+            outer_encoder = json.JSONEncoder.default
 
-def to_json(b):
+        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        return {
+            cls_name: {
+                'bits': outer_encoder(self.bits),
+                'flags': outer_encoder(self.flags),
+            }
+        }
+
+    @classmethod
+    def from_json(cls, data, outer_decoder=None):
+        if outer_decoder is None:
+            outer_decoder = json.JSONDecoder.decode
+
+        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        if cls_name in data:
+            return cls(default=outer_decoder(data[cls_name]['bits']),
+                flags=outer_decoder(data[cls_name]['flags']))
+        return data
+
+
+def old_to_json(b):
     """
     A Bit() object can be serialized to json data by
     js = json.dumps(b, default=bit.to_json)
@@ -317,7 +340,7 @@ def to_json(b):
     raise TypeError(repr(b) + " is not JSON serializable")
 
 
-def from_json(js):
+def old_from_json(js):
     """
     A Bit() object can be reconstructed from json data by
     b = json.loads(js, object_pairs_hook=bit.from_json)
