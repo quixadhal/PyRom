@@ -19,6 +19,7 @@ def do_close(ch, argument):
         ch.send("Close what?\n")
         return
 
+    # TODO: Verify this section after equipment revamp
     obj = ch.get_item_here(arg)
     if obj:
         # portal stuff */
@@ -30,7 +31,7 @@ def do_close(ch, argument):
             if state_checks.IS_SET(obj.value[1], merc.EX_CLOSED):
                 ch.send("It's already closed.\n")
                 return
-            state_checks.SET_BIT(obj.value[1], merc.EX_CLOSED)
+            obj.value[1] = state_checks.SET_BIT(obj.value[1], merc.EX_CLOSED)
             handler_game.act("You close $p.", ch, obj, None, merc.TO_CHAR)
             handler_game.act("$n closes $p.", ch, obj, None, merc.TO_ROOM)
             return
@@ -44,7 +45,7 @@ def do_close(ch, argument):
         if not state_checks.IS_SET(obj.value[1], merc.CONT_CLOSEABLE):
             ch.send("You can't do that.\n")
             return
-        state_checks.SET_BIT(obj.value[1], merc.CONT_CLOSED)
+        obj.value[1] = state_checks.SET_BIT(obj.value[1], merc.CONT_CLOSED)
         handler_game.act("You close $p.", ch, obj, None, merc.TO_CHAR)
         handler_game.act("$n closes $p.", ch, obj, None, merc.TO_ROOM)
         return
@@ -61,11 +62,14 @@ def do_close(ch, argument):
 
         # close the other side
         to_room = pexit.to_room
-        pexit_rev = to_room.exit[merc.rev_dir[door]] if pexit.to_room else None
-        if to_room and pexit_rev and pexit_rev.to_room == ch.in_room:
-            pexit_rev.exit_info.set_bit(merc.EX_CLOSED)
-            for rch in to_room.people:
-                handler_game.act("The $d closes.", rch, None, pexit_rev.keyword, merc.TO_CHAR)
+        if to_room:
+            to_room = merc.rooms[to_room]
+            pexit_rev = to_room.exit[merc.rev_dir[door]] if pexit.to_room else None
+            if pexit_rev and pexit_rev.to_room == ch.in_room.instance_id:
+                pexit_rev.exit_info.set_bit(merc.EX_CLOSED)
+                for rch_id in to_room.people:
+                    rch = merc.characters[rch_id]
+                    handler_game.act("The $d closes.", rch, None, pexit_rev.keyword, merc.TO_CHAR)
 
 
 interp.register_command(cmd_type('close', do_close, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

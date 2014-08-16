@@ -36,9 +36,7 @@ import logging
 
 logger = logging.getLogger()
 
-import psutil
 from collections import OrderedDict
-import pdb
 import random
 from types import MethodType
 import time
