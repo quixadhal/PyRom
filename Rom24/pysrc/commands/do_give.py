@@ -89,8 +89,8 @@ def do_give(ch, argument):
     if not victim.can_see_item(item):
         handler_game.act("$N can't see it.", ch, None, victim, merc.TO_CHAR)
         return
-    item.from_environment()
-    item.to_environment(victim)
+    ch.get(item)
+    victim.put(item)
     handler_game.act("$n gives $p to $N.", ch, item, victim, merc.TO_NOTVICT)
     handler_game.act("$n gives you $p.", ch, item, victim, merc.TO_VICT)
     handler_game.act("You give $p to $N.", ch, item, victim, merc.TO_CHAR)

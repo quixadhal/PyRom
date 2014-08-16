@@ -44,19 +44,19 @@ import const
 
 def acid_effect(vo, level, dam, target):
     if target == TARGET_ROOM:  # nail objects on the floor */
-        for item_id in vo.contents[:]:
+        for item_id in vo.inventory[:]:
             item = merc.items[item_id]
             acid_effect(item, level, dam, TARGET_ITEM)
         return
     if target == TARGET_CHAR:  # do the effect on a victim */
         # let's toast some gear */
-        for item_id in vo.contents[:]:
+        for item_id in vo.inventory[:]:
             item = merc.items[item_id]
             acid_effect(item, level, dam, TARGET_ITEM)
         return
     if target == TARGET_ITEM:  # toast an object */
         item = vo
-        if item.burn_proof or item.no_purge or random.randint(0, 4) == 0:
+        if item.flags.burn_proof or item.flags.no_purge or random.randint(0, 4) == 0:
             return
         chance = level / 4 + dam / 10
         if chance > 25:
@@ -64,7 +64,7 @@ def acid_effect(vo, level, dam, target):
         if chance > 50:
             chance = (chance - 50) // 2 + 50
 
-        if item.bless:
+        if item.flags.bless:
             chance -= 5
 
         chance -= item.level * 2
@@ -119,14 +119,14 @@ def acid_effect(vo, level, dam, target):
                     item.in_living.armor[i] = [i + 1 for i in item.in_living.armor]
                 return
         # get rid of the object */
-        if item.contents:  # dump contents */
-            for t_item_id in item.contents[:]:
+        if item.inventory:  # dump contents */
+            for t_item_id in item.inventory[:]:
                 t_item = merc.items[t_item_id]
-                t_item.from_environment()
+                item.get(t_item)
                 if item.in_room:
-                    t_item.to_environment(item.in_room)
+                    item.in_room.put(t_item)
                 elif item.in_living:
-                    t_item.to_environment(item.in_living.in_room)
+                    item.in_living.in_room.put(t_item)
                 else:
                     t_item.extract()
                     continue
@@ -137,7 +137,7 @@ def acid_effect(vo, level, dam, target):
 def cold_effect(vo, level, dam, target):
     if target == TARGET_ROOM:  # nail objects on the floor */
         room = vo
-        for item_id in room.contents[:]:
+        for item_id in room.inventory[:]:
             item = merc.items[item_id]
             cold_effect(item, level, dam, TARGET_ITEM)
         return
@@ -149,7 +149,7 @@ def cold_effect(vo, level, dam, target):
             handler_game.act("$n turns blue and shivers.", victim, None, None, TO_ROOM)
             handler_game.act("A chill sinks deep into your bones.", victim, None, None, TO_CHAR)
             af.where = TO_AFFECTS
-            af.type = const.skill_table["chill touch"]
+            af.type = 'chill touch'
             af.level = level
             af.duration = 6
             af.location = APPLY_STR
@@ -162,13 +162,13 @@ def cold_effect(vo, level, dam, target):
             gain_condition(victim, COND_HUNGER, dam / 20)
 
         # let's toast some gear */
-        for item in victim.contents[:]:
+        for item in victim.inventory[:]:
             cold_effect(item, level, dam, TARGET_ITEM)
         return
     if target == TARGET_ITEM:  # toast an object */
         item = vo
-        if item.burn_proof \
-                or item.no_purge \
+        if item.flags.burn_proof \
+                or item.flags.no_purge \
                 or random.randint(0, 4) == 0:
             return
         chance = level // 4 + dam // 10
@@ -177,7 +177,7 @@ def cold_effect(vo, level, dam, target):
         if chance > 50:
             chance = (chance - 50) // 2 + 50
 
-        if item.bless:
+        if item.flags.bless:
             chance -= 5
 
         chance -= item.level * 2
@@ -206,7 +206,7 @@ def cold_effect(vo, level, dam, target):
 def fire_effect(vo, level, dam, target):
     if target == TARGET_ROOM:  # nail objects on the floor */
         room = vo
-        for item_id in room.contents[:]:
+        for item_id in room.inventory[:]:
             item = merc.items[item_id]
             fire_effect(item, level, dam, TARGET_ITEM)
         return
@@ -218,7 +218,7 @@ def fire_effect(vo, level, dam, target):
             handler_game.act("Your eyes tear up from smoke...you can't see a thing!", victim, None, None, TO_CHAR)
             af = handler_game.AFFECT_DATA()
             af.where = TO_AFFECTS
-            af.type = const.skill_table["fire breath"]
+            af.type = 'fire breath'
             af.level = level
             af.duration = random.randint(0, level / 10)
             af.location = APPLY_HITROLL
@@ -230,7 +230,7 @@ def fire_effect(vo, level, dam, target):
             gain_condition(victim, COND_THIRST, dam / 20)
 
         # let's toast some gear! */
-        for item_id in victim.contents[:]:
+        for item_id in victim.inventory[:]:
             item = merc.items[item_id]
             fire_effect(item, level, dam, TARGET_ITEM)
         return
@@ -238,7 +238,7 @@ def fire_effect(vo, level, dam, target):
     if target == TARGET_ITEM:  # toast an object */
         item = vo
 
-        if item.burn_proof or item.no_purge or random.randint(0, 4) == 0:
+        if item.flags.burn_proof or item.flags.no_purge or random.randint(0, 4) == 0:
             return
 
         chance = level // 4 + dam // 10
@@ -248,7 +248,7 @@ def fire_effect(vo, level, dam, target):
         if chance > 50:
             chance = (chance - 50) // 2 + 50
 
-        if item.bless:
+        if item.flags.bless:
             chance -= 5
         chance -= item.level * 2
 
@@ -281,15 +281,15 @@ def fire_effect(vo, level, dam, target):
         elif item.in_room and item.in_room.people:
             handler_game.act(msg, item.in_room.people, item, None, TO_ALL)
 
-        if item.contents:
+        if item.inventory:
             # dump the contents */
-            for t_item_id in item.contents[:]:
+            for t_item_id in item.inventory[:]:
                 t_item = merc.items[t_item_id]
-                t_item.from_environment()
+                item.get(t_item)
                 if item.in_room:
-                    t_item.to_environment(item.in_room)
+                    item.in_room.put(t_item)
                 elif item.in_living:
-                    t_item.to_environment(item.in_living.in_room)
+                    item.in_living.in_room.put(t_item)
                 else:
                     t_item.extract()
                     continue
@@ -302,7 +302,7 @@ def fire_effect(vo, level, dam, target):
 def poison_effect(vo, level, dam, target):
     if target == TARGET_ROOM:  # nail objects on the floor */
         room = vo
-        for item_id in room.contents[:]:
+        for item_id in room.inventory[:]:
             item = merc.items[item_id]
             poison_effect(item, level, dam, TARGET_ITEM)
         return
@@ -317,7 +317,7 @@ def poison_effect(vo, level, dam, target):
             handler_game.act("$n looks very ill.", victim, None, None, TO_ROOM)
 
             af.where = TO_AFFECTS
-            af.type = const.skill_table["poison"]
+            af.type = 'poison'
             af.level = level
             af.duration = level // 2
             af.location = APPLY_STR
@@ -325,13 +325,13 @@ def poison_effect(vo, level, dam, target):
             af.bitvector = AFF_POISON
             victim.affect_join(af)
             # equipment */
-        for item_id in victim.contents[:]:
+        for item_id in victim.inventory[:]:
             item = merc.items[item_id]
             poison_effect(item, level, dam, TARGET_ITEM)
         return
     if target == TARGET_ITEM:  # do some poisoning */
         item = vo
-        if item.burn_proof or item.bless or random.randint(0, 4) == 0:
+        if item.flags.burn_proof or item.flags.bless or random.randint(0, 4) == 0:
             return
 
         chance = level // 4 + dam // 10
@@ -361,7 +361,7 @@ def poison_effect(vo, level, dam, target):
 def shock_effect(vo, level, dam, target):
     if target == TARGET_ROOM:
         room = vo
-        for item_id in room.contents[:]:
+        for item_id in room.inventory[:]:
             item = merc.items[item_id]
             shock_effect(item, level, dam, TARGET_ITEM)
         return
@@ -373,13 +373,13 @@ def shock_effect(vo, level, dam, target):
             victim.send("Your muscles stop responding.\n\r")
             state_checks.DAZE_STATE(victim, max(12, level // 4 + dam / 20))
         # toast some gear */
-        for item_id in victim.contents[:]:
+        for item_id in victim.inventory[:]:
             item = merc.items[item_id]
             shock_effect(item, level, dam, TARGET_ITEM)
         return
     if target == TARGET_ITEM:
         item = vo
-        if item.burn_proof or item.no_purge or random.randint(0, 4) == 0:
+        if item.flags.burn_proof or item.flags.no_purge or random.randint(0, 4) == 0:
             return
 
         chance = level // 4 + dam // 10
@@ -389,7 +389,7 @@ def shock_effect(vo, level, dam, target):
         if chance > 50:
             chance = (chance - 50) // 2 + 50
 
-        if item.bless:
+        if item.flags.bless:
             chance -= 5
 
         chance -= item.level * 2

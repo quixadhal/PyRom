@@ -8,7 +8,7 @@ import game_utils
 def get_obj_keeper(ch, keeper, argument):
     number, arg = game_utils.number_argument(argument)
     count = 0
-    for obj in keeper.contents:
+    for obj in keeper.inventory:
         if obj.wear_loc == merc.WEAR_NONE and keeper.can_see_item(obj) and ch.can_see_item(obj) and game_utils.is_name(arg, obj.name):
             count += 1
             if count == number:
@@ -21,7 +21,7 @@ def obj_to_keeper(item, ch):
     # see if any duplicates are found */
     n_item = None
     spot = -1
-    for i, t_item_id in enumerate(ch.contents):
+    for i, t_item_id in enumerate(ch.inventory):
         t_item = merc.items[t_item_id]
         if item.vnum == t_item.vnum \
                 and item.short_descr == t_item.short_descr:
@@ -35,10 +35,10 @@ def obj_to_keeper(item, ch):
             break
 
     if n_item is None or spot == -1:
-        ch.contents.remove(item)
+        ch.inventory.remove(item)
     else:
-        ch.contents.insert(spot, t_item)
-    item.in_environment = ch.instance_id
+        ch.inventory.insert(spot, t_item)
+    item.environment.instance_id = ch.instance_id
     item.in_room = None
     item.in_item = None
     ch.carry_number += item.get_number()
@@ -58,7 +58,7 @@ def get_cost(keeper, item, fBuy):
                 break
 
         if not item.sell_extract:
-            for item2_id in keeper.contents:
+            for item2_id in keeper.inventory:
                 item2 = merc.items[item2_id]
                 if item.vnum == item2_id.vnum and item.short_descr == item2_id.short_descr:
                     if item.inventory:

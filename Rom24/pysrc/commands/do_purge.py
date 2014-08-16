@@ -15,12 +15,14 @@ def do_purge(ch, argument):
     if not arg:
         for victim_id in ch.in_room.people:
             victim = merc.characters[victim_id]
-            if victim.is_npc() and not state_checks.IS_SET(victim.act,
-                                                                       merc.ACT_NOPURGE) and victim != ch:  # safety precaution
+            if victim.is_npc() and not state_checks.IS_SET(victim.act, merc.ACT_NOPURGE) \
+                    and victim != ch:  # safety precaution
+                victim.in_room.get(victim)
                 victim.extract(True)
         for item_id in ch.in_room.items:
             item = merc.items[item_id]
-            if not item.no_purge:
+            if not item.flags.no_purge:
+                ch.in_room.get(item)
                 item.extract()
         handler_game.act("$n purges the room!", ch, None, None, merc.TO_ROOM)
         ch.send("Ok.\n")
@@ -42,6 +44,7 @@ def do_purge(ch, argument):
         if victim.level > 1:
             save.save_char_obj(victim)
         d = victim.desc
+        victim.in_room.get(victim)
         victim.extract(True)
         if d:
             comm.close_socket(d)

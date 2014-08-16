@@ -16,14 +16,14 @@ def spell_teleport(sn, level, ch, victim, target):
         ch.send("You failed.\n")
         return
 
-    pRoomIndex = handler_room.get_random_room(victim)
+    random_room = handler_room.get_random_room(victim)
 
     if victim != ch:
         victim.send("You have been teleported! \n")
 
     handler_game.act("$n vanishes! ", victim, None, None, merc.TO_ROOM)
-    victim.from_environment()
-    victim.to_environment(pRoomIndex)
+    victim.in_room.get(victim)
+    random_room.put(victim)
     handler_game.act("$n slowly fades into existence.", victim, None, None, merc.TO_ROOM)
     victim.do_look("auto")
 

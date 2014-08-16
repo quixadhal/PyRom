@@ -51,13 +51,13 @@ def do_put(ch, argument):
             ch.send("It won't fit.\n")
             return
         if container.vnum == merc.OBJ_VNUM_PIT \
-                and not container.take:
+                and not container.flags.take:
             if item.timer:
-                item.had_timer = True
+                item.flags.had_timer = True
             else:
                 item.timer = random.randint(100, 200)
-        item.from_environment()
-        item.to_environment(container)
+        ch.get(item)
+        container.put(item)
 
         if state_checks.IS_SET(container.value[1], merc.CONT_PUT_ON):
             handler_game.act("$n puts $p on $P.", ch, item, container, merc.TO_ROOM)
@@ -67,20 +67,20 @@ def do_put(ch, argument):
             handler_game.act("You put $p in $P.", ch, item, container, merc.TO_CHAR)
     else:
         # 'put all container' or 'put all.obj container'
-        for item in ch.contents[:]:
+        for item in ch.inventory[:]:
             if (len(arg1) == 3 or arg1[4:] in item.name ) \
                     and ch.can_see_item(item) and state_checks.WEIGHT_MULT(item) == 100 \
                     and not item.equipped_to and item != container \
                     and ch.can_drop_item(item) \
                     and item.get_weight() + container.true_weight() <= (container.value[0] * 10) \
                     and item.get_weight() < (container.value[3] * 10):
-                if container.vnum == merc.OBJ_VNUM_PIT and not item.take:
+                if container.vnum == merc.OBJ_VNUM_PIT and not item.flags.take:
                     if item.timer:
-                        item.had_timer = True
+                        item.flags.had_timer = True
                     else:
                         item.timer = random.randint(100, 200)
-                item.from_environment()
-                item.to_environment(container)
+                ch.get(item)
+                container.put(item)
                 if state_checks.IS_SET(container.value[1], merc.CONT_PUT_ON):
                     handler_game.act("$n puts $p on $P.", ch, item, container, merc.TO_ROOM)
                     handler_game.act("You put $p on $P.", ch, item, container, merc.TO_CHAR)

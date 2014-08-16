@@ -21,10 +21,10 @@ def do_sacrifice(ch, argument):
         ch.send("You can't find it.\n")
         return
     if item.item_type == merc.ITEM_CORPSE_PC:
-        if item.contents:
+        if item.inventory:
             ch.send("Mota wouldn't like that.\n")
             return
-    if not item.take or item.no_sac:
+    if not item.flags.take or item.flags.no_sac:
         handler_game.act("$p is not an acceptable sacrifice.", ch, item, 0, merc.TO_CHAR)
         return
     if item.in_room:
@@ -50,6 +50,7 @@ def do_sacrifice(ch, argument):
             ch.do_split("%d" % silver)
     handler_game.act("$n sacrifices $p to Mota.", ch, item, None, merc.TO_ROOM)
     handler_game.wiznet("$N sends up $p as a burnt offering.", ch, item, merc.WIZ_SACCING, 0, 0)
+    ch.in_room.get(item)
     item.extract()
     return
 

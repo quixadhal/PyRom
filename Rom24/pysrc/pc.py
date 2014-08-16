@@ -16,11 +16,14 @@ import update
 
 
 class Pc(living.Living):
-    def __init__(self, template=None):
+    def __init__(self, template=None, prev_instance_id: int=None):
         super().__init__()
         if template:
             self.name = template
-            self.instancer()
+            if not prev_instance_id:
+                self.instancer()
+            else:
+                self.instance_id = prev_instance_id
             self.instance_setup()
         self.buffer = None
         self.valid = False

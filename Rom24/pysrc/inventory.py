@@ -6,21 +6,20 @@ import const
 import merc
 
 
-class Container:
+class Inventory:
     def __init__(self):
         super().__init__()
-        self.contents = []
+        self.inventory = []
         self.carry_weight = 0
         self.carry_number = 0
 
     @property
     def people(self):
-            return tuple(char_id for char_id in self.contents if char_id in merc.characters)
+            return tuple(char_id for char_id in self.inventory if char_id in merc.characters)
 
     @property
     def items(self):
-            return tuple(item_id for item_id in self.contents if item_id in merc.items)
-
+            return tuple(item_id for item_id in self.inventory if item_id in merc.items)
 
     def can_carry_n(self):
         if not self.is_npc() and self.level >= merc.LEVEL_IMMORTAL:

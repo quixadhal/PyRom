@@ -53,11 +53,11 @@ def do_enter(ch, argument):
             handler_game.act("You enter $p.", ch, portal, None, merc.TO_CHAR)
         else:
             handler_game.act("You walk through $p and find yourself somewhere else:...", ch, portal, None, merc.TO_CHAR)
-        ch.from_environment()
-        ch.to_environment(location)
+        ch.get()
+        ch.put(location)
         if state_checks.IS_SET(portal.value[2], merc.GATE_GOWITH):  # take the gate along
-            portal.from_environment()
-            portal.to_environment(location)
+            portal.get()
+            portal.put(location)
         if state_checks.IS_SET(portal.value[2], merc.GATE_NORMAL_EXIT):
             handler_game.act("$n has arrived.", ch, portal, None, merc.TO_ROOM)
         else:

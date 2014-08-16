@@ -32,10 +32,10 @@ def do_oload(ch, argument):
         ch.send("No object has that vnum.\n")
         return
     item = object_creator.create_item(merc.itemTemplate[vnum], level)
-    if item.take:
-        item.to_environment(ch)
+    if item.flags.take:
+        ch.put(item)
     else:
-        item.to_environment(ch.in_room)
+        ch.in_room.put(item)
     handler_game.act("$n has created $p!", ch, item, None, merc.TO_ROOM)
     handler_game.wiznet("$N loads $p.", ch, item, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.trust)
     ch.send("Ok.\n")

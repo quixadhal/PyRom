@@ -514,15 +514,15 @@ def spec_fido(ch):
     if not ch.is_awake():
         return False
 
-    for corpse_id in merc.rooms[ch.in_room].contents:
+    for corpse_id in ch.in_room.inventory:
         corpse = merc.items[corpse_id]
         if corpse.item_type != merc.ITEM_CORPSE_NPC:
             continue
         handler_game.act("$n savagely devours a corpse.", ch, None, None, merc.TO_ROOM)
-        for item_id in corpse.contains[:]:
+        for item_id in corpse.inventory[:]:
             item = merc.items[item_id]
-            item.from_item()
-            item.to_room(ch.in_room)
+            corpse.get(item)
+            ch.in_room.put(item)
 
         corpse.extract()
         return True
@@ -571,14 +571,14 @@ def spec_janitor(ch):
     if not ch.is_awake():
         return False
 
-    for trash_id in ch.in_room.contents:
+    for trash_id in ch.in_room.inventory:
         trash = merc.items[trash_id]
-        if not trash.take or not ch.can_loot(trash):
+        if not trash.flags.take or not ch.can_loot(trash):
             continue
         if trash.item_type == merc.ITEM_DRINK_CON or trash.item_type == merc.ITEM_TRASH or trash.cost < 10:
             handler_game.act("$n picks up some trash.", ch, None, None, merc.TO_ROOM)
-            trash.from_environment()
-            trash.to_environment(ch)
+            ch.in_room.get(trash)
+            ch.put(trash)
             return True
     return False
 

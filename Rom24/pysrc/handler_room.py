@@ -32,17 +32,18 @@
  ************/
 """
 import random
-import container
+import inventory
+import handler_magic
 
 import merc
 import handler_game
 import instance
-import location
+import environment
 import state_checks
 import type_bypass
 
 
-class Room(instance.Instancer, location.Location, container.Container, type_bypass.ObjectType):
+class Room(instance.Instancer, environment.Environment, inventory.Inventory, type_bypass.ObjectType):
     def __init__(self, template=None):
         super().__init__()
         self.is_room = True
@@ -74,6 +75,54 @@ class Room(instance.Instancer, location.Location, container.Container, type_bypa
             return "<Room Template: %d>" % self.vnum
         else:
             return "<Room Instance ID: %d - Template: %d >" % (self.instance_id, self.vnum)
+
+    def put(self, instance_object):
+        if not instance_object.instance_id in self.inventory:
+            self.inventory += [instance_object.instance_id]
+        else:
+            raise ValueError('Instance already present in room inventory %d' % instance_object.instance_id)
+        if instance_object.is_living:
+            if not instance_object.is_npc():
+                    self.in_area.add_pc(instance_object)
+            if instance_object.slots.light and instance_object.slots.light.value[2] != 0:
+                self.available_light += 1
+            if instance_object.is_affected(merc.AFF_PLAGUE):
+                self.spread_plague(instance_object)
+        if instance_object.is_item:
+            if instance_object.flags.light and instance_object.value[2] != 0:
+                self.available_light += 1
+        try:
+            self.carry_number += instance_object.get_number()
+            self.carry_weight += instance_object.get_weight()
+        except:
+            pass
+        instance_object.environment = self.instance_id
+        return
+
+    def get(self, instance_object):
+        if instance_object.instance_id in self.inventory:
+            self.inventory.remove(instance_object.instance_id)
+        else:
+            raise KeyError('Instance is not in room inventory, trying to be removed %d' % instance_object.instance_id)
+        if instance_object.is_living:
+            if not instance_object.is_npc():
+                self.in_area.remove_pc(instance_object)
+            if instance_object.slots.light and instance_object.slots.light.value[2] != 0 and self.available_light > 0:
+                self.available_light -= 1
+        elif instance_object.is_item:
+            if instance_object.flags.light and instance_object.value[2] != 0 and self.available_light > 0:
+                self.available_light -= 1
+        else:
+            raise TypeError('Unknown instance type trying to be removed from Room %r' % type(instance_object))
+        if instance_object.on:
+            instance_object.on = None
+        instance_object.environment = None
+        try:
+            self.carry_number -= instance_object.get_number()
+            self.carry_weight -= instance_object.get_weight()
+        except:
+            pass
+        return
 
     def instance_setup(self):
         merc.global_instances[self.instance_id] = self

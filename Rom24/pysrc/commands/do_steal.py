@@ -105,7 +105,7 @@ def do_steal(ch, argument):
     if not item:
         ch.send("You can't find it.\n")
         return
-    if not ch.can_drop_item(item) or item.inventory or item.level > ch.level:
+    if not ch.can_drop_item(item) or item.flags.inventory or item.level > ch.level:
         ch.send("You can't pry it away.\n")
         return
     if ch.carry_number + item.get_number() > ch.can_carry_n():
@@ -114,8 +114,8 @@ def do_steal(ch, argument):
     if ch.carry_weight + item.get_weight() > ch.can_carry_w():
         ch.send("You can't carry that much weight.\n")
         return
-    item.from_environment()
-    item.to_environment(ch)
+    item.get()
+    ch.put(item)
     handler_game.act("You pocket $p.", ch, item, None, merc.TO_CHAR)
     if ch.is_pc():
         ch.check_improve( "steal", True, 2)

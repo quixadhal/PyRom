@@ -81,7 +81,7 @@ def do_look(ch, argument):
                 ch.send("It is closed.\n")
                 return
             handler_game.act("$p holds:", ch, item, None, merc.TO_CHAR)
-            handler_ch.show_list_to_char(item.contents, ch, True, True)
+            handler_ch.show_list_to_char(item.inventory, ch, True, True)
             return
         else:
             ch.send("That is not a container.\n")

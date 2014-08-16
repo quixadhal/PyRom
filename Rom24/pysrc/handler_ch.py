@@ -93,7 +93,7 @@ def move_char(ch, door, follow):
             or to_room.sector_type == merc.SECT_WATER_NOSWIM) \
                 and not ch.is_affected(merc.AFF_FLYING):
             # Look for a boat.
-            boats = [item_id for item_id in ch.contents if merc.items[item_id].item_type == merc.ITEM_BOAT]
+            boats = [item_id for item_id in ch.inventory if merc.items[item_id].item_type == merc.ITEM_BOAT]
             if not boats and not ch.is_immortal():
                 ch.send("You need a boat to go there.\n")
                 return
@@ -112,8 +112,8 @@ def move_char(ch, door, follow):
         ch.move -= move
     if not ch.is_affected(merc.AFF_SNEAK) and (not ch.is_npc() and ch.invis_level < merc.LEVEL_HERO):
         handler_game.act("$n leaves $T.", ch, None, merc.dir_name[door], merc.TO_ROOM)
-    ch.from_environment()
-    ch.to_environment(to_room.instance_id)
+    ch.in_room.get(ch)
+    to_room.put(ch)
     if not ch.is_affected(merc.AFF_SNEAK) and (not ch.is_npc() and ch.invis_level < merc.LEVEL_HERO):
         handler_game.act("$n has arrived.", ch, None, None, merc.TO_ROOM)
     ch.do_look("auto")
@@ -203,9 +203,9 @@ def show_list_to_char(clist, ch, fShort, fShowNothing):
     item_dict = collections.OrderedDict()
     for item_id in clist:
         item = merc.items[item_id]
-        if not item.equipped_to and ch.can_see_item(item.instance_id):
+        if ch.can_see_item(item):
                 logger.debug("Showing an item")
-                frmt = handler_item.format_item_to_char(item.instance_id, ch, fShort)
+                frmt = handler_item.format_item_to_char(item, ch, fShort)
                 if frmt not in item_dict:
                     item_dict[frmt] = 1
                 else:
@@ -378,7 +378,7 @@ def show_char_to_char_1(victim, ch):
         ch.send("\nYou peek at the inventory:\n")
         if ch.is_pc():
             ch.check_improve('peek', True, 4)
-        show_list_to_char(victim.contents, ch, True, True)
+        show_list_to_char(victim.inventory, ch, True, True)
     return
 
 

@@ -47,8 +47,8 @@ def do_transfer(ch, argument):
     if victim.fighting:
         fight.stop_fighting(victim, True)
     handler_game.act("$n disappears in a mushroom cloud.", victim, None, None, merc.TO_ROOM)
-    victim.from_environment()
-    victim.to_environment(location)
+    victim.get()
+    victim.put(location)
     handler_game.act("$n arrives from a puff of smoke.", victim, None, None, merc.TO_ROOM)
     if ch != victim:
         handler_game.act("$n has transferred you.", ch, None, victim, merc.TO_VICT)

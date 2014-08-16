@@ -16,7 +16,7 @@ def do_envenom(ch, argument):
     if not argument:
         ch.send("Envenom what item?\n")
         return
-    item = ch.get_item_list(argument, ch.contents)
+    item = ch.get_item_list(argument, ch.inventory)
     if not item:
         ch.send("You don't have that item.\n")
         return
@@ -25,7 +25,7 @@ def do_envenom(ch, argument):
         ch.send("Are you crazy? You'd poison yourself!\n")
         return
     if item.item_type == merc.ITEM_FOOD or item.item_type == merc.ITEM_DRINK_CON:
-        if item.bless or item.burn_proof:
+        if item.flags.bless or item.flags.burn_proof:
             handler_game.act("You fail to poison $p.", ch, item, None, merc.TO_CHAR)
             return
         if random.randint(1, 99) < skill:  # success!
@@ -44,8 +44,8 @@ def do_envenom(ch, argument):
             state_checks.WAIT_STATE(ch, const.skill_table["envenom"].beats)
             return
     if item.item_type == merc.ITEM_WEAPON:
-        if item.flaming or item.frost or item.vampiric or item.sharp or item.vorpal or item.shocking or item.bless \
-                or item.burn_proof:
+        if item.flags.flaming or item.flags.frost or item.flags.vampiric or item.flags.sharp \
+                or item.flags.vorpal or item.flags.shocking or item.flags.bless or item.flags.burn_proof:
             handler_game.act("You can't seem to envenom $p.", ch, item, None, merc.TO_CHAR)
             return
         if item.value[3] < 0 or const.attack_table[item.value[3]].damage == merc.DAM_BASH:

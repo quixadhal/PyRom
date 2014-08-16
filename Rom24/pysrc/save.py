@@ -3,6 +3,7 @@ import json
 from collections import OrderedDict
 
 import object_creator
+import instance
 from merc import *
 import tables
 import world_classes
@@ -29,15 +30,17 @@ def save_char_obj(ch):
     os.makedirs(settings.PLAYER_DIR, 0o755, True)
 
     fwrite = fwrite_char(ch)
-    if ch.contents:
-        fwrite['contents'] = [fwrite_obj(ch, o) for o in ch.contents]
+    if ch.equipped:
+        fwrite['equipped'] = [fwrite_item(ch, merc.items[ins], None, loc) for loc, ins in ch.equipped.items() if ins]
+    if ch.inventory:
+        fwrite['inventory'] = [fwrite_item(ch, merc.items[i]) for i in ch.inventory]
 
-    to_write = json.dumps(fwrite, indent=4)
+    to_write = instance.data_to_json(fwrite)
     with open(pfile, 'w') as pf:
         pf.write(to_write)
 
-#    if ( ch.contents != NULL )
- #       fwrite_obj( ch, ch.contents, fp, 0 );
+#    if ( ch.inventory != NULL )
+ #       fwrite_obj( ch, ch.inventory, fp, 0 );
  #   /* save the pets */
  #   if (ch.pet != NULL and ch.pet.in_room == ch.in_room)
  #       fwrite_pet(ch.pet,fp);
@@ -51,14 +54,15 @@ def save_char_obj(ch):
 def load_char_obj(d, name):
     #ch = handler_ch.CHAR_DATA()
     #ch.pcdata = handler_ch.PC_DATA()
-    ch = pc.Pc(name)
     found = False
     pfile = os.path.join(settings.PLAYER_DIR, name + '.json')
     if os.path.isfile(pfile):
-        chdict = json.load(open(pfile, 'r'))
+        chdict = instance.json_to_data(open(pfile, 'r'))
+        ch = pc.Pc(name, chdict['instance_id'])
         ch = fread_char(chdict, ch)
         found = True
-
+    else:
+        ch = pc.Pc(name)
     ch.desc = d
     d.character = ch
     ch.send = d.send
@@ -130,6 +134,8 @@ def fwrite_char(ch):
     chdict['skills'] = ch.learned
     chdict['groups'] = ch.group_known
     chdict['affected'] = [a for a in ch.affected if a.type >= 0]
+    chdict['equipped'] = ch.equipped
+    chdict['inventory'] = ch.inventory
     return chdict
 
 
@@ -137,37 +143,41 @@ def get_if_diff(s1, s2):
     return s1 if s1 != s2 else s2
 
 
-def fwrite_obj(ch, obj, contained_by=None):
+def fwrite_item(ch, item, contained_by=None, equip_loc=None):
     #TODO make this eq-ified
     odict = OrderedDict()
-    obj = merc.items[obj]
-    odict['Vnum'] = obj.vnum
-    odict['Enchanted'] = obj.enchanted
-    odict['Name'] = obj.name
-    odict['ShD'] = obj.short_descr
-    odict['Desc'] = obj.description
-    odict['ExtF'] = obj.extra_flags
-    odict['WeaF'] = obj.equips_to
-    odict['Ityp'] = obj.item_type
-    odict['Wt'] = obj.weight
-    odict['Cond'] = obj.condition
-    
-    odict['Wear'] = obj.wear_loc
-    odict['Lev'] = obj.level
-    odict['timer'] = obj.timer
-    odict['cost'] = obj.cost
-    odict['Val'] = obj.value
+    odict['instance_id'] = item.instance_id
+    odict['Vnum'] = item.vnum
+    odict['Enchanted'] = item.enchanted
+    odict['Name'] = item.name
+    odict['ShD'] = item.short_descr
+    odict['Desc'] = item.description
+    odict['EqpT'] = item.equips_to
+    odict['IatR'] = item.item_attributes
+    odict['IrsT'] = item.item_restrictions
+    odict['WeaT'] = item.weapon_attributes
+    odict['WeaF'] = item.equips_to
+    odict['Ityp'] = item.item_type
+    odict['Wt'] = item.weight
+    odict['Cond'] = item.condition
+    odict['Lev'] = item.level
+    odict['timer'] = item.timer
+    odict['cost'] = item.cost
+    odict['Val'] = item.value
 
-    odict['affected'] = [a for a in obj.affected if a.type >= 0]
-    odict['ExDe'] = {ed.keyword: ed.description for ed in obj.extra_descr}
+    odict['affected'] = [a for a in item.affected if a.type >= 0]
+    odict['ExDe'] = {ed.keyword: ed.description for ed in item.extra_descr}
+    if equip_loc:
+        odict['to_loc'] = equip_loc
     if contained_by:
         odict['In'] = contained_by.instance_id
-    if obj.contents:
-        odict['contents'] = [fwrite_obj(ch, o, obj) for o in obj.contents]
+    if item.inventory:
+        odict['inventory'] = [fwrite_item(ch, o, item) for o in item.inventory]
     return odict
 
 
 def fread_char(chdict, ch):
+    #instance_id is already set so is omitted
     ch.name = chdict['name']
     ch.id = chdict['id']
     ch.short_descr = chdict["ShD"]
@@ -185,7 +195,7 @@ def fread_char(chdict, ch):
     room = merc.instances_by_room[chdict["Room"]][0]
     if not room:
         room = chdict["Room"]
-    ch.in_environment = room
+    ch.environment = room
     ch.hit, ch.max_hit, ch.mana, ch.max_mana, ch.move, ch.max_move = chdict["HMV"]
     ch.gold = chdict["Gold"]
     ch.silver = chdict["Silv"]
@@ -225,8 +235,10 @@ def fread_char(chdict, ch):
     ch.learned = chdict['skills']
     ch.group_known = chdict['groups']
     ch.affected = chdict['affected']
-    if 'contents' in chdict:
-        fread_items(ch, chdict['contents'])
+    if 'equipped' in chdict:
+        fread_items(ch, chdict['equipped'])
+    if 'inventory' in chdict:
+        fread_items(ch, chdict['inventory'])
     return ch
 
 
@@ -234,25 +246,29 @@ def fread_items(contents, objects, contained_by=None):
     for odict in objects:
         item = fread_item(contents, odict)
         if not contained_by:
-            item.to_environment(contents)
+            contents.put(item)
         else:
-            item.to_environment(contained_by)
-        if 'contents' in odict:
-            fread_items(contents, odict['contents'], item)
+            contained_by.put(item)
+        if 'equipped_to' in odict:
+            if contents.is_living:
+                contents.equip(item, False, False, False, odict['to_loc'])
+        if 'inventory' in odict:
+            fread_items(contents, odict['inventory'], item)
 
 
 def fread_item(contents, odict):
-    item = object_creator.create_item(itemTemplate[odict['Vnum']], odict['Lev'])
+    item = object_creator.create_item(itemTemplate[odict['Vnum']], odict['Lev'], odict['instance_id'])
     item.enchanted = odict['Enchanted']
     item.name = odict['Name']
     item.short_descr = odict['ShD']
     item.description = odict['Desc']
-    item.extra_flags = odict['ExtF']
-    item.wear_flags = odict['WeaF']
+    item.equips_to = odict['EqpT']
+    item.item_attributes = odict['IatR']
+    item.item_restrictions = odict['IrsT']
+    item.weapon_attributes = odict['WeaT']
     item.item_type = odict['Ityp']
     item.weight = odict['Wt']
     item.condition = odict['Cond']
-    item.wear_loc = odict['Wear']
     item.level = odict['Lev']
     item.timer = odict['timer']
     item.cost = odict['cost']
