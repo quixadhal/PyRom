@@ -17,6 +17,31 @@ def area_pickler():
     pass
 
 
+def recursive_item_jsonify(item_to_json, inv_dir: str=None, equip_dir: str=None,
+                           is_equipment: bool=False, is_in_inventory: bool=False):
+    if is_equipment:
+        to_equipped = json.dumps(item_to_json, default=instance.to_json, indent=4)
+        equip_write = os.path.join(equip_dir, str(item_to_json.instance_id) + '.json')
+        with open(equip_write, 'w') as eq:
+            eq.write(to_equipped)
+        if item_to_json.inventory:
+            for item_id in item_to_json.inventory:
+                new_item = merc.items[item_id]
+                recursive_item_jsonify(new_item, equip_dir=equip_dir, is_equipment=True)
+        else:
+            return
+    if is_in_inventory:
+        to_inventory = json.dumps(item_to_json, default=instance.to_json, indent=4)
+        inventory_write = os.path.join(inv_dir, str(item_to_json.instance_id) + '.json')
+        with open(inventory_write, 'w') as inv:
+            inv.write(to_inventory)
+        if item_to_json.inventory:
+            for item_id in item_to_json.inventory:
+                new_item = merc.items[item_id]
+                recursive_item_jsonify(new_item, inv_dir=inv_dir, is_in_inventory=True)
+        else:
+            return
+
 
 def save_char_obj(ch):
     if ch.is_npc():
@@ -24,18 +49,28 @@ def save_char_obj(ch):
 
     if ch.desc and ch.desc.original:
         ch = ch.desc.original
-
-    pfile = os.path.join(settings.PLAYER_DIR, ch.name + '.json')
     #A Quick Quix fix!
     os.makedirs(settings.PLAYER_DIR, 0o755, True)
+    os.makedirs(settings.PLAYER_DIR + "/" + ch.name, 0o755, True)
+    os.makedirs(settings.PLAYER_DIR + "/" + ch.name + "/" + 'equipped', 0o755, True)
+    os.makedirs(settings.PLAYER_DIR + "/" + ch.name + "/" + 'inventory', 0o755, True)
+    char_dir = os.path.join(settings.PLAYER_DIR, ch.name)
+    pfile = os.path.join(char_dir, ch.name + '.json')
+    inventory = os.path.join(char_dir, 'inventory')
+    equipped = os.path.join(char_dir, 'equipped')
 
-    fwrite = fwrite_char(ch)
     if ch.equipped:
-        fwrite['equipped'] = [fwrite_item(ch, merc.items[ins], None, loc) for loc, ins in ch.equipped.items() if ins]
-    if ch.inventory:
-        fwrite['inventory'] = [fwrite_item(ch, merc.items[i]) for i in ch.inventory]
+        #fwrite['equipped'] = [fwrite_item(ch, merc.items[ins], None, loc) for loc, ins in ch.equipped.items() if ins]
+        for item_id in ch.equipped.values():
+            if item_id:
+                recursive_item_jsonify(merc.items[item_id], equip_dir=equipped, is_equipment=True)
 
-    to_write = instance.data_to_json(fwrite)
+    if ch.inventory:
+        for item_id in ch.inventory:
+            recursive_item_jsonify(merc.items[item_id], inv_dir=inventory, is_in_inventory=True)
+        #fwrite['inventory'] = [fwrite_item(ch, merc.items[i]) for i in ch.inventory]
+
+    to_write = json.dumps(ch, default=instance.to_json, indent=4)
     with open(pfile, 'w') as pf:
         pf.write(to_write)
 
@@ -55,11 +90,8 @@ def load_char_obj(d, name):
     #ch = handler_ch.CHAR_DATA()
     #ch.pcdata = handler_ch.PC_DATA()
     found = False
-    pfile = os.path.join(settings.PLAYER_DIR, name + '.json')
-    if os.path.isfile(pfile):
-        chdict = instance.json_to_data(open(pfile, 'r'))
-        ch = pc.Pc(name, chdict['instance_id'])
-        ch = fread_char(chdict, ch)
+    ch = pc.Pc.load(name)
+    if ch:
         found = True
     else:
         ch = pc.Pc(name)

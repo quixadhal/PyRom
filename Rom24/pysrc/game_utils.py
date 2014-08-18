@@ -1,4 +1,6 @@
 import logging
+import os
+import settings
 
 logger = logging.getLogger()
 
@@ -8,6 +10,19 @@ import collections
 __author__ = 'syn'
 import merc
 import random
+
+
+def find_instance_file(instance_id: int=None, from_char_dir: str=None, from_world: bool=False):
+    if not instance_id:
+        return None
+    if from_char_dir:
+        pathname = os.path.join(settings.PLAYER_DIR, from_char_dir[0].capitalize(), from_char_dir.capitalize())
+        for start, directories, file in os.walk(pathname):
+            if str(instance_id) in file:
+                return os.path.join(start, directories, file)
+        return None
+    if from_world:
+        pass
 
 
 def read_forward(pstr, jump=1):

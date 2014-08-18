@@ -115,7 +115,7 @@ class Area(instance.Instancer, type_bypass.ObjectType, environment.Environment):
                 md5 = hashlib.md5(filename.encode()).hexdigest()
                 pathname = os.path.join(settings.DUMP_DIR, 'world', 'instances', md5[0:2], md5[2:4])
                 os.makedirs(pathname, 0o755, True)
-                filename = os.path.join(pathname, '%d.json' % (self.instance_id))
+                filename = os.path.join(pathname, '%d.json' % self.instance_id)
             logger.info('Area save file: %s', filename)
             if os.path.isfile(filename):
                 os.replace(filename, filename + 'bkp')
@@ -129,9 +129,35 @@ class Area(instance.Instancer, type_bypass.ObjectType, environment.Environment):
 
 
 class ExtraDescrData:
-    def __init__(self):
+    def __init__(self, ex_data=None):
         self.keyword = "" # Keyword in look/examine
         self.description = ""
+        if ex_data:
+            [setattr(self, k, v) for k, v in ex_data.items()]
+
+    def to_json(self, outer_encoder=None):
+        if outer_encoder is None:
+            outer_encoder = json.JSONEncoder.default
+
+        tmp_dict = {}
+        for k, v in self.__dict__.items():
+            if str(type(v)) in ("<class 'function'>", "<class 'method'>"):
+                continue
+            else:
+                tmp_dict[k] = v
+
+        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        return {cls_name: {'extra_descr': outer_encoder(tmp_dict)}}
+
+    @classmethod
+    def from_json(cls, data, outer_decoder=None):
+        if outer_decoder is None:
+            outer_decoder = json.JSONDecoder.decode
+
+        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        if cls_name in data:
+            return cls(outer_decoder(data))
+        return data
 
 
 class Exit:

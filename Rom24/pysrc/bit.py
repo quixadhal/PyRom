@@ -322,8 +322,9 @@ class Bit:
 
         cls_name = '__class__/' + __name__ + '.' + cls.__name__
         if cls_name in data:
-            return cls(default=outer_decoder(data[cls_name]['bits']),
-                flags=outer_decoder(data[cls_name]['flags']))
+            tmp_data = outer_decoder(data)
+            return cls(default=tmp_data[cls_name]['bits'],
+                       flags=tmp_data[cls_name]['flags'])
         return data
 
 

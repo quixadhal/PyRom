@@ -1,19 +1,32 @@
 __author__ = 'syn'
-
+import sys
+import json
 import logging
 
 logger = logging.getLogger()
-import equipment
-import sys
 
 
 class ItemFlags:
-    def __init__(self, item):
-        self._equips_to = item.equips_to
-        self._item_attributes = item.item_attributes
-        self._item_restrictions = item.item_restrictions
-        self._weapon_attributes = item.weapon_attributes
+    def __init__(self, et_data: set=None, iaf_data: set=None, ir_data: set=None, wa_data: set=None):
+        self._equips_to = set({})
+        if et_data:
+            for k in et_data:
+                self._equips_to |= set(k)
 
+        self._item_attributes = set({})
+        if iaf_data:
+            for k in iaf_data:
+                self._item_attributes |= set(k)
+
+        self._item_restrictions = set({})
+        if ir_data:
+            for k in ir_data:
+                self._item_restrictions |= set(k)
+
+        self._weapon_attributes = set({})
+        if wa_data:
+            for k in wa_data:
+                self._weapon_attributes |= set(k)
 
     @property
     def head(self):
@@ -365,7 +378,7 @@ class ItemFlags:
         func_name = sys._getframe().f_code.co_name
         return func_name if func_name in self._equips_to else False
 
-    @main_hand.setter
+    @held.setter
     def held(self, is_equippable):
         """
        TODO: write documentation
@@ -1056,3 +1069,31 @@ class ItemFlags:
             self._weapon_attributes |= {func_name}
         else:
             self._weapon_attributes -= {func_name}
+
+    # Serialization
+    def to_json(self, outer_encoder=None):
+        if outer_encoder is None:
+            outer_encoder = json.JSONEncoder.default
+
+        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        return {
+            cls_name: {
+                'equips_to': outer_encoder(self._equips_to),
+                'item_attributes': outer_encoder(self._item_attributes),
+                'item_restrictions': outer_encoder(self._item_restrictions),
+                'weapon_attributes': outer_encoder(self._weapon_attributes),
+            }
+        }
+
+    @classmethod
+    def from_json(cls, data, outer_decoder=None):
+        if outer_decoder is None:
+            outer_decoder = json.JSONDecoder.decode
+
+        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        if cls_name in data:
+            return cls(et_data=outer_decoder(data[cls_name]['equips_to']),
+                       iaf_data=outer_decoder(data[cls_name]['item_attributes']),
+                       ir_data=outer_decoder(data[cls_name]['item_restrictions']),
+                       wa_data=outer_decoder(data[cls_name]['weapon_restrictions']))
+        return data

@@ -54,48 +54,28 @@ import immortal
 import environment
 import state_checks
 
-''' Char wear slots'''
-character_wear_slots = collections.OrderedDict([('light', None),
-                                                ('left_finger', None),
-                                                ('right_finger', None),
-                                                ('neck', None),
-                                                ('collar', None),
-                                                ('body', None),
-                                                ('head', None),
-                                                ('legs', None),
-                                                ('feet', None),
-                                                ('hands', None),
-                                                ('arms', None),
-                                                ('about_body', None),
-                                                ('waist', None),
-                                                ('left_wrist', None),
-                                                ('right_wrist', None),
-                                                ('main_hand', None),
-                                                ('off_hand', None),
-                                                ('held', None),
-                                                ('float', None)])
 
 ''' Equipment Slot Strings - for use with displaying EQ to characters '''
 
-eq_slot_strings = collections.OrderedDict([('light',        '<used as light>     '),
-                                           ('left_finger',  '<worn on finger>    '),
-                                           ('right_finger', '<worn on finger>    '),
-                                           ('neck',         '<worn around neck>  '),
-                                           ('collar',       '<worn around neck>  '),
-                                           ('body',         '<worn on torso>     '),
-                                           ('head',         '<worn on head>      '),
-                                           ('legs',         '<worn on legs>      '),
-                                           ('feet',         '<worn on feet>      '),
-                                           ('hands',        '<worn on hands>     '),
-                                           ('arms',         '<worn on arms>      '),
-                                           ('about_body',   '<worn as shield>    '),
-                                           ('waist',        '<worn about body>   '),
-                                           ('left_wrist',   '<worn about waist>  '),
-                                           ('right_wrist',  '<worn around wrist> '),
-                                           ('main_hand',    '<worn around wrist> '),
-                                           ('off_hand',     '<wielded>           '),
-                                           ('held',         '<held>              '),
-                                           ('float',        '<floating nearby>   ')])
+eq_slot_strings = collections.OrderedDict([('light', '[[Light Source]]         :  '),
+                                           ('left_finger', '[[Worn on Left Finger]]   :  '),
+                                           ('right_finger', '[[Worn on Right Finger]]  :  '),
+                                           ('neck', '[[Worn around Neck]]     :  '),
+                                           ('collar', '[[Worn around Collar]]     :  '),
+                                           ('body', '[[Worn on Torso]]        :  '),
+                                           ('head', '[[Worn on Head]]        :  '),
+                                           ('legs', '[[Worn on Legs]]        :  '),
+                                           ('feet', '[[Worn on Feet]]        :  '),
+                                           ('hands', '[[Worn on Hands]]       :  '),
+                                           ('arms', '[[Worn on Arms]]        :  '),
+                                           ('about_body', '[[Worn about Body]]    :  '),
+                                           ('waist', '[[Worn around Waist]]   :  '),
+                                           ('left_wrist', '[[Worn on Left Wrist]]  :  '),
+                                           ('right_wrist', '[[Worn on Right Wrist]] :  '),
+                                           ('main_hand', '[[Main Hand]]            :  '),
+                                           ('off_hand', '[[Off Hand]]             :  '),
+                                           ('held', '[[Held]]                 :  '),
+                                           ('float', '[[Floating Nearby]]      :  ')])
 
 
 class Grouping:
@@ -310,8 +290,8 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         self.position = 0
         self.alignment = 0
         self.desc = None
-        self._equipped = character_wear_slots
-        self.slots = equipment.EquipSlotInstance(self._equipped)
+        self.slots = equipment.Equipped()
+        self._equipped = self.slots._equipped
 
     @property
     def equipped(self):

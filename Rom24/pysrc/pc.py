@@ -1,10 +1,13 @@
+import os
 import random
-import logging
 import time
+import json
+import logging
 
 logger = logging.getLogger()
 
 import game_utils
+import instance
 import handler_game
 import merc
 import const
@@ -16,15 +19,8 @@ import update
 
 
 class Pc(living.Living):
-    def __init__(self, template=None, prev_instance_id: int=None):
+    def __init__(self, template=None, **kwargs):
         super().__init__()
-        if template:
-            self.name = template
-            if not prev_instance_id:
-                self.instancer()
-            else:
-                self.instance_id = prev_instance_id
-            self.instance_setup()
         self.buffer = None
         self.valid = False
         self.pwd = ""
@@ -58,9 +54,19 @@ class Pc(living.Living):
         self.practice = 0
         self.train = 0
         self.dampen = False
+        if template or kwargs:
+            if template and not kwargs:
+                self.name = template
+                self.instancer()
+            if kwargs:
+                [setattr(self, k, v) for k, v in kwargs.items()]
+                if self.inventory:
+                    self.load_inventory()
+                self.load_equipment()
+            self.instance_setup()
 
-    def __del__(self):
-        logger.trace("Freeing %s", str(self))
+    #def __del__(self):
+     #   logger.trace("Freeing %s", str(self))
 
     def __repr__(self):
         return "<PC: %s ID %d>" % (self.name, self.instance_id)
@@ -80,7 +86,7 @@ class Pc(living.Living):
         del merc.characters[self.instance_id]
         del merc.global_instances[self.instance_id]
 
-    def absorb(self,*args):
+    def absorb(self, *args):
         pass
 
     @property
@@ -518,6 +524,95 @@ class Pc(living.Living):
             cmd.do_fun(self, cmd.default_arg)
             return
         cmd.do_fun(self, argument.lstrip())
+
+        # Serialization
+    def to_json(self, outer_encoder=None):
+        if outer_encoder is None:
+            outer_encoder = json.JSONEncoder.default
+
+        tmp_dict = {}
+        for k, v in self.__dict__.items():
+            if str(type(v)) in ("<class 'function'>", "<class 'method'>"):
+                continue
+            if str(k) in ('desc', 'send'):
+                continue
+            else:
+                tmp_dict[k] = v
+
+        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        return {cls_name: outer_encoder(tmp_dict)}
+
+    @classmethod
+    def from_json(cls, data, outer_decoder=None):
+        if outer_decoder is None:
+            outer_decoder = json.JSONDecoder.decode
+
+        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        if cls_name in data:
+            tmp_data = outer_decoder(data)
+            return cls(**tmp_data)
+        return data
+
+    def save(self):
+        pathname = os.path.join(settings.PLAYER_DIR, self.name[0].capitalize(), self.name.capitalize())
+        inv_path = os.path.join(pathname, 'inventory')
+        equip_path = os.path.join(pathname, 'equipment')
+        os.makedirs(pathname, 0o755, True)
+        os.makedirs(inv_path, 0o755, True)
+        os.makedirs(equip_path, 0o755, True)
+
+        filename = os.path.join(pathname, '%s.json' % self.name)
+
+        js = json.dumps(self, default=instance.to_json, indent=4)
+        with open(filename, 'w') as fp:
+            fp.write(js)
+
+        if self.inventory:
+            for item_id in self.inventory:
+                item = merc.items[item_id]
+                item.save(in_inventory=True, player_name=self.name)
+
+        for item_id in self.equipped.values():
+            if item_id:
+                item = merc.items[item_id]
+                item.save(is_equipped=True, player_name=self.name)
+
+    @classmethod
+    def load(cls, player_name: str=None):
+        if not player_name:
+            raise KeyError('Player name is required to load a player!')
+
+        filename = ''
+
+        pathname = os.path.join(settings.PLAYER_DIR, player_name[0].capitalize())
+        if not pathname:
+            raise KeyError('Cannot find player %s' % player_name)
+        for a_path, a_directory, i_files in os.walk(pathname):
+            for a_file in i_files:
+                if player_name.capitalize() in a_file:
+                    filename = os.path.join(a_path, a_file)
+                    break
+
+        with open(filename, 'r') as fp:
+            jsobj = fp.read()
+            obj = json.loads(jsobj, object_hook=instance.from_json)
+        return obj
+
+    def load_inventory(self):
+        import handler_item
+        for instance_id in self.inventory:
+            obj = handler_item.Items.load(instance_id=instance_id, player_name=self.name)
+            if not obj.is_item:
+                raise TypeError('Could not load instance %r!' % instance_id)
+
+    def load_equipment(self):
+        import handler_item
+        for item_id in self.equipped.values():
+            if item_id:
+                obj = handler_item.Items.load(instance_id=item_id, player_name=self.name)
+                if not obj.is_item:
+                    raise ReferenceError('Could not load instance!')
+
 
 
 

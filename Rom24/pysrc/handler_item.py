@@ -31,11 +31,14 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
+import json
+import os
 import logging
 
 logger = logging.getLogger()
 
 import instance
+import settings
 import equipment
 import game_utils
 import type_bypass
@@ -112,7 +115,7 @@ weapon_attribute_strings = {'flaming': 'Flaming',
 
 class Items(instance.Instancer, environment.Environment, physical.Physical, inventory.Inventory,
             equipment.Equipment, type_bypass.ObjectType):
-    def __init__(self, template=None):
+    def __init__(self, template=None, **kwargs):
         super().__init__()
         self.is_item = True
         self.vnum = 0
@@ -132,18 +135,20 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         self.condition = 0
         self.timer = 0
         self.value = [0] * 5
-        self._equips_to = set({})
-        self._item_attributes = set({})
-        self._item_restrictions = set({})
-        self._weapon_attributes = set({})
+        self.flags = item_flags.ItemFlags()
         self._equips_to_names = equips_to_strings
         self._restriction_names = item_restriction_strings
         self._item_attribute_names = item_attribute_strings
         self._weapon_attribute_names = weapon_attribute_strings
-        self.flags = item_flags.ItemFlags(self)
+        if kwargs:
+            [setattr(self, k, v) for k, v in kwargs.items()]
+            self.instance_setup()
+            if self.inventory:
+                self.load_inventory(kwargs['player'])
 
-    def __del__(self):
-        logger.trace("Freeing %s" % str(self))
+
+    #def __del__(self):
+     #   logger.trace("Freeing %s" % str(self))
 
     def __repr__(self):
         if not self.instance_id:
@@ -191,7 +196,7 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         :rtype: set
         """
         if self.is_item:
-            return self._equips_to
+            return self.flags._equips_to
         else:
             return None
 
@@ -204,9 +209,9 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
 
         :param slots: iterable
         """
-        if self._equips_to:
-            self._equips_to.clear()
-        self._equips_to |= set(slots)
+        if self.flags._equips_to:
+            self.flags._equips_to.clear()
+        self.flags._equips_to |= set(slots)
 
     #Item Attributes
     @property
@@ -229,7 +234,7 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
 
         :return: :rtype: set
         """
-        return self._item_attributes
+        return self.flags._item_attributes
 
     @item_attributes.setter
     def item_attributes(self, attr_set):
@@ -239,9 +244,9 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         :param attr_set:
         :raise TypeError:
         """
-        if self._item_attributes:
-            self._item_attributes.clear()
-        self._item_attributes |= set(attr_set)
+        if self.flags._item_attributes:
+            self.flags._item_attributes.clear()
+        self.flags._item_attributes |= set(attr_set)
 
     #Restrictions
     @property
@@ -264,7 +269,7 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
 
         :return: :rtype: set
         """
-        return self._item_restrictions
+        return self.flags._item_restrictions
 
     @item_restrictions.setter
     def item_restrictions(self, restrictions):
@@ -273,9 +278,9 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
 
         :param restrictions: input flags
         """
-        if self._item_restrictions:
-            self._item_restrictions.clear()
-        self._item_restrictions |= set(restrictions)
+        if self.flags._item_restrictions:
+            self.flags._item_restrictions.clear()
+        self.flags._item_restrictions |= set(restrictions)
 
     #Weapons
     @property
@@ -297,7 +302,7 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
 
         :return: :rtype: set
         """
-        return self._weapon_attributes
+        return self.flags._weapon_attributes
 
     @weapon_attributes.setter
     def weapon_attributes(self, weap_attr):
@@ -306,9 +311,9 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
 
         :param weap_attr: input data
         """
-        if self._weapon_attributes:
-            self._weapon_attributes.clear()
-        self._weapon_attributes |= set(weap_attr)
+        if self.flags._weapon_attributes:
+            self.flags._weapon_attributes.clear()
+        self.flags._weapon_attributes |= set(weap_attr)
 
     def get(self, instance_object):
         if instance_object.is_item and instance_object.instance_id in self.inventory:
@@ -330,7 +335,6 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         else:
             raise KeyError('Item to be added to Item, already in inventory or wrong type '
                            '%d, %r' % (instance_object.instance_id, type(instance_object)))
-
 
     def instance_setup(self):
         merc.global_instances[self.instance_id] = self
@@ -457,6 +461,99 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
                 if person.on == self.instance_id:
                     total += 1
         return total
+
+        # Serialization
+    def to_json(self, outer_encoder=None):
+        if outer_encoder is None:
+            outer_encoder = json.JSONEncoder.default
+
+        tmp_dict = {}
+        for k, v in self.__dict__.items():
+            if str(type(v)) in ("<class 'function'>", "<class 'method'>"):
+                continue
+            else:
+                tmp_dict[k] = v
+
+        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        return {cls_name: outer_encoder(tmp_dict)}
+
+    @classmethod
+    def from_json(cls, data, outer_decoder=None, player_name=None):
+        if outer_decoder is None:
+            outer_decoder = json.JSONDecoder.decode
+
+        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        if cls_name in data:
+            tmp_data = outer_decoder(data)
+            if player_name:
+                tmp_data['player'] = player_name
+            return cls(**tmp_data)
+        return data
+
+    def save(self, is_equipped: bool=False, in_inventory: bool=False, player_name: str=None):
+        if not self.instance_id:
+            raise ValueError('An instance_id is required to save an instance of an Item!')
+
+        if player_name is None:
+            os.makedirs(settings.INSTANCE_DIR, 0o755, True)
+            filename = os.path.join(settings.INSTANCE_DIR, '%d.json' % self.instance_id)
+        else:
+            pathname = os.path.join(settings.PLAYER_DIR, player_name[0].capitalize(), player_name.capitalize())
+            final_path = pathname
+            if in_inventory:
+                final_path = os.path.join(pathname, 'inventory')
+            elif is_equipped:
+                final_path = os.path.join(pathname, 'equipment')
+            os.makedirs(final_path, 0o755, True)
+            filename = os.path.join(final_path, '%d.json' % self.instance_id)
+
+        js = json.dumps(self, default=instance.to_json, indent=4)
+        with open(filename, 'w') as fp:
+            fp.write(js)
+
+        if self.inventory:
+            for item_id in self.inventory:
+                item = merc.global_instances[item_id]
+                item.save(is_equipped, in_inventory, player_name)
+
+    @classmethod
+    def load(cls, instance_id: int=None, vnum: int=None, player_name: str=None):
+        if vnum:
+            raise TypeError('Template loading is not yet supported!')
+
+        if not instance_id:
+            raise ValueError('An instance_id is required to load an instance of an Item!')
+
+        filename = ''
+
+        if player_name is None:
+            filename = os.path.join(settings.INSTANCE_DIR, '%d.json' % instance_id)
+        else:
+            pathname = os.path.join(settings.PLAYER_DIR, player_name[0].capitalize())
+            for a_path, a_directory, i_files in os.walk(pathname):
+                for a_file in i_files:
+                    if str(instance_id) in a_file:
+                        filename = os.path.join(a_path, a_file)
+                    break
+
+        with open(filename, 'r') as fp:
+            jsobj = fp.read()
+        obj = json.loads(jsobj, object_hook=instance.from_json, player_name=player_name)
+
+        return obj
+
+    def load_inventory(self, player_name: str=None):
+        for instance_id in self.inventory:
+            obj = Items.load(instance_id=instance_id, player_name=player_name)
+            if not isinstance(obj, Items):
+                raise TypeError('Could not load instance %r!' % instance_id)
+
+images = ['*.jpg', '*.jpeg', '*.png', '*.tif', '*.tiff']
+matches = []
+
+
+
+
 
 
 def get_item(ch, item, this_container):

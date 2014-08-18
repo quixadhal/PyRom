@@ -32,14 +32,13 @@
  ************/
 """
 import random
-import inventory
-import handler_magic
 
 import merc
 import handler_game
 import instance
 import environment
 import state_checks
+import inventory
 import type_bypass
 
 

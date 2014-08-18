@@ -175,6 +175,7 @@ def from_json(data):
                     module_ref = importlib.import_module(module_name)
                     class_ref = getattr(module_ref, class_name)
                     if hasattr(class_ref, 'from_json'):
+                        print('Instance data: ', data, '\n', 'Instance from_json', from_json, '\n')
                         return class_ref.from_json(data, from_json)
 
     # If we have no idea, return whatever we are and hope someone else
