@@ -223,7 +223,7 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         """
         attributes = set({})
         for astring in self.item_attributes:
-            attributes.add(self._restriction_names[astring])
+            attributes.add(self._item_attribute_names[astring])
         return ', '.join(name for name in attributes)
 
     @property

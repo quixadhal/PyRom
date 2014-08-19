@@ -431,7 +431,7 @@ def number_argument(argument):
 
 # * Simple linear interpolation.
 def interpolate(level, value_00, value_32):
-    return value_00 + level * (value_32 - value_00) / 32
+    return value_00 + level * (value_32 - value_00) // 32
 
 
 def mass_replace(pstr, pdict):

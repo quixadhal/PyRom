@@ -66,6 +66,7 @@ class GlobalDebugFlag:
         return
 
 def value_to_str(v):
+    import interp
     if isinstance(v, pc.Pc):
         return v.name
     elif isinstance(v, interp.cmd_type):

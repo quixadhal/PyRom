@@ -275,8 +275,15 @@ def load_objects(area, pArea):
                 area, number = game_utils.read_int(area)
                 area, flags = game_utils.read_flags(area)
             elif w == 'A':
-                area, number = game_utils.read_int(area)
-                area, number = game_utils.read_int(area)
+                paf = handler_game.AFFECT_DATA()
+                paf.where = merc.TO_OBJECT
+                paf.type = -1
+                paf.level = 20
+                paf.duration = -1
+                area, paf.location = game_utils.read_int(area)
+                area, paf.modifier = game_utils.read_int(area)
+                paf.bitvector = 0
+                item.affected.append(paf)
             elif w == 'E':
                 ed = world_classes.ExtraDescrData()
                 area, ed.keyword = game_utils.read_string(area)
