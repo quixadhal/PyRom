@@ -57,25 +57,25 @@ import state_checks
 
 ''' Equipment Slot Strings - for use with displaying EQ to characters '''
 
-eq_slot_strings = collections.OrderedDict([('light',        '[[Light Source]]         :  '),
-                                           ('left_finger',  '[[Worn on Left Finger]]   :  '),
-                                           ('right_finger', '[[Worn on Right Finger]]  :  '),
-                                           ('neck',         '[[Worn around Neck]]     :  '),
-                                           ('collar',       '[[Worn around Collar]]     :  '),
-                                           ('body',         '[[Worn on Torso]]        :  '),
-                                           ('head',         '[[Worn on Head]]        :  '),
-                                           ('legs',         '[[Worn on Legs]]        :  '),
-                                           ('feet', '[[Worn on Feet]]        :  '),
-                                           ('hands', '[[Worn on Hands]]       :  '),
-                                           ('arms', '[[Worn on Arms]]        :  '),
-                                           ('about_body', '[[Worn about Body]]    :  '),
-                                           ('waist', '[[Worn around Waist]]   :  '),
-                                           ('left_wrist', '[[Worn on Left Wrist]]  :  '),
-                                           ('right_wrist', '[[Worn on Right Wrist]] :  '),
-                                           ('main_hand', '[[Main Hand]]            :  '),
-                                           ('off_hand', '[[Off Hand]]             :  '),
-                                           ('held', '[[Held]]                 :  '),
-                                           ('float', '[[Floating Nearby]]      :  ')])
+eq_slot_strings = collections.OrderedDict([('light',        '<used as light>     '),
+                                           ('left_finger',  '<worn on finger>    '),
+                                           ('right_finger', '<worn on finger>    '),
+                                           ('neck',         '<worn around neck>  '),
+                                           ('collar',       '<worn around neck>  '),
+                                           ('body',         '<worn on torso>     '),
+                                           ('head',         '<worn on head>      '),
+                                           ('legs',         '<worn on legs>      '),
+                                           ('feet',         '<worn on feet>      '),
+                                           ('hands',        '<worn on hands>     '),
+                                           ('arms',         '<worn on arms>      '),
+                                           ('about_body',   '<worn as shield>    '),
+                                           ('waist',        '<worn about body>   '),
+                                           ('left_wrist',   '<worn about waist>  '),
+                                           ('right_wrist',  '<worn around wrist> '),
+                                           ('main_hand',    '<worn around wrist> '),
+                                           ('off_hand',     '<wielded>           '),
+                                           ('held',         '<held>              '),
+                                           ('float',        '<floating nearby>   ')])
 
 
 class Grouping:
