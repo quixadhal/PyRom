@@ -44,6 +44,7 @@ import merc
 import const
 import state_checks
 import handler_item
+from living import eq_slot_strings
 
 depth = 0
 
@@ -243,7 +244,7 @@ def show_char_to_char_0(victim, ch):
         buf += "(Pink Aura) "
     if victim.is_evil() and ch.is_affected(merc.AFF_DETECT_EVIL):
         buf += "(Red Aura) "
-    if victim.is_evil() and ch.is_affected(merc.AFF_DETECT_GOOD):
+    if victim.is_good() and ch.is_affected(merc.AFF_DETECT_GOOD):
         buf += "(Golden Aura) "
     if victim.is_affected(merc.AFF_SANCTUARY):
         buf += "(White Aura) "
@@ -373,7 +374,7 @@ def show_char_to_char_1(victim, ch):
             continue
         item = merc.items[instance_id]
         if item and ch.can_see_item(item.instance_id):
-            ch.send(victim.eq_slot_strings[location])
+            ch.send(eq_slot_strings[location])
             ch.send(handler_item.format_item_to_char(item, ch, True) + "\n")
     if victim != ch and not ch.is_npc() \
             and random.randint(1, 99) < ch.get_skill("peek"):

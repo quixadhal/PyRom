@@ -14,7 +14,7 @@ def spell_nexus(sn, level, ch, victim, target):
     if not victim \
             or victim == ch \
             or not to_room \
-            or not ch.can_see_room(to_room) or not ch.can_see_room(from_room) \
+            or not ch.can_see_room(to_room.instance_id) or not ch.can_see_room(from_room.instance_id) \
             or state_checks.IS_SET(to_room.room_flags, merc.ROOM_SAFE) \
             or state_checks.IS_SET(from_room.room_flags, merc.ROOM_SAFE) \
             or state_checks.IS_SET(to_room.room_flags, merc.ROOM_PRIVATE) \

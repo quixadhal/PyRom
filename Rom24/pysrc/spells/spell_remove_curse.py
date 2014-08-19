@@ -29,9 +29,9 @@ def spell_remove_curse(sn, level, ch, victim, target):
         handler_game.act("$n looks more relaxed.", victim, None, None, merc.TO_ROOM)
 
     for obj in victim.contents:
-        if (state_checks.is_item_stat(obj, merc.ITEM_NODROP) or state_checks.is_item_stat(obj,
-                                                                                        merc.ITEM_NOREMOVE)) and not state_checks.is_item_stat(obj,
-                                                                                                                                              merc.ITEM_NOUNCURSE):
+        if (state_checks.is_item_stat(obj, merc.ITEM_NODROP) \
+                or state_checks.is_item_stat(obj, merc.ITEM_NOREMOVE))\
+                and not state_checks.is_item_stat(obj, merc.ITEM_NOUNCURSE):
             # attempt to remove curse */
             if not handler_magic.saves_dispel(level, obj.level, 0):
                 state_checks.REMOVE_BIT(obj.extra_flags, merc.ITEM_NODROP)

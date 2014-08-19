@@ -29,3 +29,8 @@ PLAYER_DIR = os.path.join('..', 'player')
 DUMP_DIR = os.path.join('..', 'data')
 
 INSTANCE_DIR = os.path.join('..', 'data', 'world', 'instances')
+
+#Features
+SHOW_DAMAGE_NUMBERS = True
+
+
