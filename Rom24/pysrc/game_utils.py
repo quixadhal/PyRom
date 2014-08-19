@@ -1,4 +1,6 @@
 import logging
+import os
+import settings
 
 logger = logging.getLogger()
 
@@ -8,6 +10,19 @@ import collections
 __author__ = 'syn'
 import merc
 import random
+
+
+def find_instance_file(instance_id: int=None, from_char_dir: str=None, from_world: bool=False):
+    if not instance_id:
+        return None
+    if from_char_dir:
+        pathname = os.path.join(settings.PLAYER_DIR, from_char_dir[0].capitalize(), from_char_dir.capitalize())
+        for start, directories, file in os.walk(pathname):
+            if str(instance_id) in file:
+                return os.path.join(start, directories, file)
+        return None
+    if from_world:
+        pass
 
 
 def read_forward(pstr, jump=1):
@@ -403,7 +418,7 @@ def number_fuzzy(number):
 
 def number_argument(argument):
     if not argument:
-        return 0, ""
+        return 1, ""
     if '.' not in argument:
         return 1, argument
     dot = argument.find('.')
@@ -550,15 +565,15 @@ def object_search(ch, environment, template, obj_type, atype, num_or_count, arg_
 
     if atype == 'vnum':
         if obj_type == 'item':
-            if ch.contents:
-                contains_id_list = [item_id for item_id in ch.contents if merc.items[item_id].vnum == target]
+            if ch.inventory:
+                contains_id_list = [item_id for item_id in ch.inventory if merc.items[item_id].vnum == target]
                 if contains_id_list:
                     try:
                         return merc.items[contains_id_list[arg_num - 1]]
                     except:
                         contains_id_list = None
             elif merc.rooms[environment] and not contains_id_list:
-                contents_id_list = [item_id for item_id in environment.contents if merc.items[item_id].vnum == target]
+                contents_id_list = [item_id for item_id in environment.inventory if merc.items[item_id].vnum == target]
                 if contents_id_list:
                     try:
                         return merc.items[contents_id_list[arg_num - 1]]

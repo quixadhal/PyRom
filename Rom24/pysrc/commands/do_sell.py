@@ -63,9 +63,9 @@ def do_sell(ch, argument):
     if item.item_type == merc.ITEM_TRASH or item.sell_extract:
         item.extract()
     else:
-        item.from_environment()
+        item.get()
         if item.timer:
-            item.had_timer = True
+            item.flags.had_timer = True
         else:
             item.timer = random.randint(50, 100)
         shop_utils.obj_to_keeper(item, keeper)

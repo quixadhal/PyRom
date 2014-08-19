@@ -34,14 +34,14 @@
 import collections
 import random
 import logging
-import equipment
 
 logger = logging.getLogger()
 
 import merc
+import equipment
 import instance
 import type_bypass
-import container
+import inventory
 import handler_game
 import physical
 import tables
@@ -51,51 +51,31 @@ import const
 import fight
 import game_utils
 import immortal
-import location
+import environment
 import state_checks
 
-''' Char wear slots'''
-character_wear_slots = collections.OrderedDict([('light', None),
-                                                ('left_finger', None),
-                                                ('right_finger', None),
-                                                ('neck', None),
-                                                ('collar', None),
-                                                ('body', None),
-                                                ('head', None),
-                                                ('legs', None),
-                                                ('feet', None),
-                                                ('hands', None),
-                                                ('arms', None),
-                                                ('about_body', None),
-                                                ('waist', None),
-                                                ('left_wrist', None),
-                                                ('right_wrist', None),
-                                                ('main_hand', None),
-                                                ('off_hand', None),
-                                                ('held', None),
-                                                ('float', None)])
 
 ''' Equipment Slot Strings - for use with displaying EQ to characters '''
 
-eq_slot_strings = collections.OrderedDict([('light',        '<used as light>     '),
-                                           ('left_finger',  '<worn on finger>    '),
-                                           ('right_finger', '<worn on finger>    '),
-                                           ('neck',         '<worn around neck>  '),
-                                           ('collar',       '<worn around neck>  '),
-                                           ('body',         '<worn on torso>     '),
-                                           ('head',         '<worn on head>      '),
-                                           ('legs',         '<worn on legs>      '),
-                                           ('feet',         '<worn on feet>      '),
-                                           ('hands',        '<worn on hands>     '),
-                                           ('arms',         '<worn on arms>      '),
-                                           ('about_body',   '<worn as shield>    '),
-                                           ('waist',        '<worn about body>   '),
-                                           ('left_wrist',   '<worn about waist>  '),
-                                           ('right_wrist',  '<worn around wrist> '),
-                                           ('main_hand',    '<worn around wrist> '),
-                                           ('off_hand',     '<wielded>           '),
-                                           ('held',         '<held>              '),
-                                           ('float',        '<floating nearby>   ')])
+eq_slot_strings = collections.OrderedDict([('light', '[[Light Source]]         :  '),
+                                           ('left_finger', '[[Worn on Left Finger]]   :  '),
+                                           ('right_finger', '[[Worn on Right Finger]]  :  '),
+                                           ('neck', '[[Worn around Neck]]     :  '),
+                                           ('collar', '[[Worn around Collar]]     :  '),
+                                           ('body', '[[Worn on Torso]]        :  '),
+                                           ('head', '[[Worn on Head]]        :  '),
+                                           ('legs', '[[Worn on Legs]]        :  '),
+                                           ('feet', '[[Worn on Feet]]        :  '),
+                                           ('hands', '[[Worn on Hands]]       :  '),
+                                           ('arms', '[[Worn on Arms]]        :  '),
+                                           ('about_body', '[[Worn about Body]]    :  '),
+                                           ('waist', '[[Worn around Waist]]   :  '),
+                                           ('left_wrist', '[[Worn on Left Wrist]]  :  '),
+                                           ('right_wrist', '[[Worn on Right Wrist]] :  '),
+                                           ('main_hand', '[[Main Hand]]            :  '),
+                                           ('off_hand', '[[Off Hand]]             :  '),
+                                           ('held', '[[Held]]                 :  '),
+                                           ('float', '[[Floating Nearby]]      :  ')])
 
 
 class Grouping:
@@ -284,8 +264,8 @@ class Communication:
 
 
 class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
-             location.Location, affects.Affects, Communication,
-             container.Container, instance.Instancer, type_bypass.ObjectType, equipment.Equipment):
+             environment.Environment, affects.Affects, Communication,
+             inventory.Inventory, instance.Instancer, type_bypass.ObjectType, equipment.Equipment):
     def __init__(self):
         super().__init__()
         self.is_living = True
@@ -310,12 +290,12 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         self.position = 0
         self.alignment = 0
         self.desc = None
-        self._equipped = character_wear_slots
+        self.slots = equipment.Equipped()
 
     @property
     def equipped(self):
         if self.is_living:
-            return self._equipped
+            return self.slots._equipped
         else:
             return None
 
@@ -343,6 +323,32 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             self._guild = value.name
         else:
             self._guild = value
+
+    def get(self, instance_object):
+        if instance_object.is_item and instance_object.instance_id in self.inventory:
+            self.inventory.remove(instance_object.instance_id)
+            self.carry_number -= instance_object.get_number()
+            self.carry_weight -= instance_object.get_weight()
+            instance_object.environment = None
+            return instance_object
+        elif instance_object.is_item and instance_object.instance_id in self.equipped.values():
+            raise KeyError('Item is in equipped dict, not inventory! %d' % instance_object.instance_id)
+        else:
+            if not instance_object.is_item:
+                raise TypeError('Non-item object attempted '
+                                'to be removed from character object - %s' % type(instance_object))
+
+    def put(self, instance_object):
+        #if instance_object.is_item:
+        self.inventory += [instance_object.instance_id]
+        instance_object.environment = self.instance_id
+        if not instance_object.instance_id in self.equipped.values():
+            self.carry_number += instance_object.get_number()
+            self.carry_weight += instance_object.get_weight()
+            return instance_object
+        else:
+            raise KeyError('Item is in equipped dict, run, screaming! %d' % instance_object.instance_id)
+
 
     def send(self, pstr):
         pass
@@ -607,16 +613,16 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             return True
         if type(item) == int:
             item = merc.items.get(item, None)
-        if item.vis_death:
+        if item.flags.vis_death:
             return False
         if self.is_affected(merc.AFF_BLIND) \
                 and item.item_type != merc.ITEM_POTION:
             return False
-        if item.light and item.value[2] != 0:
+        if item.flags.light and item.value[2] != 0:
             return True
-        if item.invis and not self.is_affected(merc.AFF_DETECT_INVIS):
+        if item.flags.invis and not self.is_affected(merc.AFF_DETECT_INVIS):
             return False
-        if item.glow:
+        if item.flags.glow:
             return True
         if self.in_room.is_dark() \
                 and not self.is_affected(merc.AFF_DARK_VISION):
@@ -652,17 +658,27 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         #    die_follower( ch )
         fight.stop_fighting(self, True)
 
-        for item_id in self.contents[:]:
-            item = merc.items[item_id]
+        for item_id in self.inventory:
+            item = merc.global_instances[item_id]
             item.extract()
 
+        for equip_id in self.equipped.values():
+            if equip_id:
+                equip = merc.global_instances[equip_id]
+                equip.extract()
+
         if self.in_room:
-            self.from_environment()
+            self.in_room.get(self)
 
         # Death room is set in the clan tabe now */
         if not fPull:
             room_id = merc.instances_by_room[self.clan.hall][0]
-            self.to_environment(room_id)
+            room = merc.rooms[room_id]
+            if self.in_room:
+                self.in_room.get(self)
+                room.put(self)
+            else:
+                room.put(self)
             return
 
         if self.desc and self.desc.original:
@@ -755,8 +771,12 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             if item_id:
                 item = merc.items[item_id]
                 if ch.can_see_item(item) and game_utils.is_name(arg, item.name.lower()):
+                    #print('inside')
                     count += 1
                     if count == number:
+                        #print(item.name, '\n')
+                        #print(item.instance_id, '\n')
+                        #print(ch.equipped['main_hand'])
                         return item
             else:
                 continue
@@ -794,7 +814,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
 
     # * True if char can drop obj.
     def can_drop_item(self, item):
-        if not item.no_drop:
+        if not item.flags.no_drop:
             return True
         if not self.is_npc() \
                 and self.level >= merc.LEVEL_IMMORTAL:
@@ -924,7 +944,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         if not self:
             return None
         found = False
-        if self.equipped[check_loc]:
+        if self.equipped.get(check_loc, None):
             found = True
         if not found:
             return None
@@ -962,17 +982,15 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         :type to_loc: builtins.NoneType
         :return: :rtype:
         """
-        if to_loc:
-            pass
         now_wearing = False
 
         def wear(ch, item_to_wear, loc, should_replace: bool=False, wverbose: bool=False):
-            if (item_to_wear.anti_evil and self.is_evil()) or (item_to_wear.anti_good and self.is_good()) \
-                    or (item_to_wear.anti_neutral and self.is_neutral()):
+            if (item_to_wear.flags.anti_evil and self.is_evil()) or (item_to_wear.flags.anti_good and self.is_good()) \
+                    or (item_to_wear.flags.anti_neutral and self.is_neutral()):
                 handler_game.act("You are zapped by $p and drop it.", self, item_to_wear, None, merc.TO_CHAR)
                 handler_game.act("$n is zapped by $p and drops it.", self, item_to_wear, None, merc.TO_ROOM)
-                item_to_wear.from_environment()
-                item_to_wear.to_environment(self.in_room)
+                ch.get(item_to_wear)
+                ch.in_room.put(item_to_wear)
                 return False
             if should_replace:
                 if not ch.unequip(loc):
@@ -983,8 +1001,8 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                         if wverbose:
                             ch.send('That weapon is too heavy for you to wield.\n')
                         return False
-                    elif item_to_wear.two_handed:
-                        if ch.equipped['off_hand'] and ch.size < merc.SIZE_LARGE:
+                    elif item_to_wear.flags.two_handed:
+                        if ch.slots.off_hand and ch.size < merc.SIZE_LARGE:
                             if wverbose:
                                 ch.send('You need two hands free for that weapon.\n')
                             return False
@@ -1001,7 +1019,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                         ch.equipped[loc] = item_to_wear.instance_id
                         return True
                 elif loc == 'off_hand':
-                    if ch.equipped['main_hand'] and item_to_wear.two_handed and ch.size < merc.SIZE_LARGE:
+                    if ch.slots.main_hand and item_to_wear.flags.two_handed and ch.size < merc.SIZE_LARGE:
                         if wverbose:
                             ch.send('Your hands are tied up with your weapon!\n')
                         return False
@@ -1019,50 +1037,57 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             if verbose:
                 self.send("You can't wear, wield, or hold that.\n")
             return
-        open_slots = {k for k in self.equipped if self.equipped[k] is None}
-        possible_slots = item.equips_to & open_slots
 
-        if len(possible_slots) > 0:
-            if not verbose:
-                success = wear(self, item, [k for k in possible_slots][0], False, False)
-            else:
-                success = wear(self, item, [k for k in possible_slots][0], False, True)
+        if to_loc:
+            success = wear(self, item, to_loc, False, False)
             if not success:
                 return
-            else:
-                if verbose_all:
-                    self.verbose_wear_strings(item, [k for k in possible_slots][0])
-                now_wearing = True
-                self.contents.remove(item.instance_id)
+            now_wearing = True
+            if item.instance_id in self.inventory:
+                self.inventory.remove(item.instance_id)
         else:
-            if replace:
-                all_slots = {k for k in self.equipped.keys()}
-                overlap = item.equips_to & all_slots
-                if len(overlap) > 0:
-                    if not verbose:
-                        success = wear(self, item, [k for k in overlap][0], True, False)
+            possible_slots = item.equips_to & self.slots.available
+            if len(possible_slots) > 0:
+                if not verbose:
+                    success = wear(self, item, [k for k in possible_slots][0], False, False)
+                else:
+                    success = wear(self, item, [k for k in possible_slots][0], False, True)
+                if not success:
+                    return
+                else:
+                    if verbose_all:
+                        self.verbose_wear_strings(item, [k for k in possible_slots][0])
+                    now_wearing = True
+                    self.inventory.remove(item.instance_id)
+            else:
+                if replace:
+                    all_slots = {k for k in self.equipped.keys()}
+                    overlap = item.equips_to & all_slots
+                    if len(overlap) > 0:
+                        if not verbose:
+                            success = wear(self, item, [k for k in overlap][0], True, False)
+                        else:
+                            success = wear(self, item, [k for k in overlap][0], True)
+                        if not success:
+                            return
+                        else:
+                            if verbose_all:
+                                self.verbose_wear_strings(item, [k for k in overlap][0])
+                            now_wearing = True
+                            self.inventory.remove(item.instance_id)
                     else:
-                        success = wear(self, item, [k for k in overlap][0], True)
-                    if not success:
+                        if verbose:
+                            self.send("You can't wear, wield, or hold that.\n")
                         return
-                    else:
-                        if verbose_all:
-                            self.verbose_wear_strings(item, [k for k in overlap][0])
-                        now_wearing = True
-                        self.contents.remove(item.instance_id)
                 else:
                     if verbose:
-                        self.send("You can't wear, wield, or hold that.\n")
+                        self.send("You are already wearing something like that!\n")
                     return
-            else:
-                if verbose:
-                    self.send("You are already wearing something like that!\n")
-                return
         if now_wearing:
             for i in range(4):
                 self.armor[i] -= item.apply_ac(i)
             self.apply_affect(item)
-            if item.light and item.value[2] != 0 and self.in_room:
+            if item.flags.light and item.value[2] != 0 and self.in_room:
                 self.in_room.available_light += 1
         return
 
@@ -1110,13 +1135,13 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         :rtype:
         """
         item = self.get_eq(unequip_from)
+        if not item:
+            raise ValueError("Unequip_char: already unequipped, or never worn.")
         if not item.is_item:
             raise TypeError('Expected item on unequip, got %r' % type(item))
-        if not item:
-            raise ValueError("Unequip_char: already unequipped.")
-        if not replace:
+        if item and not replace:
             return False
-        if item.no_remove:
+        if item.flags.no_remove:
             handler_game.act("You can't remove $p.", self, item, None, merc.TO_CHAR)
             return False
         #AC Removal preceeds the actual clearing of the item from the character equipped dict, and list
@@ -1124,10 +1149,12 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         #To determine what to actually apply, or remove.
         for i in range(4):
             self.armor[i] += item.apply_ac(i)
+        if item.flags.two_handed and self.slots.off_hand:
+            self.equipped['off_hand'] = None
         self.equipped[unequip_from] = None
-        self.contents += [item.instance_id]
+        self.inventory += [item.instance_id]
         self.remove_affect(item)
-        if item.light and item.value[2] != 0 and self.in_room and self.in_room.available_light > 0:
+        if item.flags.light and item.value[2] != 0 and self.in_room and self.in_room.available_light > 0:
             self.in_room.available_light -= 1
         handler_game.act("$n stops using $p.", self, item, None, merc.TO_ROOM)
         handler_game.act("You stop using $p.", self, item, None, merc.TO_CHAR)

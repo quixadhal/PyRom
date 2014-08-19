@@ -71,29 +71,29 @@ def do_drop(ch, argument):
         if not ch.can_drop_item(item):
             ch.send("You can't let go of it.\n")
             return
-        item.from_environment()
-        item.to_environment(ch.in_room)
+        ch.get(item)
+        ch.in_room.put(item)
         handler_game.act("$n drops $p.", ch, item, None, merc.TO_ROOM)
         handler_game.act("You drop $p.", ch, item, None, merc.TO_CHAR)
-        if item.melt_drop:
+        if item.flags.melt_drop:
             handler_game.act("$p dissolves into smoke.", ch, item, None, merc.TO_ROOM)
             handler_game.act("$p dissolves into smoke.", ch, item, None, merc.TO_CHAR)
             item.extract()
     else:
         # 'drop all' or 'drop all.obj'
         found = False
-        for item_id in ch.contents[:]:
+        for item_id in ch.inventory[:]:
             item = merc.items[item_id]
             if (len(arg) == 3 or arg[4:] in item.name) \
                     and ch.can_see_item(item) \
                     and not item.equipped_to \
                     and ch.can_drop_item(item):
                 found = True
-                item.from_environment()
-                item.to_environment(ch.in_room)
+                ch.get(item)
+                ch.in_room.put(item)
                 handler_game.act("$n drops $p.", ch, item, None, merc.TO_ROOM)
                 handler_game.act("You drop $p.", ch, item, None, merc.TO_CHAR)
-                if item.melt_drop:
+                if item.flags.melt_drop:
                     handler_game.act("$p dissolves into smoke.", ch, item, None, merc.TO_ROOM)
                     handler_game.act("$p dissolves into smoke.", ch, item, None, merc.TO_CHAR)
                     item.extract()

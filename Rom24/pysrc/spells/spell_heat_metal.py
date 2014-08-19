@@ -20,7 +20,7 @@ def spell_heat_metal(sn, level, ch, victim, target):
             item = merc.items[item_id]
             if random.randint(1, 2 * level) > item.level \
                     and not handler_magic.saves_spell(level, victim, merc.DAM_FIRE) \
-                    and not item.non_metal and not item.burn_proof:
+                    and not item.flags.non_metal and not item.flags.burn_proof:
                 if item.item_type == merc.ITEM_ARMOR:
                     if item.equipped_to:  # remove the item */
                         if victim.can_drop_item(item) \
@@ -31,8 +31,8 @@ def spell_heat_metal(sn, level, ch, victim, target):
                             handler_game.act("You remove and drop $p before it burns you.", victim, item, None,
                                              merc.TO_CHAR)
                             dam += (random.randint(1, item.level) // 3)
-                            item.from_environment()
-                            item.to_environment(victim.in_room)
+                            victim.get(item)
+                            victim.in_room.put(item)
                             fail = False
                         else:  # stuck on the body!  ouch!  */
                             handler_game.act("Your skin is seared by $p! ", victim, item, None, merc.TO_CHAR)
@@ -45,8 +45,8 @@ def spell_heat_metal(sn, level, ch, victim, target):
                             handler_game.act("You and drop $p before it burns you.", victim, item, None,
                                              merc.TO_CHAR)
                             dam += (random.randint(1, item.level) // 6)
-                            item.from_environment()
-                            item.to_environment(victim.in_room)
+                            victim.get(item)
+                            victim.in_room.put(item)
                             fail = False
                         else:  # can! drop */
                             handler_game.act("Your skin is seared by $p! ", victim, item, None, merc.TO_CHAR)
@@ -54,15 +54,15 @@ def spell_heat_metal(sn, level, ch, victim, target):
                             fail = False
                 if item.item_type == merc.ITEM_WEAPON:
                     if item.equipped_to:  # try to drop it */
-                        if item.flaming:
+                        if item.flags.flaming:
                             continue
                         if victim.can_drop_item(item) and victim.unequip(item.equipped_to, True):
                             handler_game.act("$n is burned by $p, and throws it to the ground.", victim, item, None,
                                              merc.TO_ROOM)
                             victim.send("You throw your red-hot weapon to the ground! \n")
                             dam += 1
-                            item.from_environment()
-                            item.to_environment(victim.in_room)
+                            victim.get(item)
+                            victim.in_room.put(item)
                             fail = False
                         else:  # YOWCH!  */
                             victim.send("Your weapon sears your flesh! \n")
@@ -75,8 +75,8 @@ def spell_heat_metal(sn, level, ch, victim, target):
                             handler_game.act("You and drop $p before it burns you.", victim, item, None,
                                              merc.TO_CHAR)
                             dam += (random.randint(1, item.level) // 6)
-                            item.from_environment()
-                            item.to_environment(victim.in_room)
+                            victim.get(item)
+                            victim.in_room.put(item)
                             fail = False
                         else:  # can! drop */
                             handler_game.act("Your skin is seared by $p! ", victim, item, None, merc.TO_CHAR)

@@ -65,7 +65,7 @@ def do_buy(ch, argument):
         if arg:
             pet.name = "%s %s" % (pet.name, arg)
         pet.description = "%sA neck tag says 'I belong to %s'.\n" % (pet.description, ch.name)
-        pet.to_environment(ch.in_room)
+        pet.put(ch.in_room)
         merc.add_follower(pet, ch)
         pet.leader = ch
         ch.pet = pet
@@ -138,12 +138,12 @@ def do_buy(ch, argument):
                 items.append(t_obj)
         for t_obj in items[:]:
             if not obj.inventory:
-                t_obj.from_environment()
+                t_obj.get()
 
             if t_obj.timer > 0 and not t_obj.had_timer:
                 t_obj.timer = 0
             t_obj.extra_flags = t_obj.had_timer = False
-            t_obj.to_environment(ch)
+            t_obj.put(ch)
             if cost < t_obj.cost:
                 t_obj.cost = cost
 

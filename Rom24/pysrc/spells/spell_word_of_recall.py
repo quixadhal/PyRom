@@ -25,8 +25,8 @@ def spell_word_of_recall(sn, level, ch, victim, target):
 
     ch.move //= 2
     handler_game.act("$n disappears.", victim, None, None, merc.TO_ROOM)
-    victim.from_environment()
-    victim.to_environment(location)
+    victim.in_room.get(victim)
+    location.put(victim)
     handler_game.act("$n appears in the room.", victim, None, None, merc.TO_ROOM)
     victim.do_look("auto")
 

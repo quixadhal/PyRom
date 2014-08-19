@@ -13,16 +13,16 @@ def spell_continual_light(sn, level, ch, victim, target):
             ch.send("You don't see that here.\n")
             return
 
-        if state_checks.is_item_stat(light, merc.ITEM_GLOW):
+        if item.flags.glow:
             handler_game.act("$p is already glowing.", ch, light, None, merc.TO_CHAR)
             return
 
-        state_checks.SET_BIT(light.extra_flags, merc.ITEM_GLOW)
+        item.flags.glow = True
         handler_game.act("$p glows with a white light.", ch, light, None, merc.TO_ALL)
         return
 
     light = object_creator.create_object(merc.itemTemplate[merc.OBJ_VNUM_LIGHT_BALL], 0)
-    light.to_environment(ch.in_room)
+    ch.in_room.put(light)
     handler_game.act("$n twiddles $s thumbs and $p appears.", ch, light, None, merc.TO_ROOM)
     handler_game.act("You twiddle your thumbs and $p appears.", ch, light, None, merc.TO_CHAR)
 

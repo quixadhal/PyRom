@@ -31,16 +31,20 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
+import json
+import os
 import logging
 
 logger = logging.getLogger()
 
 import instance
+import settings
+import equipment
 import game_utils
 import type_bypass
-import container
+import inventory
 import physical
-import location
+import environment
 import handler_game
 import object_creator
 import merc
@@ -73,6 +77,7 @@ equips_to_strings = {'left_finger': 'Left Finger',
                      'light': 'Light'}
 
 item_restriction_strings = {'no_drop': 'No Drop',
+                            'no_sac': 'No Sacrifice',
                             'no_remove': 'No Remove',
                             'no_uncurse': 'No Uncurse',
                             'no_purge': 'No Purge',
@@ -109,9 +114,9 @@ weapon_attribute_strings = {'flaming': 'Flaming',
                             'poison': 'Poison'}
 
 
-class Items(instance.Instancer, location.Location, physical.Physical, container.Container,
-            item_flags.ItemFlags, type_bypass.ObjectType):
-    def __init__(self, template=None):
+class Items(instance.Instancer, environment.Environment, physical.Physical, inventory.Inventory,
+            equipment.Equipment, type_bypass.ObjectType):
+    def __init__(self, template=None, **kwargs):
         super().__init__()
         self.is_item = True
         self.vnum = 0
@@ -131,17 +136,19 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
         self.condition = 0
         self.timer = 0
         self.value = [0] * 5
-        self._equips_to = set({})
-        self._item_attributes = set({})
-        self._item_restrictions = set({})
-        self._weapon_attributes = set({})
+        self.flags = item_flags.ItemFlags()
         self._equips_to_names = equips_to_strings
         self._restriction_names = item_restriction_strings
         self._item_attribute_names = item_attribute_strings
         self._weapon_attribute_names = weapon_attribute_strings
+        self.player_name = ''
+        if kwargs:
+            [setattr(self, k, v) for k, v in kwargs.items()]
+            self.instance_setup()
 
-    def __del__(self):
-        logger.trace("Freeing %s" % str(self))
+
+    #def __del__(self):
+     #   logger.trace("Freeing %s" % str(self))
 
     def __repr__(self):
         if not self.instance_id:
@@ -158,8 +165,7 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
         :return: :rtype: str or None
         """
         if self.in_living:
-            character = merc.characters[self.in_living]
-            for k, v in character.equipped.items():
+            for k, v in self.in_living.equipped.items():
                 if v == self.instance_id:
                     return k
         else:
@@ -190,7 +196,7 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
         :rtype: set
         """
         if self.is_item:
-            return self._equips_to
+            return self.flags._equips_to
         else:
             return None
 
@@ -203,9 +209,9 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
 
         :param slots: iterable
         """
-        if self._equips_to:
-            self._equips_to.clear()
-        self._equips_to |= set(slots)
+        if self.flags._equips_to:
+            self.flags._equips_to.clear()
+        self.flags._equips_to |= set(slots)
 
     #Item Attributes
     @property
@@ -228,7 +234,7 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
 
         :return: :rtype: set
         """
-        return self._item_attributes
+        return self.flags._item_attributes
 
     @item_attributes.setter
     def item_attributes(self, attr_set):
@@ -238,13 +244,13 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
         :param attr_set:
         :raise TypeError:
         """
-        if self._item_attributes:
-            self._item_attributes.clear()
-        self._item_attributes |= set(attr_set)
+        if self.flags._item_attributes:
+            self.flags._item_attributes.clear()
+        self.flags._item_attributes |= set(attr_set)
 
     #Restrictions
     @property
-    def restriction_names(self):
+    def item_restriction_names(self):
         """
         return restriction flags as string
 
@@ -263,7 +269,7 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
 
         :return: :rtype: set
         """
-        return self._item_restrictions
+        return self.flags._item_restrictions
 
     @item_restrictions.setter
     def item_restrictions(self, restrictions):
@@ -272,9 +278,9 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
 
         :param restrictions: input flags
         """
-        if self._item_restrictions:
-            self._item_restrictions.clear()
-        self._item_restrictions |= set(restrictions)
+        if self.flags._item_restrictions:
+            self.flags._item_restrictions.clear()
+        self.flags._item_restrictions |= set(restrictions)
 
     #Weapons
     @property
@@ -296,7 +302,7 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
 
         :return: :rtype: set
         """
-        return self._weapon_attributes
+        return self.flags._weapon_attributes
 
     @weapon_attributes.setter
     def weapon_attributes(self, weap_attr):
@@ -305,9 +311,30 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
 
         :param weap_attr: input data
         """
-        if self._weapon_attributes:
-            self._weapon_attributes.clear()
-        self._weapon_attributes |= set(weap_attr)
+        if self.flags._weapon_attributes:
+            self.flags._weapon_attributes.clear()
+        self.flags._weapon_attributes |= set(weap_attr)
+
+    def get(self, instance_object):
+        if instance_object.is_item and instance_object.instance_id in self.inventory:
+            self.inventory.remove(instance_object.instance_id)
+            self.carry_number -= instance_object.get_number()
+            self.carry_weight -= instance_object.get_weight() * state_checks.WEIGHT_MULT(self) // 100
+            instance_object.environment = None
+            return instance_object
+        else:
+            raise KeyError('Item to be removed from Item, not in inventory %d' % instance_object.instance_id)
+
+    def put(self, instance_object):
+        if instance_object.is_item and instance_object.instance_id not in self.inventory:
+            self.inventory += [instance_object.instance_id]
+            self.carry_weight += instance_object.get_weight() * state_checks.WEIGHT_MULT(self) // 100
+            self.carry_number += instance_object.get_number()
+            instance_object.environment = self.instance_id
+            return instance_object
+        else:
+            raise KeyError('Item to be added to Item, already in inventory or wrong type '
+                           '%d, %r' % (instance_object.instance_id, type(instance_object)))
 
     def instance_setup(self):
         merc.global_instances[self.instance_id] = self
@@ -361,7 +388,7 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
                 ret_str = game_utils.item_bitvector_flag_str(paf.bitvector, 'extra flags')
                 if self.item_attribute_names.intersection(ret_str):
                     self.item_attributes |= {ret_str}
-                elif self.restriction_names.intersection(ret_str):
+                elif self.item_restriction_names.intersection(ret_str):
                     self.item_restrictions |= {ret_str}
                 else:
                     raise ValueError('paf set attempt failed, unable to find flag %s' % ret_str)
@@ -390,7 +417,7 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
                 ret_str = game_utils.item_bitvector_flag_str(paf.bitvector, 'extra flags')
                 if self.item_attribute_names.intersection(ret_str):
                     self.item_attributes -= {ret_str}
-                elif self.restriction_names.intersection(ret_str):
+                elif self.item_restriction_names.intersection(ret_str):
                     self.item_restrictions -= {ret_str}
                 else:
                     raise ValueError('paf removal attempt failed, unable to find flag %s' % ret_str)
@@ -413,15 +440,16 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
 
     # Extract an obj from the world.
     def extract(self):
-        if self.in_environment:
-            self.from_environment()
-
-        for item_id in self.contents[:]:
-            if self.instance_id not in merc.items:
-                logger.error("Extract_obj: obj %d not found in obj_instance dict." % self.instance_id)
-                return
-            tmp = merc.items[item_id]
-            tmp.extract()
+        if self.environment:
+            if not self.in_living:
+                self.environment.get(self)
+                for item_id in self.inventory[:]:
+                    if self.instance_id not in merc.items:
+                        logger.error("Extract_obj: obj %d not found in obj_instance dict." % self.instance_id)
+                        return
+                    tmp = merc.items[item_id]
+                    self.get(tmp)
+                    tmp.extract()
         self.instance_destructor()
 
     # Return the number of players "on" an object.
@@ -434,19 +462,114 @@ class Items(instance.Instancer, location.Location, physical.Physical, container.
                     total += 1
         return total
 
+        # Serialization
+    def to_json(self, outer_encoder=None):
+        if outer_encoder is None:
+            outer_encoder = json.JSONEncoder.default
+
+        tmp_dict = {}
+        for k, v in self.__dict__.items():
+            if str(type(v)) in ("<class 'function'>", "<class 'method'>"):
+                continue
+            else:
+                tmp_dict[k] = v
+
+        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        return {cls_name: outer_encoder(tmp_dict)}
+
+    @classmethod
+    def from_json(cls, data, outer_decoder=None, player_name=None):
+        if outer_decoder is None:
+            outer_decoder = json.JSONDecoder.decode
+
+        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        if cls_name in data:
+            tmp_data = outer_decoder(data[cls_name])
+            if player_name:
+                tmp_data['player'] = player_name
+            return cls(**tmp_data)
+        return data
+
+    def save(self, is_equipped: bool=False, in_inventory: bool=False, player_name: str=None):
+        if not self.instance_id:
+            raise ValueError('An instance_id is required to save an instance of an Item!')
+
+        if player_name is None:
+            os.makedirs(settings.INSTANCE_DIR, 0o755, True)
+            filename = os.path.join(settings.INSTANCE_DIR, '%d.json' % self.instance_id)
+        else:
+            pathname = os.path.join(settings.PLAYER_DIR, player_name[0].capitalize(), player_name.capitalize())
+            finalpath = pathname
+            if is_equipped:
+                finalpath = os.path.join(pathname, 'equipment')
+            if in_inventory:
+                finalpath = os.path.join(pathname, 'inventory')
+            os.makedirs(finalpath, 0o755, True)
+            filename = os.path.join(finalpath, '%d.json' % self.instance_id)
+
+        js = json.dumps(self, default=instance.to_json, indent=4)
+        with open(filename, 'w') as fp:
+            fp.write(js)
+
+        if self.inventory:
+            for item_id in self.inventory:
+                item = merc.global_instances[item_id]
+                item.save(is_equipped, in_inventory, player_name)
+
+    @classmethod
+    def load(cls, instance_id: int=None, vnum: int=None, player_name: str=None):
+        if vnum:
+            raise TypeError('Template loading is not yet supported!')
+
+        if not instance_id:
+            raise ValueError('An instance_id is required to load an instance of an Item!')
+
+        filename = ''
+
+        if not player_name:
+            filename = os.path.join(settings.INSTANCE_DIR, '%d.json' % instance_id)
+        else:
+            pathname = os.path.join(settings.PLAYER_DIR, player_name[0].capitalize(), player_name.capitalize())
+            target_file = '%d.json' % instance_id
+            for a_path, a_directory, i_files in os.walk(pathname):
+                if target_file in i_files:
+                    filename = os.path.join(a_path, target_file)
+                    break
+        with open(filename) as fp:
+            jsobj = fp.read()
+        obj = json.loads(jsobj, object_hook=instance.from_json)
+        if player_name:
+            if obj.inventory:
+                obj.load_inventory(player_name)
+        return obj
+
+    def load_inventory(self, player_name: str=None):
+        for instance_id in self.inventory:
+            obj = Items.load(instance_id=instance_id, player_name=player_name)
+            if not isinstance(obj, Items):
+                raise TypeError('Could not load instance %r!' % instance_id)
+
+images = ['*.jpg', '*.jpeg', '*.png', '*.tif', '*.tiff']
+matches = []
+
+
+
+
+
 
 def get_item(ch, item, this_container):
     # variables for AUTOSPLIT
-    if not item.take:
+    if not item.flags.take:
         ch.send("You can't take that.\n")
         return
     if ch.carry_number + item.get_number() > ch.can_carry_n():
         handler_game.act("$d: you can't carry that many items.", ch, None, item.name, merc.TO_CHAR)
         return
-    if (not item.in_item or merc.items[item.in_item].in_living != ch.instance_id) \
-            and (state_checks.get_carry_weight(ch) + item.get_weight() > ch.can_carry_w()):
-        handler_game.act("$d: you can't carry that much weight.", ch, None, item.name, merc.TO_CHAR)
-        return
+    if item.in_living:
+        if (not item.in_item or (item.in_living.instance_id != ch.instance_id)) \
+                and (state_checks.get_carry_weight(ch) + item.get_weight() > ch.can_carry_w()):
+            handler_game.act("$d: you can't carry that much weight.", ch, None, item.name, merc.TO_CHAR)
+            return
     if not ch.can_loot(item):
         handler_game.act("Corpse looting is not permitted.", ch, None, None, merc.TO_CHAR)
         return
@@ -461,29 +584,30 @@ def get_item(ch, item, this_container):
         if this_container.vnum == merc.OBJ_VNUM_PIT and ch.trust < item.level:
             ch.send("You are not powerful enough to use it.\n")
             return
-        if this_container.vnum == merc.OBJ_VNUM_PIT and not item.take and not item.had_timer:
+        elif this_container.vnum == merc.OBJ_VNUM_PIT and item.flags.take and item.flags.had_timer:
             item.timer = 0
             handler_game.act("You get $p from $P.", ch, item, this_container, merc.TO_CHAR)
             handler_game.act("$n gets $p from $P.", ch, item, this_container, merc.TO_ROOM)
-            item.had_timer = False
-            item.from_environment()
+            item.flags.had_timer = False
+            this_container.get(item)
     else:
         handler_game.act("You get $p.", ch, item, this_container, merc.TO_CHAR)
         handler_game.act("$n gets $p.", ch, item, this_container, merc.TO_ROOM)
-        item.from_environment()
+        ch.in_room.get(item)
     if item.item_type == merc.ITEM_MONEY:
         ch.silver += item.value[0]
         ch.gold += item.value[1]
         if ch.act.is_set(merc.PLR_AUTOSPLIT):
             # AUTOSPLIT code
             members = len([gch for gch in ch.in_room.people
-                           if not state_checks.IS_AFFECTED(merc.characters[gch], merc.AFF_CHARM)
+                           if not merc.characters[gch].is_affected(merc.AFF_CHARM)
                            and merc.characters[gch].is_same_group(ch)])
             if members > 1 and (item.value[0] > 1 or item.value[1]):
                 ch.do_split("%d %d" % (item.value[0], item.value[1]))
+        ch.get(item)
         item.extract()
     else:
-        item.to_environment(ch)
+        ch.put(item)
     return
 
 
@@ -507,7 +631,7 @@ def format_item_to_char(item, ch, fShort):
     if (fShort and not item.short_descr) or not item.description:
         return buf
 
-    if item.invis:
+    if item.flags.invis:
         buf += "(Invis) "
     if ch.is_affected(merc.AFF_DETECT_EVIL) and item.evil:
         buf += "(Red Aura) "
@@ -515,9 +639,9 @@ def format_item_to_char(item, ch, fShort):
         buf += "(Blue Aura) "
     if ch.is_affected(merc.AFF_DETECT_MAGIC) and item.magic:
         buf += "(Magical) "
-    if item.glow:
+    if item.flags.glow:
         buf += "(Glowing) "
-    if item.hum:
+    if item.flags.hum:
         buf += "(Humming) "
 
     if fShort:
@@ -533,15 +657,20 @@ def format_item_to_char(item, ch, fShort):
 
 # Count occurrences of an obj in a list.
 def count_obj_list(itemInstance, contents):
-    return len([item_id for item_id in contents if merc.items[item_id].name == itemInstance.name])
+    count = 0
+    for item_id in contents:
+        if item_id:
+            if merc.items[item_id].name == itemInstance.name:
+                count += 1
+    return count
 
 
 # for clone, to insure that cloning goes many levels deep
 def recursive_clone(ch, item, clone):
-    for c_item_id in item.contents:
+    for c_item_id in item.inventory:
         c_item = merc.items[c_item_id]
         if item_check(ch, c_item):
             t_obj = object_creator.create_item(merc.itemTemplate[c_item.vnum], 0)
             object_creator.clone_item(c_item, t_obj)
-            t_obj.to_environment(clone)
+            clone.put(t_obj)
             recursive_clone(ch, c_item, t_obj)

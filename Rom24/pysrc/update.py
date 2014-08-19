@@ -102,7 +102,7 @@ def gain_exp(ch, gain):
         print("%s gained level %d\r\n" % (ch.name, ch.level))
         handler_game.wiznet("$N has attained level %d!" % ch.level, ch, None, WIZ_LEVELS, 0, 0)
         advance_level(ch, False)
-        save.save_char_obj(ch)
+        ch.save()
 
 
 # * Regeneration stuff.
@@ -488,9 +488,11 @@ def char_update():
                     handler_game.act("$n disappears into the void.", ch, None, None, TO_ROOM)
                     ch.send("You disappear into the void.\n")
                     if ch.level > 1:
-                        save.save_char_obj(ch)
-                    ch.from_environment()
-                    ch.to_environment(merc.instances_by_room[ROOM_VNUM_LIMBO][0])
+                        ch.save()
+                    limbo_id = merc.instances_by_room[ROOM_VNUM_LIMBO][0]
+                    limbo = merc.rooms[limbo_id]
+                    ch.in_room.get(ch)
+                    limbo.put(ch)
 
             gain_condition(ch, COND_DRUNK, -1)
             gain_condition(ch, COND_FULL, -4 if ch.size > SIZE_MEDIUM else -2)
@@ -531,7 +533,7 @@ def char_update():
                 continue
             plague = handler_game.AFFECT_DATA()
             plague.where = TO_AFFECTS
-            plague.type = gsn_plague
+            plague.type = 'plague'
             plague.level = af.level - 1
             plague.duration = random.randint(1, 2 * plague.level)
             plague.location = APPLY_STR
@@ -548,7 +550,7 @@ def char_update():
             dam = min(ch.level, af.level // 5 + 1)
             ch.mana -= dam
             ch.move -= dam
-            fight.damage(ch, ch, dam, gsn_plague, DAM_DISEASE, False)
+            fight.damage(ch, ch, dam, 'plague', DAM_DISEASE, False)
         elif ch.is_affected(AFF_POISON) and ch and not ch.is_affected(AFF_SLOW):
             poison = state_checks.affect_find(ch.affected, 'poison')
             if poison:
@@ -566,7 +568,7 @@ def char_update():
     # */
     for ch in merc.characters.values():
         if not ch.is_npc() and ch.desc and save_number == 28:
-            save.save_char_obj(ch)
+            ch.save()
     for ch in ch_quit[:]:
         ch.do_quit("")
 
@@ -613,8 +615,8 @@ def item_update():
         elif item.item_type == ITEM_PORTAL:
             message = "$p fades out of existence."
         elif item.item_type == ITEM_CONTAINER:
-            if item.float:
-                if item.contents:
+            if item.flags.float:
+                if item.inventory:
                     message = "$p flickers and vanishes, spilling its contents on the floor."
                 else:
                     message = "$p flickers and vanishes."
@@ -636,26 +638,26 @@ def item_update():
                 handler_game.act(message, item.in_room.people[:1], item, None, TO_ROOM)
                 handler_game.act(message, item.in_room.people[:1], item, None, TO_CHAR)
 
-        if (item.item_type == ITEM_CORPSE_PC or 'float' in item.equipped_to) and item.contents:
+        if (item.item_type == ITEM_CORPSE_PC or 'float' in item.equipped_to) and item.inventory:
             # save the contents */
-            for t_item_id in item.contents[:]:
+            for t_item_id in item.inventory[:]:
                 t_item = merc.items[t_item_id]
-                t_item.from_environment()
+                t_item.get()
 
                 if item.in_item:  # in another object */
-                    t_item.to_environment(item.in_item)
+                    t_item.put(item.in_item)
                 elif item.in_living:  # carried */
                     if 'float' in item.equipped_to:
-                        if merc.characters[item.in_living].in_room is None:
+                        if item.in_living.in_room is None:
                             t_item.extract()
                         else:
-                            t_item.to_environment(merc.characters[item.in_living].in_room)
+                            t_item.put(item.in_living.in_room)
                     else:
-                        t_item.to_environment(item.in_living)
+                        t_item.put(item.in_living)
                 elif not item.in_room:  # destroy it */
                     t_item.extract()
                 else:  # to a room */
-                    t_item.to_environment(item.in_room)
+                    t_item.put(item.in_room)
 
         item.extract()
     return

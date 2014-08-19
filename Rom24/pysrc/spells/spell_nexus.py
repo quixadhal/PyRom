@@ -29,7 +29,7 @@ def spell_nexus(sn, level, ch, victim, target):
         ch.send("You failed.\n")
         return
 
-    stone = ch.get_eq('held')
+    stone = ch.slots.held
     if not ch.is_immortal() and (stone is None or stone.item_type != merc.ITEM_WARP_STONE):
         ch.send("You lack the proper component for this spell.\n")
         return
@@ -37,14 +37,16 @@ def spell_nexus(sn, level, ch, victim, target):
     if stone and stone.item_type == merc.ITEM_WARP_STONE:
         handler_game.act("You draw upon the power of $p.", ch, stone, None, merc.TO_CHAR)
         handler_game.act("It flares brightly and vanishes! ", ch, stone, None, merc.TO_CHAR)
+        ch.unequip(stone.equipped_to)
+        ch.get(stone)
         stone.extract()
 
     # portal one */
     portal = object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_PORTAL], 0)
     portal.timer = 1 + level // 10
-    portal.value[3] = to_room.vnum
+    portal.value[3] = to_room.instance_id
 
-    portal.to_environment(from_room)
+    from_room.put(portal)
 
     handler_game.act("$p rises up from the ground.", ch, portal, None, merc.TO_ROOM)
     handler_game.act("$p rises up before you.", ch, portal, None, merc.TO_CHAR)
@@ -56,9 +58,9 @@ def spell_nexus(sn, level, ch, victim, target):
     # portal two */
     portal = object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_PORTAL], 0)
     portal.timer = 1 + level // 10
-    portal.value[3] = from_room.vnum
+    portal.value[3] = from_room.instance_id
 
-    portal.to_environment(to_room)
+    to_room.put(portal)
 
     if to_room.people:
         handler_game.act("$p rises up from the ground.", to_room.people[0], portal, None, merc.TO_ROOM)

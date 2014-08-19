@@ -17,9 +17,9 @@ def do_mload(ch, argument):
     if vnum not in merc.characterTemplate:
         ch.send("No mob has that vnum.\n")
         return
-    pMobIndex = merc.characterTemplate[vnum]
-    victim = object_creator.create_mobile(pMobIndex)
-    victim.to_environment(ch.in_room)
+    template = merc.characterTemplate[vnum]
+    victim = object_creator.create_mobile(template)
+    ch.in_room.put(victim)
     handler_game.act("$n has created $N!", ch, None, victim, merc.TO_ROOM)
     handler_game.wiznet("$N loads %s." % victim.short_descr, ch, None, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.trust)
     ch.send("Ok.\n")

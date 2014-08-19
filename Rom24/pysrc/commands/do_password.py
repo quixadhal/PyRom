@@ -42,7 +42,7 @@ def do_password(ch, argument):
         # Also now not true. Davion
 
     ch.pwd = arg2
-    save.save_char_obj(ch)
+    ch.save()
     ch.send("Ok.\n")
     return
 

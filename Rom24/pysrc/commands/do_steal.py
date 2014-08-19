@@ -72,14 +72,14 @@ def do_steal(ch, argument):
         if not ch.is_npc():
             if victim.is_npc():
                 if ch.is_pc():
-                    ch.check_improve( "steal", False, 2)
+                    ch.check_improve("steal", False, 2)
                 fight.multi_hit(victim, ch, merc.TYPE_UNDEFINED)
             else:
                 handler_game.wiznet("$N tried to steal from %s." % victim.name, ch, None, merc.WIZ_FLAGS, 0, 0)
                 if not ch.act.is_set(merc.PLR_THIEF):
                     ch.act.set_bit(merc.PLR_THIEF)
                     ch.send("*** You are now a THIEF!! ***\n")
-                    save.save_char_obj(ch)
+                    ch.save()
         return
     currency = ['coins', 'coin', 'gold', 'silver']
     if arg1 in currency:
@@ -105,7 +105,7 @@ def do_steal(ch, argument):
     if not item:
         ch.send("You can't find it.\n")
         return
-    if not ch.can_drop_item(item) or item.inventory or item.level > ch.level:
+    if not ch.can_drop_item(item) or item.flags.inventory or item.level > ch.level:
         ch.send("You can't pry it away.\n")
         return
     if ch.carry_number + item.get_number() > ch.can_carry_n():
@@ -114,8 +114,8 @@ def do_steal(ch, argument):
     if ch.carry_weight + item.get_weight() > ch.can_carry_w():
         ch.send("You can't carry that much weight.\n")
         return
-    item.from_environment()
-    item.to_environment(ch)
+    item.get()
+    ch.put(item)
     handler_game.act("You pocket $p.", ch, item, None, merc.TO_CHAR)
     if ch.is_pc():
         ch.check_improve( "steal", True, 2)

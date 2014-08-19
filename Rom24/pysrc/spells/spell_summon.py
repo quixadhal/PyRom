@@ -20,15 +20,15 @@ def spell_summon(sn, level, ch, victim, target):
             or (not victim.is_npc() and victim.level >= merc.LEVEL_IMMORTAL) \
             or victim.fighting is not None \
             or (victim.is_npc() and victim.imm_flags.is_set(merc.IMM_SUMMON)) \
-            or (victim.is_npc() and victim.pIndexData.pShop is not None) \
+            or (victim.is_npc() and victim.pShop is not None) \
             or (not victim.is_npc() and victim.act.is_set(merc.PLR_NOSUMMON)) \
             or (victim.is_npc() and handler_magic.saves_spell(level, victim, merc.DAM_OTHER)):
         ch.send("You failed.\n")
         return
 
     handler_game.act("$n disappears suddenly.", victim, None, None, merc.TO_ROOM)
-    victim.from_environment()
-    victim.to_environment(ch.in_room)
+    victim.in_room.get(victim)
+    ch.in_room.put(victim)
     handler_game.act("$n arrives suddenly.", victim, None, None, merc.TO_ROOM)
     handler_game.act("$n has summoned you! ", ch, None, victim, merc.TO_VICT)
     victim.do_look("auto")

@@ -30,7 +30,7 @@ def do_deny(ch, argument):
     victim.send("You are denied access!\n")
     handler_game.wiznet("$N denies access to %s" % victim.name, ch, None, merc.WIZ_PENALTIES, merc.WIZ_SECURE, 0)
     ch.send("OK.\n")
-    save.save_char_obj(victim)
+    victim.save()
     fight.stop_fighting(victim, True)
     victim.do_quit("")
     return

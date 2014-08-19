@@ -380,7 +380,7 @@ def one_hit(ch, victim, dt):
             if not ch.get_eq('off_hand'):  # no shield = more */
                 dam = dam * 11 // 10
             # sharpness! */
-            if wield.sharp:
+            if wield.flags.sharp:
                 percent = random.randint(1, 99)
                 if percent <= (skill // 8):
                     dam = 2 * dam + (dam * 2 * percent // 100)
@@ -419,7 +419,7 @@ def one_hit(ch, victim, dt):
     # but do we have a funky weapon? */
     if result and wield is not None:
 
-        if ch.fighting == victim and wield.poison:
+        if ch.fighting == victim and wield.flags.poison:
             poison = state_checks.affect_find(wield.affected, 'poison')
             if poison:
                 level = wield.level
@@ -445,27 +445,27 @@ def one_hit(ch, victim, dt):
                 if poison.level == 0 or poison.duration == 0:
                     handler_game.act("The poison on $p has worn off.", ch, wield, None, TO_CHAR)
 
-            if ch.fighting == victim and wield.vampiric:
+            if ch.fighting == victim and wield.flags.vampiric:
                 dam = random.randint(1, wield.level // 5 + 1)
                 handler_game.act("$p draws life from $n.", victim, wield, None, TO_ROOM)
                 handler_game.act("You feel $p drawing your life away.", victim, wield, None, TO_CHAR)
                 damage(ch, victim, dam, 0, DAM_NEGATIVE, False)
                 ch.alignment = max(-1000, ch.alignment - 1)
                 ch.hit += dam // 2
-            if ch.fighting == victim and wield.flaming:
+            if ch.fighting == victim and wield.flags.flaming:
                 dam = random.randint(1, wield.level // 4 + 1)
                 handler_game.act("$n is burned by $p.", victim, wield, None, TO_ROOM)
                 handler_game.act("$p sears your flesh.", victim, wield, None, TO_CHAR)
                 effects.fire_effect(victim, wield.level // 2, dam, TARGET_CHAR)
                 damage(ch, victim, dam, 0, DAM_FIRE, False)
-            if ch.fighting == victim and wield.frost:
+            if ch.fighting == victim and wield.flags.frost:
                 dam = random.randint(1, wield.level // 6 + 2)
                 handler_game.act("$p freezes $n.", victim, wield, None, TO_ROOM)
                 handler_game.act("The cold touch of $p surrounds you with ice.",
                                  victim, wield, None, TO_CHAR)
                 effects.cold_effect(victim, wield.level // 2, dam, TARGET_CHAR)
                 damage(ch, victim, dam, 0, DAM_COLD, False)
-            if ch.fighting == victim and wield.shocking:
+            if ch.fighting == victim and wield.flags.shocking:
                 dam = random.randint(1, wield.level // 5 + 2)
                 handler_game.act("$n is struck by lightning from $p.", victim, wield, None, TO_ROOM)
                 handler_game.act("You are shocked by $p.", victim, wield, None, TO_CHAR)
@@ -484,7 +484,7 @@ def damage(ch, victim, dam, dt, dam_type, show):
         logger.warn("BUG: Damage: %d: more than 1200 points!", dam)
         dam = 1200
         if not ch.is_immortal():
-            item = ch.get_eq('main_hand')
+            item = ch.slots.main_hand
             ch.send("You really shouldn't cheat.\n")
             if item:
                 item.extract()
@@ -593,8 +593,8 @@ def damage(ch, victim, dam, dt, dam_type, show):
             # Dying penalty:
             # 2/3 way back to previous level.
             if victim.exp > victim.exp_per_level(victim.points) * victim.level:
-                update.gain_exp(victim, (
-                2 * (victim.exp_per_level(victim.points) * victim.level - victim.exp) // 3) + 50)
+                update.gain_exp(victim, (2 * (victim.exp_per_level(victim.points)
+                                              * victim.level - victim.exp) // 3) + 50)
 
         log_buf = "%s got toasted by %s at %s [[room %d]]" % (victim.short_descr if victim.is_npc() else victim.name,
                                                               ch.short_descr if ch.is_npc() else ch.name,
@@ -616,16 +616,16 @@ def damage(ch, victim, dam, dt, dam_type, show):
         corpse = ch.get_item_list("corpse", ch.in_room.items)
 
         if not ch.is_npc() and corpse and corpse.item_type == ITEM_CORPSE_NPC and ch.can_see_item(corpse.instance_id):
-            if ch.act.is_set(PLR_AUTOLOOT) and corpse and corpse.contents:  # exists and not empty */
+            if ch.act.is_set(PLR_AUTOLOOT) and corpse and corpse.inventory:  # exists and not empty */
                 ch.do_get("all corpse")
 
-            if ch.act.is_set(PLR_AUTOGOLD) and corpse and corpse.contents and not ch.act.is_set(PLR_AUTOLOOT):
-                coins = ch.get_item_list("gcash", corpse.contents)
+            if ch.act.is_set(PLR_AUTOGOLD) and corpse and corpse.inventory and not ch.act.is_set(PLR_AUTOLOOT):
+                coins = ch.get_item_list("gcash", corpse.inventory)
                 if coins:
                     ch.do_get("all.gcash corpse")
 
             if ch.act.is_set(PLR_AUTOSAC):
-                if ch.act.is_set(PLR_AUTOLOOT) and corpse and corpse.contents:
+                if ch.act.is_set(PLR_AUTOLOOT) and corpse and corpse.inventory:
                     return True  # leave if corpse has treasure */
                 else:
                     ch.do_sacrifice("corpse")
@@ -823,7 +823,7 @@ def check_killer(ch, victim):
     ch.send("*** You are now a KILLER!! ***\n")
     state_checks.SET_BIT(ch.act, PLR_KILLER)
     handler_game.wiznet("$N is attempting to murder %s" % victim.name, ch, None, WIZ_FLAGS, 0, 0)
-    save.save_char_obj(ch)
+    ch.save()
     return
 
 
@@ -932,7 +932,7 @@ def make_corpse(ch):
         corpse = object_creator.create_item(itemTemplate[OBJ_VNUM_CORPSE_NPC], 0)
         corpse.timer = random.randint(3, 6)
         if ch.gold > 0:
-            object_creator.create_money(ch.gold, ch.silver).to_environment(corpse.instance_id)
+            corpse.put(object_creator.create_money(ch.gold, ch.silver))
             ch.gold = 0
             ch.silver = 0
         corpse.cost = 0
@@ -946,7 +946,7 @@ def make_corpse(ch):
         else:
             corpse.owner = ""
             if ch.gold > 1 or ch.silver > 1:
-                object_creator.create_money(ch.gold // 2, ch.silver // 2).to_environment(corpse.instance_id)
+                corpse.put(object_creator.create_money(ch.gold // 2, ch.silver // 2))
                 ch.gold -= ch.gold // 2
                 ch.silver -= ch.silver // 2
         corpse.cost = 0
@@ -954,40 +954,40 @@ def make_corpse(ch):
     corpse.short_descr = corpse.short_descr % name
     corpse.description = corpse.description % name
 
-    for item_id in ch.contents[:]:
+    for item_id in ch.inventory[:]:
         item = merc.items[item_id]
         floating = False
-        if item.float:
+        if item.flags.float:
             floating = True
-        item.from_environment()
+        ch.get(item)
         if item.item_type == ITEM_POTION:
             item.timer = random.randint(500, 1000)
         if item.item_type == ITEM_SCROLL:
             item.timer = random.randint(1000, 2500)
-        if item.rot_death and not floating:
+        if item.flags.rot_death and not floating:
             item.timer = random.randint(5, 10)
-            item.rot_death = False
-        item.vis_death = False
+            item.flags.rot_death = False
+        item.flags.vis_death = False
 
-        if item.inventory:
+        if item.flags.inventory:
             item.extract()
         elif floating:
-            if item.rot_death:  # get rid of it! */
-                if item.contents:
+            if item.flags.rot_death:  # get rid of it! */
+                if item.inventory:
                     handler_game.act("$p evaporates,scattering its contents.", ch, item, None, TO_ROOM)
-                    for contents_id in item.contents[:]:
+                    for contents_id in item.inventory[:]:
                         contents = merc.items[contents_id]
-                        contents.from_environment()
-                        contents.to_environment(ch.in_room)
+                        item.get(contents)
+                        ch.in_room.put(contents)
                 else:
                     handler_game.act("$p evaporates.", ch, item, None, TO_ROOM)
                 item.extract()
             else:
                 handler_game.act("$p falls to the floor.", ch, item, None, TO_ROOM)
-                item.to_environment(ch.in_room)
+                ch.in_room.put(item)
         else:
-            item.to_environment(corpse.instance_id)
-    corpse.to_environment(ch.in_room)
+            corpse.put(item)
+    ch.in_room.put(corpse)
     return
 
 
@@ -1029,17 +1029,17 @@ def death_cry(ch):
     handler_game.act(msg, ch, None, None, TO_ROOM)
     if vnum != 0:
         name = ch.short_descr if ch.is_npc() else ch.name
-        obj = object_creator.create_item(itemTemplate[vnum], 0)
-        obj.timer = random.randint(4, 7)
+        item = object_creator.create_item(itemTemplate[vnum], 0)
+        item.timer = random.randint(4, 7)
 
-        obj.short_descr = obj.short_descr % name
-        obj.description = obj.description % name
-        if obj.item_type == ITEM_FOOD:
+        item.short_descr = item.short_descr % name
+        item.description = item.description % name
+        if item.item_type == ITEM_FOOD:
             if ch.form.is_set(FORM_POISON):
-                obj.value[3] = 1
+                item.value[3] = 1
             elif not ch.form.is_set(FORM_EDIBLE):
-                obj.item_type = ITEM_TRASH
-            obj.to_environment(ch.in_room)
+                item.item_type = ITEM_TRASH
+            ch.in_room.put(item)
 
     if ch.is_npc():
         msg = "You hear something's death cry."
@@ -1047,11 +1047,13 @@ def death_cry(ch):
         msg = "You hear someone's death cry."
 
     was_in_room = ch.in_room
+    was_in_room.get(ch)
     for pexit in was_in_room.exit:
         if pexit and pexit.to_room and pexit.to_room != was_in_room.instance_id:
-            ch.in_environment = pexit.to_room
+            merc.rooms[pexit.to_room].put(ch)
             handler_game.act(msg, ch, None, None, TO_ROOM)
-    ch.in_environment = was_in_room.instance_id
+            merc.rooms[pexit.to_room].get(ch)
+    was_in_room.put(ch)
     return
 
 
@@ -1063,9 +1065,12 @@ def raw_kill(victim):
     if victim.is_npc():
         merc.characterTemplate[victim.vnum].killed += 1
         # kill_table[max(0, min(victim.level, MAX_LEVEL-1))].killed += 1
+        if victim.in_room:
+            victim.in_room.get(victim)
         victim.extract(True)
         return
-
+    if victim.in_room:
+            victim.in_room.get(victim)
     victim.extract(False)
     for af in victim.affected[:]:
         victim.affect_remove(af)
@@ -1117,22 +1122,23 @@ def group_gain(ch, victim):
         xp = xp_compute(gch, victim, group_levels)
         gch.send("You receive %d experience points.\n" % xp)
         update.gain_exp(gch, xp)
-        for item_id in ch.contents[:]:
-            item = merc.items[item_id]
-            if not item.equipped_to:
+        #equipment
+        for item_id in ch.equipped.values():
+            if not item_id:
                 continue
-            if (item.anti_evil and ch.is_evil()) or (item.anti_good and ch.is_good()) \
-                    or (item.anti_neutral and ch.is_neutral()):
+            item = merc.items[item_id]
+            if (item.flags.anti_evil and ch.is_evil()) or (item.flags.anti_good and ch.is_good()) \
+                    or (item.flags.anti_neutral and ch.is_neutral()):
                 handler_game.act("You are zapped by $p.", ch, item, None, TO_CHAR)
                 handler_game.act("$n is zapped by $p.", ch, item, None, TO_ROOM)
-                item.from_environment()
-                item.to_environment(ch.in_room)
-
-                # Compute xp for a kill.
-                # Also adjust alignment of killer.
-                # Edit this function to change xp computations.
+                ch.unequip(item.equipped_to, False)
+                ch.get(item)
+                ch.in_room.put(item)
 
 
+# Compute xp for a kill.
+# Also adjust alignment of killer.
+# Edit this function to change xp computations.
 def xp_compute(gch, victim, total_levels):
     level_range = victim.level - gch.level
     # compute the base exp */
@@ -1357,12 +1363,12 @@ def dam_message(ch, victim, dam, dt, immune):
 # * Disarm a creature.
 # * Caller must check for successful attack.
 def disarm(ch, victim):
-    item = victim.get_eq('main_hand')
+    item = victim.slots.main_hand
     if not item:
         ch.send("I think you're taking disarm a little too literally")
         return
 
-    if item.no_remove:
+    if item.flags.no_remove:
         handler_game.act("$S weapon won't budge!", ch, None, victim, TO_CHAR)
         handler_game.act("$n tries to disarm you, but your weapon won't budge!", ch, None, victim, TO_VICT)
         handler_game.act("$n tries to disarm $N, but fails.", ch, None, victim, TO_NOTVICT)
@@ -1370,12 +1376,10 @@ def disarm(ch, victim):
     handler_game.act("$n DISARMS you and sends your weapon flying!", ch, None, victim, TO_VICT)
     handler_game.act("You disarm $N!", ch, None, victim, TO_CHAR)
     handler_game.act("$n disarms $N!", ch, None, victim, TO_NOTVICT)
-    item.from_environment()
-    if item.no_drop or item.inventory:
-        item.to_environment(victim)
-    else:
-        item.to_environment(victim.in_room)
-        if victim.is_npc() and victim.wait == 0 and victim.can_see_item(item.instance_id):
+    victim.unequip('main_hand')
+    if not item.flags.no_drop or item.flags.inventory:
+        victim.in_room.put(item)
+        if victim.is_npc() and victim.wait == 0 and victim.can_see_item(item):
             handler_item.get_item(victim, item, None)
     return
 

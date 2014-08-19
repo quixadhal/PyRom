@@ -15,7 +15,7 @@ def do_reboot(ch, argument):
     for d in merc.descriptor_list[:]:
         vch = handler_ch.CH(d)
         if vch:
-            save.save_char_obj(vch)
+            vch.save()
             comm.close_socket(d)
 
 

@@ -62,7 +62,7 @@ def load_area(area, index):
         elif w == "#HELPS":
             area = load_helps(area)
         elif w == "#MOBILES":
-            area = load_mobiles(area, area_instance)
+            area = load_npcs(area, area_instance)
         elif w == "#OBJECTS":
             area = load_objects(area, area_instance)
         elif w == "#RESETS":
@@ -96,77 +96,75 @@ def load_helps(area):
 
         area, nhelp.text = game_utils.read_string(area)
         nhelp.text = miniboa.terminal.escape(nhelp.text, 'pyom')
-
         if nhelp.keyword == "GREETING":
             nhelp.text += ' '
             merc.greeting_list.append(nhelp)
-
         merc.help_list.append(nhelp)
     return area
 
 
-def load_mobiles(area, pArea):
+def load_npcs(area, pArea):
     area, w = game_utils.read_word(area, False)
     w = w[1:]  # strip the pound
 
     while w != '0':
-        mob = handler_npc.Npc()
-        mob.vnum = int(w)
-        merc.characterTemplate[mob.vnum] = mob
-        mob.area = pArea.name
-        area, mob.name = game_utils.read_string(area)
-        area, mob.short_descr = game_utils.read_string(area)
+        npc = handler_npc.Npc()
+        npc.vnum = int(w)
+        merc.characterTemplate[npc.vnum] = npc
+        npc.area = pArea.name
+        area, npc.name = game_utils.read_string(area)
+        area, npc.short_descr = game_utils.read_string(area)
 
-        area, mob.long_descr = game_utils.read_string(area)
-        mob.long_descr = miniboa.terminal.escape(mob.long_descr, 'pyom')
-        area, mob.description = game_utils.read_string(area)
-        mob.description = miniboa.terminal.escape(mob.description, 'pyom')
+        area, npc.long_descr = game_utils.read_string(area)
+        npc.long_descr = miniboa.terminal.escape(npc.long_descr, 'pyom')
+        area, npc.description = game_utils.read_string(area)
+        npc.description = miniboa.terminal.escape(npc.description, 'pyom')
 
-        area, mob.race = game_utils.read_string(area)
-        area = mob.act.read_bits(area, default=merc.ACT_IS_NPC | mob.race.act)
-        area = mob.affected_by.read_bits(area, default=mob.race.aff)
-        area, mob.alignment = game_utils.read_int(area)
-        area, mob.group = game_utils.read_int(area)
-        area, mob.level = game_utils.read_int(area)
-        area, mob.hitroll = game_utils.read_int(area)
-        area, mob.hit_dice[0] = game_utils.read_int(area)
+        area, npc.race = game_utils.read_string(area)
+        area = npc.act.read_bits(area, default=merc.ACT_IS_NPC | npc.race.act)
+        area = npc.affected_by.read_bits(area, default=npc.race.aff)
+        area, npc.alignment = game_utils.read_int(area)
+        area, npc.group = game_utils.read_int(area)
+        area, npc.level = game_utils.read_int(area)
+        area, npc.hitroll = game_utils.read_int(area)
+        area, npc.hit_dice[0] = game_utils.read_int(area)
         area = game_utils.read_forward(area)
-        area, mob.hit_dice[1] = game_utils.read_int(area)
+        area, npc.hit_dice[1] = game_utils.read_int(area)
         area = game_utils.read_forward(area)
-        area, mob.hit_dice[2] = game_utils.read_int(area)
-        area, mob.mana_dice[0] = game_utils.read_int(area)
+        area, npc.hit_dice[2] = game_utils.read_int(area)
+        area, npc.mana_dice[0] = game_utils.read_int(area)
         area = game_utils.read_forward(area)
-        area, mob.mana_dice[1] = game_utils.read_int(area)
+        area, npc.mana_dice[1] = game_utils.read_int(area)
         area = game_utils.read_forward(area)
-        area, mob.mana_dice[2] = game_utils.read_int(area)
-        area, mob.dam_dice[0] = game_utils.read_int(area)
+        area, npc.mana_dice[2] = game_utils.read_int(area)
+        area, npc.dam_dice[0] = game_utils.read_int(area)
         area = game_utils.read_forward(area)
-        area, mob.dam_dice[1] = game_utils.read_int(area)
+        area, npc.dam_dice[1] = game_utils.read_int(area)
         area = game_utils.read_forward(area)
-        area, mob.dam_dice[2] = game_utils.read_int(area)
-        area, mob.dam_type = game_utils.read_word(area, False)
-        mob.dam_type = state_checks.name_lookup(const.attack_table, mob.dam_type)
-        area, mob.armor[0] = game_utils.read_int(area)
-        area, mob.armor[1] = game_utils.read_int(area)
-        area, mob.armor[2] = game_utils.read_int(area)
-        area, mob.armor[3] = game_utils.read_int(area)
-        area = mob.off_flags.read_bits(area, default=mob.race.off)
-        area = mob.imm_flags.read_bits(area, default=mob.race.imm)
-        area = mob.res_flags.read_bits(area, default=mob.race.res)
-        area = mob.vuln_flags.read_bits(area, default=mob.race.vuln)
-        area, mob.start_pos = game_utils.read_word(area, False)
-        area, mob.default_pos = game_utils.read_word(area, False)
-        mob.start_pos = state_checks.name_lookup(tables.position_table, mob.start_pos, 'short_name')
-        mob.default_pos = state_checks.name_lookup(tables.position_table, mob.default_pos, 'short_name')
+        area, npc.dam_dice[2] = game_utils.read_int(area)
+        area, npc.dam_type = game_utils.read_word(area, False)
+        npc.dam_type = state_checks.name_lookup(const.attack_table, npc.dam_type)
+        area, npc.armor[0] = game_utils.read_int(area)
+        area, npc.armor[1] = game_utils.read_int(area)
+        area, npc.armor[2] = game_utils.read_int(area)
+        area, npc.armor[3] = game_utils.read_int(area)
+        area = npc.off_flags.read_bits(area, default=npc.race.off)
+        area = npc.imm_flags.read_bits(area, default=npc.race.imm)
+        area = npc.res_flags.read_bits(area, default=npc.race.res)
+        area = npc.vuln_flags.read_bits(area, default=npc.race.vuln)
+        area, npc.start_pos = game_utils.read_word(area, False)
+        area, npc.default_pos = game_utils.read_word(area, False)
+        npc.start_pos = state_checks.name_lookup(tables.position_table, npc.start_pos, 'short_name')
+        npc.default_pos = state_checks.name_lookup(tables.position_table, npc.default_pos, 'short_name')
         area, sex = game_utils.read_word(area, False)
-        mob.sex = state_checks.value_lookup(tables.sex_table, sex)
-        area, mob.wealth = game_utils.read_int(area)
-        area = mob.form.read_bits(area, default=mob.race.form)
-        area = mob.parts.read_bits(area, default=mob.race.parts)
-        area, mob.size = game_utils.read_word(area, False)
-        area, mob.material = game_utils.read_word(area, False)
+        npc.sex = state_checks.value_lookup(tables.sex_table, sex)
+        area, npc.wealth = game_utils.read_int(area)
+        area = npc.form.read_bits(area, default=npc.race.form)
+        area = npc.parts.read_bits(area, default=npc.race.parts)
+        area, npc.size = game_utils.read_word(area, False)
+        area, npc.material = game_utils.read_word(area, False)
         area, w = game_utils.read_word(area, False)
-        mob.size = tables.size_table.index(mob.size)
+        npc.size = tables.size_table.index(npc.size)
         while w == 'F':
             area, word = game_utils.read_word(area, False)
             area, vector = game_utils.read_flags(area)
@@ -375,7 +373,8 @@ def load_rooms(area, pArea):
         area, w = game_utils.read_word(area, False)
         w = w[1:]  # strip the pound
         # Create our instances
-        object_creator.create_room(room)
+        room_instance = object_creator.create_room(room)
+        room_instance.environment = pArea.instance_id
     return area
 
 

@@ -23,7 +23,7 @@ def do_compare(ch, argument):
         return
     obj2 = None
     if not arg2:
-        for obj2 in ch.contents:
+        for obj2 in ch.inventory:
             if obj2.equipped_to and ch.can_see_item(obj2) and obj1.item_type == obj2.item_type \
                     and (obj1.equips_to & obj2.equips_to & ~merc.ITEM_TAKE) != 0:
                 break

@@ -31,9 +31,9 @@ def clone_room(parent, clone):
         return
     '''Clone a room, minus contents and exits'''
     clone = handler_room.Room(parent)
-    clone.contents = None
+    clone.inventory = None
     clone.people = None
-    clone.contents = []
+    clone.inventory = []
     clone.people = []
 
 
@@ -322,14 +322,17 @@ def clone_mobile(parent, clone):
 
 
 # * Create an instance of an object.
-def create_item(item_template, level):
+def create_item(item_template, level, prev_instance_id: int=None):
     if not item_template:
         logger.critical("Create_object: No objTemplate.")
         sys.exit(1)
 
     item = handler_item.Items()
     item.__dict__.update(item_template.__dict__)
-    item.instancer()
+    if not prev_instance_id:
+        item.instancer()
+    else:
+        item.instance_id = prev_instance_id
     item.instance_setup()
     item.enchanted = False
 

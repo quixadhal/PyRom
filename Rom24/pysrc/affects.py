@@ -109,7 +109,7 @@ class Affects:
                     self.vuln_flags.set_bit(vector)
                 return
 
-        for item_id in self.contents:
+        for item_id in self.inventory:
             item = merc.items[item_id]
             if not item.equipped_to:
                 continue
@@ -126,7 +126,7 @@ class Affects:
                     return
             if item.enchanted:
                 continue
-            for paf in item.pIndexData.affected:
+            for paf in merc.itemTemplate[item.vnum].affected:
                 if paf.where == where and paf.bitvector == vector:
                     if where == merc.TO_AFFECTS:
                         self.affected_by.set_bit(vector)
@@ -220,17 +220,16 @@ class Affects:
         #
         # * Check for weapon wielding.
         # * Guard against recursion (for weapons with affects).
-        wield = self.get_eq('main_hand')
+        wield = self.slots.main_hand
         if not self.is_npc() and wield \
                 and wield.get_weight() > (const.str_app[self.stat(merc.STAT_STR)].wield * 10):
             global depth
-
             if depth == 0:
                 depth += 1
                 handler_game.act("You drop $p.", self, wield, None, merc.TO_CHAR)
                 handler_game.act("$n drops $p.", self, wield, None, merc.TO_ROOM)
-                wield.from_environment()
-                wield.to_environment(self.in_room)
+                self.get(wield)
+                self.in_room.put(wield)
                 depth -= 1
         return
 

@@ -16,23 +16,23 @@ def do_owhere(ch, argument):
     if not argument:
         ch.send("Find what?\n")
         return
-    for obj in merc.object_list:
-        if not ch.can_see_item(obj) or not game_utils.is_name(argument, obj.name) or ch.level < obj.level:
+    for item in merc.items.values():
+        if not ch.can_see_item(item) or not game_utils.is_name(argument, item.name) or ch.level < item.level:
             continue
         found = True
         number += 1
-        in_item = obj.in_item
-        while in_item.in_item:
-            in_item = in_item.in_item
+        content = item.in_item
+        while content.in_item:
+            content = content.in_item
 
-        if in_item.in_living and ch.can_see(in_item.in_living) and in_item.in_living.in_room:
+        if content.in_living and ch.can_see(content.in_living) and content.in_living.in_room:
             ch.send("%3d) %s is carried by %s [[Room %d]]\n" % (
-                number, obj.short_descr, state_checks.PERS(in_item.in_living, ch), in_item.in_living.in_room.vnum ))
-        elif in_item.in_room and ch.can_see_room(in_item.in_room):
+                number, item.short_descr, state_checks.PERS(content.in_living, ch), content.in_living.in_room.vnum ))
+        elif content.in_room and ch.can_see_room(content.in_room):
             ch.send("%3d) %s is in %s [[Room %d]]\n" % (
-                number, obj.short_descr, in_item.in_room.name, in_item.in_room.vnum))
+                number, item.short_descr, content.in_room.name, content.in_room.vnum))
         else:
-            ch.send("%3d) %s is somewhere\n" % (number, obj.short_descr))
+            ch.send("%3d) %s is somewhere\n" % (number, item.short_descr))
 
         if number >= max_found:
             break

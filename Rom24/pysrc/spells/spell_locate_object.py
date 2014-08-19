@@ -11,15 +11,15 @@ def spell_locate_object(sn, level, ch, victim, target):
     number = 0
     max_found = 200 if ch.is_immortal() else 2 * level
 
-    for obj in merc.object_list:
-        if not ch.can_see_item(obj) or not game_utils.is_name(handler_magic.target_name, obj.name) \
-                or state_checks.is_item_stat(obj, merc.ITEM_NOLOCATE) or random.randint(1, 99) > 2 * level \
-                or ch.level < obj.level:
+    for item in merc.items.values():
+        if not ch.can_see_item(item) or not game_utils.is_name(handler_magic.target_name, item.name) \
+                or item.flags.no_locate or random.randint(1, 99) > 2 * level \
+                or ch.level < item.level:
             continue
 
         found = True
-        number = number + 1
-        in_item = obj
+        number += 1
+        in_item = item
         while in_item.in_item:
             in_item = in_item.in_item
 
@@ -27,9 +27,9 @@ def spell_locate_object(sn, level, ch, victim, target):
             ch.send("one is carried by %s\n" % state_checks.PERS(in_item.in_living, ch))
         else:
             if ch.is_immortal() and in_item.in_room is not None:
-                ch.send("one is in %s [[Room %d]]\n" % (in_item.in_room.name, in_item.in_room.vnum))
+                ch.send("one is in %s [[Room %d]]\n" % (in_item.in_room.name, in_item.in_room.instance_id))
             else:
-                ch.send("one is in %s\n" % ( "somewhere" if in_item.in_room == None else in_item.in_room.name ))
+                ch.send("one is in %s\n" % ("somewhere" if not in_item.in_room else in_item.in_room.name))
 
         if number >= max_found:
             break

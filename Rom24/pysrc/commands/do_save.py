@@ -11,7 +11,8 @@ import state_checks
 def do_save(ch, argument):
     if ch.is_npc():
         return
-    save.save_char_obj(ch)
+    #save.save_char_obj(ch)
+    ch.save()
     ch.send("Saving. Remember that ROM has automatic saving now.\n")
     state_checks.WAIT_STATE(ch, 4 * merc.PULSE_VIOLENCE)
     return

@@ -248,4 +248,6 @@ class Instancer:
 
     def instancer(self):
         merc.instance_number += 1
+        if merc.global_instances.get(merc.instance_number, None):
+            raise ValueError('houston we have a problem - instance number already in global instances')
         self.instance_id = merc.instance_number

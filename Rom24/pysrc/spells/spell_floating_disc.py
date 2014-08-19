@@ -8,8 +8,8 @@ import state_checks
 
 
 def spell_floating_disc(sn, level, ch, victim, target):
-    floating = ch.get_eq('float')
-    if floating and state_checks.is_item_stat(floating, merc.ITEM_NOREMOVE):
+    floating = ch.slots.float
+    if floating and floating.flags.no_remove:
         handler_game.act("You can't remove $p.", ch, floating, None, merc.TO_CHAR)
         return
 
@@ -20,7 +20,7 @@ def spell_floating_disc(sn, level, ch, victim, target):
 
     handler_game.act("$n has created a floating black disc.", ch, None, None, merc.TO_ROOM)
     ch.send("You create a floating disc.\n")
-    disc.to_environment(ch)
+    ch.put(disc)
     ch.equip(disc, True, True)
 
 

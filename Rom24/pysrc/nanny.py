@@ -31,17 +31,14 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
+import hashlib
 import logging
-
-import object_creator
-from world_classes import Gen
-
+import world_classes
 
 logger = logging.getLogger()
 
-import hashlib
 import const
-
+import object_creator
 import game_utils
 import handler_game
 import comm
@@ -49,6 +46,8 @@ import merc
 import save
 import settings
 import state_checks
+
+ch_selections = {}
 
 
 def licheck(c):
@@ -167,13 +166,14 @@ def con_confirm_new_password(self):
     ch.desc.password_mode_off()
     ch.send("The following races are available:\n  ")
     for race in const.pc_race_table:
-        ch.send("%s " % const.race_table[race].name )
+        ch.send("%s " % const.race_table[race].name)
         
     ch.send("\nWhat is your race (help for more information)? ")
     self.set_connected(con_get_new_race)
 
 
 def con_get_new_race(self):
+    global ch_selections
     argument = self.get_command().lower()
     ch = self.character
     if argument.startswith("help"):
@@ -196,6 +196,7 @@ def con_get_new_race(self):
         return
     
     ch.race = const.race_table[race.name]
+    ch_selections['race'] = race.name
     #initialize stats */
     for i in range(merc.MAX_STATS):
         ch.perm_stat[i] = race.stats[i]
@@ -252,6 +253,7 @@ def con_get_new_class(self):
         return
 
     ch.guild = guild
+    ch_selections['guild'] = guild
 
     log_buf = "%s@%s new player." % (ch.name, self.addrport())
     logger.info(log_buf)
@@ -295,7 +297,7 @@ def con_default_choice(self):
 
     ch.send("\n")
     if argument == 'y':
-        ch.gen_data = Gen()
+        ch.gen_data = world_classes.Gen()
         ch.gen_data.points_chosen = ch.points
         ch.do_help("group header")
         ch.list_group_costs()
@@ -332,6 +334,7 @@ def con_pick_weapon(self):
         return
 
     ch.learned[weapon.gsn] = 40
+    ch_selections['weapon'] = weapon.gsn
     ch.do_help("motd")
     self.set_connected(con_read_motd)
 
@@ -512,20 +515,25 @@ def con_read_motd(self):
         ch.practice = 5
         buf = "the %s" % const.title_table[ch.guild.name][ch.level][ch.sex - 1]
         ch.title = buf
-
-        ch.do_outfit("")
-        object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_MAP], 0).to_environment(ch)
-        ch.to_environment(merc.instances_by_room[merc.ROOM_VNUM_SCHOOL][0])
+        ch.do_outfit(ch_selections['weapon'])
+        ch.put(object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_MAP], 0))
+        school_id = merc.instances_by_room[merc.ROOM_VNUM_SCHOOL][0]
+        school = merc.rooms[school_id]
+        school.put(ch)
         ch.do_help("newbie info")
 
-    elif ch.in_room:
-        ch.to_environment(ch.in_room)
-    elif ch.is_immortal():
-        to_instance = merc.instances_by_room[merc.ROOM_VNUM_CHAT][0]
-        ch.to_environment(to_instance)
+    if ch._environment in merc.global_instances.keys() and not ch.level == 0:
+        room = merc.global_instances.get(ch._environment, None)
+        if room:
+            room.put(ch)
+    elif ch.is_immortal() and not ch.level == 0:
+        to_instance_id = merc.instances_by_room[merc.ROOM_VNUM_CHAT][0]
+        to_instance = merc.rooms[to_instance_id]
+        to_instance.put(ch)
     else:
-        to_instance = merc.instances_by_room[merc.ROOM_VNUM_TEMPLE][0]
-        ch.to_environment(to_instance)
+        to_instance_id = merc.instances_by_room[merc.ROOM_VNUM_TEMPLE][0]
+        to_instance = merc.rooms[to_instance_id]
+        to_instance.put(ch)
 
     handler_game.act("$n has entered the game.", ch, None, None, merc.TO_ROOM)
     ch.do_look("auto")
@@ -534,7 +542,7 @@ def con_read_motd(self):
 
     handler_game.wiznet("$N has left real life behind.", ch, None, merc.WIZ_LOGINS, merc.WIZ_SITES, ch.trust)
     if ch.pet:
-        ch.pet.to_environment(ch.in_room_instance)
+        ch.in_room.put(ch.pet)
         handler_game.act("$n has entered the game.", ch.pet, None, None, merc.TO_ROOM)
 
 

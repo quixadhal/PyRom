@@ -26,7 +26,7 @@ def spell_portal(sn, level, ch, victim, target):
         ch.send("You failed.\n")
         return
 
-    stone = ch.get_eq('held')
+    stone = ch.slots.held
     if not ch.is_immortal() and (stone is None or stone.item_type != merc.ITEM_WARP_STONE):
         ch.send("You lack the proper component for this spell.\n")
         return
@@ -34,13 +34,15 @@ def spell_portal(sn, level, ch, victim, target):
     if stone and stone.item_type == merc.ITEM_WARP_STONE:
         handler_game.act("You draw upon the power of $p.", ch, stone, None, merc.TO_CHAR)
         handler_game.act("It flares brightly and vanishes! ", ch, stone, None, merc.TO_CHAR)
+        ch.unequip(stone.equipped_to)
+        ch.get(stone)
         stone.extract()
 
     portal = object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_PORTAL], 0)
     portal.timer = 2 + level // 25
-    portal.value[3] = victim.in_room.vnum
+    portal.value[3] = victim.in_room.instance_id
 
-    portal.to_environment(ch.in_room)
+    ch.in_room.put(portal)
 
     handler_game.act("$p rises up from the ground.", ch, portal, None, merc.TO_ROOM)
     handler_game.act("$p rises up before you.", ch, portal, None, merc.TO_CHAR)
