@@ -1,35 +1,26 @@
 """
-/***************************************************************************
- *  Original Diku Mud copyright (C) 1990, 1991 by Sebastian Hammer,        *
- *  Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
- *                                                                         *
- *  Merc Diku Mud improvments copyright (C) 1992, 1993 by Michael          *
- *  Chastain, Michael Quan, and Mitchell Tse.                              *
- *                                                                         *
- *  In order to use any part of this Merc Diku Mud, you must comply with   *
- *  both the original Diku license in 'license.doc' as well the Merc       *
- *  license in 'license.txt'.  In particular, you may not remove either of *
- *  these copyright notices.                                               *
- *                                                                         *
- *  Much time and thought has gone into this software and you are          *
- *  benefitting.  We hope that you share your changes too.  What goes      *
- *  around, comes around.                                                  *
- ***************************************************************************/
+The code in this module is NOT subject to the DikuMUD, Merc, or ROM licenses.
+It is, instead, released under the MIT License, as follows.
 
-/***************************************************************************
-*   ROM 2.4 is copyright 1993-1998 Russ Taylor                             *
-*   ROM has been brought to you by the ROM consortium                      *
-*       Russ Taylor (rtaylor@hypercube.org)                                *
-*       Gabrielle Taylor (gtaylor@hypercube.org)                           *
-*       Brian Moore (zump@rom.org)                                         *
-*   By using this code, you have agreed to follow the terms of the         *
-*   ROM license, in the file Rom24/doc/rom.license                         *
-***************************************************************************/
-/************
- * Ported to Python by Davion of MudBytes.net
- * Using Miniboa https://code.google.com/p/miniboa/
- * Now using Python 3 version https://code.google.com/p/miniboa-py3/
- ************/
+Copyright (c) 2014 Chris Meshkin
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 """
 __author__ = 'quixadhal'
 
@@ -146,7 +137,6 @@ class TwoFactorAuth:
         token = self._raw_secret.lower()
         return '-'.join((token[0:4], token[4:8], token[8:12], token[12:16]))
 
-
     @secret.setter
     def secret(self, s: str):
         """
@@ -162,7 +152,6 @@ class TwoFactorAuth:
         self._raw_secret = s.upper().rjust(16, 'A')[0:16]
         self._secret = base64.b32decode(self._raw_secret.encode())
 
-
     def __repr__(self):
         """
         A printable format of the object's initial value, for use in saving and restoring.
@@ -171,6 +160,47 @@ class TwoFactorAuth:
         :rtype: str
         """
         return json.dumps(self, default=to_json)
+
+    def to_json(self, outer_encoder=None):
+        """
+        This method implements the serialization of a TwoFactorAuth() object
+        for the JSON module to use.
+
+        :param outer_encoder:
+        :type outer_encoder:
+        :return: JSON serialization
+        :rtype: str
+        """
+        if outer_encoder is None:
+            outer_encoder = json.JSONEncoder.default
+
+        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        return {
+            cls_name: {
+                'secret': outer_encoder(self._raw_secret),
+            }
+        }
+
+    @classmethod
+    def from_json(cls, data, outer_decoder=None):
+        """
+        This class method implements turning a JSON serialization of the data
+        from a TwoFactorAuth() class back into an actual TwoFactorAuth() object.
+
+        :param data:
+        :type data:
+        :param outer_decoder:
+        :type outer_decoder:
+        :return: TwoFactorAuth() object or unrecognized data
+        :rtype:
+        """
+        if outer_decoder is None:
+            outer_decoder = json.JSONDecoder.decode
+
+        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        if cls_name in data:
+            return cls(s=outer_decoder(data[cls_name]['secret']))
+        return data
 
 
 def random_base32_token(length: int=16, rng=random.SystemRandom(),
@@ -190,42 +220,3 @@ def random_base32_token(length: int=16, rng=random.SystemRandom(),
     """
     token = ''.join(rng.choice(charset) for i in range(length))
     return '-'.join((token[0:4], token[4:8], token[8:12], token[12:16]))
-
-def to_json(self: TwoFactorAuth):
-    """
-    A TwoFactorAuth object can be serialized to JSON by
-    js = json.dumps(obj, default=auth.to_json)
-
-    :param self: The object to be serialized
-    :type self: TwoFactorAuth
-    :return: A dictionary of the object's data
-    :rtype: dict
-    """
-    if isinstance(self, TwoFactorAuth):
-        return {'__TwoFactorAuth__': True, 'secret': self._raw_secret}
-    raise TypeError(repr(self) + " is not JSON serializable")
-
-def from_json(self: str):
-    """
-    A TwoFactorAuth() object can be reconstructed from JSON data by
-    obj = json.loads(js, object_pairs_hook=auth.from_json)
-
-    :param self: JSON data
-    :type self: str
-    :return: A TwoFactorAuth object
-    :rtype: TwoFactorAuth
-    """
-    ok = False
-    for i in self:
-        if i[0] == '__TwoFactorAuth__':
-            ok = True
-    if ok:
-        for i in self:
-            if i[0] == '__TwoFactorAuth__':
-                continue
-            elif i[0] == 'secret':
-                obj = TwoFactorAuth(i[1])
-                return obj
-            else:
-                raise TypeError(repr(self) + " is not a valid TwoFactorAuth serialization")
-    return self

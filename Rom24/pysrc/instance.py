@@ -60,7 +60,10 @@ def isnamedtuple(obj):
     :return: True if obj is a namedtuple
     :rtype: bool
     """
-    return isinstance(obj, tuple) and hasattr(obj, '_fields') and hasattr(obj, '_asdict') and callable(obj._asdict)
+    return isinstance(obj, tuple) and \
+           hasattr(obj, '_fields') and \
+           hasattr(obj, '_asdict') and \
+           callable(obj._asdict)
 
 
 def to_json(data):
