@@ -26,6 +26,8 @@ class Pc(living.Living):
         self.buffer = None
         self.valid = False
         self.pwd = ""
+        #TODO: RemoveDebug
+        self.trust = 60
         self.auth = None
         self.failed_attempts = 0
         self.bamfin = ""
@@ -459,6 +461,7 @@ class Pc(living.Living):
                     handler_game.act("$n slaps you.", victim, None, ch, merc.TO_VICT)
         return True
 
+    #TODO: RemoveDebug
     @handler_log.logged("Interp")
     def interpret(self, argument):
 

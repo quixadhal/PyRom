@@ -133,6 +133,7 @@ greeting_list = []
 shop_list = []
 social_list = []
 
+#TODO: RemoveDebug - switch to false
 GDCF = True
 GDF = True
 

@@ -57,14 +57,14 @@ import state_checks
 
 ''' Equipment Slot Strings - for use with displaying EQ to characters '''
 
-eq_slot_strings = collections.OrderedDict([('light', '[[Light Source]]         :  '),
-                                           ('left_finger', '[[Worn on Left Finger]]   :  '),
+eq_slot_strings = collections.OrderedDict([('light',        '[[Light Source]]         :  '),
+                                           ('left_finger',  '[[Worn on Left Finger]]   :  '),
                                            ('right_finger', '[[Worn on Right Finger]]  :  '),
-                                           ('neck', '[[Worn around Neck]]     :  '),
-                                           ('collar', '[[Worn around Collar]]     :  '),
-                                           ('body', '[[Worn on Torso]]        :  '),
-                                           ('head', '[[Worn on Head]]        :  '),
-                                           ('legs', '[[Worn on Legs]]        :  '),
+                                           ('neck',         '[[Worn around Neck]]     :  '),
+                                           ('collar',       '[[Worn around Collar]]     :  '),
+                                           ('body',         '[[Worn on Torso]]        :  '),
+                                           ('head',         '[[Worn on Head]]        :  '),
+                                           ('legs',         '[[Worn on Legs]]        :  '),
                                            ('feet', '[[Worn on Feet]]        :  '),
                                            ('hands', '[[Worn on Hands]]       :  '),
                                            ('arms', '[[Worn on Arms]]        :  '),
