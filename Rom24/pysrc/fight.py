@@ -484,7 +484,7 @@ def damage(ch, victim, dam, dt, dam_type, show):
         logger.warn("BUG: Damage: %d: more than 1200 points!", dam)
         dam = 1200
         if not ch.is_immortal():
-            item = ch.get_eq('main_hand')
+            item = ch.slots.main_hand
             ch.send("You really shouldn't cheat.\n")
             if item:
                 item.extract()

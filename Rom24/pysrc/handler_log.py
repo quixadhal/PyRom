@@ -42,7 +42,6 @@ import inspect
 
 import merc
 import pc
-import interp
 
 """So far this wrapper class will allow debugging of a function as such:
 @logger("Debug")
@@ -66,6 +65,7 @@ class GlobalDebugFlag:
         return
 
 def value_to_str(v):
+    import interp
     if isinstance(v, pc.Pc):
         return v.name
     elif isinstance(v, interp.cmd_type):

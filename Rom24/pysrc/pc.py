@@ -3,6 +3,7 @@ import random
 import time
 import json
 import logging
+import handler_log
 
 logger = logging.getLogger()
 
@@ -458,7 +459,7 @@ class Pc(living.Living):
                     handler_game.act("$n slaps you.", victim, None, ch, merc.TO_VICT)
         return True
 
-    #@handler_log.logged("Interp")
+    @handler_log.logged("Interp")
     def interpret(self, argument):
 
         # Strip leading spaces.

@@ -584,7 +584,7 @@ def get_item(ch, item, this_container):
         if this_container.vnum == merc.OBJ_VNUM_PIT and ch.trust < item.level:
             ch.send("You are not powerful enough to use it.\n")
             return
-        if this_container.vnum == merc.OBJ_VNUM_PIT and not item.flags.take and not item.flags.had_timer:
+        elif this_container.vnum == merc.OBJ_VNUM_PIT and item.flags.take and item.flags.had_timer:
             item.timer = 0
             handler_game.act("You get $p from $P.", ch, item, this_container, merc.TO_CHAR)
             handler_game.act("$n gets $p from $P.", ch, item, this_container, merc.TO_ROOM)
