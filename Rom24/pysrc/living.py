@@ -34,11 +34,11 @@
 import collections
 import random
 import logging
-import equipment
 
 logger = logging.getLogger()
 
 import merc
+import equipment
 import instance
 import type_bypass
 import inventory
@@ -291,12 +291,11 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         self.alignment = 0
         self.desc = None
         self.slots = equipment.Equipped()
-        self._equipped = self.slots._equipped
 
     @property
     def equipped(self):
         if self.is_living:
-            return self._equipped
+            return self.slots._equipped
         else:
             return None
 
@@ -331,7 +330,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             self.carry_number -= instance_object.get_number()
             self.carry_weight -= instance_object.get_weight()
             instance_object.environment = None
-            return
+            return instance_object
         elif instance_object.is_item and instance_object.instance_id in self.equipped.values():
             raise KeyError('Item is in equipped dict, not inventory! %d' % instance_object.instance_id)
         else:
@@ -340,15 +339,15 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                                 'to be removed from character object - %s' % type(instance_object))
 
     def put(self, instance_object):
-        if instance_object.is_item:
-            self.inventory += [instance_object.instance_id]
-            instance_object.environment = self.instance_id
-            if not instance_object.instance_id in self.equipped.values():
-                self.carry_number += instance_object.get_number()
-                self.carry_weight += instance_object.get_weight()
-            else:
-                raise KeyError('Item is in equipped dict, run, screaming! %d' % instance_object.instance_id)
-        return
+        #if instance_object.is_item:
+        self.inventory += [instance_object.instance_id]
+        instance_object.environment = self.instance_id
+        if not instance_object.instance_id in self.equipped.values():
+            self.carry_number += instance_object.get_number()
+            self.carry_weight += instance_object.get_weight()
+            return instance_object
+        else:
+            raise KeyError('Item is in equipped dict, run, screaming! %d' % instance_object.instance_id)
 
 
     def send(self, pstr):
@@ -659,9 +658,14 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         #    die_follower( ch )
         fight.stop_fighting(self, True)
 
-        for item_id in self.inventory[:]:
-            item = merc.items[item_id]
+        for item_id in self.inventory:
+            item = merc.global_instances[item_id]
             item.extract()
+
+        for equip_id in self.equipped.values():
+            if equip_id:
+                equip = merc.global_instances[equip_id]
+                equip.extract()
 
         if self.in_room:
             self.in_room.get(self)
@@ -767,8 +771,12 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             if item_id:
                 item = merc.items[item_id]
                 if ch.can_see_item(item) and game_utils.is_name(arg, item.name.lower()):
+                    #print('inside')
                     count += 1
                     if count == number:
+                        #print(item.name, '\n')
+                        #print(item.instance_id, '\n')
+                        #print(ch.equipped['main_hand'])
                         return item
             else:
                 continue
@@ -936,7 +944,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         if not self:
             return None
         found = False
-        if self.equipped[check_loc]:
+        if self.equipped.get(check_loc, None):
             found = True
         if not found:
             return None

@@ -10,23 +10,19 @@ class ItemFlags:
     def __init__(self, et_data: set=None, iaf_data: set=None, ir_data: set=None, wa_data: set=None):
         self._equips_to = set({})
         if et_data:
-            for k in et_data:
-                self._equips_to |= set(k)
+            self._equips_to |= set(et_data)
 
         self._item_attributes = set({})
         if iaf_data:
-            for k in iaf_data:
-                self._item_attributes |= set(k)
+            self._item_attributes |= set(iaf_data)
 
         self._item_restrictions = set({})
         if ir_data:
-            for k in ir_data:
-                self._item_restrictions |= set(k)
+            self._item_restrictions |= set(ir_data)
 
         self._weapon_attributes = set({})
         if wa_data:
-            for k in wa_data:
-                self._weapon_attributes |= set(k)
+            self._weapon_attributes |= set(wa_data)
 
     @property
     def head(self):
@@ -728,6 +724,19 @@ class ItemFlags:
             self._item_restrictions -= {func_name}
 
     @property
+    def no_sac(self):
+        func_name = sys._getframe().f_code.co_name
+        return func_name if func_name in self._item_restrictions else False
+
+    @no_sac.setter
+    def no_sac(self, has_restr):
+        func_name = sys._getframe().f_code.co_name
+        if has_restr:
+            self._item_restrictions |= {func_name}
+        else:
+            self._item_restrictions -= {func_name}
+
+    @property
     def no_remove(self):
         """
        TODO: write documentation
@@ -1095,5 +1104,5 @@ class ItemFlags:
             return cls(et_data=outer_decoder(data[cls_name]['equips_to']),
                        iaf_data=outer_decoder(data[cls_name]['item_attributes']),
                        ir_data=outer_decoder(data[cls_name]['item_restrictions']),
-                       wa_data=outer_decoder(data[cls_name]['weapon_restrictions']))
+                       wa_data=outer_decoder(data[cls_name]['weapon_attributes']))
         return data

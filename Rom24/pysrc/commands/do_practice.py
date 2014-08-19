@@ -48,7 +48,6 @@ def do_practice(ch, argument):
             ch.send("You have no practice sessions left.\n")
             return
         skill = state_checks.prefix_lookup(const.skill_table, argument)
-        print(locals())
         if not skill or not ch.is_npc() \
                 and (ch.level < skill.skill_level[ch.guild.name] or ch.learned[skill.name] < 1 \
                              or skill.rating[ch.guild.name] == 0):

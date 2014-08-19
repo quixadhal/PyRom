@@ -96,7 +96,7 @@ class Room(instance.Instancer, environment.Environment, inventory.Inventory, typ
         except:
             pass
         instance_object.environment = self.instance_id
-        return
+        return instance_object
 
     def get(self, instance_object):
         if instance_object.instance_id in self.inventory:
@@ -121,7 +121,7 @@ class Room(instance.Instancer, environment.Environment, inventory.Inventory, typ
             self.carry_weight -= instance_object.get_weight()
         except:
             pass
-        return
+        return instance_object
 
     def instance_setup(self):
         merc.global_instances[self.instance_id] = self
@@ -181,7 +181,6 @@ def number_door(self=None):
     return random.randint(0, 5)
 
 def find_door(ch, arg):
-    print(arg)
     if arg == "n" or arg == "north":
         door = 0
     elif arg == "e" or arg == "east":
@@ -197,15 +196,12 @@ def find_door(ch, arg):
     else:
         for door in range(0, 5):
             pexit = ch.in_room.exit[door]
-            print(pexit)
             if pexit and pexit.exit_info.is_set(merc.EX_ISDOOR) and pexit.keyword \
                     and arg in pexit.keyword:
                 return door
         handler_game.act("I see no $T here.", ch, None, arg, merc.TO_CHAR)
         return -1
     pexit = ch.in_room.exit[door]
-    print(pexit)
-    print(pexit.exit_info)
     if not pexit:
         handler_game.act("I see no door $T here.", ch, None, arg, merc.TO_CHAR)
         return -1

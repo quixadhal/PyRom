@@ -156,7 +156,7 @@ class ExtraDescrData:
 
         cls_name = '__class__/' + __name__ + '.' + cls.__name__
         if cls_name in data:
-            return cls(outer_decoder(data))
+            return cls(outer_decoder(data[cls_name]))
         return data
 
 

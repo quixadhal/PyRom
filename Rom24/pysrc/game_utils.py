@@ -418,7 +418,7 @@ def number_fuzzy(number):
 
 def number_argument(argument):
     if not argument:
-        return 0, ""
+        return 1, ""
     if '.' not in argument:
         return 1, argument
     dot = argument.find('.')

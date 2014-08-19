@@ -77,6 +77,7 @@ equips_to_strings = {'left_finger': 'Left Finger',
                      'light': 'Light'}
 
 item_restriction_strings = {'no_drop': 'No Drop',
+                            'no_sac': 'No Sacrifice',
                             'no_remove': 'No Remove',
                             'no_uncurse': 'No Uncurse',
                             'no_purge': 'No Purge',
@@ -140,11 +141,10 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         self._restriction_names = item_restriction_strings
         self._item_attribute_names = item_attribute_strings
         self._weapon_attribute_names = weapon_attribute_strings
+        self.player_name = ''
         if kwargs:
             [setattr(self, k, v) for k, v in kwargs.items()]
             self.instance_setup()
-            if self.inventory:
-                self.load_inventory(kwargs['player'])
 
 
     #def __del__(self):
@@ -321,7 +321,7 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
             self.carry_number -= instance_object.get_number()
             self.carry_weight -= instance_object.get_weight() * state_checks.WEIGHT_MULT(self) // 100
             instance_object.environment = None
-            return
+            return instance_object
         else:
             raise KeyError('Item to be removed from Item, not in inventory %d' % instance_object.instance_id)
 
@@ -331,7 +331,7 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
             self.carry_weight += instance_object.get_weight() * state_checks.WEIGHT_MULT(self) // 100
             self.carry_number += instance_object.get_number()
             instance_object.environment = self.instance_id
-            return
+            return instance_object
         else:
             raise KeyError('Item to be added to Item, already in inventory or wrong type '
                            '%d, %r' % (instance_object.instance_id, type(instance_object)))
@@ -484,7 +484,7 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
 
         cls_name = '__class__/' + __name__ + '.' + cls.__name__
         if cls_name in data:
-            tmp_data = outer_decoder(data)
+            tmp_data = outer_decoder(data[cls_name])
             if player_name:
                 tmp_data['player'] = player_name
             return cls(**tmp_data)
@@ -499,13 +499,13 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
             filename = os.path.join(settings.INSTANCE_DIR, '%d.json' % self.instance_id)
         else:
             pathname = os.path.join(settings.PLAYER_DIR, player_name[0].capitalize(), player_name.capitalize())
-            final_path = pathname
+            finalpath = pathname
+            if is_equipped:
+                finalpath = os.path.join(pathname, 'equipment')
             if in_inventory:
-                final_path = os.path.join(pathname, 'inventory')
-            elif is_equipped:
-                final_path = os.path.join(pathname, 'equipment')
-            os.makedirs(final_path, 0o755, True)
-            filename = os.path.join(final_path, '%d.json' % self.instance_id)
+                finalpath = os.path.join(pathname, 'inventory')
+            os.makedirs(finalpath, 0o755, True)
+            filename = os.path.join(finalpath, '%d.json' % self.instance_id)
 
         js = json.dumps(self, default=instance.to_json, indent=4)
         with open(filename, 'w') as fp:
@@ -526,20 +526,21 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
 
         filename = ''
 
-        if player_name is None:
+        if not player_name:
             filename = os.path.join(settings.INSTANCE_DIR, '%d.json' % instance_id)
         else:
-            pathname = os.path.join(settings.PLAYER_DIR, player_name[0].capitalize())
+            pathname = os.path.join(settings.PLAYER_DIR, player_name[0].capitalize(), player_name.capitalize())
+            target_file = '%d.json' % instance_id
             for a_path, a_directory, i_files in os.walk(pathname):
-                for a_file in i_files:
-                    if str(instance_id) in a_file:
-                        filename = os.path.join(a_path, a_file)
+                if target_file in i_files:
+                    filename = os.path.join(a_path, target_file)
                     break
-
-        with open(filename, 'r') as fp:
+        with open(filename) as fp:
             jsobj = fp.read()
-        obj = json.loads(jsobj, object_hook=instance.from_json, player_name=player_name)
-
+        obj = json.loads(jsobj, object_hook=instance.from_json)
+        if player_name:
+            if obj.inventory:
+                obj.load_inventory(player_name)
         return obj
 
     def load_inventory(self, player_name: str=None):
@@ -656,7 +657,12 @@ def format_item_to_char(item, ch, fShort):
 
 # Count occurrences of an obj in a list.
 def count_obj_list(itemInstance, contents):
-    return len([item_id for item_id in contents if merc.items[item_id].name == itemInstance.name])
+    count = 0
+    for item_id in contents:
+        if item_id:
+            if merc.items[item_id].name == itemInstance.name:
+                count += 1
+    return count
 
 
 # for clone, to insure that cloning goes many levels deep

@@ -13,14 +13,13 @@ def do_outfit(ch, argument):
         ch.send("Find it yourself!\n")
         return
 
-    logger.debug('In outfit..')
-
     item = ch.slots.light
     if not item:
         item = object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_SCHOOL_BANNER], 0)
         item.cost = 0
         ch.put(item)
         ch.equip(item, True, False)
+        item = None
 
     item = ch.slots.body
     if not item:
@@ -28,20 +27,19 @@ def do_outfit(ch, argument):
         item.cost = 0
         ch.put(item)
         ch.equip(item, True, False)
+        item = None
 
     # do the weapon thing
     item = ch.slots.main_hand
     if not item:
-        sn = 'dagger'
         vnum = merc.OBJ_VNUM_SCHOOL_SWORD  # just in case!
         for k, weapon in const.weapon_table.items():
-            if sn not in ch.learned or (
-                    weapon.gsn in ch.learned and ch.learned[sn] < ch.learned[weapon.gsn]):
-                sn = weapon.gsn
+            if argument in weapon.gsn:
                 vnum = weapon.vnum
         item = object_creator.create_item(merc.itemTemplate[vnum], 0)
         ch.put(item)
         ch.equip(item, True, False)
+        item = None
 
     item = ch.slots.main_hand
     shield = ch.slots.off_hand
@@ -50,6 +48,7 @@ def do_outfit(ch, argument):
         item.cost = 0
         ch.put(item)
         ch.equip(item, True, False)
+        item = None
 
     ch.send("You have been equipped by Mota.\n")
 

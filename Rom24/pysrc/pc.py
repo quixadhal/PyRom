@@ -20,6 +20,7 @@ import update
 
 class Pc(living.Living):
     def __init__(self, template=None, **kwargs):
+        import handler_item
         super().__init__()
         self.buffer = None
         self.valid = False
@@ -61,8 +62,11 @@ class Pc(living.Living):
             if kwargs:
                 [setattr(self, k, v) for k, v in kwargs.items()]
                 if self.inventory:
-                    self.load_inventory()
-                self.load_equipment()
+                    for instance_id in self.inventory:
+                        handler_item.Items.load(instance_id=instance_id, player_name=self.name)
+                for item_id in self.equipped.values():
+                    if item_id:
+                        handler_item.Items.load(instance_id=item_id, player_name=self.name)
             self.instance_setup()
 
     #def __del__(self):
@@ -549,7 +553,7 @@ class Pc(living.Living):
 
         cls_name = '__class__/' + __name__ + '.' + cls.__name__
         if cls_name in data:
-            tmp_data = outer_decoder(data)
+            tmp_data = outer_decoder(data[cls_name])
             return cls(**tmp_data)
         return data
 
@@ -584,7 +588,9 @@ class Pc(living.Living):
 
         filename = ''
 
-        pathname = os.path.join(settings.PLAYER_DIR, player_name[0].capitalize())
+        pathname = os.path.join(settings.PLAYER_DIR, player_name[0].capitalize(), player_name.capitalize())
+        if not os.path.isdir(pathname):
+            return None
         if not pathname:
             raise KeyError('Cannot find player %s' % player_name)
         for a_path, a_directory, i_files in os.walk(pathname):
@@ -592,27 +598,11 @@ class Pc(living.Living):
                 if player_name.capitalize() in a_file:
                     filename = os.path.join(a_path, a_file)
                     break
+        if os.path.isfile(filename):
+            with open(filename, 'r') as fp:
+                jsobj = fp.read()
 
-        with open(filename, 'r') as fp:
-            jsobj = fp.read()
-            obj = json.loads(jsobj, object_hook=instance.from_json)
-        return obj
-
-    def load_inventory(self):
-        import handler_item
-        for instance_id in self.inventory:
-            obj = handler_item.Items.load(instance_id=instance_id, player_name=self.name)
-            if not obj.is_item:
-                raise TypeError('Could not load instance %r!' % instance_id)
-
-    def load_equipment(self):
-        import handler_item
-        for item_id in self.equipped.values():
-            if item_id:
-                obj = handler_item.Items.load(instance_id=item_id, player_name=self.name)
-                if not obj.is_item:
-                    raise ReferenceError('Could not load instance!')
-
-
-
-
+                obj = json.loads(jsobj, object_hook=instance.from_json)
+            return obj
+        else:
+            return None

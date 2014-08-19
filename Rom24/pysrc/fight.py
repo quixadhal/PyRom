@@ -1124,6 +1124,8 @@ def group_gain(ch, victim):
         update.gain_exp(gch, xp)
         #equipment
         for item_id in ch.equipped.values():
+            if not item_id:
+                continue
             item = merc.items[item_id]
             if (item.flags.anti_evil and ch.is_evil()) or (item.flags.anti_good and ch.is_good()) \
                     or (item.flags.anti_neutral and ch.is_neutral()):

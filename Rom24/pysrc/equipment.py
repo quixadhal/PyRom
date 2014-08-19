@@ -1,12 +1,28 @@
 import sys
 import json
 import collections
+import gc
 import merc
 
 __author__ = 'syn'
 
-''' Char wear slots'''
-character_wear_slots = collections.OrderedDict([('light', None),
+class Equipment:
+    def __init__(self):
+        super().__init__()
+        self._equipped = None
+        self._equips_to = None
+        self._equipped_to = None
+
+    def equip(self, item, replace: bool=False, verbose: bool=True, verbose_all: bool=True, to_loc: str=None):
+        pass
+
+    def unequip(self, unequip_from, replace: bool=True):
+        pass
+
+
+class Equipped:
+    def __init__(self, equip_dict: dict=None):
+        self._equipped = collections.OrderedDict([('light', None),
                                                 ('left_finger', None),
                                                 ('right_finger', None),
                                                 ('neck', None),
@@ -25,25 +41,6 @@ character_wear_slots = collections.OrderedDict([('light', None),
                                                 ('off_hand', None),
                                                 ('held', None),
                                                 ('float', None)])
-
-
-class Equipment:
-    def __init__(self):
-        super().__init__()
-        self._equipped = None
-        self._equips_to = None
-        self._equipped_to = None
-
-    def equip(self, item, replace: bool=False, verbose: bool=True, verbose_all: bool=True, to_loc: str=None):
-        pass
-
-    def unequip(self, unequip_from, replace: bool=True):
-        pass
-
-
-class Equipped:
-    def __init__(self, equip_dict: dict=None):
-        self._equipped = character_wear_slots
         if equip_dict:
             for k, v in equip_dict.items():
                 self._equipped[k] = v

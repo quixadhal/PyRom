@@ -369,6 +369,8 @@ def show_char_to_char_1(victim, ch):
     ch.send(buf)
     handler_game.act("$N is using:", ch, None, victim, merc.TO_CHAR)
     for location, instance_id in victim.equipped.items():
+        if not instance_id:
+            continue
         item = merc.items[instance_id]
         if item and ch.can_see_item(item.instance_id):
             ch.send(victim.eq_slot_strings[location])
