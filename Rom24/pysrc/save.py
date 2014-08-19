@@ -43,49 +43,6 @@ def recursive_item_jsonify(item_to_json, inv_dir: str=None, equip_dir: str=None,
             return
 
 
-def save_char_obj(ch):
-    if ch.is_npc():
-        return
-
-    if ch.desc and ch.desc.original:
-        ch = ch.desc.original
-    #A Quick Quix fix!
-    os.makedirs(settings.PLAYER_DIR, 0o755, True)
-    os.makedirs(settings.PLAYER_DIR + "/" + ch.name, 0o755, True)
-    os.makedirs(settings.PLAYER_DIR + "/" + ch.name + "/" + 'equipped', 0o755, True)
-    os.makedirs(settings.PLAYER_DIR + "/" + ch.name + "/" + 'inventory', 0o755, True)
-    char_dir = os.path.join(settings.PLAYER_DIR, ch.name)
-    pfile = os.path.join(char_dir, ch.name + '.json')
-    inventory = os.path.join(char_dir, 'inventory')
-    equipped = os.path.join(char_dir, 'equipped')
-
-    if ch.equipped:
-        #fwrite['equipped'] = [fwrite_item(ch, merc.items[ins], None, loc) for loc, ins in ch.equipped.items() if ins]
-        for item_id in ch.equipped.values():
-            if item_id:
-                recursive_item_jsonify(merc.items[item_id], equip_dir=equipped, is_equipment=True)
-
-    if ch.inventory:
-        for item_id in ch.inventory:
-            recursive_item_jsonify(merc.items[item_id], inv_dir=inventory, is_in_inventory=True)
-        #fwrite['inventory'] = [fwrite_item(ch, merc.items[i]) for i in ch.inventory]
-
-    to_write = json.dumps(ch, default=instance.to_json, indent=4)
-    with open(pfile, 'w') as pf:
-        pf.write(to_write)
-
-#    if ( ch.inventory != NULL )
- #       fwrite_obj( ch, ch.inventory, fp, 0 );
- #   /* save the pets */
- #   if (ch.pet != NULL and ch.pet.in_room == ch.in_room)
- #       fwrite_pet(ch.pet,fp);
- #   chdict["#END\n" );
- ##   }
-  #  fclose( fp );
-  #  rename(TEMP_FILE,strsave);
-  #  fpReserve = fopen( NULL_FILE, "r" );
-
-
 def load_char_obj(d, name):
     #ch = handler_ch.CHAR_DATA()
     #ch.pcdata = handler_ch.PC_DATA()
@@ -101,6 +58,7 @@ def load_char_obj(d, name):
     return found, ch
     
 
+#unused
 def fwrite_char(ch):
     chdict = OrderedDict()
     chdict['instance_id'] = ch.instance_id
@@ -170,11 +128,11 @@ def fwrite_char(ch):
     chdict['inventory'] = ch.inventory
     return chdict
 
-
+#unused
 def get_if_diff(s1, s2):
     return s1 if s1 != s2 else s2
 
-
+#unused
 def fwrite_item(ch, item, contained_by=None, equip_loc=None):
     #TODO make this eq-ified
     odict = OrderedDict()
@@ -207,7 +165,7 @@ def fwrite_item(ch, item, contained_by=None, equip_loc=None):
         odict['inventory'] = [fwrite_item(ch, o, item) for o in item.inventory]
     return odict
 
-
+#unused
 def fread_char(chdict, ch):
     #instance_id is already set so is omitted
     ch.name = chdict['name']
@@ -273,7 +231,7 @@ def fread_char(chdict, ch):
         fread_items(ch, chdict['inventory'])
     return ch
 
-
+#unused
 def fread_items(contents, objects, contained_by=None):
     for odict in objects:
         item = fread_item(contents, odict)
@@ -287,7 +245,7 @@ def fread_items(contents, objects, contained_by=None):
         if 'inventory' in odict:
             fread_items(contents, odict['inventory'], item)
 
-
+#unused
 def fread_item(contents, odict):
     item = object_creator.create_item(itemTemplate[odict['Vnum']], odict['Lev'], odict['instance_id'])
     item.enchanted = odict['Enchanted']

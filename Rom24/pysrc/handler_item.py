@@ -441,15 +441,15 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
     # Extract an obj from the world.
     def extract(self):
         if self.environment:
-            self.environment.get(self)
-
-        for item_id in self.inventory[:]:
-            if self.instance_id not in merc.items:
-                logger.error("Extract_obj: obj %d not found in obj_instance dict." % self.instance_id)
-                return
-            tmp = merc.items[item_id]
-            self.get(tmp)
-            tmp.extract()
+            if not self.in_living:
+                self.environment.get(self)
+                for item_id in self.inventory[:]:
+                    if self.instance_id not in merc.items:
+                        logger.error("Extract_obj: obj %d not found in obj_instance dict." % self.instance_id)
+                        return
+                    tmp = merc.items[item_id]
+                    self.get(tmp)
+                    tmp.extract()
         self.instance_destructor()
 
     # Return the number of players "on" an object.

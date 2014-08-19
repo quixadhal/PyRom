@@ -522,9 +522,11 @@ def con_read_motd(self):
         school.put(ch)
         ch.do_help("newbie info")
 
-    elif ch.in_room:
-        ch.in_room.put(ch)
-    elif ch.is_immortal():
+    if ch._environment in merc.global_instances.keys() and not ch.level == 0:
+        room = merc.global_instances.get(ch._environment, None)
+        if room:
+            room.put(ch)
+    elif ch.is_immortal() and not ch.level == 0:
         to_instance_id = merc.instances_by_room[merc.ROOM_VNUM_CHAT][0]
         to_instance = merc.rooms[to_instance_id]
         to_instance.put(ch)

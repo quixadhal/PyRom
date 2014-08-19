@@ -61,7 +61,7 @@ def do_advance(ch, argument):
     victim.send("You are now level %d.\n" % victim.level)
     victim.exp = victim.exp_per_level(victim.points) * max(1, victim.level)
     victim.trust = 0
-    save.save_char_obj(victim)
+    victim.save()
     return
 
 

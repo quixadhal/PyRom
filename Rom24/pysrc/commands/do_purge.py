@@ -42,7 +42,7 @@ def do_purge(ch, argument):
         handler_game.act("$n disintegrates $N.", ch, 0, victim, merc.TO_NOTVICT)
 
         if victim.level > 1:
-            save.save_char_obj(victim)
+            victim.save()
         d = victim.desc
         victim.in_room.get(victim)
         victim.extract(True)

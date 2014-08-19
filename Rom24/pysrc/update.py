@@ -102,7 +102,7 @@ def gain_exp(ch, gain):
         print("%s gained level %d\r\n" % (ch.name, ch.level))
         handler_game.wiznet("$N has attained level %d!" % ch.level, ch, None, WIZ_LEVELS, 0, 0)
         advance_level(ch, False)
-        save.save_char_obj(ch)
+        ch.save()
 
 
 # * Regeneration stuff.
@@ -488,7 +488,7 @@ def char_update():
                     handler_game.act("$n disappears into the void.", ch, None, None, TO_ROOM)
                     ch.send("You disappear into the void.\n")
                     if ch.level > 1:
-                        save.save_char_obj(ch)
+                        ch.save()
                     limbo_id = merc.instances_by_room[ROOM_VNUM_LIMBO][0]
                     limbo = merc.rooms[limbo_id]
                     ch.in_room.get(ch)
@@ -568,7 +568,7 @@ def char_update():
     # */
     for ch in merc.characters.values():
         if not ch.is_npc() and ch.desc and save_number == 28:
-            save.save_char_obj(ch)
+            ch.save()
     for ch in ch_quit[:]:
         ch.do_quit("")
 

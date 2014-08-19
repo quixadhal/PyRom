@@ -41,7 +41,7 @@ def do_authenticator(ch, argument):
             else:
                 secret = auth.random_base32_token()
                 ch.auth = auth.TwoFactorAuth(secret)
-                save.save_char_obj(ch)
+                ch.save()
                 ch.send('Authentication is now active!\n')
                 ch.send('You must now use Google Authenticator to log in.\n')
                 ch.send('Please add a new time-based account to your authenticator, using %s as the code.\n' %
@@ -67,7 +67,7 @@ def do_authenticator(ch, argument):
                     return
                 else:
                     ch.auth = None
-                    save.save_char_obj(ch)
+                    ch.save()
                     ch.send('Authentication is now disabled.\n')
                     return
 

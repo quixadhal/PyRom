@@ -72,14 +72,14 @@ def do_steal(ch, argument):
         if not ch.is_npc():
             if victim.is_npc():
                 if ch.is_pc():
-                    ch.check_improve( "steal", False, 2)
+                    ch.check_improve("steal", False, 2)
                 fight.multi_hit(victim, ch, merc.TYPE_UNDEFINED)
             else:
                 handler_game.wiznet("$N tried to steal from %s." % victim.name, ch, None, merc.WIZ_FLAGS, 0, 0)
                 if not ch.act.is_set(merc.PLR_THIEF):
                     ch.act.set_bit(merc.PLR_THIEF)
                     ch.send("*** You are now a THIEF!! ***\n")
-                    save.save_char_obj(ch)
+                    ch.save()
         return
     currency = ['coins', 'coin', 'gold', 'silver']
     if arg1 in currency:
