@@ -5,7 +5,6 @@ logger = logging.getLogger()
 
 import game_utils
 import state_checks
-import tables
 
 
 class Bit:
@@ -48,6 +47,7 @@ class Bit:
     def __add__(self, other):
         """
         This implements addition between integers and Bit() objects.
+        It creates a new Bit() object containing the result.
 
         :param other: An integer value to be numerically added to self.bits.
         :type other: int
@@ -57,9 +57,29 @@ class Bit:
         return Bit(self.bits + self.from_name(other), self.flags)
 
     def __radd__(self, other):
+        """
+        This implements addition between integers and Bit() objects.
+        It creates a new Bit() object containing the result.
+        This version is for the reversed form, where the right-hand side is
+        the Bit() object.
+
+        :param other: An integer value to be numerically added to self.bits.
+        :type other: int
+        :return: A new Bit() object with the value added.
+        :rtype: Bit
+        """
         return Bit(self.from_name(other) + self.bits, self.flags)
 
     def __iadd__(self, other):
+        """
+        This adds the given integer value to the Bit() object and
+        returns the Bit() object with the new value.
+
+        :param other: An integer value to be numerically added to self.bits.
+        :type other: int
+        :return: A new Bit() object with the value added.
+        :rtype: Bit
+        """
         self.bits += self.from_name(other)
         return self
 
@@ -303,48 +323,45 @@ class Bit:
                 buf += " %s" % fl.name
         return buf
 
+    def to_json(self, outer_encoder=None):
+        """
+        This method implements the serialization of a Bit() object
+        for the JSON module to use.
 
-def to_json(b):
-    """
-    A Bit() object can be serialized to json data by
-    js = json.dumps(b, default=bit.to_json)
+        :param outer_encoder:
+        :type outer_encoder:
+        :return: JSON serialization
+        :rtype: str
+        """
+        if outer_encoder is None:
+            outer_encoder = json.JSONEncoder.default
 
-    :param b:
-    :return:
-    """
-    if isinstance(b, Bit):
-        return {'__Bit__': True, 'flags': b.flags, 'bits': b.bits}
-    raise TypeError(repr(b) + " is not JSON serializable")
+        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        return {
+            cls_name: {
+                'bits': outer_encoder(self.bits),
+                'flags': outer_encoder(self.flags),
+            }
+        }
 
+    @classmethod
+    def from_json(cls, data, outer_decoder=None):
+        """
+        This class method implements turning a JSON serialization of the data
+        from a Bit() class back into an actual Bit() object.
 
-def from_json(js):
-    """
-    A Bit() object can be reconstructed from json data by
-    b = json.loads(js, object_pairs_hook=bit.from_json)
+        :param data:
+        :type data:
+        :param outer_decoder:
+        :type outer_decoder:
+        :return: Bit() object or unrecognized data
+        :rtype:
+        """
+        if outer_decoder is None:
+            outer_decoder = json.JSONDecoder.decode
 
-    :param js:
-    :return:
-    """
-    ok = False
-    for i in js:
-        if i[0] == '__Bit__':
-            ok = True
-    if ok:
-        d_bits = 0
-        for i in js:
-            if i[0] == '__Bit__':
-                continue
-            elif i[0] == 'bits':
-                d_bits = i[1]
-            elif i[0] == 'flags':
-                d_flags = OrderedDict()
-                for j in i[1]:
-                    k = j[0]
-                    v = j[1]
-                    d_flags[k] = tables.flag_type._make(v)
-                b = Bit(flags=d_flags)
-                b.set_bit(d_bits)
-                return b
-            else:
-                raise TypeError(repr(js) + " is not a valid Bit serialization")
-    return js
+        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        if cls_name in data:
+            return cls(default=outer_decoder(data[cls_name]['bits']),
+                       flags=outer_decoder(data[cls_name]['flags']))
+        return data
