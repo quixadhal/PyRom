@@ -26,19 +26,16 @@ def do_ostat(ch, argument):
         obj.vnum, "new" if obj.new_format else "old",
         obj.item_type, obj.reset_num ))
     ch.send("Short description: %s\nLong description: %s\n" % (obj.short_descr, obj.description ))
-    ch.send("Wear bits: %s\nExtra bits: %s\n" % (wear_bit_name(obj.wear_flags),
-                                                 extra_bit_name(obj.extra_flags)))
+    ch.send("Wear bits: %s\nExtra bits: %s\n" % (obj.equips_to_names,
+                                                 obj.item_attribute_names))
     ch.send("Number: 1/%d  Weight: %d/%d/%d (10th pounds)\n" % ( obj.get_number(),
                                                                  obj.weight, obj.get_weight(), obj.true_weight() ))
     ch.send("Level: %d  Cost: %d  Condition: %d  Timer: %d\n" % (obj.level, obj.cost, obj.condition, obj.timer ))
 
-    if obj.in_living:
-        obj_holder = merc.characters[obj.in_living]
-    ch.send("In room: %d  In object: %s  Carried by: %s  Wear_loc: %d\n" % (
+    ch.send("In room: %d  In object: %s  Carried by: %s\n" % (
         0 if not obj.in_room else obj.in_room.vnum,
         "(none)" if not obj.in_item else obj.in_item.short_descr,
-        "(noone)" if not obj_holder else "someone" if not ch.can_see(obj_holder) else obj_holder.name,
-        obj.wear_loc ))
+        "(noone)" if not obj.in_living else "someone" if not ch.can_see(obj.in_living) else obj.in_living.name ))
     ch.send("Values: %s\n" % [v for v in obj.value])
     # now give out vital statistics as per identify
 
@@ -93,14 +90,18 @@ def do_ostat(ch, argument):
 
     if obj.extra_descr or obj.extra_descr:
         ch.send("Extra description keywords: '")
-        extra_descr = obj.extra_descr
+        extra_descr = list(obj.extra_descr)
         extra_descr.extend(obj.extra_descr)
         for ed in extra_descr:
             ch.send(ed.keyword)
             ch.send(" ")
-    affected = obj.affected
-    if not obj.enchanted:
-        affected.extend(obj.affected)
+    ch.send("'\n"
+    )
+    affected = list(obj.affected)
+    #TODO: This may not be necessary at all.
+    #if not obj.enchanted:
+    #    objTemplate = merc.itemTemplate[obj.vnum]
+    #    affected.extend(objTemplate.affected)
     for paf in affected:
         ch.send("Affects %s by %d, level %d" % (affect_loc_name(paf.location), paf.modifier, paf.level))
         if paf.duration > -1:

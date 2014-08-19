@@ -352,8 +352,8 @@ def one_hit(ch, victim, dt):
     if victim.position < POS_RESTING:
         victim_ac += 6
 
-        #* The moment of excitement!
-    diceroll = random.randint(0, 20)
+    #* The moment of excitement!
+    diceroll = random.randint(0, 19)
     if diceroll == 0 or (diceroll != 19 and diceroll < thac0 - victim_ac):
         # Miss. */
         damage(ch, victim, 0, dt, dam_type, True)
@@ -1140,6 +1140,7 @@ def group_gain(ch, victim):
 # Also adjust alignment of killer.
 # Edit this function to change xp computations.
 def xp_compute(gch, victim, total_levels):
+    return 5000
     level_range = victim.level - gch.level
     # compute the base exp */
     if level_range == -9:
