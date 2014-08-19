@@ -150,11 +150,12 @@ def reset_area(pArea):
             count = 0
             for npc_id in roomInstance.people:
                 npc = merc.global_instances[npc_id]
-                if npc.vnum == npcTemplate.vnum:
-                    count += 1
-                    if count >= pReset.arg4:
-                        last = False
-                        break
+                if npc.is_npc():
+                    if npc.vnum == npcTemplate.vnum:
+                        count += 1
+                        if count >= pReset.arg4:
+                            last = False
+                            break
 
             if count >= pReset.arg4:
                 continue
