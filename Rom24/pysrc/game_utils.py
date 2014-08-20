@@ -387,6 +387,7 @@ def find_location(ch, arg):
 
 
 def append_file(ch, fp, pstr):
+    pstr = "[%5d] %s: %s" % (ch.in_room.vnum, ch.name, pstr)
     with open(fp, "a") as f:
         f.write(pstr + "\n")
 
@@ -431,7 +432,7 @@ def number_argument(argument):
 
 # * Simple linear interpolation.
 def interpolate(level, value_00, value_32):
-    return value_00 + level * (value_32 - value_00) / 32
+    return value_00 + level * (value_32 - value_00) // 32
 
 
 def mass_replace(pstr, pdict):

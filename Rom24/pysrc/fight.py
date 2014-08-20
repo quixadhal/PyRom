@@ -51,6 +51,7 @@ import effects
 import handler_magic
 import skills
 import state_checks
+import settings
 
 # * Control the fights going on.
 # * Called periodically by update_handler.
@@ -352,8 +353,8 @@ def one_hit(ch, victim, dt):
     if victim.position < POS_RESTING:
         victim_ac += 6
 
-        #* The moment of excitement!
-    diceroll = random.randint(0, 20)
+    #* The moment of excitement!
+    diceroll = random.randint(0, 19)
     if diceroll == 0 or (diceroll != 19 and diceroll < thac0 - victim_ac):
         # Miss. */
         damage(ch, victim, 0, dt, dam_type, True)
@@ -1140,6 +1141,7 @@ def group_gain(ch, victim):
 # Also adjust alignment of killer.
 # Edit this function to change xp computations.
 def xp_compute(gch, victim, total_levels):
+    return 5000
     level_range = victim.level - gch.level
     # compute the base exp */
     if level_range == -9:
@@ -1269,6 +1271,11 @@ def dam_message(ch, victim, dam, dt, immune):
     if ch is None or victim is None:
         return
 
+    if settings.SHOW_DAMAGE_NUMBERS:
+        damnum = " (%d)" % dam
+    else:
+        damnum = ""
+
     if dam == 0:
         msg = {'vs': "miss", 'vp': "misses"}
     elif dam <= 4:
@@ -1316,12 +1323,12 @@ def dam_message(ch, victim, dam, dt, immune):
     punct = '.' if dam <= 24 else '!'
     if dt == TYPE_HIT:
         if ch == victim:
-            buf1 = "$n %s $melf%c" % (vp, punct)
-            buf2 = "You %s yourself%c" % (vs, punct)
+            buf1 = "$n %s $melf%c%s" % (vp, punct, damnum)
+            buf2 = "You %s yourself%c%s" % (vs, punct, damnum)
         else:
-            buf1 = "$n %s $N%c" % (vp, punct)
-            buf2 = "You %s $N%c" % (vs, punct)
-            buf3 = "$n %s you%c" % (vp, punct)
+            buf1 = "$n %s $N%c%s" % (vp, punct, damnum)
+            buf2 = "You %s $N%c%s" % (vs, punct, damnum)
+            buf3 = "$n %s you%c%s" % (vp, punct, damnum)
     else:
         if type(dt) == const.skill_type:
             attack = dt.noun_damage
@@ -1343,12 +1350,12 @@ def dam_message(ch, victim, dam, dt, immune):
                 buf3 = "$n's %s is powerless against you." % attack
         else:
             if ch == victim:
-                buf1 = "$n's %s %s $m%c" % (attack, vp, punct)
-                buf2 = "Your %s %s you%c" % (attack, vp, punct)
+                buf1 = "$n's %s %s $m%c%s" % (attack, vp, punct, damnum)
+                buf2 = "Your %s %s you%c%s" % (attack, vp, punct, damnum)
             else:
-                buf1 = "$n's %s %s $N%c" % (attack, vp, punct)
-                buf2 = "Your %s %s $N%c" % (attack, vp, punct)
-                buf3 = "$n's %s %s you%c" % (attack, vp, punct)
+                buf1 = "$n's %s %s $N%c%s" % (attack, vp, punct, damnum)
+                buf2 = "Your %s %s $N%c%s" % (attack, vp, punct, damnum)
+                buf3 = "$n's %s %s you%c%s" % (attack, vp, punct, damnum)
 
     if ch == victim:
         handler_game.act(buf1, ch, None, None, TO_ROOM)

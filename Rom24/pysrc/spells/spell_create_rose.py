@@ -5,7 +5,7 @@ import object_creator
 
 
 def spell_create_rose(sn, level, ch, victim, target):
-    rose = object_creator.create_object(merc.itemTemplate[merc.OBJ_VNUM_ROSE], 0)
+    rose = object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_ROSE], 0)
     handler_game.act("$n has created a beautiful red rose.", ch, rose, None, merc.TO_ROOM)
     ch.send("You create a beautiful red rose.\n")
     ch.put(rose)

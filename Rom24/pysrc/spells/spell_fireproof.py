@@ -8,7 +8,8 @@ import state_checks
 
 
 def spell_fireproof(sn, level, ch, victim, target):
-    if state_checks.is_item_stat(obj, merc.ITEM_BURN_PROOF):
+    obj = victim
+    if obj.flags.burn_proof:
         handler_game.act("$p is already protected from burning.", ch, obj, None, merc.TO_CHAR)
         return
     af = handler_game.AFFECT_DATA()

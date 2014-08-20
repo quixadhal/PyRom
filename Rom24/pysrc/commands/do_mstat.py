@@ -66,9 +66,9 @@ def do_mstat(ch, argument):
             victim.condition[merc.COND_DRUNK] ))
     ch.send("Carry number: %d  Carry weight: %ld\n" % (victim.carry_number, state_checks.get_carry_weight(victim) // 10 ))
     if not victim.is_npc():
-        ch.send("Age: %d  Played: %d  Last Level: %d  Timer: %d\n",
-                victim.get_age(), (int)(victim.played + time.time() - victim.logon) // 3600,
-                victim.last_level, victim.timer)
+        ch.send("Age: %d  Played: %d  Last Level: %d  Timer: %d\n" % (victim.get_age(),
+                (int)(victim.played + time.time() - victim.logon) // 3600,
+                victim.last_level, victim.timer))
     ch.send("Act: %s\n" %repr(victim.act))
     if victim.comm:
         ch.send("Comm: %s\n" % repr(victim.comm))
@@ -94,7 +94,7 @@ def do_mstat(ch, argument):
 
     for paf in victim.affected:
         ch.send("Spell: '%s' modifies %s by %d for %d hours with bits %s, level %d.\n" % (
-            paf.type,
+            paf.type.name,
             affect_loc_name(paf.location),
             paf.modifier,
             paf.duration,

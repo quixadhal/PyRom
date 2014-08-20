@@ -11,8 +11,8 @@ def spell_remove_curse(sn, level, ch, victim, target):
     if target == merc.TARGET_ITEM:
         obj = victim
 
-        if state_checks.is_item_stat(obj, merc.ITEM_NODROP) or state_checks.is_item_stat(obj, merc.ITEM_NOREMOVE):
-            if not state_checks.is_item_stat(obj, merc.ITEM_NOUNCURSE) and not handler_magic.saves_dispel(level + 2, obj.level, 0):
+        if obj.flags.no_drop or obj.flags.no_remove:
+            if not obj.flags.no_uncurse and not handler_magic.saves_dispel(level + 2, obj.level, 0):
                 state_checks.REMOVE_BIT(obj.extra_flags, merc.ITEM_NODROP)
                 state_checks.REMOVE_BIT(obj.extra_flags, merc.ITEM_NOREMOVE)
                 handler_game.act("$p glows blue.", ch, obj, None, merc.TO_ALL)
@@ -29,9 +29,9 @@ def spell_remove_curse(sn, level, ch, victim, target):
         handler_game.act("$n looks more relaxed.", victim, None, None, merc.TO_ROOM)
 
     for obj in victim.contents:
-        if (state_checks.is_item_stat(obj, merc.ITEM_NODROP) or state_checks.is_item_stat(obj,
-                                                                                        merc.ITEM_NOREMOVE)) and not state_checks.is_item_stat(obj,
-                                                                                                                                              merc.ITEM_NOUNCURSE):
+        if (obj.flags.no_drop \
+                or obj.flags.no_remove)\
+                and not obj.flags.no_uncurse:
             # attempt to remove curse */
             if not handler_magic.saves_dispel(level, obj.level, 0):
                 state_checks.REMOVE_BIT(obj.extra_flags, merc.ITEM_NODROP)

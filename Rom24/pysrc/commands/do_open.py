@@ -66,15 +66,13 @@ def do_open(ch, argument):
         ch.send("Ok.\n")
 
         # open the other side
-        to_room = pexit.to_room
-        if to_room:
-            to_room = merc.rooms[to_room]
-            pexit_rev = to_room.exit[merc.rev_dir[door]] if pexit.to_room else None
-            if pexit_rev and pexit_rev.to_room == ch.in_room.instance_id:
-                pexit_rev.exit_info.rem_bit(merc.EX_CLOSED)
-                for rch_id in to_room.people:
-                    rch = merc.characters[rch_id]
-                    handler_game.act("The $d opens.", rch, None, pexit_rev.keyword, merc.TO_CHAR)
+        to_room = merc.rooms[pexit.to_room]
+        pexit_rev = to_room.exit[merc.rev_dir[door]] if pexit.to_room else None
+        if to_room and pexit_rev and pexit_rev.to_room == ch.in_room.instance_id:
+            pexit_rev.exit_info.rem_bit(merc.EX_CLOSED)
+            for rch_id in to_room.people:
+                rch = merc.characters[rch_id]
+                handler_game.act("The $d opens.", rch, None, pexit_rev.keyword, merc.TO_CHAR)
 
 
 interp.register_command(interp.cmd_type('open', do_open, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

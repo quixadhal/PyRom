@@ -243,7 +243,7 @@ def show_char_to_char_0(victim, ch):
         buf += "(Pink Aura) "
     if victim.is_evil() and ch.is_affected(merc.AFF_DETECT_EVIL):
         buf += "(Red Aura) "
-    if victim.is_evil() and ch.is_affected(merc.AFF_DETECT_GOOD):
+    if victim.is_good() and ch.is_affected(merc.AFF_DETECT_GOOD):
         buf += "(Golden Aura) "
     if victim.is_affected(merc.AFF_SANCTUARY):
         buf += "(White Aura) "

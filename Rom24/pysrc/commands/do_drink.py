@@ -42,7 +42,7 @@ def do_drink(ch, argument):
             ch.send("It is already empty.\n")
             return
         liquid = obj.value[2]
-        if liquid < 0:
+        if not liquid:
             logger.warn("BUG: Do_drink: bad liquid number %s.", liquid)
             liquid = obj.value[2] = 0
         amount = const.liq_table[liquid].liq_affect[4]

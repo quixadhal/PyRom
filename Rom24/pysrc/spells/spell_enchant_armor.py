@@ -12,7 +12,7 @@ def spell_enchant_armor(sn, level, ch, victim, target):
         ch.send("That isn't an armor.\n")
         return
 
-    if obj.wear_loc != -1:
+    if not obj.equips_to:
         ch.send("The item must be carried to be enchanted.\n")
         return
 
@@ -23,7 +23,7 @@ def spell_enchant_armor(sn, level, ch, victim, target):
     affected = obj.affected
     # find the bonuses */
     if not obj.enchanted:
-        affected = obj.pIndexData.affected
+        affected = obj.affected
 
     for paf in affected:
         if paf.location == merc.APPLY_AC:
@@ -37,9 +37,9 @@ def spell_enchant_armor(sn, level, ch, victim, target):
     # apply other modifiers */
     fail -= level
 
-    if state_checks.is_item_stat(obj, merc.ITEM_BLESS):
+    if obj.flags.bless:
         fail -= 15
-    if state_checks.is_item_stat(obj, merc.ITEM_GLOW):
+    if obj.flags.glow:
         fail -= 5
 
     fail = max(5, min(fail, 85))

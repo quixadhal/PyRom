@@ -39,7 +39,7 @@ def do_enter(ch, argument):
         else:
             location = handler_room.get_room_by_vnum(portal.value[3])
         if not location or location == old_room \
-                or not ch.can_see_room(location) \
+                or not ch.can_see_room(location.instance_id) \
                 or (location.is_private() and not state_checks.IS_TRUSTED(ch, merc.MAX_LEVEL)):
             handler_game.act("$p doesn't seem to go anywhere.", ch, portal, None, merc.TO_CHAR)
             return

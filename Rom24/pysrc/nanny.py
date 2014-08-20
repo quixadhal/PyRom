@@ -524,7 +524,7 @@ def con_read_motd(self):
 
     if ch._environment in merc.global_instances.keys() and not ch.level == 0:
         room = merc.global_instances.get(ch._environment, None)
-        if room:
+        if room and ch._environment != room.instance_id:
             room.put(ch)
     elif ch.is_immortal() and not ch.level == 0:
         to_instance_id = merc.instances_by_room[merc.ROOM_VNUM_CHAT][0]

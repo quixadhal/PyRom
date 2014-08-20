@@ -427,19 +427,19 @@ def create_money(gold, silver):
         item = create_item(merc.itemTemplate[merc.OBJ_VNUM_GOLD_ONE], 0)
     elif silver == 0:
         item = create_item(merc.itemTemplate[merc.OBJ_VNUM_GOLD_SOME], 0)
-        item.short_descr += " %d" % gold
+        item.short_descr = item.short_descr % gold
         item.value[1] = gold
         item.cost = gold
         item.weight = gold // 5
     elif gold == 0:
         item = create_item(merc.itemTemplate[merc.OBJ_VNUM_SILVER_SOME], 0)
-        item.short_descr += " %d" % silver
+        item.short_descr = item.short_descr % silver
         item.value[0] = silver
         item.cost = silver
         item.weight = silver // 20
     else:
         item = create_item(merc.itemTemplate[merc.OBJ_VNUM_COINS], 0)
-        item.short_descr += " %d %d" % (gold, silver)
+        item.short_descr = item.short_descr % (gold, silver)
         item.value[0] = silver
         item.value[1] = gold
         item.cost = 100 * gold + silver

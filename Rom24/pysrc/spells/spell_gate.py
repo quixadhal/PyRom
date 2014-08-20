@@ -11,7 +11,7 @@ def spell_gate(sn, level, ch, victim, target):
     if not victim \
             or victim == ch \
             or victim.in_room == None \
-            or not ch.can_see_room(victim.in_room) \
+            or not ch.can_see_room(victim.in_room.instance_id) \
             or state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_SAFE) \
             or state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_PRIVATE) \
             or state_checks.IS_SET(victim.in_room.room_flags, merc.ROOM_SOLITARY) \

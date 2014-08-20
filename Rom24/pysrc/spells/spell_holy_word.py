@@ -35,7 +35,7 @@ def spell_holy_word(sn, level, ch, victim, target):
                 fight.damage(ch, vch, dam, sn, merc.DAM_ENERGY, True)
     ch.send("You feel drained.\n")
     ch.move = 0
-    ch.hit = hit // 2
+    ch.hit = ch.hit // 2
 
 
 const.register_spell(const.skill_type("holy word",
