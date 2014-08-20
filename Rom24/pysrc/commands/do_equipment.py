@@ -3,7 +3,6 @@ import logging
 logger = logging.getLogger()
 
 import merc
-import living
 import interp
 import handler_item
 
@@ -16,7 +15,7 @@ def do_equipment(ch, argument):
         if not item:
             continue
 
-        ch.send(living.eq_slot_strings[slot])
+        ch.send(merc.eq_slot_strings[slot])
         if ch.can_see_item(item):
             ch.send(handler_item.format_item_to_char(item, ch, True) + "\n")
         else:

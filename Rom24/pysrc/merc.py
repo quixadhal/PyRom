@@ -986,25 +986,27 @@ movement_loss = [1, 2, 2, 3, 4, 6, 4, 1, 6, 10, 6]
 #Pc Tracking
 max_on = 0
 
-where_name = ["<used as light>     ",
-              "<worn on finger>    ",
-              "<worn on finger>    ",
-              "<worn around neck>  ",
-              "<worn around neck>  ",
-              "<worn on torso>     ",
-              "<worn on head>      ",
-              "<worn on legs>      ",
-              "<worn on feet>      ",
-              "<worn on hands>     ",
-              "<worn on arms>      ",
-              "<worn as shield>    ",
-              "<worn about body>   ",
-              "<worn about waist>  ",
-              "<worn around wrist> ",
-              "<worn around wrist> ",
-              "<wielded>           ",
-              "<held>              ",
-              "<floating nearby>   "]
+''' Equipment Slot Strings - for use with displaying EQ to characters '''
+
+eq_slot_strings = collections.OrderedDict([('light', '[[Light Source]]         :  '),
+                                           ('left_finger', '[[Worn on Left Finger]]   :  '),
+                                           ('right_finger', '[[Worn on Right Finger]]  :  '),
+                                           ('neck', '[[Worn around Neck]]     :  '),
+                                           ('collar', '[[Worn around Collar]]     :  '),
+                                           ('body', '[[Worn on Torso]]        :  '),
+                                           ('head', '[[Worn on Head]]        :  '),
+                                           ('legs', '[[Worn on Legs]]        :  '),
+                                           ('feet', '[[Worn on Feet]]        :  '),
+                                           ('hands', '[[Worn on Hands]]       :  '),
+                                           ('arms', '[[Worn on Arms]]        :  '),
+                                           ('about_body', '[[Worn about Body]]    :  '),
+                                           ('waist', '[[Worn around Waist]]   :  '),
+                                           ('left_wrist', '[[Worn on Left Wrist]]  :  '),
+                                           ('right_wrist', '[[Worn on Right Wrist]] :  '),
+                                           ('main_hand', '[[Main Hand]]            :  '),
+                                           ('off_hand', '[[Off Hand]]             :  '),
+                                           ('held', '[[Held]]                 :  '),
+                                           ('float', '[[Floating Nearby]]      :  ')])
 
 
 # Return ascii name of an affect location.

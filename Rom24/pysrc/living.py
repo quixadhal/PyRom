@@ -55,29 +55,6 @@ import environment
 import state_checks
 
 
-''' Equipment Slot Strings - for use with displaying EQ to characters '''
-
-eq_slot_strings = collections.OrderedDict([('light', '[[Light Source]]         :  '),
-                                           ('left_finger', '[[Worn on Left Finger]]   :  '),
-                                           ('right_finger', '[[Worn on Right Finger]]  :  '),
-                                           ('neck', '[[Worn around Neck]]     :  '),
-                                           ('collar', '[[Worn around Collar]]     :  '),
-                                           ('body', '[[Worn on Torso]]        :  '),
-                                           ('head', '[[Worn on Head]]        :  '),
-                                           ('legs', '[[Worn on Legs]]        :  '),
-                                           ('feet', '[[Worn on Feet]]        :  '),
-                                           ('hands', '[[Worn on Hands]]       :  '),
-                                           ('arms', '[[Worn on Arms]]        :  '),
-                                           ('about_body', '[[Worn about Body]]    :  '),
-                                           ('waist', '[[Worn around Waist]]   :  '),
-                                           ('left_wrist', '[[Worn on Left Wrist]]  :  '),
-                                           ('right_wrist', '[[Worn on Right Wrist]] :  '),
-                                           ('main_hand', '[[Main Hand]]            :  '),
-                                           ('off_hand', '[[Off Hand]]             :  '),
-                                           ('held', '[[Held]]                 :  '),
-                                           ('float', '[[Floating Nearby]]      :  ')])
-
-
 class Grouping:
     def __init__(self):
         super().__init__()
