@@ -14,7 +14,7 @@ def do_string(ch, argument):
     argument, type = game_utils.read_word(argument)
     argument, arg1 = game_utils.read_word(argument)
     argument, arg2 = game_utils.read_word(argument)
-    arg3 = argument
+    arg3 = argument.strip()
 
     if not type or not arg1 or not arg2 or not arg3:
         ch.send("Syntax:\n")
