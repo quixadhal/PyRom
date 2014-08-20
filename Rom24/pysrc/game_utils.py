@@ -156,7 +156,7 @@ def read_equipment_flags(item, pstr):
 
 
 def item_bitvector_flag_str(bits: int, in_type='extra flags'):
-    if not bits or in_type:
+    if not bits or not in_type:
         return None
     if bits == 0:
         return None

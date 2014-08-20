@@ -7,7 +7,7 @@ import interp
 
 
 def do_description(ch, argument):
-    if not argument:
+    if argument:
         if argument[0] == '-':
             if not ch.description:
                 ch.send("No lines left to remove.\n")

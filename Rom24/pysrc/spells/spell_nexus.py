@@ -63,8 +63,9 @@ def spell_nexus(sn, level, ch, victim, target):
     to_room.put(portal)
 
     if to_room.people:
-        handler_game.act("$p rises up from the ground.", to_room.people[0], portal, None, merc.TO_ROOM)
-        handler_game.act("$p rises up from the ground.", to_room.people[0], portal, None, merc.TO_CHAR)
+        vch = merc.characters[to_room.people[0]]
+        handler_game.act("$p rises up from the ground.", vch, portal, None, merc.TO_ROOM)
+        handler_game.act("$p rises up from the ground.", vch, portal, None, merc.TO_CHAR)
 
 
 const.register_spell(const.skill_type("nexus",

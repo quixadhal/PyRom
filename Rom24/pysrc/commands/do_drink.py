@@ -14,9 +14,11 @@ def do_drink(ch, argument):
     argument, arg = game_utils.read_word(argument)
     obj = None
     if not arg:
-        obj = [f for f in ch.in_room.items if f.item_type == merc.ITEM_FOUNTAIN][:1]
-        if obj:
-            obj = obj[0]
+        for f_id in ch.in_room.items:
+            f = merc.items[f_id]
+            if f.item_type == merc.ITEM_FOUNTAIN:
+                obj = f
+                break
         if not obj:
             ch.send("Drink what?\n")
             return
