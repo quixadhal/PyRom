@@ -27,6 +27,7 @@ def do_tell(ch, argument):
         # Can tell to PC's anywhere, but NPC's only in same room.
         # -- Furey
     victim = ch.get_char_world(arg)
+    argument = argument.strip()
     if not victim or ( victim.is_npc() and victim.in_room != ch.in_room ):
         ch.send("They aren't here.\n")
         return
@@ -40,9 +41,7 @@ def do_tell(ch, argument):
         handler_game.act("$E can't hear you.", ch, 0, victim, merc.TO_CHAR)
         return
 
-    if (victim.comm.is_set(merc.COMM_QUIET) or state_checks.IS_SET(victim.comm,
-                                                                                 merc.COMM_DEAF)) and not state_checks.IS_IMMORTAL(
-            ch):
+    if (victim.comm.is_set(merc.COMM_QUIET) or state_checks.IS_SET(victim.comm,merc.COMM_DEAF)) and not state_checks.IS_IMMORTAL(ch):
         handler_game.act("$E is not receiving tells.", ch, 0, victim, merc.TO_CHAR)
         return
 

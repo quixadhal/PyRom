@@ -19,4 +19,10 @@ def do_reboot(ch, argument):
             comm.close_socket(d)
 
 
+def do_reboo(ch, argument):
+    ch.send("If you want to REBOOT, spell it out.\n")
+    return
+
+
 interp.register_command(interp.cmd_type('reboot', do_reboot, merc.POS_DEAD, merc.L1, merc.LOG_ALWAYS, 1))
+interp.register_command(interp.cmd_type('reboo', do_reboo, merc.POS_DEAD, merc.L1, merc.LOG_NORMAL, 0))

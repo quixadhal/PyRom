@@ -36,5 +36,8 @@ def do_delete(ch, argument):
     ch.confirm_delete = True
     handler_game.wiznet("$N is contemplating deletion.", ch, None, 0, 0, ch.trust)
 
+def do_delet(ch, argument):
+    ch.send("You must type the full command to delete yourself.\n")
 
 interp.register_command(interp.cmd_type('delete', do_delete, merc.POS_STANDING, 0, merc.LOG_ALWAYS, 1))
+interp.register_command(interp.cmd_type('delet', do_delet, merc.POS_DEAD, 0, merc.LOG_ALWAYS, 0))

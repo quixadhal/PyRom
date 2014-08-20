@@ -19,6 +19,7 @@ def do_pecho(ch, argument):
     if victim.trust >= ch.trust != merc.MAX_LEVEL:
         victim.send("personal> ")
 
+    argument = argument.strip()
     victim.send(argument)
     victim.send("\n")
     ch.send("personal> ")

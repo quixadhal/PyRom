@@ -9,6 +9,7 @@ import handler_game
 import state_checks
 
 
+#TODO: Known broken.
 def do_switch(ch, argument):
     argument, arg = game_utils.read_word(argument)
 
