@@ -40,13 +40,41 @@ import const
 import handler_game
 import merc
 import tables
+import json
 
 
 class Affects:
-    def __init__(self):
+    def __init__(self, **kwargs):
         super().__init__()
         self.affected = []
         self.affected_by = bit.Bit(flags=tables.affect_flags)
+        if kwargs:
+            [setattr(self, k, v) for k, v in kwargs.items()]
+
+    def to_json(self, outer_encoder=None):
+        if outer_encoder is None:
+            outer_encoder = json.JSONEncoder.default
+
+        tmp_dict = {}
+        for k, v in self.__dict__.items():
+            if str(type(v)) in ("<class 'function'>", "<class 'method'>"):
+                continue
+            else:
+                tmp_dict[k] = v
+
+        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        return {cls_name: outer_encoder(tmp_dict)}
+
+    @classmethod
+    def from_json(cls, data, outer_decoder=None):
+        if outer_decoder is None:
+            outer_decoder = json.JSONDecoder.decode
+
+        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        if cls_name in data:
+            tmp_data = outer_decoder(data[cls_name])
+            return cls(**tmp_data)
+        return data
 
     def is_affected(self, aff):
         if isinstance(aff, const.skill_type):

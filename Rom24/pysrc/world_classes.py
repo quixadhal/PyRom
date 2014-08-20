@@ -143,8 +143,6 @@ class ExtraDescrData:
         for k, v in self.__dict__.items():
             if str(type(v)) in ("<class 'function'>", "<class 'method'>"):
                 continue
-            if str(k) in ('desc', 'send'):
-                continue
             else:
                 tmp_dict[k] = v
 
@@ -191,8 +189,6 @@ class Exit:
         tmp_dict = {}
         for k, v in self.__dict__.items():
             if str(type(v)) in ("<class 'function'>", "<class 'method'>"):
-                continue
-            if str(k) in ('desc', 'send'):
                 continue
             else:
                 tmp_dict[k] = v
@@ -242,8 +238,6 @@ class Reset:
         for k, v in self.__dict__.items():
             if str(type(v)) in ("<class 'function'>", "<class 'method'>"):
                 continue
-            if str(k) in ('desc', 'send'):
-                continue
             else:
                 tmp_dict[k] = v
 
@@ -287,8 +281,6 @@ class Shop:
         for k, v in self.__dict__.items():
             if str(type(v)) in ("<class 'function'>", "<class 'method'>"):
                 continue
-            if str(k) in ('desc', 'send'):
-                continue
             else:
                 tmp_dict[k] = v
 
@@ -323,8 +315,6 @@ class Gen:
         tmp_dict = {}
         for k, v in self.__dict__.items():
             if str(type(v)) in ("<class 'function'>", "<class 'method'>"):
-                continue
-            if str(k) in ('desc', 'send'):
                 continue
             else:
                 tmp_dict[k] = v
