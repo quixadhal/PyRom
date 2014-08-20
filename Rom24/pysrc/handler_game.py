@@ -34,11 +34,10 @@
 import handler_ch
 import handler_item
 import living
-from merc import *
 import game_utils
-from merc import POS_RESTING, TO_VICT, TO_CHAR, TO_ROOM, TO_NOTVICT
 import merc
 import state_checks
+import json
 
 __author__ = 'syn'
 
@@ -58,7 +57,7 @@ class SOCIAL_DATA:
 
 # An affect.
 class AFFECT_DATA:
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.valid = True
         self.where = 0
         self.type = 0
@@ -67,6 +66,33 @@ class AFFECT_DATA:
         self.location = 0
         self.modifier = 0
         self.bitvector = 0
+        if kwargs:
+            [setattr(self, k, v) for k, v in kwargs.items()]
+
+    def to_json(self, outer_encoder=None):
+        if outer_encoder is None:
+            outer_encoder = json.JSONEncoder.default
+
+        tmp_dict = {}
+        for k, v in self.__dict__.items():
+            if str(type(v)) in ("<class 'function'>", "<class 'method'>"):
+                continue
+            else:
+                tmp_dict[k] = v
+
+        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        return {cls_name: outer_encoder(tmp_dict)}
+
+    @classmethod
+    def from_json(cls, data, outer_decoder=None):
+        if outer_decoder is None:
+            outer_decoder = json.JSONDecoder.decode
+
+        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        if cls_name in data:
+            tmp_data = outer_decoder(data[cls_name])
+            return cls(**tmp_data)
+        return data
 
 
 class HELP_DATA:
@@ -97,7 +123,7 @@ class weather_data:
 time_info = time_info_data()
 weather_info = weather_data()
 
-def act(format, ch, arg1=None, arg2=None, send_to=TO_ROOM, min_pos=POS_RESTING):
+def act(format, ch, arg1=None, arg2=None, send_to=merc.TO_ROOM, min_pos=merc.POS_RESTING):
     if not format:
         return
     if not ch or not ch.in_room:
@@ -113,7 +139,7 @@ def act(format, ch, arg1=None, arg2=None, send_to=TO_ROOM, min_pos=POS_RESTING):
 
     to_players = [merc.characters[instance_id] for instance_id in ch.in_room.people]
 
-    if send_to is TO_VICT:
+    if send_to is merc.TO_VICT:
         if not vch:
             print("Act: null vict with TO_VICT: " + format)
             return
@@ -124,13 +150,13 @@ def act(format, ch, arg1=None, arg2=None, send_to=TO_ROOM, min_pos=POS_RESTING):
     for to in to_players:
         if not to.desc or to.position < min_pos:
             continue
-        if send_to is TO_CHAR and to is not ch:
+        if send_to is merc.TO_CHAR and to is not ch:
             continue
-        if send_to is TO_VICT and (to is not vch or to is ch):
+        if send_to is merc.TO_VICT and (to is not vch or to is ch):
             continue
-        if send_to is TO_ROOM and to is ch:
+        if send_to is merc.TO_ROOM and to is ch:
             continue
-        if send_to is TO_NOTVICT and (to is ch or to is vch):
+        if send_to is merc.TO_NOTVICT and (to is ch or to is vch):
             continue
 
         act_trans = {}
@@ -160,17 +186,17 @@ def act(format, ch, arg1=None, arg2=None, send_to=TO_ROOM, min_pos=POS_RESTING):
 
 def wiznet( string, ch, obj, flag, flag_skip, min_level):
     from nanny import con_playing
-    for d in descriptor_list:
+    for d in merc.descriptor_list:
         if   d.is_connected(con_playing) \
         and d.character.is_immortal() \
-        and  d.character.wiznet.is_set(WIZ_ON) \
+        and  d.character.wiznet.is_set(merc.WIZ_ON) \
         and  (not flag or d.character.wiznet.is_set(flag)) \
         and  (not flag_skip or not d.character.wiznet.set(flag_skip)) \
         and  d.character.trust >= min_level \
         and  d.character != ch:
-            if d.character.wiznet.set_bit(WIZ_PREFIX):
+            if d.character.wiznet.set_bit(merc.WIZ_PREFIX):
                 d.send("-. ",d.character)
-            act(string,d.character,obj,ch,TO_CHAR,POS_DEAD)
+            act(string,d.character,obj,ch, merc.TO_CHAR, merc.POS_DEAD)
 
 # does aliasing and other fun stuff */
 def substitute_alias(d, argument):

@@ -686,7 +686,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             rch = merc.characters[rch_id]
             if not ch.can_see(rch):
                 continue
-            if not rch.is_npc() and not rch.name.lower().startswith(word):
+            if not rch.is_npc() and not rch.name.lower().contains(word):
                 continue
             if rch.is_npc() and not game_utils.is_name(word, rch.name):
                 continue
