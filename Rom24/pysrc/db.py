@@ -76,7 +76,7 @@ def init_instance():
     #First lets add the bad terms we dont want to pass during instancing, while copying attributes
     merc.not_to_instance.append('instance_id')
     merc.not_to_instance.append('act')
-    instance_num_file = os.path.join(settings.AREA_DIR, "instance_tracker.txt")
+    instance_num_file = os.path.join(settings.LEGACY_AREA_DIR, "instance_tracker.txt")
     fp = open(instance_num_file, 'a')  # in case the file doesnt exist open in append mode to not wipe
     fp.close()
     fp = open(instance_num_file, 'r')

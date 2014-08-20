@@ -2,14 +2,14 @@ import json
 import logging
 import os
 
-from settings import DUMP_DIR, DATA_EXTN
+from settings import DATA_DIR, DATA_EXTN
 
 
 logger = logging.getLogger()
 
 from database.tracker import tables
 
-def read_tables(listener=None, loc=DUMP_DIR, extn=DATA_EXTN):
+def read_tables(listener=None, loc=DATA_DIR, extn=DATA_EXTN):
     if listener:
         #This means the game is running. Wipe the current data.
         logger.debug("Clearing all tables.")

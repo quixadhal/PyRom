@@ -22,15 +22,21 @@ DATA_EXTN = '.json'
 PKL_EXTN = '.pickle'
 
 #Folders
-AREA_DIR = os.path.join('..', 'area')
-SOCIAL_DIR = os.path.join(AREA_DIR, 'socials')
-HELP_DIR = os.path.join(AREA_DIR, 'help_files')
-PLAYER_DIR = os.path.join('..', 'player')
-DUMP_DIR = os.path.join('..', 'data')
+LEGACY_AREA_DIR = os.path.join('..', 'area')
+LEGACY_PLAYER_DIR = os.path.join('..', 'player')
+SOCIAL_DIR = os.path.join(LEGACY_AREA_DIR, 'socials')
+HELP_DIR = os.path.join(LEGACY_AREA_DIR, 'help_files')
 
-INSTANCE_DIR = os.path.join('..', 'data', 'world', 'instances')
+#New structure
+DATA_DIR = os.path.join('..', 'data')
+WORLD_DIR = os.path.join(DATA_DIR, 'world')
+
+PLAYER_DIR = os.path.join(DATA_DIR, 'players')
+SYSTEM_DIR = os.path.join(DATA_DIR, 'system')
+DOC_DIR = os.path.join(DATA_DIR, 'docs')
+
+AREA_DIR = os.path.join(WORLD_DIR, 'areas')
+INSTANCE_DIR = os.path.join(WORLD_DIR, 'instances')
 
 #Features
 SHOW_DAMAGE_NUMBERS = True
-
-
