@@ -168,10 +168,6 @@ def CAN_WEAR(item, part):
     return IS_SET(item.wear_flags, part)
 
 
-def is_item_stat(item, stat):
-    return IS_SET(item.extra_flags, stat)
-
-
 def IS_WEAPON_STAT(item, stat):
     return IS_SET(item.value[4], stat)
 

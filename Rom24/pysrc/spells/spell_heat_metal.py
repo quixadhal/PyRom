@@ -20,7 +20,7 @@ def spell_heat_metal(sn, level, ch, victim, target):
             item = merc.items[item_id]
             if random.randint(1, 2 * level) > item.level \
                     and not handler_magic.saves_spell(level, victim, merc.DAM_FIRE) \
-                    and not item.flags.non_metal and not item.flags.burn_proof:
+                    and not item.flags.no_n_metal and not item.flags.burn_proof:
                 if item.item_type == merc.ITEM_ARMOR:
                     if item.equipped_to:  # remove the item */
                         if victim.can_drop_item(item) \
