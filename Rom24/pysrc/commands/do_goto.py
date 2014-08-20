@@ -31,8 +31,8 @@ def do_goto(ch, argument):
                 handler_game.act("$t", ch, ch.bamfout, rch, merc.TO_VICT)
             else:
                 handler_game.act("$n leaves in a swirling mist.", ch, None, rch, merc.TO_VICT)
-    ch.get()
-    ch.put(location)
+    ch.in_room.get(ch)
+    location.put(ch)
 
     for rch_id in ch.in_room.people:
         rch = merc.characters[rch_id]

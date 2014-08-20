@@ -506,7 +506,11 @@ class Pc(living.Living):
         if not cmd:
             #* Look for command in socials table.
             if not Pc.check_social(self, command, argument):
-                self.send("Huh?\n")
+                if settings.DETAILED_INVALID_COMMANDS:
+                    #TODO: Levenshtein distance over cmd_table, also add a wait_state to prevent horrors
+                    self.send("Huh? '%s' is not a valid command." % command)
+                else:
+                    self.send("Huh?\n")
             return
         #* Pc not in position for command?
         if self.position < cmd.position:
@@ -562,6 +566,8 @@ class Pc(living.Living):
         return data
 
     def save(self):
+        #TODO: RemoveDebug
+        return
         pathname = os.path.join(settings.PLAYER_DIR, self.name[0].capitalize(), self.name.capitalize())
         inv_path = os.path.join(pathname, 'inventory')
         equip_path = os.path.join(pathname, 'equipment')
