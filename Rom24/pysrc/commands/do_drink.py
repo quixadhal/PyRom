@@ -55,12 +55,12 @@ def do_drink(ch, argument):
     if not ch.is_npc() and not ch.is_immortal() and ch.condition[merc.COND_FULL] > 45:
         ch.send("You're too full to drink more.\n")
         return
-    handler_game.act("$n drinks $T from $p.", ch, obj, const.liq_table[liquid].liq_name, merc.TO_ROOM)
-    handler_game.act("You drink $T from $p.", ch, obj, const.liq_table[liquid].liq_name, merc.TO_CHAR)
-    update.gain_condition(ch, merc.COND_DRUNK, amount * const.liq_table[liquid].liq_affect[merc.COND_DRUNK] / 36)
-    update.gain_condition(ch, merc.COND_FULL, amount * const.liq_table[liquid].liq_affect[merc.COND_FULL] / 4)
-    update.gain_condition(ch, merc.COND_THIRST, amount * const.liq_table[liquid].liq_affect[merc.COND_THIRST] / 10)
-    update.gain_condition(ch, merc.COND_HUNGER, amount * const.liq_table[liquid].liq_affect[merc.COND_HUNGER] / 2)
+    handler_game.act("$n drinks $T from $p.", ch, obj, const.liq_table[liquid].name, merc.TO_ROOM)
+    handler_game.act("You drink $T from $p.", ch, obj, const.liq_table[liquid].name, merc.TO_CHAR)
+    update.gain_condition(ch, merc.COND_DRUNK, amount * const.liq_table[liquid].proof / 36)
+    update.gain_condition(ch, merc.COND_FULL, amount * const.liq_table[liquid].full / 4)
+    update.gain_condition(ch, merc.COND_THIRST, amount * const.liq_table[liquid].thirst / 10)
+    update.gain_condition(ch, merc.COND_HUNGER, amount * const.liq_table[liquid].food / 2)
     if not ch.is_npc() and ch.condition[merc.COND_DRUNK] > 10:
         ch.send("You feel drunk.\n")
     if not ch.is_npc() and ch.condition[merc.COND_FULL] > 40:

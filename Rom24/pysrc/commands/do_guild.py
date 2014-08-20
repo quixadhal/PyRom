@@ -37,7 +37,8 @@ def do_guild(ch, argument):
     else:
         ch.send("They are now a member of clan %s.\n" % clan.name.capitalize())
         victim.send("You are now a member of clan %s.\n" % clan.name.capitalize())
-    victim.clan = clan
+    victim.clan = clan.name
+    ch.send("dbeug")
 
 
 interp.register_command(interp.cmd_type('guild', do_guild, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1))

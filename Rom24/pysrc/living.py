@@ -109,7 +109,7 @@ class Grouping:
 
     @clan.setter
     def clan(self, value):
-        if value not in tables.clan_table:
+        if value not in tables.clan_table.keys():
             return
         self._clan = value
 
@@ -729,9 +729,9 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         for wch in merc.characters.values():
             if not wch.in_room or not ch.can_see(wch):
                 continue
-            if wch.is_pc() and not game_utils.is_name(arg, wch.name.lower()):
+            if wch.is_pc() and not game_utils.is_name(arg.lower(), wch.name.lower()):
                 continue
-            if wch.is_npc() and arg not in wch.name.lower():
+            if wch.is_npc() and arg.lower() not in wch.name.lower():
                 continue
             count += 1
             if count == number:

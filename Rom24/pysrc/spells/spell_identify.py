@@ -25,8 +25,8 @@ def spell_identify(sn, level, ch, victim, target):
             ch.send("' {skill}'".format(skill=const.skill_table[item.value[3]].name))
         ch.send(".\n")
     elif item.item_type == merc.ITEM_DRINK_CON:
-        ch.send("It holds {color}-colored {liquid}.\n".format(color=const.liq_table[item.value[2]].liq_color,
-                                                              liquid=const.liq_table[item.value[2]].liq_name))
+        ch.send("It holds {color}-colored {liquid}.\n".format(color=const.liq_table[item.value[2]].color,
+                                                              liquid=const.liq_table[item.value[2]].name))
     elif item.item_type == merc.ITEM_CONTAINER:
         ch.send("Capacity: {item.value[0]}#  "
                 "Maximum weight: {item.value[3]}#  "

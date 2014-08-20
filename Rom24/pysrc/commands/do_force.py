@@ -64,6 +64,7 @@ def do_force(ch, argument):
             ch.send("Not at your level!\n")
             return
         handler_game.act(buf, ch, None, victim, merc.TO_VICT)
+        #TODO: Known broken. NPCs don't have interpret, so we'll have to figure this out.
         victim.interpret(argument)
     ch.send("Ok.\n")
     return
