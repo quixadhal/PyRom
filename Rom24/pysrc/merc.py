@@ -41,6 +41,30 @@ logger = logging.getLogger()
 
 import state_checks
 
+#Descriptive Dicts
+
+''' Equipment Slot Strings - for use with displaying EQ to characters '''
+
+eq_slot_strings = collections.OrderedDict([('light', '<used as light>     '),
+                                           ('left_finger', '<worn on finger>    '),
+                                           ('right_finger', '<worn on finger>    '),
+                                           ('neck', '<worn around neck>  '),
+                                           ('collar', '<worn around neck>  '),
+                                           ('body', '<worn on torso>     '),
+                                           ('head', '<worn on head>      '),
+                                           ('legs', '<worn on legs>      '),
+                                           ('feet', '<worn on feet>      '),
+                                           ('hands', '<worn on hands>     '),
+                                           ('arms', '<worn on arms>      '),
+                                           ('off_hand', '<worn as shield>    '),  # TODO: Fix naming here later
+                                           ('about_body', '<worn about body>   '),
+                                           ('waist', '<worn about waist>  '),
+                                           ('left_wrist', '<worn around wrist> '),
+                                           ('right_wrist', '<worn around wrist> '),
+                                           ('main_hand', '<wielded>           '),
+                                           ('held', '<held>              '),
+                                           ('float', '<floating nearby>   ')])
+
 MAX_TRADE = 5
 MAX_GUILDROOMS = 2
 MAX_STATS = 5
