@@ -620,33 +620,31 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             return False
         return True
 
-    # * Extract a char from the world.
+    # Extract a char from the world.
     def extract(self, fPull):
-        # doesn't seem to be necessary
-        #if not ch.in_room:
-        #    print "Extract_char: None."
-        #    return
+        if not self.in_room:
+            logger.warn('Character being extracted is not in a room.')
 
-        #    nuke_pets(ch)
-        self.pet = None  # just in case */
+        # nuke_pets(ch)
+        self.pet = None  # just in case
 
         #if fPull:
         #    die_follower( ch )
         fight.stop_fighting(self, True)
 
+        for equip_id in self.equipped.values():
+            if equip_id:
+                equip = merc.global_instances[equip_id]
+                equip.unequip(self)
+
         for item_id in self.inventory:
             item = merc.global_instances[item_id]
             item.extract()
 
-        for equip_id in self.equipped.values():
-            if equip_id:
-                equip = merc.global_instances[equip_id]
-                equip.extract()
-
         if self.in_room:
             self.in_room.get(self)
 
-        # Death room is set in the clan tabe now */
+        # Death room is set in the clan table now
         if not fPull:
             room_id = merc.instances_by_room[self.clan.hall][0]
             room = merc.rooms[room_id]
@@ -1100,7 +1098,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                 self.affect_modify(paf, False)
                 self.affect_check(paf.where, paf.bitvector)
 
-    # * Unequip a char with an obj.
+    # Unequip a char with an obj.
     def unequip(self, unequip_from, replace: bool=True):
         """
         :param unequip_from:
