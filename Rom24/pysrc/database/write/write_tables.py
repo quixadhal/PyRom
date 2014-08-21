@@ -5,9 +5,9 @@ logger = logging.getLogger()
 
 from json import dumps
 from database.tracker import tables
-from settings import DATA_EXTN, DUMP_DIR
+from settings import DATA_EXTN, DATA_DIR
 
-def write_tables(listener=None, loc=DUMP_DIR, extn=DATA_EXTN):
+def write_tables(listener=None, loc=DATA_DIR, extn=DATA_EXTN):
     logger.info('    Writing Tables')
 
     if listener:

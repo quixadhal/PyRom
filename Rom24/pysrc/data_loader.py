@@ -26,11 +26,11 @@ __author__ = 'syn'
 def load_areas():
     logger.info('Loading Areas...')
     index = 0
-    narea_list = os.path.join(settings.AREA_DIR, settings.AREA_LIST)
+    narea_list = os.path.join(settings.LEGACY_AREA_DIR, settings.AREA_LIST)
     fp = open(narea_list, 'r')
     area = fp.readline().strip()
     while area != "$":
-        afp = open(os.path.join(settings.AREA_DIR, area), 'r')
+        afp = open(os.path.join(settings.LEGACY_AREA_DIR, area), 'r')
         index += 1
         load_area(afp.read(), index)
         area = fp.readline().strip()

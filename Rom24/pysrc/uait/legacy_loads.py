@@ -32,7 +32,7 @@ class AREA_SERIALIZER:
         self.shops = []
 
     def to_Pickle(self):
-        area_save_dir = settings.AREA_DIR + "/" + self.area_name
+        area_save_dir = settings.LEGACY_AREA_DIR + "/" + self.area_name
         room_save_dir = area_save_dir + "/rooms"
         obj_save_dir = area_save_dir + "/mobiles"
         mobile_save_dir = area_save_dir + "/objects"
@@ -74,16 +74,16 @@ __author__ = 'syn'
 def do_apickle(ch, argument):
     ch.send("Saving areas to pickle format..\n\n")
     save.area_pickler(ch)
-    open(os.path.join(settings.AREA_DIR, settings.PAREA_LIST), 'w').close()  # lets write a clean list
-    open(os.path.join(settings.AREA_DIR, settings.SOCIAL_LIST), 'w').close()
-    with open(os.path.join(settings.AREA_DIR, settings.PAREA_LIST), 'a') as alf:
+    open(os.path.join(settings.LEGACY_AREA_DIR, settings.PAREA_LIST), 'w').close()  # lets write a clean list
+    open(os.path.join(settings.LEGACY_AREA_DIR, settings.SOCIAL_LIST), 'w').close()
+    with open(os.path.join(settings.LEGACY_AREA_DIR, settings.PAREA_LIST), 'a') as alf:
         ch.send("Writing Area List...\n\n")
         for area in merc.area_list:
             alf.write(area.name)
         alf.write("$")
         alf.close()
         ch.send("Area List Saved.\n\n")
-    with open(os.path.join(settings.AREA_DIR, settings.SOCIAL_LIST), 'a') as slf:
+    with open(os.path.join(settings.LEGACY_AREA_DIR, settings.SOCIAL_LIST), 'a') as slf:
         ch.send("Writing Social List...\n\n")
         for social in merc.social_list:
             slf.write(social.name)
@@ -112,7 +112,7 @@ to_Pickle()
 
 def to_Pickle():
     for area_serial in world_classes.serializer_list:
-        area_save_dir = settings.AREA_DIR + "/" + area_serial.area_name
+        area_save_dir = settings.LEGACY_AREA_DIR + "/" + area_serial.area_name
         room_save_dir = area_save_dir + "/rooms"
         obj_save_dir = area_save_dir + "/mobiles"
         mobile_save_dir = area_save_dir + "/objects"
@@ -150,11 +150,11 @@ def to_Pickle():
                 ref.close()
 
 def load_areas():
-    area_list = os.path.join(settings.AREA_DIR, settings.PAREA_LIST)
+    area_list = os.path.join(settings.LEGACY_AREA_DIR, settings.PAREA_LIST)
     alf = open(area_list, 'r')
     parea = alf.readline().strip()
     while parea != "$":
-        with open(os.path.join(settings.AREA_DIR, parea, parea + ".pickle"), 'rb') as af:
+        with open(os.path.join(settings.LEGACY_AREA_DIR, parea, parea + ".pickle"), 'rb') as af:
             zarea = pickle.load(af)
             merc.area_list.append(zarea)
             load_rooms(zarea.room_dict())
@@ -232,12 +232,12 @@ def load_socials():
 
 def load_areas():
     logger.info('Loading Areas...')
-    narea_list = os.path.join(settings.AREA_DIR, settings.AREA_LIST)
-    parea_list = os.path.join(settings.AREA_DIR, settings.PAREA_LIST)
+    narea_list = os.path.join(settings.LEGACY_AREA_DIR, settings.AREA_LIST)
+    parea_list = os.path.join(settings.LEGACY_AREA_DIR, settings.PAREA_LIST)
     fp = open(narea_list, 'r')
     area = fp.readline().strip()
     while area != "$":
-        afp = open(os.path.join(settings.AREA_DIR, area), 'r')
+        afp = open(os.path.join(settings.LEGACY_AREA_DIR, area), 'r')
         load_area(afp.read())
         area = fp.readline().strip()
         afp.close()
@@ -245,7 +245,7 @@ def load_areas():
     fp = open(parea_list, 'r')
     parea = fp.readline().strip()
     while parea != "$":
-        with open(os.path.join(settings.AREA_DIR, parea, parea + ".pickle"), 'rb') as ff:
+        with open(os.path.join(settings.LEGACY_AREA_DIR, parea, parea + ".pickle"), 'rb') as ff:
             zarea = pickle.load(ff)
             merc.area_list.append(zarea)
             parea = fp.readline().strip()
