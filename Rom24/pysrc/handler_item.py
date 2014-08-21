@@ -146,17 +146,22 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         self.player_name = ''
         if kwargs:
             [setattr(self, k, v) for k, v in kwargs.items()]
-            if self.instance_id:
-                self.instance_setup()
-                Items.instance_count += 1
-            else:
-                Items.template_count += 1
+        if self.instance_id:
+            self.instance_setup()
+            Items.instance_count += 1
+        else:
+            Items.template_count += 1
 
     def __del__(self):
-        if self.instance_id:
-            Items.instance_count -= 1
-        else:
-            Items.template_count -= 1
+        try:
+            logger.trace("Freeing %s" % str(self))
+            if self.instance_id:
+                Items.instance_count -= 1
+                self.instance_destructor()
+            else:
+                Items.template_count -= 1
+        except:
+            return
 
     def __repr__(self):
         if not self.instance_id:
@@ -507,7 +512,7 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
                 number = self.vnum
             pathname = os.path.join(top_dir, '%d-%s' % (self.in_area.index, self.in_area.name), 'items')
         else:
-            top_dir = os.path.join(settings.PLAYER_DIR, player_name[0].capitalize(), player_name.capitalize())
+            top_dir = os.path.join(settings.PLAYER_DIR, player_name[0].lower(), player_name.capitalize())
             number = self.instance_id
             if is_equipped and in_inventory:
                 raise ValueError('A player item cannot be BOTH equipped AND in their inventory!')
@@ -520,6 +525,7 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
 
         os.makedirs(pathname, 0o755, True)
         filename = os.path.join(pathname, '%d.json' % number)
+        logger.info('Saving %s', filename)
         js = json.dumps(self, default=instance.to_json, indent=4)
         with open(filename, 'w') as fp:
             fp.write(js)
@@ -543,11 +549,11 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
             else:
                 pathname = settings.AREA_DIR
                 number = vnum
-            target_file = '%d.json' % number
         else:
-            pathname = os.path.join(settings.PLAYER_DIR, player_name[0].capitalize(), player_name.capitalize())
-            target_file = '%d.json' % instance_id
+            pathname = os.path.join(settings.PLAYER_DIR, player_name[0].lower(), player_name.capitalize())
+            number = instance_id
 
+        target_file = '%d.json' % number
         filename = None
         for a_path, a_directory, i_files in os.walk(pathname):
             if target_file in i_files:
@@ -557,8 +563,9 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
             raise ValueError('Cannot find %s' % target_file)
 
         with open(filename) as fp:
-            js = fp.read()
-        obj = json.loads(js, object_hook=instance.from_json)
+            obj = json.load(fp, object_hook=instance.from_json)
+        if not isinstance(obj, Items):
+            raise TypeError('Could not load instance %r!' % number)
         if obj.inventory:
             obj.load_inventory(player_name)
         return obj

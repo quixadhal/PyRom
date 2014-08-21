@@ -32,6 +32,9 @@
  ************/
 """
 import random
+import logging
+
+logger = logging.getLogger()
 
 import merc
 import handler_game
@@ -43,6 +46,9 @@ import type_bypass
 
 
 class Room(instance.Instancer, environment.Environment, inventory.Inventory, type_bypass.ObjectType):
+    template_count = 0
+    instance_count = 0
+
     def __init__(self, template=None):
         super().__init__()
         self.is_room = True
@@ -64,10 +70,18 @@ class Room(instance.Instancer, environment.Environment, inventory.Inventory, typ
             [setattr(self, k, v) for k, v in template.__dict__.items()]
             self.instancer()
             self.instance_setup()
+        if self.instance_id:
+            Room.instance_count += 1
+        else:
+            Room.template_count += 1
 
     def __del__(self):
-        if self.instance_id:
-            self.instance_destructor()
+        try:
+            logger.trace("Freeing %s" % str(self))
+            if self.instance_id:
+                self.instance_destructor()
+        except:
+            return
 
     def __repr__(self):
         if not self.instance_id:

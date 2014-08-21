@@ -46,8 +46,10 @@ import merc
 import save
 import settings
 import state_checks
+import pc
 
 ch_selections = {}
+retries = 0
 
 
 def licheck(c):
@@ -63,7 +65,10 @@ def check_parse_name(name):
     if name in bad_names:
         return False
     
-    if 2 > len(name) > 12:
+    if len(name) < 2:
+        return False
+
+    if len(name) > 12:
         return False
     
     if not name.isalpha():
@@ -76,13 +81,28 @@ def check_parse_name(name):
 
 
 def con_get_name(self):
+    global retries
     argument = self.get_command()
     name = argument.title()
 
     if not check_parse_name(name):
         self.send("Illegal name, try another.\nName:")
+        retries += 1
+        if retries > 3:
+            self.send('Please come back when you think of a name.')
+            self.deactivate()
+        return
 
-    found, ch = save.load_char_obj(self, name)
+    retries = 0
+
+    ch = pc.Pc.load(name)
+    if ch:
+        found = True
+        ch.desc = self
+        self.character = ch
+        ch.send = self.send
+    else:
+        found, ch = save.legacy_load_char_obj(self, name)
 
     if ch.act.is_set(merc.PLR_DENY):
         logger.info("Denying access to %s@%s" % (ch.name, self.addrport()))
