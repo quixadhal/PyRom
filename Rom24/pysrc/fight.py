@@ -955,6 +955,12 @@ def make_corpse(ch):
     corpse.short_descr = corpse.short_descr % name
     corpse.description = corpse.description % name
 
+    for item_id in ch.equipped.values():
+        if not item_id:
+            continue
+        item = merc.items[item_id]
+        ch.unequip(item.equipped_to, silent=True, forced=True)
+
     for item_id in ch.inventory[:]:
         item = merc.items[item_id]
         floating = False
