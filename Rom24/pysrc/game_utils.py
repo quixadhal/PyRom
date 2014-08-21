@@ -621,45 +621,35 @@ def find_room(ch, template, target_package):
 def find_item(ch, template, target_package):
     #TODO change instance dicts to ordered dicts to support searches with predictable results.
     atype, num_or_count, arg_num, target = target_package
-    room_inventory_list = []
-    ch_inventory_list = []
+    bagels = ''
+    sorted(sorted(merc.rooms.keys(), key=lambda x: merc.rooms[x].vnum), key=lambda x: merc.rooms[x].instance_id)
+
+    combined_inventory = ch.inventory + ch.in_room.items
+
     if 'vnum' in atype:
-        if ch.inventory:
-                ch_inventory_list = [item_id for item_id in ch.inventory if merc.items[item_id].vnum == target]
-                if ch_inventory_list:
-                        try:
-                            return merc.items[ch_inventory_list[arg_num - 1]]
-                        except:
-                            ch_inventory_list = None
-                elif ch.in_room and not ch_inventory_list:
-                    room_inventory_list = [item_id for item_id in ch.in_room.items
-                                           if merc.items[item_id].vnum == target]
-                    if room_inventory_list:
-                        try:
-                            return merc.items[room_inventory_list[arg_num - 1]]
-                        except:
-                            room_inventory_list = None
-                elif not room_inventory_list:
-                    try:
-                        return merc.instances_by_item[target][arg_num - 1]
-                    except:
-                        return None
-                else:
-                    return None
+        if combined_inventory:
+            final_item = [merc.items[item_id] for item_id in combined_inventory
+                          if merc.items[item_id].vnum == target][arg_num - 1]
+            if final_item:
+                return final_item
+        elif ch.is_immortal():
+            item_id = merc.instances_by_item[target][arg_num - 1]
+            return merc.items.get(item_id, None)
+        else:
+            return None
     elif 'instance' in atype:
         return merc.items.get(target, None)
-    elif 'word' in atype and not 'count' in atype:
-        try:
-            return [item for item in merc.items.values() if target in item.name][arg_num - 1]
-        except:
-            return None
-    elif 'word' in atype and 'count' in atype:
-        try:
-            #global
-            item_list = [item for item in merc.items.values() if target in item.name][:arg_num]
-            return item_list
-        except:
-            return None
+    elif 'number' in atype:
+        pass
+    else:
+        if 'vnum' in atype:
+            if ch.is_immortal():
+                try:
+                    #temp
+                    return merc.items[None]
+                except:
+                    return None
+
 
 
 def to_integer(s: str):

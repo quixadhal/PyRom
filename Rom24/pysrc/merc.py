@@ -102,15 +102,15 @@ Likewise you can effect a change TO mob from accessing either dict:
 >>>merc.mob_instances[mob.instance_id].name
 'bob'
 '''
-areas = {}  # Currently areas are singleton, making them both a template and instance
-items = {}
+areas = {}
+items = collections.OrderedDict()
 rooms = {}
 characters = {}
 shops = {}
 player_characters = {}
 
 # global instance dict
-global_instances = {}
+global_instances = collections.OrderedDict()
 
 instance_number = 0
 previous_instance = instance_number

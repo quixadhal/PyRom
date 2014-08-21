@@ -1,15 +1,13 @@
 import logging
 
-import game_utils
-import handler_ch
-import handler_game
-import state_checks
-
-
 logger = logging.getLogger()
 
 from const import liq_table
 import merc
+import game_utils
+import handler_ch
+import handler_game
+import state_checks
 import interp
 
 
