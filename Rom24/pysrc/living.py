@@ -1242,5 +1242,3 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             return
         else:
             raise LookupError('Unable to find verbose wear string for %s' % slot)
-
-
