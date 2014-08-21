@@ -509,7 +509,7 @@ def char_update():
             else:
                 # multiple affects. don't send the spelldown msg
                 multi = [a for a in ch.affected if a.type == paf.type and a is not paf and a.duration > 0]
-                if not multi and paf.type > 0 and const.skill_table[paf.type].msg_off:
+                if not multi and paf.type and const.skill_table[paf.type].msg_off:
                     ch.send(const.skill_table[paf.type].msg_off + "\n")
 
                 ch.affect_remove(paf)

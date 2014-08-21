@@ -56,8 +56,8 @@ def do_ostat(ch, argument):
             ch.send(" '%s'" % const.skill_table[obj.value[3]].name)
         ch.send(".\n")
     elif obj.item_type == merc.ITEM_DRINK_CON:
-        ch.send("It holds %s-colored %s.\n" % (const.liq_table[obj.value[2]].liq_color,
-                                               const.liq_table[obj.value[2]].liq_name))
+        ch.send("It holds %s-colored %s.\n" % (const.liq_table[obj.value[2]].color,
+                                               const.liq_table[obj.value[2]].name))
     elif obj.item_type == merc.ITEM_WEAPON:
         ch.send("Weapon type is ")
         weapon_type = {merc.WEAPON_EXOTIC: "exotic", merc.WEAPON_SWORD: "sword",
@@ -95,8 +95,8 @@ def do_ostat(ch, argument):
         for ed in extra_descr:
             ch.send(ed.keyword)
             ch.send(" ")
-    ch.send("'\n"
-    )
+        ch.send("'\n")
+
     affected = list(obj.affected)
     #TODO: This may not be necessary at all.
     #if not obj.enchanted:

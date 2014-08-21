@@ -99,7 +99,8 @@ def process_output(self):
                 wound = "%s %s \n" % (state_checks.PERS(victim, ch), wound)
                 wound = wound.capitalize()
                 ch.send(wound)
-        self.send("\n")
+        if not ch.comm.is_set(merc.COMM_COMPACT):
+            self.send("\n")
         bust_a_prompt(ch)
     self.miniboa_send()
 

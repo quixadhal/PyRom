@@ -35,7 +35,7 @@ def do_snoop(ch, argument):
             and victim.in_room.is_private() and not state_checks.IS_TRUSTED(ch, merc.MAX_LEVEL):
         ch.send("That character is in a private room.\n")
         return
-    if victim.get_trust() >= ch.trust or victim.comm.is_set(merc.COMM_SNOOP_PROOF):
+    if victim.trust >= ch.trust or victim.comm.is_set(merc.COMM_SNOOP_PROOF):
         ch.send("You failed.\n")
         return
     if ch.desc:

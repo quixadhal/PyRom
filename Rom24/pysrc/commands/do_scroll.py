@@ -7,7 +7,7 @@ import merc
 import interp
 import game_utils
 
-
+#TODO: Known broken. Not this command, but the paging itself.
 def do_scroll(ch, argument):
     argument, arg = game_utils.read_word(argument)
     if not arg:

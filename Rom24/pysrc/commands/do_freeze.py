@@ -22,7 +22,7 @@ def do_freeze(ch, argument):
     if victim.is_npc():
         ch.send("Not on NPC's.\n")
         return
-    if victim.get_trust() >= ch.trust:
+    if victim.trust >= ch.trust:
         ch.send("You failed.\n")
         return
     if victim.act.is_set(merc.PLR_FREEZE):

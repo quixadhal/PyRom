@@ -14,7 +14,7 @@ month_name = ["Winter", "the Winter Wolf", "the Frost Giant", "the Old Forces",
               "the Sun", "the Heat", "the Battle", "the Dark Shades", "the Shadows",
               "the Long Shadows", "the Ancient Darkness", "the Great Evil"]
 
-
+#TODO: Known broken. Doesn't show startup or longevity.
 def do_time(ch, argument):
     day = handler_game.time_info.day + 1
     suf = ''

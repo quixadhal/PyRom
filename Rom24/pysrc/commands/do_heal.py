@@ -14,11 +14,13 @@ import interp
 
 def do_heal(ch, argument):
     # check for healer
-    mob = [mob for mob in ch.in_room.people if mob.is_npc() and mob.act.is_set(merc.ACT_IS_HEALER)][:1]
+    for mob_id in ch.in_room.people:
+        healer = merc.characters[mob_id]
+        if healer.is_npc() and healer.act.is_set(merc.ACT_IS_HEALER):
+            mob = healer
     if not mob:
         ch.send("You can't do that here.\n")
         return
-    mob = mob[0]
     argument, arg = game_utils.read_word(argument)
     if not arg:
         # display price list

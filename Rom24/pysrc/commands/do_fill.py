@@ -18,11 +18,14 @@ def do_fill(ch, argument):
     if not obj:
         ch.send("You do not have that item.\n")
         return
-    fountain = [f for f in ch.in_room.items if f.item_type == merc.ITEM_FOUNTAIN][:1]
+    for f_id in ch.in_room.items:
+        f = merc.items[f_id]
+        if f.item_type == merc.ITEM_FOUNTAIN:
+            fountain = f
+            break
     if not fountain:
         ch.send("There is no fountain here!\n")
         return
-    fountain = fountain[0]
     if obj.item_type != merc.ITEM_DRINK_CON:
         ch.send("You can't fill that.\n")
         return
@@ -32,9 +35,9 @@ def do_fill(ch, argument):
     if obj.value[1] >= obj.value[0]:
         ch.send("Your container is full.\n")
         return
-    handler_game.act("You fill $p with %s from $P." % const.liq_table[fountain.value[2]].liq_name, ch, obj, fountain,
+    handler_game.act("You fill $p with %s from $P." % const.liq_table[fountain.value[2]].name, ch, obj, fountain,
                      merc.TO_CHAR)
-    handler_game.act("$n fills $p with %s from $P." % const.liq_table[fountain.value[2]].liq_name, ch, obj, fountain,
+    handler_game.act("$n fills $p with %s from $P." % const.liq_table[fountain.value[2]].name, ch, obj, fountain,
                      merc.TO_ROOM)
     obj.value[2] = fountain.value[2]
     obj.value[1] = obj.value[0]

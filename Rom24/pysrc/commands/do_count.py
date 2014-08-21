@@ -7,7 +7,7 @@ import merc
 import interp
 import nanny
 
-
+#TODO: Known broken
 # for  keeping track of the player count
 def do_count(ch, argument):
     count = len([d for d in merc.descriptor_list if d.is_connected(nanny.con_playing) and ch.can_see(handler_ch.CH(d))])

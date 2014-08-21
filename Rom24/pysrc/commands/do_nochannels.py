@@ -19,7 +19,7 @@ def do_nochannels(ch, argument):
     if not victim:
         ch.send("They aren't here.\n")
         return
-    if victim.get_trust() >= ch.trust:
+    if victim.trust >= ch.trust:
         ch.send("You failed.\n")
         return
     if victim.comm.is_set(merc.COMM_NOCHANNELS):

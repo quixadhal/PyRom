@@ -30,7 +30,7 @@ def do_password(ch, argument):
         arg1 = hashlib.sha512(arg1.encode()).hexdigest()
         arg2 = hashlib.sha512(arg2.encode()).hexdigest()
 
-    if arg1 == ch.pwd:
+    if arg1 != ch.pwd:
         state_checks.WAIT_STATE(ch, 40)
         ch.send("Wrong password.  Wait 10 seconds.\n")
         return

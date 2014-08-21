@@ -164,7 +164,7 @@ def create_mobile(npc_template):
             npc.perm_stat[merc.STAT_STR] -= 1
             npc.perm_stat[merc.STAT_DEX] += 1
 
-        if npc.off_flags.is_set(merc.OFF_FAST):
+        if (npc.is_npc() and npc.off_flags.is_set(merc.OFF_FAST)):
             npc.perm_stat[merc.STAT_DEX] += 2
 
         npc.perm_stat[merc.STAT_STR] += npc.size - merc.SIZE_MEDIUM

@@ -57,13 +57,14 @@ def do_force(ch, argument):
                 and victim.in_room.is_private() and not state_checks.IS_TRUSTED(ch, merc.MAX_LEVEL):
             ch.send("That character is in a private room.\n")
             return
-        if victim.get_trust() >= ch.trust:
+        if victim.is_pc() and victim.trust >= ch.trust:
             ch.send("Do it yourself!\n")
             return
         if not victim.is_npc() and ch.trust < merc.MAX_LEVEL - 3:
             ch.send("Not at your level!\n")
             return
         handler_game.act(buf, ch, None, victim, merc.TO_VICT)
+        #TODO: Known broken. NPCs don't have interpret, so we'll have to figure this out.
         victim.interpret(argument)
     ch.send("Ok.\n")
     return

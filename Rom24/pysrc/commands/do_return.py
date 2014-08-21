@@ -6,7 +6,7 @@ import merc
 import interp
 import handler_game
 
-
+#TODO: Known broken.
 def do_return(ch, argument):
     if not ch.desc:
         return

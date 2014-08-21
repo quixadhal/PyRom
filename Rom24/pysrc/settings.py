@@ -37,6 +37,7 @@ DOC_DIR = os.path.join(DATA_DIR, 'docs')
 
 AREA_DIR = os.path.join(WORLD_DIR, 'areas')
 INSTANCE_DIR = os.path.join(WORLD_DIR, 'instances')
-
 #Features
 SHOW_DAMAGE_NUMBERS = True
+DETAILED_INVALID_COMMANDS = True
+

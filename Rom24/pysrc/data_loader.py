@@ -142,7 +142,7 @@ def load_npcs(area, pArea):
         area, npc.dam_dice[1] = game_utils.read_int(area)
         area = game_utils.read_forward(area)
         area, npc.dam_dice[2] = game_utils.read_int(area)
-        area, npc.dam_type = game_utils.read_word(area, False)
+        area, npc.  dam_type = game_utils.read_word(area, False)
         npc.dam_type = state_checks.name_lookup(const.attack_table, npc.dam_type)
         area, npc.armor[0] = game_utils.read_int(area)
         area, npc.armor[1] = game_utils.read_int(area)

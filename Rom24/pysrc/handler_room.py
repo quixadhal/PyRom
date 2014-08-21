@@ -57,8 +57,8 @@ class Room(instance.Instancer, environment.Environment, inventory.Inventory, typ
         self.room_flags = 0
         self.available_light = 0
         self.sector_type = 0
-        self.heal_rate = 0
-        self.mana_rate = 0
+        self.heal_rate = 100
+        self.mana_rate = 100
         self.clan = None
         if template:
             [setattr(self, k, v) for k, v in template.__dict__.items()]
