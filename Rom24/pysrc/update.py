@@ -682,7 +682,7 @@ def aggr_update():
         if wch.is_npc() \
                 or wch.level >= LEVEL_IMMORTAL \
                 or wch.in_room is None \
-                or merc.areaTemplate[wch.in_room.area].empty:
+                or wch.in_area.empty:
             continue
 
         for ch_id in wch.in_room.people:

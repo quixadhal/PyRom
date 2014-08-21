@@ -31,7 +31,6 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
-import collections
 import random
 import logging
 
@@ -53,29 +52,6 @@ import game_utils
 import immortal
 import environment
 import state_checks
-
-
-''' Equipment Slot Strings - for use with displaying EQ to characters '''
-
-eq_slot_strings = collections.OrderedDict([('light',        '<used as light>     '),
-                                           ('left_finger',  '<worn on finger>    '),
-                                           ('right_finger', '<worn on finger>    '),
-                                           ('neck',         '<worn around neck>  '),
-                                           ('collar',       '<worn around neck>  '),
-                                           ('body',         '<worn on torso>     '),
-                                           ('head',         '<worn on head>      '),
-                                           ('legs',         '<worn on legs>      '),
-                                           ('feet',         '<worn on feet>      '),
-                                           ('hands',        '<worn on hands>     '),
-                                           ('arms',         '<worn on arms>      '),
-                                           ('about_body',   '<worn as shield>    '),
-                                           ('waist',        '<worn about body>   '),
-                                           ('left_wrist',   '<worn about waist>  '),
-                                           ('right_wrist',  '<worn around wrist> '),
-                                           ('main_hand',    '<worn around wrist> '),
-                                           ('off_hand',     '<wielded>           '),
-                                           ('held',         '<held>              '),
-                                           ('float',        '<floating nearby>   ')])
 
 
 class Grouping:

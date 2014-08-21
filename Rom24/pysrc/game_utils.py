@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 import settings
 
 logger = logging.getLogger()
@@ -376,10 +377,11 @@ def item_flags_from_bits(bits: int, out_data: collections.namedtuple, in_type='w
         if bits & merc.WEAPON_POISON:
             out_data.weapon.update({'poison'})
 
+
 def find_location(ch, arg):
     if arg.isdigit():
         vnum = int(arg)
-        if vnum not in merc.roomTemplate:
+        if vnum not in merc.roomTemplate.keys():
             return None
         else:
             room_instance = merc.instances_by_room[vnum][0]
@@ -473,145 +475,188 @@ def get_extra_descr(name, edlist):
     return None
 
 
-def argument_parser(string):
-    if not string:
+def argument_parser(arg_string):
+    if not arg_string:
         return None
 
     atype = None
     num_or_count = None
     arg_num = 1
 
-    string = string.lstrip()
-    if '#' in string:
-        if string[0] == '#':
+    if '' is arg_string:
+        return None, None, None, None
+
+    arg_string = arg_string.lstrip()
+    if '#' in arg_string:
+        if arg_string[0] == '#':
             atype = 'instance_id'
-            target = string.replace('#', '')
+            target = arg_string.replace('#', '')
             return atype, num_or_count, arg_num, int(target)
         else:
             return None  # Funky id request
 
-    if '.' in string or '*' in string:
-        if '*' in string:
-            sep = string.find('*')
+    elif '.' in arg_string or '*' in arg_string:
+        if '*' in arg_string:
+            sep = arg_string.find('*')
             num_or_count = 'count'
         else:
-            sep = string.find('.')
+            sep = arg_string.find('.')
             num_or_count = 'number'
-        arg_num = string[:sep]
-        target = string[sep + 1:]
-        if not target.isalnum():
-            return None, None, None, None
+        arg_num = arg_string[:sep]
+        target = arg_string[sep + 1:]
         if '"' in target or "'" in target:
             if num_or_count == 'number':
                 atype = 'number_compound'
             else:
                 atype = 'count_compound'
-            compound_list = []
+            compound_set = set({})
             if '"' in target:
                 target = target.replace('"', '')
             else:
                 target = target.replace("'", "")
             compound, word = read_word(target, True)
-            compound_list.append(word)
+            compound_set |= {word}
             while len(compound) > 0:
                 compound, word = read_word(compound)
-                compound_list.append(word)
-            return atype, num_or_count, arg_num, compound_list
+                compound_set |= {word}
+            return atype, num_or_count, arg_num, compound_set
+        elif ' ' in target and re.match("^[a-zA-Z ]*$", target):
+            if num_or_count == 'number':
+                atype = 'number_compound'
+            else:
+                atype = 'count_compound'
+            compound_set = set({})
+            compound, word = read_word(target, True)
+            compound_set |= {word}
+            while len(compound) > 0:
+                compound, word = read_word(compound)
+                compound_set |= {word}
+            return atype, num_or_count, arg_num, compound_set
         if not arg_num.isdigit():
             arg_num = 1
         if target.isdigit():
-            atype = 'vnum'
+            if num_or_count == 'number':
+                atype = 'number_vnum'
+            else:
+                atype = 'count_vnum'
             return atype, num_or_count, arg_num, int(target)
         elif target.isalpha():
-            atype = 'word'
+            if num_or_count == 'number':
+                atype = 'number_word'
+            else:
+                atype = 'count_word'
             return atype, num_or_count, arg_num, target
         else:
             return None, None, None, None
 
-    elif string.isdigit():
+    elif arg_string.isdigit():
         atype = 'vnum'
-        return atype, None, arg_num, int(string)
+        return atype, None, arg_num, int(arg_string)
 
-    elif string.isalpha():
+    elif arg_string.isalpha():
         atype = 'word'
-        return atype, None, arg_num, string
+        return atype, None, arg_num, arg_string
 
-    elif not string.isalnum():
+    elif re.match("^[a-zA-Z ]*$", arg_string):
+        compound_set = set({})
+        compound, word = read_word(arg_string, True)
+        compound_set |= {word}
+        while len(compound) > 0:
+            compound, word = read_word(compound)
+            compound_set |= {word}
+        atype = 'compound'
+        return atype, num_or_count, arg_num, compound_set
+
+    elif not arg_string.isalnum():
         return None, None, None, None
 
     else:
-        compound_list = []
-        compound, word = read_word(string, True)
-        compound_list.append(word)
-        while len(compound) > 0:
-            compound, word = read_word(compound)
-            compound_list.append(word)
-        atype = 'compound'
-        return atype, num_or_count, arg_num, compound_list
+        return None, None, None, None
 
 
-def object_search(ch, environment, template, obj_type, atype, num_or_count, arg_num, target):
-    if not atype or not target:
-        return None
-
-    count = 0
-    result_list = None
-    contains_id_list = None
-    contents_id_list = None
-
-    if template is True:  # just in case we ever need to 'find' a template..
-        if 'vnum' not in atype:
-            return None
-        if obj_type == 'item':
-            return merc.itemTemplate[target]
-        elif obj_type == 'npc':
-            return merc.characterTemplate[target]
-        elif obj_type == 'room':
-            return merc.roomTemplate[target]
-        else:
-            return None
-
-    if atype == 'vnum':
-        if obj_type == 'item':
-            if ch.inventory:
-                contains_id_list = [item_id for item_id in ch.inventory if merc.items[item_id].vnum == target]
-                if contains_id_list:
-                    try:
-                        return merc.items[contains_id_list[arg_num - 1]]
-                    except:
-                        contains_id_list = None
-            elif merc.rooms[environment] and not contains_id_list:
-                contents_id_list = [item_id for item_id in environment.inventory if merc.items[item_id].vnum == target]
-                if contents_id_list:
-                    try:
-                        return merc.items[contents_id_list[arg_num - 1]]
-                    except:
-                        contents_id_list = None
-            elif not contents_id_list:
+def object_search(ch, template: bool=False, obj_type: str=None, target_package: tuple=None):
+    if not obj_type:
+        try:
+            return find_character(ch, template, target_package)
+        except:
+            try:
+                return find_item(ch, template, target_package)
+            except:
                 try:
-                    return merc.instances_by_item[target][arg_num - 1]
+                    return find_room(ch, template, target_package)
                 except:
                     return None
-            else:
-                return None
-        elif obj_type == 'npc':
-            try:
-                item_id = merc.instances_by_item[target][0]
-                return merc.items[item_id]
-            except:
-                return None
-        elif obj_type == 'room':
-            try:
-                item_id = merc.instances_by_item[target][0]
-                return merc.items[item_id]
-            except:
-                return None
+
+    if 'character' in obj_type:
+        return find_character(ch, template, target_package)
+    elif 'room' in obj_type:
+        return find_room(ch, template, target_package)
+    elif 'item' in obj_type:
+        return find_item(ch, template, target_package)
+
+
+def find_character(ch, template, target_package):
+    atype, num_or_count, arg_num, target = target_package
+    if ch.in_room:
+                room_inventory_list = [npc_id for npc_id in ch.in_room.people
+                                       if merc.characters[npc_id].vnum == target]
+                if room_inventory_list:
+                    try:
+                        return merc.characters[room_inventory_list[arg_num - 1]]
+                    except:
+                        room_inventory_list = None
+                else:
+                    npc_id = merc.instances_by_character[target][arg_num - 1]
+                    if npc_id:
+                        return merc.characters[npc_id]
+
+def find_room(ch, template, target_package):
+    atype, num_or_count, arg_num, target = target_package
+    if isinstance(target, int):
+                trash = ''
+                try:
+                    room_id = merc.instances_by_room[target][arg_num - 1]
+                    return merc.rooms[room_id]
+                except:
+                    trash = 'onion bagels!'
+                if trash:
+                    try:
+                        return merc.rooms[target]
+                    except:
+                        return None
+
+def find_item(ch, template, target_package):
+    #TODO change instance dicts to ordered dicts to support searches with predictable results.
+    atype, num_or_count, arg_num, target = target_package
+    bagels = ''
+    sorted(sorted(merc.rooms.keys(), key=lambda x: merc.rooms[x].vnum), key=lambda x: merc.rooms[x].instance_id)
+
+    combined_inventory = ch.inventory + ch.in_room.items
+
+    if 'vnum' in atype:
+        if combined_inventory:
+            final_item = [merc.items[item_id] for item_id in combined_inventory
+                          if merc.items[item_id].vnum == target][arg_num - 1]
+            if final_item:
+                return final_item
+        elif ch.is_immortal():
+            item_id = merc.instances_by_item[target][arg_num - 1]
+            return merc.items.get(item_id, None)
         else:
             return None
-    elif atype == 'instance_id':
+    elif 'instance' in atype:
+        return merc.items.get(target, None)
+    elif 'number' in atype:
         pass
-    elif atype == 'compound' or atype == 'word' or atype == 'number_compound' or atype == 'count_compound':
-        pass
+    else:
+        if 'vnum' in atype:
+            if ch.is_immortal():
+                try:
+                    #temp
+                    return merc.items[None]
+                except:
+                    return None
+
 
 
 def to_integer(s: str):

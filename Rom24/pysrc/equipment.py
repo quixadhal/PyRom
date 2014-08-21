@@ -1,10 +1,10 @@
 import sys
 import json
 import collections
-import gc
 import merc
 
 __author__ = 'syn'
+
 
 class Equipment:
     def __init__(self):

@@ -44,10 +44,10 @@ class Area(instance.Instancer, type_bypass.ObjectType, environment.Environment):
             self.player_chars = []
             self.player_count = len(self.player_chars)
 
-    def __del__(self):
-        self.save()
-        if self.instance_id:
-            self.instance_destructor()
+    #def __del__(self):
+    #    self.save()
+    #    if self.instance_id:
+    #        self.instance_destructor()
 
     def __repr__(self):
         if self.instance_id:
@@ -129,11 +129,11 @@ class Area(instance.Instancer, type_bypass.ObjectType, environment.Environment):
 
 
 class ExtraDescrData:
-    def __init__(self, ex_data=None):
-        self.keyword = "" # Keyword in look/examine
+    def __init__(self, **kwargs):
+        self.keyword = ""  # Keyword in look/examine
         self.description = ""
-        if ex_data:
-            [setattr(self, k, v) for k, v in ex_data.items()]
+        if kwargs:
+            [setattr(self, k, v) for k, v in kwargs.items()]
 
     def to_json(self, outer_encoder=None):
         if outer_encoder is None:
@@ -147,7 +147,7 @@ class ExtraDescrData:
                 tmp_dict[k] = v
 
         cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
-        return {cls_name: {'extra_descr': outer_encoder(tmp_dict)}}
+        return {cls_name: outer_encoder(tmp_dict)}
 
     @classmethod
     def from_json(cls, data, outer_decoder=None):
@@ -156,12 +156,21 @@ class ExtraDescrData:
 
         cls_name = '__class__/' + __name__ + '.' + cls.__name__
         if cls_name in data:
-            return cls(outer_decoder(data[cls_name]))
+            tmp_data = outer_decoder(data[cls_name])
+            return cls(**tmp_data)
         return data
 
 
 class Exit:
-    def __init__(self, template=None):
+    def __init__(self, template=None, **kwargs):
+        self.name = ""
+        self.to_room_vnum = None
+        self.to_room = None
+        self.exit_info = bit.Bit(flags=tables.exit_flags)
+        self.key = None
+        self.key_vnum = None
+        self.keyword = ""
+        self.description = ""
         if template:
             [setattr(self, k, v) for k, v in template.__dict__.items()]
             if self.to_room_vnum != -1 and not None:
@@ -170,59 +179,156 @@ class Exit:
                 self.to_room = None
             if self.key <= 0:
                 self.key = None
-        else:
-            self.name = ""
-            self.to_room_vnum = None
-            self.to_room = None
-            self.exit_info = bit.Bit(flags=tables.exit_flags)
-            self.key = None
-            self.key_vnum = None
-            self.keyword = ""
-            self.description = ""
+        if kwargs:
+            [setattr(self, k, v) for k, v in kwargs.items()]
+
+    def to_json(self, outer_encoder=None):
+        if outer_encoder is None:
+            outer_encoder = json.JSONEncoder.default
+
+        tmp_dict = {}
+        for k, v in self.__dict__.items():
+            if str(type(v)) in ("<class 'function'>", "<class 'method'>"):
+                continue
+            else:
+                tmp_dict[k] = v
+
+        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        return {cls_name: outer_encoder(tmp_dict)}
+
+    @classmethod
+    def from_json(cls, data, outer_decoder=None):
+        if outer_decoder is None:
+            outer_decoder = json.JSONDecoder.decode
+
+        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        if cls_name in data:
+            tmp_data = outer_decoder(data[cls_name])
+            return cls(**tmp_data)
+        return data
 
 
 class Reset:
-    def __init__(self, template=None):
+    def __init__(self, template=None, **kwargs):
+        self.name = ""
+        self.area = ""
+        self.instance_id = None
+        self.room = None
+        self.command = ""
+        self.arg1 = 0
+        self.arg2 = 0
+        self.arg3 = 0
+        self.arg4 = 0
         if template:
             [setattr(self, k, v) for k, v in template.__dict__.items()]
             self.room = merc.instances_by_room[self.room][0]
-        else:
-            self.name = ""
-            self.area = ""
-            self.instance_id = None
-            self.room = None
-            self.command = ""
-            self.arg1 = 0
-            self.arg2 = 0
-            self.arg3 = 0
-            self.arg4 = 0
+        if kwargs:
+            [setattr(self, k, v) for k, v in kwargs.items()]
 
     def __repr__(self):
         if not self.instance_id:
             return "Reset Area: %s Room: %d Type: %s" % (merc.roomTemplate[self.room].area,
-                                                         self.room, self.command )
+                                                         self.room, self.command)
+
+    def to_json(self, outer_encoder=None):
+        if outer_encoder is None:
+            outer_encoder = json.JSONEncoder.default
+
+        tmp_dict = {}
+        for k, v in self.__dict__.items():
+            if str(type(v)) in ("<class 'function'>", "<class 'method'>"):
+                continue
+            else:
+                tmp_dict[k] = v
+
+        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        return {cls_name: outer_encoder(tmp_dict)}
+
+    @classmethod
+    def from_json(cls, data, outer_decoder=None):
+        if outer_decoder is None:
+            outer_decoder = json.JSONDecoder.decode
+
+        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        if cls_name in data:
+            tmp_data = outer_decoder(data[cls_name])
+            return cls(**tmp_data)
+        return data
 
 class Shop:
-    def __init__(self, template=None):
+    def __init__(self, template=None, **kwargs):
+        self.keeper = None
+        self.keeperTemplate = None
+        self.room = None
+        self.buy_type = {}
+        self.profit_buy = 0
+        self.profit_sell = 0
+        self.open_hour = 0
+        self.close_hour = 0
         if template:
             [setattr(self, k, v) for k, v in template.__dict__.items()]
-        else:
-            self.keeper = None
-            self.keeperTemplate = None
-            self.room = None
-            self.buy_type = {}
-            self.profit_buy = 0
-            self.profit_sell = 0
-            self.open_hour = 0
-            self.close_hour = 0
+        if kwargs:
+            [setattr(self, k, v) for k, v in kwargs.items()]
 
     def __repr__(self):
             return "Shop Mob: %s Room: %d" % (merc.characters[self.keeper].name, self.room)
 
+    def to_json(self, outer_encoder=None):
+        if outer_encoder is None:
+            outer_encoder = json.JSONEncoder.default
+
+        tmp_dict = {}
+        for k, v in self.__dict__.items():
+            if str(type(v)) in ("<class 'function'>", "<class 'method'>"):
+                continue
+            else:
+                tmp_dict[k] = v
+
+        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        return {cls_name: outer_encoder(tmp_dict)}
+
+    @classmethod
+    def from_json(cls, data, outer_decoder=None):
+        if outer_decoder is None:
+            outer_decoder = json.JSONDecoder.decode
+
+        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        if cls_name in data:
+            tmp_data = outer_decoder(data[cls_name])
+            return cls(**tmp_data)
+        return data
+
 
 class Gen:
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.valid = False
         self.skill_chosen = {}
         self.group_chosen = {}
         self.points_chosen = 0
+        if kwargs:
+            [setattr(self, k, v) for k, v in kwargs.items()]
+
+    def to_json(self, outer_encoder=None):
+        if outer_encoder is None:
+            outer_encoder = json.JSONEncoder.default
+
+        tmp_dict = {}
+        for k, v in self.__dict__.items():
+            if str(type(v)) in ("<class 'function'>", "<class 'method'>"):
+                continue
+            else:
+                tmp_dict[k] = v
+
+        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        return {cls_name: outer_encoder(tmp_dict)}
+
+    @classmethod
+    def from_json(cls, data, outer_decoder=None):
+        if outer_decoder is None:
+            outer_decoder = json.JSONDecoder.decode
+
+        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        if cls_name in data:
+            tmp_data = outer_decoder(data[cls_name])
+            return cls(**tmp_data)
+        return data

@@ -41,6 +41,30 @@ logger = logging.getLogger()
 
 import state_checks
 
+#Descriptive Dicts
+
+''' Equipment Slot Strings - for use with displaying EQ to characters '''
+
+eq_slot_strings = collections.OrderedDict([('light', '<used as light>     '),
+                                           ('left_finger', '<worn on finger>    '),
+                                           ('right_finger', '<worn on finger>    '),
+                                           ('neck', '<worn around neck>  '),
+                                           ('collar', '<worn around neck>  '),
+                                           ('body', '<worn on torso>     '),
+                                           ('head', '<worn on head>      '),
+                                           ('legs', '<worn on legs>      '),
+                                           ('feet', '<worn on feet>      '),
+                                           ('hands', '<worn on hands>     '),
+                                           ('arms', '<worn on arms>      '),
+                                           ('off_hand', '<worn as shield>    '),  # TODO: Fix naming here later
+                                           ('about_body', '<worn about body>   '),
+                                           ('waist', '<worn about waist>  '),
+                                           ('left_wrist', '<worn around wrist> '),
+                                           ('right_wrist', '<worn around wrist> '),
+                                           ('main_hand', '<wielded>           '),
+                                           ('held', '<held>              '),
+                                           ('float', '<floating nearby>   ')])
+
 MAX_TRADE = 5
 MAX_GUILDROOMS = 2
 MAX_STATS = 5
@@ -102,15 +126,15 @@ Likewise you can effect a change TO mob from accessing either dict:
 >>>merc.mob_instances[mob.instance_id].name
 'bob'
 '''
-areas = {}  # Currently areas are singleton, making them both a template and instance
-items = {}
+areas = {}
+items = collections.OrderedDict()
 rooms = {}
 characters = {}
 shops = {}
 player_characters = {}
 
 # global instance dict
-global_instances = {}
+global_instances = collections.OrderedDict()
 
 instance_number = 0
 previous_instance = instance_number
@@ -987,25 +1011,27 @@ movement_loss = [1, 2, 2, 3, 4, 6, 4, 1, 6, 10, 6]
 #Pc Tracking
 max_on = 0
 
-where_name = ["<used as light>     ",
-              "<worn on finger>    ",
-              "<worn on finger>    ",
-              "<worn around neck>  ",
-              "<worn around neck>  ",
-              "<worn on torso>     ",
-              "<worn on head>      ",
-              "<worn on legs>      ",
-              "<worn on feet>      ",
-              "<worn on hands>     ",
-              "<worn on arms>      ",
-              "<worn as shield>    ",
-              "<worn about body>   ",
-              "<worn about waist>  ",
-              "<worn around wrist> ",
-              "<worn around wrist> ",
-              "<wielded>           ",
-              "<held>              ",
-              "<floating nearby>   "]
+''' Equipment Slot Strings - for use with displaying EQ to characters '''
+
+eq_slot_strings = collections.OrderedDict([('light', '[[Light Source]]         :  '),
+                                           ('left_finger', '[[Worn on Left Finger]]   :  '),
+                                           ('right_finger', '[[Worn on Right Finger]]  :  '),
+                                           ('neck', '[[Worn around Neck]]     :  '),
+                                           ('collar', '[[Worn around Collar]]     :  '),
+                                           ('body', '[[Worn on Torso]]        :  '),
+                                           ('head', '[[Worn on Head]]        :  '),
+                                           ('legs', '[[Worn on Legs]]        :  '),
+                                           ('feet', '[[Worn on Feet]]        :  '),
+                                           ('hands', '[[Worn on Hands]]       :  '),
+                                           ('arms', '[[Worn on Arms]]        :  '),
+                                           ('about_body', '[[Worn about Body]]    :  '),
+                                           ('waist', '[[Worn around Waist]]   :  '),
+                                           ('left_wrist', '[[Worn on Left Wrist]]  :  '),
+                                           ('right_wrist', '[[Worn on Right Wrist]] :  '),
+                                           ('main_hand', '[[Main Hand]]            :  '),
+                                           ('off_hand', '[[Off Hand]]             :  '),
+                                           ('held', '[[Held]]                 :  '),
+                                           ('float', '[[Floating Nearby]]      :  ')])
 
 
 # Return ascii name of an affect location.
