@@ -74,7 +74,7 @@ def do_look(ch, argument):
             else:
                 amnt = "more than half-"
             ch.send("It's %sfilled with a %s liquid.\n" % (
-                amnt, liq_table[item.value[2]].liq_color))
+                amnt, liq_table[item.value[2]].color))
         elif item_type == merc.ITEM_CONTAINER or item_type == merc.ITEM_CORPSE_NPC \
                 or item_type == merc.ITEM_CORPSE_PC:
             if state_checks.IS_SET(item.value[1], merc.CONT_CLOSED):

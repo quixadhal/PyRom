@@ -32,5 +32,5 @@ INSTANCE_DIR = os.path.join('..', 'data', 'world', 'instances')
 
 #Features
 SHOW_DAMAGE_NUMBERS = True
-
+DETAILED_INVALID_COMMANDS = True
 

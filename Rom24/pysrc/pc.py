@@ -26,6 +26,8 @@ class Pc(living.Living):
         self.buffer = None
         self.valid = False
         self.pwd = ""
+        #TODO: RemoveDebug
+        self.trust = 60
         self.auth = None
         self.failed_attempts = 0
         self.bamfin = ""
@@ -459,6 +461,7 @@ class Pc(living.Living):
                     handler_game.act("$n slaps you.", victim, None, ch, merc.TO_VICT)
         return True
 
+    #TODO: RemoveDebug
     @handler_log.logged("Interp")
     def interpret(self, argument):
 
@@ -503,7 +506,11 @@ class Pc(living.Living):
         if not cmd:
             #* Look for command in socials table.
             if not Pc.check_social(self, command, argument):
-                self.send("Huh?\n")
+                if settings.DETAILED_INVALID_COMMANDS:
+                    #TODO: Levenshtein distance over cmd_table, also add a wait_state to prevent horrors
+                    self.send("Huh? '%s' is not a valid command." % command)
+                else:
+                    self.send("Huh?\n")
             return
         #* Pc not in position for command?
         if self.position < cmd.position:
@@ -559,6 +566,8 @@ class Pc(living.Living):
         return data
 
     def save(self):
+        #TODO: RemoveDebug
+        return
         pathname = os.path.join(settings.PLAYER_DIR, self.name[0].capitalize(), self.name.capitalize())
         inv_path = os.path.join(pathname, 'inventory')
         equip_path = os.path.join(pathname, 'equipment')

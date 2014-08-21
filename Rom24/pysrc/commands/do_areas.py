@@ -7,13 +7,12 @@ import interp
 
 
 def do_areas(ch, argument):
-    ch.send("Known not working. TODO: Make this work\n")
     if argument:
         ch.send("No argument is used with this command.\n")
         return
     col = 0
-    for iArea in merc.area_list:
-        ch.send("%-39s\n" % iArea.credits)
+    for iArea in merc.areas.values():
+        ch.send("%-39s" % iArea.credits)
         col += 1
         if col % 2 == 0:
             ch.send("\n")

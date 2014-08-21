@@ -14,9 +14,15 @@ def do_gtell(ch, argument):
     if ch.comm.is_set(merc.COMM_NOTELL):
         ch.send("Your message didn't get through!\n")
         return
+    found = False
     for gch in merc.characters.values():
         if gch.is_same_group(ch):
             handler_game.act("$n tells the group '$t'", ch, argument, gch, merc.TO_VICT, merc.POS_SLEEPING)
+            found = True
+    if found:
+        handler_game.act("$n tells the group '$t'", ch, argument, ch, merc.TO_CHAR, merc.POS_SLEEPING)
+    else:
+        ch.send("You do not have a group.\n")
     return
 
 

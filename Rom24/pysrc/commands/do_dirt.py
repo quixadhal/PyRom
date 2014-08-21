@@ -50,9 +50,9 @@ def do_dirt(ch, argument):
     chance -= 2 * victim.stat(merc.STAT_DEX)
 
     # speed
-    if ch.off_flags.is_set(merc.OFF_FAST) or ch.is_affected(merc.AFF_HASTE):
+    if (ch.is_npc() and ch.off_flags.is_set(merc.OFF_FAST)) or ch.is_affected(merc.AFF_HASTE):
         chance += 10
-    if victim.off_flags.is_set(merc.OFF_FAST) or victim.is_affected( merc.AFF_HASTE):
+    if (victim.is_npc() and victim.off_flags.is_set(merc.OFF_FAST)) or victim.is_affected( merc.AFF_HASTE):
         chance -= 25
     # level
     chance += (ch.level - victim.level) * 2

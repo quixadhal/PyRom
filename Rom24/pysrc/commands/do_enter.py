@@ -37,9 +37,9 @@ def do_enter(ch, argument):
         elif state_checks.IS_SET(portal.value[2], merc.GATE_BUGGY) and (random.randint(1, 99) < 5):
             location = handler_room.get_random_room(ch)
         else:
-            location = handler_room.get_room_by_vnum(portal.value[3])
+            location = merc.rooms[portal.value[3]]
         if not location or location == old_room \
-                or not ch.can_see_room(location.instance_id) \
+                or not  ch.can_see_room(location.instance_id) \
                 or (location.is_private() and not state_checks.IS_TRUSTED(ch, merc.MAX_LEVEL)):
             handler_game.act("$p doesn't seem to go anywhere.", ch, portal, None, merc.TO_CHAR)
             return
@@ -53,8 +53,8 @@ def do_enter(ch, argument):
             handler_game.act("You enter $p.", ch, portal, None, merc.TO_CHAR)
         else:
             handler_game.act("You walk through $p and find yourself somewhere else:...", ch, portal, None, merc.TO_CHAR)
-        ch.get()
-        ch.put(location)
+        ch.in_room.get(ch)
+        location.put(ch)
         if state_checks.IS_SET(portal.value[2], merc.GATE_GOWITH):  # take the gate along
             portal.get()
             portal.put(location)
@@ -72,7 +72,8 @@ def do_enter(ch, argument):
         # protect against circular follows
         if old_room == location:
             return
-        for fch in old_room.people[:]:
+        for fch_id in old_room.people[:]:
+            fch = merc.characters[fch_id]
             if not portal or portal.value[0] == -1:
                 # no following through dead portals
                 continue
