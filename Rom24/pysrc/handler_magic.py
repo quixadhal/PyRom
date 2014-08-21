@@ -151,8 +151,8 @@ def obj_cast_spell(sn, level, ch, victim, obj):
             or sn.target == merc.TAR_CHAR_SELF:
         if not victim:
             victim = ch
-            vo = victim
-            target = merc.TARGET_CHAR
+        vo = victim
+        target = merc.TARGET_CHAR
     elif sn.target == merc.TAR_OBJ_INV:
         if not obj:
             ch.send("You can't do that.\n")

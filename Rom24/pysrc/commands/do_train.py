@@ -53,9 +53,6 @@ def do_train(ch, argument):
         pOutput = "constitution"
     elif argument == "hp":
         cost = 1
-    elif argument == "mana":
-        cost = 1
-    elif "hp" == argument:
         if cost > ch.train:
             ch.send("You don't have enough training sessions.\n")
             return
@@ -66,7 +63,8 @@ def do_train(ch, argument):
         handler_game.act("Your durability increases!", ch, None, None, merc.TO_CHAR)
         handler_game.act("$n's durability increases!", ch, None, None, merc.TO_ROOM)
         return
-    elif "mana" == argument:
+    elif argument == "mana":
+        cost = 1
         if cost > ch.train:
             ch.send("You don't have enough training sessions.\n")
             return

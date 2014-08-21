@@ -22,4 +22,9 @@ def do_prefix(ch, argument):
     ch.prefix = argument
 
 
+def do_prefi(ch, argument):
+    ch.send("You cannot abbreviate the prefix command.\n")
+    return
+
 interp.register_command(interp.cmd_type('prefix', do_prefix, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1))
+interp.register_command(interp.cmd_type('prefi', do_prefi, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 0))

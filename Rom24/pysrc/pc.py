@@ -23,7 +23,7 @@ class Pc(living.Living):
     def __init__(self, template=None, **kwargs):
         import handler_item
         super().__init__()
-        self.buffer = None
+        self.buffer = []
         self.valid = False
         self.pwd = ""
         #TODO: RemoveDebug
