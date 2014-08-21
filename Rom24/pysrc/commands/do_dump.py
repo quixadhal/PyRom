@@ -5,7 +5,7 @@ logger = logging.getLogger()
 import merc
 import interp
 
-
+#TODO: Known broken
 def do_dump(ch, argument):
     pass
 

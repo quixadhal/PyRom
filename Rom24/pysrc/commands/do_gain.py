@@ -11,12 +11,16 @@ import game_utils
 import handler_game
 import state_checks
 
-
+#TODO: Known broken. Probably needs some significant cleanup, doesn't appear to be granting skills properly. Needs more testing with non-immortal characters.
 def do_gain(ch, argument):
     if ch.is_npc():
         return
-    trainer = [t for t in ch.in_room.people if t.is_npc() and t.act.is_set(merc.ACT_GAIN)]
     # find a trainer
+    trainer = None
+    for t_id in ch.in_room.people:
+        t = merc.characters[t_id]
+        if t.is_npc() and t.act.is_set(merc.ACT_GAIN):
+            trainer = t
     if not trainer or not ch.can_see(trainer):
         ch.send("You can't do that here.\n")
         return
@@ -29,7 +33,7 @@ def do_gain(ch, argument):
         ch.send("%-18s %-5s %-18s %-5s %-18s %-5s\n" % ("group", "cost", "group", "cost", "group", "cost"))
         for gn, group in const.group_table.items():
             if gn not in ch.group_known and group.rating[ch.guild.name] > 0:
-                ch.send("%-18s %-5d " % group.name, group.rating[ch.guild.name])
+                ch.send("%-18s %-5d " % (group.name, group.rating[ch.guild.name]))
                 col += 1
                 if (col % 3) == 0:
                     ch.send("\n")

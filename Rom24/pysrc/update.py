@@ -509,7 +509,7 @@ def char_update():
             else:
                 # multiple affects. don't send the spelldown msg
                 multi = [a for a in ch.affected if a.type == paf.type and a is not paf and a.duration > 0]
-                if not multi and paf.type > 0 and const.skill_table[paf.type].msg_off:
+                if not multi and paf.type and const.skill_table[paf.type].msg_off:
                     ch.send(const.skill_table[paf.type].msg_off + "\n")
 
                 ch.affect_remove(paf)
@@ -725,7 +725,7 @@ def aggr_update():
 def instance_number_save():
     if merc.instance_number > merc.previous_instance:
         merc.previous_instance = merc.instance_number
-        instance_num_file = os.path.join(settings.AREA_DIR, "instance_tracker.txt")
+        instance_num_file = os.path.join(settings.LEGACY_AREA_DIR, "instance_tracker.txt")
         fp = open(instance_num_file, 'w')
         fp.write(str(merc.instance_number))
         fp.close()

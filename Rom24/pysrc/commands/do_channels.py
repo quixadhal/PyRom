@@ -42,7 +42,7 @@ def do_channels(ch, argument):
     else:
         ch.send("OFF\n")
 
-    if merc.IS_IMMORTAL(ch):
+    if ch.is_immortal():
         ch.send("god channel    ")
         if not state_checks.IS_SET(ch.comm, merc.COMM_NOWIZ):
             ch.send("ON\n")

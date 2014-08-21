@@ -55,6 +55,29 @@ import environment
 import state_checks
 
 
+''' Equipment Slot Strings - for use with displaying EQ to characters '''
+
+eq_slot_strings = collections.OrderedDict([('light',        '<used as light>     '),
+                                           ('left_finger',  '<worn on finger>    '),
+                                           ('right_finger', '<worn on finger>    '),
+                                           ('neck',         '<worn around neck>  '),
+                                           ('collar',       '<worn around neck>  '),
+                                           ('body',         '<worn on torso>     '),
+                                           ('head',         '<worn on head>      '),
+                                           ('legs',         '<worn on legs>      '),
+                                           ('feet',         '<worn on feet>      '),
+                                           ('hands',        '<worn on hands>     '),
+                                           ('arms',         '<worn on arms>      '),
+                                           ('about_body',   '<worn as shield>    '),
+                                           ('waist',        '<worn about body>   '),
+                                           ('left_wrist',   '<worn about waist>  '),
+                                           ('right_wrist',  '<worn around wrist> '),
+                                           ('main_hand',    '<worn around wrist> '),
+                                           ('off_hand',     '<wielded>           '),
+                                           ('held',         '<held>              '),
+                                           ('float',        '<floating nearby>   ')])
+
+
 class Grouping:
     def __init__(self):
         super().__init__()
@@ -86,7 +109,7 @@ class Grouping:
 
     @clan.setter
     def clan(self, value):
-        if value not in tables.clan_table:
+        if value not in tables.clan_table.keys():
             return
         self._clan = value
 
@@ -706,9 +729,9 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         for wch in merc.characters.values():
             if not wch.in_room or not ch.can_see(wch):
                 continue
-            if not wch.is_npc() and not game_utils.is_name(arg, wch.name.lower()):
+            if wch.is_pc() and not game_utils.is_name(arg.lower(), wch.name.lower()):
                 continue
-            if wch.is_npc() and arg not in wch.name:
+            if wch.is_npc() and arg.lower() not in wch.name.lower():
                 continue
             count += 1
             if count == number:

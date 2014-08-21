@@ -40,6 +40,8 @@ def spell_charm_person(sn, level, ch, victim, target):
     af.modifier = 0
     af.bitvector = merc.AFF_CHARM
     victim.affect_add(af)
+    #TODO: Known broken. Mob will immediately try to fight you after casting this, because this is an offensive spell.
+    #ROM had some stipulation to prevent this combat, possibly in fight.py:is_safe()
     handler_game.act("Isn't $n just so nice?", ch, None, victim, merc.TO_VICT)
     if ch is not victim:
         handler_game.act("$N looks at you with adoring eyes.", ch, None, victim, merc.TO_CHAR)

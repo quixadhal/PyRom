@@ -40,14 +40,19 @@ def read_word(pstr, lower=True):
         return "", ""
     pstr = pstr.lstrip()
     locate = len(pstr)
+    unmatch = False
+    if locate == 0:
+        return "", ""
     if pstr[0] == "'":
         locate = pstr.find("'", 1)+1
         if locate == 0:
-            locate = len(pstr)-1
+            locate = len(pstr)
+            unmatch = True
     elif pstr[0] == '"':
         locate = pstr.find('"', 1)+1
         if locate == 0:
-            locate = len(pstr)-1
+            locate = len(pstr)
+            unmatch = True
     else:
         for i, c in enumerate(pstr):
             if c.isspace():
@@ -59,7 +64,9 @@ def read_word(pstr, lower=True):
     if not word:
         return pstr, word
     if word[0] in ['"', "'"]:
-        word = word[1:-1]
+        word = word[1:]
+        if not unmatch:
+            word = word[:-1]
     if lower:
         word = word.lower()
 
@@ -150,7 +157,7 @@ def read_equipment_flags(item, pstr):
 
 
 def item_bitvector_flag_str(bits: int, in_type='extra flags'):
-    if not bits or in_type:
+    if not bits or not in_type:
         return None
     if bits == 0:
         return None

@@ -108,12 +108,12 @@ class Area(instance.Instancer, type_bypass.ObjectType, environment.Environment):
         if not self.no_save:
             filename = '%03d_%s' % (self.index, self.name.replace(' ', '_'))
             if self.instance_id is None:
-                pathname = os.path.join(settings.DUMP_DIR, 'world', 'areas', filename)
+                pathname = os.path.join(settings.DATA_DIR, 'world', 'areas', filename)
                 os.makedirs(pathname, 0o755, True)
                 filename = os.path.join(pathname, 'area.json')
             else:
                 md5 = hashlib.md5(filename.encode()).hexdigest()
-                pathname = os.path.join(settings.DUMP_DIR, 'world', 'instances', md5[0:2], md5[2:4])
+                pathname = os.path.join(settings.DATA_DIR, 'world', 'instances', md5[0:2], md5[2:4])
                 os.makedirs(pathname, 0o755, True)
                 filename = os.path.join(pathname, '%d.json' % self.instance_id)
             logger.info('Area save file: %s', filename)

@@ -26,11 +26,11 @@ __author__ = 'syn'
 def load_areas():
     logger.info('Loading Areas...')
     index = 0
-    narea_list = os.path.join(settings.AREA_DIR, settings.AREA_LIST)
+    narea_list = os.path.join(settings.LEGACY_AREA_DIR, settings.AREA_LIST)
     fp = open(narea_list, 'r')
     area = fp.readline().strip()
     while area != "$":
-        afp = open(os.path.join(settings.AREA_DIR, area), 'r')
+        afp = open(os.path.join(settings.LEGACY_AREA_DIR, area), 'r')
         index += 1
         load_area(afp.read(), index)
         area = fp.readline().strip()
@@ -142,7 +142,7 @@ def load_npcs(area, pArea):
         area, npc.dam_dice[1] = game_utils.read_int(area)
         area = game_utils.read_forward(area)
         area, npc.dam_dice[2] = game_utils.read_int(area)
-        area, npc.dam_type = game_utils.read_word(area, False)
+        area, npc.  dam_type = game_utils.read_word(area, False)
         npc.dam_type = state_checks.name_lookup(const.attack_table, npc.dam_type)
         area, npc.armor[0] = game_utils.read_int(area)
         area, npc.armor[1] = game_utils.read_int(area)

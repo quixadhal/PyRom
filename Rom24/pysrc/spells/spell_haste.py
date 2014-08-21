@@ -7,8 +7,7 @@ import state_checks
 
 def spell_haste(sn, level, ch, victim, target):
     # RT haste spell */
-    if state_checks.is_affected(victim, sn) or victim.is_affected( merc.AFF_HASTE) or state_checks.IS_SET(victim.off_flags,
-                                                                                                                       merc.OFF_FAST):
+    if state_checks.is_affected(victim, sn) or victim.is_affected( merc.AFF_HASTE) or (victim.is_npc() and state_checks.IS_SET(victim.off_flags,merc.OFF_FAST)):
         if victim == ch:
             ch.send("You can't move any faster! \n")
         else:

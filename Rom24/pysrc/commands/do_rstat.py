@@ -8,9 +8,10 @@ import interp
 import game_utils
 import state_checks
 
+#TODO: Known broken. Exit flags or locks are messed up.
 def do_rstat(ch, argument):
     argument, arg = game_utils.read_word(argument)
-    location = merc.rooms[ch.in_room] if not arg else game_utils.find_location(ch, arg)
+    location = ch.in_room if not arg else game_utils.find_location(ch, arg)
     if not location:
         ch.send("No such location.\n")
         return
@@ -23,7 +24,7 @@ def do_rstat(ch, argument):
     ch.send("Vnum: %d  Sector: %d  Light: %d  Healing: %d  Mana: %d\n" % (
         location.vnum,
         location.sector_type,
-        location.light,
+        location.available_light,
         location.heal_rate,
         location.mana_rate))
     ch.send("Room flags: %d.\nDescription:\n%s" % (location.room_flags, location.description))
@@ -38,7 +39,7 @@ def do_rstat(ch, argument):
         if ch.can_see(rch):
             ch.send("%s " % rch.name if not rch.is_npc() else rch.short_descr)
     ch.send(".\nObjects:   ")
-    for obj_id in location.contents:
+    for obj_id in location.inventory:
         obj = merc.global_instances[obj_id]
         ch.send("'%s' " % obj.name)
     ch.send(".\n")

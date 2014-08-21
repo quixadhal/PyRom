@@ -38,7 +38,7 @@ def do_examine(ch, argument):
                 or obj.item_type == merc.ITEM_CONTAINER \
                 or obj.item_type == merc.ITEM_CORPSE_NPC \
                 or obj.item_type == merc.ITEM_CORPSE_PC:
-            ch.do_look("in %s" % argument)
+            ch.do_look("in %s" % arg)
 
 
 interp.register_command(interp.cmd_type('examine', do_examine, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

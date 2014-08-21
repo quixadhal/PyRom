@@ -116,11 +116,13 @@ weapon_attribute_strings = {'flaming': 'Flaming',
 
 class Items(instance.Instancer, environment.Environment, physical.Physical, inventory.Inventory,
             equipment.Equipment, type_bypass.ObjectType):
+    template_count = 0
+    instance_count = 0
+
     def __init__(self, template=None, **kwargs):
         super().__init__()
         self.is_item = True
         self.vnum = 0
-        self.template = True
         self.instance_id = None
         self.count = 0
         self.reset_num = 0
@@ -144,17 +146,23 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         self.player_name = ''
         if kwargs:
             [setattr(self, k, v) for k, v in kwargs.items()]
-            self.instance_setup()
+            if self.instance_id:
+                self.instance_setup()
+                Items.instance_count += 1
+            else:
+                Items.template_count += 1
 
-
-    #def __del__(self):
-     #   logger.trace("Freeing %s" % str(self))
+    def __del__(self):
+        if self.instance_id:
+            Items.instance_count -= 1
+        else:
+            Items.template_count -= 1
 
     def __repr__(self):
         if not self.instance_id:
             return "<Item Template: %s : %d>" % (self.short_descr, self.vnum)
         else:
-            return "<Item Instance: %s : ID %d>" % (self.short_descr, self.instance_id)
+            return "<Item Instance: %s : ID %d VNUM %d>" % (self.short_descr, self.instance_id, self.vnum)
 
     #Equipped/Equips To
     @property
@@ -441,15 +449,14 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
     # Extract an obj from the world.
     def extract(self):
         if self.environment:
-            if not self.in_living:
-                self.environment.get(self)
-                for item_id in self.inventory[:]:
-                    if self.instance_id not in merc.items:
-                        logger.error("Extract_obj: obj %d not found in obj_instance dict." % self.instance_id)
-                        return
-                    tmp = merc.items[item_id]
-                    self.get(tmp)
-                    tmp.extract()
+            self.environment.get(self)
+            for item_id in self.inventory[:]:
+                if self.instance_id not in merc.items:
+                    logger.error("Extract_obj: obj %d not found in obj_instance dict." % self.instance_id)
+                    return
+                tmp = merc.items[item_id]
+                self.get(tmp)
+                tmp.extract()
         self.instance_destructor()
 
     # Return the number of players "on" an object.
@@ -491,22 +498,28 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         return data
 
     def save(self, is_equipped: bool=False, in_inventory: bool=False, player_name: str=None):
-        if not self.instance_id:
-            raise ValueError('An instance_id is required to save an instance of an Item!')
-
         if player_name is None:
-            os.makedirs(settings.INSTANCE_DIR, 0o755, True)
-            filename = os.path.join(settings.INSTANCE_DIR, '%d.json' % self.instance_id)
+            if self.instance_id:
+                top_dir = settings.INSTANCE_DIR
+                number = self.instance_id
+            else:
+                top_dir = settings.AREA_DIR
+                number = self.vnum
+            pathname = os.path.join(top_dir, '%d-%s' % (self.in_area.index, self.in_area.name), 'items')
         else:
-            pathname = os.path.join(settings.PLAYER_DIR, player_name[0].capitalize(), player_name.capitalize())
-            finalpath = pathname
+            top_dir = os.path.join(settings.PLAYER_DIR, player_name[0].capitalize(), player_name.capitalize())
+            number = self.instance_id
+            if is_equipped and in_inventory:
+                raise ValueError('A player item cannot be BOTH equipped AND in their inventory!')
             if is_equipped:
-                finalpath = os.path.join(pathname, 'equipment')
-            if in_inventory:
-                finalpath = os.path.join(pathname, 'inventory')
-            os.makedirs(finalpath, 0o755, True)
-            filename = os.path.join(finalpath, '%d.json' % self.instance_id)
+                pathname = os.path.join(top_dir, 'equipment')
+            elif in_inventory:
+                pathname = os.path.join(top_dir, 'inventory')
+            else:
+                raise ValueError('Player items must specify if they are equipped or in their inventory!')
 
+        os.makedirs(pathname, 0o755, True)
+        filename = os.path.join(pathname, '%d.json' % number)
         js = json.dumps(self, default=instance.to_json, indent=4)
         with open(filename, 'w') as fp:
             fp.write(js)
@@ -518,43 +531,49 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
 
     @classmethod
     def load(cls, instance_id: int=None, vnum: int=None, player_name: str=None):
-        if vnum:
-            raise TypeError('Template loading is not yet supported!')
-
-        if not instance_id:
-            raise ValueError('An instance_id is required to load an instance of an Item!')
-
-        filename = ''
+        if not vnum and not instance_id:
+            raise ValueError('You must provide either a vnum or an instance_id!')
+        if vnum and instance_id:
+            raise ValueError('You must provide either a vnum or an instance_id, not BOTH!')
 
         if not player_name:
-            filename = os.path.join(settings.INSTANCE_DIR, '%d.json' % instance_id)
+            if instance_id:
+                pathname = settings.INSTANCE_DIR
+                number = instance_id
+            else:
+                pathname = settings.AREA_DIR
+                number = vnum
+            target_file = '%d.json' % number
         else:
             pathname = os.path.join(settings.PLAYER_DIR, player_name[0].capitalize(), player_name.capitalize())
             target_file = '%d.json' % instance_id
-            for a_path, a_directory, i_files in os.walk(pathname):
-                if target_file in i_files:
-                    filename = os.path.join(a_path, target_file)
-                    break
+
+        filename = None
+        for a_path, a_directory, i_files in os.walk(pathname):
+            if target_file in i_files:
+                filename = os.path.join(a_path, target_file)
+                break
+        if not filename:
+            raise ValueError('Cannot find %s' % target_file)
+
         with open(filename) as fp:
-            jsobj = fp.read()
-        obj = json.loads(jsobj, object_hook=instance.from_json)
-        if player_name:
-            if obj.inventory:
-                obj.load_inventory(player_name)
+            js = fp.read()
+        obj = json.loads(js, object_hook=instance.from_json)
+        if obj.inventory:
+            obj.load_inventory(player_name)
         return obj
 
     def load_inventory(self, player_name: str=None):
-        for instance_id in self.inventory:
-            obj = Items.load(instance_id=instance_id, player_name=player_name)
+        for number in self.inventory:
+            if self.instance_id:
+                obj = Items.load(instance_id=number, player_name=player_name)
+            else:
+                obj = Items.load(vnum=number, player_name=player_name)
             if not isinstance(obj, Items):
-                raise TypeError('Could not load instance %r!' % instance_id)
+                raise TypeError('Could not load instance %r!' % number)
 
 images = ['*.jpg', '*.jpeg', '*.png', '*.tif', '*.tiff']
 matches = []
-
-
-
-
 
 
 def get_item(ch, item, this_container):

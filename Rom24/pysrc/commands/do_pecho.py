@@ -16,9 +16,10 @@ def do_pecho(ch, argument):
     if not victim:
         ch.send("Target not found.\n")
         return
-    if victim.get_trust() >= ch.trust != merc.MAX_LEVEL:
+    if victim.trust >= ch.trust != merc.MAX_LEVEL:
         victim.send("personal> ")
 
+    argument = argument.strip()
     victim.send(argument)
     victim.send("\n")
     ch.send("personal> ")

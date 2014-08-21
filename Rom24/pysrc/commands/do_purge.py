@@ -35,7 +35,7 @@ def do_purge(ch, argument):
         if ch == victim:
             ch.send("Ho ho ho.\n")
             return
-        if ch.trust <= victim.get_trust():
+        if ch.trust <= victim.trust:
             ch.send("Maybe that wasn't a good idea...\n")
             victim.send("%s tried to purge you!\n" % ch.name)
             return

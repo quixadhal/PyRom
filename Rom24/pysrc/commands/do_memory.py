@@ -5,7 +5,7 @@ logger = logging.getLogger()
 import merc
 import interp
 
-
+#TODO: Known broken.
 def do_memory(ch, argument):
     pass
 
