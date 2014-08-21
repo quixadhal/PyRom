@@ -43,6 +43,9 @@ from tables import off_flags
 
 
 class Npc(living.Living):
+    template_count = 0
+    instance_count = 0
+
     def __init__(self):
         super().__init__()
         self.vnum = 0  # Needs to come before the template to setup the instance
@@ -62,9 +65,18 @@ class Npc(living.Living):
         self.killed = 0
         self.pShop = None
         self.listeners = {}
+        if self.instance_id:
+            Npc.instance_count += 1
+        else:
+            Npc.template_count += 1
 
     def __del__(self):
-        logger.trace("Freeing %s" % str(self))
+        try:
+            logger.trace("Freeing %s" % str(self))
+            if self.instance_id:
+                self.instance_destructor()
+        except:
+            return
 
     def __repr__(self):
         if self.instance_id:
