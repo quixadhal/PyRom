@@ -17,6 +17,9 @@ __author__ = 'syn'
 
 
 class Area(instance.Instancer, type_bypass.ObjectType, environment.Environment):
+    template_count = 0
+    instance_count = 0
+
     def __init__(self, template=None):
         super().__init__()
         self.is_area = True
@@ -43,11 +46,18 @@ class Area(instance.Instancer, type_bypass.ObjectType, environment.Environment):
             self.empty = False
             self.player_chars = []
             self.player_count = len(self.player_chars)
+        if self.instance_id:
+            Area.instance_count += 1
+        else:
+            Area.template_count += 1
 
-    #def __del__(self):
-    #    self.save()
-    #    if self.instance_id:
-    #        self.instance_destructor()
+    def __del__(self):
+        try:
+            logger.trace("Freeing %s" % str(self))
+            if self.instance_id:
+                self.instance_destructor()
+        except:
+            return
 
     def __repr__(self):
         if self.instance_id:

@@ -16,7 +16,72 @@ import auth
 def area_pickler():
     pass
 
+def legacy_load_char_obj(d, name):
+    #ch = handler_ch.CHAR_DATA()
+    #ch.pcdata = handler_ch.PC_DATA()
+    ch = pc.Pc(name)
+    found = False
+    pfile = os.path.join(settings.LEGACY_PLAYER_DIR, name + '.json')
+    if os.path.isfile(pfile):
+        chdict = json.load(open(pfile, 'r'))
+        ch = fread_char(chdict, ch)
+        found = True
 
+    ch.desc = d
+    d.character = ch
+    ch.send = d.send
+    return found, ch
+
+
+def legacy_save_char_obj(ch):
+    if ch.is_npc():
+        return
+
+    if ch.desc and ch.desc.original:
+        ch = ch.desc.original
+
+    pfile = os.path.join(settings.LEGACY_PLAYER_DIR, ch.name + '.json')
+    os.makedirs(settings.PLAYER_DIR, 0o755, True)
+
+    fwrite = fwrite_char(ch)
+    if ch.inventory:
+        fwrite['inventory'] = [fwrite_obj(ch, o) for o in ch.inventory]
+
+    to_write = json.dumps(fwrite, indent=4)
+    with open(pfile, 'w') as pf:
+        pf.write(to_write)
+
+
+def fwrite_obj(ch, obj, contained_by=None):
+    odict = OrderedDict()
+    obj = merc.items[obj]
+    odict['Vnum'] = obj.vnum
+    odict['Enchanted'] = obj.enchanted
+    odict['Name'] = obj.name
+    odict['ShD'] = obj.short_descr
+    odict['Desc'] = obj.description
+    odict['ExtF'] = obj.extra_flags
+    odict['WeaF'] = obj.wear_flags
+    odict['Ityp'] = obj.item_type
+    odict['Wt'] = obj.weight
+    odict['Cond'] = obj.condition
+
+    odict['Wear'] = obj.wear_loc
+    odict['Lev'] = obj.level
+    odict['timer'] = obj.timer
+    odict['cost'] = obj.cost
+    odict['Val'] = obj.value
+
+    odict['affected'] = [a for a in obj.affected if a.type >= 0]
+    odict['ExDe'] = {ed.keyword: ed.description for ed in obj.extra_descr}
+    if contained_by:
+        odict['In'] = contained_by.instance_id
+    if obj.contents:
+        odict['inventory'] = [fwrite_obj(ch, o, obj) for o in obj.inventory]
+    return odict
+
+
+# unused
 def recursive_item_jsonify(item_to_json, inv_dir: str=None, equip_dir: str=None,
                            is_equipment: bool=False, is_in_inventory: bool=False):
     if is_equipment:
@@ -41,22 +106,6 @@ def recursive_item_jsonify(item_to_json, inv_dir: str=None, equip_dir: str=None,
                 recursive_item_jsonify(new_item, inv_dir=inv_dir, is_in_inventory=True)
         else:
             return
-
-
-def load_char_obj(d, name):
-    #ch = handler_ch.CHAR_DATA()
-    #ch.pcdata = handler_ch.PC_DATA()
-    found = False
-    ch = pc.Pc.load(name)
-    if ch:
-        found = True
-    else:
-        ch = pc.Pc(name)
-    ch.desc = d
-    d.character = ch
-    ch.send = d.send
-    return found, ch
-    
 
 #unused
 def fwrite_char(ch):

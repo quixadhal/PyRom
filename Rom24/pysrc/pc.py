@@ -20,6 +20,9 @@ import update
 
 
 class Pc(living.Living):
+    template_count = 0
+    instance_count = 0
+
     def __init__(self, template=None, **kwargs):
         import handler_item
         super().__init__()
@@ -71,9 +74,18 @@ class Pc(living.Living):
                     if item_id:
                         handler_item.Items.load(instance_id=item_id, player_name=self.name)
             self.instance_setup()
+        if self.instance_id:
+            Pc.instance_count += 1
+        else:
+            Pc.template_count += 1
 
-    #def __del__(self):
-     #   logger.trace("Freeing %s", str(self))
+    def __del__(self):
+        try:
+            logger.trace("Freeing %s" % str(self))
+            if self.instance_id:
+                self.instance_destructor()
+        except:
+            return
 
     def __repr__(self):
         return "<PC: %s ID %d>" % (self.name, self.instance_id)
@@ -537,7 +549,7 @@ class Pc(living.Living):
             return
         cmd.do_fun(self, argument.lstrip())
 
-        # Serialization
+    # Serialization
     def to_json(self, outer_encoder=None):
         if outer_encoder is None:
             outer_encoder = json.JSONEncoder.default
@@ -566,17 +578,10 @@ class Pc(living.Living):
         return data
 
     def save(self):
-        #TODO: RemoveDebug
-        return
-        pathname = os.path.join(settings.PLAYER_DIR, self.name[0].capitalize(), self.name.capitalize())
-        inv_path = os.path.join(pathname, 'inventory')
-        equip_path = os.path.join(pathname, 'equipment')
+        pathname = os.path.join(settings.PLAYER_DIR, self.name[0].lower(), self.name.capitalize())
         os.makedirs(pathname, 0o755, True)
-        os.makedirs(inv_path, 0o755, True)
-        os.makedirs(equip_path, 0o755, True)
-
-        filename = os.path.join(pathname, '%s.json' % self.name)
-
+        filename = os.path.join(pathname, 'player.json')
+        logger.info('Saving %s', filename)
         js = json.dumps(self, default=instance.to_json, indent=4)
         with open(filename, 'w') as fp:
             fp.write(js)
@@ -585,7 +590,6 @@ class Pc(living.Living):
             for item_id in self.inventory:
                 item = merc.items[item_id]
                 item.save(in_inventory=True, player_name=self.name)
-
         for item_id in self.equipped.values():
             if item_id:
                 item = merc.items[item_id]
@@ -596,23 +600,18 @@ class Pc(living.Living):
         if not player_name:
             raise KeyError('Player name is required to load a player!')
 
-        filename = ''
+        pathname = os.path.join(settings.PLAYER_DIR, player_name[0].lower(), player_name.capitalize())
+        filename = os.path.join(pathname, 'player.json')
 
-        pathname = os.path.join(settings.PLAYER_DIR, player_name[0].capitalize(), player_name.capitalize())
-        if not os.path.isdir(pathname):
-            return None
-        if not pathname:
-            raise KeyError('Cannot find player %s' % player_name)
-        for a_path, a_directory, i_files in os.walk(pathname):
-            for a_file in i_files:
-                if player_name.capitalize() in a_file:
-                    filename = os.path.join(a_path, a_file)
-                    break
         if os.path.isfile(filename):
+            logger.info('Loading %s player data', player_name)
             with open(filename, 'r') as fp:
-                jsobj = fp.read()
-
-                obj = json.loads(jsobj, object_hook=instance.from_json)
-            return obj
+                obj = json.load(fp, object_hook=instance.from_json)
+            if isinstance(obj, Pc):
+                return obj
+            else:
+                logger.error('Could not load player file for %s', player_name)
+                return None
         else:
+            logger.error('Could not open player file for %s', player_name)
             return None
