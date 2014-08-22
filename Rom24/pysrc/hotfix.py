@@ -71,6 +71,8 @@ def init_monitoring():
     init_file('handler_item.py', ['handler_item'])
     init_file('handler_room.py', ['handler_room'])
     init_file('handler_log.py', ['handler_log'])
+    init_file('shop_utils.py', ['shop_utils'])
+    init_file('game_utils.py', ['game_utils'])
     init_file('pyprogs.py', ['pyprogs'])
     init_file('affects.py', ['affects'])
     init_file('effects.py', ['effects'])

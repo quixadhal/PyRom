@@ -339,7 +339,7 @@ def create_item(item_template, level, prev_instance_id: int=None):
     if item_template.new_format is False:
         item.level = max(0, level)
 
-    if level != -1 or not item_template.new_format:
+    if level == -1 or not item_template.new_format:
         item.cost = game_utils.number_fuzzy(10) * game_utils.number_fuzzy(level) * game_utils.number_fuzzy(level)
 
         # Mess with object properties.

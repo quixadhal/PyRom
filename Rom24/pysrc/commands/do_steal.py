@@ -105,7 +105,7 @@ def do_steal(ch, argument):
     if not item:
         ch.send("You can't find it.\n")
         return
-    if not ch.can_drop_item(item) or item.flags.inventory or item.level > ch.level:
+    if not ch.can_drop_item(item) or item.flags.shop_inventory or item.level > ch.level:
         ch.send("You can't pry it away.\n")
         return
     if ch.carry_number + item.get_number() > ch.can_carry_n():
