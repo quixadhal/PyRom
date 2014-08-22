@@ -113,6 +113,7 @@ def load_npcs(area, pArea):
         merc.characterTemplate[npc.vnum] = npc
         npc.area = pArea.name
         area, npc.name = game_utils.read_string(area)
+        npc.name = npc.name.lower()
         area, npc.short_descr = game_utils.read_string(area)
 
         area, npc.long_descr = game_utils.read_string(area)
