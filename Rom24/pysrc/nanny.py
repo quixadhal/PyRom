@@ -32,8 +32,8 @@
  ************/
 """
 import hashlib
+import os
 import logging
-import world_classes
 
 logger = logging.getLogger()
 
@@ -47,6 +47,9 @@ import save
 import settings
 import state_checks
 import pc
+import world_classes
+import sys_utils
+import update
 
 ch_selections = {}
 retries = 0
@@ -541,6 +544,19 @@ def con_read_motd(self):
         school = merc.rooms[school_id]
         school.put(ch)
         ch.do_help("newbie info")
+
+        #TODO: create a player manifest that we can use/check, instead of needing to walk the dir.
+        player_files = list(sys_utils.flatten([x[2] for x in os.walk(settings.PLAYER_DIR)]))
+        if len(player_files) < 1:
+            for iLevel in range(ch.level, merc.MAX_LEVEL):
+                ch.level += 1
+                update.advance_level(ch, True)
+            ch.exp = ch.exp_per_level(ch.points) * max(1, ch.level)
+            ch.trust = 0
+            ch.save()
+            ch.send('Congratulations!  As the first player to log into this MUD, you are now\n' +
+                    'the IMPLEMENTOR, the sucker in charge, the place where the buck stops.\n' +
+                    'Enjoy!')
 
     if ch._environment in merc.global_instances.keys() and not ch.level == 0:
         room = merc.global_instances.get(ch._environment, None)
