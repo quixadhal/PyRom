@@ -8,8 +8,9 @@ import game_utils
 def get_obj_keeper(ch, keeper, argument):
     number, arg = game_utils.number_argument(argument)
     count = 0
-    for obj in keeper.inventory:
-        if obj.wear_loc == merc.WEAR_NONE and keeper.can_see_item(obj) and ch.can_see_item(obj) and game_utils.is_name(arg, obj.name):
+    for obj_id in keeper.inventory:
+        obj = merc.items[obj_id]
+        if not obj.equipped_to and keeper.can_see_item(obj) and ch.can_see_item(obj) and game_utils.is_name(arg, obj.name):
             count += 1
             if count == number:
                 return obj
@@ -45,9 +46,9 @@ def obj_to_keeper(item, ch):
     ch.carry_weight += item.get_weight()
 
 def get_cost(keeper, item, fBuy):
-    if not item or not keeper.vnum.pShop:
+    if not item or not merc.characterTemplate[keeper.vnum].pShop:
         return 0
-    pShop = keeper.vnum.pShop
+    pShop = merc.characterTemplate[keeper.vnum].pShop
     if fBuy:
         cost = item.cost * pShop.profit_buy // 100
     else:
@@ -77,8 +78,9 @@ def find_keeper(ch):
     pShop = None
     for keeper_id in ch.in_room.people:
         keeper = merc.characters[keeper_id]
-        if keeper.is_npc() and keeper.pShop:
-            pShop = keeper.pShop
+        keeperTemplate = merc.characterTemplate[keeper.vnum]
+        if keeper.is_npc() and keeperTemplate.pShop:
+            pShop = keeperTemplate.pShop
             break
     if not pShop:
         ch.send("You can't do that here.\n")

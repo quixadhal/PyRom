@@ -691,15 +691,15 @@ class ItemFlags:
             self._item_attributes -= {func_name}
 
     @property
-    def inventory(self):
+    def shop_inventory(self):
         """
        TODO: write documentation
        """
         func_name = sys._getframe().f_code.co_name
-        return func_name if func_name in self._item_restrictions else False
+        return func_name if func_name in self._item_attributes else False
 
-    @inventory.setter
-    def inventory(self, has_restr):
+    @shop_inventory.setter
+    def shop_inventory(self, has_restr):
         """
        TODO: write documentation
        """

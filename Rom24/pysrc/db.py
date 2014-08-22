@@ -146,7 +146,7 @@ def reset_area(pArea):
 
             if npcTemplate.count >= pReset.arg2:
                 last = False
-                break
+                continue
             count = 0
             for npc_id in roomInstance.people:
                 npc = merc.global_instances[npc_id]
@@ -233,7 +233,7 @@ def reset_area(pArea):
                     or (itemTemplate.count >= limit and random.randint(0, 4) != 0) \
                     or handler_item.count_obj_list(itemTemplate, item_to.inventory) > pReset.arg4:
                 last = False
-                break
+                continue
             count = handler_item.count_obj_list(itemTemplate, item_to.inventory)
             while count < pReset.arg4:
                 item = object_creator.create_item(itemTemplate, game_utils.number_fuzzy(item_to.level))
@@ -252,15 +252,16 @@ def reset_area(pArea):
                 continue
             else:
                 itemTemplate = merc.itemTemplate[pReset.arg1]
-            if not last:
-                continue
+            #if not last:
+            #    continue
 
             if not npc:
                 logger.error("Reset_area: 'E' or 'G': None mob for vnum %d.", pReset.arg1)
                 last = False
                 continue
+
             olevel = 0
-            if npc.pShop:
+            if merc.characterTemplate[npc.vnum].pShop:
                 if not itemTemplate.new_format:
                     if itemTemplate.item_type == merc.ITEM_PILL \
                             or itemTemplate.item_type == merc.ITEM_POTION \
@@ -285,7 +286,7 @@ def reset_area(pArea):
                         olevel = random.randint(10, 20)
 
                 item = object_creator.create_item(itemTemplate, olevel)
-                item.flags.inventory = True
+                item.flags.shop_inventory = True
             else:
                 if pReset.arg2 > 50:  # old format */
                     limit = 6
@@ -297,25 +298,23 @@ def reset_area(pArea):
                 if itemTemplate.count < limit or random.randint(0, 4) == 0:
                     item = object_creator.create_item(itemTemplate,
                                                       min(game_utils.number_fuzzy(level), merc.LEVEL_HERO - 1))
-                # error message if it is too high */
-                if item.level > npc.level + 3 \
-                        or (item.item_type == merc.ITEM_WEAPON
-                            and pReset.command == 'E'
-                            and item.level < npc.level - 5
-                            and item.level < 45):
-                    logger.error("Err: obj %s (%d) -- %d, mob %s (%d) -- %d",
-                                 item.short_descr, item.vnum, item.level,
-                                 npc.short_descr, npc.vnum, npc.level)
+                    # error message if it is too high */
+                    if item.level > npc.level + 3 \
+                            or (item.item_type == merc.ITEM_WEAPON
+                                and pReset.command == 'E'
+                                and item.level < npc.level - 5
+                                and item.level < 45):
+                        logger.error("Err: obj %s (%d) -- %d, mob %s (%d) -- %d",
+                                     item.short_descr, item.vnum, item.level,
+                                     npc.short_descr, npc.vnum, npc.level)
                 else:
                     continue
             npc.put(item)
             if pReset.command == 'E':
                 npc.equip(item, True)
-                item = None
-                last = True
-                continue
-            else:
-                item = None
+            item = None
+            last = True
+            continue
 
         elif pReset.command == 'D':
             if pReset.arg1 not in merc.roomTemplate.keys():

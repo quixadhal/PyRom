@@ -591,14 +591,14 @@ def get_item(ch, item, this_container):
     if ch.carry_number + item.get_number() > ch.can_carry_n():
         handler_game.act("$d: you can't carry that many items.", ch, None, item.name, merc.TO_CHAR)
         return
+    if not ch.can_loot(item):
+        handler_game.act("Corpse looting is not permitted.", ch, None, None, merc.TO_CHAR)
+        return
     if item.in_living:
         if (not item.in_item or (item.in_living.instance_id != ch.instance_id)) \
                 and (state_checks.get_carry_weight(ch) + item.get_weight() > ch.can_carry_w()):
             handler_game.act("$d: you can't carry that much weight.", ch, None, item.name, merc.TO_CHAR)
             return
-    if not ch.can_loot(item):
-        handler_game.act("Corpse looting is not permitted.", ch, None, None, merc.TO_CHAR)
-        return
     if item.in_room:
         for gch_id in item.in_room.people:
             gch = merc.characters[gch_id]
@@ -612,10 +612,10 @@ def get_item(ch, item, this_container):
             return
         elif this_container.vnum == merc.OBJ_VNUM_PIT and item.flags.take and item.flags.had_timer:
             item.timer = 0
-            handler_game.act("You get $p from $P.", ch, item, this_container, merc.TO_CHAR)
-            handler_game.act("$n gets $p from $P.", ch, item, this_container, merc.TO_ROOM)
-            item.flags.had_timer = False
-            this_container.get(item)
+        handler_game.act("You get $p from $P.", ch, item, this_container, merc.TO_CHAR)
+        handler_game.act("$n gets $p from $P.", ch, item, this_container, merc.TO_ROOM)
+        item.flags.had_timer = False
+        this_container.get(item)
     else:
         handler_game.act("You get $p.", ch, item, this_container, merc.TO_CHAR)
         handler_game.act("$n gets $p.", ch, item, this_container, merc.TO_ROOM)

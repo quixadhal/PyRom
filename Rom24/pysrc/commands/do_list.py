@@ -41,7 +41,7 @@ def do_list(ch, argument):
             return
         argument, arg = game_utils.read_word(argument)
         items = collections.OrderedDict()
-        for item_id in keeper.contents:
+        for item_id in keeper.inventory:
             item = merc.items[item_id]
             cost = shop_utils.get_cost(keeper, item, True)
             if not item.equipped_to and ch.can_see_item(item) and cost > 0 \
@@ -61,7 +61,7 @@ def do_list(ch, argument):
         for k, p in items.items():
             item, count = p
             cost = shop_utils.get_cost(keeper, item, True)
-            ch.send("[[%2d %5d %2s ]] %s" % (item.level, cost, ("--" if count == -1 else count), item.short_descr))
+            ch.send("[[%2d %5d %2s ]] %s" % (item.level, cost, ("--" if item.flags.shop_inventory else count), item.short_descr))
             if ch.act.is_set(merc.PLR_OMNI):
                 ch.send("(%d)" % item.vnum)
             ch.send("\n")

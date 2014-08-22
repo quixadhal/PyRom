@@ -955,6 +955,12 @@ def make_corpse(ch):
     corpse.short_descr = corpse.short_descr % name
     corpse.description = corpse.description % name
 
+    for item_id in ch.equipped.values():
+        if not item_id:
+            continue
+        item = merc.items[item_id]
+        ch.unequip(item.equipped_to, silent=True, forced=True)
+
     for item_id in ch.inventory[:]:
         item = merc.items[item_id]
         floating = False
@@ -970,7 +976,7 @@ def make_corpse(ch):
             item.flags.rot_death = False
         item.flags.vis_death = False
 
-        if item.flags.inventory:
+        if item.flags.shop_inventory:
             item.extract()
         elif floating:
             if item.flags.rot_death:  # get rid of it! */
@@ -1384,7 +1390,7 @@ def disarm(ch, victim):
     handler_game.act("You disarm $N!", ch, None, victim, TO_CHAR)
     handler_game.act("$n disarms $N!", ch, None, victim, TO_NOTVICT)
     victim.unequip('main_hand')
-    if not item.flags.no_drop or item.flags.inventory:
+    if not item.flags.no_drop or item.flags.shop_inventory:
         victim.in_room.put(item)
         if victim.is_npc() and victim.wait == 0 and victim.can_see_item(item):
             handler_item.get_item(victim, item, None)

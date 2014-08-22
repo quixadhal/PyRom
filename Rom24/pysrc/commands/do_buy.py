@@ -4,9 +4,12 @@ logger = logging.getLogger()
 
 import random
 import merc
+import game_utils
+import handler_game
 import handler_room
 import interp
 import object_creator
+import shop_utils
 import state_checks
 
 def do_buy(ch, argument):
@@ -34,7 +37,7 @@ def do_buy(ch, argument):
         pet = ch.get_char_room(arg)
         ch.in_environment = in_room
 
-        if not pet or not state_checks.IS_SET(pet.act, merc.ACT_PET):
+        if not pet or not state_checks.IS_SET(pet.act, handler_game.act_PET):
             ch.send("Sorry, you can't buy that here.\n")
             return
         if ch.pet:
@@ -57,7 +60,7 @@ def do_buy(ch, argument):
                 ch.check_improve( "haggle", True, 4)
         ch.deduct_cost(cost)
         pet = object_creator.create_mobile(pet.pIndexData)
-        pet.act = state_checks.SET_BIT(pet.act, merc.ACT_PET)
+        pet.act = state_checks.SET_BIT(pet.act, handler_game.act_PET)
         pet.affected_by = state_checks.SET_BIT(pet.affected_by, merc.AFF_CHARM)
         pet.comm = merc.COMM_NOTELL | merc.COMM_NOSHOUT | merc.COMM_NOCHANNELS
 
@@ -70,40 +73,46 @@ def do_buy(ch, argument):
         pet.leader = ch
         ch.pet = pet
         ch.send("Enjoy your pet.\n")
-        merc.act("$n bought $N as a pet.", ch, None, pet, merc.TO_ROOM)
+        handler_game.act("$n bought $N as a pet.", ch, None, pet, merc.TO_ROOM)
         return
     else:
-        keeper = merc.find_keeper(ch)
+        keeper = shop_utils.find_keeper(ch)
         if not keeper:
             return
-        number, arg = merc.mult_argument(argument)
-        obj = merc.get_obj_keeper(ch, keeper, arg)
-        cost = merc.get_cost(keeper, obj, True)
+        number, arg = game_utils.number_argument(argument)
+        #TODO: Allow multiple purchase arguments.
+        #number = 1
+        #number, arg = merc.mult_argument(argument)
+        obj = shop_utils.get_obj_keeper(ch, keeper, arg)
+        cost = shop_utils.get_cost(keeper, obj, True)
         if number < 1 or number > 99:
-            merc.act("$n tells you 'Get real!", keeper, None, ch, merc.TO_VICT)
+            handler_game.act("$n tells you 'Get real!", keeper, None, ch, merc.TO_VICT)
             return
         if cost <= 0 or not ch.can_see_item(obj):
-            merc.act("$n tells you 'I don't sell that -- try 'list''.", keeper, None, ch, merc.TO_VICT)
+            handler_game.act("$n tells you 'I don't sell that -- try 'list''.", keeper, None, ch, merc.TO_VICT)
             ch.reply = keeper
             return
-        items = None
-        if not merc.IS_OBJ_STAT(obj, merc.ITEM_INVENTORY):
-            items = [t_obj for t_obj in keeper.contents if
-                     t_obj.pIndexData == obj.pIndexData and t_obj.short_descr == obj.short_descr][:number]
-            count = len(items)
+        items = []
+        if not obj.flags.shop_inventory:
+            count = 0
+            for t_obj_id in keeper.inventory:
+                t_obj = merc.items[t_obj_id]
+                if t_obj.vnum == obj.vnum and t_obj.short_descr == obj.short_descr:
+                    items.append(t_obj)
+                    count += 1
             if count < number:
-                merc.act("$n tells you 'I don't have that many in stock.", keeper, None, ch, merc.TO_VICT)
+                handler_game.act("$n tells you 'I don't have that many in stock.", keeper, None, ch, merc.TO_VICT)
                 ch.reply = keeper
                 return
         if (ch.silver + ch.gold * 100) < cost * number:
             if number > 1:
-                merc.act("$n tells you 'You can't afford to buy that many.", keeper, obj, ch, merc.TO_VICT)
+                handler_game.act("$n tells you 'You can't afford to buy that many.", keeper, obj, ch, merc.TO_VICT)
             else:
-                merc.act("$n tells you 'You can't afford to buy $p'.", keeper, obj, ch, merc.TO_VICT)
+                handler_game.act("$n tells you 'You can't afford to buy $p'.", keeper, obj, ch, merc.TO_VICT)
             ch.reply = keeper
             return
         if obj.level > ch.level:
-            merc.act("$n tells you 'You can't use $p yet'.", keeper, obj, ch, merc.TO_VICT)
+            handler_game.act("$n tells you 'You can't use $p yet'.", keeper, obj, ch, merc.TO_VICT)
             ch.reply = keeper
             return
         if ch.carry_number + number * obj.get_number() > ch.can_carry_n():
@@ -114,36 +123,36 @@ def do_buy(ch, argument):
             return
         # haggle
         roll = random.randint(1, 99)
-        if not merc.IS_OBJ_STAT(obj, merc.ITEM_SELL_EXTRACT) and roll < ch.get_skill("haggle"):
+        if not obj.flags.sell_extract and roll < ch.get_skill("haggle"):
             cost -= obj.cost // 2 * roll // 100
-            merc.act("You haggle with $N.", ch, None, keeper, merc.TO_CHAR)
+            handler_game.act("You haggle with $N.", ch, None, keeper, merc.TO_CHAR)
             if ch.is_pc():
                 ch.check_improve( "haggle", True, 4)
 
         if number > 1:
-            merc.act("$n buys $p[[%d]]." % number, ch, obj, None, merc.TO_ROOM)
-            merc.act("You buy $p[[%d]] for %d silver." % (number, cost * number), ch, obj, None, merc.TO_CHAR)
+            handler_game.act("$n buys $p[[%d]]." % number, ch, obj, None, merc.TO_ROOM)
+            handler_game.act("You buy $p[[%d]] for %d silver." % (number, cost * number), ch, obj, None, merc.TO_CHAR)
         else:
-            merc.act("$n buys $p.", ch, obj, None, merc.TO_ROOM)
-            merc.act("You buy $p for %d silver." % cost, ch, obj, None, merc.TO_CHAR)
+            handler_game.act("$n buys $p.", ch, obj, None, merc.TO_ROOM)
+            handler_game.act("You buy $p for %d silver." % cost, ch, obj, None, merc.TO_CHAR)
 
         ch.deduct_cost(cost * number)
         keeper.gold += cost * number / 100
         keeper.silver += cost * number - (cost * number / 100) * 100
         t_obj = None
-        if obj.inventory:
+        if obj.flags.shop_inventory:
             items = []
             for count in range(number):
-                t_obj = object_creator.create_item(obj.vnum, obj.level)
+                t_obj = object_creator.create_item(merc.itemTemplate[obj.vnum], obj.level)
                 items.append(t_obj)
         for t_obj in items[:]:
-            if not obj.inventory:
-                t_obj.get()
+            if not obj.flags.shop_inventory:
+                t_obj.in_living.get(t_obj)
 
             if t_obj.timer > 0 and not t_obj.had_timer:
                 t_obj.timer = 0
             t_obj.extra_flags = t_obj.had_timer = False
-            t_obj.put(ch)
+            ch.put(t_obj)
             if cost < t_obj.cost:
                 t_obj.cost = cost
 

@@ -1099,7 +1099,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                 self.affect_check(paf.where, paf.bitvector)
 
     # Unequip a char with an obj.
-    def unequip(self, unequip_from, replace: bool=True):
+    def unequip(self, unequip_from, replace: bool=True, silent: bool=False, forced: bool=False):
         """
         :param unequip_from:
         :type unequip_from:
@@ -1113,11 +1113,12 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             raise ValueError("Unequip_char: already unequipped, or never worn.")
         if not item.is_item:
             raise TypeError('Expected item on unequip, got %r' % type(item))
-        if item and not replace:
-            return False
-        if item.flags.no_remove:
-            handler_game.act("You can't remove $p.", self, item, None, merc.TO_CHAR)
-            return False
+        if not forced:
+            if item and not replace:
+                return False
+            if item.flags.no_remove:
+                handler_game.act("You can't remove $p.", self, item, None, merc.TO_CHAR)
+                return False
         #AC Removal preceeds the actual clearing of the item from the character equipped dict, and list
         #This is because, apply_ac relies on the item being equipped to figure out its position on the character
         #To determine what to actually apply, or remove.
@@ -1130,8 +1131,9 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         self.remove_affect(item)
         if item.flags.light and item.value[2] != 0 and self.in_room and self.in_room.available_light > 0:
             self.in_room.available_light -= 1
-        handler_game.act("$n stops using $p.", self, item, None, merc.TO_ROOM)
-        handler_game.act("You stop using $p.", self, item, None, merc.TO_CHAR)
+        if not silent:
+            handler_game.act("$n stops using $p.", self, item, None, merc.TO_ROOM)
+            handler_game.act("You stop using $p.", self, item, None, merc.TO_CHAR)
         return True
 
     def verbose_wear_strings(self, item, slot):

@@ -49,14 +49,11 @@ def do_get(ch, argument):
         if not container:
             handler_game.act("I see no $T here.", ch, None, arg2, merc.TO_CHAR)
             return
-        if container.item_type == merc.ITEM_CONTAINER \
-                or container.item_type == merc.ITEM_CORPSE_NPC:
-            pass
         elif container.item_type == merc.ITEM_CORPSE_PC:
             if not ch.can_loot(container):
                 ch.send("You can't do that.\n")
                 return
-        else:
+        elif container.item_type != merc.ITEM_CONTAINER and container.item_type != merc.ITEM_CORPSE_NPC:
             ch.send("That's not a container.\n")
             return
         if state_checks.IS_SET(container.value[1], merc.CONT_CLOSED):
