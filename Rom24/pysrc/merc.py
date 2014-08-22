@@ -127,14 +127,14 @@ Likewise you can effect a change TO mob from accessing either dict:
 'bob'
 '''
 areas = {}
-items = collections.OrderedDict()
+items = {}
 rooms = {}
 characters = {}
 shops = {}
 player_characters = {}
 
 # global instance dict
-global_instances = collections.OrderedDict()
+global_instances = {}
 
 instance_number = 0
 previous_instance = instance_number
@@ -1010,29 +1010,6 @@ movement_loss = [1, 2, 2, 3, 4, 6, 4, 1, 6, 10, 6]
 
 #Pc Tracking
 max_on = 0
-
-''' Equipment Slot Strings - for use with displaying EQ to characters '''
-
-eq_slot_strings = collections.OrderedDict([('light', '[[Light Source]]         :  '),
-                                           ('left_finger', '[[Worn on Left Finger]]   :  '),
-                                           ('right_finger', '[[Worn on Right Finger]]  :  '),
-                                           ('neck', '[[Worn around Neck]]     :  '),
-                                           ('collar', '[[Worn around Collar]]     :  '),
-                                           ('body', '[[Worn on Torso]]        :  '),
-                                           ('head', '[[Worn on Head]]        :  '),
-                                           ('legs', '[[Worn on Legs]]        :  '),
-                                           ('feet', '[[Worn on Feet]]        :  '),
-                                           ('hands', '[[Worn on Hands]]       :  '),
-                                           ('arms', '[[Worn on Arms]]        :  '),
-                                           ('about_body', '[[Worn about Body]]    :  '),
-                                           ('waist', '[[Worn around Waist]]   :  '),
-                                           ('left_wrist', '[[Worn on Left Wrist]]  :  '),
-                                           ('right_wrist', '[[Worn on Right Wrist]] :  '),
-                                           ('main_hand', '[[Main Hand]]            :  '),
-                                           ('off_hand', '[[Off Hand]]             :  '),
-                                           ('held', '[[Held]]                 :  '),
-                                           ('float', '[[Floating Nearby]]      :  ')])
-
 
 # Return ascii name of an affect location.
 def affect_loc_name(location):

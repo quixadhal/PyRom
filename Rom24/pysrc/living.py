@@ -699,13 +699,16 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             return wch
 
         number, arg = game_utils.number_argument(argument)
+        arg = arg.lower()
         count = 0
         for wch in merc.characters.values():
-            if not wch.in_room or not ch.can_see(wch):
+            if not wch.in_room:
                 continue
-            if wch.is_pc() and not game_utils.is_name(arg.lower(), wch.name.lower()):
+            if wch.is_npc() and arg not in wch.name:
                 continue
-            if wch.is_npc() and arg.lower() not in wch.name.lower():
+            if not ch.can_see(wch):
+                continue
+            if wch.is_pc() and not game_utils.is_name(arg, wch.name.lower()):
                 continue
             count += 1
             if count == number:
