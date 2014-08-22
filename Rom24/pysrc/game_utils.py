@@ -35,7 +35,7 @@ def read_letter(pstr):
     return pstr[1:], pstr[:1]
 
 
-def read_word(pstr, lower=True):
+def old_read_word(pstr, lower=True):
     if not pstr:
         return "", ""
     pstr = pstr.lstrip()
@@ -71,6 +71,49 @@ def read_word(pstr, lower=True):
         word = word.lower()
 
     return pstr.lstrip()[strip:], word.strip()
+
+
+def read_word(pstr, lower=True):
+    if not pstr:
+        return '', ''
+
+    open_quote = False
+    overflow = False
+    start = None
+    end = None
+
+    i = 0
+    for c in pstr:
+        if c in ('"', "'"):
+            if open_quote:
+                end = i
+                break
+            else:
+                open_quote = True
+                start = i + 1
+        elif c.isspace():
+            if start is not None and not open_quote:
+                end = i
+                break
+        else:
+            if start is None:
+                start = i
+        i += 1
+
+    if not end:
+        overflow = True
+        end = len(pstr)
+
+    if open_quote and not overflow:
+        if lower:
+            return pstr[end+1:], pstr[start:end].lower()
+        else:
+            return pstr[end+1:], pstr[start:end]
+    else:
+        if lower:
+            return pstr[end:], pstr[start:end].lower()
+        else:
+            return pstr[end:], pstr[start:end]
 
 
 def read_int(pstr):
@@ -407,7 +450,7 @@ def read_to_eol(pstr):
         locate = len(pstr)
     return pstr[locate+1:], pstr[:locate]
 
-def is_name(arg, name):
+def old_is_name(arg, name):
     name, tmp = read_word(name)
     if not arg:
         return False
@@ -415,6 +458,22 @@ def is_name(arg, name):
         if tmp.lower().startswith(arg):
             return True
         name, tmp = read_word(name)
+    return False
+
+_breakup = re.compile('(\".*?\"|\'.*?\'|[^\s\"\']+)')
+
+
+def is_name(arg, name):
+    if not arg or not name:
+        return False
+    #arg = arg.lstrip().lower()
+    arg = arg.lower()
+    words = _breakup.findall(name)
+    for word in words:
+        if word[0] in ('"', "'"):
+            word = word[1:-1]
+        if word.lower().startswith(arg):
+            return True
     return False
 
 

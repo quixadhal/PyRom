@@ -53,7 +53,7 @@ class Pc(living.Living):
         self.confirm_delete = False
         self.alias = {}
         self.gen_data = None
-        self.prompt = "<%hhp %mm %vmv>"
+        self.prompt = "<%hhp %mm %vmv> "
         self.prefix = ""
         self.lines = 22
         self.played = 0
