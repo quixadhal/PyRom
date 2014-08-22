@@ -3,6 +3,8 @@ __author__ = 'quixadhal'
 import psutil
 import time
 from datetime import datetime
+from collections import Iterable
+import itertools
 import logging
 logger = logging.getLogger()
 
@@ -167,3 +169,27 @@ class ResourceSnapshot:
         spaces = '\n' + ' ' * 51
         output = spaces.join(results)
         return output
+
+
+def flatten(iterable, ltypes=Iterable):
+    """
+    This is a generator function which will flatten any iterable container's contents.
+    The most common use of it is to collapse nested lists into a single list.
+
+    Note that since this is a generator, you have to encapsulate it in a list() context
+    to get results from it, otherwise it can be used as an iterator itself.
+
+    :param iterable:
+    :type iterable:
+    :param ltypes:
+    :type ltypes:
+    :return:
+    :rtype:
+    """
+    remainder = iter(iterable)
+    while True:
+        first = next(remainder)
+        if isinstance(first, ltypes) and not isinstance(first, str):
+            remainder = itertools.chain(first, remainder)
+        else:
+            yield first
