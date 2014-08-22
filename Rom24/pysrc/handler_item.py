@@ -454,8 +454,10 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
     # Extract an obj from the world.
     def extract(self):
         if self.environment:
+            if self.equipped_to:
+                self.environment.raw_unequip(self)
             self.environment.get(self)
-            for item_id in self.inventory[:]:
+            for item_id in self.inventory:
                 if self.instance_id not in merc.items:
                     logger.error("Extract_obj: obj %d not found in obj_instance dict." % self.instance_id)
                     return

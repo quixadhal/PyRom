@@ -11,7 +11,6 @@ MAX_ITERATIONS = 300
 
 #Files
 AREA_LIST = 'area.lst'
-PAREA_LIST = 'area2.lst'
 BUG_FILE = 'bug.txt'
 TYPO_FILE = 'typo.txt'
 SOCIAL_LIST = 'social.lst'
