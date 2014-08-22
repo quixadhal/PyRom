@@ -92,6 +92,7 @@ class Room(instance.Instancer, environment.Environment, inventory.Inventory, typ
     def put(self, instance_object):
         if not instance_object.instance_id in self.inventory:
             self.inventory += [instance_object.instance_id]
+            instance_object._room_vnum = self.vnum
         else:
             raise ValueError('Instance already present in room inventory %d' % instance_object.instance_id)
         if instance_object.is_living:
@@ -115,6 +116,7 @@ class Room(instance.Instancer, environment.Environment, inventory.Inventory, typ
     def get(self, instance_object):
         if instance_object.instance_id in self.inventory:
             self.inventory.remove(instance_object.instance_id)
+            instance_object._room_vnum = None
         else:
             raise KeyError('Instance is not in room inventory, trying to be removed %d' % instance_object.instance_id)
         if instance_object.is_living:

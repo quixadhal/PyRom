@@ -580,86 +580,86 @@ def char_update():
 def item_update():
     for item in merc.items.values():
         # go through affects and decrement */
-        for paf in item.affected[:]:
-            if paf.duration > 0:
-                paf.duration -= 1
-                if random.randint(0, 4) == 0 and paf.level > 0:
-                    paf.level -= 1  # spell strength fades with time */
-            elif paf.duration < 0:
-                pass
-            else:
-                multi = [a for a in item.affected if a.type == paf.type and a is not paf and a.duration > 0]
-                if multi and paf.type > 0 and const.skill_table[paf.type].msg_obj:
-                    if item.in_living:
-                        rch = merc.characters[item.in_living]
-                        handler_game.act(const.skill_table[paf.type].msg_obj, rch, item, None, TO_CHAR)
-
-                    if item.in_room is not None and item.in_room.people:
-                        handler_game.act(const.skill_table[paf.type].msg_obj,
-                                         item.in_room.people, item, None, TO_ALL)
-                item.affect_remove(paf)
-        item.timer -= 1
-        if item.timer <= 0 or item.timer > 0:
-            continue
-
-        if item.item_type == ITEM_FOUNTAIN:
-            message = "$p dries up."
-        elif item.item_type == ITEM_CORPSE_NPC:
-            message = "$p decays into dust."
-        elif item.item_type == ITEM_CORPSE_PC:
-            message = "$p decays into dust."
-        elif item.item_type == ITEM_FOOD:
-            message = "$p decomposes."
-        elif item.item_type == ITEM_POTION:
-            message = "$p has evaporated from disuse."
-        elif item.item_type == ITEM_PORTAL:
-            message = "$p fades out of existence."
-        elif item.item_type == ITEM_CONTAINER:
-            if item.flags.float:
-                if item.inventory:
-                    message = "$p flickers and vanishes, spilling its contents on the floor."
+        if item:
+            for paf in item.affected[:]:
+                if paf.duration > 0:
+                    paf.duration -= 1
+                    if random.randint(0, 4) == 0 and paf.level > 0:
+                        paf.level -= 1  # spell strength fades with time */
+                elif paf.duration < 0:
+                    pass
                 else:
-                    message = "$p flickers and vanishes."
+                    multi = [a for a in item.affected if a.type == paf.type and a is not paf and a.duration > 0]
+                    if multi and paf.type > 0 and const.skill_table[paf.type].msg_obj:
+                        if item.in_living:
+                            rch = merc.characters[item.in_living]
+                            handler_game.act(const.skill_table[paf.type].msg_obj, rch, item, None, TO_CHAR)
+
+                        if item.in_room is not None and item.in_room.people:
+                            handler_game.act(const.skill_table[paf.type].msg_obj,
+                                             item.in_room.people, item, None, TO_ALL)
+                    item.affect_remove(paf)
+            item.timer -= 1
+            if item.timer <= 0 or item.timer > 0:
+                continue
+
+            if item.item_type == ITEM_FOUNTAIN:
+                message = "$p dries up."
+            elif item.item_type == ITEM_CORPSE_NPC:
+                message = "$p decays into dust."
+            elif item.item_type == ITEM_CORPSE_PC:
+                message = "$p decays into dust."
+            elif item.item_type == ITEM_FOOD:
+                message = "$p decomposes."
+            elif item.item_type == ITEM_POTION:
+                message = "$p has evaporated from disuse."
+            elif item.item_type == ITEM_PORTAL:
+                message = "$p fades out of existence."
+            elif item.item_type == ITEM_CONTAINER:
+                if item.flags.float:
+                    if item.inventory:
+                        message = "$p flickers and vanishes, spilling its contents on the floor."
+                    else:
+                        message = "$p flickers and vanishes."
+                else:
+                    message = "$p crumbles into dust."
             else:
                 message = "$p crumbles into dust."
-        else:
-            message = "$p crumbles into dust."
 
-        if item.in_living:
-            if state_checks.IS_NPC(merc.characters[item.in_living]) and merc.characters[item.in_living].pShop:
-                merc.characters[item.in_living].silver += item.cost // 5
-            else:
-                handler_game.act(message, merc.characters[item.in_living], item, None, TO_CHAR)
-                if 'float' in item.equipped_to:
-                    handler_game.act(message, merc.characters[item.in_living], item, None, TO_ROOM)
-        elif item.in_room and item.in_room.people:
-            if not (item.in_item and merc.items[item.in_item].vnum == OBJ_VNUM_PIT
-                    and not item.take):
-                handler_game.act(message, item.in_room.people[:1], item, None, TO_ROOM)
-                handler_game.act(message, item.in_room.people[:1], item, None, TO_CHAR)
-
-        if (item.item_type == ITEM_CORPSE_PC or 'float' in item.equipped_to) and item.inventory:
-            # save the contents */
-            for t_item_id in item.inventory[:]:
-                t_item = merc.items[t_item_id]
-                t_item.get()
-
-                if item.in_item:  # in another object */
-                    t_item.put(item.in_item)
-                elif item.in_living:  # carried */
+            if item.in_living:
+                if state_checks.IS_NPC(merc.characters[item.in_living]) and merc.characters[item.in_living].pShop:
+                    merc.characters[item.in_living].silver += item.cost // 5
+                else:
+                    handler_game.act(message, merc.characters[item.in_living], item, None, TO_CHAR)
                     if 'float' in item.equipped_to:
-                        if item.in_living.in_room is None:
-                            t_item.extract()
-                        else:
-                            t_item.put(item.in_living.in_room)
-                    else:
-                        t_item.put(item.in_living)
-                elif not item.in_room:  # destroy it */
-                    t_item.extract()
-                else:  # to a room */
-                    t_item.put(item.in_room)
+                        handler_game.act(message, merc.characters[item.in_living], item, None, TO_ROOM)
+            elif item.in_room and item.in_room.people:
+                if not (item.in_item and merc.items[item.in_item].vnum == OBJ_VNUM_PIT
+                        and not item.take):
+                    handler_game.act(message, item.in_room.people[:1], item, None, TO_ROOM)
+                    handler_game.act(message, item.in_room.people[:1], item, None, TO_CHAR)
 
-        item.extract()
+            if (item.item_type == ITEM_CORPSE_PC or 'float' in item.equipped_to) and item.inventory:
+                # save the contents */
+                for t_item_id in item.inventory[:]:
+                    t_item = merc.items[t_item_id]
+                    t_item.get()
+
+                    if item.in_item:  # in another object */
+                        t_item.put(item.in_item)
+                    elif item.in_living:  # carried */
+                        if 'float' in item.equipped_to:
+                            if item.in_living.in_room is None:
+                                t_item.extract()
+                            else:
+                                t_item.put(item.in_living.in_room)
+                        else:
+                            t_item.put(item.in_living)
+                    elif not item.in_room:  # destroy it */
+                        t_item.extract()
+                    else:  # to a room */
+                        t_item.put(item.in_room)
+            item.extract()
     return
 
 

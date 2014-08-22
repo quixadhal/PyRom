@@ -327,13 +327,12 @@ def create_item(item_template, level, prev_instance_id: int=None):
         logger.critical("Create_object: No objTemplate.")
         sys.exit(1)
 
-    item = handler_item.Items()
-    item.__dict__.update(item_template.__dict__)
+    item = handler_item.Items(item_template)
     if not prev_instance_id:
-        item.instancer()
+        pass  # item.instancer()
     else:
         item.instance_id = prev_instance_id
-    item.instance_setup()
+    #item.instance_setup()
     item.enchanted = False
 
     if item_template.new_format is False:

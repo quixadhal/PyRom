@@ -2,12 +2,13 @@ import os
 import random
 import time
 import json
+import copy
 import logging
-import handler_log
 
 logger = logging.getLogger()
 
 import game_utils
+import handler_log
 import instance
 import handler_game
 import merc
@@ -66,9 +67,15 @@ class Pc(living.Living):
                 self.name = template
                 self.instancer()
             if kwargs:
-                [setattr(self, k, v) for k, v in kwargs.items()]
+                [setattr(self, k, copy.deepcopy(v)) for k, v in kwargs.items()]
+                if self._fighting:
+                    self._fighting = None
+                    self.position = merc.POS_STANDING
+                if self.environment:
+                    if self._environment not in merc.global_instances.keys():
+                        self.environment = None
                 if self.inventory:
-                    for instance_id in self.inventory:
+                    for instance_id in self.inventory[:]:
                         handler_item.Items.load(instance_id=instance_id, player_name=self.name)
                 for item_id in self.equipped.values():
                     if item_id:
@@ -587,7 +594,7 @@ class Pc(living.Living):
             fp.write(js)
 
         if self.inventory:
-            for item_id in self.inventory:
+            for item_id in self.inventory[:]:
                 item = merc.items[item_id]
                 item.save(in_inventory=True, player_name=self.name)
         for item_id in self.equipped.values():

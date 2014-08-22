@@ -514,7 +514,7 @@ def spec_fido(ch):
     if not ch.is_awake():
         return False
 
-    for corpse_id in ch.in_room.inventory:
+    for corpse_id in ch.in_room.inventory[:]:
         corpse = merc.items[corpse_id]
         if corpse.item_type != merc.ITEM_CORPSE_NPC:
             continue
@@ -571,7 +571,7 @@ def spec_janitor(ch):
     if not ch.is_awake():
         return False
 
-    for trash_id in ch.in_room.inventory:
+    for trash_id in ch.in_room.inventory[:]:
         trash = merc.items[trash_id]
         if not trash.flags.take or not ch.can_loot(trash):
             continue

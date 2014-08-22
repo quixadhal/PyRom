@@ -27,7 +27,8 @@ class Area(instance.Instancer, type_bypass.ObjectType, environment.Environment):
         self.name = ""
         self.no_save = False  # TODO: This should be true for instances
         if template:
-            [setattr(self, k, v) for k, v in template.__dict__.items() if k not in merc.not_to_instance]
+            import copy
+            [setattr(self, k, copy.deepcopy(v)) for k, v in template.__dict__.items() if k not in merc.not_to_instance]
             self.instancer()
             self.instance_setup()
         else:
@@ -143,7 +144,8 @@ class ExtraDescrData:
         self.keyword = ""  # Keyword in look/examine
         self.description = ""
         if kwargs:
-            [setattr(self, k, v) for k, v in kwargs.items()]
+            import copy
+            [setattr(self, k, copy.deepcopy(v)) for k, v in kwargs.items()]
 
     def to_json(self, outer_encoder=None):
         if outer_encoder is None:
@@ -182,7 +184,8 @@ class Exit:
         self.keyword = ""
         self.description = ""
         if template:
-            [setattr(self, k, v) for k, v in template.__dict__.items()]
+            import copy
+            [setattr(self, k, copy.deepcopy(v)) for k, v in template.__dict__.items()]
             if self.to_room_vnum != -1 and not None:
                 self.to_room = merc.instances_by_room[self.to_room_vnum][0]
             else:
@@ -190,7 +193,8 @@ class Exit:
             if self.key <= 0:
                 self.key = None
         if kwargs:
-            [setattr(self, k, v) for k, v in kwargs.items()]
+            import copy
+            [setattr(self, k, copy.deepcopy(v)) for k, v in kwargs.items()]
 
     def to_json(self, outer_encoder=None):
         if outer_encoder is None:
@@ -230,10 +234,12 @@ class Reset:
         self.arg3 = 0
         self.arg4 = 0
         if template:
-            [setattr(self, k, v) for k, v in template.__dict__.items()]
+            import copy
+            [setattr(self, k, copy.deepcopy(v)) for k, v in template.__dict__.items()]
             self.room = merc.instances_by_room[self.room][0]
         if kwargs:
-            [setattr(self, k, v) for k, v in kwargs.items()]
+            import copy
+            [setattr(self, k, copy.deepcopy(v)) for k, v in kwargs.items()]
 
     def __repr__(self):
         if not self.instance_id:
@@ -276,9 +282,11 @@ class Shop:
         self.open_hour = 0
         self.close_hour = 0
         if template:
-            [setattr(self, k, v) for k, v in template.__dict__.items()]
+            import copy
+            [setattr(self, k, copy.deepcopy(v)) for k, v in template.__dict__.items()]
         if kwargs:
-            [setattr(self, k, v) for k, v in kwargs.items()]
+            import copy
+            [setattr(self, k, copy.deepcopy(v)) for k, v in kwargs.items()]
 
     def __repr__(self):
             return "Shop Mob: %s Room: %d" % (merc.characters[self.keeper].name, self.room)
@@ -316,7 +324,8 @@ class Gen:
         self.group_chosen = {}
         self.points_chosen = 0
         if kwargs:
-            [setattr(self, k, v) for k, v in kwargs.items()]
+            import copy
+            [setattr(self, k, copy.deepcopy(v)) for k, v in kwargs.items()]
 
     def to_json(self, outer_encoder=None):
         if outer_encoder is None:

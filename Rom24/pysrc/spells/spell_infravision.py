@@ -4,7 +4,7 @@ import merc
 
 
 def spell_infravision(sn, level, ch, victim, target):
-    if victim.is_affected( merc.AFF_INFRARED):
+    if victim.is_affected(merc.AFF_INFRARED):
         if victim == ch:
             ch.send("You can already see in the dark.\n")
         else:

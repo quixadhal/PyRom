@@ -8,7 +8,7 @@ import game_utils
 def get_obj_keeper(ch, keeper, argument):
     number, arg = game_utils.number_argument(argument)
     count = 0
-    for obj_id in keeper.inventory:
+    for obj_id in keeper.inventory[:]:
         obj = merc.items[obj_id]
         if not obj.equipped_to and keeper.can_see_item(obj) and ch.can_see_item(obj) and game_utils.is_name(arg, obj.name):
             count += 1
@@ -59,7 +59,7 @@ def get_cost(keeper, item, fBuy):
                 break
 
         if not item.sell_extract:
-            for item2_id in keeper.inventory:
+            for item2_id in keeper.inventory[:]:
                 item2 = merc.items[item2_id]
                 if item.vnum == item2_id.vnum and item.short_descr == item2_id.short_descr:
                     if item.inventory:

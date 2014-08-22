@@ -41,7 +41,7 @@ def do_list(ch, argument):
             return
         argument, arg = game_utils.read_word(argument)
         items = collections.OrderedDict()
-        for item_id in keeper.inventory:
+        for item_id in keeper.inventory[:]:
             item = merc.items[item_id]
             cost = shop_utils.get_cost(keeper, item, True)
             if not item.equipped_to and ch.can_see_item(item) and cost > 0 \

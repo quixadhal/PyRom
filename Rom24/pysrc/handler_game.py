@@ -31,13 +31,15 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
+import copy
+import json
+
 import handler_ch
 import handler_item
 import living
 import game_utils
 import merc
 import state_checks
-import json
 
 __author__ = 'syn'
 
@@ -67,7 +69,7 @@ class AFFECT_DATA:
         self.modifier = 0
         self.bitvector = 0
         if kwargs:
-            [setattr(self, k, v) for k, v in kwargs.items()]
+            [setattr(self, k, copy.deepcopy(v)) for k, v in kwargs.items()]
 
     def to_json(self, outer_encoder=None):
         if outer_encoder is None:

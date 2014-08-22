@@ -235,11 +235,16 @@ def reset_area(pArea):
                 last = False
                 continue
             count = handler_item.count_obj_list(itemTemplate, item_to.inventory)
-            while count < pReset.arg4:
+            #Converted while to For Loop, testing indicated
+            #While loop was ~.002-.004
+            #For loop ~.0009-.001
+            for i in range(pReset.arg4):
                 item = object_creator.create_item(itemTemplate, game_utils.number_fuzzy(item_to.level))
                 item_to.put(item)
                 item = None
                 count += 1
+                if count >= pReset.arg4:
+                    break
                 if itemTemplate.count >= limit:
                     break
 

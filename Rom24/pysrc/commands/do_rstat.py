@@ -39,7 +39,7 @@ def do_rstat(ch, argument):
         if ch.can_see(rch):
             ch.send("%s " % rch.name if not rch.is_npc() else rch.short_descr)
     ch.send(".\nObjects:   ")
-    for obj_id in location.inventory:
+    for obj_id in location.inventory[:]:
         obj = merc.global_instances[obj_id]
         ch.send("'%s' " % obj.name)
     ch.send(".\n")

@@ -31,6 +31,7 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
+import copy
 import logging
 
 logger = logging.getLogger()
@@ -49,7 +50,7 @@ class Affects:
         self.affected = []
         self.affected_by = bit.Bit(flags=tables.affect_flags)
         if kwargs:
-            [setattr(self, k, v) for k, v in kwargs.items()]
+            [setattr(self, k, copy.deepcopy(v)) for k, v in kwargs.items()]
 
     def to_json(self, outer_encoder=None):
         if outer_encoder is None:
@@ -89,7 +90,6 @@ class Affects:
         self.affected.append(paf_new)
         self.affect_modify(paf_new, True)
         return
-
 
     # * Add or enhance an affect.
     def affect_join(self, paf):
@@ -137,7 +137,7 @@ class Affects:
                     self.vuln_flags.set_bit(vector)
                 return
 
-        for item_id in self.inventory:
+        for item_id in self.inventory[:]:
             item = merc.items[item_id]
             if not item.equipped_to:
                 continue

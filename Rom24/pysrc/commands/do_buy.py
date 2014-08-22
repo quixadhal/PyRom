@@ -95,7 +95,7 @@ def do_buy(ch, argument):
         items = []
         if not obj.flags.shop_inventory:
             count = 0
-            for t_obj_id in keeper.inventory:
+            for t_obj_id in keeper.inventory[:]:
                 t_obj = merc.items[t_obj_id]
                 if t_obj.vnum == obj.vnum and t_obj.short_descr == obj.short_descr:
                     items.append(t_obj)

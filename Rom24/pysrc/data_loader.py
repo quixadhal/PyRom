@@ -113,6 +113,7 @@ def load_npcs(area, pArea):
         merc.characterTemplate[npc.vnum] = npc
         npc.area = pArea.name
         area, npc.name = game_utils.read_string(area)
+        npc.name = npc.name.lower()
         area, npc.short_descr = game_utils.read_string(area)
 
         area, npc.long_descr = game_utils.read_string(area)
@@ -283,7 +284,7 @@ def load_objects(area, pArea):
                 area, paf.location = game_utils.read_int(area)
                 area, paf.modifier = game_utils.read_int(area)
                 paf.bitvector = 0
-                item.affected.append(paf)
+                item.affected += [paf]
             elif w == 'E':
                 ed = world_classes.ExtraDescrData()
                 area, ed.keyword = game_utils.read_string(area)

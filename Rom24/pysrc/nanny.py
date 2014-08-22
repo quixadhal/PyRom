@@ -558,10 +558,11 @@ def con_read_motd(self):
                     'the IMPLEMENTOR, the sucker in charge, the place where the buck stops.\n' +
                     'Enjoy!')
 
-    if ch._environment in merc.global_instances.keys() and not ch.level == 0:
-        room = merc.global_instances.get(ch._environment, None)
-        if room and ch._environment != room.instance_id:
-            room.put(ch)
+    if ch.environment and not ch.level == 0:
+        ch.environment.put(ch)
+    elif ch._saved_room_vnum:
+        room = merc.instances_by_room[ch._saved_room_vnum][0]
+        room.put(ch)
     elif ch.is_immortal() and not ch.level == 0:
         to_instance_id = merc.instances_by_room[merc.ROOM_VNUM_CHAT][0]
         to_instance = merc.rooms[to_instance_id]

@@ -234,9 +234,6 @@ def fire_effect(vo, level, dam, target):
         for item_id in victim.inventory[:]:
             item = merc.items[item_id]
             fire_effect(item, level, dam, TARGET_ITEM)
-        return
-        if type(obj) is int:
-            obj = merc.items[obj]
 
     if target == TARGET_ITEM:  # toast an object */
         item = vo
@@ -297,7 +294,6 @@ def fire_effect(vo, level, dam, target):
                     t_item.extract()
                     continue
                 fire_effect(t_item, level / 2, dam / 2, TARGET_ITEM)
-
         item.extract()
         return
 
@@ -415,6 +411,5 @@ def shock_effect(vo, level, dam, target):
             handler_game.act(msg, item.in_living, item, None, TO_ALL)
         elif item.in_room and item.in_room.people:
             handler_game.act(msg, item.in_room.people, item, None, TO_ALL)
-
         item.extract()
         return

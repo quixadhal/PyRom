@@ -183,7 +183,7 @@ def item_bitvector_flag_str(bits: int, in_type='extra flags'):
         elif bits & merc.ITEM_WEAR_SHIELD:
             return 'off_hand'
         elif bits & merc.ITEM_WEAR_ABOUT:
-            return 'about'
+            return 'about_body'
         elif bits & merc.ITEM_WEAR_WAIST:
             return 'waist'
         elif bits & merc.ITEM_WEAR_WRIST:
@@ -297,7 +297,7 @@ def item_flags_from_bits(bits: int, out_data: collections.namedtuple, in_type='w
         if bits & merc.ITEM_WEAR_SHIELD:
             out_data.slots.update({'off_hand'})
         if bits & merc.ITEM_WEAR_ABOUT:
-            out_data.slots.update({'about'})
+            out_data.slots.update({'about_body'})
         if bits & merc.ITEM_WEAR_WAIST:
             out_data.slots.update({'waist'})
         if bits & merc.ITEM_WEAR_WRIST:
@@ -407,14 +407,30 @@ def read_to_eol(pstr):
         locate = len(pstr)
     return pstr[locate+1:], pstr[:locate]
 
-def is_name(arg, name):
-    name, tmp = read_word(name)
+
+def old_is_name(arg, name):
     if not arg:
         return False
-    while tmp:
-        if tmp.lower().startswith(arg):
+    arg = arg.lower()
+    its_a_name = [word for word in name.split(' ') if word.startswith(arg.lower())]
+    if its_a_name:
+        return True
+    else:
+        return False
+
+_breakup = re.compile('(\".*?\"|\'.*?\'|[^\s]+)')
+
+
+def is_name(arg, name):
+    if not arg or not name:
+        return False
+    arg = arg.lower()
+    words = _breakup.findall(name)
+    for word in words:
+        if word[0] in ('"', "'"):
+            word = word[1:-1]
+        if word.lower().startswith(arg):
             return True
-        name, tmp = read_word(name)
     return False
 
 

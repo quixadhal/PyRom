@@ -33,6 +33,7 @@
 """
 import json
 import os
+import copy
 import logging
 
 logger = logging.getLogger()
@@ -66,7 +67,7 @@ equips_to_strings = {'left_finger': 'Left Finger',
                      'feet': 'Feet',
                      'hands': 'Hands',
                      'arms': 'Arms',
-                     'about': 'About Body',
+                     'about_body': 'About Body',
                      'left_wrist': 'Left Wrist',
                      'right_wrist': 'Right Wrist',
                      'waist': 'Waist',
@@ -139,13 +140,11 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         self.timer = 0
         self.value = [0] * 5
         self.flags = item_flags.ItemFlags()
-        self._equips_to_names = equips_to_strings
-        self._restriction_names = item_restriction_strings
-        self._item_attribute_names = item_attribute_strings
-        self._weapon_attribute_names = weapon_attribute_strings
-        self.player_name = ''
         if kwargs:
-            [setattr(self, k, v) for k, v in kwargs.items()]
+            [setattr(self, k, copy.deepcopy(v)) for k, v in kwargs.items()]
+        if template:
+            [setattr(self, k, copy.deepcopy(v)) for k, v in template.__dict__.items()]
+            self.instancer()
         if self.instance_id:
             self.instance_setup()
             Items.instance_count += 1
@@ -157,7 +156,8 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
             logger.trace("Freeing %s" % str(self))
             if self.instance_id:
                 Items.instance_count -= 1
-                self.instance_destructor()
+                if merc.items.get(self.instance_id, None):
+                    self.instance_destructor()
             else:
                 Items.template_count -= 1
         except:
@@ -197,7 +197,7 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         for name in self.equips_to:
             if used == name:
                 continue
-            things.add(self._equips_to_names[name])
+            things.add(equips_to_strings[name])
         return ', '.join(name for name in things)
 
     @property
@@ -236,7 +236,7 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         """
         attributes = set({})
         for astring in self.item_attributes:
-            attributes.add(self._item_attribute_names[astring])
+            attributes.add(item_attribute_strings[astring])
         return ', '.join(name for name in attributes)
 
     @property
@@ -271,7 +271,7 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         """
         restrictions = set({})
         for rstring in self.item_restrictions:
-            restrictions.add(self._restriction_names[rstring])
+            restrictions.add(item_restriction_strings[rstring])
         return ', '.join(name for name in restrictions)
 
     @property
@@ -305,7 +305,7 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         """
         attributes = set({})
         for wstring in self.item_restrictions:
-            attributes.add(self._restriction_names[wstring])
+            attributes.add(weapon_attribute_strings[wstring])
         return ', '.join(name for name in attributes)
 
     @property
@@ -350,8 +350,8 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
                            '%d, %r' % (instance_object.instance_id, type(instance_object)))
 
     def instance_setup(self):
+        merc.items[self.instance_id] = self
         merc.global_instances[self.instance_id] = self
-        merc.items[self.instance_id] = merc.global_instances[self.instance_id]
         if self.vnum not in merc.instances_by_item.keys():
             merc.instances_by_item[self.vnum] = [self.instance_id]
         else:
@@ -454,6 +454,8 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
     # Extract an obj from the world.
     def extract(self):
         if self.environment:
+            if self.equipped_to:
+                self.in_living.raw_unequip(self)
             self.environment.get(self)
             for item_id in self.inventory[:]:
                 if self.instance_id not in merc.items:
@@ -497,8 +499,6 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         cls_name = '__class__/' + __name__ + '.' + cls.__name__
         if cls_name in data:
             tmp_data = outer_decoder(data[cls_name])
-            if player_name:
-                tmp_data['player'] = player_name
             return cls(**tmp_data)
         return data
 
@@ -531,7 +531,7 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
             fp.write(js)
 
         if self.inventory:
-            for item_id in self.inventory:
+            for item_id in self.inventory[:]:
                 item = merc.global_instances[item_id]
                 item.save(is_equipped, in_inventory, player_name)
 
@@ -552,7 +552,6 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         else:
             pathname = os.path.join(settings.PLAYER_DIR, player_name[0].lower(), player_name.capitalize())
             number = instance_id
-
         target_file = '%d.json' % number
         filename = None
         for a_path, a_directory, i_files in os.walk(pathname):
@@ -568,10 +567,13 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
             raise TypeError('Could not load instance %r!' % number)
         if obj.inventory:
             obj.load_inventory(player_name)
+        if obj.environment:
+            if obj.environment.is_room and obj.instance_id not in obj.environment.inventory:
+                obj.environment.put(obj)
         return obj
 
     def load_inventory(self, player_name: str=None):
-        for number in self.inventory:
+        for number in self.inventory[:]:
             if self.instance_id:
                 obj = Items.load(instance_id=number, player_name=player_name)
             else:
@@ -603,7 +605,8 @@ def get_item(ch, item, this_container):
         for gch_id in item.in_room.people:
             gch = merc.characters[gch_id]
             if gch.on:
-                if merc.items[gch.on] == item.instance_id:
+                on_item = merc.items[gch.on]
+                if on_item.instance_id in item.in_room.items:
                     handler_game.act("$N appears to be using $p.", ch, item, gch, merc.TO_CHAR)
                     return
     if this_container:
@@ -693,7 +696,7 @@ def count_obj_list(itemInstance, contents):
 
 # for clone, to insure that cloning goes many levels deep
 def recursive_clone(ch, item, clone):
-    for c_item_id in item.inventory:
+    for c_item_id in item.inventory[:]:
         c_item = merc.items[c_item_id]
         if item_check(ch, c_item):
             t_obj = object_creator.create_item(merc.itemTemplate[c_item.vnum], 0)
