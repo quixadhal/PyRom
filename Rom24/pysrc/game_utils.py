@@ -467,7 +467,7 @@ def old_is_name(arg, name):
 _breakup = re.compile('(\".*?\"|\'.*?\'|[^\s]+)')
 
 
-def new_is_name(arg, name):
+def is_name(arg, name):
     if not arg or not name:
         return False
     arg = arg.lower()
