@@ -73,47 +73,51 @@ def old_read_word(pstr, lower=True):
     return pstr.lstrip()[strip:], word.strip()
 
 
-def read_word(pstr, lower=True):
+def read_word(pstr, to_lower=True):
     if not pstr:
         return '', ''
 
-    open_quote = False
-    overflow = False
     start = None
     end = None
-
-    i = 0
+    i = -1
     for c in pstr:
-        if c in ('"', "'"):
-            if open_quote:
-                end = i
-                break
+        i += 1
+        if c == "'" and start is None:
+            start = i + 1
+            quote = pstr.find("'", i + 1)
+            if quote > -1:
+                end = quote
             else:
-                open_quote = True
-                start = i + 1
+                end = len(pstr)
+            if to_lower:
+                return pstr[end + 1:], pstr[start:end].lower()
+            else:
+                return pstr[end + 1:], pstr[start:end]
+        elif c == '"' and start is None:
+            start = i + 1
+            quote = pstr.find('"', i + 1)
+            if quote > -1:
+                end = quote
+            else:
+                end = len(pstr)
+            if to_lower:
+                return pstr[end + 1:], pstr[start:end].lower()
+            else:
+                return pstr[end + 1:], pstr[start:end]
         elif c.isspace():
-            if start is not None and not open_quote:
+            if start is not None:
                 end = i
                 break
         else:
             if start is None:
                 start = i
-        i += 1
 
     if not end:
-        overflow = True
         end = len(pstr)
-
-    if open_quote and not overflow:
-        if lower:
-            return pstr[end+1:], pstr[start:end].lower()
-        else:
-            return pstr[end+1:], pstr[start:end]
+    if to_lower:
+        return pstr[end:], pstr[start:end].lower()
     else:
-        if lower:
-            return pstr[end:], pstr[start:end].lower()
-        else:
-            return pstr[end:], pstr[start:end]
+        return pstr[end:], pstr[start:end]
 
 
 def read_int(pstr):
@@ -460,13 +464,12 @@ def old_is_name(arg, name):
         name, tmp = read_word(name)
     return False
 
-_breakup = re.compile('(\".*?\"|\'.*?\'|[^\s\"\']+)')
+_breakup = re.compile('(\".*?\"|\'.*?\'|[^\s]+)')
 
 
-def is_name(arg, name):
+def new_is_name(arg, name):
     if not arg or not name:
         return False
-    #arg = arg.lstrip().lower()
     arg = arg.lower()
     words = _breakup.findall(name)
     for word in words:
