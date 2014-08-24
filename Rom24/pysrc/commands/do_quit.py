@@ -24,7 +24,7 @@ def do_quit(ch, argument):
     logger.info("%s has quit.", ch.name)
     handler_game.wiznet("$N rejoins the real world.", ch, None, merc.WIZ_LOGINS, 0, ch.trust)
     # After extract_char the ch is no longer valid!
-    ch.save()
+    ch.save(True)
     #save.legacy_save_char_obj(ch)
     id = ch.id
     d = ch.desc
