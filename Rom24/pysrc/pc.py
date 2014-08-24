@@ -29,7 +29,7 @@ class Pc(living.Living):
         self.buffer = []
         self.valid = False
         self.pwd = ""
-        self.trust = None
+        self.trust = 1
         self.auth = None
         self.failed_attempts = 0
         self.bamfin = ""
@@ -654,6 +654,8 @@ class Pc(living.Living):
             with open(filename, 'r') as fp:
                 obj = json.load(fp, object_hook=instance.from_json)
             if isinstance(obj, Pc):
+                obj._last_login = time.time()
+                obj._last_logout = None
                 return obj
             else:
                 logger.error('Could not load player file for %s', player_name)
