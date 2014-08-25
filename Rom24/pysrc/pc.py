@@ -632,7 +632,6 @@ class Pc(living.Living):
             logger.error('Could not open player stub file for %s', player_name)
             return None
 
-
     def save(self, logout: bool=False):
         self.save_stub(logout)
         pathname = os.path.join(settings.PLAYER_DIR, self.name[0].lower(), self.name.capitalize())

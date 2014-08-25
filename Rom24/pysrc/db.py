@@ -36,6 +36,7 @@ import os
 import random
 import time
 import logging
+import sys
 
 logger = logging.getLogger()
 
@@ -65,23 +66,31 @@ def boot_db():
     area_update()
     object_creator.setup_exits()
     update.instance_number_save()
-    logger.info('    Loaded %d Help files', len(merc.help_list))
+    logger.info('-----------------------------------------')
+
     logger.info('    Loaded %d Areas', world_classes.Area.template_count)
     logger.info('    Loaded %d Npc Templates', handler_npc.Npc.template_count)
     logger.info('    Loaded %d Item Templates', handler_item.Items.template_count)
     logger.info('    Loaded %d Room Templates', handler_room.Room.template_count)
+    logger.info('    Loaded %d Shops', len(merc.shopTemplate))
+    logger.info('    Loaded %d Total Templates', (world_classes.Area.template_count + handler_npc.Npc.template_count
+                                                  + handler_item.Items.template_count
+                                                  + handler_room.Room.template_count))
+    logger.info('-----------------------------------------')
+    logger.info('    Loaded %d Resets', world_classes.Reset.load_count)
+    logger.info('-----------------------------------------')
     logger.info('    Loaded %d Area Instances', world_classes.Area.instance_count)
     logger.info('    Loaded %d Npc Instances', handler_npc.Npc.instance_count)
     logger.info('    Loaded %d Item Instances', handler_item.Items.instance_count)
     logger.info('    Loaded %d Room Instances', handler_room.Room.instance_count)
-    logger.info('    Loaded %d Resets', len(merc.resets))
-    logger.info('    Loaded %d Shops', len(merc.shopTemplate))
+    logger.info('    Loaded %d Total Instances', (world_classes.Area.instance_count + handler_room.Room.instance_count +
+                                                  handler_item.Items.instance_count + handler_npc.Npc.instance_count))
+    logger.info('-----------------------------------------')
+    logger.info('    Loaded %d Help files', len(merc.help_list))
     logger.info('    Loaded %d Socials', len(merc.social_list))
     logger.info('-----------------------------------------')
-    logger.info('    %d Templates', (len(merc.areaTemplate) + len(merc.itemTemplate)
-                                     + len(merc.characterTemplate) + len(merc.roomTemplate)))
-    logger.info('    %d Instances', (sum([world_classes.Area.instance_count, handler_room.Room.instance_count,
-                                          handler_item.Items.instance_count, handler_npc.Npc.instance_count])))
+
+
 
 def init_instance():
     #First lets add the bad terms we dont want to pass during instancing, while copying attributes
@@ -383,7 +392,6 @@ def reset_area(pArea):
     npc = None
     last = True
     level = 0
-    print(time.time(), 'start of reset_area')
     for pReset in pArea.reset_list[:]:
         if pReset.command.startswith('M'):
             last, level, npc = m_reset(pReset, last, level, npc)
@@ -399,7 +407,6 @@ def reset_area(pArea):
             last, level, npc = r_reset(pReset, last, level, npc)
         else:
             logger.error("Reset_area: bad command %c.", pReset.command)
-    print(time.time(), 'end of reset_area')
 
 
 #

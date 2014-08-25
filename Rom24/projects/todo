@@ -287,3 +287,51 @@ R Section
 elif pReset.command == 'R':
 
 
+def con_get_name(self):
+    global retries
+    argument = self.get_command()
+    ch = Dummy()
+    name = argument.title()
+    new_connection[name] = {'name': name}
+
+    if not check_parse_name(name):
+        self.send("Illegal name, try another.\nName:")
+        retries += 1
+        if retries > 3:
+            self.send('Please come back when you think of a name.')
+            self.deactivate()
+        return
+
+    retries = 0
+
+    ch_stub = pc.Pc.load_stub(name)
+    if ch_stub:
+        found = True
+        if ch_stub['is_banned']:
+            logger.info("Denying access to %s@%s" % (ch_stub['name'], self.addrport()))
+            self.send("You have been denied access.")
+            self.deactivate()
+            return
+        if settings.WIZLOCK and not ch_stub['is_immortal']:
+            self.send("Game is Wizlocked. Try again later.")
+            self.deactivate()
+            return
+
+
+if ch._environment in merc.global_instances.keys() and not ch.level == 0:
+        room = merc.global_instances.get(ch._environment, None)
+        if room and ch._environment != room.instance_id:
+            room.put(ch)
+    elif ch.is_immortal() and not ch.level == 0:
+        to_instance_id = merc.instances_by_room[merc.ROOM_VNUM_CHAT][0]
+        to_instance = merc.rooms[to_instance_id]
+        to_instance.put(ch)
+    else:
+        to_instance_id = merc.instances_by_room[merc.ROOM_VNUM_TEMPLE][0]
+        to_instance = merc.rooms[to_instance_id]
+        to_instance.put(ch)
+
+    handler_game.act("$n has entered the game.", ch, None, None, merc.TO_ROOM)
+    ch.do_look("auto")
+    ch.send("\n\n")
+    ch.do_term("")

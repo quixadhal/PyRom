@@ -79,6 +79,8 @@ def read_word(pstr, to_lower=True):
 
     start = None
     end = None
+    if to_lower:
+        pstr = pstr.lower()
     i = -1
     for c in pstr:
         i += 1
@@ -89,10 +91,7 @@ def read_word(pstr, to_lower=True):
                 end = quote
             else:
                 end = len(pstr)
-            if to_lower:
-                return pstr[end + 1:], pstr[start:end].lower()
-            else:
-                return pstr[end + 1:], pstr[start:end]
+            return pstr[end + 1:], pstr[start:end]
         elif c == '"' and start is None:
             start = i + 1
             quote = pstr.find('"', i + 1)
@@ -100,10 +99,7 @@ def read_word(pstr, to_lower=True):
                 end = quote
             else:
                 end = len(pstr)
-            if to_lower:
-                return pstr[end + 1:], pstr[start:end].lower()
-            else:
-                return pstr[end + 1:], pstr[start:end]
+            return pstr[end + 1:], pstr[start:end]
         elif c.isspace():
             if start is not None:
                 end = i
@@ -114,10 +110,7 @@ def read_word(pstr, to_lower=True):
 
     if not end:
         end = len(pstr)
-    if to_lower:
-        return pstr[end:], pstr[start:end].lower()
-    else:
-        return pstr[end:], pstr[start:end]
+    return pstr[end:], pstr[start:end]
 
 
 def read_int(pstr):
@@ -471,11 +464,12 @@ def is_name(arg, name):
     if not arg or not name:
         return False
     arg = arg.lower()
+    name = name.lower()
     words = _breakup.findall(name)
     for word in words:
         if word[0] in ('"', "'"):
             word = word[1:-1]
-        if word.lower().startswith(arg):
+        if word.startswith(arg):
             return True
     return False
 

@@ -59,7 +59,10 @@ class SOCIAL_DATA:
 
 # An affect.
 class AFFECT_DATA:
+    load_count = 0
+
     def __init__(self, **kwargs):
+        AFFECT_DATA.load_count += 1
         self.valid = True
         self.where = 0
         self.type = 0

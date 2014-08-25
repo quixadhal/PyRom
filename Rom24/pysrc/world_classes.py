@@ -232,7 +232,10 @@ class Exit:
 
 
 class Reset:
+    load_count = 0
+
     def __init__(self, template=None, **kwargs):
+        Reset.load_count += 1
         self.name = ""
         self.area = ""
         self.instance_id = None
