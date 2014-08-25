@@ -35,7 +35,7 @@ def read_letter(pstr):
     return pstr[1:], pstr[:1]
 
 
-def read_word(pstr, lower=True):
+def old_read_word(pstr, lower=True):
     if not pstr:
         return "", ""
     pstr = pstr.lstrip()
@@ -71,6 +71,53 @@ def read_word(pstr, lower=True):
         word = word.lower()
 
     return pstr.lstrip()[strip:], word.strip()
+
+
+def read_word(pstr, to_lower=True):
+    if not pstr:
+        return '', ''
+
+    start = None
+    end = None
+    i = -1
+    for c in pstr:
+        i += 1
+        if c == "'" and start is None:
+            start = i + 1
+            quote = pstr.find("'", i + 1)
+            if quote > -1:
+                end = quote
+            else:
+                end = len(pstr)
+            if to_lower:
+                return pstr[end + 1:], pstr[start:end].lower()
+            else:
+                return pstr[end + 1:], pstr[start:end]
+        elif c == '"' and start is None:
+            start = i + 1
+            quote = pstr.find('"', i + 1)
+            if quote > -1:
+                end = quote
+            else:
+                end = len(pstr)
+            if to_lower:
+                return pstr[end + 1:], pstr[start:end].lower()
+            else:
+                return pstr[end + 1:], pstr[start:end]
+        elif c.isspace():
+            if start is not None:
+                end = i
+                break
+        else:
+            if start is None:
+                start = i
+
+    if not end:
+        end = len(pstr)
+    if to_lower:
+        return pstr[end:], pstr[start:end].lower()
+    else:
+        return pstr[end:], pstr[start:end]
 
 
 def read_int(pstr):
@@ -407,16 +454,15 @@ def read_to_eol(pstr):
         locate = len(pstr)
     return pstr[locate+1:], pstr[:locate]
 
-
 def old_is_name(arg, name):
+    name, tmp = read_word(name)
     if not arg:
         return False
-    arg = arg.lower()
-    its_a_name = [word for word in name.split(' ') if word.startswith(arg.lower())]
-    if its_a_name:
-        return True
-    else:
-        return False
+    while tmp:
+        if tmp.lower().startswith(arg):
+            return True
+        name, tmp = read_word(name)
+    return False
 
 _breakup = re.compile('(\".*?\"|\'.*?\'|[^\s]+)')
 

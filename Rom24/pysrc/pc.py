@@ -53,7 +53,7 @@ class Pc(living.Living):
         self.confirm_delete = False
         self.alias = {}
         self.gen_data = None
-        self.prompt = "<%hhp %mm %vmv>"
+        self.prompt = "<%hhp %mm %vmv> "
         self.prefix = ""
         self.lines = 22
         self.played = 0
@@ -61,6 +61,9 @@ class Pc(living.Living):
         self.practice = 0
         self.train = 0
         self.dampen = False
+        self._last_login = time.time()
+        self._last_logout = None
+        self._saved_room_vnum = merc.ROOM_VNUM_TEMPLE
         if template or kwargs:
             if template and not kwargs:
                 self.name = template
@@ -587,7 +590,51 @@ class Pc(living.Living):
             return cls(**tmp_data)
         return data
 
-    def save(self):
+    def save_stub(self, logout: bool=False):
+        if logout:
+            self._last_logout = time.time()
+        pathname = os.path.join(settings.PLAYER_DIR, self.name[0].lower(), self.name.capitalize())
+        os.makedirs(pathname, 0o755, True)
+        filename = os.path.join(pathname, 'login.json')
+        stub = dict({})
+        stub['name'] = self.name
+        stub['pwd'] = self.pwd
+        stub['auth'] = self.auth
+        stub['is_immortal'] = self.is_immortal()
+        stub['is_banned'] = self.act.is_set(merc.PLR_DENY)
+        stub['instance_id'] = self.instance_id
+        stub['last_login'] = self._last_login
+        stub['last_logout'] = self._last_logout
+        stub['room'] = self._saved_room_vnum
+        js = json.dumps(stub, default=instance.to_json, indent=4)
+        with open(filename, 'w') as fp:
+            fp.write(js)
+
+
+    @classmethod
+    def load_stub(cls, player_name: str=None):
+        if not player_name:
+            raise KeyError('Player name is required to load a player!')
+
+        pathname = os.path.join(settings.PLAYER_DIR, player_name[0].lower(), player_name.capitalize())
+        filename = os.path.join(pathname, 'login.json')
+
+        if os.path.isfile(filename):
+            logger.info('Loading %s player stub data', player_name)
+            with open(filename, 'r') as fp:
+                data = json.load(fp, object_hook=instance.from_json)
+            if isinstance(data, dict):
+                return data
+            else:
+                logger.error('Could not load player stub file for %s', player_name)
+                return None
+        else:
+            logger.error('Could not open player stub file for %s', player_name)
+            return None
+
+
+    def save(self, logout: bool=False):
+        self.save_stub(logout)
         pathname = os.path.join(settings.PLAYER_DIR, self.name[0].lower(), self.name.capitalize())
         os.makedirs(pathname, 0o755, True)
         filename = os.path.join(pathname, 'player.json')
@@ -618,6 +665,8 @@ class Pc(living.Living):
             with open(filename, 'r') as fp:
                 obj = json.load(fp, object_hook=instance.from_json)
             if isinstance(obj, Pc):
+                obj._last_login = time.time()
+                obj._last_logout = None
                 return obj
             else:
                 logger.error('Could not load player file for %s', player_name)

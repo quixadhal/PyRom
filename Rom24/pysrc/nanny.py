@@ -553,6 +553,7 @@ def con_read_motd(self):
         ch.practice = 5
         buf = "the %s" % const.title_table[ch.guild.name][ch.level][ch.sex - 1]
         ch.title = buf
+        #ch.prompt = "<%hhp %mm %vmv> "
         ch.do_outfit(ch_selections['weapon'])
         ch.put(object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_MAP], 0))
         school_id = merc.instances_by_room[merc.ROOM_VNUM_SCHOOL][0]
@@ -569,9 +570,9 @@ def con_read_motd(self):
             ch.exp = ch.exp_per_level(ch.points) * max(1, ch.level)
             ch.trust = 0
             ch.save()
-            ch.send('Congratulations!  As the first player to log into this MUD, you are now\n' +
+            ch.send('\n\nCongratulations!  As the first player to log into this MUD, you are now\n' +
                     'the IMPLEMENTOR, the sucker in charge, the place where the buck stops.\n' +
-                    'Enjoy!')
+                    'Enjoy!\n\n')
 
     if ch.environment and not ch.level == 0:
         ch.environment.put(ch)

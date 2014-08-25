@@ -16,7 +16,7 @@ def do_shutdown(ch, argument):
     for d in merc.descriptor_list[:]:
         vch = handler_ch.CH(d)
         if vch:
-            vch.save()
+            vch.save(True)
             comm.close_socket(d)
 
 
