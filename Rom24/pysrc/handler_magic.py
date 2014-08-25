@@ -51,16 +51,16 @@ def say_spell(ch, spell):
     buf = "$n utters the words, '%s'." % incantation
     buf2 = "$n utters the words, '%s'." % spell.name
 
-    for rch_id in ch.in_room.people:
+    for rch_id in ch.in_room.people[:]:
         rch = merc.characters[rch_id]
-        send = buf2 if ch.guild==rch.guild else buf
+        send = buf2 if ch.guild == rch.guild else buf
         handler_game.act(send, ch, None, rch, merc.TO_VICT)
 
 
 def saves_spell(level, victim, dam_type):
-    save = 50 + ( victim.level - level) * 5 - victim.saving_throw * 2
-    if victim.is_affected( merc.AFF_BERSERK):
-        save += victim.level//2
+    save = 50 + (victim.level - level) * 5 - victim.saving_throw * 2
+    if victim.is_affected(merc.AFF_BERSERK):
+        save += victim.level // 2
 
     immunity = victim.check_immune(dam_type)
     if immunity == merc.IS_IMMUNE:

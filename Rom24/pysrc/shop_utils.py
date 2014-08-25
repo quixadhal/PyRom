@@ -78,7 +78,7 @@ def get_cost(keeper, item, fBuy):
 #* Shopping commands.
 def find_keeper(ch):
     pShop = None
-    for keeper_id in ch.in_room.people:
+    for keeper_id in ch.in_room.people[:]:
         keeper = merc.characters[keeper_id]
         keeperTemplate = merc.characterTemplate[keeper.vnum]
         if keeper.is_npc() and keeperTemplate.pShop:

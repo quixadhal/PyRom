@@ -15,11 +15,11 @@ class Inventory:
 
     @property
     def people(self):
-            return [char_id for char_id in self.inventory if char_id in merc.characters]
+            return tuple(char_id for char_id in self.inventory if char_id in merc.characters)
 
     @property
     def items(self):
-            return [item_id for item_id in self.inventory if item_id in merc.items]
+            return tuple(item_id for item_id in self.inventory if item_id in merc.items)
 
     def can_carry_n(self):
         if not self.is_npc() and self.level >= merc.LEVEL_IMMORTAL:

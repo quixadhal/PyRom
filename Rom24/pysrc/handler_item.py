@@ -470,7 +470,7 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
     def count_users(self):
         total = 0
         if self.in_room:
-            for person_id in self.in_room.people:
+            for person_id in self.in_room.people[:]:
                 person = merc.characters[person_id]
                 if person.on == self.instance_id:
                     total += 1
@@ -602,7 +602,7 @@ def get_item(ch, item, this_container):
             handler_game.act("$d: you can't carry that much weight.", ch, None, item.name, merc.TO_CHAR)
             return
     if item.in_room:
-        for gch_id in item.in_room.people:
+        for gch_id in item.in_room.people[:]:
             gch = merc.characters[gch_id]
             if gch.on:
                 on_item = merc.items[gch.on]
@@ -628,7 +628,7 @@ def get_item(ch, item, this_container):
         ch.gold += item.value[1]
         if ch.act.is_set(merc.PLR_AUTOSPLIT):
             # AUTOSPLIT code
-            members = len([gch for gch in ch.in_room.people
+            members = len([gch for gch in ch.in_room.people[:]
                            if not merc.characters[gch].is_affected(merc.AFF_CHARM)
                            and merc.characters[gch].is_same_group(ch)])
             if members > 1 and (item.value[0] > 1 or item.value[1]):

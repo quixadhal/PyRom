@@ -654,7 +654,7 @@ def object_search(ch, template: bool=False, obj_type: str=None, target_package: 
 def find_character(ch, template, target_package):
     atype, num_or_count, arg_num, target = target_package
     if ch.in_room:
-                room_inventory_list = [npc_id for npc_id in ch.in_room.people
+                room_inventory_list = [npc_id for npc_id in ch.in_room.people[:]
                                        if merc.characters[npc_id].vnum == target]
                 if room_inventory_list:
                     try:

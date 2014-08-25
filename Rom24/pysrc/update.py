@@ -539,7 +539,7 @@ def char_update():
             plague.modifier = -5
             plague.bitvector = merc.AFF_PLAGUE
 
-            for vch_id in ch.in_room.people:
+            for vch_id in ch.in_room.people[:]:
                 vch = merc.characters[vch_id]
                 if not handler_magic.saves_spell(plague.level - 2, vch, merc.DAM_DISEASE) and not vch.is_immmortal() \
                         and not vch.is_affected(merc.AFF_PLAGUE) and random.randint(0, 4) == 0:
@@ -594,7 +594,7 @@ def item_update():
                             rch = merc.characters[item.in_living]
                             handler_game.act(const.skill_table[paf.type].msg_obj, rch, item, None, merc.TO_CHAR)
 
-                        if item.in_room is not None and item.in_room.people:
+                        if item.in_room is not None and item.in_room.people[:]:
                             handler_game.act(const.skill_table[paf.type].msg_obj,
                                              item.in_room.people, item, None, merc.TO_ALL)
                     item.affect_remove(paf)
@@ -632,7 +632,7 @@ def item_update():
                     handler_game.act(message, merc.characters[item.in_living], item, None, merc.TO_CHAR)
                     if 'float' in item.equipped_to:
                         handler_game.act(message, merc.characters[item.in_living], item, None, merc.TO_ROOM)
-            elif item.in_room and item.in_room.people:
+            elif item.in_room and item.in_room.people[:]:
                 if not (item.in_item and merc.items[item.in_item].vnum == merc.OBJ_VNUM_PIT
                         and not item.take):
                     handler_game.act(message, item.in_room.people[:1], item, None, merc.TO_ROOM)
@@ -684,7 +684,7 @@ def aggr_update():
                 or wch.in_area.empty:
             continue
 
-        for ch_id in wch.in_room.people:
+        for ch_id in wch.in_room.people[:]:
             ch = merc.characters[ch_id]
             if not ch.is_npc() \
                     or not ch.act.is_set(merc.ACT_AGGRESSIVE) \
@@ -704,7 +704,7 @@ def aggr_update():
             # *   giving each 'vch' an equal chance of selection.
             count = 0
             victim = None
-            for vch_id in wch.in_room.people:
+            for vch_id in wch.in_room.people[:]:
                 vch = merc.characters[vch_id]
                 if not vch.is_npc() \
                         and vch.level < merc.LEVEL_IMMORTAL \

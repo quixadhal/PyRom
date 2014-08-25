@@ -14,7 +14,7 @@ import interp
 
 def do_heal(ch, argument):
     # check for healer
-    for mob_id in ch.in_room.people:
+    for mob_id in ch.in_room.people[:]:
         healer = merc.characters[mob_id]
         if healer.is_npc() and healer.act.is_set(merc.ACT_IS_HEALER):
             mob = healer

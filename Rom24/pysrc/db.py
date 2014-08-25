@@ -161,7 +161,7 @@ def m_reset(pReset, last, level, npc):
         last = False
         return last, level, npc
     count = 0
-    for npc_id in roomInstance.people:
+    for npc_id in roomInstance.people[:]:
         npc = merc.global_instances[npc_id]
         if npc.is_npc():
             if npc.vnum == npcTemplate.vnum:

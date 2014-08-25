@@ -9,7 +9,6 @@ import const
 import magic
 import game_utils
 import handler_game
-import state_checks
 
 #TODO: Known broken. Probably needs some significant cleanup, doesn't appear to be granting skills properly. Needs more testing with non-immortal characters.
 def do_gain(ch, argument):
@@ -17,7 +16,7 @@ def do_gain(ch, argument):
         return
     # find a trainer
     trainer = None
-    for t_id in ch.in_room.people:
+    for t_id in ch.in_room.people[:]:
         t = merc.characters[t_id]
         if t.is_npc() and t.act.is_set(merc.ACT_GAIN):
             trainer = t

@@ -683,7 +683,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         if word == "self":
             return ch
         number, arg = game_utils.number_argument(argument)
-        ch_list = [merc.characters[rch_id] for rch_id in ch.in_room.people
+        ch_list = [merc.characters[rch_id] for rch_id in ch.in_room.people[:]
                    if game_utils.is_name(word, merc.characters[rch_id].name)]
         if ch_list:
             try:
@@ -933,6 +933,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         :return: no return
         :rtype: nothing
         """
+        # redundant anc causes bugs!
         #if not aff_object.enchanted:
          #   for paf in merc.itemTemplate[aff_object.vnum].affected:
           #      if paf.location != merc.APPLY_SPELL_AFFECT:

@@ -142,7 +142,7 @@ def act(format, ch, arg1=None, arg2=None, send_to=merc.TO_ROOM, min_pos=merc.POS
     him_her = ["it",  "him", "her"]
     his_her = ["its", "his", "her"]
 
-    to_players = [merc.characters[instance_id] for instance_id in ch.in_room.people]
+    to_players = [merc.characters[instance_id] for instance_id in ch.in_room.people[:]]
 
     if send_to is merc.TO_VICT:
         if not vch:
@@ -150,7 +150,7 @@ def act(format, ch, arg1=None, arg2=None, send_to=merc.TO_ROOM, min_pos=merc.POS
             return
         if not vch.in_room:
             return
-        to_players = [merc.characters[instance_id] for instance_id in ch.in_room.people]
+        to_players = [merc.characters[instance_id] for instance_id in ch.in_room.people[:]]
 
     for to in to_players:
         if not to.desc or to.position < min_pos:

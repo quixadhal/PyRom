@@ -26,7 +26,7 @@ def do_list(ch, argument):
             ch.send("You can't do that here.\n")
             return
         found = False
-        for pet in pRoomIndexNext.people:
+        for pet in pRoomIndexNext.people[:]:
             if pet.act.is_set(merc.ACT_PET):
                 if not found:
                     found = True

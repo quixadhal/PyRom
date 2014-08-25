@@ -134,7 +134,7 @@ def con_get_name(self):
 
     else:
         found, ch_dummy = save.legacy_load_char_obj(self, name)
-        ch_dummy.send = self.send()
+        ch_dummy.send = self.send
         ch_dummy.desc = self
         self.character = ch_dummy
     if found:
