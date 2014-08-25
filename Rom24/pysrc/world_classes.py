@@ -1,3 +1,4 @@
+import copy
 import os
 import hashlib
 import json
@@ -46,7 +47,6 @@ class Area(instance.Instancer, type_bypass.ObjectType, environment.Environment):
             #As in, this area is just loaded and has no PC objects, True
             self.empty = False
             self.player_chars = []
-            self.player_count = len(self.player_chars)
         if self.instance_id:
             Area.instance_count += 1
         else:
@@ -56,7 +56,12 @@ class Area(instance.Instancer, type_bypass.ObjectType, environment.Environment):
         try:
             logger.trace("Freeing %s" % str(self))
             if self.instance_id:
-                self.instance_destructor()
+                Area.instance_count -= 1
+                if merc.areas.get(self.instance_id, None):
+                    self.instance_destructor()
+            else:
+                Area.template_count -= 1
+                del merc.areaTemplate[self.name]
         except:
             return
 
@@ -71,6 +76,10 @@ class Area(instance.Instancer, type_bypass.ObjectType, environment.Environment):
                                                      self.file_name,
                                                      self.min_vnum,
                                                      self.max_vnum)
+
+    @property
+    def player_count(self):
+        return len(self.player_chars)
 
     def add_pc(self, player_char):
         if player_char.is_living and not player_char.is_npc():
@@ -96,11 +105,11 @@ class Area(instance.Instancer, type_bypass.ObjectType, environment.Environment):
 
     def instance_setup(self):
         merc.global_instances[self.instance_id] = self
-        merc.areas[self.instance_id] = merc.global_instances[self.instance_id]
+        merc.areas[self.instance_id] = self
         if self.name not in merc.instances_by_area.keys():
             merc.instances_by_area[self.name] = [self.instance_id]
         else:
-            merc.instances_by_area[self.name].append(self.instance_id)
+            merc.instances_by_area[self.name] += [self.instance_id]
 
     def instance_destructor(self):
         merc.instances_by_area[self.name].remove(self.instance_id)
@@ -234,11 +243,9 @@ class Reset:
         self.arg3 = 0
         self.arg4 = 0
         if template:
-            import copy
             [setattr(self, k, copy.deepcopy(v)) for k, v in template.__dict__.items()]
             self.room = merc.instances_by_room[self.room][0]
         if kwargs:
-            import copy
             [setattr(self, k, copy.deepcopy(v)) for k, v in kwargs.items()]
 
     def __repr__(self):
@@ -271,6 +278,7 @@ class Reset:
             return cls(**tmp_data)
         return data
 
+
 class Shop:
     def __init__(self, template=None, **kwargs):
         self.keeper = None
@@ -282,10 +290,8 @@ class Shop:
         self.open_hour = 0
         self.close_hour = 0
         if template:
-            import copy
             [setattr(self, k, copy.deepcopy(v)) for k, v in template.__dict__.items()]
         if kwargs:
-            import copy
             [setattr(self, k, copy.deepcopy(v)) for k, v in kwargs.items()]
 
     def __repr__(self):
@@ -324,7 +330,6 @@ class Gen:
         self.group_chosen = {}
         self.points_chosen = 0
         if kwargs:
-            import copy
             [setattr(self, k, copy.deepcopy(v)) for k, v in kwargs.items()]
 
     def to_json(self, outer_encoder=None):

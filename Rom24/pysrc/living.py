@@ -933,10 +933,10 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         :return: no return
         :rtype: nothing
         """
-        if not aff_object.enchanted:
-            for paf in merc.itemTemplate[aff_object.vnum].affected:
-                if paf.location != merc.APPLY_SPELL_AFFECT:
-                    self.affect_modify(paf, True)
+        #if not aff_object.enchanted:
+         #   for paf in merc.itemTemplate[aff_object.vnum].affected:
+          #      if paf.location != merc.APPLY_SPELL_AFFECT:
+           #         self.affect_modify(paf, True)
 
         for paf in aff_object.affected:
             if paf.location == merc.APPLY_SPELL_AFFECT:
@@ -1075,18 +1075,18 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         :rtype: none
         Taken from unequip to shorten it, searches for Affects, and removes as needed
         """
-        if aff_object.is_item and not aff_object.enchanted:
+        #if aff_object.is_item and not aff_object.enchanted:
             #No idea why ROM was going back to the template for this one.. but to make it accurate, for now.
-            for paf in merc.itemTemplate[aff_object.vnum].affected:
-                    if paf.location == merc.APPLY_SPELL_AFFECT:
-                        for lpaf in self.affected[:]:
-                            if lpaf.type == paf.type and lpaf.level == paf.level \
-                                    and lpaf.location == merc.APPLY_SPELL_AFFECT:
-                                self.affect_remove(lpaf)
-                                break
-                    else:
-                        self.affect_modify(paf, False)
-                        self.affect_check(paf.where, paf.bitvector)
+            #for paf in merc.itemTemplate[aff_object.vnum].affected:
+             #       if paf.location == merc.APPLY_SPELL_AFFECT:
+              #          for lpaf in self.affected[:]:
+               #             if lpaf.type == paf.type and lpaf.level == paf.level \
+                #                    and lpaf.location == merc.APPLY_SPELL_AFFECT:
+                 #               self.affect_remove(lpaf)
+                  #              break
+                   # else:
+                    #    self.affect_modify(paf, False)
+                     #   self.affect_check(paf.where, paf.bitvector)
         for paf in aff_object.affected:
             if paf.location == merc.APPLY_SPELL_AFFECT:
                 logger.error("Bug: Norm-Apply")

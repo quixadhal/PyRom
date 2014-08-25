@@ -79,7 +79,11 @@ class Room(instance.Instancer, environment.Environment, inventory.Inventory, typ
         try:
             logger.trace("Freeing %s" % str(self))
             if self.instance_id:
-                self.instance_destructor()
+                Room.instance_count -= 1
+                if merc.rooms.get(self.instance_id, None):
+                    self.instance_destructor()
+            else:
+                Room.template_count -= 1
         except:
             return
 
@@ -141,11 +145,11 @@ class Room(instance.Instancer, environment.Environment, inventory.Inventory, typ
 
     def instance_setup(self):
         merc.global_instances[self.instance_id] = self
-        merc.rooms[self.instance_id] = merc.global_instances[self.instance_id]
+        merc.rooms[self.instance_id] = self
         if self.vnum not in merc.instances_by_room.keys():
             merc.instances_by_room[self.vnum] = [self.instance_id]
         else:
-            merc.instances_by_room[self.vnum].append(self.instance_id)
+            merc.instances_by_room[self.vnum] += [self.instance_id]
 
     def instance_destructor(self):
         merc.instances_by_room[self.vnum].remove(self.instance_id)

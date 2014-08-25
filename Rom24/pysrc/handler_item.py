@@ -355,7 +355,7 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         if self.vnum not in merc.instances_by_item.keys():
             merc.instances_by_item[self.vnum] = [self.instance_id]
         else:
-            merc.instances_by_item[self.vnum].append(self.instance_id)
+            merc.instances_by_item[self.vnum] += [self.instance_id]
 
     def instance_destructor(self):
         merc.instances_by_item[self.vnum].remove(self.instance_id)

@@ -4,6 +4,7 @@ import state_checks
 import handler_game
 import game_utils
 
+
 # get an object from a shopkeeper's list */
 def get_obj_keeper(ch, keeper, argument):
     number, arg = game_utils.number_argument(argument)
@@ -16,6 +17,7 @@ def get_obj_keeper(ch, keeper, argument):
                 return obj
 
     return None
+
 
 # insert an object at the right spot for the keeper */
 def obj_to_keeper(item, ch):

@@ -30,8 +30,7 @@ class Pc(living.Living):
         self.buffer = []
         self.valid = False
         self.pwd = ""
-        #TODO: RemoveDebug
-        self.trust = 60
+        self.trust = 1
         self.auth = None
         self.failed_attempts = 0
         self.bamfin = ""
@@ -90,7 +89,11 @@ class Pc(living.Living):
         try:
             logger.trace("Freeing %s" % str(self))
             if self.instance_id:
-                self.instance_destructor()
+                Pc.instance_count -= 1
+                if merc.player_characters.get(self.instance_id, None):
+                    self.instance_destructor()
+            else:
+                Pc.template_count -= 1
         except:
             return
 
@@ -99,12 +102,12 @@ class Pc(living.Living):
 
     def instance_setup(self):
         merc.global_instances[self.instance_id] = self
-        merc.characters[self.instance_id] = merc.global_instances[self.instance_id]
-        merc.player_characters[self.instance_id] = merc.global_instances[self.instance_id]
+        merc.characters[self.instance_id] = self
+        merc.player_characters[self.instance_id] = self
         if self.name not in merc.instances_by_player.keys():
             merc.instances_by_player[self.name] = [self.instance_id]
         else:
-            merc.instances_by_player[self.name].append(self.instance_id)
+            merc.instances_by_player[self.name] += [self.instance_id]
 
     def instance_destructor(self):
         merc.instances_by_player[self.name].remove(self.instance_id)

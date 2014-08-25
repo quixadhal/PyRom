@@ -86,9 +86,9 @@ def check_parse_name(name):
 def con_get_name(self):
     global retries
     argument = self.get_command()
-    name = argument.title()
+    new_connection = {'name': argument.title()}
 
-    if not check_parse_name(name):
+    if not check_parse_name(new_connection['name']):
         self.send("Illegal name, try another.\nName:")
         retries += 1
         if retries > 3:
@@ -98,66 +98,63 @@ def con_get_name(self):
 
     retries = 0
 
-    ch = pc.Pc.load(name)
-    if ch:
+    ch_stub = pc.Pc.load_stub(new_connection['name'])
+    if ch_stub:
         found = True
-        ch.desc = self
-        self.character = ch
-        ch.send = self.send
+        if ch_stub['is_banned']:
+            logger.info("Denying access to %s@%s" % (ch_stub['name'], self.addrport()))
+            self.send("You have been denied access.")
+            self.deactivate()
+            return
+        if settings.WIZLOCK and not ch_stub['is_immortal']:
+            self.send("Game is Wizlocked. Try again later.")
+            self.deactivate()
+            return
     else:
-        found, ch = save.legacy_load_char_obj(self, name)
+        found, ch = save.legacy_load_char_obj(self, new_connection['name'])
 
-    if ch.act.is_set(merc.PLR_DENY):
-        logger.info("Denying access to %s@%s" % (ch.name, self.addrport()))
-        self.send("You have been denied access.")
-        self.deactivate()
-        return
-
-    if comm.is_reconnecting(self, name):
+    if comm.is_reconnecting(self, new_connection['name']):
         found = True
-    
-    if settings.WIZLOCK and not ch.is_immortal():
-        ch.send("Game is wizlocked")
-        self.deactivate()
+
+    if found:
+        self.send("Password: ")
+        self.password_mode_on()
+        self.set_connected(con_get_old_password(self, ch_stub))
         return
 
     if not found and settings.NEWLOCK:
-        ch.send("Game is newlocked")
+        self.send("Game is newlocked")
         self.deactivate()
         return
 
-    if found:
-        ch.send("Password: ")
-        ch.desc.password_mode_on()
-        self.set_connected(con_get_old_password)
+    if not found and settings.WIZLOCK:
+        self.send("Game is Wizlocked. Try again later.")
+        self.deactivate()
         return
 
-    ch.send("Did I get that right, %s (Y/N)? " % ch.name)
-    self.set_connected(con_confirm_new_name)
+    if not found:
+        self.send("Did I get that right, %s (Y/N)? " % new_connection['name'])
+        self.set_connected(con_confirm_new_name(self=self, new_connection=new_connection))
     return
 
 
-def con_confirm_new_name(self):
+def con_confirm_new_name(self, new_connection):
     argument = self.get_command()[:1].lower()
-    ch = self.character
     if argument == 'y':
-        ch.send("New character.\nGive me a password for %s: " % ch.name)
-        ch.desc.password_mode_on()
-        self.set_connected(con_get_new_password)
+        self.send("New character.\nGive me a password for %s: " % new_connection['name'])
+        self.password_mode_on()
+        self.set_connected(con_get_new_password(self=self, new_connection=new_connection))
     elif argument == 'n':
-        ch.send("Ok, what IS it, then? ")
-        del ch
-        self.character = None
+        self.send("Ok, what IS it, then? ")
         self.set_connected(con_get_name)
     else:
-        ch.send("Please type Yes or No? ")
+        self.send("Please type Yes or No? ")
 
 
-def con_get_new_password(self):
+def con_get_new_password(self, new_connection):
     argument = self.get_command()
-    ch = self.character
     if len(argument) < 5:
-        ch.send("Password must be at least five characters long.\nPassword: ")
+        self.send("Password must be at least five characters long.\nPassword: ")
         return
     if settings.ENCRYPT_PASSWORD:
         argument = argument.encode('utf8')
@@ -165,26 +162,32 @@ def con_get_new_password(self):
     else:
         pwdnew = argument
 
-    ch.pwd = pwdnew
+    new_connection['pwd'] = pwdnew
     
-    ch.send("Please retype password: ")
-    ch.desc.password_mode_on()
-    self.set_connected(con_confirm_new_password)
+    self.send("Please retype password: ")
+    self.password_mode_on()
+    self.set_connected(con_confirm_new_password(self=self, new_connection=new_connection))
 
 
-def con_confirm_new_password(self):
+def con_confirm_new_password(self, new_connection):
     argument = self.get_command()
-    ch = self.character
 
     if settings.ENCRYPT_PASSWORD:
         argument = argument.encode('utf8')
         argument = hashlib.sha512(argument).hexdigest()
 
-    if argument != ch.pwd:
-        ch.send("Passwords don't match.\nRetype password: ")
-        ch.desc.password_mode_on()
-        self.set_connected(con_get_new_password)
+    if argument != new_connection['pwd']:
+        self.send("Passwords don't match.\nRetype password: ")
+        self.password_mode_on()
+        self.set_connected(con_get_new_password(self=self, new_connection=new_connection))
         return
+
+    ch = pc.Pc()
+    ch.name = new_connection['name']
+    ch.pwd = new_connection['pwd']
+    ch.desc = self
+    self.character = ch
+    ch.send = self.send
 
     ch.desc.password_mode_off()
     ch.send("The following races are available:\n  ")
@@ -397,34 +400,40 @@ def con_gen_groups(self):
         return
 
 
-def con_get_old_password(self):
+def con_get_old_password(self, ch_stub):
+    failed_attempts = 0
     argument = self.get_command()
-    ch = self.character
-    ch.desc.password_mode_off()
+
+    self.password_mode_off()
     if settings.ENCRYPT_PASSWORD:
         argument = argument.encode('utf8')
         pwdcmp = hashlib.sha512(argument).hexdigest()
     else:
         pwdcmp = argument
-    if pwdcmp != ch.pwd:
-        ch.send("\nWrong password.\n")
-        ch.failed_attempts += 1
-        if ch.failed_attempts > 3:
+    if pwdcmp != ch_stub.pwd:
+        self.send("\nWrong password.\n")
+        failed_attempts += 1
+        if failed_attempts > 3:
             comm.close_socket(self)
         else:
-            ch.send("Password: ")
-            ch.desc.password_mode_on()
+            self.send("Password: ")
+            self.password_mode_on()
             self.set_connected(con_get_old_password)
         return
     #write_to_buffer( d, echo_on_str, 0 );
 
-    if ch.auth:
-        ch.failed_attempts = 0
-        ch.send('\nAuthenticator code: ')
+    if ch_stub['auth']:
+        self.send('\nAuthenticator code: ')
         self.set_connected(con_get_timecode)
         return
 
+    #success!
+    ch = pc.Pc.load(ch_stub['name'])
+    ch.desc = self
+    self.character = ch
+    ch.send = self.send
     ch.send("\n")
+
     if comm.check_playing(self, ch.name):
         return
 
@@ -443,21 +452,27 @@ def con_get_old_password(self):
     return
 
 
-def con_get_timecode(self):
+def con_get_timecode(self, ch_stub):
     argument = self.get_command()
-    ch = self.character
+    failed_attempts = 0
 
-    if not ch.auth.verify(argument):
-        ch.send('\nWrong timecode.\n')
-        ch.failed_attempts += 1
-        if ch.failed_attempts > 3:
+    if not ch_stub['auth'].verify(argument):
+        self.send('\nWrong timecode.\n')
+        failed_attempts += 1
+        if failed_attempts > 3:
             comm.close_socket(self)
         else:
-            ch.send('Authenticator code: ')
+            self.send('Authenticator code: ')
             self.set_connected(con_get_timecode)
         return
 
+    #success!
+    ch = pc.Pc.load(ch_stub['name'])
+    ch.desc = self
+    self.character = ch
+    ch.send = self.send
     ch.send("\n")
+
     if comm.check_playing(self, ch.name):
         return
 
