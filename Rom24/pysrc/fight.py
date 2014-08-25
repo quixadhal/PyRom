@@ -114,7 +114,7 @@ def check_assist(ch, victim):
 
                 target = None
                 number = 0
-                for vch_id in ch.in_room.people:
+                for vch_id in ch.in_room.people[:]:
                     vch = merc.characters[vch_id]
                     if rch.can_see(vch) and vch.is_same_group(victim) and random.randint(0, number) == 0:
                         target = vch
@@ -1099,7 +1099,7 @@ def group_gain(ch, victim):
         return
     members = 0
     group_levels = 0
-    for gch_id in ch.in_room.people:
+    for gch_id in ch.in_room.people[:]:
         gch = merc.characters[gch_id]
         if gch.is_same_group(ch):
             members += 1
@@ -1112,7 +1112,7 @@ def group_gain(ch, victim):
 
     lch = ch.leader if ch.leader else ch
 
-    for gch_id in ch.in_room.people:
+    for gch_id in ch.in_room.people[:]:
         gch = merc.characters[gch_id]
         if not gch.is_same_group(ch) or gch.is_npc():
             continue

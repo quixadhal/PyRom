@@ -143,7 +143,7 @@ def load_npcs(area, pArea):
         area, npc.dam_dice[1] = game_utils.read_int(area)
         area = game_utils.read_forward(area)
         area, npc.dam_dice[2] = game_utils.read_int(area)
-        area, npc.  dam_type = game_utils.read_word(area, False)
+        area, npc.dam_type = game_utils.read_word(area, False)
         npc.dam_type = state_checks.name_lookup(const.attack_table, npc.dam_type)
         area, npc.armor[0] = game_utils.read_int(area)
         area, npc.armor[1] = game_utils.read_int(area)
@@ -284,7 +284,7 @@ def load_objects(area, pArea):
                 area, paf.location = game_utils.read_int(area)
                 area, paf.modifier = game_utils.read_int(area)
                 paf.bitvector = 0
-                item.affected.append(paf)
+                item.affected += [paf]
             elif w == 'E':
                 ed = world_classes.ExtraDescrData()
                 area, ed.keyword = game_utils.read_string(area)
@@ -318,7 +318,6 @@ def load_resets(area, pArea):
         area, reset.arg3 = (area, 0) if letter == 'G' or letter == 'R' else game_utils.read_int(area)
         area, reset.arg4 = game_utils.read_int(area) if letter == 'P' or letter == 'M' else (area, 0)
         area, t = game_utils.read_to_eol(area)
-        merc.resets[reset.name] = reset
         pArea.reset_list.append(reset)
     return area
 

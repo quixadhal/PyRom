@@ -24,7 +24,7 @@ def do_goto(ch, argument):
         return
     if ch.fighting:
         fight.stop_fighting(ch, True)
-    for rch_id in ch.in_room.people:
+    for rch_id in ch.in_room.people[:]:
         rch = merc.characters[rch_id]
         if rch.trust >= ch.invis_level:
             if ch.is_npc() and ch.bamfout:
@@ -33,7 +33,7 @@ def do_goto(ch, argument):
                 handler_game.act("$n leaves in a swirling mist.", ch, None, rch, merc.TO_VICT)
     location.put(ch.in_room.get(ch))
 
-    for rch_id in ch.in_room.people:
+    for rch_id in ch.in_room.people[:]:
         rch = merc.characters[rch_id]
         if rch.trust >= ch.invis_level:
             if ch.is_npc() and ch.bamfin:

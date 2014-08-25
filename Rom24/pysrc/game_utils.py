@@ -79,6 +79,8 @@ def read_word(pstr, to_lower=True):
 
     start = None
     end = None
+    if to_lower:
+        pstr = pstr.lower()
     i = -1
     for c in pstr:
         i += 1
@@ -89,10 +91,7 @@ def read_word(pstr, to_lower=True):
                 end = quote
             else:
                 end = len(pstr)
-            if to_lower:
-                return pstr[end + 1:], pstr[start:end].lower()
-            else:
-                return pstr[end + 1:], pstr[start:end]
+            return pstr[end + 1:], pstr[start:end]
         elif c == '"' and start is None:
             start = i + 1
             quote = pstr.find('"', i + 1)
@@ -100,10 +99,7 @@ def read_word(pstr, to_lower=True):
                 end = quote
             else:
                 end = len(pstr)
-            if to_lower:
-                return pstr[end + 1:], pstr[start:end].lower()
-            else:
-                return pstr[end + 1:], pstr[start:end]
+            return pstr[end + 1:], pstr[start:end]
         elif c.isspace():
             if start is not None:
                 end = i
@@ -114,10 +110,7 @@ def read_word(pstr, to_lower=True):
 
     if not end:
         end = len(pstr)
-    if to_lower:
-        return pstr[end:], pstr[start:end].lower()
-    else:
-        return pstr[end:], pstr[start:end]
+    return pstr[end:], pstr[start:end]
 
 
 def read_int(pstr):
@@ -230,7 +223,7 @@ def item_bitvector_flag_str(bits: int, in_type='extra flags'):
         elif bits & merc.ITEM_WEAR_SHIELD:
             return 'off_hand'
         elif bits & merc.ITEM_WEAR_ABOUT:
-            return 'about'
+            return 'about_body'
         elif bits & merc.ITEM_WEAR_WAIST:
             return 'waist'
         elif bits & merc.ITEM_WEAR_WRIST:
@@ -344,7 +337,7 @@ def item_flags_from_bits(bits: int, out_data: collections.namedtuple, in_type='w
         if bits & merc.ITEM_WEAR_SHIELD:
             out_data.slots.update({'off_hand'})
         if bits & merc.ITEM_WEAR_ABOUT:
-            out_data.slots.update({'about'})
+            out_data.slots.update({'about_body'})
         if bits & merc.ITEM_WEAR_WAIST:
             out_data.slots.update({'waist'})
         if bits & merc.ITEM_WEAR_WRIST:
@@ -471,11 +464,12 @@ def is_name(arg, name):
     if not arg or not name:
         return False
     arg = arg.lower()
+    name = name.lower()
     words = _breakup.findall(name)
     for word in words:
         if word[0] in ('"', "'"):
             word = word[1:-1]
-        if word.lower().startswith(arg):
+        if word.startswith(arg):
             return True
     return False
 
@@ -660,7 +654,7 @@ def object_search(ch, template: bool=False, obj_type: str=None, target_package: 
 def find_character(ch, template, target_package):
     atype, num_or_count, arg_num, target = target_package
     if ch.in_room:
-                room_inventory_list = [npc_id for npc_id in ch.in_room.people
+                room_inventory_list = [npc_id for npc_id in ch.in_room.people[:]
                                        if merc.characters[npc_id].vnum == target]
                 if room_inventory_list:
                     try:

@@ -94,7 +94,7 @@ def do_mstat(ch, argument):
 
     for paf in victim.affected:
         ch.send("Spell: '%s' modifies %s by %d for %d hours with bits %s, level %d.\n" % (
-            paf.type.name,
+            paf.type,
             affect_loc_name(paf.location),
             paf.modifier,
             paf.duration,

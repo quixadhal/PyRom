@@ -26,7 +26,7 @@ def do_list(ch, argument):
             ch.send("You can't do that here.\n")
             return
         found = False
-        for pet in pRoomIndexNext.people:
+        for pet in pRoomIndexNext.people[:]:
             if pet.act.is_set(merc.ACT_PET):
                 if not found:
                     found = True
@@ -41,7 +41,7 @@ def do_list(ch, argument):
             return
         argument, arg = game_utils.read_word(argument)
         items = collections.OrderedDict()
-        for item_id in keeper.inventory:
+        for item_id in keeper.inventory[:]:
             item = merc.items[item_id]
             cost = shop_utils.get_cost(keeper, item, True)
             if not item.equipped_to and ch.can_see_item(item) and cost > 0 \

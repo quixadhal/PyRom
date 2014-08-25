@@ -79,7 +79,11 @@ class Room(instance.Instancer, environment.Environment, inventory.Inventory, typ
         try:
             logger.trace("Freeing %s" % str(self))
             if self.instance_id:
-                self.instance_destructor()
+                Room.instance_count -= 1
+                if merc.rooms.get(self.instance_id, None):
+                    self.instance_destructor()
+            else:
+                Room.template_count -= 1
         except:
             return
 
@@ -92,6 +96,7 @@ class Room(instance.Instancer, environment.Environment, inventory.Inventory, typ
     def put(self, instance_object):
         if not instance_object.instance_id in self.inventory:
             self.inventory += [instance_object.instance_id]
+            instance_object._room_vnum = self.vnum
         else:
             raise ValueError('Instance already present in room inventory %d' % instance_object.instance_id)
         if instance_object.is_living:
@@ -115,6 +120,7 @@ class Room(instance.Instancer, environment.Environment, inventory.Inventory, typ
     def get(self, instance_object):
         if instance_object.instance_id in self.inventory:
             self.inventory.remove(instance_object.instance_id)
+            instance_object._room_vnum = None
         else:
             raise KeyError('Instance is not in room inventory, trying to be removed %d' % instance_object.instance_id)
         if instance_object.is_living:
@@ -139,11 +145,11 @@ class Room(instance.Instancer, environment.Environment, inventory.Inventory, typ
 
     def instance_setup(self):
         merc.global_instances[self.instance_id] = self
-        merc.rooms[self.instance_id] = merc.global_instances[self.instance_id]
+        merc.rooms[self.instance_id] = self
         if self.vnum not in merc.instances_by_room.keys():
             merc.instances_by_room[self.vnum] = [self.instance_id]
         else:
-            merc.instances_by_room[self.vnum].append(self.instance_id)
+            merc.instances_by_room[self.vnum] += [self.instance_id]
 
     def instance_destructor(self):
         merc.instances_by_room[self.vnum].remove(self.instance_id)

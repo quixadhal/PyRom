@@ -31,17 +31,16 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
-import logging
-import pc
-import update
-
-logger = logging.getLogger()
 
 import os
 import random
 import time
+import logging
+
+logger = logging.getLogger()
 
 import merc
+import update
 import data_loader
 import object_creator
 import handler_item
@@ -54,6 +53,10 @@ import database.read.read_tables as read
 
 
 def boot_db():
+    import handler_npc
+    import handler_room
+    import world_classes
+
     init_time()
     init_instance()
     read.read_tables()
@@ -62,14 +65,30 @@ def boot_db():
     area_update()
     object_creator.setup_exits()
     update.instance_number_save()
+    logger.info('-----------------------------------------')
+
+    logger.info('    Loaded %d Areas', world_classes.Area.template_count)
+    logger.info('    Loaded %d Npc Templates', handler_npc.Npc.template_count)
+    logger.info('    Loaded %d Item Templates', handler_item.Items.template_count)
+    logger.info('    Loaded %d Room Templates', handler_room.Room.template_count)
+    logger.info('    Loaded %d Shops', len(merc.shopTemplate))
+    logger.info('    Loaded %d Total Templates', (world_classes.Area.template_count + handler_npc.Npc.template_count
+                                                  + handler_item.Items.template_count
+                                                  + handler_room.Room.template_count))
+    logger.info('-----------------------------------------')
+    logger.info('    Loaded %d Resets', world_classes.Reset.load_count)
+    logger.info('-----------------------------------------')
+    logger.info('    Loaded %d Area Instances', world_classes.Area.instance_count)
+    logger.info('    Loaded %d Npc Instances', handler_npc.Npc.instance_count)
+    logger.info('    Loaded %d Item Instances', handler_item.Items.instance_count)
+    logger.info('    Loaded %d Room Instances', handler_room.Room.instance_count)
+    logger.info('    Loaded %d Total Instances', (world_classes.Area.instance_count + handler_room.Room.instance_count +
+                                                  handler_item.Items.instance_count + handler_npc.Npc.instance_count))
+    logger.info('-----------------------------------------')
     logger.info('    Loaded %d Help files', len(merc.help_list))
-    logger.info('    Loaded %d Areas', len(merc.areaTemplate))
-    logger.info('    Loaded %d Npc Templates', len(merc.characterTemplate))
-    logger.info('    Loaded %d Item Templates', len(merc.itemTemplate))
-    logger.info('    Loaded %d Room Templates', len(merc.roomTemplate))
-    # TODO logger.info('    Loaded %d Resets', len(merc.reset_list))  Fix this
-    logger.info('    Loaded %d Shops', len(merc.shop_list))
     logger.info('    Loaded %d Socials', len(merc.social_list))
+    logger.info('-----------------------------------------')
+
 
 
 def init_instance():
@@ -118,243 +137,273 @@ def area_update():
         area.age = random.randint(0, 3)
         school_instance_id = merc.instances_by_room[merc.ROOM_VNUM_SCHOOL][0]
         school_instance = merc.rooms[school_instance_id]
-        #TODO change this later when area instances are properly tracked
         if school_instance and area_id == school_instance.area:
             area.age = 15 - 2
         elif area.player_count == 0:
             area.empty = True
 
 
+def m_reset(pReset, last, level, npc):
+    if pReset.arg1 not in merc.characterTemplate.keys():
+            logger.error("Reset_area: 'M': bad vnum %d.", pReset.arg1)
+            return last, level, npc
+    else:
+        npcTemplate = merc.characterTemplate[pReset.arg1]
+
+    if pReset.arg3 not in merc.roomTemplate.keys():
+        logger.error("Reset_area: 'R': bad vnum %d.", pReset.arg3)
+        return last, level, npc
+    else:
+        roomInstance_id = merc.instances_by_room[pReset.arg3][0]
+        roomInstance = merc.global_instances[roomInstance_id]
+
+    if npcTemplate.count >= pReset.arg2:
+        last = False
+        return last, level, npc
+    count = 0
+    for npc_id in roomInstance.people[:]:
+        npc = merc.global_instances[npc_id]
+        if npc.is_npc():
+            if npc.vnum == npcTemplate.vnum:
+                count += 1
+                if count >= pReset.arg4:
+                    last = False
+                    break
+
+    if count >= pReset.arg4:
+        return last, level, npc
+
+    npc = object_creator.create_mobile(npcTemplate)
+
+    #
+    # * Check for pet shop.
+    # */
+
+    if roomInstance.vnum - 1 in merc.roomTemplate.keys():
+        prevRoomInstance_id = merc.instances_by_room[roomInstance.vnum - 1][0]
+        prevRoomInstance = merc.global_instances[prevRoomInstance_id]
+        if state_checks.IS_SET(prevRoomInstance.room_flags, merc.ROOM_PET_SHOP):
+            npc.act.set_bit(merc.ACT_PET)
+
+    # set area */
+    npc.area = roomInstance.area
+
+    roomInstance.put(npc)
+    level = max(0, min(npc.level - 2, merc.LEVEL_HERO - 1))
+    last = True
+    return last, level, npc
+
+
+def o_reset(pArea, pReset, last, level, npc):
+    item = None
+    if pReset.arg1 not in merc.itemTemplate.keys():
+        logger.error("Reset_area: 'O': bad vnum %d.", pReset.arg1)
+        return last, level, npc
+    else:
+        itemTemplate = merc.itemTemplate[pReset.arg1]
+
+    if pReset.arg3 not in merc.roomTemplate.keys():
+        logger.error("Reset_area: 'R': bad vnum %d.", pReset.arg3)
+        return last, level, npc
+    else:
+        roomInstance_id = merc.instances_by_room[pReset.arg3][0]
+        roomInstance = merc.global_instances[roomInstance_id]
+
+    if pArea.player_count > 0 or handler_item.count_obj_list(itemTemplate, roomInstance.items) > 0:
+        last = False
+        return last, level, npc
+
+    item = object_creator.create_item(itemTemplate, min(game_utils.number_fuzzy(level), merc.LEVEL_HERO - 1))
+    item.cost = 0
+    roomInstance.put(item)
+    item = None
+    last = True
+    return last, level, npc
+
+
+def p_reset(pArea, pReset, last, level, npc):
+    item = None
+    if pReset.arg1 not in merc.itemTemplate.keys():
+        logger.error("Reset_area: 'P': bad vnum %d.", pReset.arg1)
+        return last, level, npc
+    else:
+        itemTemplate = merc.itemTemplate[pReset.arg1]
+
+    if pReset.arg3 not in merc.itemTemplate.keys():
+        logger.error("Reset_area: 'P': bad vnum %d.", pReset.arg3)
+        return last, level, npc
+    else:
+        item_toTemplate = merc.itemTemplate[pReset.arg3]
+    if pReset.arg2 > 50:  # old format */
+        limit = 6
+    elif pReset.arg2 == -1:  # no limit */
+        limit = 999
+    else:
+        limit = pReset.arg2
+    item_to = None
+    item_to_list = merc.instances_by_item.get(item_toTemplate.vnum, None)
+    if item_to_list:
+        item_to = merc.global_instances[item_to_list[0]]
+
+    if pArea.player_count > 0 \
+            or not item_to \
+            or (not item_to.in_room and not last) \
+            or (itemTemplate.count >= limit and random.randint(0, 4) != 0) \
+            or handler_item.count_obj_list(itemTemplate, item_to.inventory) > pReset.arg4:
+        last = False
+        return last, level, npc
+    count = handler_item.count_obj_list(itemTemplate, item_to.inventory)
+    #Converted while to For Loop, testing indicated
+    #While loop was ~.002-.004
+    #For loop ~.0009-.001
+    if item_to:
+        for i in range(pReset.arg4):
+            item = object_creator.create_item(itemTemplate, game_utils.number_fuzzy(item_to.level))
+            item_to.put(item)
+            item = None
+            count += 1
+            if count >= pReset.arg4:
+                break
+            if itemTemplate.count >= limit:
+                break
+
+    # fix object lock state! */
+        item_to.value[1] = item_toTemplate.value[1]
+    last = True
+    return last, level, npc
+
+
+def g_e_reset(pReset, last, level, npc):
+    item = None
+    if pReset.arg1 not in merc.itemTemplate.keys():
+        logger.error("Reset_area: 'E' or 'G': bad vnum %d.", pReset.arg1)
+        return last, level, npc
+    else:
+        itemTemplate = merc.itemTemplate[pReset.arg1]
+    #if not last:
+    #    continue
+
+    if not npc:
+        logger.error("Reset_area: 'E' or 'G': None mob for vnum %d.", pReset.arg1)
+        last = False
+        return last, level, npc
+
+    olevel = 0
+    if merc.characterTemplate[npc.vnum].pShop:
+        if not itemTemplate.new_format:
+            if itemTemplate.item_type == merc.ITEM_PILL \
+                    or itemTemplate.item_type == merc.ITEM_POTION \
+                    or itemTemplate.item_type == merc.ITEM_SCROLL:
+                olevel = 53
+                for i in itemTemplate.value:
+                    if i > 0:
+                        for j in const.skill_table[itemTemplate.value[i]].skill_level:
+                            olevel = min(olevel, j)
+
+                olevel = max(0, (olevel * 3 // 4) - 2)
+
+            elif itemTemplate.item_type == merc.ITEM_WAND:
+                olevel = random.randint(10, 20)
+            elif itemTemplate.item_type == merc.ITEM_STAFF:
+                olevel = random.randint(15, 25)
+            elif itemTemplate.item_type == merc.ITEM_ARMOR:
+                olevel = random.randint(5, 15)
+            elif itemTemplate.item_type == merc.ITEM_WEAPON:
+                olevel = random.randint(5, 15)
+            elif itemTemplate.item_type == merc.ITEM_TREASURE:
+                olevel = random.randint(10, 20)
+
+        item = object_creator.create_item(itemTemplate, olevel)
+        item.flags.shop_inventory = True
+    else:
+        if pReset.arg2 > 50:  # old format */
+            limit = 6
+        elif pReset.arg2 == -1:  # no limit */
+            limit = 999
+        else:
+            limit = pReset.arg2
+
+        if itemTemplate.count < limit or random.randint(0, 4) == 0:
+            item = object_creator.create_item(itemTemplate,
+                                              min(game_utils.number_fuzzy(level), merc.LEVEL_HERO - 1))
+            # error message if it is too high */
+            if item.level > npc.level + 3 \
+                    or (item.item_type == merc.ITEM_WEAPON
+                        and pReset.command == 'E'
+                        and item.level < npc.level - 5
+                        and item.level < 45):
+                logger.error("Err: obj %s (%d) -- %d, mob %s (%d) -- %d",
+                             item.short_descr, item.vnum, item.level,
+                             npc.short_descr, npc.vnum, npc.level)
+        else:
+            return last, level, npc
+    npc.put(item)
+    if pReset.command == 'E':
+        npc.equip(item, True)
+    item = None
+    last = True
+    return last, level, npc
+
+
+def d_reset(pReset, last, level, npc):
+    if pReset.arg1 not in merc.roomTemplate.keys():
+        logger.error("Reset_area: 'D': bad vnum %d.", pReset.arg1)
+        return last, level, npc
+    else:
+        roomInstance_id = merc.instances_by_room[pReset.arg1][0]
+        roomInstance = merc.global_instances[roomInstance_id]
+        pexit = roomInstance.exit[pReset.arg2]
+    if not pexit:
+        return last, level, npc
+
+    if pReset.arg3 == 0:
+        pexit.exit_info = state_checks.REMOVE_BIT(pexit.exit_info, merc.EX_CLOSED)
+        pexit.exit_info = state_checks.REMOVE_BIT(pexit.exit_info, merc.EX_LOCKED)
+        return last, level, npc
+    elif pReset.arg3 == 1:
+        pexit.exit_info = state_checks.SET_BIT(pexit.exit_info, merc.EX_CLOSED)
+        pexit.exit_info = state_checks.REMOVE_BIT(pexit.exit_info, merc.EX_LOCKED)
+        return last, level, npc
+    elif pReset.arg3 == 2:
+        pexit.exit_info = state_checks.SET_BIT(pexit.exit_info, merc.EX_CLOSED)
+        pexit.exit_info = state_checks.SET_BIT(pexit.exit_info, merc.EX_LOCKED)
+        return last, level, npc
+    last = True
+    return last, level, npc
+
+
+def r_reset(pReset, last, level, npc):
+    if pReset.arg1 not in merc.roomTemplate.keys():
+        logger.error("Reset_area: 'R': bad vnum %d.", pReset.arg1)
+        return last, level, npc
+    else:
+        roomInstance_id = merc.instances_by_room[pReset.arg1][0]
+        roomInstance = merc.global_instances[roomInstance_id]
+    for d0 in range(pReset.arg2 - 1):
+        d1 = random.randint(d0, pReset.arg2 - 1)
+        pexit = roomInstance.exit[d0]
+        roomInstance.exit[d0] = roomInstance.exit[d1]
+        roomInstance.exit[d1] = pexit
+        break
+    return last, level, npc
+
 def reset_area(pArea):
     npc = None
     last = True
     level = 0
-    for pReset in pArea.reset_list:
-        if pReset.command == 'M':
-            if pReset.arg1 not in merc.characterTemplate.keys():
-                logger.error("Reset_area: 'M': bad vnum %d.", pReset.arg1)
-                continue
-            else:
-                npcTemplate = merc.characterTemplate[pReset.arg1]
-
-            if pReset.arg3 not in merc.roomTemplate.keys():
-                logger.error("Reset_area: 'R': bad vnum %d.", pReset.arg3)
-                continue
-            else:
-                roomInstance_id = merc.instances_by_room[pReset.arg3][0]
-                roomInstance = merc.global_instances[roomInstance_id]
-
-            if npcTemplate.count >= pReset.arg2:
-                last = False
-                continue
-            count = 0
-            for npc_id in roomInstance.people:
-                npc = merc.global_instances[npc_id]
-                if npc.is_npc():
-                    if npc.vnum == npcTemplate.vnum:
-                        count += 1
-                        if count >= pReset.arg4:
-                            last = False
-                            break
-
-            if count >= pReset.arg4:
-                continue
-
-            npc = object_creator.create_mobile(npcTemplate)
-
-            #
-            # * Check for pet shop.
-            # */
-
-            if roomInstance.vnum - 1 in merc.roomTemplate.keys():
-                prevRoomInstance_id = merc.instances_by_room[roomInstance.vnum - 1][0]
-                prevRoomInstance = merc.global_instances[prevRoomInstance_id]
-                if state_checks.IS_SET(prevRoomInstance.room_flags, merc.ROOM_PET_SHOP):
-                    npc.act.set_bit(merc.ACT_PET)
-
-            # set area */
-            npc.area = roomInstance.area
-
-            roomInstance.put(npc)
-            level = max(0, min(npc.level - 2, merc.LEVEL_HERO - 1))
-            last = True
-
-        elif pReset.command == 'O':
-            if pReset.arg1 not in merc.itemTemplate.keys():
-                logger.error("Reset_area: 'O': bad vnum %d.", pReset.arg1)
-                continue
-            else:
-                itemTemplate = merc.itemTemplate[pReset.arg1]
-
-            if pReset.arg3 not in merc.roomTemplate.keys():
-                logger.error("Reset_area: 'R': bad vnum %d.", pReset.arg3)
-                continue
-            else:
-                roomInstance_id = merc.instances_by_room[pReset.arg3][0]
-                roomInstance = merc.global_instances[roomInstance_id]
-
-            if pArea.player_count > 0 or handler_item.count_obj_list(itemTemplate, roomInstance.items) > 0:
-                last = False
-                continue
-
-            item = object_creator.create_item(itemTemplate, min(game_utils.number_fuzzy(level), merc.LEVEL_HERO - 1))
-            item.cost = 0
-            roomInstance.put(item)
-            item = None
-            last = True
-            continue
-
-        elif pReset.command == 'P':
-            if pReset.arg1 not in merc.itemTemplate.keys():
-                logger.error("Reset_area: 'P': bad vnum %d.", pReset.arg1)
-                continue
-            else:
-                itemTemplate = merc.itemTemplate[pReset.arg1]
-
-            if pReset.arg3 not in merc.itemTemplate.keys():
-                logger.error("Reset_area: 'P': bad vnum %d.", pReset.arg3)
-                continue
-            else:
-                item_toTemplate = merc.itemTemplate[pReset.arg3]
-            if pReset.arg2 > 50:  # old format */
-                limit = 6
-            elif pReset.arg2 == -1:  # no limit */
-                limit = 999
-            else:
-                limit = pReset.arg2
-
-            item_to_list = merc.instances_by_item.get(item_toTemplate.vnum, None)
-            if item_to_list:
-                item_to = merc.global_instances[item_to_list[0]]
-
-            if pArea.player_count > 0 \
-                    or not item_to \
-                    or (not item_to.in_room and not last) \
-                    or (itemTemplate.count >= limit and random.randint(0, 4) != 0) \
-                    or handler_item.count_obj_list(itemTemplate, item_to.inventory) > pReset.arg4:
-                last = False
-                continue
-            count = handler_item.count_obj_list(itemTemplate, item_to.inventory)
-            while count < pReset.arg4:
-                item = object_creator.create_item(itemTemplate, game_utils.number_fuzzy(item_to.level))
-                item_to.put(item)
-                item = None
-                count += 1
-                if itemTemplate.count >= limit:
-                    break
-
-            # fix object lock state! */
-            item_to.value[1] = item_toTemplate.value[1]
-            last = True
-        elif pReset.command == 'G' or pReset.command == 'E':
-            if pReset.arg1 not in merc.itemTemplate.keys():
-                logger.error("Reset_area: 'E' or 'G': bad vnum %d.", pReset.arg1)
-                continue
-            else:
-                itemTemplate = merc.itemTemplate[pReset.arg1]
-            #if not last:
-            #    continue
-
-            if not npc:
-                logger.error("Reset_area: 'E' or 'G': None mob for vnum %d.", pReset.arg1)
-                last = False
-                continue
-
-            olevel = 0
-            if merc.characterTemplate[npc.vnum].pShop:
-                if not itemTemplate.new_format:
-                    if itemTemplate.item_type == merc.ITEM_PILL \
-                            or itemTemplate.item_type == merc.ITEM_POTION \
-                            or itemTemplate.item_type == merc.ITEM_SCROLL:
-                        olevel = 53
-                        for i in itemTemplate.value:
-                            if i > 0:
-                                for j in const.skill_table[itemTemplate.value[i]].skill_level:
-                                    olevel = min(olevel, j)
-
-                        olevel = max(0, (olevel * 3 // 4) - 2)
-
-                    elif itemTemplate.item_type == merc.ITEM_WAND:
-                        olevel = random.randint(10, 20)
-                    elif itemTemplate.item_type == merc.ITEM_STAFF:
-                        olevel = random.randint(15, 25)
-                    elif itemTemplate.item_type == merc.ITEM_ARMOR:
-                        olevel = random.randint(5, 15)
-                    elif itemTemplate.item_type == merc.ITEM_WEAPON:
-                        olevel = random.randint(5, 15)
-                    elif itemTemplate.item_type == merc.ITEM_TREASURE:
-                        olevel = random.randint(10, 20)
-
-                item = object_creator.create_item(itemTemplate, olevel)
-                item.flags.shop_inventory = True
-            else:
-                if pReset.arg2 > 50:  # old format */
-                    limit = 6
-                elif pReset.arg2 == -1:  # no limit */
-                    limit = 999
-                else:
-                    limit = pReset.arg2
-
-                if itemTemplate.count < limit or random.randint(0, 4) == 0:
-                    item = object_creator.create_item(itemTemplate,
-                                                      min(game_utils.number_fuzzy(level), merc.LEVEL_HERO - 1))
-                    # error message if it is too high */
-                    if item.level > npc.level + 3 \
-                            or (item.item_type == merc.ITEM_WEAPON
-                                and pReset.command == 'E'
-                                and item.level < npc.level - 5
-                                and item.level < 45):
-                        logger.error("Err: obj %s (%d) -- %d, mob %s (%d) -- %d",
-                                     item.short_descr, item.vnum, item.level,
-                                     npc.short_descr, npc.vnum, npc.level)
-                else:
-                    continue
-            npc.put(item)
-            if pReset.command == 'E':
-                npc.equip(item, True)
-            item = None
-            last = True
-            continue
-
-        elif pReset.command == 'D':
-            if pReset.arg1 not in merc.roomTemplate.keys():
-                logger.error("Reset_area: 'D': bad vnum %d.", pReset.arg1)
-                continue
-            else:
-                roomInstance_id = merc.instances_by_room[pReset.arg1][0]
-                roomInstance = merc.global_instances[roomInstance_id]
-                pexit = roomInstance.exit[pReset.arg2]
-            if not pexit:
-                continue
-
-            if pReset.arg3 == 0:
-                pexit.exit_info = state_checks.REMOVE_BIT(pexit.exit_info, merc.EX_CLOSED)
-                pexit.exit_info = state_checks.REMOVE_BIT(pexit.exit_info, merc.EX_LOCKED)
-                continue
-            elif pReset.arg3 == 1:
-                pexit.exit_info = state_checks.SET_BIT(pexit.exit_info, merc.EX_CLOSED)
-                pexit.exit_info = state_checks.REMOVE_BIT(pexit.exit_info, merc.EX_LOCKED)
-                continue
-            elif pReset.arg3 == 2:
-                pexit.exit_info = state_checks.SET_BIT(pexit.exit_info, merc.EX_CLOSED)
-                pexit.exit_info = state_checks.SET_BIT(pexit.exit_info, merc.EX_LOCKED)
-                continue
-            last = True
-            continue
-
-        elif pReset.command == 'R':
-            if pReset.arg1 not in merc.roomTemplate.keys():
-                logger.error("Reset_area: 'R': bad vnum %d.", pReset.arg1)
-                continue
-            else:
-                roomInstance_id = merc.instances_by_room[pReset.arg1][0]
-                roomInstance = merc.global_instances[roomInstance_id]
-            for d0 in range(pReset.arg2 - 1):
-                d1 = random.randint(d0, pReset.arg2 - 1)
-                pexit = roomInstance.exit[d0]
-                roomInstance.exit[d0] = roomInstance.exit[d1]
-                roomInstance.exit[d1] = pexit
-                break
+    for pReset in pArea.reset_list[:]:
+        if pReset.command.startswith('M'):
+            last, level, npc = m_reset(pReset, last, level, npc)
+        elif pReset.command.startswith('O'):
+            last, level, npc = o_reset(pArea, pReset, last, level, npc)
+        elif pReset.command.startswith('P'):
+            last, level, npc = p_reset(pArea, pReset, last, level, npc)
+        elif pReset.command.startswith('G') or pReset.command.startswith('E'):
+            last, level, npc = g_e_reset(pReset, last, level, npc)
+        elif pReset.command.startswith('D'):
+            last, level, npc = d_reset(pReset, last, level, npc)
+        elif pReset.command.startswith('R'):
+            last, level, npc = r_reset(pReset, last, level, npc)
         else:
             logger.error("Reset_area: bad command %c.", pReset.command)
 

@@ -90,7 +90,7 @@ def recursive_item_jsonify(item_to_json, inv_dir: str=None, equip_dir: str=None,
         with open(equip_write, 'w') as eq:
             eq.write(to_equipped)
         if item_to_json.inventory:
-            for item_id in item_to_json.inventory:
+            for item_id in item_to_json.inventory[:]:
                 new_item = merc.items[item_id]
                 recursive_item_jsonify(new_item, equip_dir=equip_dir, is_equipment=True)
         else:
@@ -101,7 +101,7 @@ def recursive_item_jsonify(item_to_json, inv_dir: str=None, equip_dir: str=None,
         with open(inventory_write, 'w') as inv:
             inv.write(to_inventory)
         if item_to_json.inventory:
-            for item_id in item_to_json.inventory:
+            for item_id in item_to_json.inventory[:]:
                 new_item = merc.items[item_id]
                 recursive_item_jsonify(new_item, inv_dir=inv_dir, is_in_inventory=True)
         else:

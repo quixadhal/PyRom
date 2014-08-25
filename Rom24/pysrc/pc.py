@@ -2,12 +2,13 @@ import os
 import random
 import time
 import json
+import copy
 import logging
-import handler_log
 
 logger = logging.getLogger()
 
 import game_utils
+import handler_log
 import instance
 import handler_game
 import merc
@@ -68,9 +69,15 @@ class Pc(living.Living):
                 self.name = template
                 self.instancer()
             if kwargs:
-                [setattr(self, k, v) for k, v in kwargs.items()]
+                [setattr(self, k, copy.deepcopy(v)) for k, v in kwargs.items()]
+                if self._fighting:
+                    self._fighting = None
+                    self.position = merc.POS_STANDING
+                if self.environment:
+                    if self._environment not in merc.global_instances.keys():
+                        self.environment = None
                 if self.inventory:
-                    for instance_id in self.inventory:
+                    for instance_id in self.inventory[:]:
                         handler_item.Items.load(instance_id=instance_id, player_name=self.name)
                 for item_id in self.equipped.values():
                     if item_id:
@@ -85,7 +92,11 @@ class Pc(living.Living):
         try:
             logger.trace("Freeing %s" % str(self))
             if self.instance_id:
-                self.instance_destructor()
+                Pc.instance_count -= 1
+                if merc.player_characters.get(self.instance_id, None):
+                    self.instance_destructor()
+            else:
+                Pc.template_count -= 1
         except:
             return
 
@@ -94,12 +105,12 @@ class Pc(living.Living):
 
     def instance_setup(self):
         merc.global_instances[self.instance_id] = self
-        merc.characters[self.instance_id] = merc.global_instances[self.instance_id]
-        merc.player_characters[self.instance_id] = merc.global_instances[self.instance_id]
+        merc.characters[self.instance_id] = self
+        merc.player_characters[self.instance_id] = self
         if self.name not in merc.instances_by_player.keys():
             merc.instances_by_player[self.name] = [self.instance_id]
         else:
-            merc.instances_by_player[self.name].append(self.instance_id)
+            merc.instances_by_player[self.name] += [self.instance_id]
 
     def instance_destructor(self):
         merc.instances_by_player[self.name].remove(self.instance_id)
@@ -621,7 +632,6 @@ class Pc(living.Living):
             logger.error('Could not open player stub file for %s', player_name)
             return None
 
-
     def save(self, logout: bool=False):
         self.save_stub(logout)
         pathname = os.path.join(settings.PLAYER_DIR, self.name[0].lower(), self.name.capitalize())
@@ -633,7 +643,7 @@ class Pc(living.Living):
             fp.write(js)
 
         if self.inventory:
-            for item_id in self.inventory:
+            for item_id in self.inventory[:]:
                 item = merc.items[item_id]
                 item.save(in_inventory=True, player_name=self.name)
         for item_id in self.equipped.values():

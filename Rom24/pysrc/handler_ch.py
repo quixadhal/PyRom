@@ -57,6 +57,8 @@ def move_char(ch, door, follow):
         logger.error("BUG: Do_move: bad door %d." % door)
         return
     in_room = ch.in_room
+    if not ch._room_vnum:
+        ch._room_vnum = in_room.vnum
     pexit = in_room.exit[door]
     if not pexit or not pexit.to_room or not ch.can_see_room(pexit.to_room):
         ch.send("Alas, you cannot go that way.\n")
@@ -372,9 +374,14 @@ def show_char_to_char_1(victim, ch):
         if not instance_id:
             continue
         item = merc.items[instance_id]
-        if item and ch.can_see_item(item.instance_id):
-            ch.send(merc.eq_slot_strings[location])
-            ch.send(handler_item.format_item_to_char(item, ch, True) + "\n")
+        if item:
+            if ch.can_see_item(item):
+                if item.flags.two_handed and victim.equipped['off_hand'] == item.instance_id and 'off_hand' in location:
+                    continue
+                else:
+                    if ch.can_see_item(item):
+                        ch.send(merc.eq_slot_strings[location])
+                        ch.send(handler_item.format_item_to_char(item, ch, True) + "\n")
     if victim != ch and not ch.is_npc() \
             and random.randint(1, 99) < ch.get_skill("peek"):
         ch.send("\nYou peek at the inventory:\n")

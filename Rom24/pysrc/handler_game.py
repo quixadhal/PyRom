@@ -31,13 +31,15 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
+import copy
+import json
+
 import handler_ch
 import handler_item
 import living
 import game_utils
 import merc
 import state_checks
-import json
 
 __author__ = 'syn'
 
@@ -57,7 +59,10 @@ class SOCIAL_DATA:
 
 # An affect.
 class AFFECT_DATA:
+    load_count = 0
+
     def __init__(self, **kwargs):
+        AFFECT_DATA.load_count += 1
         self.valid = True
         self.where = 0
         self.type = 0
@@ -67,7 +72,7 @@ class AFFECT_DATA:
         self.modifier = 0
         self.bitvector = 0
         if kwargs:
-            [setattr(self, k, v) for k, v in kwargs.items()]
+            [setattr(self, k, copy.deepcopy(v)) for k, v in kwargs.items()]
 
     def to_json(self, outer_encoder=None):
         if outer_encoder is None:
@@ -137,7 +142,7 @@ def act(format, ch, arg1=None, arg2=None, send_to=merc.TO_ROOM, min_pos=merc.POS
     him_her = ["it",  "him", "her"]
     his_her = ["its", "his", "her"]
 
-    to_players = [merc.characters[instance_id] for instance_id in ch.in_room.people]
+    to_players = [merc.characters[instance_id] for instance_id in ch.in_room.people[:]]
 
     if send_to is merc.TO_VICT:
         if not vch:
@@ -145,7 +150,7 @@ def act(format, ch, arg1=None, arg2=None, send_to=merc.TO_ROOM, min_pos=merc.POS
             return
         if not vch.in_room:
             return
-        to_players = [merc.characters[instance_id] for instance_id in ch.in_room.people]
+        to_players = [merc.characters[instance_id] for instance_id in ch.in_room.people[:]]
 
     for to in to_players:
         if not to.desc or to.position < min_pos:

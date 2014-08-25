@@ -47,7 +47,7 @@ def spec_troll_member(ch):
         return False
     count = 0
     # find an ogre to beat up */
-    for vch_id in ch.in_room.people:
+    for vch_id in ch.in_room.people[:]:
         vch = merc.characters[vch_id]
         if not vch.is_npc() or ch == vch:
             continue
@@ -84,7 +84,7 @@ def spec_ogre_member(ch):
     count = 0
     victim = None
     # find an troll to beat up */
-    for vch_id in ch.in_room.people:
+    for vch_id in ch.in_room.people[:]:
         vch = merc.characters[vch_id]
         if not vch.is_npc() or ch == vch:
             continue
@@ -119,7 +119,7 @@ def spec_patrolman(ch):
         return False
     victim = None
     # look for a fight in the room */
-    for vch_id in ch.in_room.people:
+    for vch_id in ch.in_room.people[:]:
         vch = merc.characters[vch_id]
         if vch == ch:
             continue
@@ -163,7 +163,7 @@ def spec_nasty(ch):
         return False
 
     if ch.position != merc.POS_FIGHTING:
-        for victim_id in ch.in_room.people:
+        for victim_id in ch.in_room.people[:]:
             victim = merc.characters[victim_id]
             if not victim.is_npc() and (victim.level > ch.level) and (victim.level < ch.level + 10):
                 ch.do_backstab(victim.name)
@@ -200,7 +200,7 @@ def dragon(ch, spell_name):
     if ch.position != merc.POS_FIGHTING:
         return False
     victim = None
-    for vch_id in ch.in_room.people:
+    for vch_id in ch.in_room.people[:]:
         vch = merc.characters[vch_id]
         if vch.fighting == ch and random.randint(0,3) == 0:
             victim = vch
@@ -301,7 +301,7 @@ def spec_cast_cleric(ch):
     if ch.position != merc.POS_FIGHTING:
         return False
     victim = None
-    for vch_id in ch.in_room.people:
+    for vch_id in ch.in_room.people[:]:
         vch = merc.characters[vch_id]
         if vch.fighting == ch and random.randint(0,3) == 0:
             victim = vch
@@ -360,7 +360,7 @@ def spec_cast_judge(ch):
         return False
 
     victim = None
-    for vch_id in ch.in_room.people:
+    for vch_id in ch.in_room.people[:]:
         vch = merc.characters[vch_id]
         if vch.fighting == ch and random.randint(0, 3 ) == 0:
             victim = vch
@@ -380,7 +380,7 @@ def spec_cast_mage(ch):
     if ch.position != merc.POS_FIGHTING:
         return False
     victim = None
-    for vch_id in ch.in_room.people:
+    for vch_id in ch.in_room.people[:]:
         vch = merc.characters[vch_id]
         if vch.fighting == ch and random.randint(0, 2) == 0:
             victim = vch
@@ -435,7 +435,7 @@ def spec_cast_undead(ch):
     if ch.position != merc.POS_FIGHTING:
         return False
 
-    for vch_id in ch.in_room.people:
+    for vch_id in ch.in_room.people[:]:
 
         vch = merc.characters[vch_id]
         if vch.fighting == ch and random.randint(0,3) == 0:
@@ -491,7 +491,7 @@ def spec_executioner(ch):
 
     crime = ""
     victim = None
-    for vch_id in ch.in_room.people:
+    for vch_id in ch.in_room.people[:]:
         vch = merc.characters[vch_id]
         if not vch.is_npc() and vch.act.is_set(merc.PLR_KILLER) and ch.can_see(vch):
             victim = vch
@@ -514,7 +514,7 @@ def spec_fido(ch):
     if not ch.is_awake():
         return False
 
-    for corpse_id in ch.in_room.inventory:
+    for corpse_id in ch.in_room.inventory[:]:
         corpse = merc.items[corpse_id]
         if corpse.item_type != merc.ITEM_CORPSE_NPC:
             continue
@@ -537,7 +537,7 @@ def spec_guard(ch):
     ech = None
     crime = ""
     victim = None
-    for vch_id in ch.in_room.people:
+    for vch_id in ch.in_room.people[:]:
         vch = merc.characters[vch_id]
         if not vch.is_npc() and vch.act.is_set(merc.PLR_KILLER) and ch.can_see(vch):
             victim = vch
@@ -571,7 +571,7 @@ def spec_janitor(ch):
     if not ch.is_awake():
         return False
 
-    for trash_id in ch.in_room.inventory:
+    for trash_id in ch.in_room.inventory[:]:
         trash = merc.items[trash_id]
         if not trash.flags.take or not ch.can_loot(trash):
             continue
@@ -658,7 +658,7 @@ def spec_thief(ch):
     if ch.position != merc.POS_STANDING:
         return False
 
-    for victim_id in ch.in_room.people:
+    for victim_id in ch.in_room.people[:]:
 
         victim = merc.characters[victim_id]
         if victim.is_npc() or victim.level >= merc.LEVEL_IMMORTAL or random.randint(0,31) != 0 or not ch.can_see(victim):

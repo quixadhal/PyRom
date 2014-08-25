@@ -51,6 +51,17 @@ import world_classes
 import sys_utils
 import update
 
+class CharDummy:
+    def __init__(self):
+        self.name = ''
+        self.pwd = None
+        self.desc = None
+        self.stub = None
+        self.failed_attempts = 0
+
+    def send(self, pstr):
+        pass
+
 ch_selections = {}
 retries = 0
 
@@ -93,71 +104,74 @@ def con_get_name(self):
         retries += 1
         if retries > 3:
             self.send('Please come back when you think of a name.')
+            retries = 0
             self.deactivate()
         return
 
-    retries = 0
-
-    ch = pc.Pc.load(name)
-    if ch:
-        found = True
-        ch.desc = self
-        self.character = ch
-        ch.send = self.send
+    found = False
+    if not self.character:
+        ch_dummy = CharDummy()
+        ch_dummy.desc = self
+        self.character = ch_dummy
+        ch_dummy.send = self.send
     else:
-        found, ch = save.legacy_load_char_obj(self, name)
-
-    if ch.act.is_set(merc.PLR_DENY):
-        logger.info("Denying access to %s@%s" % (ch.name, self.addrport()))
-        self.send("You have been denied access.")
-        self.deactivate()
-        return
-
-    if comm.is_reconnecting(self, name):
+        ch_dummy = self.character
+    ch_dummy.name = name
+    ch_dummy.stub = pc.Pc.load_stub(name)
+    if ch_dummy.stub:
         found = True
-    
-    if settings.WIZLOCK and not ch.is_immortal():
-        ch.send("Game is wizlocked")
-        self.deactivate()
-        return
+        if ch_dummy.stub['is_banned']:
+            logger.info("Denying access to %s@%s" % (ch_dummy.stub['name'], self.addrport()))
+            self.send("You have been denied access.")
+            self.deactivate()
+            return
+        if settings.WIZLOCK and not ch_dummy.stub['is_immortal']:
+            self.send("Game is Wizlocked. Try again later.")
+            self.deactivate()
+            return
+        if comm.is_reconnecting(self, name):
+            found = True
 
-    if not found and settings.NEWLOCK:
-        ch.send("Game is newlocked")
-        self.deactivate()
-        return
-
+    else:
+        found, ch_dummy = save.legacy_load_char_obj(self, name)
+        ch_dummy.send = self.send
+        ch_dummy.desc = self
+        self.character = ch_dummy
     if found:
-        ch.send("Password: ")
-        ch.desc.password_mode_on()
+        ch_dummy.send("Password: ")
+        ch_dummy.desc.password_mode_on()
         self.set_connected(con_get_old_password)
         return
 
-    ch.send("Did I get that right, %s (Y/N)? " % ch.name)
-    self.set_connected(con_confirm_new_name)
+    else:
+        if settings.NEWLOCK:
+            ch_dummy.send("Game is newlocked")
+            self.deactivate()
+            return
+        ch_dummy.send("Did I get that right, %s (Y/N)? " % ch_dummy.name)
+        self.set_connected(con_confirm_new_name)
     return
 
 
 def con_confirm_new_name(self):
     argument = self.get_command()[:1].lower()
-    ch = self.character
+    ch_dummy = self.character
     if argument == 'y':
-        ch.send("New character.\nGive me a password for %s: " % ch.name)
-        ch.desc.password_mode_on()
+        ch_dummy.send("New character.\nGive me a password for %s: " % ch_dummy.name)
+        ch_dummy.desc.password_mode_on()
         self.set_connected(con_get_new_password)
     elif argument == 'n':
-        ch.send("Ok, what IS it, then? ")
-        del ch
-        self.character = None
+        ch_dummy.send("Ok, what IS it, then? ")
         self.set_connected(con_get_name)
     else:
-        ch.send("Please type Yes or No? ")
+        ch_dummy.send("Please type Yes or No? ")
 
 
 def con_get_new_password(self):
     argument = self.get_command()
-    ch = self.character
+    ch_dummy = self.character
     if len(argument) < 5:
-        ch.send("Password must be at least five characters long.\nPassword: ")
+        ch_dummy.send("Password must be at least five characters long.\nPassword: ")
         return
     if settings.ENCRYPT_PASSWORD:
         argument = argument.encode('utf8')
@@ -165,27 +179,32 @@ def con_get_new_password(self):
     else:
         pwdnew = argument
 
-    ch.pwd = pwdnew
+    ch_dummy.pwd = pwdnew
     
-    ch.send("Please retype password: ")
-    ch.desc.password_mode_on()
+    ch_dummy.send("Please retype password: ")
+    ch_dummy.desc.password_mode_on()
     self.set_connected(con_confirm_new_password)
 
 
 def con_confirm_new_password(self):
     argument = self.get_command()
-    ch = self.character
+    ch_dummy = self.character
 
     if settings.ENCRYPT_PASSWORD:
         argument = argument.encode('utf8')
         argument = hashlib.sha512(argument).hexdigest()
 
-    if argument != ch.pwd:
-        ch.send("Passwords don't match.\nRetype password: ")
-        ch.desc.password_mode_on()
+    if argument != ch_dummy.pwd:
+        ch_dummy.send("Passwords don't match.\nRetype password: ")
+        ch_dummy.desc.password_mode_on()
         self.set_connected(con_get_new_password)
         return
-
+    ch = pc.Pc(ch_dummy.name)
+    del ch_dummy
+    ch.pwd = ch_dummy.pwd
+    ch.desc = self
+    ch.send = self.send
+    self.character = ch
     ch.desc.password_mode_off()
     ch.send("The following races are available:\n  ")
     for race in const.pc_race_table:
@@ -399,38 +418,42 @@ def con_gen_groups(self):
 
 def con_get_old_password(self):
     argument = self.get_command()
-    ch = self.character
-    ch.desc.password_mode_off()
+    ch_dummy = self.character
+    ch_dummy.desc.password_mode_off()
     if settings.ENCRYPT_PASSWORD:
         argument = argument.encode('utf8')
         pwdcmp = hashlib.sha512(argument).hexdigest()
     else:
         pwdcmp = argument
-    if pwdcmp != ch.pwd:
-        ch.send("\nWrong password.\n")
-        ch.failed_attempts += 1
-        if ch.failed_attempts > 3:
+    if pwdcmp != ch_dummy.stub['pwd']:
+        ch_dummy.send("\nWrong password.\n")
+        ch_dummy.failed_attempts += 1
+        if ch_dummy.failed_attempts > 3:
             comm.close_socket(self)
         else:
-            ch.send("Password: ")
-            ch.desc.password_mode_on()
+            ch_dummy.send("Password: ")
+            ch_dummy.desc.password_mode_on()
             self.set_connected(con_get_old_password)
         return
     #write_to_buffer( d, echo_on_str, 0 );
 
-    if ch.auth:
-        ch.failed_attempts = 0
-        ch.send('\nAuthenticator code: ')
+    if ch_dummy.stub['auth']:
+        ch_dummy.failed_attempts = 0
+        ch_dummy.send('\nAuthenticator code: ')
         self.set_connected(con_get_timecode)
         return
 
-    ch.send("\n")
-    if comm.check_playing(self, ch.name):
+    ch_dummy.send("\n")
+    if comm.check_playing(self, ch_dummy.name):
         return
 
-    if comm.check_reconnect(self, ch.name, True):
+    if comm.check_reconnect(self, ch_dummy.name, True):
         return
-
+    ch = pc.Pc.load(ch_dummy.name)
+    del ch_dummy
+    ch.send = self.send
+    ch.desc = self
+    self.character = ch
     log_buf = "%s@%s has connected." % (ch.name, self.addrport())
     logger.info(log_buf)
     handler_game.wiznet(log_buf, None, None, merc.WIZ_SITES, 0, ch.trust)
@@ -445,28 +468,32 @@ def con_get_old_password(self):
 
 def con_get_timecode(self):
     argument = self.get_command()
-    ch = self.character
+    ch_dummy = self.character
 
-    if not ch.auth.verify(argument):
-        ch.send('\nWrong timecode.\n')
-        ch.failed_attempts += 1
-        if ch.failed_attempts > 3:
+    if not ch_dummy.stub['auth'].verify(argument):
+        ch_dummy.send('\nWrong timecode.\n')
+        ch_dummy.failed_attempts += 1
+        if ch_dummy.failed_attempts > 3:
             comm.close_socket(self)
         else:
-            ch.send('Authenticator code: ')
+            ch_dummy.send('Authenticator code: ')
             self.set_connected(con_get_timecode)
         return
 
-    ch.send("\n")
-    if comm.check_playing(self, ch.name):
+    ch_dummy.send("\n")
+    if comm.check_playing(self, ch_dummy.name):
         return
 
-    if comm.check_reconnect(self, ch.name, True):
+    if comm.check_reconnect(self, ch_dummy.name, True):
         return
-
+    ch = pc.Pc.load(ch_dummy.name)
+    del ch_dummy
+    ch.send = self.send
+    ch.desc = self
+    self.character = ch
     log_buf = "%s@%s has connected." % (ch.name, self.addrport())
     logger.info(log_buf)
-    handler_game.wiznet(log_buf, None, None, merc.WIZ_SITES, 0, ch.trust)
+    handler_game.wiznet(log_buf, None, None, merc.WIZ_SITES, 0, ch_dummy.trust)
     if ch.is_immortal():
         ch.do_help("imotd")
         self.set_connected(con_read_imotd)
@@ -588,4 +615,3 @@ def con_playing(self):
     if not command.strip():
         return
     handler_game.substitute_alias(self, command)
-

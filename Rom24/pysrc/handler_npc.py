@@ -31,29 +31,31 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
+import copy
+
 import logging
 
 logger = logging.getLogger()
 
-from bit import Bit
 import living
 import merc
 import pyprogs
-from tables import off_flags
+import bit
+import tables
 
 
 class Npc(living.Living):
     template_count = 0
     instance_count = 0
 
-    def __init__(self):
+    def __init__(self, template=None):
         super().__init__()
         self.vnum = 0  # Needs to come before the template to setup the instance
         self.memory = None
         self.spec_fun = None
         self.new_format = True
         self.area = ""
-        self.off_flags = Bit(flags=off_flags)
+        self.off_flags = bit.Bit(flags=tables.off_flags)
         self.damage = [0, 0, 0]
         self.start_pos = 0
         self.default_pos = 0
@@ -65,6 +67,10 @@ class Npc(living.Living):
         self.killed = 0
         self.pShop = None
         self.listeners = {}
+        if template:
+            [setattr(self, k, copy.deepcopy(v)) for k, v in template.__dict__.items()]
+            self.instancer()
+            self.instance_setup()
         if self.instance_id:
             Npc.instance_count += 1
         else:
@@ -74,7 +80,11 @@ class Npc(living.Living):
         try:
             logger.trace("Freeing %s" % str(self))
             if self.instance_id:
-                self.instance_destructor()
+                Npc.instance_count -= 1
+                if merc.characters.get(self.instance_id, None):
+                    self.instance_destructor()
+            else:
+                Npc.template_count -= 1
         except:
             return
 
@@ -86,21 +96,16 @@ class Npc(living.Living):
 
     def instance_setup(self):
         merc.global_instances[self.instance_id] = self
-        merc.characters[self.instance_id] = merc.global_instances[self.instance_id]
+        merc.characters[self.instance_id] = self
         if self.vnum not in merc.instances_by_character.keys():
             merc.instances_by_character[self.vnum] = [self.instance_id]
         else:
-            merc.instances_by_character[self.vnum].append(self.instance_id)
+            merc.instances_by_character[self.vnum] += [self.instance_id]
 
     def instance_destructor(self):
-        if self.vnum in merc.instances_by_character:
-            instance_list = merc.instances_by_character[self.vnum]
-            if self.instance_id in instance_list:
-                instance_list.remove(self.instance_id)
-        if self.instance_id in merc.characters:
-            del merc.characters[self.instance_id]
-        if self.instance_id in merc.global_instances:
-            del merc.global_instances[self.instance_id]
+        merc.instances_by_character[self.vnum].remove(self.instance_id)
+        del merc.characters[self.instance_id]
+        del merc.global_instances[self.instance_id]
 
     register_signal = pyprogs.register_signal
     absorb = pyprogs.absorb

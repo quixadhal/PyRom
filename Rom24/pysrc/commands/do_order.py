@@ -42,7 +42,7 @@ def do_order(ch, argument):
             ch.send("Do it yourself!\n")
             return
     found = False
-    for och_id in ch.in_room.people:
+    for och_id in ch.in_room.people[:]:
         och = merc.characters[och_id]
         if state_checks.IS_AFFECTED(och, merc.AFF_CHARM) \
                 and och.master == ch \

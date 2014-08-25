@@ -19,6 +19,8 @@ class Environment:
         super().__init__()
         self._environment = None
         self.was_in_room = None
+        # When we load into a game without persistent room instances, this will get us to logged room
+        self._room_vnum = None
         self.on = None
         self.zone_template = ""
         self.zone = 0
@@ -167,7 +169,7 @@ class Environment:
 
     def true_weight(item):
         weight = item.weight
-        for content_id in item.inventory:
+        for content_id in item.inventory[:]:
             content = merc.items[content_id]
             weight += content.get_weight()
         return weight
