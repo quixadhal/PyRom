@@ -36,7 +36,6 @@ import os
 import random
 import time
 import logging
-import sys
 
 logger = logging.getLogger()
 
