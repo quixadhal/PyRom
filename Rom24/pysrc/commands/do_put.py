@@ -1,8 +1,8 @@
+import random
 import logging
 
 logger = logging.getLogger()
 
-import random
 import merc
 import interp
 import game_utils

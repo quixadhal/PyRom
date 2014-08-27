@@ -5,6 +5,7 @@ logger = logging.getLogger()
 import merc
 import interp
 import game_utils
+import instance
 
 
 def do_mfind(ch, argument):
@@ -19,7 +20,7 @@ def do_mfind(ch, argument):
     # Get_mob_index is fast, and I don't feel like threading another link.
     # Do you?
     # -- Furey
-    for pMobIndex in merc.characterTemplate.values():
+    for pMobIndex in instance.npc_templates.values():
         if fAll or game_utils.is_name(arg, pMobIndex.name):
             found = True
             ch.send("[[%5d]] %s\n" % (pMobIndex.vnum, pMobIndex.short_descr))

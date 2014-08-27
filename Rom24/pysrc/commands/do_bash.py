@@ -1,11 +1,10 @@
+import random
 import logging
-import handler_game
 
 logger = logging.getLogger()
 
-import random
 import game_utils
-
+import handler_game
 import merc
 import const
 import fight

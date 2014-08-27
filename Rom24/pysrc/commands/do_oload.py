@@ -7,7 +7,7 @@ import object_creator
 import interp
 import game_utils
 import handler_game
-import state_checks
+import instance
 
 
 def do_oload(ch, argument):
@@ -28,10 +28,10 @@ def do_oload(ch, argument):
             ch.send("Level must be be between 0 and your level.\n")
             return
     vnum = int(arg1)
-    if vnum not in merc.itemTemplate:
+    if vnum not in instance.item_templates:
         ch.send("No object has that vnum.\n")
         return
-    item = object_creator.create_item(merc.itemTemplate[vnum], level)
+    item = object_creator.create_item(instance.item_templates[vnum], level)
     if item.flags.take:
         ch.put(item)
     else:

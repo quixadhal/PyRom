@@ -1,12 +1,13 @@
 import logging
-import handler_game
 
 logger = logging.getLogger()
 
+import handler_game
 import merc
 import interp
 import fight
 import game_utils
+import instance
 
 
 def do_goto(ch, argument):
@@ -25,7 +26,7 @@ def do_goto(ch, argument):
     if ch.fighting:
         fight.stop_fighting(ch, True)
     for rch_id in ch.in_room.people[:]:
-        rch = merc.characters[rch_id]
+        rch = instance.characters[rch_id]
         if rch.trust >= ch.invis_level:
             if ch.is_npc() and ch.bamfout:
                 handler_game.act("$t", ch, ch.bamfout, rch, merc.TO_VICT)
@@ -34,7 +35,7 @@ def do_goto(ch, argument):
     location.put(ch.in_room.get(ch))
 
     for rch_id in ch.in_room.people[:]:
-        rch = merc.characters[rch_id]
+        rch = instance.characters[rch_id]
         if rch.trust >= ch.invis_level:
             if ch.is_npc() and ch.bamfin:
                 handler_game.act("$t", ch, ch.bamfin, rch, merc.TO_VICT)

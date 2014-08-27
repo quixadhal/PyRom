@@ -15,6 +15,7 @@ import merc
 import handler_npc
 import special
 import state_checks
+import instance
 
 
 def create_room(room_template):
@@ -38,7 +39,7 @@ def clone_room(parent, clone):
 
 
 def setup_exits():
-    for room in merc.rooms.values():
+    for room in instance.rooms.values():
         if room.exit:
             for door, pexit in enumerate(room.exit):
                 if pexit:
@@ -415,23 +416,23 @@ def create_money(gold, silver):
         silver = max(1, silver)
 
     if gold == 0 and silver == 1:
-        item = create_item(merc.itemTemplate[merc.OBJ_VNUM_SILVER_ONE], 0)
+        item = create_item(instance.item_templates[merc.OBJ_VNUM_SILVER_ONE], 0)
     elif gold == 1 and silver == 0:
-        item = create_item(merc.itemTemplate[merc.OBJ_VNUM_GOLD_ONE], 0)
+        item = create_item(instance.item_templates[merc.OBJ_VNUM_GOLD_ONE], 0)
     elif silver == 0:
-        item = create_item(merc.itemTemplate[merc.OBJ_VNUM_GOLD_SOME], 0)
+        item = create_item(instance.item_templates[merc.OBJ_VNUM_GOLD_SOME], 0)
         item.short_descr = item.short_descr % gold
         item.value[1] = gold
         item.cost = gold
         item.weight = gold // 5
     elif gold == 0:
-        item = create_item(merc.itemTemplate[merc.OBJ_VNUM_SILVER_SOME], 0)
+        item = create_item(instance.item_templates[merc.OBJ_VNUM_SILVER_SOME], 0)
         item.short_descr = item.short_descr % silver
         item.value[0] = silver
         item.cost = silver
         item.weight = silver // 20
     else:
-        item = create_item(merc.itemTemplate[merc.OBJ_VNUM_COINS], 0)
+        item = create_item(instance.item_templates[merc.OBJ_VNUM_COINS], 0)
         item.short_descr = item.short_descr % (gold, silver)
         item.value[0] = silver
         item.value[1] = gold

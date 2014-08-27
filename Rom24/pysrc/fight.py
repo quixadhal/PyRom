@@ -40,10 +40,8 @@ from merc import *
 import handler_ch
 import handler_item
 import object_creator
-import merc
 import game_utils
 import handler_game
-import save
 import random
 import update
 import const
@@ -52,13 +50,15 @@ import handler_magic
 import skills
 import state_checks
 import settings
+import instance
 
-# * Control the fights going on.
-# * Called periodically by update_handler.
+
+# Control the fights going on.
+# Called periodically by update_handler.
 def violence_update():
-    ch_list = [ch_id for ch_id in merc.characters.keys()]
+    ch_list = [ch_id for ch_id in instance.characters.keys()]
     for character in ch_list:
-        ch = merc.characters.get(character, None)
+        ch = instance.characters.get(character, None)
         if ch:
             if not ch.fighting or not ch.in_room:
                 continue
@@ -81,7 +81,7 @@ def violence_update():
 # for auto assisting */
 def check_assist(ch, victim):
     for rch_id in ch.in_room.people[:]:
-        rch = merc.characters[rch_id]
+        rch = instance.characters[rch_id]
         if state_checks.IS_AWAKE(rch) and rch.fighting is None:
             # quick check for ASSIST_PLAYER */
             if not ch.is_npc() and rch.is_npc() \
@@ -115,7 +115,7 @@ def check_assist(ch, victim):
                 target = None
                 number = 0
                 for vch_id in ch.in_room.people[:]:
-                    vch = merc.characters[vch_id]
+                    vch = instance.characters[vch_id]
                     if rch.can_see(vch) and vch.is_same_group(victim) and random.randint(0, number) == 0:
                         target = vch
                         number += 1
@@ -179,7 +179,7 @@ def mob_hit(ch, victim, dt):
     # Area attack -- BALLS nasty! */
     if ch.off_flags.is_set(OFF_AREA_ATTACK):
         for vch_id in ch.in_room.people[:]:
-            vch = merc.characters[vch_id]
+            vch = instance.characters[vch_id]
             if vch != victim and vch.fighting == ch:
                 one_hit(ch, vch, dt)
 
@@ -646,7 +646,7 @@ def damage(ch, victim, dam, dt, dam_type, show):
         if (victim.act.is_set(ACT_WIMPY) and random.randint(0, 4) == 0
             and victim.hit < victim.max_hit // 5) \
                 or (victim.is_affected(AFF_CHARM) and victim.master
-                    and merc.characters[victim.master].in_room != victim.in_room):
+                    and instance.characters[victim.master].in_room != victim.in_room):
             victim.do_flee("")
 
     if not victim.is_npc() and 0 < victim.hit <= victim.wimpy and victim.wait < PULSE_VIOLENCE // 2:
@@ -765,7 +765,7 @@ def is_safe_spell(ch, victim, area):
         if ch.is_npc():
             # charmed mobs and pets cannot attack players while owned */
             if state_checks.IS_AFFECTED(ch, AFF_CHARM) and ch.master \
-                    and merc.characters[ch.master].fighting != victim:
+                    and instance.characters[ch.master].fighting != victim:
                 return True
             # safe room? */
             if state_checks.IS_SET(victim.in_room.room_flags, ROOM_SAFE):
@@ -794,7 +794,7 @@ def check_killer(ch, victim):
     #     * Attacking someone's charmed char is hostile!
     while victim.is_affected(AFF_CHARM) and victim.master is not None:
         victim_id = victim.master
-        victim = merc.characters[victim_id]
+        victim = instance.characters[victim_id]
 
         # NPC's are fair game.
         # So are killers and thieves.
@@ -917,7 +917,7 @@ def set_fighting(ch, victim):
 
 # Stop fights.
 def stop_fighting(ch, fBoth):
-    for fch in merc.characters.values():
+    for fch in instance.characters.values():
         if fch.instance_id == ch.instance_id or (fBoth and fch.fighting == ch):
             fch.fighting = None
             fch.position = fch.default_pos if fch.is_npc() else POS_STANDING
@@ -930,7 +930,7 @@ def stop_fighting(ch, fBoth):
 def make_corpse(ch):
     if ch.is_npc():
         name = ch.short_descr
-        corpse = object_creator.create_item(itemTemplate[OBJ_VNUM_CORPSE_NPC], 0)
+        corpse = object_creator.create_item(item_templates[OBJ_VNUM_CORPSE_NPC], 0)
         corpse.timer = random.randint(3, 6)
         if ch.gold > 0:
             corpse.put(object_creator.create_money(ch.gold, ch.silver))
@@ -939,7 +939,7 @@ def make_corpse(ch):
         corpse.cost = 0
     else:
         name = ch.name
-        corpse = object_creator.create_item(itemTemplate[OBJ_VNUM_CORPSE_PC], 0)
+        corpse = object_creator.create_item(item_templates[OBJ_VNUM_CORPSE_PC], 0)
         corpse.timer = random.randint(25, 40)
         ch.act.rem_bit(PLR_CANLOOT)
         if not ch.is_clan():
@@ -958,11 +958,11 @@ def make_corpse(ch):
     for item_id in ch.equipped.values():
         if not item_id:
             continue
-        item = merc.items[item_id]
+        item = instance.items[item_id]
         ch.unequip(item.equipped_to, silent=True, forced=True)
 
     for item_id in ch.inventory[:]:
-        item = merc.items[item_id]
+        item = instance.items[item_id]
         floating = False
         if item.flags.float:
             floating = True
@@ -983,7 +983,7 @@ def make_corpse(ch):
                 if item.inventory:
                     handler_game.act("$p evaporates,scattering its contents.", ch, item, None, TO_ROOM)
                     for contents_id in item.inventory[:]:
-                        contents = merc.items[contents_id]
+                        contents = instance.items[contents_id]
                         item.get(contents)
                         ch.in_room.put(contents)
                 else:
@@ -1036,7 +1036,7 @@ def death_cry(ch):
     handler_game.act(msg, ch, None, None, TO_ROOM)
     if vnum != 0:
         name = ch.short_descr if ch.is_npc() else ch.name
-        item = object_creator.create_item(itemTemplate[vnum], 0)
+        item = object_creator.create_item(item_templates[vnum], 0)
         item.timer = random.randint(4, 7)
 
         item.short_descr = item.short_descr % name
@@ -1057,9 +1057,9 @@ def death_cry(ch):
     was_in_room.get(ch)
     for pexit in was_in_room.exit:
         if pexit and pexit.to_room and pexit.to_room != was_in_room.instance_id:
-            merc.rooms[pexit.to_room].put(ch)
+            instance.rooms[pexit.to_room].put(ch)
             handler_game.act(msg, ch, None, None, TO_ROOM)
-            merc.rooms[pexit.to_room].get(ch)
+            instance.rooms[pexit.to_room].get(ch)
     was_in_room.put(ch)
     return
 
@@ -1070,7 +1070,7 @@ def raw_kill(victim):
     make_corpse(victim)
 
     if victim.is_npc():
-        merc.characterTemplate[victim.vnum].killed += 1
+        instance.npc_templates[victim.vnum].killed += 1
         # kill_table[max(0, min(victim.level, MAX_LEVEL-1))].killed += 1
         if victim.in_room:
             victim.in_room.get(victim)
@@ -1100,7 +1100,7 @@ def group_gain(ch, victim):
     members = 0
     group_levels = 0
     for gch_id in ch.in_room.people[:]:
-        gch = merc.characters[gch_id]
+        gch = instance.characters[gch_id]
         if gch.is_same_group(ch):
             members += 1
             group_levels += gch.level // 2 if gch.is_npc() else gch.level
@@ -1113,7 +1113,7 @@ def group_gain(ch, victim):
     lch = ch.leader if ch.leader else ch
 
     for gch_id in ch.in_room.people[:]:
-        gch = merc.characters[gch_id]
+        gch = instance.characters[gch_id]
         if not gch.is_same_group(ch) or gch.is_npc():
             continue
 
@@ -1133,7 +1133,7 @@ def group_gain(ch, victim):
         for item_id in ch.equipped.values():
             if not item_id:
                 continue
-            item = merc.items[item_id]
+            item = instance.items[item_id]
             if (item.flags.anti_evil and ch.is_evil()) or (item.flags.anti_good and ch.is_good()) \
                     or (item.flags.anti_neutral and ch.is_neutral()):
                 handler_game.act("You are zapped by $p.", ch, item, None, TO_CHAR)

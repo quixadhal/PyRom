@@ -11,7 +11,7 @@ def spell_locate_object(sn, level, ch, victim, target):
     number = 0
     max_found = 200 if ch.is_immortal() else 2 * level
 
-    for item in merc.items.values():
+    for item in instance.items.values():
         if not ch.can_see_item(item) or not game_utils.is_name(handler_magic.target_name, item.name) \
                 or item.flags.no_locate or random.randint(1, 99) > 2 * level \
                 or ch.level < item.level:

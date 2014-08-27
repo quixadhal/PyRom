@@ -1,8 +1,8 @@
 import logging
-import handler_game
 
 logger = logging.getLogger()
 
+import handler_game
 import merc
 import interp
 import game_utils
@@ -31,7 +31,7 @@ def do_get(ch, argument):
         else:
             # 'get all' or 'get all.obj'
             for item_id in ch.in_room.items:
-                item = merc.items[item_id]
+                item = instance.items[item_id]
                 if (len(arg1) == 3 or arg1[4:] in item.name) and ch.can_see_item(item):
                     found = True
                     handler_item.get_item(ch, item, None)
@@ -70,7 +70,7 @@ def do_get(ch, argument):
             # 'get all container' or 'get all.obj container'
             found = False
             for item_id in container.inventory[:]:
-                item = merc.items[item_id]
+                item = instance.items[item_id]
                 if (len(arg1) == 3 or arg1[4:] in item.name) and ch.can_see_item(item):
                     found = True
                     if container.vnum == merc.OBJ_VNUM_PIT and not ch.is_immortal():

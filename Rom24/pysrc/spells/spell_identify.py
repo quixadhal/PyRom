@@ -6,7 +6,7 @@ from merc import affect_loc_name, affect_bit_name, extra_bit_name, imm_bit_name,
 def spell_identify(sn, level, ch, victim, target):
     item = victim
     if type(item) is int:
-        item = merc.items[item]
+        item = instance.items[item]
     ch.send("Item '{item.name}' is type {item.item_type}, "
             "weight is {weight}".format(item=item, weight=(item.weight // 10)))
     ch.send("Equips to: {item.equips_to_names}\n".format(item=item))
@@ -67,7 +67,7 @@ def spell_identify(sn, level, ch, victim, target):
 
     affected = item.affected
     if not item.enchanted:
-        affected.extend(merc.itemTemplate[item.vnum].affected)
+        affected.extend(instance.item_templates[item.vnum].affected)
 
     for paf in affected:
         if paf.location != merc.APPLY_NONE and paf.modifier != 0:

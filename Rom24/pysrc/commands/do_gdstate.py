@@ -1,10 +1,9 @@
-import interp
-
 __author__ = 'syn'
 import logging
 
 logger = logging.getLogger()
 
+import interp
 import merc
 import handler_log
 import game_utils

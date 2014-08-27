@@ -1,13 +1,15 @@
 import os
 import json
 from collections import OrderedDict
+import logging
+
+logger = logging.getLogger()
 
 import object_creator
 import instance
 from merc import *
 import tables
 import world_classes
-import merc
 import settings
 import pc
 import auth
@@ -54,7 +56,7 @@ def legacy_save_char_obj(ch):
 
 def fwrite_obj(ch, obj, contained_by=None):
     odict = OrderedDict()
-    obj = merc.items[obj]
+    obj = instance.items[obj]
     odict['Vnum'] = obj.vnum
     odict['Enchanted'] = obj.enchanted
     odict['Name'] = obj.name
@@ -91,7 +93,7 @@ def recursive_item_jsonify(item_to_json, inv_dir: str=None, equip_dir: str=None,
             eq.write(to_equipped)
         if item_to_json.inventory:
             for item_id in item_to_json.inventory[:]:
-                new_item = merc.items[item_id]
+                new_item = instance.items[item_id]
                 recursive_item_jsonify(new_item, equip_dir=equip_dir, is_equipment=True)
         else:
             return
@@ -102,7 +104,7 @@ def recursive_item_jsonify(item_to_json, inv_dir: str=None, equip_dir: str=None,
             inv.write(to_inventory)
         if item_to_json.inventory:
             for item_id in item_to_json.inventory[:]:
-                new_item = merc.items[item_id]
+                new_item = instance.items[item_id]
                 recursive_item_jsonify(new_item, inv_dir=inv_dir, is_in_inventory=True)
         else:
             return
@@ -130,7 +132,7 @@ def fwrite_char(ch):
     if ch.in_room.vnum == ROOM_VNUM_LIMBO and ch.was_in_room:
         in_room = ch.was_in_room
     elif not ch.in_room:
-        in_room = merc.instances_by_room[ROOM_VNUM_TEMPLE][0]
+        in_room = instance.instances_by_room[ROOM_VNUM_TEMPLE][0]
     else:
         in_room = ch.in_room
     chdict["Room"] = in_room.vnum
@@ -231,7 +233,7 @@ def fread_char(chdict, ch):
     ch.trust = chdict["Tru"]
     ch.played = chdict["Plyd"]
     ch.lines = chdict["Scro"]
-    room = merc.instances_by_room[chdict["Room"]][0]
+    room = instance.instances_by_room[chdict["Room"]][0]
     if not room:
         room = chdict["Room"]
     ch.environment = room
@@ -296,7 +298,7 @@ def fread_items(contents, objects, contained_by=None):
 
 #unused
 def fread_item(contents, odict):
-    item = object_creator.create_item(itemTemplate[odict['Vnum']], odict['Lev'], odict['instance_id'])
+    item = object_creator.create_item(item_templates[odict['Vnum']], odict['Lev'], odict['instance_id'])
     item.enchanted = odict['Enchanted']
     item.name = odict['Name']
     item.short_descr = odict['ShD']

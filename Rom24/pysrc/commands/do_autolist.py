@@ -5,10 +5,8 @@ logger = logging.getLogger()
 import merc
 import interp
 
-# RT this following section holds all the auto commands from ROM, as well as
-#   replacements for config */
 
-
+# RT this following section holds all the auto commands from ROM, as well as replacements for config
 def do_autolist(ch, argument):
     # lists most player flags */
     if ch.is_npc():

@@ -32,13 +32,12 @@
  ************/
  """
 __author__ = 'syn'
-import logging
-
-logger = logging.getLogger()
-
 import sys
 import functools
 import inspect
+import logging
+
+logger = logging.getLogger()
 
 import merc
 import pc

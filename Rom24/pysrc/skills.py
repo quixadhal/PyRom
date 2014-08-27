@@ -32,6 +32,9 @@
  ************/
 """
 import random
+import logging
+
+logger = logging.getLogger()
 
 from merc import *
 import const

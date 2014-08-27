@@ -18,6 +18,7 @@ import living
 import settings
 import state_checks
 import update
+import handler_item
 
 
 class Pc(living.Living):
@@ -27,6 +28,7 @@ class Pc(living.Living):
     def __init__(self, template=None, **kwargs):
         import handler_item
         super().__init__()
+        self.is_pc = True
         self.buffer = []
         self.valid = False
         self.pwd = ""
@@ -74,7 +76,7 @@ class Pc(living.Living):
                     self._fighting = None
                     self.position = merc.POS_STANDING
                 if self.environment:
-                    if self._environment not in merc.global_instances.keys():
+                    if self._environment not in instance.global_instances.keys():
                         self.environment = None
                 if self.inventory:
                     for instance_id in self.inventory[:]:
@@ -93,7 +95,7 @@ class Pc(living.Living):
             logger.trace("Freeing %s" % str(self))
             if self.instance_id:
                 Pc.instance_count -= 1
-                if merc.player_characters.get(self.instance_id, None):
+                if instance.players.get(self.instance_id, None):
                     self.instance_destructor()
             else:
                 Pc.template_count -= 1
@@ -104,19 +106,19 @@ class Pc(living.Living):
         return "<PC: %s ID %d>" % (self.name, self.instance_id)
 
     def instance_setup(self):
-        merc.global_instances[self.instance_id] = self
-        merc.characters[self.instance_id] = self
-        merc.player_characters[self.instance_id] = self
-        if self.name not in merc.instances_by_player.keys():
-            merc.instances_by_player[self.name] = [self.instance_id]
+        instance.global_instances[self.instance_id] = self
+        instance.characters[self.instance_id] = self
+        instance.players[self.instance_id] = self
+        if self.name not in instance.instances_by_player.keys():
+            instance.instances_by_player[self.name] = [self.instance_id]
         else:
-            merc.instances_by_player[self.name] += [self.instance_id]
+            instance.instances_by_player[self.name] += [self.instance_id]
 
     def instance_destructor(self):
-        merc.instances_by_player[self.name].remove(self.instance_id)
-        del merc.player_characters[self.instance_id]
-        del merc.characters[self.instance_id]
-        del merc.global_instances[self.instance_id]
+        instance.instances_by_player[self.name].remove(self.instance_id)
+        del instance.players[self.instance_id]
+        del instance.characters[self.instance_id]
+        del instance.global_instances[self.instance_id]
 
     def absorb(self, *args):
         pass
@@ -644,11 +646,11 @@ class Pc(living.Living):
 
         if self.inventory:
             for item_id in self.inventory[:]:
-                item = merc.items[item_id]
+                item = instance.items[item_id]
                 item.save(in_inventory=True, player_name=self.name)
         for item_id in self.equipped.values():
             if item_id:
-                item = merc.items[item_id]
+                item = instance.items[item_id]
                 item.save(is_equipped=True, player_name=self.name)
 
     @classmethod
@@ -666,6 +668,13 @@ class Pc(living.Living):
             if isinstance(obj, Pc):
                 obj._last_login = time.time()
                 obj._last_logout = None
+                # This just ensures that all items the player has are actually loaded.
+                if obj.inventory:
+                    for item_id in obj.inventory[:]:
+                        handler_item.Items.load(instance_id=item_id, player_name=player_name)
+                for item_id in obj.equipped.values():
+                    if item_id:
+                        handler_item.Items.load(instance_id=item_id, player_name=player_name)
                 return obj
             else:
                 logger.error('Could not load player file for %s', player_name)

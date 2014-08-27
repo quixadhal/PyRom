@@ -1,13 +1,15 @@
-
 #Thanks to this post http://stackoverflow.com/questions/5597836/how-can-i-embedcreate-an-interactive-python-shell-in-my-python-program
 # I'm setting up a small environment for testing.
 
-
 import code
-from db import boot_db
+import logging
 
+logger = logging.getLogger()
 
-boot_db()
+import db
+
+db.boot_db()
+
 
 def send(txt):
     print(txt)

@@ -4,7 +4,6 @@ logger = logging.getLogger()
 
 import merc
 import interp
-import save
 import comm
 import handler_ch
 import handler_game

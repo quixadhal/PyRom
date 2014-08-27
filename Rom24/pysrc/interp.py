@@ -31,13 +31,12 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
+from collections import OrderedDict
 import logging
 
 logger = logging.getLogger()
 
-from collections import OrderedDict
-
-from living import Living
+import living
 
 
 class cmd_type:
@@ -49,7 +48,7 @@ class cmd_type:
         self.log = log
         self.show = show
         self.default_arg = default_arg
-        setattr(Living, self.do_fun.__name__, self.do_fun)
+        setattr(living.Living, self.do_fun.__name__, self.do_fun)
 
 # These commands don't need to be here but are, for order. These will always match first with prefixes.
 cmd_table = OrderedDict()

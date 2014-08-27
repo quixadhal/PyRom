@@ -182,7 +182,7 @@ def load_helps():
 def load_mobiles(mobile_dict):
     count = 0
     for k, v in mobile_dict.items():
-        merc.characterTemplate[k] = v
+        instance.npc_templates[k] = v
         count += 1
     logger.info("%d mobiles loaded", count)
 
@@ -190,7 +190,7 @@ def load_mobiles(mobile_dict):
 def load_objects(object_dict):
     count = 0
     for k, v in object_dict.items():
-        merc.itemTemplate[k] = v
+        instance.item_templates[k] = v
         count += 1
     logger.info("%d items loaded", count)
 
@@ -206,7 +206,7 @@ def load_resets(reset_dict):
 def load_rooms(room_dict):
     count = 0
     for k, v in room_dict.items():
-        merc.roomTemplate[k] = v
+        instance.room_templates[k] = v
         count += 1
     logger.info("%d rooms loaded", count)
 
@@ -321,7 +321,7 @@ def load_mobiles(area, pArea):
     while w != '0':
         mob = handler_ch.Mobile()
         mob.vnum = int(w)
-        merc.characterTemplate[mob.vnum] = mob
+        instance.npc_templates[mob.vnum] = mob
         area, mob.name = game_utils.read_string(area)
         area, mob.short_descr = game_utils.read_string(area)
         area, mob.long_descr = game_utils.read_string(area)
@@ -395,7 +395,7 @@ def load_objects(area, pArea):
     while w != '0':
         obj = handler_item.Items()
         obj.vnum = int(w)
-        merc.itemTemplate[obj.vnum] = obj
+        instance.item_templates[obj.vnum] = obj
         area, obj.name = game_utils.read_string(area)
         area, obj.short_descr = game_utils.read_string(area)
 
@@ -519,11 +519,11 @@ def load_rooms(area, pArea):
     while w != '0':
         room = handler_room.Room()
         room.vnum = int(w)
-        if room.vnum in merc.roomTemplate:
+        if room.vnum in instance.room_templates:
             logger.critical('Dupicate room Vnum: %d', room.vnum)
             sys.exit(1)
 
-        merc.roomTemplate[room.vnum] = room
+        instance.room_templates[room.vnum] = room
         room.area = pArea
         area, room.name = game_utils.read_string(area)
         area, room.description = game_utils.read_string(area)
@@ -581,7 +581,7 @@ def load_shops(area, pArea):
         area, shop.open_hour = game_utils.read_int(area)
         area, shop.close_hour = game_utils.read_int(area)
         area, t = game_utils.read_to_eol(area)
-        merc.characterTemplate[keeper].pShop = shop
+        instance.npc_templates[keeper].pShop = shop
         merc.shop_list.append(shop)
         pArea.shop_dict[shop.keeper] = shop
     return area
@@ -693,7 +693,7 @@ def load_specials(area):
             return area
         elif letter == 'M':
             area, vnum = game_utils.read_int(area)
-            area, merc.characterTemplate[vnum].spec_fun = game_utils.read_word(area, False)
+            area, instance.npc_templates[vnum].spec_fun = game_utils.read_word(area, False)
         else:
             logger.error("Load_specials: letter noth *SM: %s", letter)
 

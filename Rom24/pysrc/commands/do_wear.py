@@ -5,6 +5,7 @@ logger = logging.getLogger()
 import game_utils
 import merc
 import interp
+import instance
 
 
 def do_wear(ch, argument):
@@ -14,7 +15,7 @@ def do_wear(ch, argument):
         return
     if arg == "all":
         for item_id in ch.items:
-            item = merc.items.get(item_id, None)
+            item = instance.items.get(item_id, None)
             if ch.can_see_item(item):
                 ch.equip(item, False, verbose_all=True)
         return

@@ -7,6 +7,7 @@ import const
 import interp
 import game_utils
 import handler_game
+import instance
 
 
 def do_fill(ch, argument):
@@ -19,7 +20,7 @@ def do_fill(ch, argument):
         ch.send("You do not have that item.\n")
         return
     for f_id in ch.in_room.items:
-        f = merc.items[f_id]
+        f = instance.items[f_id]
         if f.item_type == merc.ITEM_FOUNTAIN:
             fountain = f
             break

@@ -2,7 +2,6 @@ import logging
 
 logger = logging.getLogger()
 
-import db
 import merc
 import interp
 import game_utils

@@ -1,10 +1,9 @@
+import random
 import logging
-import handler_game
 
 logger = logging.getLogger()
 
-import random
-
+import handler_game
 import merc
 import interp
 import handler_room
@@ -37,7 +36,7 @@ def do_enter(ch, argument):
         elif state_checks.IS_SET(portal.value[2], merc.GATE_BUGGY) and (random.randint(1, 99) < 5):
             location = handler_room.get_random_room(ch)
         else:
-            location = merc.rooms[portal.value[3]]
+            location = instance.rooms[portal.value[3]]
         if not location or location == old_room \
                 or not  ch.can_see_room(location.instance_id) \
                 or (location.is_private() and not state_checks.IS_TRUSTED(ch, merc.MAX_LEVEL)):
@@ -73,7 +72,7 @@ def do_enter(ch, argument):
         if old_room == location:
             return
         for fch_id in old_room.people[:]:
-            fch = merc.characters[fch_id]
+            fch = instance.characters[fch_id]
             if not portal or portal.value[0] == -1:
                 # no following through dead portals
                 continue

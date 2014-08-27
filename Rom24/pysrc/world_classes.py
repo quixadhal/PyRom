@@ -1,12 +1,10 @@
-import copy
 import os
-import hashlib
 import json
+import copy
 import logging
 
 logger = logging.getLogger()
 
-import merc
 import environment
 import tables
 import instance
@@ -21,33 +19,33 @@ class Area(instance.Instancer, type_bypass.ObjectType, environment.Environment):
     template_count = 0
     instance_count = 0
 
-    def __init__(self, template=None):
+    def __init__(self, template=None, **kwargs):
         super().__init__()
         self.is_area = True
         self.index = 0
         self.name = ""
         self.no_save = False  # TODO: This should be true for instances
+        self.instance_id = None
+        self.reset_list = []
+        self.file_name = ""
+        self.credits = ""
+        self.age = 15
+        self.character = 0
+        self.low_range = 0
+        self.high_range = 0
+        self.min_vnum = 0
+        self.max_vnum = 0
+        #Empty is a check for if the area contains player_characters or not for use in resets, should default True
+        #As in, this area is just loaded and has no PC objects, True
+        self.empty = False
+        self.player_chars = []
+        if kwargs:
+            [setattr(self, k, copy.deepcopy(v)) for k, v in kwargs.items()]
         if template:
-            import copy
-            [setattr(self, k, copy.deepcopy(v)) for k, v in template.__dict__.items() if k not in merc.not_to_instance]
+            [setattr(self, k, copy.deepcopy(v)) for k, v in template.__dict__.items() if k not in instance.not_to_instance]
             self.instancer()
-            self.instance_setup()
-        else:
-            self.instance_id = None
-            self.reset_list = []
-            self.file_name = ""
-            self.credits = ""
-            self.age = 15
-            self.character = 0
-            self.low_range = 0
-            self.high_range = 0
-            self.min_vnum = 0
-            self.max_vnum = 0
-            #Empty is a check for if the area contains player_characters or not for use in resets, should default True
-            #As in, this area is just loaded and has no PC objects, True
-            self.empty = False
-            self.player_chars = []
         if self.instance_id:
+            self.instance_setup()
             Area.instance_count += 1
         else:
             Area.template_count += 1
@@ -57,11 +55,11 @@ class Area(instance.Instancer, type_bypass.ObjectType, environment.Environment):
             logger.trace("Freeing %s" % str(self))
             if self.instance_id:
                 Area.instance_count -= 1
-                if merc.areas.get(self.instance_id, None):
+                if instance.areas.get(self.instance_id, None):
                     self.instance_destructor()
             else:
                 Area.template_count -= 1
-                del merc.areaTemplate[self.name]
+                del instance.area_templates[self.name]
         except:
             return
 
@@ -104,48 +102,87 @@ class Area(instance.Instancer, type_bypass.ObjectType, environment.Environment):
             raise KeyError('Entity not a player character, or is an NPC on area removal! %r' % type(player_char))
 
     def instance_setup(self):
-        merc.global_instances[self.instance_id] = self
-        merc.areas[self.instance_id] = self
-        if self.name not in merc.instances_by_area.keys():
-            merc.instances_by_area[self.name] = [self.instance_id]
+        instance.global_instances[self.instance_id] = self
+        instance.areas[self.instance_id] = self
+        if self.name not in instance.instances_by_area.keys():
+            instance.instances_by_area[self.name] = [self.instance_id]
         else:
-            merc.instances_by_area[self.name] += [self.instance_id]
+            instance.instances_by_area[self.name] += [self.instance_id]
 
     def instance_destructor(self):
-        merc.instances_by_area[self.name].remove(self.instance_id)
-        del merc.areas[self.instance_id]
-        del merc.global_instances[self.instance_id]
+        instance.instances_by_area[self.name].remove(self.instance_id)
+        del instance.areas[self.instance_id]
+        del instance.global_instances[self.instance_id]
 
-    def to_json(self, obj):
-        if isinstance(obj, Area):
-            special_keys = []
-            result = {k: v for k, v in obj.__dict__.items() if k not in special_keys}
-            result['__type__'] = 'Area'
-            return result
-        return obj
+    def to_json(self, outer_encoder=None):
+        if outer_encoder is None:
+            outer_encoder = json.JSONEncoder.default
+
+        tmp_dict = {}
+        for k, v in self.__dict__.items():
+            if str(type(v)) in ("<class 'function'>", "<class 'method'>"):
+                continue
+            else:
+                tmp_dict[k] = v
+
+        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        return {cls_name: outer_encoder(tmp_dict)}
+
+    @classmethod
+    def from_json(cls, data, outer_decoder=None):
+        if outer_decoder is None:
+            outer_decoder = json.JSONDecoder.decode
+
+        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        if cls_name in data:
+            tmp_data = outer_decoder(data[cls_name])
+            return cls(**tmp_data)
+        return data
 
     def save(self):
-        if not self.no_save:
-            filename = '%03d_%s' % (self.index, self.name.replace(' ', '_'))
-            if self.instance_id is None:
-                pathname = os.path.join(settings.DATA_DIR, 'world', 'areas', filename)
-                os.makedirs(pathname, 0o755, True)
-                filename = os.path.join(pathname, 'area.json')
-            else:
-                md5 = hashlib.md5(filename.encode()).hexdigest()
-                pathname = os.path.join(settings.DATA_DIR, 'world', 'instances', md5[0:2], md5[2:4])
-                os.makedirs(pathname, 0o755, True)
-                filename = os.path.join(pathname, '%d.json' % self.instance_id)
-            logger.info('Area save file: %s', filename)
-            if os.path.isfile(filename):
-                os.replace(filename, filename + 'bkp')
-            fp = open(filename, 'w')
-            json.dump(self, fp, default=self.to_json)
-            fp.close()
-        return
+        if self.instance_id:
+            top_dir = settings.INSTANCE_DIR
+            number = self.instance_id
+        else:
+            top_dir = settings.AREA_DIR
+            number = self.index
+        pathname = os.path.join(top_dir, '%d-%s' % (number, self.name))
 
-    def restore(self):
-        pass
+        os.makedirs(pathname, 0o755, True)
+        filename = os.path.join(pathname, '%d-area.json' % number)
+        logger.info('Saving %s', filename)
+        js = json.dumps(self, default=instance.to_json, indent=4)
+        with open(filename, 'w') as fp:
+            fp.write(js)
+
+    @classmethod
+    def load(cls, index: int=None, instance_id: int=None):
+        if instance_id:
+            if instance_id in instance.characters:
+                logger.warn('Instance %d of npc already loaded!', instance_id)
+                return
+            top_dir = settings.INSTANCE_DIR
+            number = instance_id
+        else:
+            top_dir = settings.AREA_DIR
+            number = index
+
+        target_file = '%d-area.json' % number
+        filename = None
+        for a_path, a_directory, i_files in os.walk(top_dir):
+            if target_file in i_files:
+                filename = os.path.join(a_path, target_file)
+                break
+        if not filename:
+            raise ValueError('Cannot find %s' % target_file)
+
+        with open(filename, 'r') as fp:
+            obj = json.load(fp, object_hook=instance.from_json)
+        if isinstance(obj, Area):
+            return obj
+        else:
+            logger.error('Could not load area data for %d', number)
+            return None
 
 
 class ExtraDescrData:
@@ -196,7 +233,7 @@ class Exit:
             import copy
             [setattr(self, k, copy.deepcopy(v)) for k, v in template.__dict__.items()]
             if self.to_room_vnum != -1 and not None:
-                self.to_room = merc.instances_by_room[self.to_room_vnum][0]
+                self.to_room = instance.instances_by_room[self.to_room_vnum][0]
             else:
                 self.to_room = None
             if self.key <= 0:
@@ -247,13 +284,13 @@ class Reset:
         self.arg4 = 0
         if template:
             [setattr(self, k, copy.deepcopy(v)) for k, v in template.__dict__.items()]
-            self.room = merc.instances_by_room[self.room][0]
+            self.room = instance.instances_by_room[self.room][0]
         if kwargs:
             [setattr(self, k, copy.deepcopy(v)) for k, v in kwargs.items()]
 
     def __repr__(self):
         if not self.instance_id:
-            return "Reset Area: %s Room: %d Type: %s" % (merc.roomTemplate[self.room].area,
+            return "Reset Area: %s Room: %d Type: %s" % (instance.room_templates[self.room].area,
                                                          self.room, self.command)
 
     def to_json(self, outer_encoder=None):
@@ -298,7 +335,7 @@ class Shop:
             [setattr(self, k, copy.deepcopy(v)) for k, v in kwargs.items()]
 
     def __repr__(self):
-            return "Shop Mob: %s Room: %d" % (merc.characters[self.keeper].name, self.room)
+            return "Shop Mob: %s Room: %d" % (instance.characters[self.keeper].name, self.room)
 
     def to_json(self, outer_encoder=None):
         if outer_encoder is None:

@@ -1,8 +1,8 @@
+import random
 import logging
 
 logger = logging.getLogger()
 
-import random
 import game_utils
 import merc
 import const

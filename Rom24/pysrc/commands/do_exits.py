@@ -1,5 +1,4 @@
 import logging
-import state_checks
 
 logger = logging.getLogger()
 
@@ -26,7 +25,7 @@ def do_exits(ch, argument):
                      or (ch.can_see_room(pexit.to_room)
                          and not pexit.exit_info.is_set(merc.EX_CLOSED))):
             found = True
-            pto_room = merc.rooms[pexit.to_room]
+            pto_room = instance.rooms[pexit.to_room]
             if fAuto:
                 if pexit.exit_info.is_set(merc.EX_CLOSED):
                     buf += " [[%s]]" % (merc.dir_name[door])

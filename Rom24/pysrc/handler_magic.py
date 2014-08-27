@@ -31,11 +31,15 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
-import random
-import handler_game
-
 __author__ = 'syn'
+
+import random
+import logging
+
+logger = logging.getLogger()
+
 import merc
+import handler_game
 import state_checks
 import game_utils
 
@@ -52,7 +56,7 @@ def say_spell(ch, spell):
     buf2 = "$n utters the words, '%s'." % spell.name
 
     for rch_id in ch.in_room.people[:]:
-        rch = merc.characters[rch_id]
+        rch = instance.characters[rch_id]
         send = buf2 if ch.guild == rch.guild else buf
         handler_game.act(send, ch, None, rch, merc.TO_VICT)
 

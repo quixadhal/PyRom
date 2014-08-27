@@ -1,12 +1,12 @@
 import logging
-import handler_game
-
 
 logger = logging.getLogger()
 
+import handler_game
 import merc
 import interp
 import game_utils
+import instance
 
 
 def do_pmote(ch, argument):
@@ -18,7 +18,7 @@ def do_pmote(ch, argument):
         return
     handler_game.act("$n $t", ch, argument, None, merc.TO_CHAR)
     for vch_id in ch.in_room.people:
-        vch = merc.characters[vch_id]
+        vch = instance.characters[vch_id]
         if vch.desc is None or vch == ch:
             continue
         if vch.name not in argument:

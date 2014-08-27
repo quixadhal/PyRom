@@ -17,7 +17,7 @@ def spell_heat_metal(sn, level, ch, victim, target):
         total_items.update([an_item for an_item in victim.equipped.values()])
         total_items.update(victim.contents)
         for item_id in total_items:
-            item = merc.items[item_id]
+            item = instance.items[item_id]
             if random.randint(1, 2 * level) > item.level \
                     and not handler_magic.saves_spell(level, victim, merc.DAM_FIRE) \
                     and not item.flags.no_n_metal and not item.flags.burn_proof:

@@ -22,7 +22,7 @@ def spell_gas_breath(sn, level, ch, victim, target):
 
     for vch_id in ch.in_room.people:
 
-        vch = merc.characters[vch_id]
+        vch = instance.characters[vch_id]
         if fight.is_safe_spell(ch, vch, True) or (ch.is_npc() and vch.is_npc() and (ch.fighting == vch or vch.fighting == ch)):
             continue
 

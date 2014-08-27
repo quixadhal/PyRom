@@ -1,19 +1,17 @@
 import random
 import logging
-import handler_game
-
-import handler_room
-
 
 logger = logging.getLogger()
 
-
+import handler_game
+import handler_room
 import handler_ch
 import state_checks
 import merc
 import interp
 import fight
 import update
+import instance
 
 
 def do_flee( ch, argument ):
@@ -33,7 +31,7 @@ def do_flee( ch, argument ):
                 or pexit.exit_info.is_set(merc.EX_CLOSED) \
                 or random.randint(0, ch.daze) != 0 \
                 or (ch.is_npc()
-                    and state_checks.IS_SET(merc.rooms[pexit.to_room].room_flags, merc.ROOM_NO_MOB)):
+                    and state_checks.IS_SET(instance.rooms[pexit.to_room].room_flags, merc.ROOM_NO_MOB)):
             continue
 
         handler_ch.move_char(ch, door, False)

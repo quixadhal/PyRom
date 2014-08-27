@@ -1,13 +1,14 @@
-import logging
 import random
-import handler_game
-import handler_magic
+import logging
 
 logger = logging.getLogger()
 
 import merc
+import handler_game
+import handler_magic
 import state_checks
 import game_utils
+import instance
 
 
 class Environment:
@@ -29,7 +30,7 @@ class Environment:
 
     @property
     def environment(self):
-        return merc.global_instances.get(self._environment, None)
+        return instance.global_instances.get(self._environment, None)
 
     @environment.setter
     def environment(self, input_value):
@@ -93,7 +94,7 @@ class Environment:
         plague.modifier = -5
         plague.bitvector = merc.AFF_PLAGUE
         for vch_id in self.people[:]:
-                vch = merc.characters[vch_id]
+                vch = instance.characters[vch_id]
                 if not handler_magic.saves_spell(plague.level - 2, vch, merc.DAM_DISEASE) \
                         and not vch.is_immortal() and not vch.is_affected(merc.AFF_PLAGUE) \
                         and random.randint(0, 5) == 0:
@@ -115,7 +116,7 @@ class Environment:
         pass
 
     def has_key(self, key):
-        instance_id = [item_id for item_id in self.items if merc.items[item_id].vnum == key.vnum]
+        instance_id = [item_id for item_id in self.items if instance.items[item_id].vnum == key.vnum]
         if instance_id:
             return True
         return False
@@ -135,7 +136,7 @@ class Environment:
         contents = self.inventory[:]
         counted = [self.instance_id]
         for content_id in contents:
-            content = merc.items[content_id]
+            content = instance.items[content_id]
             number += 1
             if content.instance_id in counted:
                 logger.debug("BUG: Objects contain eachother. %s(%d) - %s(%d)" %
@@ -153,7 +154,7 @@ class Environment:
         contents = item.inventory[:]
         counted = [item.instance_id]
         for content_id in contents:
-            content = merc.items[content_id]
+            content = instance.items[content_id]
             if content.instance_id in counted:
                 print("BUG: Objects contain eachother. %s(%d) - %s(%d)" %
                       (item.short_descr, item.instance_id, content.short_descr, content.instance_id))
@@ -170,7 +171,7 @@ class Environment:
     def true_weight(item):
         weight = item.weight
         for content_id in item.inventory[:]:
-            content = merc.items[content_id]
+            content = instance.items[content_id]
             weight += content.get_weight()
         return weight
 

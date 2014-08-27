@@ -7,6 +7,8 @@ import interp
 import game_utils
 import handler_game
 import object_creator
+import instance
+
 
 def do_mload(ch, argument):
     argument, arg = game_utils.read_word(argument)
@@ -14,10 +16,10 @@ def do_mload(ch, argument):
         ch.send("Syntax: load mob <vnum>.\n")
         return
     vnum = int(arg)
-    if vnum not in merc.characterTemplate:
+    if vnum not in instance.npc_templates:
         ch.send("No mob has that vnum.\n")
         return
-    template = merc.characterTemplate[vnum]
+    template = instance.npc_templates[vnum]
     victim = object_creator.create_mobile(template)
     ch.in_room.put(victim)
     handler_game.act("$n has created $N!", ch, None, victim, merc.TO_ROOM)

@@ -1,16 +1,13 @@
+import random
 import logging
-
-import game_utils
-import handler_game
-import shop_utils
-import state_checks
-
 
 logger = logging.getLogger()
 
-import random
 import merc
 import interp
+import game_utils
+import handler_game
+import shop_utils
 
 
 def do_sell(ch, argument):

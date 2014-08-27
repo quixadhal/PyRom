@@ -6,7 +6,7 @@ import state_checks
 
 def spell_mass_invis(sn, level, ch, victim, target):
     for gch_id in ch.in_room.people:
-        gch = merc.characters[gch_id]
+        gch = instance.characters[gch_id]
         if not gch.is_same_group(ch) or gch.is_affected(merc.AFF_INVISIBLE):
             continue
         handler_game.act("$n slowly fades out of existence.", gch, None, None, merc.TO_ROOM)

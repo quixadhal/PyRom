@@ -71,9 +71,9 @@ class Grouping:
             return False
 
         if self.leader is not None:
-            self = merc.characters[self.leader]
+            self = instance.characters[self.leader]
         if bch.leader is not None:
-            bch = merc.characters[bch.leader]
+            bch = instance.characters[bch.leader]
         return self == bch
 
     @property
@@ -98,11 +98,11 @@ class Grouping:
             self.affected_by.rem_bit(merc.AFF_CHARM)
             self.affect_strip('charm person')
 
-        if merc.characters[self.master].can_see(self) and self.in_room:
+        if instance.characters[self.master].can_see(self) and self.in_room:
             handler_game.act("$n stops following you.", self, None, self.master, merc.TO_VICT)
             handler_game.act("You stop following $N.", self, None, self.master, merc.TO_CHAR)
-        if merc.characters[self.master].pet == self.instance_id:
-            merc.characters[self.master].pet = None
+        if instance.characters[self.master].pet == self.instance_id:
+            instance.characters[self.master].pet = None
         self.master = None
         self.leader = None
         return
@@ -122,7 +122,7 @@ class Grouping:
         if not item.owner or item.owner is None:
             return True
         owner = None
-        for wch in merc.characters.values():
+        for wch in instance.characters.values():
             if wch.name == item.owner:
                 owner = wch
         if owner is None:
@@ -157,12 +157,12 @@ class Fight:
 
     @property
     def fighting(self):
-        return merc.characters.get(self._fighting, None)
+        return instance.characters.get(self._fighting, None)
 
     @fighting.setter
     def fighting(self, value):
         if type(value) is int:
-            value = merc.characters.get(value, None)  # Ensure fighting exists.
+            value = instance.characters.get(value, None)  # Ensure fighting exists.
         if value and not isinstance(value, Fight):
             logger.error("Instance fighting non combat. %s fighting %s", self.name, value.name)
             return
@@ -547,7 +547,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
     def can_see(self, victim):
         # RT changed so that WIZ_INVIS has levels */
         if type(victim) is int:
-            victim = merc.characters[victim]
+            victim = instance.characters[victim]
         if self == victim:
             return True
         if self.trust < victim.invis_level:
@@ -592,7 +592,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                 and self.act.is_set(merc.PLR_HOLYLIGHT):
             return True
         if type(item) == int:
-            item = merc.items.get(item, None)
+            item = instance.items.get(item, None)
         if item.flags.vis_death:
             return False
         if self.is_affected(merc.AFF_BLIND) \
@@ -610,7 +610,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         return True
 
     def can_see_room(self, room_id):
-        room = merc.rooms[room_id]
+        room = instance.rooms[room_id]
         if state_checks.IS_SET(room.room_flags, merc.ROOM_IMP_ONLY) and self.trust < merc.MAX_LEVEL:
             return False
         if state_checks.IS_SET(room.room_flags, merc.ROOM_GODS_ONLY) and not self.is_immortal():
@@ -638,10 +638,10 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
 
         for item_id in self.equipped.values():
             if item_id:
-                item = merc.global_instances[item_id]
+                item = instance.global_instances[item_id]
                 self.raw_unequip(item)
         for item_id in self.inventory[:]:
-            item = merc.global_instances[item_id]
+            item = instance.global_instances[item_id]
             item.extract()
 
         if self.in_room:
@@ -649,8 +649,8 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
 
         # Death room is set in the clan table now
         if not fPull:
-            room_id = merc.instances_by_room[self.clan.hall][0]
-            room = merc.rooms[room_id]
+            room_id = instance.instances_by_room[self.clan.hall][0]
+            room = instance.rooms[room_id]
             if self.in_room:
                 self.in_room.get(self)
                 room.put(self)
@@ -662,11 +662,11 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             self.do_return("")
             self.desc = None
 
-        for wch in merc.player_characters.values():
+        for wch in instance.players.values():
             if wch.reply == self:
                 wch.reply = None
 
-        if self.instance_id not in merc.characters:
+        if self.instance_id not in instance.characters:
             logger.error("Extract_char: char not found.")
             return
 
@@ -683,8 +683,8 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         if word == "self":
             return ch
         number, arg = game_utils.number_argument(argument)
-        ch_list = [merc.characters[rch_id] for rch_id in ch.in_room.people[:]
-                   if game_utils.is_name(word, merc.characters[rch_id].name)]
+        ch_list = [instance.characters[rch_id] for rch_id in ch.in_room.people[:]
+                   if game_utils.is_name(word, instance.characters[rch_id].name)]
         if ch_list:
             try:
                 if ch.can_see(ch_list[number - 1]):
@@ -700,8 +700,8 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             return wch
         number, arg = game_utils.number_argument(argument)
         arg = arg.lower()
-        ch_list = [merc.characters[wch_id] for wch_id in sorted(merc.characters.keys())
-                   if game_utils.is_name(arg, merc.characters[wch_id].name)]
+        ch_list = [instance.characters[wch_id] for wch_id in sorted(instance.characters.keys())
+                   if game_utils.is_name(arg, instance.characters[wch_id].name)]
         if ch_list:
             try:
                 if ch.can_see(ch_list[number - 1]):
@@ -714,7 +714,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
     def get_item_list(ch, argument, contents):
         number, arg = game_utils.number_argument(argument)
         arg = arg.lower()
-        item_list = [merc.items[item_id] for item_id in contents if game_utils.is_name(arg, merc.items[item_id].name)]
+        item_list = [instance.items[item_id] for item_id in contents if game_utils.is_name(arg, instance.items[item_id].name)]
         if item_list:
             try:
                 if ch.can_see_item(item_list[number - 1]):
@@ -728,7 +728,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         number, arg = game_utils.number_argument(argument)
         count = 0
         for item_id in ch.items:
-            item = merc.items.get(item_id, None)
+            item = instance.items.get(item_id, None)
             if viewer.can_see_item(item) and game_utils.is_name(arg, item.name.lower()):
                 count += 1
                 if count == number:
@@ -741,7 +741,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         count = 0
         for loc, item_id in ch.equipped.items():
             if item_id:
-                item = merc.items[item_id]
+                item = instance.items[item_id]
                 if ch.can_see_item(item) and game_utils.is_name(arg, item.name.lower()):
                     #print('inside')
                     count += 1
@@ -774,8 +774,8 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             return item
         number, arg = game_utils.number_argument(argument)
         arg = arg.lower()
-        item_list = [merc.items[item_id] for item_id in sorted(merc.items.keys())
-                     if game_utils.is_name(arg, merc.items[item_id].name)]
+        item_list = [instance.items[item_id] for item_id in sorted(instance.items.keys())
+                     if game_utils.is_name(arg, instance.items[item_id].name)]
         if item_list:
             try:
                 if ch.can_see_item(item_list[number - 1]):
@@ -922,7 +922,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             return None
         else:
             item_id = self.equipped[check_loc]
-            return merc.items[item_id]
+            return instance.items[item_id]
 
     def apply_affect(self, aff_object):
         """
@@ -1113,12 +1113,12 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         """
         if isinstance(unequip_from, int):
             try:
-                item = merc.items[unequip_from]
+                item = instance.items[unequip_from]
             except:
                 return False
         elif isinstance(unequip_from, str):
             try:
-                item = merc.items[self.equipped[unequip_from]]
+                item = instance.items[self.equipped[unequip_from]]
             except:
                 return False
         elif hasattr(unequip_from, 'is_item') and unequip_from.is_item:

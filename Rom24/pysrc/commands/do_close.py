@@ -1,16 +1,14 @@
 import logging
 
-import interp
-
-
 logger = logging.getLogger()
 
-from handler_room import find_door
-from interp import cmd_type
+import interp
+import handler_room
 import merc
 import game_utils
 import state_checks
 import handler_game
+import instance
 
 
 def do_close(ch, argument):
@@ -49,8 +47,8 @@ def do_close(ch, argument):
         handler_game.act("You close $p.", ch, obj, None, merc.TO_CHAR)
         handler_game.act("$n closes $p.", ch, obj, None, merc.TO_ROOM)
         return
-    door = find_door(ch, arg)
-    if find_door(ch, arg) >= 0:
+    door = handler_room.find_door(ch, arg)
+    if handler_room.find_door(ch, arg) >= 0:
         # 'close door'
         pexit = ch.in_room.exit[door]
         if pexit.exit_info.is_set(merc.EX_CLOSED):
@@ -61,13 +59,13 @@ def do_close(ch, argument):
         ch.send("Ok.\n")
 
         # close the other side
-        to_room = merc.rooms[pexit.to_room]
+        to_room = instance.rooms[pexit.to_room]
         pexit_rev = to_room.exit[merc.rev_dir[door]] if pexit.to_room else None
         if to_room and pexit_rev and pexit_rev.to_room == ch.in_room.instance_id:
             pexit_rev.exit_info.set_bit(merc.EX_CLOSED)
             for rch_id in to_room.people[:]:
-                rch = merc.characters[rch_id]
+                rch = instance.characters[rch_id]
                 handler_game.act("The $d closes.", rch, None, pexit_rev.keyword, merc.TO_CHAR)
 
 
-interp.register_command(cmd_type('close', do_close, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(interp.cmd_type('close', do_close, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))

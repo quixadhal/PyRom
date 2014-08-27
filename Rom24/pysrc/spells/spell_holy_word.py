@@ -13,7 +13,7 @@ def spell_holy_word(sn, level, ch, victim, target):
 
     for vch_id in ch.in_room.people:
 
-        vch = merc.characters[vch_id]
+        vch = instance.characters[vch_id]
         if (ch.is_good() and vch.is_good()) or (
             ch.is_evil() and vch.is_evil()) or (
             ch.is_neutral() and vch.is_neutral()):

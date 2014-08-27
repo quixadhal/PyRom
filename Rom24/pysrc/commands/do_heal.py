@@ -1,21 +1,21 @@
 import logging
 
-import game_utils
-import handler_game
-import state_checks
-
 
 logger = logging.getLogger()
 
+import game_utils
+import handler_game
+import state_checks
 import const
 import merc
 import interp
+import instance
 
 
 def do_heal(ch, argument):
     # check for healer
     for mob_id in ch.in_room.people[:]:
-        healer = merc.characters[mob_id]
+        healer = instance.characters[mob_id]
         if healer.is_npc() and healer.act.is_set(merc.ACT_IS_HEALER):
             mob = healer
     if not mob:

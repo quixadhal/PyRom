@@ -1,11 +1,9 @@
+import random
 import logging
-
-import state_checks
-
 
 logger = logging.getLogger()
 
-import random
+import state_checks
 import merc
 import fight
 import const

@@ -32,6 +32,9 @@
  ************/
 """
 from collections import OrderedDict, namedtuple
+import logging
+
+logger = logging.getLogger()
 
 clan_type = namedtuple('clan_type', 'name, who_name, hall, independent')
 clan_table = OrderedDict()

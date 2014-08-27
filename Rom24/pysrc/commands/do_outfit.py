@@ -6,6 +6,8 @@ import merc
 import interp
 import const
 import object_creator
+import instance
+
 
 # equips a character
 def do_outfit(ch, argument):
@@ -15,7 +17,7 @@ def do_outfit(ch, argument):
 
     item = ch.slots.light
     if not item:
-        item = object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_SCHOOL_BANNER], 0)
+        item = object_creator.create_item(instance.item_templates[merc.OBJ_VNUM_SCHOOL_BANNER], 0)
         item.cost = 0
         ch.put(item)
         ch.equip(item, True, False)
@@ -23,7 +25,7 @@ def do_outfit(ch, argument):
 
     item = ch.slots.body
     if not item:
-        item = object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_SCHOOL_VEST], 0)
+        item = object_creator.create_item(instance.item_templates[merc.OBJ_VNUM_SCHOOL_VEST], 0)
         item.cost = 0
         ch.put(item)
         ch.equip(item, True, False)
@@ -36,7 +38,7 @@ def do_outfit(ch, argument):
         for k, weapon in const.weapon_table.items():
             if argument in weapon.gsn:
                 vnum = weapon.vnum
-        item = object_creator.create_item(merc.itemTemplate[vnum], 0)
+        item = object_creator.create_item(instance.item_templates[vnum], 0)
         ch.put(item)
         ch.equip(item, True, False)
         item = None
@@ -44,7 +46,7 @@ def do_outfit(ch, argument):
     item = ch.slots.main_hand
     shield = ch.slots.off_hand
     if (not item or not item.flags.two_handed) and not shield:
-        item = object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_SCHOOL_SHIELD], 0)
+        item = object_creator.create_item(instance.item_templates[merc.OBJ_VNUM_SCHOOL_SHIELD], 0)
         item.cost = 0
         ch.put(item)
         ch.equip(item, True, False)

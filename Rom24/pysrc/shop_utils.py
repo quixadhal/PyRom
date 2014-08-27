@@ -1,8 +1,12 @@
 __author__ = 'syn'
+import logging
+
+logger = logging.getLogger()
+
 import merc
-import state_checks
 import handler_game
 import game_utils
+import instance
 
 
 # get an object from a shopkeeper's list */
@@ -10,7 +14,7 @@ def get_obj_keeper(ch, keeper, argument):
     number, arg = game_utils.number_argument(argument)
     count = 0
     for obj_id in keeper.inventory[:]:
-        obj = merc.items[obj_id]
+        obj = instance.items[obj_id]
         if not obj.equipped_to and keeper.can_see_item(obj) and ch.can_see_item(obj) and game_utils.is_name(arg, obj.name):
             count += 1
             if count == number:
@@ -25,7 +29,7 @@ def obj_to_keeper(item, ch):
     n_item = None
     spot = -1
     for i, t_item_id in enumerate(ch.inventory):
-        t_item = merc.items[t_item_id]
+        t_item = instance.items[t_item_id]
         if item.vnum == t_item.vnum \
                 and item.short_descr == t_item.short_descr:
             # if this is an unlimited item, destroy the new one */
@@ -48,9 +52,9 @@ def obj_to_keeper(item, ch):
     ch.carry_weight += item.get_weight()
 
 def get_cost(keeper, item, fBuy):
-    if not item or not merc.characterTemplate[keeper.vnum].pShop:
+    if not item or not instance.npc_templates[keeper.vnum].pShop:
         return 0
-    pShop = merc.characterTemplate[keeper.vnum].pShop
+    pShop = instance.npc_templates[keeper.vnum].pShop
     if fBuy:
         cost = item.cost * pShop.profit_buy // 100
     else:
@@ -62,7 +66,7 @@ def get_cost(keeper, item, fBuy):
 
         if not item.sell_extract:
             for item2_id in keeper.inventory[:]:
-                item2 = merc.items[item2_id]
+                item2 = instance.items[item2_id]
                 if item.vnum == item2_id.vnum and item.short_descr == item2_id.short_descr:
                     if item.inventory:
                         cost /= 2
@@ -79,8 +83,8 @@ def get_cost(keeper, item, fBuy):
 def find_keeper(ch):
     pShop = None
     for keeper_id in ch.in_room.people[:]:
-        keeper = merc.characters[keeper_id]
-        keeperTemplate = merc.characterTemplate[keeper.vnum]
+        keeper = instance.characters[keeper_id]
+        keeperTemplate = instance.npc_templates[keeper.vnum]
         if keeper.is_npc() and keeperTemplate.pShop:
             pShop = keeperTemplate.pShop
             break

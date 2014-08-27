@@ -20,7 +20,7 @@ def do_smote(ch, argument):
         return
     ch.send(argument + "\n")
     for vch_id in ch.in_room.people:
-        vch = merc.characters[vch_id]
+        vch = instance.characters[vch_id]
         if vch.desc is None or vch == ch:
             continue
         if vch.name not in argument:

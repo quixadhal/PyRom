@@ -6,11 +6,12 @@ import merc
 import fight
 import interp
 import state_checks
+import instance
 
 
 def do_peace(ch, argument):
     for rch_id in ch.in_room.people[:]:
-        rch = merc.characters[rch_id]
+        rch = instance.characters[rch_id]
         if rch.fighting:
             fight.stop_fighting(rch, True)
         if rch.is_npc() and rch.act.is_set(merc.ACT_AGGRESSIVE):

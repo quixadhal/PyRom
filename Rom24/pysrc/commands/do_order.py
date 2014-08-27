@@ -1,12 +1,11 @@
 import logging
-import handler_game
-
 
 logger = logging.getLogger()
 
 import merc
 import interp
 import game_utils
+import handler_game
 import state_checks
 
 
@@ -43,7 +42,7 @@ def do_order(ch, argument):
             return
     found = False
     for och_id in ch.in_room.people[:]:
-        och = merc.characters[och_id]
+        och = instance.characters[och_id]
         if state_checks.IS_AFFECTED(och, merc.AFF_CHARM) \
                 and och.master == ch \
                 and (fAll or och == victim):

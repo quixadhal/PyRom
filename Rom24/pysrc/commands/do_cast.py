@@ -1,3 +1,4 @@
+import random
 import logging
 
 logger = logging.getLogger()
@@ -5,7 +6,6 @@ logger = logging.getLogger()
 import game_utils
 import handler_magic
 import state_checks
-import random
 import merc
 import interp
 import fight
@@ -171,7 +171,7 @@ def do_cast(ch, argument):
     if (sn.target == merc.TAR_CHAR_OFFENSIVE or (sn.target == merc.TAR_OBJ_CHAR_OFF and target == merc.TARGET_CHAR)) \
             and victim != ch and victim.master != ch:
         for vch_id in ch.in_room.people[:]:
-            vch = merc.characters[vch_id]
+            vch = instance.characters[vch_id]
             if victim == vch and not victim.fighting:
                 fight.check_killer(victim, ch)
                 fight.multi_hit(victim, ch, merc.TYPE_UNDEFINED)

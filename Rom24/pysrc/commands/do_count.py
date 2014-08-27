@@ -1,15 +1,19 @@
 import logging
-import handler_ch
 
 logger = logging.getLogger()
 
+import handler_ch
 import merc
 import interp
 import nanny
 
 #TODO: Known broken
 # for  keeping track of the player count
+max_on = 0
+
+
 def do_count(ch, argument):
+    global max_on
     count = len([d for d in merc.descriptor_list if d.is_connected(nanny.con_playing) and ch.can_see(handler_ch.CH(d))])
     max_on = max(count, max_on)
 

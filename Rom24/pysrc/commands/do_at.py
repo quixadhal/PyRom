@@ -5,7 +5,7 @@ logger = logging.getLogger()
 import game_utils
 import merc
 import interp
-import handler_game
+import instance
 
 
 def do_at(ch, argument):
@@ -29,7 +29,7 @@ def do_at(ch, argument):
 
     # See if 'ch' still exists before continuing!
     # Handles 'at XXXX quit' case.
-    for wch in merc.characters.values():
+    for wch in instance.characters.values():
         if wch == ch:
             location.get(ch)
             original.put(ch)

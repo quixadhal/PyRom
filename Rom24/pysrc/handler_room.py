@@ -32,6 +32,9 @@
  ************/
 """
 import random
+import copy
+import os
+import json
 import logging
 
 logger = logging.getLogger()
@@ -43,13 +46,14 @@ import environment
 import state_checks
 import inventory
 import type_bypass
+import settings
 
 
 class Room(instance.Instancer, environment.Environment, inventory.Inventory, type_bypass.ObjectType):
     template_count = 0
     instance_count = 0
 
-    def __init__(self, template=None):
+    def __init__(self, template=None, **kwargs):
         super().__init__()
         self.is_room = True
         self.vnum = 0
@@ -66,11 +70,30 @@ class Room(instance.Instancer, environment.Environment, inventory.Inventory, typ
         self.heal_rate = 100
         self.mana_rate = 100
         self.clan = None
+        self.special_inventory = []
+        if kwargs:
+            [setattr(self, k, copy.deepcopy(v)) for k, v in kwargs.items()]
         if template:
-            [setattr(self, k, v) for k, v in template.__dict__.items()]
+            [setattr(self, k, copy.deepcopy(v)) for k, v in template.__dict__.items()]
             self.instancer()
-            self.instance_setup()
+        if self.environment:
+            if self._environment not in instance.global_instances.keys():
+                self.environment = None
+        if self.special_inventory:
+            for t in self.special_inventory[:]:
+                self.inventory += t[0]
+                import importlib
+                words = t[1].split('.')
+                class_name = words[-1]
+                module_name = '.'.join(words[0:-1])
+                if module_name != '' and class_name != '':
+                    module_ref = importlib.import_module(module_name)
+                    class_ref = getattr(module_ref, class_name)
+                    if hasattr(class_ref, 'load'):
+                        return class_ref.load(t[0])
+            del self.special_inventory
         if self.instance_id:
+            self.instance_setup()
             Room.instance_count += 1
         else:
             Room.template_count += 1
@@ -80,7 +103,7 @@ class Room(instance.Instancer, environment.Environment, inventory.Inventory, typ
             logger.trace("Freeing %s" % str(self))
             if self.instance_id:
                 Room.instance_count -= 1
-                if merc.rooms.get(self.instance_id, None):
+                if instance.rooms.get(self.instance_id, None):
                     self.instance_destructor()
             else:
                 Room.template_count -= 1
@@ -144,17 +167,17 @@ class Room(instance.Instancer, environment.Environment, inventory.Inventory, typ
         return instance_object
 
     def instance_setup(self):
-        merc.global_instances[self.instance_id] = self
-        merc.rooms[self.instance_id] = self
-        if self.vnum not in merc.instances_by_room.keys():
-            merc.instances_by_room[self.vnum] = [self.instance_id]
+        instance.global_instances[self.instance_id] = self
+        instance.rooms[self.instance_id] = self
+        if self.vnum not in instance.instances_by_room.keys():
+            instance.instances_by_room[self.vnum] = [self.instance_id]
         else:
-            merc.instances_by_room[self.vnum] += [self.instance_id]
+            instance.instances_by_room[self.vnum] += [self.instance_id]
 
     def instance_destructor(self):
-        merc.instances_by_room[self.vnum].remove(self.instance_id)
-        del merc.rooms[self.instance_id]
-        del merc.global_instances[self.instance_id]
+        instance.instances_by_room[self.vnum].remove(self.instance_id)
+        del instance.rooms[self.instance_id]
+        del instance.global_instances[self.instance_id]
 
     def is_dark(room_instance):
         if room_instance.available_light > 0:
@@ -180,14 +203,108 @@ class Room(instance.Instancer, environment.Environment, inventory.Inventory, typ
             return True
         return False
 
+    # Serialization
+    def to_json(self, outer_encoder=None):
+        if outer_encoder is None:
+            outer_encoder = json.JSONEncoder.default
+
+        tmp_dict = {}
+        for k, v in self.__dict__.items():
+            if str(type(v)) in ("<class 'function'>", "<class 'method'>"):
+                continue
+            if str(k) == 'inventory' and v is not None:
+                # We need to save the inventory special to keep the type data with it.
+                t = 'special_inventory'
+                tmp_dict[t] = []
+                for i in v:
+                    if i in instance.players:
+                        pass
+                    elif i in instance.rooms:
+                        pass
+                    elif i in instance.areas:
+                        pass
+                    else:
+                        tmp_dict[t].append(tuple((i, instance.global_instances[i].__module__ + '.'
+                                                  + instance.global_instances[i].__class__.__name__)))
+            else:
+                tmp_dict[k] = v
+
+        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        return {cls_name: outer_encoder(tmp_dict)}
+
+    @classmethod
+    def from_json(cls, data, outer_decoder=None):
+        if outer_decoder is None:
+            outer_decoder = json.JSONDecoder.decode
+
+        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        if cls_name in data:
+            tmp_data = outer_decoder(data[cls_name])
+            return cls(**tmp_data)
+        return data
+
+    def save(self):
+        if self.instance_id:
+            top_dir = settings.INSTANCE_DIR
+            number = self.instance_id
+        else:
+            top_dir = settings.AREA_DIR
+            number = self.vnum
+        pathname = os.path.join(top_dir, '%d-%s' % (self.in_area.index, self.in_area.name), 'rooms')
+
+        os.makedirs(pathname, 0o755, True)
+        filename = os.path.join(pathname, '%d-room.json' % number)
+        logger.info('Saving %s', filename)
+        js = json.dumps(self, default=instance.to_json, indent=4)
+        with open(filename, 'w') as fp:
+            fp.write(js)
+
+        if self.inventory:
+            for item_id in self.inventory[:]:
+                item = instance.items[item_id]
+                item.save(in_inventory=True)
+
+    @classmethod
+    def load(cls, vnum: int=None, instance_id: int=None):
+        if instance_id:
+            if instance_id in instance.rooms:
+                logger.warn('Instance %d of room already loaded!', instance_id)
+                return
+            pathname = settings.INSTANCE_DIR
+            number = instance_id
+        elif vnum:
+            pathname = settings.AREA_DIR
+            number = vnum
+        else:
+            raise ValueError('To load a Room, you must provide either a VNUM or an Instance_ID!')
+
+        target_file = '%d-room.json' % number
+        filename = None
+        for a_path, a_directory, i_files in os.walk(pathname):
+            if target_file in i_files:
+                filename = os.path.join(a_path, target_file)
+                break
+        if not filename:
+            raise ValueError('Cannot find %s' % target_file)
+
+        with open(filename, 'r') as fp:
+            obj = json.load(fp, object_hook=instance.from_json)
+        if isinstance(obj, Room):
+            # Inventory is already loaded by Room's __init__ function.
+            return obj
+        else:
+            logger.error('Could not load room data for %d', number)
+            return None
+
+
 def get_room_by_vnum(vnum):
-    room_id = merc.instances_by_room[vnum][0]
-    return merc.rooms[room_id]
+    room_id = instance.instances_by_room[vnum][0]
+    return instance.rooms[room_id]
 
 def get_random_room(ch):
     room = None
     while True:
-        room = random.choice(merc.rooms.values())
+        room = random.choice(instance.rooms.values())
         if ch.can_see_room(room) and not room.is_private() \
             and not state_checks.IS_SET(room.room_flags, merc.ROOM_PRIVATE) \
             and not state_checks.IS_SET(room.room_flags, merc.ROOM_SOLITARY) \

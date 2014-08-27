@@ -34,8 +34,8 @@
 
 import os
 import random
-import logging
 import time
+import logging
 
 logger = logging.getLogger()
 
@@ -50,9 +50,10 @@ import handler_magic
 import handler_game
 import handler_ch
 import game_utils
+import instance
 
-# * Advancement stuff.
 
+# Advancement stuff.
 def advance_level(ch, hide):
     ch.last_level = (ch.played + (int)(merc.current_time - ch.logon)) // 3600
 
@@ -148,7 +149,7 @@ def hit_gain(ch):
 
     gain = gain * ch.in_room.heal_rate // 100
 
-    if ch.on and merc.items[ch.on].item_type == merc.ITEM_FURNITURE:
+    if ch.on and instance.items[ch.on].item_type == merc.ITEM_FURNITURE:
         gain = gain * ch.on.value[3] // 100
 
     if ch.is_affected(merc.AFF_POISON):
@@ -205,7 +206,7 @@ def mana_gain(ch):
 
     gain = gain * ch.in_room.mana_rate // 100
 
-    if ch.on and merc.items[ch.on].item_type == merc.ITEM_FURNITURE:
+    if ch.on and instance.items[ch.on].item_type == merc.ITEM_FURNITURE:
         gain = gain * ch.on.value[4] // 100
 
     if ch.is_affected(merc.AFF_POISON):
@@ -242,7 +243,7 @@ def move_gain(ch):
 
     gain = gain * ch.in_room.heal_rate // 100
 
-    if ch.on and merc.items[ch.on].item_type == merc.ITEM_FURNITURE:
+    if ch.on and instance.items[ch.on].item_type == merc.ITEM_FURNITURE:
         gain = gain * ch.on.value[3] // 100
 
     if ch.is_affected(merc.AFF_POISON):
@@ -281,11 +282,11 @@ def gain_condition(ch, iCond, value):
 # * -- Furey
 def npc_update():
     # Examine all mobs. */
-    for npc in merc.characters.values():
+    for npc in instance.characters.values():
         if not npc.is_npc() or npc.in_room is None or npc.is_affected(merc.AFF_CHARM):
             continue
 
-        if merc.areaTemplate[npc.in_room.area] and not npc.act.is_set(merc.ACT_UPDATE_ALWAYS):
+        if instance.area_templates[npc.in_room.area] and not npc.act.is_set(merc.ACT_UPDATE_ALWAYS):
             continue
 
         # Examine call for special procedure */
@@ -307,7 +308,7 @@ def npc_update():
             top = 1
             item_best = None
             for item_id in npc.in_room.items:
-                item = merc.items[item_id]
+                item = instance.items[item_id]
                 if item.take and npc.can_loot(item) and item.cost > top and item.cost > 0:
                     item_best = item
                     top = item.cost
@@ -326,13 +327,13 @@ def npc_update():
                 and pexit \
                 and pexit.to_room \
                 and not pexit.exit_info.is_set(merc.EX_CLOSED) \
-                and not state_checks.IS_SET(merc.rooms[pexit.to_room].room_flags, merc.ROOM_NO_MOB) \
+                and not state_checks.IS_SET(instance.rooms[pexit.to_room].room_flags, merc.ROOM_NO_MOB) \
                 and (not npc.act.is_set(merc.ACT_STAY_AREA)
-                     or merc.rooms[pexit.to_room].area == npc.in_room.area) \
+                     or instance.rooms[pexit.to_room].area == npc.in_room.area) \
                 and (not npc.act.is_set(merc.ACT_OUTDOORS)
-                     or not state_checks.IS_SET(merc.rooms[pexit.to_room].room_flags, merc.ROOM_INDOORS)) \
+                     or not state_checks.IS_SET(instance.rooms[pexit.to_room].room_flags, merc.ROOM_INDOORS)) \
                 and (not npc.act.is_set(merc.ACT_INDOORS)
-                     or state_checks.IS_SET(merc.rooms[pexit.to_room].room_flags, merc.ROOM_INDOORS)):
+                     or state_checks.IS_SET(instance.rooms[pexit.to_room].room_flags, merc.ROOM_INDOORS)):
             handler_ch.move_char(npc, door, False)
 
 
@@ -412,7 +413,7 @@ def weather_update():
 
     if buf:
         import nanny
-        for char in merc.player_characters.items():
+        for char in instance.players.items():
             if char.desc.is_connected(nanny.con_playing) and state_checks.IS_OUTSIDE(char) and state_checks.IS_AWAKE(
                     char):
                 char.send(buf)
@@ -430,15 +431,15 @@ def char_update():
     if save_number > 29:
         save_number = 0
     ch_quit = []
-    id_list = [instance_id for instance_id in merc.characters.keys()]
+    id_list = [instance_id for instance_id in instance.characters.keys()]
     for character_id in id_list:
-        ch = merc.characters[character_id]
+        ch = instance.characters[character_id]
         if ch.timer > 30:
             ch_quit.append(ch)
 
         if ch.position >= merc.POS_STUNNED:
             # check to see if we need to go home */
-            if ch.is_npc() and ch.zone and ch.zone != merc.areaTemplate[ch.zone] \
+            if ch.is_npc() and ch.zone and ch.zone != instance.area_templates[ch.zone] \
                     and not ch.desc and not ch.fighting\
                     and not ch.is_affected(merc.AFF_CHARM) and random.randint(1, 99) < 5:
                 handler_game.act("$n wanders on home.", ch, None, None, merc.TO_ROOM)
@@ -488,8 +489,8 @@ def char_update():
                     ch.send("You disappear into the void.\n")
                     if ch.level > 1:
                         ch.save()
-                    limbo_id = merc.instances_by_room[merc.ROOM_VNUM_LIMBO][0]
-                    limbo = merc.rooms[limbo_id]
+                    limbo_id = instance.instances_by_room[merc.ROOM_VNUM_LIMBO][0]
+                    limbo = instance.rooms[limbo_id]
                     ch.in_room.get(ch)
                     limbo.put(ch)
 
@@ -540,7 +541,7 @@ def char_update():
             plague.bitvector = merc.AFF_PLAGUE
 
             for vch_id in ch.in_room.people[:]:
-                vch = merc.characters[vch_id]
+                vch = instance.characters[vch_id]
                 if not handler_magic.saves_spell(plague.level - 2, vch, merc.DAM_DISEASE) and not vch.is_immmortal() \
                         and not vch.is_affected(merc.AFF_PLAGUE) and random.randint(0, 4) == 0:
                     vch.send("You feel hot and feverish.\n")
@@ -565,7 +566,7 @@ def char_update():
     # * Autosave and autoquit.
     # * Check that these chars still exist.
     # */
-    for ch in merc.characters.values():
+    for ch in instance.characters.values():
         if not ch.is_npc() and ch.desc and save_number == 28:
             ch.save()
     for ch in ch_quit[:]:
@@ -577,7 +578,7 @@ def char_update():
 
 
 def item_update():
-    for item in merc.items.values():
+    for item in instance.items.values():
         # go through affects and decrement */
         if item:
             for paf in item.affected[:]:
@@ -591,7 +592,7 @@ def item_update():
                     multi = [a for a in item.affected if a.type == paf.type and a is not paf and a.duration > 0]
                     if multi and paf.type > 0 and const.skill_table[paf.type].msg_obj:
                         if item.in_living:
-                            rch = merc.characters[item.in_living]
+                            rch = instance.characters[item.in_living]
                             handler_game.act(const.skill_table[paf.type].msg_obj, rch, item, None, merc.TO_CHAR)
 
                         if item.in_room is not None and item.in_room.people[:]:
@@ -626,14 +627,14 @@ def item_update():
                 message = "$p crumbles into dust."
 
             if item.in_living:
-                if state_checks.IS_NPC(merc.characters[item.in_living]) and merc.characters[item.in_living].pShop:
-                    merc.characters[item.in_living].silver += item.cost // 5
+                if state_checks.IS_NPC(instance.characters[item.in_living]) and instance.characters[item.in_living].pShop:
+                    instance.characters[item.in_living].silver += item.cost // 5
                 else:
-                    handler_game.act(message, merc.characters[item.in_living], item, None, merc.TO_CHAR)
+                    handler_game.act(message, instance.characters[item.in_living], item, None, merc.TO_CHAR)
                     if 'float' in item.equipped_to:
-                        handler_game.act(message, merc.characters[item.in_living], item, None, merc.TO_ROOM)
+                        handler_game.act(message, instance.characters[item.in_living], item, None, merc.TO_ROOM)
             elif item.in_room and item.in_room.people[:]:
-                if not (item.in_item and merc.items[item.in_item].vnum == merc.OBJ_VNUM_PIT
+                if not (item.in_item and instance.items[item.in_item].vnum == merc.OBJ_VNUM_PIT
                         and not item.take):
                     handler_game.act(message, item.in_room.people[:1], item, None, merc.TO_ROOM)
                     handler_game.act(message, item.in_room.people[:1], item, None, merc.TO_CHAR)
@@ -641,7 +642,7 @@ def item_update():
             if (item.item_type == merc.ITEM_CORPSE_PC or 'float' in item.equipped_to) and item.inventory:
                 # save the contents */
                 for t_item_id in item.inventory[:]:
-                    t_item = merc.items[t_item_id]
+                    t_item = instance.items[t_item_id]
                     t_item.get()
 
                     if item.in_item:  # in another object */
@@ -677,7 +678,7 @@ def item_update():
 # * -- Furey
 # */
 def aggr_update():
-    for wch in merc.characters.values():
+    for wch in instance.characters.values():
         if wch.is_npc() \
                 or wch.level >= merc.LEVEL_IMMORTAL \
                 or wch.in_room is None \
@@ -685,7 +686,7 @@ def aggr_update():
             continue
 
         for ch_id in wch.in_room.people[:]:
-            ch = merc.characters[ch_id]
+            ch = instance.characters[ch_id]
             if not ch.is_npc() \
                     or not ch.act.is_set(merc.ACT_AGGRESSIVE) \
                     or state_checks.IS_SET(ch.in_room.room_flags, merc.ROOM_SAFE) \
@@ -705,7 +706,7 @@ def aggr_update():
             count = 0
             victim = None
             for vch_id in wch.in_room.people[:]:
-                vch = merc.characters[vch_id]
+                vch = instance.characters[vch_id]
                 if not vch.is_npc() \
                         and vch.level < merc.LEVEL_IMMORTAL \
                         and ch.level >= vch.level - 5 \
@@ -722,13 +723,13 @@ def aggr_update():
 
 
 def instance_number_save():
-    if merc.instance_number > merc.previous_instance:
-        merc.previous_instance = merc.instance_number
+    if instance.max_instance_id > instance.previous_max_instance_id:
+        instance.previous_max_instance_id = instance.max_instance_id
         instance_num_file = os.path.join(settings.LEGACY_AREA_DIR, "instance_tracker.txt")
         fp = open(instance_num_file, 'w')
-        fp.write(str(merc.instance_number))
+        fp.write(str(instance.max_instance_id))
         fp.close()
-        logger.info("Saved the current instance number: %d" % (merc.instance_number,))
+        logger.info("Saved the current instance number: %d" % (instance.max_instance_id,))
 
 #
 # * Handle all kinds of updates.
@@ -761,7 +762,7 @@ def update_handler():
         pulse_violence -= 1
         pulse_point -= 1
 
-        for ch in merc.characters.values():
+        for ch in instance.characters.values():
             if ch.daze > 0:
                 ch.daze -= 1
             if ch.wait > 0:

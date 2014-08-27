@@ -31,15 +31,14 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
-import datetime
+from collections import OrderedDict
+from types import MethodType
+import random
+import time
 import logging
 
 logger = logging.getLogger()
 
-from collections import OrderedDict
-import random
-from types import MethodType
-import time
 import db
 import game_utils
 import handler_game
@@ -47,6 +46,7 @@ import merc
 import nanny
 import handler_ch
 import state_checks
+import instance
 
 
 done = False
@@ -142,7 +142,7 @@ def check_playing(d, name):
 
 #Look for link-dead player to reconnect.
 def check_reconnect(d, name, fConn):
-    for ch in merc.player_characters.values():
+    for ch in instance.players.values():
         if not ch.is_npc() and (not fConn or not ch.desc) \
                 and d.character.name == ch.name:
             if not fConn:
@@ -232,7 +232,7 @@ def bust_a_prompt(ch):
         replace['%R'] = " "
     
     if ch.is_immortal() and ch.in_room:
-        replace['%z'] = "%s" % merc.areaTemplate[ch.in_room.area].name
+        replace['%z'] = "%s" % instance.area_templates[ch.in_room.area].name
     else:
         replace['%z'] = " "
         
@@ -249,7 +249,7 @@ def bust_a_prompt(ch):
 
 
 def is_reconnecting(d, name):
-    for ch in merc.player_characters.values():
+    for ch in instance.players.values():
         if not ch.desc and ch.name == name:
             return True
     return False
@@ -269,6 +269,7 @@ def game_loop(server):
 
     logger.boot('Pyom database booted in %.3f seconds', (boot_time - startup_time))
     logger.boot("Pyom is ready to rock on port %d", server.port)
+    instance.save()
 
     done = False
     while not done:

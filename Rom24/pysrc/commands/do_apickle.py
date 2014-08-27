@@ -1,13 +1,15 @@
+__author__ = 'syn'
+
+import logging
+
+logger = logging.getLogger()
+
 import os
 import interp
 import merc
 import save
 import settings
 
-__author__ = 'syn'
-import logging
-
-logger = logging.getLogger()
 
 def do_apickle(ch, argument):
     ch.send("Saving areas to pickle format..\n\n")

@@ -1,11 +1,10 @@
 import logging
-import handler_game
 
 logger = logging.getLogger()
 
+import handler_game
 import merc
 import interp
-import state_checks
 
 
 def do_train(ch, argument):
@@ -15,7 +14,7 @@ def do_train(ch, argument):
         return
     trainer = None
     for mob_id in ch.in_room.people:
-        mob = merc.characters[mob_id]
+        mob = instance.characters[mob_id]
         if mob.is_npc() and mob.act.is_set(merc.ACT_TRAIN):
             trainer = mob
 

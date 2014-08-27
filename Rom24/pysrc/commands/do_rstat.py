@@ -1,12 +1,12 @@
 import logging
 
-
 logger = logging.getLogger()
 
 import merc
 import interp
 import game_utils
 import state_checks
+import instance
 
 #TODO: Known broken. Exit flags or locks are messed up.
 def do_rstat(ch, argument):
@@ -35,19 +35,19 @@ def do_rstat(ch, argument):
 
     ch.send("Characters:")
     for rch_id in location.people:
-        rch = merc.characters[rch_id]
+        rch = instance.characters[rch_id]
         if ch.can_see(rch):
             ch.send("%s " % rch.name if not rch.is_npc() else rch.short_descr)
     ch.send(".\nObjects:   ")
     for obj_id in location.inventory[:]:
-        obj = merc.global_instances[obj_id]
+        obj = instance.global_instances[obj_id]
         ch.send("'%s' " % obj.name)
     ch.send(".\n")
     for door, pexit in enumerate(location.exit):
         if pexit:
             ch.send("Door: %d.  To: %d.  Key: %d.  Exit flags: %d.\nKeyword: '%s'.  Description: %s" % (
                 door,  # TODO:  come back and fix this
-                -1 if pexit.to_room is None else merc.rooms[pexit.to_room].vnum,
+                -1 if pexit.to_room is None else instance.rooms[pexit.to_room].vnum,
                 -1 if pexit.key is None else pexit.key,
                 pexit.exit_info,
                 pexit.keyword,

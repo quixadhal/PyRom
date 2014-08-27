@@ -1,9 +1,9 @@
+import time
 import logging
-import state_checks
 
 logger = logging.getLogger()
 
-import time
+import state_checks
 import merc
 import interp
 

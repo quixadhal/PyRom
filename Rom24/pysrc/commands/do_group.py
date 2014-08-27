@@ -7,6 +7,8 @@ import interp
 import game_utils
 import state_checks
 import handler_game
+import instance
+
 
 def do_group(ch, argument):
     argument, arg = game_utils.read_word(argument)
@@ -14,7 +16,7 @@ def do_group(ch, argument):
         leader = ch.leader if ch.leader else ch
         ch.send("%s's group:\n" % state_checks.PERS(leader, ch))
 
-        for gch in merc.characters.values():
+        for gch in instance.characters.values():
             if gch.is_same_group(ch):
                 ch.send("[[%2d %s]] %-16s %4d/%4d hp %4d/%4d mana %4d/%4d mv %5d xp\n" % (
                     gch.level,

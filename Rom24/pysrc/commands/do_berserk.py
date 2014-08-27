@@ -7,7 +7,6 @@ import merc
 import game_utils
 import handler_game
 import const
-import fight
 import interp
 import state_checks
 

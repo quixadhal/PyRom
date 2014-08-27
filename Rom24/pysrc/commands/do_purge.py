@@ -1,8 +1,8 @@
 import logging
-import handler_game
 
 logger = logging.getLogger()
 
+import handler_game
 import merc
 import comm
 import interp
@@ -13,13 +13,13 @@ def do_purge(ch, argument):
     argument, arg = game_utils.read_word(argument)
     if not arg:
         for victim_id in ch.in_room.people:
-            victim = merc.characters[victim_id]
+            victim = instance.characters[victim_id]
             if victim.is_npc() and not state_checks.IS_SET(victim.act, merc.ACT_NOPURGE) \
                     and victim != ch:  # safety precaution
                 victim.in_room.get(victim)
                 victim.extract(True)
         for item_id in ch.in_room.items:
-            item = merc.items[item_id]
+            item = instance.items[item_id]
             if not item.flags.no_purge:
                 ch.in_room.get(item)
                 item.extract()

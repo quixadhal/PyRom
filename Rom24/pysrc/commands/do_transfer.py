@@ -1,8 +1,8 @@
 import logging
-import handler_game
 
 logger = logging.getLogger()
 
+import handler_game
 import merc
 import fight
 import interp

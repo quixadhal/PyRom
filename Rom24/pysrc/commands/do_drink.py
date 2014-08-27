@@ -15,7 +15,7 @@ def do_drink(ch, argument):
     obj = None
     if not arg:
         for f_id in ch.in_room.items:
-            f = merc.items[f_id]
+            f = instance.items[f_id]
             if f.item_type == merc.ITEM_FOUNTAIN:
                 obj = f
                 break

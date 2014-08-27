@@ -32,24 +32,28 @@
  ************/
 """
 import random
+import logging
+
+logger = logging.getLogger()
 
 import merc
 import handler_game
 import handler_magic
 import state_checks
 import update
+import instance
 
 
 def acid_effect(vo, level, dam, target):
     if target == merc.TARGET_ROOM:  # nail objects on the floor */
         for item_id in vo.inventory[:]:
-            item = merc.items[item_id]
+            item = instance.items[item_id]
             acid_effect(item, level, dam, merc.TARGET_ITEM)
         return
     if target == merc.TARGET_CHAR:  # do the effect on a victim */
         # let's toast some gear */
         for item_id in vo.inventory[:]:
-            item = merc.items[item_id]
+            item = instance.items[item_id]
             acid_effect(item, level, dam, merc.TARGET_ITEM)
         return
     if target == merc.TARGET_ITEM:  # toast an object */
@@ -119,7 +123,7 @@ def acid_effect(vo, level, dam, target):
         # get rid of the object */
         if item.inventory:  # dump contents */
             for t_item_id in item.inventory[:]:
-                t_item = merc.items[t_item_id]
+                t_item = instance.items[t_item_id]
                 item.get(t_item)
                 if item.in_room:
                     item.in_room.put(t_item)
@@ -136,7 +140,7 @@ def cold_effect(vo, level, dam, target):
     if target == merc.TARGET_ROOM:  # nail objects on the floor */
         room = vo
         for item_id in room.inventory[:]:
-            item = merc.items[item_id]
+            item = instance.items[item_id]
             cold_effect(item, level, dam, merc.TARGET_ITEM)
         return
     if target == merc.TARGET_CHAR:  # whack a character */
@@ -161,7 +165,7 @@ def cold_effect(vo, level, dam, target):
 
         # let's toast some gear */
         for item_id in victim.inventory[:]:
-            item = merc.items[item_id]
+            item = instance.items[item_id]
             cold_effect(item, level, dam, merc.TARGET_ITEM)
         return
     if target == merc.TARGET_ITEM:  # toast an object */
@@ -206,7 +210,7 @@ def fire_effect(vo, level, dam, target):
     if target == merc.TARGET_ROOM:  # nail objects on the floor */
         room = vo
         for item_id in room.inventory[:]:
-            item = merc.items[item_id]
+            item = instance.items[item_id]
             fire_effect(item, level, dam, merc.TARGET_ITEM)
         return
     if target == merc.TARGET_CHAR:  # do the effect on a victim */
@@ -231,7 +235,7 @@ def fire_effect(vo, level, dam, target):
 
         # let's toast some gear! */
         for item_id in victim.inventory[:]:
-            item = merc.items[item_id]
+            item = instance.items[item_id]
             fire_effect(item, level, dam, merc.TARGET_ITEM)
 
     if target == merc.TARGET_ITEM:  # toast an object */
@@ -283,7 +287,7 @@ def fire_effect(vo, level, dam, target):
         if item.inventory:
             # dump the contents */
             for t_item_id in item.inventory[:]:
-                t_item = merc.items[t_item_id]
+                t_item = instance.items[t_item_id]
                 item.get(t_item)
                 if item.in_room:
                     item.in_room.put(t_item)
@@ -301,7 +305,7 @@ def poison_effect(vo, level, dam, target):
     if target == merc.TARGET_ROOM:  # nail objects on the floor */
         room = vo
         for item_id in room.inventory[:]:
-            item = merc.items[item_id]
+            item = instance.items[item_id]
             poison_effect(item, level, dam, merc.TARGET_ITEM)
         return
 
@@ -324,7 +328,7 @@ def poison_effect(vo, level, dam, target):
             victim.affect_join(af)
             # equipment */
         for item_id in victim.inventory[:]:
-            item = merc.items[item_id]
+            item = instance.items[item_id]
             poison_effect(item, level, dam, merc.TARGET_ITEM)
         return
     if target == merc.TARGET_ITEM:  # do some poisoning */
@@ -360,7 +364,7 @@ def shock_effect(vo, level, dam, target):
     if target == merc.TARGET_ROOM:
         room = vo
         for item_id in room.inventory[:]:
-            item = merc.items[item_id]
+            item = instance.items[item_id]
             shock_effect(item, level, dam, merc.TARGET_ITEM)
         return
 
@@ -372,7 +376,7 @@ def shock_effect(vo, level, dam, target):
             state_checks.DAZE_STATE(victim, max(12, level // 4 + dam / 20))
         # toast some gear */
         for item_id in victim.inventory[:]:
-            item = merc.items[item_id]
+            item = instance.items[item_id]
             shock_effect(item, level, dam, merc.TARGET_ITEM)
         return
     if target == merc.TARGET_ITEM:

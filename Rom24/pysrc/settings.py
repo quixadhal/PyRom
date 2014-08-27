@@ -1,5 +1,7 @@
 import os
+import logging
 
+logger = logging.getLogger()
 
 #Game settings
 PORT = 1337

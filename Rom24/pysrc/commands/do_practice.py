@@ -1,14 +1,14 @@
 import logging
-import game_utils
-import handler_game
-
 
 logger = logging.getLogger()
 
+import game_utils
+import handler_game
 import merc
 import interp
 import const
 import state_checks
+
 
 def do_practice(ch, argument):
     temp, argument = game_utils.read_word(argument)
@@ -35,7 +35,7 @@ def do_practice(ch, argument):
             return
         practitioner = None
         for mob_id in ch.in_room.people:
-            mob = merc.characters[mob_id]
+            mob = instance.characters[mob_id]
             if mob.is_npc() and mob.act.is_set(merc.ACT_PRACTICE):
                 practitioner = mob
 

@@ -1,6 +1,10 @@
-from bit import Bit
-from const import wiznet_table
-from merc import LEVEL_IMMORTAL, LEVEL_HERO
+import logging
+
+logger = logging.getLogger()
+
+import bit
+import const
+import merc
 
 
 class Immortal:
@@ -10,16 +14,16 @@ class Immortal:
         self._trust = 0
         self.invis_level = 0
         self.incog_level = 0
-        self.wiznet = Bit(flags=wiznet_table)
+        self.wiznet = bit.Bit(flags=const.wiznet_table)
 
     def is_immortal(self):
-        return self.trust >= LEVEL_IMMORTAL
+        return self.trust >= merc.LEVEL_IMMORTAL
 
     @property
     def trust(self):
         if self.is_npc():
-            if self.level >= LEVEL_HERO:
-                return LEVEL_HERO - 1
+            if self.level >= merc.LEVEL_HERO:
+                return merc.LEVEL_HERO - 1
             else:
                 return self.level
         trust = self._trust

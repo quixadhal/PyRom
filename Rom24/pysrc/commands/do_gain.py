@@ -17,7 +17,7 @@ def do_gain(ch, argument):
     # find a trainer
     trainer = None
     for t_id in ch.in_room.people[:]:
-        t = merc.characters[t_id]
+        t = instance.characters[t_id]
         if t.is_npc() and t.act.is_set(merc.ACT_GAIN):
             trainer = t
     if not trainer or not ch.can_see(trainer):

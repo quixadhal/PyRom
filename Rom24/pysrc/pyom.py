@@ -31,7 +31,8 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
-import os, sys
+import os
+import sys
 import logging
 #import pdb
 
@@ -61,6 +62,7 @@ from hotfix import init_monitoring
 import time
 
 startup_time = time.time()
+
 
 def Pyom():
     sys.path.append(os.getcwd())

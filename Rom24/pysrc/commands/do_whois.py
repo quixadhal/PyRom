@@ -8,7 +8,6 @@ import const
 import interp
 import nanny
 import handler_ch
-# whois command */
 
 
 def do_whois(ch, argument):

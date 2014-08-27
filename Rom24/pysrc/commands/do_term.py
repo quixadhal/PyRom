@@ -4,13 +4,13 @@ logger = logging.getLogger()
 
 import merc
 import interp
-from game_utils import to_integer
-from miniboa.colors import TERMINAL_TYPES
+import game_utils
+import miniboa
 
 
 def usage(ch):
     ch.send('Usage: term [[ttype]] [[cols N]] [[rows N]]\n')
-    ch.send('       valid ttypes are %s.\n\n' % ', '.join(TERMINAL_TYPES))
+    ch.send('       valid ttypes are %s.\n\n' % ', '.join(miniboa.TERMINAL_TYPES))
 
 
 def do_term(ch, argument):
@@ -35,18 +35,18 @@ def do_term(ch, argument):
                 continue
             elif a.isnumeric():
                 if expect_rows:
-                    ch.desc.rows = to_integer(a)
+                    ch.desc.rows = game_utils.to_integer(a)
                     expect_rows = False
                     changed = True
                 elif expect_cols:
-                    ch.desc.columns = to_integer(a)
+                    ch.desc.columns = game_utils.to_integer(a)
                     expect_cols = False
                     changed = True
                 else:
                     ch.send('Invalid argument: %s\n\n' % a)
                     usage(ch)
                     return
-            elif not got_type and a.lower() in TERMINAL_TYPES:
+            elif not got_type and a.lower() in miniboa.TERMINAL_TYPES:
                 ch.desc.terminal_type = a.lower()
                 got_type = True
                 changed = True

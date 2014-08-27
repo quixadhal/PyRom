@@ -7,7 +7,7 @@ import merc
 import interp
 import game_utils
 import handler_game
-import state_checks
+
 
 def do_sacrifice(ch, argument):
     argument, arg = game_utils.read_word(argument)
@@ -29,7 +29,7 @@ def do_sacrifice(ch, argument):
         return
     if item.in_room:
         for gch_id in item.in_room.people:
-            gch = merc.characters[gch_id]
+            gch = instance.characters[gch_id]
             if gch.on == item.instance_id:
                 handler_game.act("$N appears to be using $p.", ch, item, gch, merc.TO_CHAR)
                 return

@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger()
+
 import bit
 import tables
 

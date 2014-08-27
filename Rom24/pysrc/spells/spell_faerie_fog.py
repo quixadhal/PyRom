@@ -11,7 +11,7 @@ def spell_faerie_fog(sn, level, ch, victim, target):
 
     for ich_id in ch.in_room.people:
 
-        ich = merc.characters[ich_id]
+        ich = instance.characters[ich_id]
         if ich.invis_level > 0:
             continue
 

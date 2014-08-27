@@ -32,24 +32,28 @@
  ************/
 """
 import copy
-
+import os
 import logging
 
 logger = logging.getLogger()
 
 import living
-import merc
 import pyprogs
 import bit
 import tables
+import handler_item
+import json
+import settings
+import instance
 
 
 class Npc(living.Living):
     template_count = 0
     instance_count = 0
 
-    def __init__(self, template=None):
+    def __init__(self, template=None, **kwargs):
         super().__init__()
+        #self.is_npc = True
         self.vnum = 0  # Needs to come before the template to setup the instance
         self.memory = None
         self.spec_fun = None
@@ -67,11 +71,22 @@ class Npc(living.Living):
         self.killed = 0
         self.pShop = None
         self.listeners = {}
+        if kwargs:
+            [setattr(self, k, copy.deepcopy(v)) for k, v in kwargs.items()]
         if template:
             [setattr(self, k, copy.deepcopy(v)) for k, v in template.__dict__.items()]
             self.instancer()
-            self.instance_setup()
+        if self.environment:
+            if self._environment not in instance.global_instances.keys():
+                self.environment = None
+        if self.inventory:
+            for instance_id in self.inventory[:]:
+                handler_item.Items.load(instance_id=instance_id)
+        for item_id in self.equipped.values():
+            if item_id:
+                handler_item.Items.load(instance_id=item_id)
         if self.instance_id:
+            self.instance_setup()
             Npc.instance_count += 1
         else:
             Npc.template_count += 1
@@ -81,7 +96,7 @@ class Npc(living.Living):
             logger.trace("Freeing %s" % str(self))
             if self.instance_id:
                 Npc.instance_count -= 1
-                if merc.characters.get(self.instance_id, None):
+                if instance.characters.get(self.instance_id, None):
                     self.instance_destructor()
             else:
                 Npc.template_count -= 1
@@ -95,17 +110,105 @@ class Npc(living.Living):
             return "<NPC Template: %s:%s>" % (self.short_descr, self.vnum)
 
     def instance_setup(self):
-        merc.global_instances[self.instance_id] = self
-        merc.characters[self.instance_id] = self
-        if self.vnum not in merc.instances_by_character.keys():
-            merc.instances_by_character[self.vnum] = [self.instance_id]
+        instance.global_instances[self.instance_id] = self
+        instance.characters[self.instance_id] = self
+        if self.vnum not in instance.instances_by_npc.keys():
+            instance.instances_by_npc[self.vnum] = [self.instance_id]
         else:
-            merc.instances_by_character[self.vnum] += [self.instance_id]
+            instance.instances_by_npc[self.vnum] += [self.instance_id]
 
     def instance_destructor(self):
-        merc.instances_by_character[self.vnum].remove(self.instance_id)
-        del merc.characters[self.instance_id]
-        del merc.global_instances[self.instance_id]
+        instance.instances_by_npc[self.vnum].remove(self.instance_id)
+        del instance.characters[self.instance_id]
+        del instance.global_instances[self.instance_id]
 
     register_signal = pyprogs.register_signal
     absorb = pyprogs.absorb
+
+    # Serialization
+    def to_json(self, outer_encoder=None):
+        if outer_encoder is None:
+            outer_encoder = json.JSONEncoder.default
+
+        tmp_dict = {}
+        for k, v in self.__dict__.items():
+            if str(type(v)) in ("<class 'function'>", "<class 'method'>"):
+                continue
+            if str(k) in ('desc', 'send'):
+                continue
+            else:
+                tmp_dict[k] = v
+
+        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        return {cls_name: outer_encoder(tmp_dict)}
+
+    @classmethod
+    def from_json(cls, data, outer_decoder=None):
+        if outer_decoder is None:
+            outer_decoder = json.JSONDecoder.decode
+
+        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        if cls_name in data:
+            tmp_data = outer_decoder(data[cls_name])
+            return cls(**tmp_data)
+        return data
+
+    def save(self):
+        if self.instance_id:
+            top_dir = settings.INSTANCE_DIR
+            number = self.instance_id
+        else:
+            top_dir = settings.AREA_DIR
+            number = self.vnum
+        pathname = os.path.join(top_dir, '%d-%s' % (self.in_area.index, self.in_area.name), 'npcs')
+
+        os.makedirs(pathname, 0o755, True)
+        filename = os.path.join(pathname, '%d-npc.json' % number)
+        logger.info('Saving %s', filename)
+        js = json.dumps(self, default=instance.to_json, indent=4)
+        with open(filename, 'w') as fp:
+            fp.write(js)
+
+        if self.inventory:
+            for item_id in self.inventory[:]:
+                item = instance.items[item_id]
+                item.save(in_inventory=True)
+        for item_id in self.equipped.values():
+            if item_id:
+                item = instance.items[item_id]
+                item.save(is_equipped=True)
+
+    @classmethod
+    def load(cls, vnum: int=None, instance_id: int=None):
+        if instance_id:
+            if instance_id in instance.characters:
+                logger.warn('Instance %d of npc already loaded!', instance_id)
+                return
+            pathname = settings.INSTANCE_DIR
+            number = instance_id
+        elif vnum:
+            pathname = settings.AREA_DIR
+            number = vnum
+        else:
+            raise ValueError('To load an NPC, you must provide either a VNUM or an Instance_ID!')
+
+        target_file = '%d-npc.json' % number
+        filename = None
+        for a_path, a_directory, i_files in os.walk(pathname):
+            if target_file in i_files:
+                filename = os.path.join(a_path, target_file)
+                break
+        if not filename:
+            raise ValueError('Cannot find %s' % target_file)
+
+        with open(filename, 'r') as fp:
+            obj = json.load(fp, object_hook=instance.from_json)
+        if isinstance(obj, Npc):
+            # This just ensures that all items the player has are actually loaded.
+            if obj.inventory:
+                for item_id in obj.inventory[:]:
+                    handler_item.Items.load(instance_id=item_id)
+            return obj
+        else:
+            logger.error('Could not load npc data for %d', number)
+            return None

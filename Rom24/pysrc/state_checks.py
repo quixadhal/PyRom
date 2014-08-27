@@ -33,6 +33,10 @@
 """
 __author__ = 'syn'
 import time
+import logging
+
+logger = logging.getLogger()
+
 import merc
 
 

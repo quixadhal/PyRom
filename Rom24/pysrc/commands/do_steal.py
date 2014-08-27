@@ -1,9 +1,7 @@
+import random
 import logging
 
-
 logger = logging.getLogger()
-
-import random
 
 import merc
 import interp
@@ -11,7 +9,6 @@ import fight
 import game_utils
 import handler_game
 import state_checks
-import save
 import const
 
 

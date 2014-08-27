@@ -7,12 +7,14 @@ import interp
 import game_utils
 import state_checks
 
+
 def do_log(ch, argument):
     argument, arg = game_utils.read_word(argument)
     if not arg:
         ch.send("Log whom?\n")
         return
     if arg == "all":
+        #TODO: fix this by either adding it to merc, or figuring out an alternative
         if fLogAll:
             fLogAll = False
             ch.send("Log ALL off.\n")

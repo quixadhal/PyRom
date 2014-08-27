@@ -1,16 +1,17 @@
-import logging
+__author__ = 'syn'
+
 import os
 import re
-import settings
+import time
+import collections
+import random
+import logging
 
 logger = logging.getLogger()
 
-import time
-import collections
-
-__author__ = 'syn'
+import settings
 import merc
-import random
+import instance
 
 
 def find_instance_file(instance_id: int=None, from_char_dir: str=None, from_world: bool=False):
@@ -421,11 +422,11 @@ def item_flags_from_bits(bits: int, out_data: collections.namedtuple, in_type='w
 def find_location(ch, arg):
     if arg.isdigit():
         vnum = int(arg)
-        if vnum not in merc.roomTemplate.keys():
+        if vnum not in instance.room_templates.keys():
             return None
         else:
-            room_instance = merc.instances_by_room[vnum][0]
-            return merc.rooms[room_instance]
+            room_instance = instance.instances_by_room[vnum][0]
+            return instance.rooms[room_instance]
     victim = ch.get_char_world(arg)
     if victim:
         return victim.in_room
@@ -655,29 +656,29 @@ def find_character(ch, template, target_package):
     atype, num_or_count, arg_num, target = target_package
     if ch.in_room:
                 room_inventory_list = [npc_id for npc_id in ch.in_room.people[:]
-                                       if merc.characters[npc_id].vnum == target]
+                                       if instance.characters[npc_id].vnum == target]
                 if room_inventory_list:
                     try:
-                        return merc.characters[room_inventory_list[arg_num - 1]]
+                        return instance.characters[room_inventory_list[arg_num - 1]]
                     except:
                         room_inventory_list = None
                 else:
-                    npc_id = merc.instances_by_character[target][arg_num - 1]
+                    npc_id = instance.instances_by_npc[target][arg_num - 1]
                     if npc_id:
-                        return merc.characters[npc_id]
+                        return instance.characters[npc_id]
 
 def find_room(ch, template, target_package):
     atype, num_or_count, arg_num, target = target_package
     if isinstance(target, int):
                 trash = ''
                 try:
-                    room_id = merc.instances_by_room[target][arg_num - 1]
-                    return merc.rooms[room_id]
+                    room_id = instance.instances_by_room[target][arg_num - 1]
+                    return instance.rooms[room_id]
                 except:
                     trash = 'onion bagels!'
                 if trash:
                     try:
-                        return merc.rooms[target]
+                        return instance.rooms[target]
                     except:
                         return None
 
@@ -685,23 +686,23 @@ def find_item(ch, template, target_package):
     #TODO change instance dicts to ordered dicts to support searches with predictable results.
     atype, num_or_count, arg_num, target = target_package
     bagels = ''
-    sorted(sorted(merc.rooms.keys(), key=lambda x: merc.rooms[x].vnum), key=lambda x: merc.rooms[x].instance_id)
+    sorted(sorted(instance.rooms.keys(), key=lambda x: instance.rooms[x].vnum), key=lambda x: instance.rooms[x].instance_id)
 
     combined_inventory = ch.inventory + ch.in_room.items
 
     if 'vnum' in atype:
         if combined_inventory:
-            final_item = [merc.items[item_id] for item_id in combined_inventory
-                          if merc.items[item_id].vnum == target][arg_num - 1]
+            final_item = [instance.items[item_id] for item_id in combined_inventory
+                          if instance.items[item_id].vnum == target][arg_num - 1]
             if final_item:
                 return final_item
         elif ch.is_immortal():
-            item_id = merc.instances_by_item[target][arg_num - 1]
-            return merc.items.get(item_id, None)
+            item_id = instance.instances_by_item[target][arg_num - 1]
+            return instance.items.get(item_id, None)
         else:
             return None
     elif 'instance' in atype:
-        return merc.items.get(target, None)
+        return instance.items.get(target, None)
     elif 'number' in atype:
         pass
     else:
@@ -709,7 +710,7 @@ def find_item(ch, template, target_package):
             if ch.is_immortal():
                 try:
                     #temp
-                    return merc.items[None]
+                    return instance.items[None]
                 except:
                     return None
 

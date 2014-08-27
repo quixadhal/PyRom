@@ -1,9 +1,7 @@
+import random
 import logging
 
-
 logger = logging.getLogger()
-
-import random
 
 import interp
 import merc
@@ -26,7 +24,7 @@ def do_pick(self, argument):
 
     # look for guards
     for gch_id in ch.in_room.people:
-        gch = merc.characters[gch_id]
+        gch = instance.characters[gch_id]
         if state_checks.IS_NPC(gch) and state_checks.IS_AWAKE(gch) and ch.level + 5 < gch.level:
             handler_game.act("$N is standing too close to the lock.", ch, None, gch, merc.TO_CHAR)
             return

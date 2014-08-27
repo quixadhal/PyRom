@@ -1,12 +1,13 @@
 import logging
 
-
 logger = logging.getLogger()
 
 import merc
 import interp
 import game_utils
 import state_checks
+import instance
+
 
 def do_owhere(ch, argument):
     found = False
@@ -16,7 +17,7 @@ def do_owhere(ch, argument):
     if not argument:
         ch.send("Find what?\n")
         return
-    for item in merc.items.values():
+    for item in instance.items.values():
         if not ch.can_see_item(item) or not game_utils.is_name(argument, item.name) or ch.level < item.level:
             continue
         found = True

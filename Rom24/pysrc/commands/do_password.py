@@ -1,13 +1,12 @@
-import logging
 import hashlib
-import game_utils
+import logging
 
 logger = logging.getLogger()
 
+import game_utils
 import state_checks
 import merc
 import interp
-import save
 import settings
 
 

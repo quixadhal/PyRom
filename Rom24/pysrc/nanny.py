@@ -50,6 +50,8 @@ import pc
 import world_classes
 import sys_utils
 import update
+import instance
+
 
 class CharDummy:
     def __init__(self):
@@ -131,18 +133,17 @@ def con_get_name(self):
             return
         if comm.is_reconnecting(self, name):
             found = True
-
     else:
         found, ch_dummy = save.legacy_load_char_obj(self, name)
         ch_dummy.send = self.send
         ch_dummy.desc = self
         self.character = ch_dummy
+
     if found:
         ch_dummy.send("Password: ")
         ch_dummy.desc.password_mode_on()
         self.set_connected(con_get_old_password)
         return
-
     else:
         if settings.NEWLOCK:
             ch_dummy.send("Game is newlocked")
@@ -200,8 +201,8 @@ def con_confirm_new_password(self):
         self.set_connected(con_get_new_password)
         return
     ch = pc.Pc(ch_dummy.name)
-    del ch_dummy
     ch.pwd = ch_dummy.pwd
+    del ch_dummy
     ch.desc = self
     ch.send = self.send
     self.character = ch
@@ -567,9 +568,9 @@ def con_read_motd(self):
         ch.title = buf
         #ch.prompt = "<%hhp %mm %vmv> "
         ch.do_outfit(ch_selections['weapon'])
-        ch.put(object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_MAP], 0))
-        school_id = merc.instances_by_room[merc.ROOM_VNUM_SCHOOL][0]
-        school = merc.rooms[school_id]
+        ch.put(object_creator.create_item(instance.item_templates[merc.OBJ_VNUM_MAP], 0))
+        school_id = instance.instances_by_room[merc.ROOM_VNUM_SCHOOL][0]
+        school = instance.rooms[school_id]
         school.put(ch)
         ch.do_help("newbie info")
 
@@ -586,17 +587,17 @@ def con_read_motd(self):
                     'the IMPLEMENTOR, the sucker in charge, the place where the buck stops.\n' +
                     'Enjoy!\n\n')
 
-    if ch._environment in merc.global_instances.keys() and not ch.level == 0:
-        room = merc.global_instances.get(ch._environment, None)
+    if ch._environment in instance.global_instances.keys() and not ch.level == 0:
+        room = instance.global_instances.get(ch._environment, None)
         if room and ch._environment != room.instance_id:
             room.put(ch)
     elif ch.is_immortal() and not ch.level == 0:
-        to_instance_id = merc.instances_by_room[merc.ROOM_VNUM_CHAT][0]
-        to_instance = merc.rooms[to_instance_id]
+        to_instance_id = instance.instances_by_room[merc.ROOM_VNUM_CHAT][0]
+        to_instance = instance.rooms[to_instance_id]
         to_instance.put(ch)
     else:
-        to_instance_id = merc.instances_by_room[merc.ROOM_VNUM_TEMPLE][0]
-        to_instance = merc.rooms[to_instance_id]
+        to_instance_id = instance.instances_by_room[merc.ROOM_VNUM_TEMPLE][0]
+        to_instance = instance.rooms[to_instance_id]
         to_instance.put(ch)
 
     handler_game.act("$n has entered the game.", ch, None, None, merc.TO_ROOM)

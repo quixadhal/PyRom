@@ -1,8 +1,8 @@
+import random
 import logging
 
 logger = logging.getLogger()
 
-import random
 import merc
 import game_utils
 import handler_game
@@ -11,6 +11,8 @@ import interp
 import object_creator
 import shop_utils
 import state_checks
+import instance
+
 
 def do_buy(ch, argument):
     if not argument:
@@ -23,10 +25,10 @@ def do_buy(ch, argument):
         pRoomIndexNext = None
         # hack to make new thalos pets work
         if ch.in_room.vnum == 9621:
-            if 9706 in merc.roomTemplate:
+            if 9706 in instance.room_templates:
                 pRoomIndexNext = handler_room.get_room_by_vnum(9706)
         else:
-            if ch.in_room.vnum + 1 in merc.roomTemplate:
+            if ch.in_room.vnum + 1 in instance.room_templates:
                 pRoomIndexNext = handler_room.get_room_by_vnum(ch.in_room.vnum + 1)
         if not pRoomIndexNext:
             logger.warn("BUG: Do_buy: bad pet shop at vnum %d.", ch.in_room.vnum)
@@ -96,7 +98,7 @@ def do_buy(ch, argument):
         if not obj.flags.shop_inventory:
             count = 0
             for t_obj_id in keeper.inventory[:]:
-                t_obj = merc.items[t_obj_id]
+                t_obj = instance.items[t_obj_id]
                 if t_obj.vnum == obj.vnum and t_obj.short_descr == obj.short_descr:
                     items.append(t_obj)
                     count += 1
@@ -143,7 +145,7 @@ def do_buy(ch, argument):
         if obj.flags.shop_inventory:
             items = []
             for count in range(number):
-                t_obj = object_creator.create_item(merc.itemTemplate[obj.vnum], obj.level)
+                t_obj = object_creator.create_item(instance.item_templates[obj.vnum], obj.level)
                 items.append(t_obj)
         for t_obj in items[:]:
             if not obj.flags.shop_inventory:

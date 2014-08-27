@@ -4,7 +4,7 @@ import merc
 import object_creator
 
 def spell_create_food(sn, level, ch, victim, target):
-    mushroom = object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_MUSHROOM], 0)
+    mushroom = object_creator.create_item(instance.item_templates[merc.OBJ_VNUM_MUSHROOM], 0)
     mushroom.value[0] = level // 2
     mushroom.value[1] = level
     ch.in_room.put(mushroom)

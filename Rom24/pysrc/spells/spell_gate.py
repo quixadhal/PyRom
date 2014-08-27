@@ -40,9 +40,9 @@ def spell_gate(sn, level, ch, victim, target):
 
     if gate_pet:
         handler_game.act("$n steps through a gate and vanishes.", ch.pet, None, None, merc.TO_ROOM)
-        merc.characters[ch.pet].send("You step through a gate and vanish.\n")
-        merc.characters[ch.pet].in_room.get(merc.characters[ch.pet])
-        ch.in_room.put(merc.characters[ch.pet])
+        instance.characters[ch.pet].send("You step through a gate and vanish.\n")
+        instance.characters[ch.pet].in_room.get(instance.characters[ch.pet])
+        ch.in_room.put(instance.characters[ch.pet])
         handler_game.act("$n has arrived through a gate.", ch.pet, None, None, merc.TO_ROOM)
         ch.pet.do_look("auto")
 

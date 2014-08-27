@@ -50,6 +50,7 @@ import game_utils
 import handler_game
 import const
 import database.read.read_tables as read
+import instance
 
 
 def boot_db():
@@ -65,64 +66,70 @@ def boot_db():
     area_update()
     object_creator.setup_exits()
     update.instance_number_save()
-    logger.info('-----------------------------------------')
 
-    logger.info('    Loaded %d Areas', world_classes.Area.template_count)
-    logger.info('    Loaded %d Npc Templates', handler_npc.Npc.template_count)
-    logger.info('    Loaded %d Item Templates', handler_item.Items.template_count)
-    logger.info('    Loaded %d Room Templates', handler_room.Room.template_count)
-    logger.info('    Loaded %d Shops', len(merc.shopTemplate))
-    logger.info('    Loaded %d Total Templates', (world_classes.Area.template_count + handler_npc.Npc.template_count
-                                                  + handler_item.Items.template_count
-                                                  + handler_room.Room.template_count))
-    logger.info('-----------------------------------------')
-    logger.info('    Loaded %d Resets', world_classes.Reset.load_count)
-    logger.info('-----------------------------------------')
-    logger.info('    Loaded %d Area Instances', world_classes.Area.instance_count)
-    logger.info('    Loaded %d Npc Instances', handler_npc.Npc.instance_count)
-    logger.info('    Loaded %d Item Instances', handler_item.Items.instance_count)
-    logger.info('    Loaded %d Room Instances', handler_room.Room.instance_count)
-    logger.info('    Loaded %d Total Instances', (world_classes.Area.instance_count + handler_room.Room.instance_count +
-                                                  handler_item.Items.instance_count + handler_npc.Npc.instance_count))
-    logger.info('-----------------------------------------')
-    logger.info('    Loaded %d Help files', len(merc.help_list))
-    logger.info('    Loaded %d Socials', len(merc.social_list))
-    logger.info('-----------------------------------------')
-
+    results = (
+        '-----------------------------------------',
+        '    Loaded %d Areas' % world_classes.Area.template_count,
+        '    Loaded %d Npc Templates' % handler_npc.Npc.template_count,
+        '    Loaded %d Item Templates' % handler_item.Items.template_count,
+        '    Loaded %d Room Templates' % handler_room.Room.template_count,
+        '    Loaded %d Shops' % len(instance.shop_templates),
+        '    Loaded %d Total Templates' % (world_classes.Area.template_count
+                                           + handler_npc.Npc.template_count
+                                           + handler_item.Items.template_count
+                                           + handler_room.Room.template_count),
+        '-----------------------------------------',
+        '    Loaded %d Resets' % world_classes.Reset.load_count,
+        '-----------------------------------------',
+        '    Loaded %d Area Instances' % world_classes.Area.instance_count,
+        '    Loaded %d Npc Instances' % handler_npc.Npc.instance_count,
+        '    Loaded %d Item Instances' % handler_item.Items.instance_count,
+        '    Loaded %d Room Instances' % handler_room.Room.instance_count,
+        '    Loaded %d Total Instances' % (world_classes.Area.instance_count
+                                           + handler_room.Room.instance_count
+                                           + handler_item.Items.instance_count
+                                           + handler_npc.Npc.instance_count),
+        '-----------------------------------------',
+        '    Loaded %d Help files' % len(merc.help_list),
+        '    Loaded %d Socials' % len(merc.social_list),
+        '-----------------------------------------',
+    )
+    spaces = '\n' + ' ' * 51
+    logger.boot(spaces.join(results))
 
 
 def init_instance():
     #First lets add the bad terms we dont want to pass during instancing, while copying attributes
-    merc.not_to_instance.append('instance_id')
-    merc.not_to_instance.append('act')
+    instance.not_to_instance.append('instance_id')
+    instance.not_to_instance.append('act')
     instance_num_file = os.path.join(settings.LEGACY_AREA_DIR, "instance_tracker.txt")
     fp = open(instance_num_file, 'a')  # in case the file doesnt exist open in append mode to not wipe
     fp.close()
     fp = open(instance_num_file, 'r')
-    junk, merc.instance_number = game_utils.read_int(fp.read())
+    junk, instance.max_instance_id = game_utils.read_int(fp.read())
     fp.close()
-    if merc.instance_number == 0 or not merc.instance_number:
+    if instance.max_instance_id == 0 or not instance.max_instance_id:
         logger.info("First run, or problem with instance, setting 0")
-        merc.instance_number = 0
+        instance.max_instance_id = 0
     else:
-        logger.info("Global Instance Tracker, instances thus far: %d", merc.instance_number)
+        logger.info("Global Instance Tracker, instances thus far: %d", instance.max_instance_id)
 
 
 def fix_exits():
-    for k, r in merc.roomTemplate.items():
+    for k, r in instance.room_templates.items():
         for e in r.template_exit[:]:
             if e and type(e.template_to_room) == int:
-                if e.template_to_room not in merc.roomTemplate:
+                if e.template_to_room not in instance.room_templates:
                     logger.error("Fix_exits: Failed to find to_room for %d: %d", r.template_vnum, e.template_to_room)
                     e.template_to_room = None
                     r.template_exit.remove(e)
                 else:
-                    e.template_to_room = merc.roomTemplate[e.template_to_room]
+                    e.template_to_room = instance.room_templates[e.template_to_room]
 
 
 # * Repopulate areas periodically.
 def area_update():
-    for area_id, area in merc.areas.items():
+    for area_id, area in instance.areas.items():
         area.age += 1
         if area.age < 3:
             continue
@@ -135,8 +142,8 @@ def area_update():
             handler_game.wiznet("%s has just been reset." % area.name, None, None, merc.WIZ_RESETS, 0, 0)
 
         area.age = random.randint(0, 3)
-        school_instance_id = merc.instances_by_room[merc.ROOM_VNUM_SCHOOL][0]
-        school_instance = merc.rooms[school_instance_id]
+        school_instance_id = instance.instances_by_room[merc.ROOM_VNUM_SCHOOL][0]
+        school_instance = instance.rooms[school_instance_id]
         if school_instance and area_id == school_instance.area:
             area.age = 15 - 2
         elif area.player_count == 0:
@@ -144,25 +151,25 @@ def area_update():
 
 
 def m_reset(pReset, last, level, npc):
-    if pReset.arg1 not in merc.characterTemplate.keys():
+    if pReset.arg1 not in instance.npc_templates.keys():
             logger.error("Reset_area: 'M': bad vnum %d.", pReset.arg1)
             return last, level, npc
     else:
-        npcTemplate = merc.characterTemplate[pReset.arg1]
+        npcTemplate = instance.npc_templates[pReset.arg1]
 
-    if pReset.arg3 not in merc.roomTemplate.keys():
+    if pReset.arg3 not in instance.room_templates.keys():
         logger.error("Reset_area: 'R': bad vnum %d.", pReset.arg3)
         return last, level, npc
     else:
-        roomInstance_id = merc.instances_by_room[pReset.arg3][0]
-        roomInstance = merc.global_instances[roomInstance_id]
+        roomInstance_id = instance.instances_by_room[pReset.arg3][0]
+        roomInstance = instance.global_instances[roomInstance_id]
 
     if npcTemplate.count >= pReset.arg2:
         last = False
         return last, level, npc
     count = 0
     for npc_id in roomInstance.people[:]:
-        npc = merc.global_instances[npc_id]
+        npc = instance.global_instances[npc_id]
         if npc.is_npc():
             if npc.vnum == npcTemplate.vnum:
                 count += 1
@@ -179,9 +186,9 @@ def m_reset(pReset, last, level, npc):
     # * Check for pet shop.
     # */
 
-    if roomInstance.vnum - 1 in merc.roomTemplate.keys():
-        prevRoomInstance_id = merc.instances_by_room[roomInstance.vnum - 1][0]
-        prevRoomInstance = merc.global_instances[prevRoomInstance_id]
+    if roomInstance.vnum - 1 in instance.room_templates.keys():
+        prevRoomInstance_id = instance.instances_by_room[roomInstance.vnum - 1][0]
+        prevRoomInstance = instance.global_instances[prevRoomInstance_id]
         if state_checks.IS_SET(prevRoomInstance.room_flags, merc.ROOM_PET_SHOP):
             npc.act.set_bit(merc.ACT_PET)
 
@@ -196,18 +203,18 @@ def m_reset(pReset, last, level, npc):
 
 def o_reset(pArea, pReset, last, level, npc):
     item = None
-    if pReset.arg1 not in merc.itemTemplate.keys():
+    if pReset.arg1 not in instance.item_templates.keys():
         logger.error("Reset_area: 'O': bad vnum %d.", pReset.arg1)
         return last, level, npc
     else:
-        itemTemplate = merc.itemTemplate[pReset.arg1]
+        itemTemplate = instance.item_templates[pReset.arg1]
 
-    if pReset.arg3 not in merc.roomTemplate.keys():
+    if pReset.arg3 not in instance.room_templates.keys():
         logger.error("Reset_area: 'R': bad vnum %d.", pReset.arg3)
         return last, level, npc
     else:
-        roomInstance_id = merc.instances_by_room[pReset.arg3][0]
-        roomInstance = merc.global_instances[roomInstance_id]
+        roomInstance_id = instance.instances_by_room[pReset.arg3][0]
+        roomInstance = instance.global_instances[roomInstance_id]
 
     if pArea.player_count > 0 or handler_item.count_obj_list(itemTemplate, roomInstance.items) > 0:
         last = False
@@ -223,17 +230,17 @@ def o_reset(pArea, pReset, last, level, npc):
 
 def p_reset(pArea, pReset, last, level, npc):
     item = None
-    if pReset.arg1 not in merc.itemTemplate.keys():
+    if pReset.arg1 not in instance.item_templates.keys():
         logger.error("Reset_area: 'P': bad vnum %d.", pReset.arg1)
         return last, level, npc
     else:
-        itemTemplate = merc.itemTemplate[pReset.arg1]
+        itemTemplate = instance.item_templates[pReset.arg1]
 
-    if pReset.arg3 not in merc.itemTemplate.keys():
+    if pReset.arg3 not in instance.item_templates.keys():
         logger.error("Reset_area: 'P': bad vnum %d.", pReset.arg3)
         return last, level, npc
     else:
-        item_toTemplate = merc.itemTemplate[pReset.arg3]
+        item_toTemplate = instance.item_templates[pReset.arg3]
     if pReset.arg2 > 50:  # old format */
         limit = 6
     elif pReset.arg2 == -1:  # no limit */
@@ -241,9 +248,9 @@ def p_reset(pArea, pReset, last, level, npc):
     else:
         limit = pReset.arg2
     item_to = None
-    item_to_list = merc.instances_by_item.get(item_toTemplate.vnum, None)
+    item_to_list = instance.instances_by_item.get(item_toTemplate.vnum, None)
     if item_to_list:
-        item_to = merc.global_instances[item_to_list[0]]
+        item_to = instance.global_instances[item_to_list[0]]
 
     if pArea.player_count > 0 \
             or not item_to \
@@ -275,11 +282,11 @@ def p_reset(pArea, pReset, last, level, npc):
 
 def g_e_reset(pReset, last, level, npc):
     item = None
-    if pReset.arg1 not in merc.itemTemplate.keys():
+    if pReset.arg1 not in instance.item_templates.keys():
         logger.error("Reset_area: 'E' or 'G': bad vnum %d.", pReset.arg1)
         return last, level, npc
     else:
-        itemTemplate = merc.itemTemplate[pReset.arg1]
+        itemTemplate = instance.item_templates[pReset.arg1]
     #if not last:
     #    continue
 
@@ -289,7 +296,7 @@ def g_e_reset(pReset, last, level, npc):
         return last, level, npc
 
     olevel = 0
-    if merc.characterTemplate[npc.vnum].pShop:
+    if instance.npc_templates[npc.vnum].pShop:
         if not itemTemplate.new_format:
             if itemTemplate.item_type == merc.ITEM_PILL \
                     or itemTemplate.item_type == merc.ITEM_POTION \
@@ -346,12 +353,12 @@ def g_e_reset(pReset, last, level, npc):
 
 
 def d_reset(pReset, last, level, npc):
-    if pReset.arg1 not in merc.roomTemplate.keys():
+    if pReset.arg1 not in instance.room_templates.keys():
         logger.error("Reset_area: 'D': bad vnum %d.", pReset.arg1)
         return last, level, npc
     else:
-        roomInstance_id = merc.instances_by_room[pReset.arg1][0]
-        roomInstance = merc.global_instances[roomInstance_id]
+        roomInstance_id = instance.instances_by_room[pReset.arg1][0]
+        roomInstance = instance.global_instances[roomInstance_id]
         pexit = roomInstance.exit[pReset.arg2]
     if not pexit:
         return last, level, npc
@@ -373,12 +380,12 @@ def d_reset(pReset, last, level, npc):
 
 
 def r_reset(pReset, last, level, npc):
-    if pReset.arg1 not in merc.roomTemplate.keys():
+    if pReset.arg1 not in instance.room_templates.keys():
         logger.error("Reset_area: 'R': bad vnum %d.", pReset.arg1)
         return last, level, npc
     else:
-        roomInstance_id = merc.instances_by_room[pReset.arg1][0]
-        roomInstance = merc.global_instances[roomInstance_id]
+        roomInstance_id = instance.instances_by_room[pReset.arg1][0]
+        roomInstance = instance.global_instances[roomInstance_id]
     for d0 in range(pReset.arg2 - 1):
         d1 = random.randint(d0, pReset.arg2 - 1)
         pexit = roomInstance.exit[d0]

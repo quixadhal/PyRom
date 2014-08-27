@@ -38,7 +38,7 @@ def spell_portal(sn, level, ch, victim, target):
         ch.get(stone)
         stone.extract()
 
-    portal = object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_PORTAL], 0)
+    portal = object_creator.create_item(instance.item_templates[merc.OBJ_VNUM_PORTAL], 0)
     portal.timer = 2 + level // 25
     portal.value[3] = victim.in_room.instance_id
 

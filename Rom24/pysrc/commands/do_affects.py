@@ -1,5 +1,4 @@
 import logging
-from merc import affect_loc_name
 
 logger = logging.getLogger()
 
@@ -20,7 +19,7 @@ def do_affects(ch, argument):
             else:
                 ch.send("Spell: %-15s" % paf.type.name)
             if ch.level >= 20:
-                ch.send(": modifies %s by %d " % (affect_loc_name(paf.location), paf.modifier))
+                ch.send(": modifies %s by %d " % (merc.affect_loc_name(paf.location), paf.modifier))
             if paf.duration == -1:
                 ch.send("permanently")
             else:

@@ -32,6 +32,7 @@
  ************/
 """
 import copy
+import json
 import logging
 
 logger = logging.getLogger()
@@ -41,7 +42,7 @@ import const
 import handler_game
 import merc
 import tables
-import json
+import instance
 
 
 class Affects:
@@ -138,7 +139,7 @@ class Affects:
                 return
 
         for item_id in self.inventory[:]:
-            item = merc.items[item_id]
+            item = instance.items[item_id]
             if not item.equipped_to:
                 continue
             for paf in item.affected:
@@ -154,7 +155,7 @@ class Affects:
                     return
             if item.enchanted:
                 continue
-            for paf in merc.itemTemplate[item.vnum].affected:
+            for paf in instance.item_templates[item.vnum].affected:
                 if paf.where == where and paf.bitvector == vector:
                     if where == merc.TO_AFFECTS:
                         self.affected_by.set_bit(vector)

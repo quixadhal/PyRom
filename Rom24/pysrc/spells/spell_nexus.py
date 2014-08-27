@@ -42,7 +42,7 @@ def spell_nexus(sn, level, ch, victim, target):
         stone.extract()
 
     # portal one */
-    portal = object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_PORTAL], 0)
+    portal = object_creator.create_item(instance.item_templates[merc.OBJ_VNUM_PORTAL], 0)
     portal.timer = 1 + level // 10
     portal.value[3] = to_room.instance_id
 
@@ -56,14 +56,14 @@ def spell_nexus(sn, level, ch, victim, target):
         return
 
     # portal two */
-    portal = object_creator.create_item(merc.itemTemplate[merc.OBJ_VNUM_PORTAL], 0)
+    portal = object_creator.create_item(instance.item_templates[merc.OBJ_VNUM_PORTAL], 0)
     portal.timer = 1 + level // 10
     portal.value[3] = from_room.instance_id
 
     to_room.put(portal)
 
     if to_room.people:
-        vch = merc.characters[to_room.people[0]]
+        vch = instance.characters[to_room.people[0]]
         handler_game.act("$p rises up from the ground.", vch, portal, None, merc.TO_ROOM)
         handler_game.act("$p rises up from the ground.", vch, portal, None, merc.TO_CHAR)
 

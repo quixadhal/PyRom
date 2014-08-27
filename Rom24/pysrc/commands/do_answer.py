@@ -1,19 +1,15 @@
 import logging
 
-import handler_ch
-
-
 logger = logging.getLogger()
 
+import handler_ch
 import merc
 import interp
 import nanny
 import handler_game
 
 
-# RT answer channel - uses same line as questions */
-
-
+# RT answer channel - uses same line as questions
 def do_answer(ch, argument):
     if not argument:
         if ch.comm.is_set(merc.COMM_NOQUESTION):

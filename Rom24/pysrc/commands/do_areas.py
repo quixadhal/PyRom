@@ -4,6 +4,7 @@ logger = logging.getLogger()
 
 import merc
 import interp
+import instance
 
 
 def do_areas(ch, argument):
@@ -11,7 +12,7 @@ def do_areas(ch, argument):
         ch.send("No argument is used with this command.\n")
         return
     col = 0
-    for iArea in merc.areas.values():
+    for iArea in instance.areas.values():
         ch.send("%-39s" % iArea.credits)
         col += 1
         if col % 2 == 0:

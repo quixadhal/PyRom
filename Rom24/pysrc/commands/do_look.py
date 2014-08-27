@@ -2,13 +2,14 @@ import logging
 
 logger = logging.getLogger()
 
-from const import liq_table
 import merc
 import game_utils
 import handler_ch
 import handler_game
 import state_checks
 import interp
+import const
+import instance
 
 
 def do_look(ch, argument):
@@ -72,7 +73,7 @@ def do_look(ch, argument):
             else:
                 amnt = "more than half-"
             ch.send("It's %sfilled with a %s liquid.\n" % (
-                amnt, liq_table[item.value[2]].color))
+                amnt, const.liq_table[item.value[2]].color))
         elif item_type == merc.ITEM_CONTAINER or item_type == merc.ITEM_CORPSE_NPC \
                 or item_type == merc.ITEM_CORPSE_PC:
             if state_checks.IS_SET(item.value[1], merc.CONT_CLOSED):
@@ -91,7 +92,7 @@ def do_look(ch, argument):
     item_list = ch.items
     item_list.extend(room.items)
     for obj_id in item_list:
-        item = merc.items[obj_id]
+        item = instance.items[obj_id]
         if ch.can_see_item(item):
             # player can see object
             pdesc = game_utils.get_extra_descr(arg3, item.extra_descr)

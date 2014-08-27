@@ -1,5 +1,7 @@
 import logging
+
 import handler_game
+
 
 logger = logging.getLogger()
 
@@ -24,7 +26,7 @@ def do_violate(ch, argument):
         fight.stop_fighting(ch, True)
 
     for rch_id in ch.in_room.people:
-        rch = merc.characters[rch_id]
+        rch = instance.characters[rch_id]
         if rch.trust >= ch.invis_level:
             if ch.pcdata and ch.bamfout:
                 handler_game.act("$t", ch, ch.bamfout, rch, merc.TO_VICT)
@@ -34,7 +36,7 @@ def do_violate(ch, argument):
     ch.put(location)
 
     for rch_id in ch.in_room.people:
-        rch = merc.characters[rch_id]
+        rch = instance.characters[rch_id]
         if rch.trust >= ch.invis_level:
             if ch.pcdata and ch.bamfin:
                 handler_game.act("$t", ch, ch.bamfin, rch, merc.TO_VICT)

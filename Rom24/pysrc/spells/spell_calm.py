@@ -17,7 +17,7 @@ def spell_calm(sn, level, ch, victim, target):
     mlevel = 0
     high_level = 0
     for vch_id in ch.in_room.people:
-        vch = merc.characters[vch_id]
+        vch = instance.characters[vch_id]
         if vch.position == merc.POS_FIGHTING:
             count = count + 1
         if vch.is_npc():
@@ -34,7 +34,7 @@ def spell_calm(sn, level, ch, victim, target):
 
     if random.randint(0, chance) >= mlevel:  # hard to stop large fights */
         for vch_id in ch.in_room.people:
-            vch = merc.characters[vch_id]
+            vch = instance.characters[vch_id]
             if vch.is_npc() and (vch.imm_flags.is_set(merc.IMM_MAGIC) \
                                         or vch.act.is_set(merc.ACT_UNDEAD)):
                 return

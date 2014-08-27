@@ -14,7 +14,7 @@ def do_restore(ch, argument):
     if not arg or arg == "room":
         # cure room
         for vch_id in ch.in_room.people:
-            vch = merc.characters[vch_id]
+            vch = instance.characters[vch_id]
             vch.affect_strip("plague")
             vch.affect_strip("poison")
             vch.affect_strip("blindness")

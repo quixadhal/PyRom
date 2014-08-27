@@ -1,12 +1,12 @@
 import logging
-import handler_game
-
 
 logger = logging.getLogger()
 
+import handler_game
 import merc
 import interp
 import nanny
+import instance
 
 
 def do_mwhere(ch, argument):
@@ -28,7 +28,7 @@ def do_mwhere(ch, argument):
                     count, victim.name, victim.in_room.name, victim.in_room.vnum))
         return
     found = False
-    for victim in merc.characters.values():
+    for victim in instance.characters.values():
         if victim.in_room and argument in victim.name:
             found = True
             count += 1

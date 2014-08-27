@@ -9,6 +9,7 @@ import nanny
 import state_checks
 import handler_ch
 import handler_game
+import instance
 
 
 def do_where(ch, argument):
@@ -33,7 +34,7 @@ def do_where(ch, argument):
 
     else:
         found = False
-        for victim in merc.characters.values():
+        for victim in instance.characters.values():
             if victim.in_room \
             and victim.in_room.area == ch.in_room.area \
             and not victim.is_affected( merc.AFF_HIDE) \

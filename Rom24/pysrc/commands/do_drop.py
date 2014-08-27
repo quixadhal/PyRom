@@ -1,15 +1,12 @@
 import logging
-import handler_game
-
-import object_creator
-
 
 logger = logging.getLogger()
 
+import object_creator
+import handler_game
 import merc
 import interp
 import game_utils
-import state_checks
 
 
 def do_drop(ch, argument):
@@ -41,7 +38,7 @@ def do_drop(ch, argument):
             ch.gold -= amount
             gold = amount
         for item_id in ch.in_room.items:
-            item = merc.items[item_id]
+            item = instance.items[item_id]
             if item.vnum == merc.OBJ_VNUM_SILVER_ONE:
                 silver += 1
                 item.extract()
@@ -83,7 +80,7 @@ def do_drop(ch, argument):
         # 'drop all' or 'drop all.obj'
         found = False
         for item_id in ch.inventory[:]:
-            item = merc.items[item_id]
+            item = instance.items[item_id]
             if (len(arg) == 3 or arg[4:] in item.name) \
                     and ch.can_see_item(item) \
                     and not item.equipped_to \

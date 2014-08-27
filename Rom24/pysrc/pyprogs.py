@@ -1,18 +1,17 @@
 import ast
 import copy
 import inspect
-import logging
 import time
 import collections
-
-import merc
-import settings
-
+import tokenize
+import io
+import logging
 
 logger = logging.getLogger()
 
-import tokenize
-import io
+import merc
+import settings
+import instance
 
 signals = {'say': []}
 
@@ -28,7 +27,7 @@ def emit_signal(signal, actor=None, victim=None, argument=None, audience=None):
         victim.absorb(signal, actor, victim, argument)
 
     if audience:
-        [merc.global_instances[a].absorb(signal, actor, victim, argument, audience) for a in audience if a != actor and a != victim]
+        [instance.global_instances[a].absorb(signal, actor, victim, argument, audience) for a in audience if a != actor and a != victim]
     for prog in signals[signal]:
         prog.execute(actor, victim, argument, audience)
     actor.dampen = False

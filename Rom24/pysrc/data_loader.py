@@ -1,7 +1,9 @@
 import os
 import sys
-import logging
 import collections
+import logging
+
+logger = logging.getLogger()
 
 import const
 import object_creator
@@ -16,9 +18,8 @@ import settings
 import state_checks
 import tables
 import miniboa.terminal
+import instance
 
-
-logger = logging.getLogger()
 
 __author__ = 'syn'
 
@@ -55,7 +56,7 @@ def load_area(area, index):
             area, pArea.credits = game_utils.read_string(area)
             area, pArea.min_vnum = game_utils.read_int(area)
             area, pArea.max_vnum = game_utils.read_int(area)
-            merc.areaTemplate[pArea.name] = pArea
+            instance.area_templates[pArea.name] = pArea
             area_instance = world_classes.Area(pArea)
             logger.info("    Loading %s", area_instance)
 
@@ -88,7 +89,7 @@ def load_helps(area):
         nhelp = handler_game.HELP_DATA()
         area, nhelp.level = game_utils.read_int(area)
         area, nhelp.keyword = game_utils.read_string(area)
-        merc.helps[nhelp.keyword] = nhelp
+        instance.helps[nhelp.keyword] = nhelp
 
         if nhelp.keyword == '$':
             del nhelp
@@ -110,7 +111,7 @@ def load_npcs(area, pArea):
     while w != '0':
         npc = handler_npc.Npc()
         npc.vnum = int(w)
-        merc.characterTemplate[npc.vnum] = npc
+        instance.npc_templates[npc.vnum] = npc
         npc.area = pArea.name
         area, npc.name = game_utils.read_string(area)
         npc.name = npc.name.lower()
@@ -185,7 +186,7 @@ def load_objects(area, pArea):
         flag_data.attributes = set({})
         item = handler_item.Items(None)
         item.vnum = int(w)
-        merc.itemTemplate[item.vnum] = item
+        instance.item_templates[item.vnum] = item
         item.area = pArea.name
         area, item.name = game_utils.read_string(area)
         area, item.short_descr = game_utils.read_string(area)
@@ -328,10 +329,10 @@ def load_rooms(area, pArea):
     while w != '0':
         room = handler_room.Room(None)
         room.vnum = int(w)
-        if room.vnum in merc.roomTemplate:
+        if room.vnum in instance.room_templates:
             logger.critical('Dupicate room Vnum: %d', room.vnum)
             sys.exit(1)
-        merc.roomTemplate[room.vnum] = room
+        instance.room_templates[room.vnum] = room
         room.area = pArea.name
         area, room.name = game_utils.read_string(area)
 
@@ -393,8 +394,8 @@ def load_shops(area):
             break
         shop = world_classes.Shop(None)
         shop.keeper = keeper
-        merc.shopTemplate[shop.keeper] = shop
-        merc.characterTemplate[shop.keeper].pShop = merc.shopTemplate[shop.keeper]
+        instance.shop_templates[shop.keeper] = shop
+        instance.npc_templates[shop.keeper].pShop = instance.shop_templates[shop.keeper]
         for r in range(merc.MAX_TRADE):
             area, shop.buy_type[r] = game_utils.read_int(area)
         area, shop.profit_buy = game_utils.read_int(area)
@@ -413,7 +414,7 @@ def load_socials(area):
             return
         social = handler_game.SOCIAL_DATA()
         social.name = word
-        merc.social[social.name] = social
+        instance.socials[social.name] = social
         area, throwaway = game_utils.read_to_eol(area)
         area, line = game_utils.read_to_eol(area)
         if line == '$':
@@ -512,7 +513,7 @@ def load_specials(area):
             return area
         elif letter == 'M':
             area, vnum = game_utils.read_int(area)
-            area, merc.characterTemplate[vnum].spec_fun = game_utils.read_word(area, False)
+            area, instance.npc_templates[vnum].spec_fun = game_utils.read_word(area, False)
         else:
             logger.error("Load_specials: letter noth *SM: %s", letter)
 

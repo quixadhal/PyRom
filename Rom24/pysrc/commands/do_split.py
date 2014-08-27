@@ -33,7 +33,7 @@ def do_split(ch, argument):
         return
     members = 0
     for gch_id in ch.in_room.people:
-        gch = merc.characters[gch_id]
+        gch = instance.characters[gch_id]
         if gch.is_same_group(ch) and not state_checks.IS_AFFECTED(gch, merc.AFF_CHARM):
             members += 1
     if members < 2:
@@ -63,7 +63,7 @@ def do_split(ch, argument):
                 amount_silver, amount_gold, share_silver, share_gold)
 
     for gch_id in ch.in_room.people:
-        gch = merc.characters[gch_id]
+        gch = instance.characters[gch_id]
         if gch != ch and gch.is_same_group(ch) and not state_checks.IS_AFFECTED(gch, merc.AFF_CHARM):
             handler_game.act(buf, ch, None, gch, merc.TO_VICT)
             gch.gold += share_gold

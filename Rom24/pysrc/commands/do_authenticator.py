@@ -8,7 +8,6 @@ import auth
 import game_utils
 import interp
 import merc
-import save
 
 
 def do_authenticator(ch, argument):
@@ -46,6 +45,7 @@ def do_authenticator(ch, argument):
                 ch.send('You must now use Google Authenticator to log in.\n')
                 ch.send('Please add a new time-based account to your authenticator, using %s as the code.\n' %
                         ch.auth.secret)
+                ch.send('If you don\'t have a smartphone app, you can get a Windows version at https://winauth.com/\n')
                 return
 
     if arg1 == 'off' or arg1 == 'deactivate' or arg1 == 'disable' or arg1 == 'remove':

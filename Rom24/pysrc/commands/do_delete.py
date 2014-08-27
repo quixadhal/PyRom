@@ -1,8 +1,7 @@
+import os
 import logging
 
 logger = logging.getLogger()
-
-import os
 
 import handler_game
 import merc

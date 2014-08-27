@@ -31,19 +31,18 @@
  * Now using Python 3 version https://code.google.com/p/miniboa-py3/
  ************/
 """
+import collections
+import random
 import logging
 
 logger = logging.getLogger()
-
-# * Move a char into a room.
-import collections
-import random
 
 import merc
 import handler_game
 import const
 import state_checks
 import handler_item
+import instance
 
 depth = 0
 
@@ -63,7 +62,7 @@ def move_char(ch, door, follow):
     if not pexit or not pexit.to_room or not ch.can_see_room(pexit.to_room):
         ch.send("Alas, you cannot go that way.\n")
         return
-    to_room = merc.rooms[pexit.to_room]
+    to_room = instance.rooms[pexit.to_room]
     if pexit.exit_info.is_set(merc.EX_CLOSED) \
             and (not ch.is_affected(merc.AFF_PASS_DOOR)
                  or pexit.exit_info.is_set(merc.EX_NOPASS)) \
@@ -71,7 +70,7 @@ def move_char(ch, door, follow):
         handler_game.act("The $d is closed.", ch, None, pexit.keyword, merc.TO_CHAR)
         return
     if ch.is_affected(merc.AFF_CHARM) \
-            and ch.master and in_room == merc.characters[ch.master].in_room:
+            and ch.master and in_room == instance.characters[ch.master].in_room:
         ch.send("What?  And leave your beloved master?\n")
         return
     if not ch.is_room_owner(to_room) and to_room.is_private():
@@ -80,8 +79,8 @@ def move_char(ch, door, follow):
     if not ch.is_npc():
         for gn, guild in const.guild_table.items():
             for room_vnum in guild.guild_rooms:
-                room_id = merc.instances_by_room[room_vnum][0]
-                room = merc.rooms[room_id]
+                room_id = instance.instances_by_room[room_vnum][0]
+                room = instance.rooms[room_id]
                 if guild != ch.guild and to_room.instance_id == room.instance_id:
                     ch.send("You aren't allowed in there.\n")
                     return
@@ -95,7 +94,7 @@ def move_char(ch, door, follow):
             or to_room.sector_type == merc.SECT_WATER_NOSWIM) \
                 and not ch.is_affected(merc.AFF_FLYING):
             # Look for a boat.
-            boats = [item_id for item_id in ch.inventory if merc.items[item_id].item_type == merc.ITEM_BOAT]
+            boats = [item_id for item_id in ch.inventory if instance.items[item_id].item_type == merc.ITEM_BOAT]
             if not boats and not ch.is_immortal():
                 ch.send("You need a boat to go there.\n")
                 return
@@ -123,7 +122,7 @@ def move_char(ch, door, follow):
         return
 
     for fch_id in in_room.people[:]:
-        fch = merc.characters[fch_id]
+        fch = instance.characters[fch_id]
         if fch.master == ch.instance_id and fch.is_affected(merc.AFF_CHARM) and fch.position < merc.POS_STANDING:
             fch.do_stand("")
 
@@ -155,21 +154,21 @@ def add_follower(ch, master):
 def nuke_pets(ch):
     if ch.pet:
         stop_follower(ch.pet)
-        if merc.characters[ch.pet].in_room:
-            handler_game.act("$N slowly fades away.", ch, None, merc.characters[ch.pet], merc.TO_NOTVICT)
-        merc.characters[ch.pet].extract(True)
+        if instance.characters[ch.pet].in_room:
+            handler_game.act("$N slowly fades away.", ch, None, instance.characters[ch.pet], merc.TO_NOTVICT)
+        instance.characters[ch.pet].extract(True)
     ch.pet = None
     return
 
 
 def die_follower(ch):
     if ch.master:
-        if merc.characters[ch.master].pet == ch.instance_id:
-            merc.characters[ch.master].pet = None
+        if instance.characters[ch.master].pet == ch.instance_id:
+            instance.characters[ch.master].pet = None
         stop_follower(ch)
     ch.leader = None
 
-    for fch in merc.characters.values():
+    for fch in instance.characters.values():
         if fch.master == ch.instance_id:
             stop_follower(fch)
         if fch.leader == ch.instance_id:
@@ -186,11 +185,11 @@ def stop_follower(ch):
         ch.affected_by.rem_bit(merc.AFF_CHARM)
         ch.affect_strip('charm person')
 
-    if merc.characters[ch.master].can_see(ch) and ch.in_room:
-        handler_game.act("$n stops following you.", ch, None, merc.characters[ch.master], merc.TO_VICT)
-        handler_game.act("You stop following $N.", ch, None, merc.characters[ch.master], merc.TO_CHAR)
-    if merc.characters[ch.master].pet == ch.instance_id:
-        merc.characters[ch.master].pet = None
+    if instance.characters[ch.master].can_see(ch) and ch.in_room:
+        handler_game.act("$n stops following you.", ch, None, instance.characters[ch.master], merc.TO_VICT)
+        handler_game.act("You stop following $N.", ch, None, instance.characters[ch.master], merc.TO_CHAR)
+    if instance.characters[ch.master].pet == ch.instance_id:
+        instance.characters[ch.master].pet = None
     ch.master = None
     ch.leader = None
     return
@@ -204,9 +203,9 @@ def show_list_to_char(clist, ch, fShort, fShowNothing):
         return
     item_dict = collections.OrderedDict()
     for item_id in clist:
-        item = merc.items[item_id]
+        item = instance.items[item_id]
         if ch.can_see_item(item):
-                logger.debug("Showing an item")
+                #logger.trace("Showing an item")
                 frmt = handler_item.format_item_to_char(item, ch, fShort)
                 if frmt not in item_dict:
                     item_dict[frmt] = 1
@@ -276,7 +275,7 @@ def show_char_to_char_0(victim, ch):
         buf += " is lying here stunned."
     elif victim.position == merc.POS_SLEEPING:
         if victim.on:
-            on_item = merc.items[victim.on]
+            on_item = instance.items[victim.on]
             if state_checks.IS_SET(on_item.value[2], merc.SLEEP_AT):
                 buf += " is sleeping at %s." % on_item.short_descr
             elif state_checks.IS_SET(on_item.value[2], merc.SLEEP_ON):
@@ -287,7 +286,7 @@ def show_char_to_char_0(victim, ch):
             buf += " is sleeping here."
     elif victim.position == merc.POS_RESTING:
         if victim.on:
-            on_item = merc.items[victim.on]
+            on_item = instance.items[victim.on]
             if state_checks.IS_SET(on_item.value[2], merc.REST_AT):
                 buf += " is resting at %s." % on_item.short_descr
             elif state_checks.IS_SET(on_item.value[2], merc.REST_ON):
@@ -298,7 +297,7 @@ def show_char_to_char_0(victim, ch):
             buf += " is resting here."
     elif victim.position == merc.POS_SITTING:
         if victim.on:
-            on_item = merc.items[victim.on]
+            on_item = instance.items[victim.on]
             if state_checks.IS_SET(on_item.value[2], merc.SIT_AT):
                 buf += " is sitting at %s." % on_item.short_descr
             elif state_checks.IS_SET(on_item.value[2], merc.SIT_ON):
@@ -309,7 +308,7 @@ def show_char_to_char_0(victim, ch):
             buf += " is sitting here."
     elif victim.position == merc.POS_STANDING:
         if victim.on:
-            on_item = merc.items[victim.on]
+            on_item = instance.items[victim.on]
             if state_checks.IS_SET(on_item.value[2], merc.STAND_AT):
                 buf += " is standing at %s." % on_item.short_descr
             elif state_checks.IS_SET(on_item.value[2], merc.STAND_ON):
@@ -373,7 +372,7 @@ def show_char_to_char_1(victim, ch):
     for location, instance_id in victim.equipped.items():
         if not instance_id:
             continue
-        item = merc.items[instance_id]
+        item = instance.items[instance_id]
         if item:
             if ch.can_see_item(item):
                 if item.flags.two_handed and victim.equipped['off_hand'] == item.instance_id and 'off_hand' in location:
@@ -393,7 +392,7 @@ def show_char_to_char_1(victim, ch):
 
 def show_char_to_char(plist, ch):
     for rch in plist:
-        character = merc.characters[rch]
+        character = instance.characters[rch]
         if character == ch:
             continue
         if ch.trust < character.invis_level:
