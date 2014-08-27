@@ -192,11 +192,15 @@ class Exit:
         self.key_vnum = None
         self.keyword = ""
         self.description = ""
+        self.is_broken = False
         if template:
             import copy
             [setattr(self, k, copy.deepcopy(v)) for k, v in template.__dict__.items()]
-            if self.to_room_vnum != -1 and not None:
+            if self.to_room_vnum != -1 and not None and self.to_room_vnum in merc.instances_by_room:
                 self.to_room = merc.instances_by_room[self.to_room_vnum][0]
+            elif self.to_room_vnum not in merc.instances_by_room:
+                self.is_broken = True
+                logger.error("Exit(): bad to_room_vnum %d.", self.to_room_vnum)
             else:
                 self.to_room = None
             if self.key <= 0:
