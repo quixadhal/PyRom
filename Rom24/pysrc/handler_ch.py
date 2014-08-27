@@ -79,11 +79,12 @@ def move_char(ch, door, follow):
     if not ch.is_npc():
         for gn, guild in const.guild_table.items():
             for room_vnum in guild.guild_rooms:
-                room_id = instance.instances_by_room[room_vnum][0]
-                room = instance.rooms[room_id]
-                if guild != ch.guild and to_room.instance_id == room.instance_id:
-                    ch.send("You aren't allowed in there.\n")
-                    return
+                if room_vnum in instance.instances_by_room:
+                    room_id = instance.instances_by_room[room_vnum][0]
+                    room = instance.rooms[room_id]
+                    if guild != ch.guild and to_room.instance_id == room.instance_id:
+                        ch.send("You aren't allowed in there.\n")
+                        return
         if in_room.sector_type == merc.SECT_AIR \
                 or to_room.sector_type == merc.SECT_AIR:
             if not ch.is_affected(merc.AFF_FLYING) \

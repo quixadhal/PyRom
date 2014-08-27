@@ -4,6 +4,7 @@ logger = logging.getLogger()
 
 import merc
 import interp
+import instance
 
 
 # Thanks to Zrin for auto-exit part.
@@ -20,11 +21,14 @@ def do_exits(ch, argument):
         buf += "Obvious exits:\n"
     found = False
     for door, pexit in enumerate(ch.in_room.exit):
-        if pexit and pexit.to_room \
+        if pexit \
                 and (ch.act.is_set(merc.PLR_OMNI)
                      or (ch.can_see_room(pexit.to_room)
                          and not pexit.exit_info.is_set(merc.EX_CLOSED))):
             found = True
+            if pexit.is_broken:
+                buf += " #%s#" % (merc.dir_name[door])
+                continue
             pto_room = instance.rooms[pexit.to_room]
             if fAuto:
                 if pexit.exit_info.is_set(merc.EX_CLOSED):
@@ -33,7 +37,7 @@ def do_exits(ch, argument):
                     buf += " %s" % merc.dir_name[door]
                 if ch.act.is_set(merc.PLR_OMNI):
                     buf += "(%d)" % pto_room.vnum
-            else:
+            elif pto_room:
                 buf += "%-5s - %s" % (merc.dir_name[door].capitalize(),
                                       "Too dark to tell" if pto_room.is_dark() else pto_room.name)
                 if ch.is_immortal():
