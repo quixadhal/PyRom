@@ -200,8 +200,8 @@ def con_confirm_new_password(self):
         self.set_connected(con_get_new_password)
         return
     ch = pc.Pc(ch_dummy.name)
-    del ch_dummy
     ch.pwd = ch_dummy.pwd
+    del ch_dummy
     ch.desc = self
     ch.send = self.send
     self.character = ch

@@ -610,6 +610,11 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         return True
 
     def can_see_room(self, room_id):
+        if not room_id:
+            if self.is_immortal():
+                return True
+            else:
+                return False
         room = merc.rooms[room_id]
         if state_checks.IS_SET(room.room_flags, merc.ROOM_IMP_ONLY) and self.trust < merc.MAX_LEVEL:
             return False
@@ -617,8 +622,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             return False
         if state_checks.IS_SET(room.room_flags, merc.ROOM_HEROES_ONLY) and not self.is_immortal():
             return False
-        if state_checks.IS_SET(room.room_flags,
-                               merc.ROOM_NEWBIES_ONLY) and self.level > 5 and not self.is_immortal():
+        if state_checks.IS_SET(room.room_flags, merc.ROOM_NEWBIES_ONLY) and self.level > 5 and not self.is_immortal():
             return False
         if not self.is_immortal() and room.clan and self.clan != room.clan:
             return False

@@ -184,16 +184,16 @@ def bust_a_prompt(ch):
     replace = OrderedDict()
     found = False
     for door, pexit in enumerate(room.exit):
-        if pexit and (ch.can_see_room(pexit.to_room)
+        if pexit and (pexit.to_room and ch.can_see_room(pexit.to_room)
                       or (ch.is_affected(merc.AFF_INFRARED)
                           and not ch.is_affected(merc.AFF_BLIND))) \
                 and not pexit.exit_info.is_set(merc.EX_CLOSED):
             found = True
             doors += dir_name[door]
-        if not found:
-            replace['%e'] = "none"
-        else:
-            replace['%e'] = doors
+    if not found:
+        replace['%e'] = "none"
+    else:
+        replace['%e'] = doors
     replace['%c'] = '\n'
     replace['%h'] = '%s' % ch.hit
     replace['%H'] = "%s" % ch.max_hit
