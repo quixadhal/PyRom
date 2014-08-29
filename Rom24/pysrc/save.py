@@ -49,7 +49,7 @@ def legacy_save_char_obj(ch):
     if ch.inventory:
         fwrite['inventory'] = [fwrite_obj(ch, o) for o in ch.inventory]
 
-    to_write = json.dumps(fwrite, indent=4)
+    to_write = json.dumps(fwrite, indent=4, sort_keys=True)
     with open(pfile, 'w') as pf:
         pf.write(to_write)
 
@@ -87,7 +87,7 @@ def fwrite_obj(ch, obj, contained_by=None):
 def recursive_item_jsonify(item_to_json, inv_dir: str=None, equip_dir: str=None,
                            is_equipment: bool=False, is_in_inventory: bool=False):
     if is_equipment:
-        to_equipped = json.dumps(item_to_json, default=instance.to_json, indent=4)
+        to_equipped = json.dumps(item_to_json, default=instance.to_json, indent=4, sort_keys=True)
         equip_write = os.path.join(equip_dir, str(item_to_json.instance_id) + '.json')
         with open(equip_write, 'w') as eq:
             eq.write(to_equipped)
@@ -98,7 +98,7 @@ def recursive_item_jsonify(item_to_json, inv_dir: str=None, equip_dir: str=None,
         else:
             return
     if is_in_inventory:
-        to_inventory = json.dumps(item_to_json, default=instance.to_json, indent=4)
+        to_inventory = json.dumps(item_to_json, default=instance.to_json, indent=4, sort_keys=True)
         inventory_write = os.path.join(inv_dir, str(item_to_json.instance_id) + '.json')
         with open(inventory_write, 'w') as inv:
             inv.write(to_inventory)

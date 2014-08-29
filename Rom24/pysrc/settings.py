@@ -42,3 +42,4 @@ INSTANCE_DIR = os.path.join(WORLD_DIR, 'instances')
 #Features
 SHOW_DAMAGE_NUMBERS = True
 DETAILED_INVALID_COMMANDS = True
+SAVE_LIMITER = 300  # Only save files every N seconds, unless forced.

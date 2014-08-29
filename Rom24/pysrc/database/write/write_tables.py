@@ -1,9 +1,9 @@
 import logging
 import os
+import json
 
 logger = logging.getLogger()
 
-from json import dumps
 from database.tracker import tables
 from settings import DATA_EXTN, DATA_DIR
 
@@ -23,6 +23,6 @@ def write_tables(listener=None, loc=DATA_DIR, extn=DATA_EXTN):
 def write_table(path, tok):
     with open(path, 'w') as fp:
         if tok.filter:
-            fp.write(dumps(tok.filter(tok.table), indent=4))
+            fp.write(json.dumps(tok.filter(tok.table), indent=4, sort_keys=True))
         else:
-            fp.write(dumps(tok.table, indent=4))
+            fp.write(json.dumps(tok.table, indent=4, sort_keys=True))

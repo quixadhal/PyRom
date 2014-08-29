@@ -34,6 +34,8 @@
 import json
 import os
 import copy
+import hashlib
+import time
 import logging
 
 logger = logging.getLogger()
@@ -150,6 +152,8 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
             Items.instance_count += 1
         else:
             Items.template_count += 1
+        self._last_saved = None
+        self._md5 = None
 
     def __del__(self):
         try:
@@ -485,6 +489,8 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         for k, v in self.__dict__.items():
             if str(type(v)) in ("<class 'function'>", "<class 'method'>"):
                 continue
+            elif str(k) in ('_last_saved', '_md5'):
+                continue
             else:
                 tmp_dict[k] = v
 
@@ -502,7 +508,12 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
             return cls(**tmp_data)
         return data
 
-    def save(self, is_equipped: bool=False, in_inventory: bool=False, player_name: str=None):
+    def save(self, is_equipped: bool=False, in_inventory: bool=False, player_name: str=None, force: bool=False):
+        if self._last_saved is None:
+            self._last_saved = time.time() - settings.SAVE_LIMITER - 2
+        if not force and time.time() < self._last_saved + settings.SAVE_LIMITER:
+            return
+
         if player_name is None:
             if self.instance_id:
                 top_dir = settings.INSTANCE_DIR
@@ -526,14 +537,17 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         os.makedirs(pathname, 0o755, True)
         filename = os.path.join(pathname, '%d-item.json' % number)
         logger.info('Saving %s', filename)
-        js = json.dumps(self, default=instance.to_json, indent=4)
-        with open(filename, 'w') as fp:
-            fp.write(js)
+        js = json.dumps(self, default=instance.to_json, indent=4, sort_keys=True)
+        md5 = hashlib.md5(js.encode('utf-8')).hexdigest()
+        if self._md5 != md5:
+            self._md5 = md5
+            with open(filename, 'w') as fp:
+                fp.write(js)
 
         if self.inventory:
             for item_id in self.inventory[:]:
                 item = instance.global_instances[item_id]
-                item.save(is_equipped, in_inventory, player_name)
+                item.save(is_equipped=is_equipped, in_inventory=in_inventory, player_name=player_name, force=force)
 
     @classmethod
     def load(cls, instance_id: int=None, vnum: int=None, player_name: str=None):

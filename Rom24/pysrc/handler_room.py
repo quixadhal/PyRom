@@ -35,6 +35,8 @@ import random
 import copy
 import os
 import json
+import hashlib
+import time
 import logging
 
 logger = logging.getLogger()
@@ -97,6 +99,8 @@ class Room(instance.Instancer, environment.Environment, inventory.Inventory, typ
             Room.instance_count += 1
         else:
             Room.template_count += 1
+        self._last_saved = None
+        self._md5 = None
 
     def __del__(self):
         try:
@@ -212,7 +216,9 @@ class Room(instance.Instancer, environment.Environment, inventory.Inventory, typ
         for k, v in self.__dict__.items():
             if str(type(v)) in ("<class 'function'>", "<class 'method'>"):
                 continue
-            if str(k) == 'inventory' and v is not None:
+            elif str(k) in ('_last_saved', '_md5'):
+                continue
+            elif str(k) == 'inventory' and v is not None:
                 # We need to save the inventory special to keep the type data with it.
                 t = 'special_inventory'
                 tmp_dict[t] = []
@@ -243,7 +249,12 @@ class Room(instance.Instancer, environment.Environment, inventory.Inventory, typ
             return cls(**tmp_data)
         return data
 
-    def save(self):
+    def save(self, force: bool=False):
+        if self._last_saved is None:
+            self._last_saved = time.time() - settings.SAVE_LIMITER - 2
+        if not force and time.time() < self._last_saved + settings.SAVE_LIMITER:
+            return
+
         if self.instance_id:
             top_dir = settings.INSTANCE_DIR
             number = self.instance_id
@@ -255,14 +266,17 @@ class Room(instance.Instancer, environment.Environment, inventory.Inventory, typ
         os.makedirs(pathname, 0o755, True)
         filename = os.path.join(pathname, '%d-room.json' % number)
         logger.info('Saving %s', filename)
-        js = json.dumps(self, default=instance.to_json, indent=4)
-        with open(filename, 'w') as fp:
-            fp.write(js)
+        js = json.dumps(self, default=instance.to_json, indent=4, sort_keys=True)
+        md5 = hashlib.md5(js.encode('utf-8')).hexdigest()
+        if self._md5 != md5:
+            self._md5 = md5
+            with open(filename, 'w') as fp:
+                fp.write(js)
 
         if self.inventory:
             for item_id in self.inventory[:]:
                 item = instance.items[item_id]
-                item.save(in_inventory=True)
+                item.save(in_inventory=True, force=force)
 
     @classmethod
     def load(cls, vnum: int=None, instance_id: int=None):

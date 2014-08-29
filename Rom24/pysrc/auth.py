@@ -35,6 +35,8 @@ import logging
 
 logger = logging.getLogger()
 
+import instance
+
 
 class TwoFactorAuth:
     """
@@ -159,7 +161,7 @@ class TwoFactorAuth:
         :return: Secret key token, as set.
         :rtype: str
         """
-        return json.dumps(self, default=to_json)
+        return json.dumps(self, default=instance.to_json, indent=4, sort_keys=True)
 
     def to_json(self, outer_encoder=None):
         """

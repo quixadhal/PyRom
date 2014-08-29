@@ -824,7 +824,7 @@ def check_killer(ch, victim):
     ch.send("*** You are now a KILLER!! ***\n")
     state_checks.SET_BIT(ch.act, PLR_KILLER)
     handler_game.wiznet("$N is attempting to murder %s" % victim.name, ch, None, WIZ_FLAGS, 0, 0)
-    ch.save()
+    ch.save(force=True)
     return
 
 

@@ -251,7 +251,7 @@ def save():
         else:
             tmp_dict[i] = [global_instances[i].__module__, global_instances[i].__class__.__name__]
     with open(filename, 'w') as fp:
-        json.dump({'max_instance_id': max_instance_id, 'data': tmp_dict}, fp, default=to_json, indent=4)
+        json.dump({'max_instance_id': max_instance_id, 'data': tmp_dict}, fp, default=to_json, indent=4, sort_keys=True)
 
 
 def load():

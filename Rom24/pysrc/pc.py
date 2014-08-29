@@ -3,6 +3,7 @@ import random
 import time
 import json
 import copy
+import hashlib
 import logging
 
 logger = logging.getLogger()
@@ -89,6 +90,8 @@ class Pc(living.Living):
             Pc.instance_count += 1
         else:
             Pc.template_count += 1
+        self._last_saved = None
+        self._md5 = None
 
     def __del__(self):
         try:
@@ -573,7 +576,9 @@ class Pc(living.Living):
         for k, v in self.__dict__.items():
             if str(type(v)) in ("<class 'function'>", "<class 'method'>"):
                 continue
-            if str(k) in ('desc', 'send'):
+            elif str(k) in ('desc', 'send'):
+                continue
+            elif str(k) in ('_last_saved', '_md5'):
                 continue
             else:
                 tmp_dict[k] = v
@@ -608,7 +613,7 @@ class Pc(living.Living):
         stub['last_login'] = self._last_login
         stub['last_logout'] = self._last_logout
         stub['room'] = self._saved_room_vnum
-        js = json.dumps(stub, default=instance.to_json, indent=4)
+        js = json.dumps(stub, default=instance.to_json, indent=4, sort_keys=True)
         with open(filename, 'w') as fp:
             fp.write(js)
 
@@ -634,24 +639,33 @@ class Pc(living.Living):
             logger.error('Could not open player stub file for %s', player_name)
             return None
 
-    def save(self, logout: bool=False):
+    def save(self, logout: bool=False, force: bool=False):
+        if self._last_saved is None:
+            self._last_saved = time.time() - settings.SAVE_LIMITER - 2
+        if not force and time.time() < self._last_saved + settings.SAVE_LIMITER:
+            return
+
+        self._last_saved = time.time()
         self.save_stub(logout)
         pathname = os.path.join(settings.PLAYER_DIR, self.name[0].lower(), self.name.capitalize())
         os.makedirs(pathname, 0o755, True)
         filename = os.path.join(pathname, 'player.json')
         logger.info('Saving %s', filename)
-        js = json.dumps(self, default=instance.to_json, indent=4)
-        with open(filename, 'w') as fp:
-            fp.write(js)
+        js = json.dumps(self, default=instance.to_json, indent=4, sort_keys=True)
+        md5 = hashlib.md5(js.encode('utf-8')).hexdigest()
+        if self._md5 != md5:
+            self._md5 = md5
+            with open(filename, 'w') as fp:
+                fp.write(js)
 
         if self.inventory:
             for item_id in self.inventory[:]:
                 item = instance.items[item_id]
-                item.save(in_inventory=True, player_name=self.name)
+                item.save(in_inventory=True, player_name=self.name, force=force)
         for item_id in self.equipped.values():
             if item_id:
                 item = instance.items[item_id]
-                item.save(is_equipped=True, player_name=self.name)
+                item.save(is_equipped=True, player_name=self.name, force=force)
 
     @classmethod
     def load(cls, player_name: str=None):
