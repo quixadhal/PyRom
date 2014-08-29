@@ -11,7 +11,7 @@ from merc import *
 import tables
 import world_classes
 import settings
-import pc
+import handler_pc
 import auth
 
 
@@ -21,7 +21,7 @@ def area_pickler():
 def legacy_load_char_obj(d, name):
     #ch = handler_ch.CHAR_DATA()
     #ch.pcdata = handler_ch.PC_DATA()
-    ch = pc.Pc(name)
+    ch = handler_pc.Pc(name)
     found = False
     pfile = os.path.join(settings.LEGACY_PLAYER_DIR, name + '.json')
     if os.path.isfile(pfile):

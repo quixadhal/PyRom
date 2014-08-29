@@ -660,10 +660,16 @@ class Pc(living.Living):
 
         if self.inventory:
             for item_id in self.inventory[:]:
+                if item_id not in instance.items:
+                    logger.error('Item %d is in Player %s\'s inventory, but does not exist?', item_id, self.name)
+                    continue
                 item = instance.items[item_id]
                 item.save(in_inventory=True, player_name=self.name, force=force)
         for item_id in self.equipped.values():
             if item_id:
+                if item_id not in instance.items:
+                    logger.error('Item %d is in Player %s\'s inventory, but does not exist?', item_id, self.name)
+                    continue
                 item = instance.items[item_id]
                 item.save(is_equipped=True, player_name=self.name, force=force)
 

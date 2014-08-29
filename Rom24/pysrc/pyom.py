@@ -52,7 +52,7 @@ logging.addLevelName(21, 'BOOT')
 logging.Logger.boot = boot_log
 logging.addLevelName(5, 'TRACE')
 logging.Logger.trace = trace_log
-logging.basicConfig(format='%(asctime)s %(levelname)-8s %(module)16s| %(message)s', level=logging.DEBUG)
+logging.basicConfig(format='%(asctime)s %(levelname)-8s %(module)16s| %(message)s', level=21)
 logger = logging.getLogger()
 
 from miniboa import TelnetServer

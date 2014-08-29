@@ -261,7 +261,11 @@ class Room(instance.Instancer, environment.Environment, inventory.Inventory, typ
         else:
             top_dir = settings.AREA_DIR
             number = self.vnum
-        pathname = os.path.join(top_dir, '%d-%s' % (self.in_area.index, self.in_area.name), 'rooms')
+        if self.in_area.instance_id:
+            area_number = self.in_area.instance_id
+        else:
+            area_number = self.in_area.index
+        pathname = os.path.join(top_dir, '%d-%s' % (area_number, self.in_area.name), 'rooms')
 
         os.makedirs(pathname, 0o755, True)
         filename = os.path.join(pathname, '%d-room.json' % number)
@@ -275,6 +279,9 @@ class Room(instance.Instancer, environment.Environment, inventory.Inventory, typ
 
         if self.inventory:
             for item_id in self.inventory[:]:
+                if item_id not in instance.items:
+                    logger.error('Item %d is in Room %d\'s inventory, but does not exist?', item_id, self.instance_id)
+                    continue
                 item = instance.items[item_id]
                 item.save(in_inventory=True, force=force)
 

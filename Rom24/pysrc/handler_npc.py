@@ -115,6 +115,7 @@ class Npc(living.Living):
 
     def instance_setup(self):
         instance.global_instances[self.instance_id] = self
+        instance.npcs[self.instance_id] = self
         instance.characters[self.instance_id] = self
         if self.vnum not in instance.instances_by_npc.keys():
             instance.instances_by_npc[self.vnum] = [self.instance_id]
@@ -123,6 +124,7 @@ class Npc(living.Living):
 
     def instance_destructor(self):
         instance.instances_by_npc[self.vnum].remove(self.instance_id)
+        del instance.npcs[self.instance_id]
         del instance.characters[self.instance_id]
         del instance.global_instances[self.instance_id]
 
@@ -171,7 +173,11 @@ class Npc(living.Living):
         else:
             top_dir = settings.AREA_DIR
             number = self.vnum
-        pathname = os.path.join(top_dir, '%d-%s' % (self.in_area.index, self.in_area.name), 'npcs')
+        if self.in_area.instance_id:
+            area_number = self.in_area.instance_id
+        else:
+            area_number = self.in_area.index
+        pathname = os.path.join(top_dir, '%d-%s' % (area_number, self.in_area.name), 'npcs')
 
         os.makedirs(pathname, 0o755, True)
         filename = os.path.join(pathname, '%d-npc.json' % number)
@@ -185,10 +191,16 @@ class Npc(living.Living):
 
         if self.inventory:
             for item_id in self.inventory[:]:
+                if item_id not in instance.items:
+                    logger.error('Item %d is in NPC %d\'s inventory, but does not exist?', item_id, self.instance_id)
+                    continue
                 item = instance.items[item_id]
                 item.save(in_inventory=True, force=force)
         for item_id in self.equipped.values():
             if item_id:
+                if item_id not in instance.items:
+                    logger.error('Item %d is in NPC %d\'s equipment, but does not exist?', item_id, self.instance_id)
+                    continue
                 item = instance.items[item_id]
                 item.save(is_equipped=True, force=force)
 

@@ -521,7 +521,11 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
             else:
                 top_dir = settings.AREA_DIR
                 number = self.vnum
-            pathname = os.path.join(top_dir, '%d-%s' % (self.in_area.index, self.in_area.name), 'items')
+            if self.in_area.instance_id:
+                area_number = self.in_area.instance_id
+            else:
+                area_number = self.in_area.index
+            pathname = os.path.join(top_dir, '%d-%s' % (area_number, self.in_area.name), 'items')
         else:
             top_dir = os.path.join(settings.PLAYER_DIR, player_name[0].lower(), player_name.capitalize())
             number = self.instance_id
@@ -546,6 +550,9 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
 
         if self.inventory:
             for item_id in self.inventory[:]:
+                if item_id not in instance.global_instances:
+                    logger.error('Item %d is in Item %d\'s inventory, but does not exist?', item_id, self.instance_id)
+                    continue
                 item = instance.global_instances[item_id]
                 item.save(is_equipped=is_equipped, in_inventory=in_inventory, player_name=player_name, force=force)
 

@@ -46,7 +46,7 @@ import merc
 import save
 import settings
 import state_checks
-import pc
+import handler_pc
 import world_classes
 import sys_utils
 import update
@@ -119,7 +119,7 @@ def con_get_name(self):
     else:
         ch_dummy = self.character
     ch_dummy.name = name
-    ch_dummy.stub = pc.Pc.load_stub(name)
+    ch_dummy.stub = handler_pc.Pc.load_stub(name)
     if ch_dummy.stub:
         found = True
         if ch_dummy.stub['is_banned']:
@@ -200,7 +200,7 @@ def con_confirm_new_password(self):
         ch_dummy.desc.password_mode_on()
         self.set_connected(con_get_new_password)
         return
-    ch = pc.Pc(ch_dummy.name)
+    ch = handler_pc.Pc(ch_dummy.name)
     ch.pwd = ch_dummy.pwd
     del ch_dummy
     ch.desc = self
@@ -450,7 +450,7 @@ def con_get_old_password(self):
 
     if comm.check_reconnect(self, ch_dummy.name, True):
         return
-    ch = pc.Pc.load(ch_dummy.name)
+    ch = handler_pc.Pc.load(ch_dummy.name)
     del ch_dummy
     ch.send = self.send
     ch.desc = self
@@ -487,7 +487,7 @@ def con_get_timecode(self):
 
     if comm.check_reconnect(self, ch_dummy.name, True):
         return
-    ch = pc.Pc.load(ch_dummy.name)
+    ch = handler_pc.Pc.load(ch_dummy.name)
     del ch_dummy
     ch.send = self.send
     ch.desc = self

@@ -253,6 +253,24 @@ def save():
     with open(filename, 'w') as fp:
         json.dump({'max_instance_id': max_instance_id, 'data': tmp_dict}, fp, default=to_json, indent=4, sort_keys=True)
 
+    for i in areas:
+        areas[i].save(force=True)
+    for i in rooms:
+        rooms[i].save(force=True)
+    for i in npcs:
+        npcs[i].save(force=True)
+    for i in players:
+        players[i].save(force=True)
+    for i in items:
+        it = items[i]
+        if it.in_living() is not None:
+            continue
+        if it.in_room() is not None:
+            continue
+        if it.in_item() is not None:
+            continue
+        it.save(force=True)
+
 
 def load():
     filename = os.path.join(settings.INSTANCE_DIR, 'list.json')
