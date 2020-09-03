@@ -80,17 +80,17 @@ def check_parse_name(name):
     bad_names = ['All', 'Auto', 'Immortal', 'Self', 'Someone', 'Something', 'The', 'You', 'Loner', 'Alander']
     if name in bad_names:
         return False
-    
+
     if len(name) < 2:
         return False
 
     if len(name) > 12:
         return False
-    
+
     if not name.isalpha():
         return False
     checked = [licheck(c) for c in name]
-    
+
     if True not in checked:
         return False
     return True
@@ -181,7 +181,7 @@ def con_get_new_password(self):
         pwdnew = argument
 
     ch_dummy.pwd = pwdnew
-    
+
     ch_dummy.send("Please retype password: ")
     ch_dummy.desc.password_mode_on()
     self.set_connected(con_confirm_new_password)
@@ -210,7 +210,7 @@ def con_confirm_new_password(self):
     ch.send("The following races are available:\n  ")
     for race in const.pc_race_table:
         ch.send("%s " % const.race_table[race].name)
-        
+
     ch.send("\nWhat is your race (help for more information)? ")
     self.set_connected(con_get_new_race)
 
@@ -237,7 +237,7 @@ def con_get_new_race(self):
             ch.send("%s " % const.race_table[race].name)
         ch.send("\nWhat is your race? (help for more information) ")
         return
-    
+
     ch.race = const.race_table[race.name]
     ch_selections['race'] = race.name
     #initialize stats */
@@ -261,7 +261,7 @@ def con_get_new_race(self):
     ch.send("What is your sex (M/F)? ")
     self.set_connected(con_get_new_sex)
     return
-        
+
 
 def con_get_new_sex(self):
     argument = self.get_command()[:1].lower()
@@ -351,7 +351,7 @@ def con_default_choice(self):
     elif argument == 'n':
         ch.group_add(ch.guild.default_group, True)
         ch.send("Please pick a weapon from the following choices:\n")
-        
+
         for k, weapon in const.weapon_table.items():
             if weapon.gsn in ch.learned:
                 ch.send("%s " % weapon.name)
@@ -402,7 +402,7 @@ def con_gen_groups(self):
         del ch.gen_data
         ch.gen_data = None
         ch.send("Please pick a weapon from the following choices:\n")
-        
+
         for w, weapon in const.weapon_table.items():
             if weapon.gsn in ch.learned and ch.learned[weapon.gsn] > 0:
                 ch.send("%s " % weapon.name)
@@ -541,7 +541,7 @@ def con_read_imotd(self):
     ch = self.character
     ch.do_help("motd")
     self.set_connected(con_read_motd)
-    
+
 
 def con_read_motd(self):
     ch = self.character
@@ -575,7 +575,7 @@ def con_read_motd(self):
         ch.do_help("newbie info")
 
         #TODO: create a player manifest that we can use/check, instead of needing to walk the dir.
-        player_files = list(sys_utils.flatten([x[2] for x in os.walk(settings.PLAYER_DIR)]))
+        player_files = os.listdir(settings.PLAYER_DIR)
         if len(player_files) < 1:
             for iLevel in range(ch.level, merc.MAX_LEVEL):
                 ch.level += 1

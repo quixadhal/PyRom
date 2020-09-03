@@ -6,3 +6,5 @@ __pycache__/
 *.suo
 .idea/
 venv/
+data/
+instance_tracker.txt
