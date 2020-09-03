@@ -5,3 +5,4 @@ __pycache__/
 *.sln
 *.suo
 .idea/
+venv/

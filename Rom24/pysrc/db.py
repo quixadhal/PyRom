@@ -95,7 +95,7 @@ def boot_db():
         '-----------------------------------------',
     )
     spaces = '\n' + ' ' * 51
-    logger.boot(spaces.join(results))
+    logger.info(spaces.join(results))
 
 
 def init_instance():

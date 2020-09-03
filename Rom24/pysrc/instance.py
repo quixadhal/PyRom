@@ -263,11 +263,11 @@ def save():
         players[i].save(force=True)
     for i in items:
         it = items[i]
-        if it.in_living() is not None:
+        if it.in_living is not None:
             continue
-        if it.in_room() is not None:
+        if it.in_room is not None:
             continue
-        if it.in_item() is not None:
+        if it.in_item is not None:
             continue
         it.save(force=True)
 
