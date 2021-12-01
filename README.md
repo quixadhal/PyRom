@@ -45,14 +45,14 @@ If all went well, you should be seeing a barrage of initialization messages and 
 
 A basic interactive shell is available in **shell.py**.  Various configuration
 options can be adjusted in **settings.py**.  If you're running from a command
-line, 
-```
-#!bash
+line
 
-cd ./Rom24/pysrc && python3 ./pyom.py
+```
+cd PyRom
+pip install -e .
+rom24
 ```
  should get things started.  If
-you're using an IDE, make sure you set **pyom.py** as the start file.
 
 ## Configuring an Implementor Character ##
 
