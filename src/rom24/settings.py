@@ -23,13 +23,13 @@ DATA_EXTN = '.json'
 PKL_EXTN = '.pickle'
 
 #Folders
-LEGACY_AREA_DIR = os.path.join('..', 'area')
-LEGACY_PLAYER_DIR = os.path.join('..', 'player')
+LEGACY_AREA_DIR = os.path.join('../..', 'area')
+LEGACY_PLAYER_DIR = os.path.join('../..', 'player')
 SOCIAL_DIR = os.path.join(LEGACY_AREA_DIR, 'socials')
 HELP_DIR = os.path.join(LEGACY_AREA_DIR, 'help_files')
 
 #New structure
-DATA_DIR = os.path.join('..', 'data')
+DATA_DIR = os.path.join('../..', 'data')
 WORLD_DIR = os.path.join(DATA_DIR, 'world')
 
 PLAYER_DIR = os.path.join(DATA_DIR, 'players')

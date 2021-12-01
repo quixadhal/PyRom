@@ -35,7 +35,7 @@ import copy
 import json
 import logging
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 import bit
 import const
