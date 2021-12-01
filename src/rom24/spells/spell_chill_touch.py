@@ -1,10 +1,10 @@
 import random
 
-import const
-import fight
-import handler_game
-import handler_magic
-import merc
+from rom24 import const
+from rom24 import fight
+from rom24 import handler_game
+from rom24 import handler_magic
+from rom24 import merc
 
 
 def spell_chill_touch(sn, level, ch, victim, target):

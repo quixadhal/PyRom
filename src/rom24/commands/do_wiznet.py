@@ -2,10 +2,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import interp
-import const
-import state_checks
+from rom24 import merc
+from rom24 import interp
+from rom24 import const
+from rom24 import state_checks
 
 
 def do_wiznet(ch, argument):

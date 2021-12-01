@@ -5,10 +5,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 import os
-import interp
-import merc
-import save
-import settings
+from rom24 import interp
+from rom24 import merc
+from rom24 import save
+from rom24 import settings
 
 
 def do_apickle(ch, argument):

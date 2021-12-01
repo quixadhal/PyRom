@@ -8,18 +8,17 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import game_utils
-import handler_log
-import instance
-import handler_game
-import merc
-import const
-import interp
-import living
-import settings
-import state_checks
-import update
-import handler_item
+from rom24 import game_utils
+from rom24 import instance
+from rom24 import handler_game
+from rom24 import merc
+from rom24 import const
+from rom24 import interp
+from rom24 import living
+from rom24 import settings
+from rom24 import state_checks
+from rom24 import update
+from rom24 import handler_item
 
 
 class Pc(living.Living):
@@ -27,7 +26,7 @@ class Pc(living.Living):
     instance_count = 0
 
     def __init__(self, template=None, **kwargs):
-        import handler_item
+        from rom24 import handler_item
         super().__init__()
         self.is_pc = True
         self.buffer = []
@@ -491,8 +490,6 @@ class Pc(living.Living):
                     handler_game.act("$n slaps you.", victim, None, ch, merc.TO_VICT)
         return True
 
-    #TODO: RemoveDebug
-    @handler_log.logged("Interp")
     def interpret(self, argument):
 
         # Strip leading spaces.
@@ -650,7 +647,7 @@ class Pc(living.Living):
         pathname = os.path.join(settings.PLAYER_DIR, self.name[0].lower(), self.name.capitalize())
         os.makedirs(pathname, 0o755, True)
         filename = os.path.join(pathname, 'player.json')
-        logger.info('Saving %s', filename)
+        # logger.info('Saving %s', filename)
         js = json.dumps(self, default=instance.to_json, indent=4, sort_keys=True)
         md5 = hashlib.md5(js.encode('utf-8')).hexdigest()
         if self._md5 != md5:
@@ -661,14 +658,14 @@ class Pc(living.Living):
         if self.inventory:
             for item_id in self.inventory[:]:
                 if item_id not in instance.items:
-                    logger.error('Item %d is in Player %s\'s inventory, but does not exist?', item_id, self.name)
+                    # logger.error('Item %d is in Player %s\'s inventory, but does not exist?', item_id, self.name)
                     continue
                 item = instance.items[item_id]
                 item.save(in_inventory=True, player_name=self.name, force=force)
         for item_id in self.equipped.values():
             if item_id:
                 if item_id not in instance.items:
-                    logger.error('Item %d is in Player %s\'s inventory, but does not exist?', item_id, self.name)
+                    # logger.error('Item %d is in Player %s\'s inventory, but does not exist?', item_id, self.name)
                     continue
                 item = instance.items[item_id]
                 item.save(is_equipped=True, player_name=self.name, force=force)

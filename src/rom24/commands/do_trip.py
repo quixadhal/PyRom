@@ -3,13 +3,13 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import game_utils
-import merc
-import const
-import interp
-import fight
-import handler_game
-import state_checks
+from rom24 import game_utils
+from rom24 import merc
+from rom24 import const
+from rom24 import interp
+from rom24 import fight
+from rom24 import handler_game
+from rom24 import state_checks
 
 
 def do_trip(ch, argument):
@@ -70,7 +70,7 @@ def do_trip(ch, argument):
         handler_game.act("$n trips you and you go down!",ch,None,victim, merc.TO_VICT)
         handler_game.act("You trip $N and $N goes down!",ch,None,victim, merc.TO_CHAR)
         handler_game.act("$n trips $N, sending $M to the ground.",ch,None,victim, merc.TO_NOTVICT)
-        if ch.is_pc():
+        if ch.is_pc:
             ch.check_improve('trip', True, 1)
         state_checks.DAZE_STATE(victim,2 * merc.PULSE_VIOLENCE)
         state_checks.WAIT_STATE(ch,const.skill_table['trip'].beats)
@@ -79,7 +79,7 @@ def do_trip(ch, argument):
     else:
         fight.damage(ch,victim,0,'trip', merc.DAM_BASH,True)
         state_checks.WAIT_STATE(ch,const.skill_table['trip'].beats*2 // 3)
-        if ch.is_pc():
+        if ch.is_pc:
             ch.check_improve('trip', False, 1)
     fight.check_killer(ch,victim)
 

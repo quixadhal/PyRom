@@ -2,10 +2,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import game_utils
-import merc
-import interp
-import instance
+from rom24 import game_utils
+from rom24 import merc
+from rom24 import interp
+from rom24 import instance
 
 
 def do_at(ch, argument):

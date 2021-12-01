@@ -2,10 +2,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import interp
-import game_utils
-import handler_game
+from rom24 import merc
+from rom24 import interp
+from rom24 import game_utils
+from rom24 import handler_game
 
 
 def do_incognito(ch, argument):

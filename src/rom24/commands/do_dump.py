@@ -2,8 +2,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import interp
+from rom24 import merc
+from rom24 import interp
 
 #TODO: Known broken
 def do_dump(ch, argument):

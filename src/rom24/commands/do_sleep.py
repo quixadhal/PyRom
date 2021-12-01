@@ -2,10 +2,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import handler_game
-import interp
-import merc
-import state_checks
+from rom24 import handler_game
+from rom24 import interp
+from rom24 import merc
+from rom24 import state_checks
 
 
 def do_sleep(ch, argument):

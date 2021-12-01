@@ -2,12 +2,12 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import const
-import interp
-import game_utils
-import handler_game
-import instance
+from rom24 import merc
+from rom24 import const
+from rom24 import interp
+from rom24 import game_utils
+from rom24 import handler_game
+from rom24 import instance
 
 
 def do_fill(ch, argument):

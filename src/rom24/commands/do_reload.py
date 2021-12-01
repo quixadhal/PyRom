@@ -2,9 +2,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import hotfix
-import interp
+from rom24 import merc
+from rom24 import hotfix
+from rom24 import interp
 
 
 def do_reload(ch, argument):

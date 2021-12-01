@@ -3,9 +3,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import state_checks
-import merc
-import interp
+from rom24 import state_checks
+from rom24 import merc
+from rom24 import interp
 
 
 def do_score(ch, argument):

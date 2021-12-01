@@ -1,0 +1,3 @@
+[console_scripts]
+rom24 = rom24.pyom:pyom
+

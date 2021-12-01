@@ -2,9 +2,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import handler_ch
-import interp
-import merc
+from rom24 import handler_ch
+from rom24 import interp
+from rom24 import merc
 
 
 def do_west(ch, argument):

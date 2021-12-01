@@ -2,12 +2,12 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import handler_game
-import merc
-import interp
-import fight
-import game_utils
-import instance
+from rom24 import handler_game
+from rom24 import merc
+from rom24 import interp
+from rom24 import fight
+from rom24 import game_utils
+from rom24 import instance
 
 
 def do_goto(ch, argument):

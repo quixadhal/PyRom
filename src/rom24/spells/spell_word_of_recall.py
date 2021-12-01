@@ -1,9 +1,9 @@
-import const
-import fight
-import handler_game
-import handler_room
-import merc
-import state_checks
+from rom24 import const
+from rom24 import fight
+from rom24 import handler_game
+from rom24 import handler_room
+from rom24 import merc
+from rom24 import state_checks
 
 
 def spell_word_of_recall(sn, level, ch, victim, target):

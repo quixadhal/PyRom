@@ -1,57 +1,25 @@
-"""
-/***************************************************************************
- *  Original Diku Mud copyright (C) 1990, 1991 by Sebastian Hammer,        *
- *  Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
- *                                                                         *
- *  Merc Diku Mud improvments copyright (C) 1992, 1993 by Michael          *
- *  Chastain, Michael Quan, and Mitchell Tse.                              *
- *                                                                         *
- *  In order to use any part of this Merc Diku Mud, you must comply with   *
- *  both the original Diku license in 'license.doc' as well the Merc       *
- *  license in 'license.txt'.  In particular, you may not remove either of *
- *  these copyright notices.                                               *
- *                                                                         *
- *  Much time and thought has gone into this software and you are          *
- *  benefitting.  We hope that you share your changes too.  What goes      *
- *  around, comes around.                                                  *
- ***************************************************************************/
 
-/***************************************************************************
-*   ROM 2.4 is copyright 1993-1998 Russ Taylor                             *
-*   ROM has been brought to you by the ROM consortium                      *
-*       Russ Taylor (rtaylor@hypercube.org)                                *
-*       Gabrielle Taylor (gtaylor@hypercube.org)                           *
-*       Brian Moore (zump@rom.org)                                         *
-*   By using this code, you have agreed to follow the terms of the         *
-*   ROM license, in the file Rom24/doc/rom.license                         *
-***************************************************************************/
-/************
- * Ported to Python by Davion of MudBytes.net
- * Using Miniboa https://code.google.com/p/miniboa/
- * Now using Python 3 version https://code.google.com/p/miniboa-py3/
- ************/
-"""
 import random
 import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import equipment
-import instance
-import type_bypass
-import inventory
-import handler_game
-import physical
-import tables
-import affects
-import bit
-import const
-import fight
-import game_utils
-import immortal
-import environment
-import state_checks
+from rom24 import merc
+from rom24 import equipment
+from rom24 import instance
+from rom24 import type_bypass
+from rom24 import inventory
+from rom24 import handler_game
+from rom24 import physical
+from rom24 import tables
+from rom24 import affects
+from rom24 import bit
+from rom24 import const
+from rom24 import fight
+from rom24 import game_utils
+from rom24 import immortal
+from rom24 import environment
+from rom24 import state_checks
 
 
 class Grouping:
@@ -211,6 +179,7 @@ class Fight:
                merc.DAM_LIGHT: merc.IMM_LIGHT,
                merc.DAM_CHARM: merc.IMM_CHARM,
                merc.DAM_SOUND: merc.IMM_SOUND}
+
         if dam_type not in bit:
             return defence
         bit = bit[dam_type]
@@ -409,10 +378,10 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                 if not item:
                     continue
                 affected = item.affected
-                #This was causing a massive bug, where items would multiply affects because json doesnt operate
-                #the way that the flat files did.
-                #if not item.enchanted: - this is unnecessary as we load all affects directly with the json
-                 #  affected(merc.itemTemplate[item.vnum].affected)
+                # This was causing a massive bug, where items would multiply affects because json doesnt operate
+                # the way that the flat files did.
+                # if not item.enchanted: - this is unnecessary as we load all affects directly with the json
+                # affected(merc.itemTemplate[item.vnum].affected)
                 for af in affected:
                     mod = af.modifier
                     if af.location == merc.APPLY_SEX:
@@ -462,8 +431,9 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             for i in range(4):
                 self.armor[i] -= item.apply_ac(i)
             affected = item.affected
-            #if not item.enchanted: - this is unnecessary as we load all affects directly with the json
-             #   affected.extend(merc.itemTemplate[item.vnum].affected)
+            # this is unnecessary as we load all affects directly with the json
+            # if not item.enchanted:
+            #     affected.extend(merc.itemTemplate[item.vnum].affected)
 
             for af in affected:
                 mod = af.modifier
@@ -803,7 +773,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         elif sn not in const.skill_table:
             logger.error("BUG: Bad sn %s in get_skill." % sn)
             skill = 0
-        elif self.is_pc():
+        elif self.is_pc:
             if self.level < const.skill_table[sn].skill_level[self.guild.name] \
                     or sn not in self.learned:
                 skill = 0
@@ -854,7 +824,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                 skill //= 2
             else:
                 skill = 2 * skill // 3
-        if self.is_pc() \
+        if self.is_pc \
                 and self.condition[merc.COND_DRUNK] > 10:
             skill = 9 * skill // 10
 
@@ -909,7 +879,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             logger.error("BUG: deduct costs: silver %d < 0" % self.silver)
             self.silver = 0
 
-# Find a piece of eq on a character.
+    # Find a piece of eq on a character.
     def get_eq(self, check_loc):
         """
         :param check_loc:

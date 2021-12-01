@@ -9,9 +9,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import settings
-import instance
+from rom24 import merc
+from rom24 import settings
+from rom24 import instance
 
 signals = {'say': []}
 

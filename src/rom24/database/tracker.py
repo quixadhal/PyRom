@@ -1,8 +1,8 @@
-from const import liq_table, wiznet_table, attack_table, con_app, dex_app, wis_app, int_app, str_app, title_table, \
+from rom24.const import liq_table, wiznet_table, attack_table, con_app, dex_app, wis_app, int_app, str_app, title_table, \
     weapon_table, guild_table, group_table, pc_race_table, race_table, skill_table, pc_race_type, race_type, liq_type, \
     wiznet_type, attack_type, dex_app_type, wis_app_type, int_app_type, str_app_type, weapon_type, guild_type, \
     group_type, skill_type, con_app_type
-from tables import comm_flags, part_flags, form_flags, imm_flags, off_flags, affect_flags, plr_flags, act_flags, \
+from rom24.tables import comm_flags, part_flags, form_flags, imm_flags, off_flags, affect_flags, plr_flags, act_flags, \
     size_table, sex_table, position_table, clan_table, clan_type, position_type, flag_type, exit_flags
 
 

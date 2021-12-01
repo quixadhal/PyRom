@@ -2,10 +2,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import interp
-import pyprogs
-from handler_game import act
+from rom24 import merc
+from rom24 import interp
+from rom24 import pyprogs
+from rom24.handler_game import act
 
 def do_say(ch, argument):
     if not argument:

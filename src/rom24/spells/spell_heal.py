@@ -1,6 +1,6 @@
-import const
-import fight
-import merc
+from rom24 import const
+from rom24 import fight
+from rom24 import merc
 
 
 def spell_heal(sn, level, ch, victim, target):

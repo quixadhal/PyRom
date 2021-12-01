@@ -3,12 +3,12 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import handler_game
-import state_checks
-import merc
-import const
-import interp
-import fight
+from rom24 import handler_game
+from rom24 import state_checks
+from rom24 import merc
+from rom24 import const
+from rom24 import interp
+from rom24 import fight
 
 
 def do_disarm(ch, argument):
@@ -57,14 +57,14 @@ def do_disarm(ch, argument):
     if random.randint(1, 99) < chance:
         state_checks.WAIT_STATE(ch, const.skill_table['disarm'].beats)
         fight.disarm(ch, victim)
-        if ch.is_pc():
+        if ch.is_pc:
             ch.check_improve('disarm', True, 1)
     else:
         state_checks.WAIT_STATE(ch, const.skill_table['disarm'].beats)
         handler_game.act("You fail to disarm $N.", ch, None, victim, merc.TO_CHAR)
         handler_game.act("$n tries to disarm you, but fails.", ch, None, victim, merc.TO_VICT)
         handler_game.act("$n tries to disarm $N, but fails.", ch, None, victim, merc.TO_NOTVICT)
-        if ch.is_pc():
+        if ch.is_pc:
             ch.check_improve('disarm', False, 1)
     fight.check_killer(ch, victim)
     return

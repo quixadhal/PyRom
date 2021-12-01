@@ -3,11 +3,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 import random
-import merc
-import interp
-import game_utils
-import handler_game
-import handler_magic
+from rom24 import merc
+from rom24 import interp
+from rom24 import game_utils
+from rom24 import handler_game
+from rom24 import handler_magic
 
 
 def do_recite(ch, argument):
@@ -38,13 +38,13 @@ def do_recite(ch, argument):
 
     if random.randint(1, 99) >= 20 + ch.get_skill("scrolls") * 4 // 5:
         ch.send("You mispronounce a syllable.\n")
-        if ch.is_pc():
+        if ch.is_pc:
             ch.check_improve( "scrolls", False, 2)
     else:
         handler_magic.obj_cast_spell(scroll.value[1], scroll.value[0], ch, victim, obj)
         handler_magic.obj_cast_spell(scroll.value[2], scroll.value[0], ch, victim, obj)
         handler_magic.obj_cast_spell(scroll.value[3], scroll.value[0], ch, victim, obj)
-        if ch.is_pc():
+        if ch.is_pc:
             ch.check_improve( "scrolls", True, 2)
     scroll.extract()
     return

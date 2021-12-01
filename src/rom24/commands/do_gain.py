@@ -2,13 +2,13 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import interp
-import skills
-import const
-import magic
-import game_utils
-import handler_game
+from rom24 import merc
+from rom24 import interp
+from rom24 import skills
+from rom24 import const
+from rom24 import magic
+from rom24 import game_utils
+from rom24 import handler_game
 
 #TODO: Known broken. Probably needs some significant cleanup, doesn't appear to be granting skills properly. Needs more testing with non-immortal characters.
 def do_gain(ch, argument):

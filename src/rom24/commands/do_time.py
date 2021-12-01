@@ -2,9 +2,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import interp
-import handler_game
+from rom24 import merc
+from rom24 import interp
+from rom24 import handler_game
 
 
 day_name = ["the Moon", "the Bull", "Deception", "Thunder", "Freedom",

@@ -2,11 +2,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import handler_ch
-import merc
-import interp
-import nanny
-import handler_game
+from rom24 import handler_ch
+from rom24 import merc
+from rom24 import interp
+from rom24 import nanny
+from rom24 import handler_game
 
 
 # RT answer channel - uses same line as questions

@@ -4,10 +4,10 @@ import hashlib
 import logging
 logger = logging.getLogger(__name__)
 
-import auth
-import game_utils
-import interp
-import merc
+from rom24 import auth
+from rom24 import game_utils
+from rom24 import interp
+from rom24 import merc
 
 
 def do_authenticator(ch, argument):

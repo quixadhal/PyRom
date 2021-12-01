@@ -2,10 +2,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import handler_ch
-import merc
-import interp
-import nanny
+from rom24 import handler_ch
+from rom24 import merc
+from rom24 import interp
+from rom24 import nanny
 
 #TODO: Known broken
 # for  keeping track of the player count

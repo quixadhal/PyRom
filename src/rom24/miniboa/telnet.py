@@ -34,8 +34,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from miniboa.terminal import color_convert
-from miniboa.terminal import word_wrap
+from rom24.miniboa.terminal import color_convert
+from rom24.miniboa.terminal import word_wrap
 
 
 #---[ Telnet Notes ]-----------------------------------------------------------

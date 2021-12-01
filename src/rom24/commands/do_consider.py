@@ -2,11 +2,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import game_utils
-import merc
-import interp
-import fight
-import handler_game
+from rom24 import game_utils
+from rom24 import merc
+from rom24 import interp
+from rom24 import fight
+from rom24 import handler_game
 
 
 def do_consider(ch, argument):

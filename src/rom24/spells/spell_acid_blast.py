@@ -1,8 +1,8 @@
-import const
-import fight
-import game_utils
-import handler_magic
-import merc
+from rom24 import const
+from rom24 import fight
+from rom24 import game_utils
+from rom24 import handler_magic
+from rom24 import merc
 
 
 def spell_acid_blast(sn, level, ch, victim, target):

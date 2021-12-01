@@ -3,9 +3,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import interp
-import handler_game
+from rom24 import merc
+from rom24 import interp
+from rom24 import handler_game
 
 
 # All the posing stuff.

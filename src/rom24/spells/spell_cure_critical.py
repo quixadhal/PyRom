@@ -1,7 +1,7 @@
-import const
-import fight
-import game_utils
-import merc
+from rom24 import const
+from rom24 import fight
+from rom24 import game_utils
+from rom24 import merc
 
 
 def spell_cure_critical(sn, level, ch, victim, target):

@@ -2,9 +2,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import bit
-import const
-import merc
+from rom24 import bit
+from rom24 import const
+from rom24 import merc
 
 
 class Immortal:

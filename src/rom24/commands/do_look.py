@@ -2,14 +2,14 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import game_utils
-import handler_ch
-import handler_game
-import state_checks
-import interp
-import const
-import instance
+from rom24 import merc
+from rom24 import game_utils
+from rom24 import handler_ch
+from rom24 import handler_game
+from rom24 import state_checks
+from rom24 import interp
+from rom24 import const
+from rom24 import instance
 
 
 def do_look(ch, argument):
@@ -89,8 +89,7 @@ def do_look(ch, argument):
     if victim:
         handler_ch.show_char_to_char_1(victim, ch)
         return
-    item_list = ch.items
-    item_list.extend(room.items)
+    item_list = list(ch.items) + list(room.items)
     for obj_id in item_list:
         item = instance.items[obj_id]
         if ch.can_see_item(item):

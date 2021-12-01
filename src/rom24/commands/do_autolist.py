@@ -2,8 +2,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import interp
+from rom24 import merc
+from rom24 import interp
 
 
 # RT this following section holds all the auto commands from ROM, as well as replacements for config

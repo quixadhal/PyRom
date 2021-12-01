@@ -2,11 +2,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import interp
-import game_utils
-import state_checks
-import instance
+from rom24 import merc
+from rom24 import interp
+from rom24 import game_utils
+from rom24 import state_checks
+from rom24 import instance
 
 
 def do_owhere(ch, argument):

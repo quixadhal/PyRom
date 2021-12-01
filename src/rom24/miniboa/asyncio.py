@@ -34,8 +34,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from miniboa.telnet import TelnetClient
-from miniboa.telnet import ConnectionLost
+from rom24.miniboa.telnet import TelnetClient
+from rom24.miniboa.telnet import ConnectionLost
 
 
 ## Cap sockets to 512 on Windows because winsock can only process 512 at time

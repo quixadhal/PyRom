@@ -3,11 +3,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import handler_game
-import merc
-import interp
-import settings
-import fight
+from rom24 import handler_game
+from rom24 import merc
+from rom24 import interp
+from rom24 import settings
+from rom24 import fight
 
 def do_delete(ch, argument):
     if ch.is_npc():

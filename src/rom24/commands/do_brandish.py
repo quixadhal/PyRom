@@ -3,12 +3,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 import random
-import merc
-import handler_game
-import handler_magic
-import interp
-import const
-import state_checks
+from rom24 import merc
+from rom24 import handler_game
+from rom24 import handler_magic
+from rom24 import interp
+from rom24 import const
+from rom24 import state_checks
 
 
 def do_brandish(ch, argument):
@@ -30,7 +30,7 @@ def do_brandish(ch, argument):
         if ch.level < staff.level or random.randint(1, 99) >= 20 + ch.get_skill("staves") * 4 / 5:
             handler_game.act("You fail to invoke $p.", ch, staff, None, merc.TO_CHAR)
             handler_game.act("...and nothing happens.", ch, None, None, merc.TO_ROOM)
-            if ch.is_pc():
+            if ch.is_pc:
                 ch.check_improve("staves", False, 2)
         else:
             for vch_id in ch.in_room.people[:]:
@@ -52,7 +52,7 @@ def do_brandish(ch, argument):
                     logger.error("BUG: Do_brandish: bad target for sn %s.", sn)
                     return
                 handler_magic.obj_cast_spell(staff.value[3], staff.value[0], ch, vch, None)
-                if ch.is_pc():
+                if ch.is_pc:
                     ch.check_improve("staves", True, 2)
     staff.value[2] -= 1
     if staff.value[2] <= 0:

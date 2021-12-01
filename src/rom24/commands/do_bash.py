@@ -3,13 +3,13 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import game_utils
-import handler_game
-import merc
-import const
-import fight
-import interp
-import state_checks
+from rom24 import game_utils
+from rom24 import handler_game
+from rom24 import merc
+from rom24 import const
+from rom24 import fight
+from rom24 import interp
+from rom24 import state_checks
 
 
 def do_bash(ch, argument):
@@ -77,7 +77,7 @@ def do_bash(ch, argument):
         handler_game.act("You slam into $N, and send $M flying!",ch,None,victim, merc.TO_CHAR)
         handler_game.act("$n sends $N sprawling with a powerful bash.", ch,None,victim, merc.TO_NOTVICT)
         if not ch.is_npc():
-            if ch.is_pc():
+            if ch.is_pc:
                 ch.check_improve('bash',True,1)
         state_checks.DAZE_STATE(victim, 3 * merc.PULSE_VIOLENCE)
         state_checks.WAIT_STATE(ch,const.skill_table['bash'].beats)
@@ -89,7 +89,7 @@ def do_bash(ch, argument):
         handler_game.act("$n falls flat on $s face.", ch, None, victim, merc.TO_NOTVICT)
         handler_game.act("You evade $n's bash, causing $m to fall flat on $s face.", ch, None, victim, merc.TO_VICT)
         if not ch.is_npc():
-            if ch.is_pc():
+            if ch.is_pc:
                 ch.check_improve('bash',False,1)
         ch.position = merc.POS_RESTING
         state_checks.WAIT_STATE(ch, const.skill_table['bash'].beats * 3 // 2)

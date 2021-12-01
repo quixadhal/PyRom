@@ -2,10 +2,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import const
-import interp
-import game_utils
+from rom24 import merc
+from rom24 import const
+from rom24 import interp
+from rom24 import game_utils
 
 # RT spells and skills show the players spells (or skills)
 def do_spells(ch, argument):

@@ -2,10 +2,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import interp
-import merc
-import game_utils
-import tables
+from rom24 import interp
+from rom24 import merc
+from rom24 import game_utils
+from rom24 import tables
 
 __author__ = 'venom'
 

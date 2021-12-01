@@ -2,9 +2,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import interp
-import db
+from rom24 import merc
+from rom24 import interp
+from rom24 import db
 
 
 def do_freset(ch, argument):

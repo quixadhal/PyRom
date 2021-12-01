@@ -2,12 +2,12 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import handler_game
-import merc
-import comm
-import interp
-import game_utils
-import state_checks
+from rom24 import handler_game
+from rom24 import merc
+from rom24 import comm
+from rom24 import interp
+from rom24 import game_utils
+from rom24 import state_checks
 
 def do_purge(ch, argument):
     argument, arg = game_utils.read_word(argument)

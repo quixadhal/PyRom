@@ -2,12 +2,12 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import handler_game
-import merc
-import interp
-import game_utils
-import handler_item
-import state_checks
+from rom24 import handler_game
+from rom24 import merc
+from rom24 import interp
+from rom24 import game_utils
+from rom24 import handler_item
+from rom24 import state_checks
 
 
 def do_get(ch, argument):

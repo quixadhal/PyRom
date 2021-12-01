@@ -3,13 +3,13 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import const
-import fight
-import interp
-import game_utils
-import handler_game
-import state_checks
+from rom24 import merc
+from rom24 import const
+from rom24 import fight
+from rom24 import interp
+from rom24 import game_utils
+from rom24 import handler_game
+from rom24 import state_checks
 
 
 def do_rescue(ch, argument):
@@ -41,13 +41,13 @@ def do_rescue(ch, argument):
     state_checks.WAIT_STATE(ch, const.skill_table['rescue'].beats)
     if random.randint(1, 99) > ch.get_skill('rescue'):
         ch.send("You fail the rescue.\n")
-        if ch.is_pc():
+        if ch.is_pc:
             ch.check_improve( 'rescue', False, 1)
         return
     handler_game.act("You rescue $N!", ch, None, victim, merc.TO_CHAR)
     handler_game.act("$n rescues you!", ch, None, victim, merc.TO_VICT)
     handler_game.act("$n rescues $N!", ch, None, victim, merc.TO_NOTVICT)
-    if ch.is_pc():
+    if ch.is_pc:
         ch.check_improve( 'rescue', True, 1)
 
     fight.stop_fighting(fch, False)

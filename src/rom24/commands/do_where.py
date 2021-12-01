@@ -2,14 +2,14 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import game_utils
-import merc
-import interp
-import nanny
-import state_checks
-import handler_ch
-import handler_game
-import instance
+from rom24 import game_utils
+from rom24 import merc
+from rom24 import interp
+from rom24 import nanny
+from rom24 import state_checks
+from rom24 import handler_ch
+from rom24 import handler_game
+from rom24 import instance
 
 
 def do_where(ch, argument):

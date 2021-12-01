@@ -2,11 +2,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import interp
-import const
-import object_creator
-import instance
+from rom24 import merc
+from rom24 import interp
+from rom24 import const
+from rom24 import object_creator
+from rom24 import instance
 
 
 # equips a character

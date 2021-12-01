@@ -1,56 +1,24 @@
-"""
-#**************************************************************************
- *  Original Diku Mud copyright=C) 1990, 1991 by Sebastian Hammer,         *
- *  Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
- *                                                                         *
- *  Merc Diku Mud improvments copyright=C) 1992, 1993 by Michael           *
- *  Chastain, Michael Quan, and Mitchell Tse.                              *
- *                                                                         *
- *  In order to use any part of this Merc Diku Mud, you must comply with   *
- *  both the original Diku license in 'license.doc' as well the Merc       *
- *  license in 'license.txt'.  In particular, you may not remove either of *
- *  these copyright notices.                                               *
- *                                                                         *
- *  Much time and thought has gone into this software and you are          *
- *  benefitting.  We hope that you share your changes too.  What goes      *
- *  around, comes around.                                                  *
- ***************************************************************************/
 
-#**************************************************************************
-*    ROM 2.4 is copyright 1993-1998 Russ Taylor                           *
-*    ROM has been brought to you by the ROM consortium                    *
-*        Russ Taylor=rtaylor@hypercube.org)                               *
-*        Gabrielle Taylor=gtaylor@hypercube.org)                          *
-*        Brian Moore=zump@rom.org)                                        *
-*    By using this code, you have agreed to follow the terms of the       *
-*    ROM license, in the file Rom24/doc/rom.license                       *
-***************************************************************************/
-#***********
- * Ported to Python by Davion of MudBytes.net
- * Using Miniboa https://code.google.com/p/miniboa/
- * Now using Python 3 version https://code.google.com/p/miniboa-py3/
- ************/
-"""
 
 import logging
+import random
 
 logger = logging.getLogger(__name__)
 
-from merc import *
-import handler_ch
-import handler_item
-import object_creator
-import game_utils
-import handler_game
-import random
-import update
-import const
-import effects
-import handler_magic
-import skills
-import state_checks
-import settings
-import instance
+from rom24.merc import *
+from rom24 import handler_ch
+from rom24 import handler_item
+from rom24 import object_creator
+from rom24 import game_utils
+from rom24 import handler_game
+from rom24 import update
+from rom24 import const
+from rom24 import effects
+from rom24 import handler_magic
+from rom24 import skills
+from rom24 import state_checks
+from rom24 import settings
+from rom24 import instance
 
 
 # Control the fights going on.
@@ -152,7 +120,7 @@ def multi_hit(ch, victim, dt):
 
     if random.randint(1, 99) < chance:
         one_hit(ch, victim, dt)
-        if ch.is_pc():
+        if ch.is_pc:
             ch.check_improve('second attack', True, 5)
         if ch.fighting != victim:
             return
@@ -164,7 +132,7 @@ def multi_hit(ch, victim, dt):
 
     if random.randint(1, 99) < chance:
         one_hit(ch, victim, dt)
-        if ch.is_pc():
+        if ch.is_pc:
             ch.check_improve('third attack', True, 6)
         if ch.fighting != victim :
             return
@@ -370,7 +338,7 @@ def one_hit(ch, victim, dt):
             dam = game_utils.dice(ch.damage[DICE_NUMBER], ch.damage[DICE_TYPE])
     else:
         if sn != -1:
-            if ch.is_pc():
+            if ch.is_pc:
                 ch.check_improve( sn, True, 5)
         if wield:
             if wield.new_format:
@@ -397,7 +365,7 @@ def one_hit(ch, victim, dt):
     if ch.get_skill('enhanced damage') > 0:
         diceroll = random.randint(1, 99)
         if diceroll <= ch.get_skill('enhanced damage'):
-            if ch.is_pc():
+            if ch.is_pc:
                 ch.check_improve('enhanced damage', True, 6)
             dam += 2 * (dam * diceroll // 300)
     if not state_checks.IS_AWAKE(victim):

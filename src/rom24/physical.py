@@ -2,8 +2,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import bit
-import tables
+from rom24 import bit
+from rom24 import tables
 
 
 class Physical:

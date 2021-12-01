@@ -1,6 +1,6 @@
-import const
-import handler_magic
-import merc
+from rom24 import const
+from rom24 import handler_magic
+from rom24 import merc
 
 
 def spell_farsight(sn, level, ch, victim, target):

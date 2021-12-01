@@ -2,10 +2,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import interp
-import nanny
-import state_checks
+from rom24 import merc
+from rom24 import interp
+from rom24 import nanny
+from rom24 import state_checks
 
 
 # clan channels

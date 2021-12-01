@@ -2,10 +2,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import interp
-import settings
-import handler_game
+from rom24 import merc
+from rom24 import interp
+from rom24 import settings
+from rom24 import handler_game
 
 # RT anti-newbie code
 def do_newlock(ch, argument):

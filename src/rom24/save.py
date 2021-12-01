@@ -5,14 +5,14 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import object_creator
-import instance
-from merc import *
-import tables
-import world_classes
-import settings
-import handler_pc
-import auth
+from rom24 import object_creator
+from rom24 import instance
+from rom24.merc import *
+from rom24 import tables
+from rom24 import world_classes
+from rom24 import settings
+from rom24 import handler_pc
+from rom24 import auth
 
 
 def area_pickler():

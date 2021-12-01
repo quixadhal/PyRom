@@ -2,10 +2,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import comm
-import handler_ch
-import merc
-import interp
+from rom24 import comm
+from rom24 import handler_ch
+from rom24 import merc
+from rom24 import interp
 
 
 def do_shutdown(ch, argument):

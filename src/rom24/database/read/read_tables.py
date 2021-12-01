@@ -2,12 +2,12 @@ import json
 import logging
 import os
 
-from settings import DATA_DIR, DATA_EXTN
+from rom24.settings import DATA_DIR, DATA_EXTN
+from rom24.database.tracker import tables
 
 
 logger = logging.getLogger(__name__)
 
-from database.tracker import tables
 
 def read_tables(listener=None, loc=DATA_DIR, extn=DATA_EXTN):
     if listener:

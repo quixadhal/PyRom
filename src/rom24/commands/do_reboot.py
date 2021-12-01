@@ -2,10 +2,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import interp
-import comm
-import handler_ch
+from rom24 import merc
+from rom24 import interp
+from rom24 import comm
+from rom24 import handler_ch
 
 def do_reboot(ch, argument):
     if ch.invis_level < merc.LEVEL_HERO:

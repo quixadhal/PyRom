@@ -1,36 +1,4 @@
-"""
-#**************************************************************************
- *  Original Diku Mud copyright (C) 1990, 1991 by Sebastian Hammer,        *
- *  Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
- *                                                                         *
- *  Merc Diku Mud improvments copyright (C) 1992, 1993 by Michael          *
- *  Chastain, Michael Quan, and Mitchell Tse.                              *
- *                                                                         *
- *  In order to use any part of this Merc Diku Mud, you must comply with   *
- *  both the original Diku license in 'license.doc' as well the Merc       *
- *  license in 'license.txt'.  In particular, you may not remove either of *
- *  these copyright notices.                                               *
- *                                                                         *
- *  Much time and thought has gone into this software and you are          *
- *  benefitting.  We hope that you share your changes too.  What goes      *
- *  around, comes around.                                                  *
- ***************************************************************************/
 
-#**************************************************************************
-*   ROM 2.4 is copyright 1993-1998 Russ Taylor                             *
-*   ROM has been brought to you by the ROM consortium                      *
-*       Russ Taylor (rtaylor@hypercube.org)                                *
-*       Gabrielle Taylor (gtaylor@hypercube.org)                           *
-*       Brian Moore (zump@rom.org)                                         *
-*   By using this code, you have agreed to follow the terms of the         *
-*   ROM license, in the file Rom24/doc/rom.license                         *
-***************************************************************************/
-#***********
- * Ported to Python by Davion of MudBytes.net
- * Using Miniboa https://code.google.com/p/miniboa/
- * Now using Python 3 version https://code.google.com/p/miniboa-py3/
- ************/
-"""
 
 import os
 import random
@@ -39,18 +7,18 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import db
-import hotfix
-import const
-import fight
-import settings
-import state_checks
-import handler_magic
-import handler_game
-import handler_ch
-import game_utils
-import instance
+from rom24 import merc
+from rom24 import db
+from rom24 import hotfix
+from rom24 import const
+from rom24 import fight
+from rom24 import settings
+from rom24 import state_checks
+from rom24 import handler_magic
+from rom24 import handler_game
+from rom24 import handler_ch
+from rom24 import game_utils
+from rom24 import instance
 
 
 # Advancement stuff.
@@ -129,7 +97,7 @@ def hit_gain(ch):
         if number < ch.get_skill('fast healing'):
             gain += number * gain // 100
             if ch.hit < ch.max_hit:
-                if ch.is_pc():
+                if ch.is_pc:
                     ch.check_improve('fast healing', True, 8)
 
         if ch.position == merc.POS_SLEEPING:
@@ -184,7 +152,7 @@ def mana_gain(ch):
         if number < ch.get_skill('meditation'):
             gain += number * gain // 100
             if ch.mana < ch.max_mana:
-                if ch.is_pc():
+                if ch.is_pc:
                     ch.check_improve( 'meditation', True, 8)
 
         if not ch.guild.fMana:
@@ -726,7 +694,7 @@ def instance_number_save():
     if instance.max_instance_id > instance.previous_max_instance_id:
         instance.previous_max_instance_id = instance.max_instance_id
         instance_num_file = os.path.join(settings.LEGACY_AREA_DIR, "instance_tracker.txt")
-        fp = open(instance_num_file, 'w')
+        fp = open(settings.INSTANCE_NUM_FILE, 'w')
         fp.write(str(instance.max_instance_id))
         fp.close()
         logger.info("Saved the current instance number: %d" % (instance.max_instance_id,))

@@ -2,11 +2,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import object_creator
-import handler_game
-import merc
-import interp
-import game_utils
+from rom24 import object_creator
+from rom24 import handler_game
+from rom24 import merc
+from rom24 import interp
+from rom24 import game_utils
 
 
 def do_drop(ch, argument):

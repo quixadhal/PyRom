@@ -3,8 +3,8 @@ from collections import OrderedDict
 import logging
 logger = logging.getLogger(__name__)
 
-import game_utils
-import state_checks
+from rom24 import game_utils
+from rom24 import state_checks
 
 
 class Bit:

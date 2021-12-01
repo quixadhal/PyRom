@@ -6,16 +6,16 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import game_utils
-import handler_game
-import handler_item
-import handler_room
-import world_classes
-import merc
-import handler_npc
-import special
-import state_checks
-import instance
+from rom24 import game_utils
+from rom24 import handler_game
+from rom24 import handler_item
+from rom24 import handler_room
+from rom24 import world_classes
+from rom24 import merc
+from rom24 import handler_npc
+from rom24 import special
+from rom24 import state_checks
+from rom24 import instance
 
 
 def create_room(room_template):

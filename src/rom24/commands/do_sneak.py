@@ -4,9 +4,9 @@ import logging
 logger = logging.getLogger(__name__)
 
 import random
-import handler_game
-import merc
-import interp
+from rom24 import handler_game
+from rom24 import merc
+from rom24 import interp
 
 
 def do_sneak(ch, argument):
@@ -17,7 +17,7 @@ def do_sneak(ch, argument):
         return
 
     if random.randint(1, 99) < ch.get_skill("sneak"):
-        if ch.is_pc():
+        if ch.is_pc:
             ch.check_improve( "sneak", True, 3)
         af = handler_game.AFFECT_DATA()
         af.where = merc.TO_AFFECTS
@@ -29,7 +29,7 @@ def do_sneak(ch, argument):
         af.bitvector = merc.AFF_SNEAK
         ch.affect_add(af)
     else:
-        if ch.is_pc():
+        if ch.is_pc:
             ch.check_improve( "sneak", False, 3)
     return
 

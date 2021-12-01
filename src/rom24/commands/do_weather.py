@@ -2,10 +2,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import handler_game
-import merc
-import interp
-import state_checks
+from rom24 import handler_game
+from rom24 import merc
+from rom24 import interp
+from rom24 import state_checks
 
 def do_weather(ch, argument):
     sky_look = ["cloudless", "cloudy", "rainy", "lit by flashes of lightning"]

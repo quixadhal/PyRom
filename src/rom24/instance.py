@@ -1,36 +1,4 @@
-"""
-/***************************************************************************
- *  Original Diku Mud copyright (C) 1990, 1991 by Sebastian Hammer,        *
- *  Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
- *                                                                         *
- *  Merc Diku Mud improvments copyright (C) 1992, 1993 by Michael          *
- *  Chastain, Michael Quan, and Mitchell Tse.                              *
- *                                                                         *
- *  In order to use any part of this Merc Diku Mud, you must comply with   *
- *  both the original Diku license in 'license.doc' as well the Merc       *
- *  license in 'license.txt'.  In particular, you may not remove either of *
- *  these copyright notices.                                               *
- *                                                                         *
- *  Much time and thought has gone into this software and you are          *
- *  benefitting.  We hope that you share your changes too.  What goes      *
- *  around, comes around.                                                  *
- ***************************************************************************/
 
-/***************************************************************************
-*   ROM 2.4 is copyright 1993-1998 Russ Taylor                             *
-*   ROM has been brought to you by the ROM consortium                      *
-*       Russ Taylor (rtaylor@hypercube.org)                                *
-*       Gabrielle Taylor (gtaylor@hypercube.org)                           *
-*       Brian Moore (zump@rom.org)                                         *
-*   By using this code, you have agreed to follow the terms of the         *
-*   ROM license, in the file Rom24/doc/rom.license                         *
-***************************************************************************/
-/************
- * Ported to Python by Davion of MudBytes.net
- * Using Miniboa https://code.google.com/p/miniboa/
- * Now using Python 3 version https://code.google.com/p/miniboa-py3/
- ************/
-"""
 __author__ = 'quixadhal'
 
 import os
@@ -41,7 +9,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import settings
+from rom24 import settings
 
 '''For the instance dicts, we are not going to make another pointer, or copy, of
 the original entity. We are going to alias, or bind, the specific entity
@@ -229,10 +197,10 @@ def from_json(data):
                 import importlib
                 module_name = found[0][0].rstrip('.')
                 class_name = found[0][1]
-
                 if module_name != '' and class_name != '':
-                    module_ref = importlib.import_module(module_name)
+                    module_ref = importlib.import_module('rom24.' + module_name)
                     class_ref = getattr(module_ref, class_name)
+                    logger.debug("class_ref: %s", class_ref)
                     if hasattr(class_ref, 'from_json'):
                         return class_ref.from_json(data, from_json)
 
@@ -287,7 +255,7 @@ def load():
             if hasattr(class_ref, 'load'):
                 obj = class_ref.load(instance_id=k)
                 if isinstance(obj, class_ref):
-                    logger.boot('Restored instance %d (%r)', k, repr(obj))
+                    logger.info('Restored instance %d (%r)', k, repr(obj))
 
 
 class Instancer:

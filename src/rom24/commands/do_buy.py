@@ -3,15 +3,15 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import game_utils
-import handler_game
-import handler_room
-import interp
-import object_creator
-import shop_utils
-import state_checks
-import instance
+from rom24 import merc
+from rom24 import game_utils
+from rom24 import handler_game
+from rom24 import handler_room
+from rom24 import interp
+from rom24 import object_creator
+from rom24 import shop_utils
+from rom24 import state_checks
+from rom24 import instance
 
 
 def do_buy(ch, argument):
@@ -58,7 +58,7 @@ def do_buy(ch, argument):
         if roll < ch.get_skill("haggle"):
             cost -= cost // 2 * roll // 100
             ch.send("You haggle the price down to %d coins.\n" % cost)
-            if ch.is_pc():
+            if ch.is_pc:
                 ch.check_improve( "haggle", True, 4)
         ch.deduct_cost(cost)
         pet = object_creator.create_mobile(pet.pIndexData)
@@ -128,7 +128,7 @@ def do_buy(ch, argument):
         if not obj.flags.sell_extract and roll < ch.get_skill("haggle"):
             cost -= obj.cost // 2 * roll // 100
             handler_game.act("You haggle with $N.", ch, None, keeper, merc.TO_CHAR)
-            if ch.is_pc():
+            if ch.is_pc:
                 ch.check_improve( "haggle", True, 4)
 
         if number > 1:

@@ -2,9 +2,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import handler_game
-import merc
-import interp
+from rom24 import handler_game
+from rom24 import merc
+from rom24 import interp
 
 
 def do_train(ch, argument):

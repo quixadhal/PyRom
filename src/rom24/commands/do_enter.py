@@ -3,11 +3,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import handler_game
-import merc
-import interp
-import handler_room
-import state_checks
+from rom24 import handler_game
+from rom24 import merc
+from rom24 import interp
+from rom24 import handler_room
+from rom24 import state_checks
 
 
 # RT Enter portals

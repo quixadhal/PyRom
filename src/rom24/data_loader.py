@@ -5,33 +5,33 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import const
-import object_creator
-import game_utils
-import handler_game
-import handler_item
-import handler_npc
-import world_classes
-import handler_room
-import merc
-import settings
-import state_checks
-import tables
-import miniboa.terminal
-import instance
+from rom24 import const
+from rom24 import object_creator
+from rom24 import game_utils
+from rom24 import handler_game
+from rom24 import handler_item
+from rom24 import handler_npc
+from rom24 import world_classes
+from rom24 import handler_room
+from rom24 import merc
+from rom24 import settings
+from rom24 import state_checks
+from rom24 import tables
+from rom24.miniboa import terminal as miniboa_terminal
+from rom24 import instance
 
 
 __author__ = 'syn'
 
 
 def load_areas():
-    logger.info('Loading Areas...')
+    logger.info('Loading Areas from %s', settings.AREA_LIST_FILE)
     index = 0
-    narea_list = os.path.join(settings.LEGACY_AREA_DIR, settings.AREA_LIST)
-    fp = open(narea_list, 'r')
+    fp = open(settings.AREA_LIST_FILE, 'r')
     area = fp.readline().strip()
     while area != "$":
-        afp = open(os.path.join(settings.LEGACY_AREA_DIR, area), 'r')
+        logger.debug("Loading area %s", area)
+        afp = open(os.path.join(settings.AREA_DIR, area), 'r')
         index += 1
         load_area(afp.read(), index)
         area = fp.readline().strip()
@@ -96,7 +96,7 @@ def load_helps(area):
             break
 
         area, nhelp.text = game_utils.read_string(area)
-        nhelp.text = miniboa.terminal.escape(nhelp.text, 'pyom')
+        nhelp.text = miniboa_terminal.escape(nhelp.text, 'pyom')
         if nhelp.keyword == "GREETING":
             nhelp.text += ' '
             merc.greeting_list.append(nhelp)
@@ -118,9 +118,9 @@ def load_npcs(area, pArea):
         area, npc.short_descr = game_utils.read_string(area)
 
         area, npc.long_descr = game_utils.read_string(area)
-        npc.long_descr = miniboa.terminal.escape(npc.long_descr, 'pyom')
+        npc.long_descr = miniboa_terminal.escape(npc.long_descr, 'pyom')
         area, npc.description = game_utils.read_string(area)
-        npc.description = miniboa.terminal.escape(npc.description, 'pyom')
+        npc.description = miniboa_terminal.escape(npc.description, 'pyom')
 
         area, npc.race = game_utils.read_string(area)
         area = npc.act.read_bits(area, default=merc.ACT_IS_NPC | npc.race.act)
@@ -192,7 +192,7 @@ def load_objects(area, pArea):
         area, item.short_descr = game_utils.read_string(area)
 
         area, item.description = game_utils.read_string(area)
-        item.description = miniboa.terminal.escape(item.description, 'pyom')
+        item.description = miniboa_terminal.escape(item.description, 'pyom')
 
         area, item.material = game_utils.read_string(area)
         area, item.item_type = game_utils.read_word(area, False)
@@ -337,7 +337,7 @@ def load_rooms(area, pArea):
         area, room.name = game_utils.read_string(area)
 
         area, room.description = game_utils.read_string(area)
-        room.description = miniboa.terminal.escape(room.description, 'pyom')
+        room.description = miniboa_terminal.escape(room.description, 'pyom')
 
         area, number = game_utils.read_int(area)  # area number
         area, room.room_flags = game_utils.read_flags(area)

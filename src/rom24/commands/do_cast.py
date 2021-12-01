@@ -3,12 +3,12 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import game_utils
-import handler_magic
-import state_checks
-import merc
-import interp
-import fight
+from rom24 import game_utils
+from rom24 import handler_magic
+from rom24 import state_checks
+from rom24 import merc
+from rom24 import interp
+from rom24 import fight
 
 
 def do_cast(ch, argument):
@@ -155,7 +155,7 @@ def do_cast(ch, argument):
 
     if random.randint(1, 99) > ch.get_skill(sn.name):
         ch.send("You lost your concentration.\n")
-        if ch.is_pc():
+        if ch.is_pc:
             ch.check_improve( sn, False, 1)
         ch.mana -= mana // 2
     else:
@@ -165,7 +165,7 @@ def do_cast(ch, argument):
             sn.spell_fun(sn, ch.level, ch, vo, target)
         else:
             sn.spell_fun(sn, 3 * ch.level // 4, ch, vo, target)
-            if ch.is_pc():
+            if ch.is_pc:
                 ch.check_improve( sn, True, 1)
 
     if (sn.target == merc.TAR_CHAR_OFFENSIVE or (sn.target == merc.TAR_OBJ_CHAR_OFF and target == merc.TARGET_CHAR)) \

@@ -9,9 +9,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import settings
-import merc
-import instance
+from rom24 import settings
+from rom24 import merc
+from rom24 import instance
 
 
 def find_instance_file(instance_id: int=None, from_char_dir: str=None, from_world: bool=False):

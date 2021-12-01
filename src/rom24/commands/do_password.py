@@ -3,11 +3,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import game_utils
-import state_checks
-import merc
-import interp
-import settings
+from rom24 import game_utils
+from rom24 import state_checks
+from rom24 import merc
+from rom24 import interp
+from rom24 import settings
 
 
 def do_password(ch, argument):

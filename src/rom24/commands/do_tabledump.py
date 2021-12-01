@@ -2,9 +2,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import database
-import merc
-import interp
+from rom24 import database
+from rom24 import merc
+from rom24 import interp
 
 
 def do_tabledump(ch, argument):

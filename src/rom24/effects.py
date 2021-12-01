@@ -36,12 +36,12 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import handler_game
-import handler_magic
-import state_checks
-import update
-import instance
+from rom24 import merc
+from rom24 import handler_game
+from rom24 import handler_magic
+from rom24 import state_checks
+from rom24 import update
+from rom24 import instance
 
 
 def acid_effect(vo, level, dam, target):

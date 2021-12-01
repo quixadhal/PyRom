@@ -3,11 +3,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import interp
-import game_utils
-import handler_game
-import handler_magic
+from rom24 import merc
+from rom24 import interp
+from rom24 import game_utils
+from rom24 import handler_game
+from rom24 import handler_magic
 
 def do_quaff(ch, argument):
     argument, arg = game_utils.read_word(argument)

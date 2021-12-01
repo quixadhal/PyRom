@@ -1,6 +1,6 @@
-import const
-import merc
-import state_checks
+from rom24 import const
+from rom24 import merc
+from rom24 import state_checks
 
 
 def spell_mass_healing(sn, level, ch, victim, target):

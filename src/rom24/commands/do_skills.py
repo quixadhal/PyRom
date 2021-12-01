@@ -3,10 +3,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import interp
-import const
-import game_utils
+from rom24 import merc
+from rom24 import interp
+from rom24 import const
+from rom24 import game_utils
 
 
 def do_skills(ch, argument):

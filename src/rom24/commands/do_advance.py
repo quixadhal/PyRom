@@ -2,10 +2,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import game_utils
-import update
-import interp
+from rom24 import merc
+from rom24 import game_utils
+from rom24 import update
+from rom24 import interp
 
 def do_advance(ch, argument):
     argument, arg1  = game_utils.read_word(argument)

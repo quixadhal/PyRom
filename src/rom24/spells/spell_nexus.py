@@ -1,9 +1,9 @@
-import const
-import handler_game
-import handler_magic
-import merc
-import object_creator
-import state_checks
+from rom24 import const
+from rom24 import handler_game
+from rom24 import handler_magic
+from rom24 import merc
+from rom24 import object_creator
+from rom24 import state_checks
 
 
 def spell_nexus(sn, level, ch, victim, target):

@@ -1,36 +1,4 @@
-"""
-/***************************************************************************
- *  Original Diku Mud copyright (C) 1990, 1991 by Sebastian Hammer,        *
- *  Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
- *                                                                         *
- *  Merc Diku Mud improvments copyright (C) 1992, 1993 by Michael          *
- *  Chastain, Michael Quan, and Mitchell Tse.                              *
- *                                                                         *
- *  In order to use any part of this Merc Diku Mud, you must comply with   *
- *  both the original Diku license in 'license.doc' as well the Merc       *
- *  license in 'license.txt'.  In particular, you may not remove either of *
- *  these copyright notices.                                               *
- *                                                                         *
- *  Much time and thought has gone into this software and you are          *
- *  benefitting.  We hope that you share your changes too.  What goes      *
- *  around, comes around.                                                  *
- ***************************************************************************/
 
-/***************************************************************************
-*   ROM 2.4 is copyright 1993-1998 Russ Taylor                             *
-*   ROM has been brought to you by the ROM consortium                      *
-*       Russ Taylor (rtaylor@hypercube.org)                                *
-*       Gabrielle Taylor (gtaylor@hypercube.org)                           *
-*       Brian Moore (zump@rom.org)                                         *
-*   By using this code, you have agreed to follow the terms of the         *
-*   ROM license, in the file Rom24/doc/rom.license                         *
-***************************************************************************/
-/************
- * Ported to Python by Davion of MudBytes.net
- * Using Miniboa https://code.google.com/p/miniboa/
- * Now using Python 3 version https://code.google.com/p/miniboa-py3/
- ************/
-"""
 __author__ = 'syn'
 
 import copy
@@ -39,13 +7,13 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import handler_ch
-import handler_item
-import living
-import game_utils
-import merc
-import state_checks
-import instance
+from rom24 import handler_ch
+from rom24 import handler_item
+from rom24 import living
+from rom24 import game_utils
+from rom24 import merc
+from rom24 import state_checks
+from rom24 import instance
 
 
 class SOCIAL_DATA:
@@ -194,7 +162,7 @@ def act(format, ch, arg1=None, arg2=None, send_to=merc.TO_ROOM, min_pos=merc.POS
     return
 
 def wiznet( string, ch, obj, flag, flag_skip, min_level):
-    from nanny import con_playing
+    from rom24.nanny import con_playing
     for d in merc.descriptor_list:
         if   d.is_connected(con_playing) \
         and d.character.is_immortal() \

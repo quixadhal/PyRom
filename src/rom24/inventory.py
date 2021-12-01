@@ -2,9 +2,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import const
-import merc
-import instance
+from rom24 import const
+from rom24 import merc
+from rom24 import instance
 
 
 class Inventory:

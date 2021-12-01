@@ -2,13 +2,13 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import game_utils
-import merc
-import const
-import interp
-import nanny
-import tables
-import handler_ch
+from rom24 import game_utils
+from rom24 import merc
+from rom24 import const
+from rom24 import interp
+from rom24 import nanny
+from rom24 import tables
+from rom24 import handler_ch
 
 # New 'who' command originally by Alander of Rivers of Mud.
 def do_who(ch, argument):

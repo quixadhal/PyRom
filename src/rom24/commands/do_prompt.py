@@ -3,8 +3,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import interp
+from rom24 import merc
+from rom24 import interp
 
 
 def do_prompt(ch, argument):

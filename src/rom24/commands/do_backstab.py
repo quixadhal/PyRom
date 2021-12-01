@@ -3,13 +3,13 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import game_utils
-import merc
-import fight
-import const
-import state_checks
-import interp
-import handler_game
+from rom24 import game_utils
+from rom24 import merc
+from rom24 import fight
+from rom24 import const
+from rom24 import state_checks
+from rom24 import interp
+from rom24 import handler_game
 
 
 def do_backstab(ch, argument):
@@ -46,11 +46,11 @@ def do_backstab(ch, argument):
         state_checks.WAIT_STATE(ch, const.skill_table['backstab'].beats )
         if random.randint(1, 99) < ch.get_skill('backstab') \
                 or (ch.get_skill('backstab') >= 2 and not state_checks.IS_AWAKE(victim)):
-            if ch.is_pc():
+            if ch.is_pc:
                 ch.check_improve('backstab',True,1)
             fight.multi_hit(ch, victim, 'backstab')
         else:
-            if ch.is_pc():
+            if ch.is_pc:
                 ch.check_improve('backstab', False, 1)
             fight.damage(ch, victim, 0, 'backstab', merc.DAM_NONE, True)
     return

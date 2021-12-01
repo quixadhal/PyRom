@@ -1,36 +1,4 @@
-"""
- #**************************************************************************
- *  Original Diku Mud copyright(C) 1990, 1991 by Sebastian Hammer,         *
- *  Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
- *                                                                         *
- *  Merc Diku Mud improvments copyright(C) 1992, 1993 by Michael           *
- *  Chastain, Michael Quan, and Mitchell Tse.                              *
- *                                                                         *
- *  In order to use any part of this Merc Diku Mud, you must comply with   *
- *  both the original Diku license in 'license.doc' as well the Merc       *
- *  license in 'license.txt'.  In particular, you may not remove either of *
- *  these copyright notices.                                               *
- *                                                                         *
- *  Much time and thought has gone into this software and you are          *
- *  benefitting.  We hope that you share your changes too.  What goes      *
- *  around, comes around.                                                  *
- ***************************************************************************/
 
-#**************************************************************************
-*   ROM 2.4 is copyright 1993-1998 Russ Taylor                             *
-*   ROM has been brought to you by the ROM consortium                      *
-*       Russ Taylor=rtaylor@hypercube.org)                                 *
-*       Gabrielle Taylor=gtaylor@hypercube.org)                            *
-*       Brian Moore=zump@rom.org)                                          *
-*   By using this code, you have agreed to follow the terms of the         *
-*   ROM license, in the file Rom24/doc/rom.license                         *
-***************************************************************************/
-#***********
- * Ported to Python by Davion of MudBytes.net
- * Using Miniboa https://code.google.com/p/miniboa/
- * Now using Python 3 version https://code.google.com/p/miniboa-py3/ 
- ************/
-"""
 import random
 import copy
 import os
@@ -41,14 +9,14 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import handler_game
-import instance
-import environment
-import state_checks
-import inventory
-import type_bypass
-import settings
+from rom24 import merc
+from rom24 import handler_game
+from rom24 import instance
+from rom24 import environment
+from rom24 import state_checks
+from rom24 import inventory
+from rom24 import type_bypass
+from rom24 import settings
 
 
 class Room(instance.Instancer, environment.Environment, inventory.Inventory, type_bypass.ObjectType):
@@ -269,7 +237,7 @@ class Room(instance.Instancer, environment.Environment, inventory.Inventory, typ
 
         os.makedirs(pathname, 0o755, True)
         filename = os.path.join(pathname, '%d-room.json' % number)
-        logger.info('Saving %s', filename)
+        # logger.info('Saving %s', filename)
         js = json.dumps(self, default=instance.to_json, indent=4, sort_keys=True)
         md5 = hashlib.md5(js.encode('utf-8')).hexdigest()
         if self._md5 != md5:
@@ -280,7 +248,7 @@ class Room(instance.Instancer, environment.Environment, inventory.Inventory, typ
         if self.inventory:
             for item_id in self.inventory[:]:
                 if item_id not in instance.items:
-                    logger.error('Item %d is in Room %d\'s inventory, but does not exist?', item_id, self.instance_id)
+                    # logger.error('Item %d is in Room %d\'s inventory, but does not exist?', item_id, self.instance_id)
                     continue
                 item = instance.items[item_id]
                 item.save(in_inventory=True, force=force)

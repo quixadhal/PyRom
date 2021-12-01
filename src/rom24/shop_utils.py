@@ -3,10 +3,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import handler_game
-import game_utils
-import instance
+from rom24 import merc
+from rom24 import handler_game
+from rom24 import game_utils
+from rom24 import instance
 
 
 # get an object from a shopkeeper's list */

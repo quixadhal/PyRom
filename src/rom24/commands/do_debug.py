@@ -2,11 +2,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import handler_pc
-import game_utils
-import interp
-import merc
-import handler_log
+from rom24 import handler_pc
+from rom24 import game_utils
+from rom24 import interp
+from rom24 import merc
 
 
 def do_debug(ch, argument):
@@ -21,7 +20,6 @@ def do_debug(ch, argument):
     if word.startswith('debug'):
         ch.send("Nope.\n")
         return
-    handler_log.GlobalDebugFlag.gdfset(True)
     handler_pc.Pc.interpret(ch, argument)
     return
 

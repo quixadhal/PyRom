@@ -2,9 +2,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import const
-import interp
+from rom24 import merc
+from rom24 import const
+from rom24 import interp
 
 
 def do_groups(ch, argument):

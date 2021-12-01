@@ -3,15 +3,15 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import handler_game
-import handler_room
-import handler_ch
-import state_checks
-import merc
-import interp
-import fight
-import update
-import instance
+from rom24 import handler_game
+from rom24 import handler_room
+from rom24 import handler_ch
+from rom24 import state_checks
+from rom24 import merc
+from rom24 import interp
+from rom24 import fight
+from rom24 import update
+from rom24 import instance
 
 
 def do_flee( ch, argument ):

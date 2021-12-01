@@ -3,9 +3,9 @@ import logging
 logger = logging.getLogger(__name__)
 
 # changes your scroll
-import merc
-import interp
-import game_utils
+from rom24 import merc
+from rom24 import interp
+from rom24 import game_utils
 
 #TODO: Known broken. Not this command, but the paging itself.
 def do_scroll(ch, argument):

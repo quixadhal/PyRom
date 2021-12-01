@@ -1,9 +1,9 @@
 import random
-import const
-import game_utils
-import handler_magic
-import merc
-import state_checks
+from rom24 import const
+from rom24 import game_utils
+from rom24 import handler_magic
+from rom24 import merc
+from rom24 import state_checks
 
 
 def spell_locate_object(sn, level, ch, victim, target):

@@ -2,10 +2,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import interp
-import state_checks
-import handler_game
+from rom24 import merc
+from rom24 import interp
+from rom24 import state_checks
+from rom24 import handler_game
 
 def do_protect(ch, argument):
     if not argument:

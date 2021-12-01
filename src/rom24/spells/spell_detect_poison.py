@@ -1,6 +1,6 @@
 
-import const
-import merc
+from rom24 import const
+from rom24 import merc
 
 
 def spell_detect_poison(sn, level, ch, victim, target):

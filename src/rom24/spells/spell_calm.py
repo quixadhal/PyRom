@@ -4,11 +4,11 @@
 
 # RT calm spell stops all fighting in the room */
 import random
-import const
-import fight
-import handler_game
-import merc
-import state_checks
+from rom24 import const
+from rom24 import fight
+from rom24 import handler_game
+from rom24 import merc
+from rom24 import state_checks
 
 
 def spell_calm(sn, level, ch, victim, target):

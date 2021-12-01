@@ -6,7 +6,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import db
+from rom24 import db
 
 db.boot_db()
 

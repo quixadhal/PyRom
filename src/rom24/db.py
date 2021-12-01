@@ -1,37 +1,3 @@
-"""
-#**************************************************************************
- *  Original Diku Mud copyright (C) 1990, 1991 by Sebastian Hammer,        *
- *  Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
- *                                                                         *
- *  Merc Diku Mud improvments copyright (C) 1992, 1993 by Michael          *
- *  Chastain, Michael Quan, and Mitchell Tse.                              *
- *                                                                         *
- *  In order to use any part of this Merc Diku Mud, you must comply with   *
- *  both the original Diku license in 'license.doc' as well the Merc       *
- *  license in 'license.txt'.  In particular, you may not remove either of *
- *  these copyright notices.                                               *
- *                                                                         *
- *  Much time and thought has gone into this software and you are          *
- *  benefitting.  We hope that you share your changes too.  What goes      *
- *  around, comes around.                                                  *
- ***************************************************************************/
-
-#**************************************************************************
-*	ROM 2.4 is copyright 1993-1998 Russ Taylor			                   *
-*	ROM has been brought to you by the ROM consortium		               *
-*	    Russ Taylor (rtaylor@hypercube.org)				                   *
-*	    Gabrielle Taylor (gtaylor@hypercube.org)			               *
-*	    Brian Moore (zump@rom.org)					                       *
-*	By using this code, you have agreed to follow the terms of the	       *
-*	ROM license, in the file Rom24/doc/rom.license			               *
-***************************************************************************/
-#***********
- * Ported to Python by Davion of MudBytes.net
- * Using Miniboa https://code.google.com/p/miniboa/
- * Now using Python 3 version https://code.google.com/p/miniboa-py3/
- ************/
-"""
-
 import os
 import random
 import time
@@ -39,24 +5,24 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import update
-import data_loader
-import object_creator
-import handler_item
-import settings
-import state_checks
-import game_utils
-import handler_game
-import const
-import database.read.read_tables as read
-import instance
+from rom24 import merc
+from rom24 import update
+from rom24 import data_loader
+from rom24 import object_creator
+from rom24 import handler_item
+from rom24 import settings
+from rom24 import state_checks
+from rom24 import game_utils
+from rom24 import handler_game
+from rom24 import const
+from rom24.database.read import read_tables as read
+from rom24 import instance
 
 
 def boot_db():
-    import handler_npc
-    import handler_room
-    import world_classes
+    from rom24 import handler_npc
+    from rom24 import handler_room
+    from rom24 import world_classes
 
     init_time()
     init_instance()
@@ -102,10 +68,9 @@ def init_instance():
     #First lets add the bad terms we dont want to pass during instancing, while copying attributes
     instance.not_to_instance.append('instance_id')
     instance.not_to_instance.append('act')
-    instance_num_file = os.path.join(settings.LEGACY_AREA_DIR, "instance_tracker.txt")
-    fp = open(instance_num_file, 'a')  # in case the file doesnt exist open in append mode to not wipe
+    fp = open(settings.INSTANCE_NUM_FILE, 'a')  # in case the file doesnt exist open in append mode to not wipe
     fp.close()
-    fp = open(instance_num_file, 'r')
+    fp = open(settings.INSTANCE_NUM_FILE, 'r')
     junk, instance.max_instance_id = game_utils.read_int(fp.read())
     fp.close()
     if instance.max_instance_id == 0 or not instance.max_instance_id:

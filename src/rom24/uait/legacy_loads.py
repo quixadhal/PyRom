@@ -2,22 +2,22 @@ import os
 import pickle
 import sys
 import logging
-import interp
-import save
+from rom24 import interp
+from rom24 import save
 
 logger = logging.getLogger(__name__)
 
-import const
-import handler_item
-import handler_room
-import settings
-import tables
-import game_utils
-import handler_ch
-import handler_game
-import world_classes
-import merc
-import state_checks
+from rom24 import const
+from rom24 import handler_item
+from rom24 import handler_room
+from rom24 import settings
+from rom24 import tables
+from rom24 import game_utils
+from rom24 import handler_ch
+from rom24 import handler_game
+from rom24 import world_classes
+from rom24 import merc
+from rom24 import state_checks
 
 serializer_list = []
 
@@ -232,9 +232,8 @@ def load_socials():
 
 def load_areas():
     logger.info('Loading Areas...')
-    narea_list = os.path.join(settings.LEGACY_AREA_DIR, settings.AREA_LIST)
     parea_list = os.path.join(settings.LEGACY_AREA_DIR, settings.PAREA_LIST)
-    fp = open(narea_list, 'r')
+    fp = open(settings.AREA_LIST_FILE, 'r')
     area = fp.readline().strip()
     while area != "$":
         afp = open(os.path.join(settings.LEGACY_AREA_DIR, area), 'r')

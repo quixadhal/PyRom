@@ -3,13 +3,13 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import game_utils
-import handler_game
-import state_checks
-import const
-import merc
-import interp
-import instance
+from rom24 import game_utils
+from rom24 import handler_game
+from rom24 import state_checks
+from rom24 import const
+from rom24 import merc
+from rom24 import interp
+from rom24 import instance
 
 
 def do_heal(ch, argument):

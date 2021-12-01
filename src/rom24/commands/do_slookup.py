@@ -2,11 +2,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import const
-import interp
-import game_utils
-import state_checks
+from rom24 import merc
+from rom24 import const
+from rom24 import interp
+from rom24 import game_utils
+from rom24 import state_checks
 
 
 def do_slookup(ch, argument):

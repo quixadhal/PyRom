@@ -3,13 +3,13 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import interp
-import merc
-import const
-import game_utils
-import handler_game
-import handler_room
-import state_checks
+from rom24 import interp
+from rom24 import merc
+from rom24 import const
+from rom24 import game_utils
+from rom24 import handler_game
+from rom24 import handler_room
+from rom24 import state_checks
 
 
 def do_pick(self, argument):
@@ -30,7 +30,7 @@ def do_pick(self, argument):
             return
         if not ch.is_npc() and random.randint(1, 99) > ch.get_skill("pick lock"):
             ch.send("You failed.\n")
-            if ch.is_pc():
+            if ch.is_pc:
                 ch.check_improve( "pick lock", False, 2)
             return
         obj = ch.get_item_here(arg)
@@ -52,7 +52,7 @@ def do_pick(self, argument):
                 state_checks.REMOVE_BIT(obj.value[1], merc.EX_LOCKED)
                 handler_game.act("You pick the lock on $p.", ch, obj, None, merc.TO_CHAR)
                 handler_game.act("$n picks the lock on $p.", ch, obj, None, merc.TO_ROOM)
-                if ch.is_pc():
+                if ch.is_pc:
                     ch.check_improve( "pick lock", True, 2)
                 return
 
@@ -77,7 +77,7 @@ def do_pick(self, argument):
             state_checks.REMOVE_BIT(obj.value[1], merc.CONT_LOCKED)
             handler_game.act("You pick the lock on $p.", ch, obj, None, merc.TO_CHAR)
             handler_game.act("$n picks the lock on $p.", ch, obj, None, merc.TO_ROOM)
-            if ch.is_pc():
+            if ch.is_pc:
                 ch.check_improve( "pick lock", True, 2)
             return
         door = handler_room.find_door(ch, arg)
@@ -99,7 +99,7 @@ def do_pick(self, argument):
             pexit.exit_info.rem_bit(merc.EX_LOCKED)
             ch.send("*Click*\n")
             handler_game.act("$n picks the $d.", ch, None, pexit.keyword, merc.TO_ROOM)
-            if ch.is_pc():
+            if ch.is_pc:
                 ch.check_improve( "pick_lock", True, 2)
 
             # unlock the other side

@@ -1,8 +1,8 @@
 import random
-import const
-import fight
-import handler_magic
-import merc
+from rom24 import const
+from rom24 import fight
+from rom24 import handler_magic
+from rom24 import merc
 
 
 def spell_high_explosive(sn, level, ch, victim, target):

@@ -2,8 +2,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import interp
-import merc
+from rom24 import interp
+from rom24 import merc
 
 
 # Contributed by Alander.

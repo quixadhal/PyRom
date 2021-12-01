@@ -3,11 +3,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 import random
-import merc
-import interp
-import const
-import handler_game
-import state_checks
+from rom24 import merc
+from rom24 import interp
+from rom24 import const
+from rom24 import handler_game
+from rom24 import state_checks
 
 
 # for poisoning weapons and food/drink
@@ -33,13 +33,13 @@ def do_envenom(ch, argument):
             handler_game.act("You treat $p with deadly poison.", ch, item, None, merc.TO_CHAR)
             if not item.value[3]:
                 item.value[3] = 1
-                if ch.is_pc():
+                if ch.is_pc:
                     ch.check_improve( "envenom", True, 4)
             state_checks.WAIT_STATE(ch, const.skill_table["envenom"].beats)
             return
         handler_game.act("You fail to poison $p.", ch, item, None, merc.TO_CHAR)
         if not item.value[3]:
-            if ch.is_pc():
+            if ch.is_pc:
                 ch.check_improve( "envenom", False, 4)
             state_checks.WAIT_STATE(ch, const.skill_table["envenom"].beats)
             return
@@ -68,13 +68,13 @@ def do_envenom(ch, argument):
 
             handler_game.act("$n coats $p with deadly venom.", ch, item, None, merc.TO_ROOM)
             handler_game.act("You coat $p with venom.", ch, item, None, merc.TO_CHAR)
-            if ch.is_pc():
+            if ch.is_pc:
                 ch.check_improve( "envenom", True, 3)
             state_checks.WAIT_STATE(ch, const.skill_table["envenom"].beats)
             return
         else:
             handler_game.act("You fail to envenom $p.", ch, item, None, merc.TO_CHAR)
-            if ch.is_pc():
+            if ch.is_pc:
                 ch.check_improve("envenom", False, 3)
             state_checks.WAIT_STATE(ch, const.skill_table["envenom"].beats)
             return

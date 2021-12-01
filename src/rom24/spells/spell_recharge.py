@@ -1,8 +1,8 @@
 import random
 
-import const
-import handler_game
-import merc
+from rom24 import const
+from rom24 import handler_game
+from rom24 import merc
 
 
 def spell_recharge(sn, level, ch, victim, target):

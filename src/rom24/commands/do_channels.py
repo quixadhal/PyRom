@@ -2,9 +2,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import interp
-import state_checks
+from rom24 import merc
+from rom24 import interp
+from rom24 import state_checks
 
 # RT code to display channel status
 def do_channels(ch, argument):

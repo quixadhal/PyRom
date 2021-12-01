@@ -7,12 +7,12 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import environment
-import tables
-import instance
-import settings
-import type_bypass
-import bit
+from rom24 import environment
+from rom24 import tables
+from rom24 import instance
+from rom24 import settings
+from rom24 import type_bypass
+from rom24 import bit
 
 __author__ = 'syn'
 
@@ -161,7 +161,7 @@ class Area(instance.Instancer, type_bypass.ObjectType, environment.Environment):
 
         os.makedirs(pathname, 0o755, True)
         filename = os.path.join(pathname, '%d-area.json' % number)
-        logger.info('Saving %s', filename)
+        # logger.info('Saving %s', filename)
         js = json.dumps(self, default=instance.to_json, indent=4, sort_keys=True)
         md5 = hashlib.md5(js.encode('utf-8')).hexdigest()
         if self._md5 != md5:

@@ -2,12 +2,12 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import game_utils
-import handler_game
-import merc
-import interp
-import const
-import state_checks
+from rom24 import game_utils
+from rom24 import handler_game
+from rom24 import merc
+from rom24 import interp
+from rom24 import const
+from rom24 import state_checks
 
 
 def do_practice(ch, argument):

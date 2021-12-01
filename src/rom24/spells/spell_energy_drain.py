@@ -1,10 +1,10 @@
 import random
-import const
-import fight
-import game_utils
-import handler_magic
-import merc
-import update
+from rom24 import const
+from rom24 import fight
+from rom24 import game_utils
+from rom24 import handler_magic
+from rom24 import merc
+from rom24 import update
 
 
 def spell_energy_drain(sn, level, ch, victim, target):

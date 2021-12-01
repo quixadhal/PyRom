@@ -2,9 +2,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import interp
-import game_utils
+from rom24 import merc
+from rom24 import interp
+from rom24 import game_utils
 
 def do_oset(ch, argument):
     argument, arg1 = game_utils.read_word(argument)

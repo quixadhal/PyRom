@@ -3,12 +3,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 import random
-import merc
-import game_utils
-import handler_game
-import const
-import interp
-import state_checks
+from rom24 import merc
+from rom24 import game_utils
+from rom24 import handler_game
+from rom24 import const
+from rom24 import interp
+from rom24 import state_checks
 
 
 def do_berserk(ch, argument):
@@ -46,7 +46,7 @@ def do_berserk(ch, argument):
         ch.send("Your pulse races as you are consumed by rage!\n")
         handler_game.act("$n gets a wild look in $s eyes.", ch, None, None, merc.TO_ROOM)
         if not ch.is_npc():
-            if ch.is_pc():
+            if ch.is_pc:
                 ch.check_improve( 'berserk', True, 2)
         af = handler_game.AFFECT_DATA()
         af.where = merc.TO_AFFECTS
@@ -72,7 +72,7 @@ def do_berserk(ch, argument):
 
         ch.send("Your pulse speeds up, but nothing happens.\n")
         if not ch.is_npc():
-            if ch.is_pc():
+            if ch.is_pc:
                 ch.check_improve('berserk', False, 2)
 
 

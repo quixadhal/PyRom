@@ -1,9 +1,9 @@
-import const
-import fight
-import game_utils
-import handler_game
-import merc
-import state_checks
+from rom24 import const
+from rom24 import fight
+from rom24 import game_utils
+from rom24 import handler_game
+from rom24 import merc
+from rom24 import state_checks
 
 
 def spell_earthquake(sn, level, ch, victim, target):

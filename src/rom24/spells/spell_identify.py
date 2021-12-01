@@ -1,6 +1,6 @@
-import const
-import merc
-from merc import affect_loc_name, affect_bit_name, extra_bit_name, imm_bit_name, weapon_bit_name, cont_bit_name
+from rom24 import const
+from rom24 import merc
+from rom24.merc import affect_loc_name, affect_bit_name, extra_bit_name, imm_bit_name, weapon_bit_name, cont_bit_name
 
 #TODO: Make this ROM-like formatting
 def spell_identify(sn, level, ch, victim, target):

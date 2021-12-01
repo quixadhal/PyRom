@@ -7,7 +7,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import instance
+from rom24 import instance
 
 
 class Equipment:

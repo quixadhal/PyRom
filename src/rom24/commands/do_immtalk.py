@@ -2,11 +2,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import merc
-import interp
-import nanny
-import state_checks
-import handler_game
+from rom24 import merc
+from rom24 import interp
+from rom24 import nanny
+from rom24 import state_checks
+from rom24 import handler_game
 
 
 def do_immtalk(ch, argument):

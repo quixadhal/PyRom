@@ -1,8 +1,8 @@
-import const
-import handler_game
-import handler_magic
-import merc
-import state_checks
+from rom24 import const
+from rom24 import handler_game
+from rom24 import handler_magic
+from rom24 import merc
+from rom24 import state_checks
 
 
 def spell_cure_poison(sn, level, ch, victim, target):
