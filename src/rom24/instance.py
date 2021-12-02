@@ -45,9 +45,9 @@ room_templates: Dict[str, Any] = {}
 npc_templates: Dict[str, Any] = {}
 shop_templates: Dict[str, Any] = {}
 
-global_instances = (
-    {}
-)  # This is the global instance list, the heart of the game data set
+global_instances: Dict[
+    int, Any
+] = {}  # This is the global instance list, the heart of the game data set
 
 areas: Dict[str, Any] = {}
 items: Dict[int, Any] = {}

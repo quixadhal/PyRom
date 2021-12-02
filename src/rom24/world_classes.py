@@ -194,15 +194,20 @@ class Area(instance.Instancer, type_bypass.ObjectType, environment.Environment):
 
     @classmethod
     def load(cls, index: int = None, instance_id: int = None):
+        if instance_id and instance_id in instance.characters:
+            logger.warn("Instance %d of npc already loaded!", instance_id)
+            return
+
         if instance_id:
-            if instance_id in instance.characters:
-                logger.warn("Instance %d of npc already loaded!", instance_id)
-                return
             top_dir = settings.INSTANCE_DIR
             number = instance_id
-        else:
+        elif index:
             top_dir = settings.AREA_DIR
             number = index
+        else:
+            raise ValueError(
+                "Must have an instance_id that's in characters, an instance_id, or an index."
+            )
 
         target_file = "%d-area.json" % number
         filename = None

@@ -1,6 +1,6 @@
 __author__ = "quixadhal"
 
-import psutil
+import psutil  # type: ignore
 import time
 from datetime import datetime
 from collections import Iterable

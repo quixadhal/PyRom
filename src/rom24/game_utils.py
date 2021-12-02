@@ -15,23 +15,23 @@ from rom24 import merc
 from rom24 import instance
 
 
-def find_instance_file(
-    instance_id: int = None, from_char_dir: str = None, from_world: bool = False
-):
-    if not instance_id:
-        return None
-    if from_char_dir:
-        pathname = os.path.join(
-            settings.PLAYER_DIR,
-            from_char_dir[0].capitalize(),
-            from_char_dir.capitalize(),
-        )
-        for start, directories, file in os.walk(pathname):
-            if str(instance_id) in file:
-                return os.path.join(start, directories, file)
-        return None
-    if from_world:
-        pass
+# def find_instance_file(
+#     instance_id: int = None, from_char_dir: str = None, from_world: bool = False
+# ):
+#     if not instance_id:
+#         return None
+#     if from_char_dir:
+#         pathname = os.path.join(
+#             settings.PLAYER_DIR,
+#             from_char_dir[0].capitalize(),
+#             from_char_dir.capitalize(),
+#         )
+#         for start, directories, file in os.walk(pathname):
+#             if str(instance_id) in file:
+#                 return os.path.join(start, directories, file)
+#         return None
+#     if from_world:
+#         pass
 
 
 def read_forward(pstr, jump=1):
@@ -318,9 +318,7 @@ def item_bitvector_flag_str(bits: int, in_type="extra flags"):
             return None
 
 
-def item_flags_from_bits(
-    bits: int, out_data: Any, in_type="wear flags"
-):
+def item_flags_from_bits(bits: int, out_data: Any, in_type="wear flags"):
     if not out_data or not bits or not in_type:
         return None
     if bits == 0:

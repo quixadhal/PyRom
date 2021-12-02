@@ -173,92 +173,92 @@ def to_Pickle():
                 ref.close()
 
 
-def load_areas():
-    area_list = os.path.join(settings.LEGACY_AREA_DIR, settings.PAREA_LIST)
-    alf = open(area_list, "r")
-    parea = alf.readline().strip()
-    while parea != "$":
-        with open(
-            os.path.join(settings.LEGACY_AREA_DIR, parea, parea + ".pickle"), "rb"
-        ) as af:
-            zarea = pickle.load(af)
-            merc.area_list.append(zarea)
-            load_rooms(zarea.room_dict())
-            load_mobiles(zarea.mobile_dict())
-            load_objects(zarea.object_dict())
-            load_shops(zarea.shop_dict())
-            parea = alf.readline().strip()
-            logger.info("Area %s loaded", zarea.name)
-        af.close()
-    alf.close()
-    logger.info("Game Data Load Complete.")
+# def load_areas():
+#     area_list = os.path.join(settings.LEGACY_AREA_DIR, settings.PAREA_LIST)
+#     alf = open(area_list, "r")
+#     parea = alf.readline().strip()
+#     while parea != "$":
+#         with open(
+#             os.path.join(settings.LEGACY_AREA_DIR, parea, parea + ".pickle"), "rb"
+#         ) as af:
+#             zarea = pickle.load(af)
+#             merc.area_list.append(zarea)
+#             load_rooms(zarea.room_dict())
+#             load_mobiles(zarea.mobile_dict())
+#             load_objects(zarea.object_dict())
+#             load_shops(zarea.shop_dict())
+#             parea = alf.readline().strip()
+#             logger.info("Area %s loaded", zarea.name)
+#         af.close()
+#     alf.close()
+#     logger.info("Game Data Load Complete.")
 
 
-def load_helps():
-    count = 0
-    with open(
-        os.path.join(settings.HELP_DIR, settings.HELP_FILE + settings.PKL_EXTN), "rb"
-    ) as hf:
-        helps = pickle.load(hf)
-        for item in helps:
-            count += 1
-            merc.help_list.append(item)
-        logger.info("Loaded %d helps", count)
-    hf.close()
+# def load_helps():
+#     count = 0
+#     with open(
+#         os.path.join(settings.HELP_DIR, settings.HELP_FILE + settings.PKL_EXTN), "rb"
+#     ) as hf:
+#         helps = pickle.load(hf)
+#         for item in helps:
+#             count += 1
+#             merc.help_list.append(item)
+#         logger.info("Loaded %d helps", count)
+#     hf.close()
 
 
-def load_mobiles(mobile_dict):
-    count = 0
-    for k, v in mobile_dict.items():
-        instance.npc_templates[k] = v
-        count += 1
-    logger.info("%d mobiles loaded", count)
+# def load_mobiles(mobile_dict):
+#     count = 0
+#     for k, v in mobile_dict.items():
+#         instance.npc_templates[k] = v
+#         count += 1
+#     logger.info("%d mobiles loaded", count)
 
 
-def load_objects(object_dict):
-    count = 0
-    for k, v in object_dict.items():
-        instance.item_templates[k] = v
-        count += 1
-    logger.info("%d items loaded", count)
+# def load_objects(object_dict):
+#     count = 0
+#     for k, v in object_dict.items():
+#         instance.item_templates[k] = v
+#         count += 1
+#     logger.info("%d items loaded", count)
 
 
-def load_resets(reset_dict):
-    count = 0
-    for k, v in reset_dict.items():
-        merc.reset_list[k] = v
-        count += 1
-    logger.info("%d resets loaded", count)
+# def load_resets(reset_dict):
+#     count = 0
+#     for k, v in reset_dict.items():
+#         merc.reset_list[k] = v
+#         count += 1
+#     logger.info("%d resets loaded", count)
 
 
-def load_rooms(room_dict):
-    count = 0
-    for k, v in room_dict.items():
-        instance.room_templates[k] = v
-        count += 1
-    logger.info("%d rooms loaded", count)
+# def load_rooms(room_dict):
+#     count = 0
+#     for k, v in room_dict.items():
+#         instance.room_templates[k] = v
+#         count += 1
+#     logger.info("%d rooms loaded", count)
 
 
-def load_shops(shop_dict):
-    count = 0
-    for k, v in shop_dict.items():
-        merc.shop_list[k] = v
-        count += 1
-    logger.info("%d shops loaded", count)
+# def load_shops(shop_dict):
+#     count = 0
+#     for k, v in shop_dict.items():
+#         merc.shop_list[k] = v
+#         count += 1
+#     logger.info("%d shops loaded", count)
 
 
-def load_socials():
-    slf = open(settings.SOCIAL_LIST, "r")
-    social = slf.readline().strip()
-    while social != "$":
-        with open(
-            os.path.join(settings.SOCIAL_DIR, social + settings.PKL_EXTN), "rb"
-        ) as sf:
-            social_file = pickle.load(sf)
-            merc.social_list.append(social_file)
-            logger.info("Social %s loaded", social_file.name)
-        sf.close()
-    slf.close()
+# def load_socials():
+#     slf = open(settings.SOCIAL_LIST, "r")
+#     social = slf.readline().strip()
+#     while social != "$":
+#         with open(
+#             os.path.join(settings.SOCIAL_DIR, social + settings.PKL_EXTN), "rb"
+#         ) as sf:
+#             social_file = pickle.load(sf)
+#             merc.social_list.append(social_file)
+#             logger.info("Social %s loaded", social_file.name)
+#         sf.close()
+#     slf.close()
 
 
 def load_areas():

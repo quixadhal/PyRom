@@ -1,6 +1,6 @@
 """Setup configuration and dependencies for rom24."""
 
-from setuptools import find_packages
+from setuptools import find_packages  # type: ignore
 from setuptools import setup
 
 

@@ -174,13 +174,14 @@ class Items(
             return None
 
     @property
-    def equips_to_names(self, check_occupied: bool = False):
+    def equips_to_names(self):
         """
         return equips_to flags as string
 
         :param check_occupied:
         :return: :rtype: str
         """
+        check_occupied: bool = False
         things = set({})
         used = self.equipped_to if check_occupied else None
         for name in self.equips_to:
@@ -605,19 +606,19 @@ class Items(
             logger.warn("Instance %d of item already loaded!", instance_id)
             return
 
-        if not player_name:
-            if instance_id:
-                pathname = settings.INSTANCE_DIR
-                number = instance_id
-            else:
-                pathname = settings.AREA_DIR
-                number = vnum
-        else:
+        if player_name:
             pathname = os.path.join(
                 settings.PLAYER_DIR, player_name[0].lower(), player_name.capitalize()
             )
             number = instance_id
-        target_file = "%d-item.json" % number
+        elif instance_id:
+            pathname = settings.INSTANCE_DIR
+            number = instance_id
+        else:
+            pathname = settings.AREA_DIR
+            number = vnum
+
+        target_file = f"{number}-item.json"
         filename = None
         for a_path, a_directory, i_files in os.walk(pathname):
             if target_file in i_files:

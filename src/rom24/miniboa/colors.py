@@ -64,17 +64,20 @@ TERMINAL_TYPES = (
     "mxp",
 )
 
-ColorToken = namedtuple("ColorToken", (
-    "unknown",
-    "pyom",
-    "rom",
-    "smaug",
-    "imc2",
-    "ansi",
-    "greyscale",
-    "i3",
-    "mxp",
-))
+ColorToken = namedtuple(
+    "ColorToken",
+    (
+        "unknown",
+        "pyom",
+        "rom",
+        "smaug",
+        "imc2",
+        "ansi",
+        "greyscale",
+        "i3",
+        "mxp",
+    ),
+)
 
 COLOR_MAP: Dict[str, Any] = {}
 

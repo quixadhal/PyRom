@@ -96,7 +96,9 @@ def recursive_item_jsonify(
         to_equipped = json.dumps(
             item_to_json, default=instance.to_json, indent=4, sort_keys=True
         )
-        equip_write = os.path.join(equip_dir, str(item_to_json.instance_id) + ".json")
+        if not equip_dir:
+            raise ValueError("Must have an equip_dir.")
+        equip_write = os.path.join(equip_dir, f"{item_to_json.instance_id}.json")
         with open(equip_write, "w") as eq:
             eq.write(to_equipped)
         if item_to_json.inventory:
@@ -109,7 +111,9 @@ def recursive_item_jsonify(
         to_inventory = json.dumps(
             item_to_json, default=instance.to_json, indent=4, sort_keys=True
         )
-        inventory_write = os.path.join(inv_dir, str(item_to_json.instance_id) + ".json")
+        if not inv_dir:
+            raise ValueError("Must have an inv_dir.")
+        inventory_write = os.path.join(inv_dir, f"{item_to_json.instance_id}.json")
         with open(inventory_write, "w") as inv:
             inv.write(to_inventory)
         if item_to_json.inventory:

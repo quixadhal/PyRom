@@ -66,11 +66,11 @@ boot_time = time.time()
 current_time = 0
 
 # Old Style Lists
-descriptor_list = []
-shop_list = []
-help_list = []
-greeting_list = []
-social_list = []
+descriptor_list: list = []
+shop_list: list = []
+help_list: list = []
+greeting_list: list = []
+social_list: list = []
 
 """
 Game Defines
