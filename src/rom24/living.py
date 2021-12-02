@@ -941,11 +941,18 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             self.in_room.available_light += 1
 
     def can_equip(self, item, loc, should_replace=False, wverbose=False):
-        if item.environment:
-            try:
-                item.environment.get(item)
-            except:
-                return
+        logger.debug("Checking if user %s can equip %s at %s", self.name, item, loc)
+        # if item.environment:
+        #     logger.debug("item.environment: %s", item.environment)
+        #     try:
+        #         item.environment.get(item)
+        #         logger.debug("item.environment: %s", item.environment)
+        #         logger.debug("Successfully ran item.environment.get(item)")
+        #     except:
+        #         logger.debug("item.environment: %s", item.environment)
+        #         logger.exception("Encountered an exception trying to get the item from the environment.")
+        #         return
+
         if (item.flags.anti_evil and self.is_evil()) or (item.flags.anti_good and self.is_good()) \
                 or (item.flags.anti_neutral and self.is_neutral()):
             handler_game.act("You are zapped by $p and drop it.", self, item, None, merc.TO_CHAR)
@@ -958,6 +965,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                 return False
         if not self.is_npc():
             if loc == 'main_hand':
+
                 if item.get_weight() > (const.str_app[self.stat(merc.STAT_STR)].wield * 10):
                     if wverbose:
                         self.send('That weapon is too heavy for you to wield.\n')
@@ -966,10 +974,13 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                     if self.slots.off_hand and self.size < merc.SIZE_LARGE:
                         if wverbose:
                             self.send('You need two hands free for that weapon.\n')
+
                         return False
                     elif self.size < merc.SIZE_LARGE:
+
                         if wverbose:
                             self.send('That weapon is too large for you to wield.\n')
+
                         return False
                     else:
                         return True
@@ -999,7 +1010,6 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         :return: :rtype:
         """
         location = None
-
         if not item.equips_to:
             if verbose:
                 self.send("You can't wear, wield, or hold that.\n")
@@ -1012,6 +1022,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             self.raw_equip(item, to_loc)
             return
         else:
+
             possible_slots = item.equips_to & self.slots.available
             if len(possible_slots) > 0:
                 if not verbose:
@@ -1038,6 +1049,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                         if not success:
                             return
                         else:
+                            # Get first location for equipping.
                             location = [k for k in overlap][0]
                             self.raw_equip(item, location)
                             if verbose_all:

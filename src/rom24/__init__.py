@@ -17,7 +17,7 @@ VERBOSE_LOGGING_FORMAT = (
 LOGGING_LEVEL = os.environ.get(f"{LIBRARY_NAME.upper()}_LOGGING_LEVEL", logging.DEBUG)
 LOG_ALL_THE_THINGS = os.environ.get(f"{LIBRARY_NAME.upper()}_LOG_ALL_THE_THINGS")
 LOGGING_FORMATTER = os.environ.get(
-    f"{LIBRARY_NAME.upper()}_LOGGING_VERBOSITY", "normal"
+    f"{LIBRARY_NAME.upper()}_LOGGING_VERBOSITY", "verbose"
 )
 
 

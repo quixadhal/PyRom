@@ -217,6 +217,7 @@ def con_get_new_race(self):
     ch.vuln_flags.set_bit(const.race_table[race.name].vuln)
     ch.form.set_bit(const.race_table[race.name].form)
     ch.parts.set_bit(const.race_table[race.name].parts)
+    ch.act.set_bit(merc.PLR_AUTOEXIT)
 
     # add skills */
     for i in race.skills:
