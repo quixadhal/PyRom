@@ -18,7 +18,11 @@ def do_owhere(ch, argument):
         ch.send("Find what?\n")
         return
     for item in instance.items.values():
-        if not ch.can_see_item(item) or not game_utils.is_name(argument, item.name) or ch.level < item.level:
+        if (
+            not ch.can_see_item(item)
+            or not game_utils.is_name(argument, item.name)
+            or ch.level < item.level
+        ):
             continue
         found = True
         logger.info("owhere command found an item for %s: %s", argument, item)
@@ -36,14 +40,36 @@ def do_owhere(ch, argument):
         while content and content.in_item:
             content = content.in_item
 
-        if content.in_living and ch.can_see(content.in_living) and content.in_living.in_room:
-            ch.send("%3d) %s (%s) is carried by %s [[Room %d]]\n" % (
-                number,item.short_descr, item.vnum, state_checks.PERS(content.in_living, ch), content.in_living.in_room.vnum ))
+        if (
+            content.in_living
+            and ch.can_see(content.in_living)
+            and content.in_living.in_room
+        ):
+            ch.send(
+                "%3d) %s (%s) is carried by %s [[Room %d]]\n"
+                % (
+                    number,
+                    item.short_descr,
+                    item.vnum,
+                    state_checks.PERS(content.in_living, ch),
+                    content.in_living.in_room.vnum,
+                )
+            )
         elif content.in_room and ch.can_see_room(content.in_room.instance_id):
-            ch.send("%3d) %s (%s) is in %s [[Room %d]]\n" % (
-                number, item.short_descr, item.vnum, content.in_room.name, content.in_room.vnum))
+            ch.send(
+                "%3d) %s (%s) is in %s [[Room %d]]\n"
+                % (
+                    number,
+                    item.short_descr,
+                    item.vnum,
+                    content.in_room.name,
+                    content.in_room.vnum,
+                )
+            )
         else:
-            ch.send("%3d) %s (%s) is somewhere\n" % (number, item.short_descr, item.vnum))
+            ch.send(
+                "%3d) %s (%s) is somewhere\n" % (number, item.short_descr, item.vnum)
+            )
 
         if number >= max_found:
             break
@@ -52,4 +78,6 @@ def do_owhere(ch, argument):
         ch.send("Nothing like that in heaven or earth.\n")
 
 
-interp.register_command(interp.cmd_type('owhere', do_owhere, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("owhere", do_owhere, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+)

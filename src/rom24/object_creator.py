@@ -1,4 +1,4 @@
-__author__ = 'syn'
+__author__ = "syn"
 
 import random
 import sys
@@ -30,7 +30,7 @@ def create_room(room_template):
 def clone_room(parent, clone):
     if not parent or not clone:
         return
-    '''Clone a room, minus contents and exits'''
+    """Clone a room, minus contents and exits"""
     clone = handler_room.Room(parent)
     clone.inventory = None
     clone.people = None
@@ -92,23 +92,33 @@ def create_mobile(npc_template):
     if npc_template.new_format:
         # load in new style */
         # read from prototype */
-        #npc.group = npc_template.group
-        #npc.act.bits = npc_template.act.bits
+        # npc.group = npc_template.group
+        # npc.act.bits = npc_template.act.bits
         npc.comm.set_bit(merc.COMM_NOCHANNELS | merc.COMM_NOSHOUT | merc.COMM_NOTELL)
-        #npc.affected_by.bits = npc_template.affected_by.bits
-        #npc.alignment = npc_template.alignment
-        #npc.level = npc_template.level
-        #npc.hitroll = npc_template.hitroll
-        #npc.damroll = npc_template.dam_dice[merc.DICE_BONUS]
-        npc.max_hit = game_utils.dice(npc_template.hit_dice[merc.DICE_NUMBER],
-                                      npc_template.hit_dice[merc.DICE_TYPE]) + npc_template.hit_dice[merc.DICE_BONUS]
+        # npc.affected_by.bits = npc_template.affected_by.bits
+        # npc.alignment = npc_template.alignment
+        # npc.level = npc_template.level
+        # npc.hitroll = npc_template.hitroll
+        # npc.damroll = npc_template.dam_dice[merc.DICE_BONUS]
+        npc.max_hit = (
+            game_utils.dice(
+                npc_template.hit_dice[merc.DICE_NUMBER],
+                npc_template.hit_dice[merc.DICE_TYPE],
+            )
+            + npc_template.hit_dice[merc.DICE_BONUS]
+        )
         npc.hit = npc.max_hit
-        npc.max_mana = game_utils.dice(npc_template.mana_dice[merc.DICE_NUMBER],
-                                       npc_template.mana_dice[merc.DICE_TYPE]) + npc_template.mana_dice[merc.DICE_BONUS]
+        npc.max_mana = (
+            game_utils.dice(
+                npc_template.mana_dice[merc.DICE_NUMBER],
+                npc_template.mana_dice[merc.DICE_TYPE],
+            )
+            + npc_template.mana_dice[merc.DICE_BONUS]
+        )
         npc.mana = npc.max_mana
         npc.damage[merc.DICE_NUMBER] = npc_template.dam_dice[merc.DICE_NUMBER]
         npc.damage[merc.DICE_TYPE] = npc_template.dam_dice[merc.DICE_TYPE]
-        #npc.dam_type = npc_template.dam_type
+        # npc.dam_type = npc_template.dam_type
         if npc.dam_type == 0:
             num = random.randint(1, 3)
             if num == 1:
@@ -119,20 +129,20 @@ def create_mobile(npc_template):
                 npc.dam_type = 11  # pierce */
         for i in range(4):
             npc.armor[i] = npc_template.armor[i]
-        #npc.off_flags.bits = npc_template.off_flags.bits
-        #npc.imm_flags.bits = npc_template.imm_flags.bits
-        #npc.res_flags.bits = npc_template.res_flags.bits
-        #npc.vuln_flags.bits = npc_template.vuln_flags.bits
-        #npc.start_pos = npc_template.start_pos
-        #npc.default_pos = npc_template.default_pos
-        #npc.sex = npc_template.sex
+        # npc.off_flags.bits = npc_template.off_flags.bits
+        # npc.imm_flags.bits = npc_template.imm_flags.bits
+        # npc.res_flags.bits = npc_template.res_flags.bits
+        # npc.vuln_flags.bits = npc_template.vuln_flags.bits
+        # npc.start_pos = npc_template.start_pos
+        # npc.default_pos = npc_template.default_pos
+        # npc.sex = npc_template.sex
         if type(npc_template.sex) != int or npc.sex == 3:  # random sex */
             npc.sex = random.randint(1, 2)
-        #npc.race = npc_template.race
-        #npc.form.bits = npc_template.form.bits
-        #npc.parts.bits = npc_template.parts.bits
-        #npc.size = int(npc_template.size)
-        #npc.material = npc_template.material
+        # npc.race = npc_template.race
+        # npc.form.bits = npc_template.form.bits
+        # npc.parts.bits = npc_template.parts.bits
+        # npc.size = int(npc_template.size)
+        # npc.material = npc_template.material
 
         # computed on the spot */
         for i in range(merc.MAX_STATS):
@@ -205,14 +215,16 @@ def create_mobile(npc_template):
             af.bitvector = merc.AFF_PROTECT_GOOD
             npc.affect_add(af)
     else:  # read in old format and convert */
-        #npc.act.bits = npc_template.act.bits
-        #npc.affected_by.bits = npc_template.affected_by.bits
-        #npc.alignment = npc_template.alignment
-        #npc.level = npc_template.level
-        #npc.hitroll = npc_template.hitroll
+        # npc.act.bits = npc_template.act.bits
+        # npc.affected_by.bits = npc_template.affected_by.bits
+        # npc.alignment = npc_template.alignment
+        # npc.level = npc_template.level
+        # npc.hitroll = npc_template.hitroll
         npc.damroll = 0
-        npc.max_hit = npc.level * 8 + random.randint(npc.level * npc.level // 4, npc.level * npc.level)
-        npc.max_hit *= .9
+        npc.max_hit = npc.level * 8 + random.randint(
+            npc.level * npc.level // 4, npc.level * npc.level
+        )
+        npc.max_hit *= 0.9
         npc.hit = npc.max_hit
         npc.max_mana = 100 + game_utils.dice(npc.level, 10)
         npc.mana = npc.max_mana
@@ -226,16 +238,16 @@ def create_mobile(npc_template):
         for i in range(3):
             npc.armor[i] = game_utils.interpolate(npc.level, 100, -100)
         npc.armor[3] = game_utils.interpolate(npc.level, 100, 0)
-        #npc.race = npc_template.race
-        #npc.off_flags.bits = npc_template.off_flags.bits
-        #npc.imm_flags.bits = npc_template.imm_flags.bits
-        #npc.res_flags.bits = npc_template.res_flags.bits
-        #npc.vuln_flags.bits = npc_template.vuln_flags.bits
-        #npc.start_pos = npc_template.start_pos
-        #npc.default_pos = npc_template.default_pos
-        #npc.sex = npc_template.sex
-        #npc.form.bits = npc_template.form.bits
-        #npc.parts.bits = npc_template.parts.bits
+        # npc.race = npc_template.race
+        # npc.off_flags.bits = npc_template.off_flags.bits
+        # npc.imm_flags.bits = npc_template.imm_flags.bits
+        # npc.res_flags.bits = npc_template.res_flags.bits
+        # npc.vuln_flags.bits = npc_template.vuln_flags.bits
+        # npc.start_pos = npc_template.start_pos
+        # npc.default_pos = npc_template.default_pos
+        # npc.sex = npc_template.sex
+        # npc.form.bits = npc_template.form.bits
+        # npc.parts.bits = npc_template.parts.bits
         npc.size = merc.SIZE_MEDIUM
         npc.material = ""
 
@@ -316,7 +328,7 @@ def clone_mobile(parent, clone):
 
 
 # * Create an instance of an object.
-def create_item(item_template, level, prev_instance_id: int=None):
+def create_item(item_template, level, prev_instance_id: int = None):
     if not item_template:
         logger.critical("Create_object: No objTemplate.")
         sys.exit(1)
@@ -326,47 +338,54 @@ def create_item(item_template, level, prev_instance_id: int=None):
         pass  # item.instancer()
     else:
         item.instance_id = prev_instance_id
-    #item.instance_setup()
-    #item.enchanted = False
+    # item.instance_setup()
+    # item.enchanted = False
 
     if item_template.new_format is False:
         item.level = max(0, level)
 
     if level == -1 or not item_template.new_format:
-        item.cost = game_utils.number_fuzzy(10) * game_utils.number_fuzzy(level) * game_utils.number_fuzzy(level)
+        item.cost = (
+            game_utils.number_fuzzy(10)
+            * game_utils.number_fuzzy(level)
+            * game_utils.number_fuzzy(level)
+        )
 
         # Mess with object properties.
     if item.item_type == merc.ITEM_LIGHT:
         if item.value[2] == 999:
             item.value[2] = -1
-    elif item.item_type == merc.ITEM_FURNITURE \
-            or item.item_type == merc.ITEM_TRASH \
-            or item.item_type == merc.ITEM_CONTAINER \
-            or item.item_type == merc.ITEM_DRINK_CON \
-            or item.item_type == merc.ITEM_KEY \
-            or item.item_type == merc.ITEM_FOOD \
-            or item.item_type == merc.ITEM_BOAT \
-            or item.item_type == merc.ITEM_CORPSE_NPC \
-            or item.item_type == merc.ITEM_CORPSE_PC \
-            or item.item_type == merc.ITEM_FOUNTAIN \
-            or item.item_type == merc.ITEM_MAP \
-            or item.item_type == merc.ITEM_CLOTHING \
-            or item.item_type == merc.ITEM_PORTAL:
+    elif (
+        item.item_type == merc.ITEM_FURNITURE
+        or item.item_type == merc.ITEM_TRASH
+        or item.item_type == merc.ITEM_CONTAINER
+        or item.item_type == merc.ITEM_DRINK_CON
+        or item.item_type == merc.ITEM_KEY
+        or item.item_type == merc.ITEM_FOOD
+        or item.item_type == merc.ITEM_BOAT
+        or item.item_type == merc.ITEM_CORPSE_NPC
+        or item.item_type == merc.ITEM_CORPSE_PC
+        or item.item_type == merc.ITEM_FOUNTAIN
+        or item.item_type == merc.ITEM_MAP
+        or item.item_type == merc.ITEM_CLOTHING
+        or item.item_type == merc.ITEM_PORTAL
+    ):
         if not item_template.new_format:
             item.cost //= 5
-    elif item.item_type == merc.ITEM_TREASURE \
-            or item.item_type == merc.ITEM_WARP_STONE \
-            or item.item_type == merc.ITEM_ROOM_KEY \
-            or item.item_type == merc.ITEM_GEM \
-            or item.item_type == merc.ITEM_JEWELRY:
+    elif (
+        item.item_type == merc.ITEM_TREASURE
+        or item.item_type == merc.ITEM_WARP_STONE
+        or item.item_type == merc.ITEM_ROOM_KEY
+        or item.item_type == merc.ITEM_GEM
+        or item.item_type == merc.ITEM_JEWELRY
+    ):
         pass
     elif item.item_type == merc.ITEM_JUKEBOX:
         item.value = [-1 for i in range(5)]
     elif item.item_type == merc.ITEM_SCROLL:
         if level != -1 and not item_template.new_format:
             item.value[0] = game_utils.number_fuzzy(item.value[0])
-    elif item.item_type == merc.ITEM_WAND \
-            or item.item_type == merc.ITEM_STAFF:
+    elif item.item_type == merc.ITEM_WAND or item.item_type == merc.ITEM_STAFF:
         if level != -1 and not item_template.new_format:
             item.value[0] = game_utils.number_fuzzy(item.value[0])
             item.value[1] = game_utils.number_fuzzy(item.value[1])
@@ -375,26 +394,34 @@ def create_item(item_template, level, prev_instance_id: int=None):
             item.cost *= 2
     elif item.item_type == merc.ITEM_WEAPON:
         if level != -1 and not item_template.new_format:
-            item.value[1] = game_utils.number_fuzzy(game_utils.number_fuzzy(1 * level // 4 + 2))
-            item.value[2] = game_utils.number_fuzzy(game_utils.number_fuzzy(3 * level // 4 + 6))
+            item.value[1] = game_utils.number_fuzzy(
+                game_utils.number_fuzzy(1 * level // 4 + 2)
+            )
+            item.value[2] = game_utils.number_fuzzy(
+                game_utils.number_fuzzy(3 * level // 4 + 6)
+            )
     elif item.item_type == merc.ITEM_ARMOR:
         if level != -1 and not item_template.new_format:
             item.value[0] = game_utils.number_fuzzy(level // 5 + 3)
             item.value[1] = game_utils.number_fuzzy(level // 5 + 3)
             item.value[2] = game_utils.number_fuzzy(level // 5 + 3)
-    elif item.item_type == merc.ITEM_POTION \
-            or item.item_type == merc.ITEM_PILL:
+    elif item.item_type == merc.ITEM_POTION or item.item_type == merc.ITEM_PILL:
         if level != -1 and not item_template.new_format:
-            item.value[0] = game_utils.number_fuzzy(game_utils.number_fuzzy(item.value[0]))
+            item.value[0] = game_utils.number_fuzzy(
+                game_utils.number_fuzzy(item.value[0])
+            )
     elif item.item_type == merc.ITEM_MONEY:
         if not item_template.new_format:
             item.value[0] = item.cost
     else:
-        logger.error("Bad item_type objTemplate vnum: %s(%s)" % (item_template.vnum, item.item_type))
+        logger.error(
+            "Bad item_type objTemplate vnum: %s(%s)"
+            % (item_template.vnum, item.item_type)
+        )
 
-    #for paf in item_template.affected:
-     #   if paf.location == merc.APPLY_SPELL_AFFECT:
-      #      item.affect_add(paf)
+    # for paf in item_template.affected:
+    #   if paf.location == merc.APPLY_SPELL_AFFECT:
+    #      item.affect_add(paf)
     return item
 
 
@@ -439,4 +466,3 @@ def create_money(gold, silver):
         item.cost = 100 * gold + silver
         item.weight = gold // 5 + silver // 20
     return item
-

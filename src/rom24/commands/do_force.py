@@ -29,13 +29,17 @@ def do_force(ch, argument):
         for vch in instance.characters.values():
             if not vch.is_npc() and vch.trust < ch.trust:
                 handler_game.act(buf, ch, None, vch, merc.TO_VICT)
-                vch.interpret( argument)
+                vch.interpret(argument)
     elif arg == "players":
         if ch.trust < merc.MAX_LEVEL - 2:
             ch.send("Not at your level!\n")
             return
         for vch in instance.characters.values():
-            if not vch.is_npc() and vch.trust < ch.trust and vch.level < merc.LEVEL_HERO:
+            if (
+                not vch.is_npc()
+                and vch.trust < ch.trust
+                and vch.level < merc.LEVEL_HERO
+            ):
                 handler_game.act(buf, ch, None, vch, merc.TO_VICT)
                 vch.interpret(argument)
     elif arg == "gods":
@@ -43,7 +47,11 @@ def do_force(ch, argument):
             ch.send("Not at your level!\n")
             return
         for vch in instance.characters.values():
-            if not vch.is_npc() and vch.trust < ch.trust and vch.level >= merc.LEVEL_HERO:
+            if (
+                not vch.is_npc()
+                and vch.trust < ch.trust
+                and vch.level >= merc.LEVEL_HERO
+            ):
                 handler_game.act(buf, ch, None, vch, merc.TO_VICT)
                 vch.interpret(argument)
     else:
@@ -54,8 +62,12 @@ def do_force(ch, argument):
         if victim == ch:
             ch.send("Aye aye, right away!\n")
             return
-        if not ch.is_room_owner(victim.in_room) and ch.in_room != victim.in_room \
-                and victim.in_room.is_private() and not state_checks.IS_TRUSTED(ch, merc.MAX_LEVEL):
+        if (
+            not ch.is_room_owner(victim.in_room)
+            and ch.in_room != victim.in_room
+            and victim.in_room.is_private()
+            and not state_checks.IS_TRUSTED(ch, merc.MAX_LEVEL)
+        ):
             ch.send("That character is in a private room.\n")
             return
         if victim.is_pc and victim.trust >= ch.trust:
@@ -65,10 +77,12 @@ def do_force(ch, argument):
             ch.send("Not at your level!\n")
             return
         handler_game.act(buf, ch, None, victim, merc.TO_VICT)
-        #TODO: Known broken. NPCs don't have interpret, so we'll have to figure this out.
+        # TODO: Known broken. NPCs don't have interpret, so we'll have to figure this out.
         victim.interpret(argument)
     ch.send("Ok.\n")
     return
 
 
-interp.register_command(interp.cmd_type('force', do_force, merc.POS_DEAD, merc.L7, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type("force", do_force, merc.POS_DEAD, merc.L7, merc.LOG_ALWAYS, 1)
+)

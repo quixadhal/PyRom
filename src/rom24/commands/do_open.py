@@ -73,7 +73,11 @@ def do_open(ch, argument):
             pexit_rev.exit_info.rem_bit(merc.EX_CLOSED)
             for rch_id in to_room.people[:]:
                 rch = instance.characters[rch_id]
-                handler_game.act("The $d opens.", rch, None, pexit_rev.keyword, merc.TO_CHAR)
+                handler_game.act(
+                    "The $d opens.", rch, None, pexit_rev.keyword, merc.TO_CHAR
+                )
 
 
-interp.register_command(interp.cmd_type('open', do_open, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("open", do_open, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)

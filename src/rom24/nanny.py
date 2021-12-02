@@ -1,4 +1,3 @@
-
 import hashlib
 import os
 import logging
@@ -23,7 +22,7 @@ from rom24 import instance
 
 class CharDummy:
     def __init__(self):
-        self.name = ''
+        self.name = ""
         self.pwd = None
         self.desc = None
         self.stub = None
@@ -32,20 +31,32 @@ class CharDummy:
     def send(self, pstr):
         pass
 
+
 ch_selections = {}
 retries = 0
 
 
 def licheck(c):
-    if c.lower() == 'l':
+    if c.lower() == "l":
         return False
-    if c.lower() == 'i':
+    if c.lower() == "i":
         return False
     return True
 
 
 def check_parse_name(name):
-    bad_names = ['All', 'Auto', 'Immortal', 'Self', 'Someone', 'Something', 'The', 'You', 'Loner', 'Alander']
+    bad_names = [
+        "All",
+        "Auto",
+        "Immortal",
+        "Self",
+        "Someone",
+        "Something",
+        "The",
+        "You",
+        "Loner",
+        "Alander",
+    ]
     if name in bad_names:
         return False
 
@@ -73,7 +84,7 @@ def con_get_name(self):
         self.send("Illegal name, try another.\nName:")
         retries += 1
         if retries > 3:
-            self.send('Please come back when you think of a name.')
+            self.send("Please come back when you think of a name.")
             retries = 0
             self.deactivate()
         return
@@ -90,12 +101,14 @@ def con_get_name(self):
     ch_dummy.stub = handler_pc.Pc.load_stub(name)
     if ch_dummy.stub:
         found = True
-        if ch_dummy.stub['is_banned']:
-            logger.info("Denying access to %s@%s" % (ch_dummy.stub['name'], self.addrport()))
+        if ch_dummy.stub["is_banned"]:
+            logger.info(
+                "Denying access to %s@%s" % (ch_dummy.stub["name"], self.addrport())
+            )
             self.send("You have been denied access.")
             self.deactivate()
             return
-        if settings.WIZLOCK and not ch_dummy.stub['is_immortal']:
+        if settings.WIZLOCK and not ch_dummy.stub["is_immortal"]:
             self.send("Game is Wizlocked. Try again later.")
             self.deactivate()
             return
@@ -125,11 +138,11 @@ def con_get_name(self):
 def con_confirm_new_name(self):
     argument = self.get_command()[:1].lower()
     ch_dummy = self.character
-    if argument == 'y':
+    if argument == "y":
         ch_dummy.send("New character.\nGive me a password for %s: " % ch_dummy.name)
         ch_dummy.desc.password_mode_on()
         self.set_connected(con_get_new_password)
-    elif argument == 'n':
+    elif argument == "n":
         ch_dummy.send("Ok, what IS it, then? ")
         self.set_connected(con_get_name)
     else:
@@ -143,7 +156,7 @@ def con_get_new_password(self):
         ch_dummy.send("Password must be at least five characters long.\nPassword: ")
         return
     if settings.ENCRYPT_PASSWORD:
-        argument = argument.encode('utf8')
+        argument = argument.encode("utf8")
         pwdnew = hashlib.sha512(argument).hexdigest()
     else:
         pwdnew = argument
@@ -160,7 +173,7 @@ def con_confirm_new_password(self):
     ch_dummy = self.character
 
     if settings.ENCRYPT_PASSWORD:
-        argument = argument.encode('utf8')
+        argument = argument.encode("utf8")
         argument = hashlib.sha512(argument).hexdigest()
 
     if argument != ch_dummy.pwd:
@@ -190,7 +203,7 @@ def con_get_new_race(self):
     if argument.startswith("help"):
         argument, arg = game_utils.read_word(argument)
         if not argument:
-            ch.do_help('race help')
+            ch.do_help("race help")
         else:
             ch.do_help(argument)
         ch.send("\nWhat is your race (help for more information)? ")
@@ -207,8 +220,8 @@ def con_get_new_race(self):
         return
 
     ch.race = const.race_table[race.name]
-    ch_selections['race'] = race.name
-    #initialize stats */
+    ch_selections["race"] = race.name
+    # initialize stats */
     for i in range(merc.MAX_STATS):
         ch.perm_stat[i] = race.stats[i]
     ch.affected_by.set_bit(const.race_table[race.name].aff)
@@ -236,10 +249,10 @@ def con_get_new_sex(self):
     argument = self.get_command()[:1].lower()
     ch = self.character
 
-    if argument == 'm':
+    if argument == "m":
         ch.sex = merc.SEX_MALE
         ch.true_sex = merc.SEX_MALE
-    elif argument == 'f':
+    elif argument == "f":
         ch.sex = merc.SEX_FEMALE
         ch.true_sex = merc.SEX_FEMALE
     else:
@@ -265,7 +278,7 @@ def con_get_new_class(self):
         return
 
     ch.guild = guild
-    ch_selections['guild'] = guild
+    ch_selections["guild"] = guild
 
     log_buf = "%s@%s new player." % (ch.name, self.addrport())
     logger.info(log_buf)
@@ -282,11 +295,11 @@ def con_get_alignment(self):
     argument = self.get_command()[:1].lower()
     ch = self.character
 
-    if argument == 'g':
+    if argument == "g":
         ch.alignment = 750
-    elif argument == 'n':
+    elif argument == "n":
         ch.alignment = 0
-    elif argument == 'e':
+    elif argument == "e":
         ch.alignment = -750
     else:
         ch.send("That's not a valid alignment.\n")
@@ -296,9 +309,11 @@ def con_get_alignment(self):
     ch.send("\n")
     ch.group_add("rom basics", False)
     ch.group_add(ch.guild.base_group, False)
-    ch.learned['recall'] = 50
+    ch.learned["recall"] = 50
     ch.send("Do you wish to customize this character?\n")
-    ch.send("Customization takes time, but allows a wider range of skills and abilities.\n")
+    ch.send(
+        "Customization takes time, but allows a wider range of skills and abilities.\n"
+    )
     ch.send("Customize (Y/N)? ")
     self.set_connected(con_default_choice)
 
@@ -308,7 +323,7 @@ def con_default_choice(self):
     ch = self.character
 
     ch.send("\n")
-    if argument == 'y':
+    if argument == "y":
         ch.gen_data = world_classes.Gen()
         ch.gen_data.points_chosen = ch.points
         ch.do_help("group header")
@@ -317,7 +332,7 @@ def con_default_choice(self):
         ch.do_skills("")
         ch.do_help("menu choice")
         self.set_connected(con_gen_groups)
-    elif argument == 'n':
+    elif argument == "n":
         ch.group_add(ch.guild.default_group, True)
         ch.send("Please pick a weapon from the following choices:\n")
 
@@ -346,7 +361,7 @@ def con_pick_weapon(self):
         return
 
     ch.learned[weapon.gsn] = 40
-    ch_selections['weapon'] = weapon.gsn
+    ch_selections["weapon"] = weapon.gsn
     ch.do_help("motd")
     self.set_connected(con_read_motd)
 
@@ -360,12 +375,16 @@ def con_gen_groups(self):
             ch.send("You didn't pick anything.\n")
             return
         if ch.points < 40 + const.pc_race_table[ch.race.name].points:
-            ch.send("You must take at least %d points of skills and groups" %
-                    (40 + const.pc_race_table[ch.race.name].points))
+            ch.send(
+                "You must take at least %d points of skills and groups"
+                % (40 + const.pc_race_table[ch.race.name].points)
+            )
             return
 
         ch.send("Creation points: %d\n" % ch.points)
-        ch.send("Experience per level: %d\n" % ch.exp_per_level(ch.gen_data.points_chosen))
+        ch.send(
+            "Experience per level: %d\n" % ch.exp_per_level(ch.gen_data.points_chosen)
+        )
         if ch.points < 40:
             ch.train = (40 - ch.points + 1) / 2
         del ch.gen_data
@@ -391,11 +410,11 @@ def con_get_old_password(self):
     ch_dummy = self.character
     ch_dummy.desc.password_mode_off()
     if settings.ENCRYPT_PASSWORD:
-        argument = argument.encode('utf8')
+        argument = argument.encode("utf8")
         pwdcmp = hashlib.sha512(argument).hexdigest()
     else:
         pwdcmp = argument
-    if pwdcmp != ch_dummy.stub['pwd']:
+    if pwdcmp != ch_dummy.stub["pwd"]:
         ch_dummy.send("\nWrong password.\n")
         ch_dummy.failed_attempts += 1
         if ch_dummy.failed_attempts > 3:
@@ -405,11 +424,11 @@ def con_get_old_password(self):
             ch_dummy.desc.password_mode_on()
             self.set_connected(con_get_old_password)
         return
-    #write_to_buffer( d, echo_on_str, 0 );
+    # write_to_buffer( d, echo_on_str, 0 );
 
-    if ch_dummy.stub['auth']:
+    if ch_dummy.stub["auth"]:
         ch_dummy.failed_attempts = 0
-        ch_dummy.send('\nAuthenticator code: ')
+        ch_dummy.send("\nAuthenticator code: ")
         self.set_connected(con_get_timecode)
         return
 
@@ -440,13 +459,13 @@ def con_get_timecode(self):
     argument = self.get_command()
     ch_dummy = self.character
 
-    if not ch_dummy.stub['auth'].verify(argument):
-        ch_dummy.send('\nWrong timecode.\n')
+    if not ch_dummy.stub["auth"].verify(argument):
+        ch_dummy.send("\nWrong timecode.\n")
         ch_dummy.failed_attempts += 1
         if ch_dummy.failed_attempts > 3:
             comm.close_socket(self)
         else:
-            ch_dummy.send('Authenticator code: ')
+            ch_dummy.send("Authenticator code: ")
             self.set_connected(con_get_timecode)
         return
 
@@ -478,7 +497,7 @@ def con_break_connect(self):
     argument = self.get_command()[:1].lower()
     ch = self.character
 
-    if argument == 'y':
+    if argument == "y":
         for d_old in merc.descriptor_list[:]:
             if d_old == self or not d_old.character:
                 continue
@@ -494,7 +513,7 @@ def con_break_connect(self):
             self.character = None
         self.set_connected(con_get_name)
         return
-    if argument == 'n':
+    if argument == "n":
         self.send("Name: ")
         if self.character:
             del self.character
@@ -535,15 +554,17 @@ def con_read_motd(self):
         ch.practice = 5
         buf = "the %s" % const.title_table[ch.guild.name][ch.level][ch.sex - 1]
         ch.title = buf
-        #ch.prompt = "<%hhp %mm %vmv> "
-        ch.do_outfit(ch_selections['weapon'])
-        ch.put(object_creator.create_item(instance.item_templates[merc.OBJ_VNUM_MAP], 0))
+        # ch.prompt = "<%hhp %mm %vmv> "
+        ch.do_outfit(ch_selections["weapon"])
+        ch.put(
+            object_creator.create_item(instance.item_templates[merc.OBJ_VNUM_MAP], 0)
+        )
         school_id = instance.instances_by_room[merc.ROOM_VNUM_SCHOOL][0]
         school = instance.rooms[school_id]
         school.put(ch)
         ch.do_help("newbie info")
 
-        #TODO: create a player manifest that we can use/check, instead of needing to walk the dir.
+        # TODO: create a player manifest that we can use/check, instead of needing to walk the dir.
         player_files = os.listdir(settings.PLAYER_DIR)
         if len(player_files) < 1:
             for iLevel in range(ch.level, merc.MAX_LEVEL):
@@ -552,9 +573,11 @@ def con_read_motd(self):
             ch.exp = ch.exp_per_level(ch.points) * max(1, ch.level)
             ch.trust = 0
             ch.save()
-            ch.send('\n\nCongratulations!  As the first player to log into this MUD, you are now\n' +
-                    'the IMPLEMENTOR, the sucker in charge, the place where the buck stops.\n' +
-                    'Enjoy!\n\n')
+            ch.send(
+                "\n\nCongratulations!  As the first player to log into this MUD, you are now\n"
+                + "the IMPLEMENTOR, the sucker in charge, the place where the buck stops.\n"
+                + "Enjoy!\n\n"
+            )
 
     if ch._environment in instance.global_instances.keys() and not ch.level == 0:
         room = instance.global_instances.get(ch._environment, None)
@@ -574,7 +597,14 @@ def con_read_motd(self):
     ch.send("\n\n")
     ch.do_term("")
 
-    handler_game.wiznet("$N has left real life behind.", ch, None, merc.WIZ_LOGINS, merc.WIZ_SITES, ch.trust)
+    handler_game.wiznet(
+        "$N has left real life behind.",
+        ch,
+        None,
+        merc.WIZ_LOGINS,
+        merc.WIZ_SITES,
+        ch.trust,
+    )
     if ch.pet:
         ch.in_room.put(ch.pet)
         handler_game.act("$n has entered the game.", ch.pet, None, None, merc.TO_ROOM)

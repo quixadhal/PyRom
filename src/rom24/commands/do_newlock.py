@@ -20,4 +20,6 @@ def do_newlock(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('newlock', do_newlock, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type("newlock", do_newlock, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)
+)

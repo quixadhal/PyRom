@@ -7,13 +7,23 @@ from rom24 import state_checks
 
 def spell_haste(sn, level, ch, victim, target):
     # RT haste spell */
-    if state_checks.is_affected(victim, sn) or victim.is_affected( merc.AFF_HASTE) or (victim.is_npc() and state_checks.IS_SET(victim.off_flags,merc.OFF_FAST)):
+    if (
+        state_checks.is_affected(victim, sn)
+        or victim.is_affected(merc.AFF_HASTE)
+        or (victim.is_npc() and state_checks.IS_SET(victim.off_flags, merc.OFF_FAST))
+    ):
         if victim == ch:
             ch.send("You can't move any faster! \n")
         else:
-            handler_game.act("$N is already moving as fast as $E can.", ch, None, victim, merc.TO_CHAR)
+            handler_game.act(
+                "$N is already moving as fast as $E can.",
+                ch,
+                None,
+                victim,
+                merc.TO_CHAR,
+            )
         return
-    if victim.is_affected( merc.AFF_SLOW):
+    if victim.is_affected(merc.AFF_SLOW):
         if not handler_magic.check_dispel(level, victim, const.skill_table["slow"]):
             if victim != ch:
                 ch.send("Spell failed.\n")
@@ -39,8 +49,20 @@ def spell_haste(sn, level, ch, victim, target):
         ch.send("Ok.\n")
 
 
-const.register_spell(const.skill_type("haste",
-                          {'mage': 21, 'cleric': 53, 'thief': 26, 'warrior': 29},
-                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_haste, merc.TAR_CHAR_DEFENSIVE, merc.POS_FIGHTING,
-                          None, const.SLOT(502), 30, 12, "", "You feel yourself slow down.", ""))
+const.register_spell(
+    const.skill_type(
+        "haste",
+        {"mage": 21, "cleric": 53, "thief": 26, "warrior": 29},
+        {"mage": 1, "cleric": 1, "thief": 2, "warrior": 2},
+        spell_haste,
+        merc.TAR_CHAR_DEFENSIVE,
+        merc.POS_FIGHTING,
+        None,
+        const.SLOT(502),
+        30,
+        12,
+        "",
+        "You feel yourself slow down.",
+        "",
+    )
+)

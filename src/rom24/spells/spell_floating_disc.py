@@ -18,14 +18,28 @@ def spell_floating_disc(sn, level, ch, victim, target):
     disc.value[3] = ch.level * 5  # 5 pounds per level max per item */
     disc.timer = ch.level * 2 - random.randint(0, level // 2)
 
-    handler_game.act("$n has created a floating black disc.", ch, None, None, merc.TO_ROOM)
+    handler_game.act(
+        "$n has created a floating black disc.", ch, None, None, merc.TO_ROOM
+    )
     ch.send("You create a floating disc.\n")
     ch.put(disc)
     ch.equip(disc, True, True)
 
 
-const.register_spell(const.skill_type("floating disc",
-                          {'mage': 4, 'cleric': 10, 'thief': 7, 'warrior': 16},
-                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_floating_disc, merc.TAR_IGNORE, merc.POS_STANDING, None,
-                          const.SLOT(522), 40, 24, "", "!Floating disc!", ""))
+const.register_spell(
+    const.skill_type(
+        "floating disc",
+        {"mage": 4, "cleric": 10, "thief": 7, "warrior": 16},
+        {"mage": 1, "cleric": 1, "thief": 2, "warrior": 2},
+        spell_floating_disc,
+        merc.TAR_IGNORE,
+        merc.POS_STANDING,
+        None,
+        const.SLOT(522),
+        40,
+        24,
+        "",
+        "!Floating disc!",
+        "",
+    )
+)

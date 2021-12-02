@@ -48,12 +48,18 @@ def spell_enchant_armor(sn, level, ch, victim, target):
 
     # the moment of truth */
     if result < (fail // 5):  # item destroyed */
-        handler_game.act("$p flares blindingly... and evaporates! ", ch, obj, None, merc.TO_CHAR)
-        handler_game.act("$p flares blindingly... and evaporates! ", ch, obj, None, merc.TO_ROOM)
+        handler_game.act(
+            "$p flares blindingly... and evaporates! ", ch, obj, None, merc.TO_CHAR
+        )
+        handler_game.act(
+            "$p flares blindingly... and evaporates! ", ch, obj, None, merc.TO_ROOM
+        )
         obj.extract()
 
     if result < (fail // 3):  # item disenchanted */
-        handler_game.act("$p glows brightly, then fades...oops.", ch, obj, None, merc.TO_CHAR)
+        handler_game.act(
+            "$p glows brightly, then fades...oops.", ch, obj, None, merc.TO_CHAR
+        )
         handler_game.act("$p glows brightly, then fades.", ch, obj, None, merc.TO_ROOM)
         obj.enchanted = True
 
@@ -67,7 +73,6 @@ def spell_enchant_armor(sn, level, ch, victim, target):
     if result <= fail:  # failed, no bad result */
         ch.send("Nothing seemed to happen.\n")
         return
-
 
     # okay, move all the old flags into new vectors if we have to */
     if not obj.enchanted:
@@ -118,8 +123,20 @@ def spell_enchant_armor(sn, level, ch, victim, target):
         obj.affected.append(paf)
 
 
-const.register_spell(const.skill_type("enchant armor",
-                          {'mage': 16, 'cleric': 53, 'thief': 53, 'warrior': 53},
-                          {'mage': 2, 'cleric': 2, 'thief': 4, 'warrior': 4},
-                          spell_enchant_armor, merc.TAR_OBJ_INV, merc.POS_STANDING, None,
-                          const.SLOT(510), 100, 24, "", "!Enchant Armor!", ""))
+const.register_spell(
+    const.skill_type(
+        "enchant armor",
+        {"mage": 16, "cleric": 53, "thief": 53, "warrior": 53},
+        {"mage": 2, "cleric": 2, "thief": 4, "warrior": 4},
+        spell_enchant_armor,
+        merc.TAR_OBJ_INV,
+        merc.POS_STANDING,
+        None,
+        const.SLOT(510),
+        100,
+        24,
+        "",
+        "!Enchant Armor!",
+        "",
+    )
+)

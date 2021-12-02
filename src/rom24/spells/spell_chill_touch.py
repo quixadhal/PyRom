@@ -8,12 +8,59 @@ from rom24 import merc
 
 
 def spell_chill_touch(sn, level, ch, victim, target):
-    dam_each = [0,
-                0, 0, 6, 7, 8, 9, 12, 13, 13, 13,
-                14, 14, 14, 15, 15, 15, 16, 16, 16, 17,
-                17, 17, 18, 18, 18, 19, 19, 19, 20, 20,
-                20, 21, 21, 21, 22, 22, 22, 23, 23, 23,
-                24, 24, 24, 25, 25, 25, 26, 26, 26, 27]
+    dam_each = [
+        0,
+        0,
+        0,
+        6,
+        7,
+        8,
+        9,
+        12,
+        13,
+        13,
+        13,
+        14,
+        14,
+        14,
+        15,
+        15,
+        15,
+        16,
+        16,
+        16,
+        17,
+        17,
+        17,
+        18,
+        18,
+        18,
+        19,
+        19,
+        19,
+        20,
+        20,
+        20,
+        21,
+        21,
+        21,
+        22,
+        22,
+        22,
+        23,
+        23,
+        23,
+        24,
+        24,
+        24,
+        25,
+        25,
+        25,
+        26,
+        26,
+        26,
+        27,
+    ]
 
     level = min(level, len(dam_each) - 1)
     level = max(0, level)
@@ -34,8 +81,20 @@ def spell_chill_touch(sn, level, ch, victim, target):
     fight.damage(ch, victim, dam, sn, merc.DAM_COLD, True)
 
 
-const.register_spell(const.skill_type("chill touch",
-                          {'mage': 4, 'cleric': 53, 'thief': 6, 'warrior': 6},
-                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_chill_touch, merc.TAR_CHAR_OFFENSIVE, merc.POS_FIGHTING,
-                          None, const.SLOT(8), 15, 12, "chilling touch", "You feel less cold.", ""))
+const.register_spell(
+    const.skill_type(
+        "chill touch",
+        {"mage": 4, "cleric": 53, "thief": 6, "warrior": 6},
+        {"mage": 1, "cleric": 1, "thief": 2, "warrior": 2},
+        spell_chill_touch,
+        merc.TAR_CHAR_OFFENSIVE,
+        merc.POS_FIGHTING,
+        None,
+        const.SLOT(8),
+        15,
+        12,
+        "chilling touch",
+        "You feel less cold.",
+        "",
+    )
+)

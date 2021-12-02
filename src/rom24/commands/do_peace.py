@@ -20,4 +20,6 @@ def do_peace(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('peace', do_peace, merc.POS_DEAD, merc.L5, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("peace", do_peace, merc.POS_DEAD, merc.L5, merc.LOG_NORMAL, 1)
+)

@@ -29,4 +29,6 @@ def do_trust(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('trust', do_trust, merc.POS_DEAD, merc.ML, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type("trust", do_trust, merc.POS_DEAD, merc.ML, merc.LOG_ALWAYS, 1)
+)

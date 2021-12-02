@@ -13,7 +13,7 @@ from rom24 import merc
 from rom24 import settings
 from rom24 import instance
 
-signals = {'say': []}
+signals = {"say": []}
 
 
 def emit_signal(signal, actor=None, victim=None, argument=None, audience=None):
@@ -27,23 +27,33 @@ def emit_signal(signal, actor=None, victim=None, argument=None, audience=None):
         victim.absorb(signal, actor, victim, argument)
 
     if audience:
-        [instance.global_instances[a].absorb(signal, actor, victim, argument, audience) for a in audience if a != actor and a != victim]
+        [
+            instance.global_instances[a].absorb(
+                signal, actor, victim, argument, audience
+            )
+            for a in audience
+            if a != actor and a != victim
+        ]
     for prog in signals[signal]:
         prog.execute(actor, victim, argument, audience)
     actor.dampen = False
 
+
 def register_prog(signal, prog):
     signals[signal].append(prog)
+
 
 def register_signal(self, signal, prog):
     if signal not in self.listeners:
         self.listeners[signal] = []
     self.listeners[signal].append(prog)
 
+
 def absorb(self, signal, ch, victim, argument, audience):
     progs = self.listeners.get(signal, [])
     for prog in progs:
         prog.execute(ch, victim, argument, audience)
+
 
 class Progs:
     def __init__(self, code=None):
@@ -55,17 +65,19 @@ class Progs:
         self.actor = None
         self.victim = None
         self.argument = ""
-        self.compare_ops = ['<', '<=', '>', '>=', '==']
-        self.equation_ops = ['**', '+', '-', '/', '*', '(', ')']
-        self.process_tokens = {'break': None,
-                               'continue': None,
-                               'elif': self.process_elif,
-                               'else': self.process_else,
-                               'for': self.process_for,
-                               'if': self.process_if}
+        self.compare_ops = ["<", "<=", ">", ">=", "=="]
+        self.equation_ops = ["**", "+", "-", "/", "*", "(", ")"]
+        self.process_tokens = {
+            "break": None,
+            "continue": None,
+            "elif": self.process_elif,
+            "else": self.process_else,
+            "for": self.process_for,
+            "if": self.process_if,
+        }
 
     def tokenize(self):
-        self.tokens = tokenize.tokenize(io.BytesIO(self.code.encode('utf-8')).readline)
+        self.tokens = tokenize.tokenize(io.BytesIO(self.code.encode("utf-8")).readline)
 
     def increase_scope(self, local_scope):
         self.current_scope += 1
@@ -97,7 +109,6 @@ class Progs:
         if keep:
             return tokens
 
-
     def token_after_op(self):
         next_token = None
         try:
@@ -117,8 +128,8 @@ class Progs:
         try:
             next_char = line[pos]
         except IndexError:
-            return ''
-        while line[pos] == ' ' and pos + 1 < line_length:
+            return ""
+        while line[pos] == " " and pos + 1 < line_length:
             pos += 1
             next_char = line[pos]
         if impose:
@@ -129,15 +140,15 @@ class Progs:
         outcome = False
         if not values[1]:
             return True if values[0] else False
-        if op == '<':
+        if op == "<":
             outcome = values[0] < values[1]
-        elif op == '<=':
+        elif op == "<=":
             outcome = values[0] <= values[1]
-        elif op == '>':
+        elif op == ">":
             outcome = values[0] > values[1]
-        elif op == '>=':
+        elif op == ">=":
             outcome = values[0] >= values[1]
-        elif op == '==':
+        elif op == "==":
             outcome = values[0] == values[1]
         del values[:]
         return outcome
@@ -152,15 +163,16 @@ class Progs:
                 if token.type == value:
                     return token
         return None
+
     def process_for(self, token, local_scope, scope):
         iterator_tok = copy.deepcopy(next(self.tokens))
-        next(self.tokens) # The in
-        iterable_tok =  copy.deepcopy(next(self.tokens))
+        next(self.tokens)  # The in
+        iterable_tok = copy.deepcopy(next(self.tokens))
         iterable = self.process_variable(iterable_tok, local_scope, scope)
         self.seek(tokenize.NEWLINE)
         loop = self.jump_scope(local_scope, True)
         self.increase_scope(local_scope)
-        local_scope[scope+1] = {iterator_tok.string: None}
+        local_scope[scope + 1] = {iterator_tok.string: None}
         if not iterable and not isinstance(iterable, collections.Iterable):
             logger.debug("For sent a non-iterable %s", iterable_tok.string)
             logger.debug(iterable_tok)
@@ -174,10 +186,15 @@ class Progs:
                 logger.debug(iterable_tok)
                 logger.debug(iterator_tok)
                 break
-            local_scope[scope+1][iterator_tok.string] = value
+            local_scope[scope + 1][iterator_tok.string] = value
             self.tokens = iter(loop)
             for token in self.tokens:
-                self.process_token(token, local_scope, scope + 1, [tokenize.NAME, tokenize.OP, tokenize.NEWLINE])
+                self.process_token(
+                    token,
+                    local_scope,
+                    scope + 1,
+                    [tokenize.NAME, tokenize.OP, tokenize.NEWLINE],
+                )
         self.tokens = tokens
 
     def process_condition(self, token, local_scope, scope, open_paren=0):
@@ -191,19 +208,19 @@ class Progs:
                 value = self.process_equation(token, local_scope, scope)
                 values[set_value] = ast.literal_eval(value)
             elif token.type == tokenize.NAME:
-                if token.string == 'and':
+                if token.string == "and":
                     condition = self.compare_conditions(values, op)
                     if not condition:
-                        seek_char = ')' if open_paren > 0 else ':'
+                        seek_char = ")" if open_paren > 0 else ":"
                         self.seek(seek_char)
                         return condition
                     values = [None, None]
                     set_value = 0
                     op = None
-                elif token.string == 'or':
+                elif token.string == "or":
                     condition = self.compare_conditions(values, op)
                     if condition:
-                        seek_char = ')' if open_paren > 0 else ':'
+                        seek_char = ")" if open_paren > 0 else ":"
                         self.seek(seek_char)
                         return condition
                     values = [None, None]
@@ -214,14 +231,16 @@ class Progs:
             elif token.type == tokenize.NUMBER:
                 values[set_value] = int(token.string)
             elif token.type == tokenize.STRING:
-                values[set_value] = token.string[1: -1]
+                values[set_value] = token.string[1:-1]
             elif token.type == tokenize.OP:
-                if token.string == '(':
-                    condition = self.process_condition(token, local_scope, scope, open_paren + 1)
+                if token.string == "(":
+                    condition = self.process_condition(
+                        token, local_scope, scope, open_paren + 1
+                    )
                 elif token.string in self.compare_ops:
                     op = token.string
                     set_value = 1
-                elif token.string in [')', ':']:
+                elif token.string in [")", ":"]:
                     return self.compare_conditions(values, op)
 
     def process_if(self, token, local_scope, scope):
@@ -241,15 +260,15 @@ class Progs:
             self.jump_scope(scope)
 
     def process_else(self, token, local_scope, scope):
-        self.seek(':')
+        self.seek(":")
         if not self.exec_else[scope]:
             self.jump_scope(scope)
         else:
             self.increase_scope(local_scope)
 
-    def process_equation(self, token, local_scope, scope, open_paren=0, equation=''):
+    def process_equation(self, token, local_scope, scope, open_paren=0, equation=""):
         expected = [tokenize.OP, tokenize.NUMBER, tokenize.NAME]
-        value = ''
+        value = ""
         if token.type in expected:
             if token.type == tokenize.NAME:
                 value = self.process_variable(token, local_scope, scope)
@@ -257,33 +276,43 @@ class Progs:
                 value = int(token.string)
             elif token.type == tokenize.OP:
                 value = token.string
-                if value == '(':
+                if value == "(":
                     open_paren += 1
-                if value == ')':
+                if value == ")":
                     open_paren -= 1
                 next_tok = next(self.tokens)
-                return self.process_equation(next_tok, local_scope, scope, open_paren, '%s%s' % (equation, value))
-            equation = '%s%s' % (equation, value)
+                return self.process_equation(
+                    next_tok, local_scope, scope, open_paren, "%s%s" % (equation, value)
+                )
+            equation = "%s%s" % (equation, value)
         look_forward = self.next_char(token.line, token.end[1])
 
         if look_forward in self.equation_ops:
-            if(look_forward == ')' and open_paren-1 > 0):
+            if look_forward == ")" and open_paren - 1 > 0:
                 pass
             else:
                 next_tok = next(self.tokens)
-                equation = self.process_equation(next_tok, local_scope, scope, open_paren, equation)
+                equation = self.process_equation(
+                    next_tok, local_scope, scope, open_paren, equation
+                )
         return equation
 
     def process_variable(self, token, local_scope, scope):
         l, pos = token.end
         next_pos, next_char = self.next_char(token.line, pos, True)
 
-        if next_char == '.':
+        if next_char == ".":
             # Access variable scope
-            token = copy.deepcopy(token) #Copy the token because when you generate new ones it changes the ref.
+            token = copy.deepcopy(
+                token
+            )  # Copy the token because when you generate new ones it changes the ref.
             target = self.get_in_scope(token.string, local_scope, scope)
             new_token = self.token_after_op()
-            local_scope[scope + 1] = {attr: value for attr, value in inspect.getmembers(target) if not attr.startswith('_')}
+            local_scope[scope + 1] = {
+                attr: value
+                for attr, value in inspect.getmembers(target)
+                if not attr.startswith("_")
+            }
             var = self.get_in_scope(new_token.string, local_scope, scope + 1)
 
             if not var:
@@ -300,7 +329,7 @@ class Progs:
             del local_scope[scope + 1]
             return value
 
-        elif next_char == '(':
+        elif next_char == "(":
             # Access callable variable
             args = []
             value = None
@@ -314,21 +343,24 @@ class Progs:
                 elif itoken.type == tokenize.STRING:
                     value = itoken.string[1:-1]
                 elif itoken.type == tokenize.OP:
-                    if itoken.string == ',':
+                    if itoken.string == ",":
                         args.append(copy.deepcopy(value))
                         value = None
-                    if itoken.string == ')':
+                    if itoken.string == ")":
                         args.append(copy.deepcopy(value))
                         return target(*args)
 
-        elif next_char == '=' and self.next_char(token.line, next_pos) != '=':
+        elif next_char == "=" and self.next_char(token.line, next_pos) != "=":
             # Assignment
             token = copy.deepcopy(token)
-            next(self.tokens)  #skip the op
+            next(self.tokens)  # skip the op
             value = None
             for itoken in self.tokens:
                 look_forward = self.next_char(itoken.line, itoken.end[1])
-                if look_forward in self.equation_ops or itoken.string in self.equation_ops:
+                if (
+                    look_forward in self.equation_ops
+                    or itoken.string in self.equation_ops
+                ):
                     value = self.process_equation(itoken, local_scope, scope)
                     value = ast.literal_eval(value)
                 elif itoken.type == tokenize.NAME:
@@ -384,7 +416,7 @@ class Progs:
         logger.debug("Executing script.")
         exec_start = time.time()
         self.tokenize()
-        local_scope = {0: {'actor': actor, 'victim': victim, 'argument': argument}}
+        local_scope = {0: {"actor": actor, "victim": victim, "argument": argument}}
         self.current_scope = 0
         exec_types = [tokenize.NAME, tokenize.OP, tokenize.NEWLINE]
         try:
@@ -392,16 +424,16 @@ class Progs:
                 now = time.time()
                 # logger.debug('Time difference is: %0.3fms', (now - exec_start) * 1000.0)
                 if (now - exec_start) * 1000.0 > 200.0:
-                    logger.error('Maximum PyProg execution time exceeded')
+                    logger.error("Maximum PyProg execution time exceeded")
                     raise TimeoutError
                 self.process_token(token, local_scope, 0, exec_types)
         except:
             actor.send("Something went wrong.")
         exec_stop = time.time()
-        logger.debug("Script took % 0.3fms", (exec_stop-exec_start) * 1000.0)
+        logger.debug("Script took % 0.3fms", (exec_stop - exec_start) * 1000.0)
 
 
-# TODO: Find out more about how this works - when I say anything, it also progged the scripts below, but 
+# TODO: Find out more about how this works - when I say anything, it also progged the scripts below, but
 #       it doesn't look like it's as simple as triggering it on anything, it looks like it has to trigger
 #       on valid commands.  Commenting it out for now.
 
@@ -413,7 +445,7 @@ class Progs:
 #         actor.do_say("I'm a beast!")
 #     else:
 #         actor.do_say("I'm a wimp!")
-    
+
 #     if actor.guild.name == 'mage':
 #         actor.do_say("I'm a mage tho, so don't mess with me.")
 #     elif actor.guild.name == 'thief':

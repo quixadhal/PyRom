@@ -17,8 +17,11 @@ def do_at(ch, argument):
     if not location:
         ch.send("No such location.\n")
         return
-    if not ch.is_room_owner(location) and location.is_private() \
-            and ch.trust < merc.MAX_LEVEL:
+    if (
+        not ch.is_room_owner(location)
+        and location.is_private()
+        and ch.trust < merc.MAX_LEVEL
+    ):
         ch.send("That room is private right now.\n")
         return
     original = ch.in_room
@@ -37,4 +40,6 @@ def do_at(ch, argument):
             break
 
 
-interp.register_command(interp.cmd_type('doat', do_at, merc.POS_DEAD, merc.L6, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("doat", do_at, merc.POS_DEAD, merc.L6, merc.LOG_NORMAL, 1)
+)

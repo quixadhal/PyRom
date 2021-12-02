@@ -13,10 +13,7 @@ from rom24 import instance
 
 class Environment:
     def __init__(self):
-        """
-
-
-        """
+        """ """
         super().__init__()
         self._environment = None
         self.was_in_room = None
@@ -39,7 +36,10 @@ class Environment:
         elif type(input_value) is int:
             self._environment = input_value
         else:
-            raise TypeError('Environment trying to be set with non integer value %r' % type(input_value))
+            raise TypeError(
+                "Environment trying to be set with non integer value %r"
+                % type(input_value)
+            )
 
     @property
     def in_area(self):
@@ -78,13 +78,13 @@ class Environment:
         return None
 
     def spread_plague(self, plague_carrier):
-        af = [af for af in plague_carrier.affected if af.type == 'plague']
+        af = [af for af in plague_carrier.affected if af.type == "plague"]
         if not af:
             plague_carrier.affected_by.rem_bit(merc.AFF_PLAGUE)
             return
         af = af[0]
         if af.level == 1:
-                return
+            return
         plague = handler_game.AFFECT_DATA()
         plague.where = merc.TO_AFFECTS
         plague.type = "plague"
@@ -94,13 +94,18 @@ class Environment:
         plague.modifier = -5
         plague.bitvector = merc.AFF_PLAGUE
         for vch_id in self.people[:]:
-                vch = instance.characters[vch_id]
-                if not handler_magic.saves_spell(plague.level - 2, vch, merc.DAM_DISEASE) \
-                        and not vch.is_immortal() and not vch.is_affected(merc.AFF_PLAGUE) \
-                        and random.randint(0, 5) == 0:
-                    vch.send("You feel hot and feverish.\n\r")
-                    handler_game.act("$n shivers and looks very ill.", vch, None, None, merc.TO_ROOM)
-                    vch.affect_join(plague)
+            vch = instance.characters[vch_id]
+            if (
+                not handler_magic.saves_spell(plague.level - 2, vch, merc.DAM_DISEASE)
+                and not vch.is_immortal()
+                and not vch.is_affected(merc.AFF_PLAGUE)
+                and random.randint(0, 5) == 0
+            ):
+                vch.send("You feel hot and feverish.\n\r")
+                handler_game.act(
+                    "$n shivers and looks very ill.", vch, None, None, merc.TO_ROOM
+                )
+                vch.affect_join(plague)
 
     def is_room_owner(self, room):
         if not room.owner:
@@ -116,7 +121,11 @@ class Environment:
         pass
 
     def has_key(self, key):
-        instance_id = [item_id for item_id in self.items if instance.items[item_id].vnum == key.vnum]
+        instance_id = [
+            item_id
+            for item_id in self.items
+            if instance.items[item_id].vnum == key.vnum
+        ]
         if instance_id:
             return True
         return False
@@ -125,7 +134,12 @@ class Environment:
     # * Thanks to Tony Chamberlain for the correct recursive code here.
     def get_number(self):
         try:  # if self is an item.
-            noweight = [merc.ITEM_CONTAINER, merc.ITEM_MONEY, merc.ITEM_GEM, merc.ITEM_JEWELRY]
+            noweight = [
+                merc.ITEM_CONTAINER,
+                merc.ITEM_MONEY,
+                merc.ITEM_GEM,
+                merc.ITEM_JEWELRY,
+            ]
             if self.item_type in noweight:
                 number = 0
             else:
@@ -139,8 +153,15 @@ class Environment:
             content = instance.items[content_id]
             number += 1
             if content.instance_id in counted:
-                logger.debug("BUG: Objects contain eachother. %s(%d) - %s(%d)" %
-                             (self.short_descr, self.instance_id, content.short_descr, content.instance_id))
+                logger.debug(
+                    "BUG: Objects contain eachother. %s(%d) - %s(%d)"
+                    % (
+                        self.short_descr,
+                        self.instance_id,
+                        content.short_descr,
+                        content.instance_id,
+                    )
+                )
                 break
             counted.append(content)
             contents.extend(content.inventory)
@@ -156,8 +177,15 @@ class Environment:
         for content_id in contents:
             content = instance.items[content_id]
             if content.instance_id in counted:
-                print("BUG: Objects contain eachother. %s(%d) - %s(%d)" %
-                      (item.short_descr, item.instance_id, content.short_descr, content.instance_id))
+                print(
+                    "BUG: Objects contain eachother. %s(%d) - %s(%d)"
+                    % (
+                        item.short_descr,
+                        item.instance_id,
+                        content.short_descr,
+                        content.instance_id,
+                    )
+                )
                 break
             counted.append(content)
             contents.extend(content.inventory)
@@ -174,4 +202,3 @@ class Environment:
             content = instance.items[content_id]
             weight += content.get_weight()
         return weight
-

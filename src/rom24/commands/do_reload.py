@@ -16,4 +16,6 @@ def do_reload(ch, argument):
                 d.send(f"imp> {ch.name} reloaded files.")
 
 
-interp.register_command(interp.cmd_type('reload', do_reload, merc.POS_DEAD, merc.ML, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("reload", do_reload, merc.POS_DEAD, merc.ML, merc.LOG_NORMAL, 1)
+)

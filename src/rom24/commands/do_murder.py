@@ -17,9 +17,7 @@ def do_murder(ch, argument):
         ch.send("Murder whom?\n")
         return
 
-    if ch.is_affected(merc.AFF_CHARM) \
-            or (ch.is_npc()
-                and ch.act.is_set(merc.ACT_PET)):
+    if ch.is_affected(merc.AFF_CHARM) or (ch.is_npc() and ch.act.is_set(merc.ACT_PET)):
         return
     victim = ch.get_char_room(arg)
     if victim is None:
@@ -55,5 +53,10 @@ def do_murde(ch, argument):
     ch.send("If you want to MURDER, spell it out.\n")
     return
 
-interp.register_command(interp.cmd_type('murder', do_murder, merc.POS_FIGHTING, 5, merc.LOG_ALWAYS, 1))
-interp.register_command(interp.cmd_type('murde', do_murde, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 0))
+
+interp.register_command(
+    interp.cmd_type("murder", do_murder, merc.POS_FIGHTING, 5, merc.LOG_ALWAYS, 1)
+)
+interp.register_command(
+    interp.cmd_type("murde", do_murde, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 0)
+)

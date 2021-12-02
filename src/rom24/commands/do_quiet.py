@@ -16,4 +16,6 @@ def do_quiet(ch, argument):
         ch.comm.set_bit(merc.COMM_QUIET)
 
 
-interp.register_command(interp.cmd_type('quiet', do_quiet, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("quiet", do_quiet, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)
+)

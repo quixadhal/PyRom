@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 def read_tables(listener=None, loc=DATA_DIR, extn=DATA_EXTN):
     if listener:
-        #This means the game is running. Wipe the current data.
+        # This means the game is running. Wipe the current data.
         logger.debug("Clearing all tables.")
         for tok in tables:
             logger.debug("    Clearing %s.", tok.name)
@@ -19,10 +19,9 @@ def read_tables(listener=None, loc=DATA_DIR, extn=DATA_EXTN):
                 tok.table.clear()
             else:
                 affected = tok.filter(tok.table)
-                for k,v in tok.table.copy().items():
+                for k, v in tok.table.copy().items():
                     if k in affected:
-                        del(tok.table[k])
-
+                        del tok.table[k]
 
         listener.send("Tables cleared. Rebuilding...\n")
     logger.info("    Loading Tables.")
@@ -31,9 +30,9 @@ def read_tables(listener=None, loc=DATA_DIR, extn=DATA_EXTN):
         logger.debug("        Loading %s(%s)", tok.name, path)
         data = None
         if os.path.isfile(path):
-            data = json.load(open(path,'r'))
+            data = json.load(open(path, "r"))
         else:
-            logger.warning('    Failed to find file %s', path)
+            logger.warning("    Failed to find file %s", path)
             if listener:
                 listener.send("Failed to load %s" % path)
             continue
@@ -45,7 +44,6 @@ def read_tables(listener=None, loc=DATA_DIR, extn=DATA_EXTN):
                     tok.table[k] = tok.tupletype._make(v)
                 else:
                     tok.table[k] = v
-        except (AttributeError): #Its a list
+        except (AttributeError):  # Its a list
             for v in data:
                 tok.table.append(v)
-

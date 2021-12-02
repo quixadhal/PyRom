@@ -27,7 +27,14 @@ def do_deny(ch, argument):
         return
     victim.act = state_checks.SET_BIT(victim.act, merc.PLR_DENY)
     victim.send("You are denied access!\n")
-    handler_game.wiznet("$N denies access to %s" % victim.name, ch, None, merc.WIZ_PENALTIES, merc.WIZ_SECURE, 0)
+    handler_game.wiznet(
+        "$N denies access to %s" % victim.name,
+        ch,
+        None,
+        merc.WIZ_PENALTIES,
+        merc.WIZ_SECURE,
+        0,
+    )
     ch.send("OK.\n")
     victim.save(logout=True, force=True)
     fight.stop_fighting(victim, True)
@@ -35,4 +42,6 @@ def do_deny(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type("deny", do_deny, merc.POS_DEAD, merc.L1, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type("deny", do_deny, merc.POS_DEAD, merc.L1, merc.LOG_ALWAYS, 1)
+)

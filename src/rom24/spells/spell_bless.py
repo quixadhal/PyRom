@@ -20,11 +20,20 @@ def spell_bless(sn, level, ch, victim, target):
             if not handler_magic.saves_dispel(level, level, 0):
                 if paf:
                     obj.affect_remove(paf)
-                    handler_game.act("$p glows a pale blue.", ch, obj, None, merc.TO_ALL)
-                    obj.extra_bits = state_checks.REMOVE_BIT(obj.extra_flags, merc.ITEM_EVIL)
+                    handler_game.act(
+                        "$p glows a pale blue.", ch, obj, None, merc.TO_ALL
+                    )
+                    obj.extra_bits = state_checks.REMOVE_BIT(
+                        obj.extra_flags, merc.ITEM_EVIL
+                    )
                     return
                 else:
-                    handler_game.act("The evil of $p is too powerful for you to overcome.", ch, obj, send_to=merc.TO_CHAR)
+                    handler_game.act(
+                        "The evil of $p is too powerful for you to overcome.",
+                        ch,
+                        obj,
+                        send_to=merc.TO_CHAR,
+                    )
                     return
         af = handler_game.AFFECT_DATA()
         af.where = merc.TO_OBJECT
@@ -40,13 +49,14 @@ def spell_bless(sn, level, ch, victim, target):
             ch.saving_throw = ch.saving_throw - 1
         return
 
-
     # character target */
     if victim.position == merc.POS_FIGHTING or state_checks.is_affected(victim, sn):
         if victim == ch:
             ch.send("You are already blessed.\n")
         else:
-            handler_game.act("$N already has divine favor.", ch, None, victim, merc.TO_CHAR)
+            handler_game.act(
+                "$N already has divine favor.", ch, None, victim, merc.TO_CHAR
+            )
         return
 
     af = handler_game.AFFECT_DATA()
@@ -64,11 +74,25 @@ def spell_bless(sn, level, ch, victim, target):
     victim.affect_add(af)
     victim.send("You feel righteous.\n")
     if ch is not victim:
-        handler_game.act("You grant $N the favor of your god.", ch, None, victim, merc.TO_CHAR)
+        handler_game.act(
+            "You grant $N the favor of your god.", ch, None, victim, merc.TO_CHAR
+        )
 
 
-const.register_spell(const.skill_type("bless",
-                          {'mage': 53, 'cleric': 7, 'thief': 53, 'warrior': 8},
-                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_bless, merc.TAR_OBJ_CHAR_DEF, merc.POS_STANDING, None,
-                          const.SLOT(3), 5, 12, "", "You feel less righteous.", "$p's holy aura fades."))
+const.register_spell(
+    const.skill_type(
+        "bless",
+        {"mage": 53, "cleric": 7, "thief": 53, "warrior": 8},
+        {"mage": 1, "cleric": 1, "thief": 2, "warrior": 2},
+        spell_bless,
+        merc.TAR_OBJ_CHAR_DEF,
+        merc.POS_STANDING,
+        None,
+        const.SLOT(3),
+        5,
+        12,
+        "",
+        "You feel less righteous.",
+        "$p's holy aura fades.",
+    )
+)

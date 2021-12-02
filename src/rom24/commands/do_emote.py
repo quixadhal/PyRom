@@ -19,5 +19,9 @@ def do_emote(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('emote', do_emote, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
-interp.register_command(interp.cmd_type(',', do_emote, merc.POS_RESTING, 0, merc.LOG_NORMAL, 0))
+interp.register_command(
+    interp.cmd_type("emote", do_emote, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)
+interp.register_command(
+    interp.cmd_type(",", do_emote, merc.POS_RESTING, 0, merc.LOG_NORMAL, 0)
+)

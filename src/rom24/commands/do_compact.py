@@ -15,4 +15,6 @@ def do_compact(ch, argument):
         ch.comm.set_bit(merc.COMM_COMPACT)
 
 
-interp.register_command(interp.cmd_type('compact', do_compact, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("compact", do_compact, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

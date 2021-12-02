@@ -19,4 +19,6 @@ def do_bamfout(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('poofout', do_bamfout, merc.POS_DEAD, merc.L8, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("poofout", do_bamfout, merc.POS_DEAD, merc.L8, merc.LOG_NORMAL, 1)
+)

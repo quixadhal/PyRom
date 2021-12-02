@@ -11,4 +11,6 @@ def do_rent(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('rent', do_rent, merc.POS_DEAD, 0, merc.LOG_NORMAL, 0))
+interp.register_command(
+    interp.cmd_type("rent", do_rent, merc.POS_DEAD, 0, merc.LOG_NORMAL, 0)
+)

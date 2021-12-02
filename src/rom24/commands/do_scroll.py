@@ -7,15 +7,14 @@ from rom24 import merc
 from rom24 import interp
 from rom24 import game_utils
 
-#TODO: Known broken. Not this command, but the paging itself.
+# TODO: Known broken. Not this command, but the paging itself.
 def do_scroll(ch, argument):
     argument, arg = game_utils.read_word(argument)
     if not arg:
         if ch.lines == 0:
             ch.send("You do not page long messages.\n")
         else:
-            ch.send("You currently display %d lines per page.\n" % (
-                ch.lines + 2))
+            ch.send("You currently display %d lines per page.\n" % (ch.lines + 2))
         return
     if not arg.isdigit():
         ch.send("You must provide a number.\n")
@@ -32,4 +31,6 @@ def do_scroll(ch, argument):
     ch.lines = lines - 2
 
 
-interp.register_command(interp.cmd_type('scroll', do_scroll, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("scroll", do_scroll, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

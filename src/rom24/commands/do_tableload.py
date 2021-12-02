@@ -13,4 +13,8 @@ def do_tableload(ch, argument):
         database.read.read_tables(ch)
 
 
-interp.register_command(interp.cmd_type('tableload', do_tableload, merc.POS_DEAD, merc.ML, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type(
+        "tableload", do_tableload, merc.POS_DEAD, merc.ML, merc.LOG_ALWAYS, 1
+    )
+)

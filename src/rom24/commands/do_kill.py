@@ -47,5 +47,9 @@ def do_kill(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('hit', do_kill, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 0))
-interp.register_command(interp.cmd_type('kill', do_kill, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("hit", do_kill, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 0)
+)
+interp.register_command(
+    interp.cmd_type("kill", do_kill, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)
+)

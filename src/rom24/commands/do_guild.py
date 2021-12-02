@@ -41,4 +41,6 @@ def do_guild(ch, argument):
     ch.send("dbeug")
 
 
-interp.register_command(interp.cmd_type('guild', do_guild, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type("guild", do_guild, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)
+)

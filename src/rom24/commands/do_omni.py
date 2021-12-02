@@ -15,4 +15,6 @@ def do_omni(ch, argument):
         ch.act.set_bit(merc.PLR_OMNI)
 
 
-interp.register_command(interp.cmd_type('omni', do_omni, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("omni", do_omni, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+)

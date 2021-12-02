@@ -4,11 +4,13 @@ from rom24 import merc
 
 
 def spell_fly(sn, level, ch, victim, target):
-    if victim.is_affected( merc.AFF_FLYING):
+    if victim.is_affected(merc.AFF_FLYING):
         if victim == ch:
             ch.send("You are already airborne.\n")
         else:
-            handler_game.act("$N doesn't need your help to fly.", ch, None, victim, merc.TO_CHAR)
+            handler_game.act(
+                "$N doesn't need your help to fly.", ch, None, victim, merc.TO_CHAR
+            )
         return
     af = handler_game.AFFECT_DATA()
     af.where = merc.TO_AFFECTS
@@ -24,8 +26,20 @@ def spell_fly(sn, level, ch, victim, target):
     return
 
 
-const.register_spell(const.skill_type("fly",
-                          {'mage': 10, 'cleric': 18, 'thief': 20, 'warrior': 22},
-                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_fly, merc.TAR_CHAR_DEFENSIVE, merc.POS_STANDING, None,
-                          const.SLOT(56), 10, 18, "", "You slowly float to the ground.", ""))
+const.register_spell(
+    const.skill_type(
+        "fly",
+        {"mage": 10, "cleric": 18, "thief": 20, "warrior": 22},
+        {"mage": 1, "cleric": 1, "thief": 2, "warrior": 2},
+        spell_fly,
+        merc.TAR_CHAR_DEFENSIVE,
+        merc.POS_STANDING,
+        None,
+        const.SLOT(56),
+        10,
+        18,
+        "",
+        "You slowly float to the ground.",
+        "",
+    )
+)

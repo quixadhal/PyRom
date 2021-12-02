@@ -20,22 +20,31 @@ def do_sell(ch, argument):
         return
     item = ch.get_item_carry(arg, ch)
     if not item:
-        handler_game.act("$n tells you 'You don't have that item'.", keeper, None, ch, merc.TO_VICT)
+        handler_game.act(
+            "$n tells you 'You don't have that item'.", keeper, None, ch, merc.TO_VICT
+        )
         ch.reply = keeper
         return
     if not ch.can_drop_item(item):
         ch.send("You can't let go of it.\n")
         return
     if not keeper.can_see_item(item):
-        handler_game.act("$n doesn't see what you are offering.", keeper, None, ch, merc.TO_VICT)
+        handler_game.act(
+            "$n doesn't see what you are offering.", keeper, None, ch, merc.TO_VICT
+        )
         return
     cost = shop_utils.get_cost(keeper, item, False)
     if cost <= 0:
         handler_game.act("$n looks uninterested in $p.", keeper, item, ch, merc.TO_VICT)
         return
     if cost > (keeper.silver + 100 * keeper.gold):
-        handler_game.act("$n tells you 'I'm afraid I don't have enough wealth to buy $p.", keeper, item, ch,
-                         merc.TO_VICT)
+        handler_game.act(
+            "$n tells you 'I'm afraid I don't have enough wealth to buy $p.",
+            keeper,
+            item,
+            ch,
+            merc.TO_VICT,
+        )
         return
     handler_game.act("$n sells $p.", ch, item, None, merc.TO_ROOM)
     # haggle
@@ -46,9 +55,15 @@ def do_sell(ch, argument):
         cost = min(cost, 95 * shop_utils.get_cost(keeper, item, True) // 100)
         cost = min(cost, (keeper.silver + 100 * keeper.gold))
         if ch.is_pc:
-            ch.check_improve( "haggle", True, 4)
-    handler_game.act("You sell $p for %d silver and %d gold piece%s." % (
-        cost - (cost // 100) * 100, cost // 100, ("" if cost == 1 else "s")), ch, item, None, merc.TO_CHAR)
+            ch.check_improve("haggle", True, 4)
+    handler_game.act(
+        "You sell $p for %d silver and %d gold piece%s."
+        % (cost - (cost // 100) * 100, cost // 100, ("" if cost == 1 else "s")),
+        ch,
+        item,
+        None,
+        merc.TO_CHAR,
+    )
     ch.gold += cost // 100
     ch.silver += cost - (cost // 100) * 100
 
@@ -69,4 +84,6 @@ def do_sell(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('sell', do_sell, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("sell", do_sell, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)

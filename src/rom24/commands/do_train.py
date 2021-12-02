@@ -77,15 +77,22 @@ def do_train(ch, argument):
         return
     else:
         ch.send("You can train:")
-        if ch.perm_stat[merc.STAT_STR] < ch.get_max_train(merc.STAT_STR): ch.send(" str")
-        if ch.perm_stat[merc.STAT_INT] < ch.get_max_train(merc.STAT_INT): ch.send(" int")
-        if ch.perm_stat[merc.STAT_WIS] < ch.get_max_train(merc.STAT_WIS): ch.send(" wis")
-        if ch.perm_stat[merc.STAT_DEX] < ch.get_max_train(merc.STAT_DEX): ch.send(" dex")
-        if ch.perm_stat[merc.STAT_CON] < ch.get_max_train(merc.STAT_CON): ch.send(" con")
+        if ch.perm_stat[merc.STAT_STR] < ch.get_max_train(merc.STAT_STR):
+            ch.send(" str")
+        if ch.perm_stat[merc.STAT_INT] < ch.get_max_train(merc.STAT_INT):
+            ch.send(" int")
+        if ch.perm_stat[merc.STAT_WIS] < ch.get_max_train(merc.STAT_WIS):
+            ch.send(" wis")
+        if ch.perm_stat[merc.STAT_DEX] < ch.get_max_train(merc.STAT_DEX):
+            ch.send(" dex")
+        if ch.perm_stat[merc.STAT_CON] < ch.get_max_train(merc.STAT_CON):
+            ch.send(" con")
         ch.send(" hp mana")
         return
     if ch.perm_stat[stat] >= ch.get_max_train(stat):
-        handler_game.act("Your $T is already at maximum.", ch, None, pOutput, merc.TO_CHAR)
+        handler_game.act(
+            "Your $T is already at maximum.", ch, None, pOutput, merc.TO_CHAR
+        )
         return
     if cost > ch.train:
         ch.send("You don't have enough training sessions.\n")
@@ -97,4 +104,6 @@ def do_train(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('train', do_train, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("train", do_train, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)

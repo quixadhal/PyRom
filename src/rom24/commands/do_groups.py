@@ -53,5 +53,9 @@ def do_groups(ch, argument):
         ch.send("\n")
 
 
-interp.register_command(interp.cmd_type('info', do_groups, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1))
-interp.register_command(interp.cmd_type('groups', do_groups, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("info", do_groups, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)
+)
+interp.register_command(
+    interp.cmd_type("groups", do_groups, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)
+)

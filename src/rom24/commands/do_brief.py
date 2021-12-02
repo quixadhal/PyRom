@@ -15,4 +15,6 @@ def do_brief(ch, argument):
         ch.comm.set_bit(merc.COMM_BRIEF)
 
 
-interp.register_command(interp.cmd_type('brief', do_brief, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("brief", do_brief, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

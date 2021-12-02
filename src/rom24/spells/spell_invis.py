@@ -24,7 +24,7 @@ def spell_invis(sn, level, ch, victim, target):
         handler_game.act("$p fades out of sight.", ch, obj, None, merc.TO_ALL)
         return
     # character invisibility */
-    if victim.is_affected( merc.AFF_INVISIBLE):
+    if victim.is_affected(merc.AFF_INVISIBLE):
         return
 
     handler_game.act("$n fades out of existence.", victim, None, None, merc.TO_ROOM)
@@ -41,8 +41,20 @@ def spell_invis(sn, level, ch, victim, target):
     return
 
 
-const.register_spell(const.skill_type("invisibility",
-                          {'mage': 5, 'cleric': 53, 'thief': 9, 'warrior': 53},
-                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_invis, merc.TAR_OBJ_CHAR_DEF, merc.POS_STANDING, None,
-                          const.SLOT(29), 5, 12, "", "You are no longer invisible.", "$p fades into view."))
+const.register_spell(
+    const.skill_type(
+        "invisibility",
+        {"mage": 5, "cleric": 53, "thief": 9, "warrior": 53},
+        {"mage": 1, "cleric": 1, "thief": 2, "warrior": 2},
+        spell_invis,
+        merc.TAR_OBJ_CHAR_DEF,
+        merc.POS_STANDING,
+        None,
+        const.SLOT(29),
+        5,
+        12,
+        "",
+        "You are no longer invisible.",
+        "$p fades into view.",
+    )
+)

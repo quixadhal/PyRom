@@ -30,4 +30,6 @@ def do_unalias(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('unalias', do_unalias, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("unalias", do_unalias, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

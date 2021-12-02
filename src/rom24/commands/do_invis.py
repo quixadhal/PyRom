@@ -15,11 +15,15 @@ def do_invis(ch, argument):
         # take the default path
         if ch.invis_level:
             ch.invis_level = 0
-            handler_game.act("$n slowly fades into existence.", ch, None, None, merc.TO_ROOM)
+            handler_game.act(
+                "$n slowly fades into existence.", ch, None, None, merc.TO_ROOM
+            )
             ch.send("You slowly fade back into existence.\n")
         else:
             ch.invis_level = ch.trust
-            handler_game.act("$n slowly fades into thin air.", ch, None, None, merc.TO_ROOM)
+            handler_game.act(
+                "$n slowly fades into thin air.", ch, None, None, merc.TO_ROOM
+            )
             ch.send("You slowly vanish into thin air.\n")
     else:
         # do the level thing
@@ -30,10 +34,16 @@ def do_invis(ch, argument):
         else:
             ch.reply = None
             ch.invis_level = level
-            handler_game.act("$n slowly fades into thin air.", ch, None, None, merc.TO_ROOM)
+            handler_game.act(
+                "$n slowly fades into thin air.", ch, None, None, merc.TO_ROOM
+            )
             ch.send("You slowly vanish into thin air.\n")
             return
 
 
-interp.register_command(interp.cmd_type('invis', do_invis, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 0))
-interp.register_command(interp.cmd_type('wizinvis', do_invis, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("invis", do_invis, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 0)
+)
+interp.register_command(
+    interp.cmd_type("wizinvis", do_invis, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+)

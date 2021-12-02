@@ -25,8 +25,20 @@ def spell_know_alignment(sn, level, ch, victim, target):
     return
 
 
-const.register_spell(const.skill_type("know alignment",
-                          {'mage': 12, 'cleric': 9, 'thief': 20, 'warrior': 53},
-                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_know_alignment, merc.TAR_CHAR_DEFENSIVE, merc.POS_FIGHTING,
-                          None, const.SLOT(58), 9, 12, "", "!Know Alignment!", ""))
+const.register_spell(
+    const.skill_type(
+        "know alignment",
+        {"mage": 12, "cleric": 9, "thief": 20, "warrior": 53},
+        {"mage": 1, "cleric": 1, "thief": 2, "warrior": 2},
+        spell_know_alignment,
+        merc.TAR_CHAR_DEFENSIVE,
+        merc.POS_FIGHTING,
+        None,
+        const.SLOT(58),
+        9,
+        12,
+        "",
+        "!Know Alignment!",
+        "",
+    )
+)

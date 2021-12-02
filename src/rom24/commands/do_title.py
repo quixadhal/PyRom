@@ -20,4 +20,6 @@ def do_title(ch, argument):
     ch.send("Ok.\n")
 
 
-interp.register_command(interp.cmd_type('title', do_title, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("title", do_title, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

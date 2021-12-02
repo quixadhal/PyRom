@@ -30,7 +30,9 @@ def do_steal(ch, argument):
         return
 
     if victim.is_npc() and victim.position == merc.POS_FIGHTING:
-        ch.send("Kill stealing is not permitted.\nYou'd better not -- you might get hit.\n")
+        ch.send(
+            "Kill stealing is not permitted.\nYou'd better not -- you might get hit.\n"
+        )
         return
     state_checks.WAIT_STATE(ch, const.skill_table["steal"].beats)
     percent = random.randint(1, 99)
@@ -42,22 +44,34 @@ def do_steal(ch, argument):
     else:
         percent += 50
 
-    if ((ch.level + 7 < victim.level or ch.level - 7 > victim.level)
-        and not victim.is_npc() and not ch.is_npc() ) \
-            or (not ch.is_npc() and percent > ch.get_skill("steal")) \
-            or (not ch.is_npc() and not ch.is_clan()):
+    if (
+        (
+            (ch.level + 7 < victim.level or ch.level - 7 > victim.level)
+            and not victim.is_npc()
+            and not ch.is_npc()
+        )
+        or (not ch.is_npc() and percent > ch.get_skill("steal"))
+        or (not ch.is_npc() and not ch.is_clan())
+    ):
         # Failure.
         ch.send("Oops.\n")
         ch.affect_strip("sneak")
         ch.affected_by = ch.affected_by.rem_bit(merc.AFF_SNEAK)
-        handler_game.act("$n tried to steal from you.\n", ch, None, victim, merc.TO_VICT)
-        handler_game.act("$n tried to steal from $N.\n", ch, None, victim, merc.TO_NOTVICT)
+        handler_game.act(
+            "$n tried to steal from you.\n", ch, None, victim, merc.TO_VICT
+        )
+        handler_game.act(
+            "$n tried to steal from $N.\n", ch, None, victim, merc.TO_NOTVICT
+        )
         outcome = random.randint(0, 3)
-        buf = ''
+        buf = ""
         if outcome == 0:
             buf = "%s is a lousy thief!" % ch.name
         elif outcome == 1:
-            buf = "%s couldn't rob %s way out of a paper bag!" % (ch.name, ("her" if ch.sex == 2 else "his"))
+            buf = "%s couldn't rob %s way out of a paper bag!" % (
+                ch.name,
+                ("her" if ch.sex == 2 else "his"),
+            )
         elif outcome == 2:
             buf = "%s tried to rob me!" % ch.name
         elif outcome == 3:
@@ -72,13 +86,20 @@ def do_steal(ch, argument):
                     ch.check_improve("steal", False, 2)
                 fight.multi_hit(victim, ch, merc.TYPE_UNDEFINED)
             else:
-                handler_game.wiznet("$N tried to steal from %s." % victim.name, ch, None, merc.WIZ_FLAGS, 0, 0)
+                handler_game.wiznet(
+                    "$N tried to steal from %s." % victim.name,
+                    ch,
+                    None,
+                    merc.WIZ_FLAGS,
+                    0,
+                    0,
+                )
                 if not ch.act.is_set(merc.PLR_THIEF):
                     ch.act.set_bit(merc.PLR_THIEF)
                     ch.send("*** You are now a THIEF!! ***\n")
                     ch.save()
         return
-    currency = ['coins', 'coin', 'gold', 'silver']
+    currency = ["coins", "coin", "gold", "silver"]
     if arg1 in currency:
         gold = victim.gold * random.randint(1, ch.level) // merc.MAX_LEVEL
         silver = victim.silver * random.randint(1, ch.level) // merc.MAX_LEVEL
@@ -96,7 +117,7 @@ def do_steal(ch, argument):
         else:
             ch.send("Bingo!  You got %d silver and %d gold coins.\n" % (silver, gold))
         if ch.is_pc:
-            ch.check_improve( "steal", True, 2)
+            ch.check_improve("steal", True, 2)
         return
     item = victim.get_item_carry(arg1, ch)
     if not item:
@@ -115,9 +136,11 @@ def do_steal(ch, argument):
     ch.put(item)
     handler_game.act("You pocket $p.", ch, item, None, merc.TO_CHAR)
     if ch.is_pc:
-        ch.check_improve( "steal", True, 2)
+        ch.check_improve("steal", True, 2)
     ch.send("Got it!\n")
     return
 
 
-interp.register_command(interp.cmd_type('steal', do_steal, merc.POS_STANDING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("steal", do_steal, merc.POS_STANDING, 0, merc.LOG_NORMAL, 1)
+)

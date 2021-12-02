@@ -33,4 +33,6 @@ def do_vnum(ch, argument):
     ch.do_ofind(argument)
 
 
-interp.register_command(interp.cmd_type('vnum', do_vnum, merc.POS_DEAD, merc.L4, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("vnum", do_vnum, merc.POS_DEAD, merc.L4, merc.LOG_NORMAL, 1)
+)

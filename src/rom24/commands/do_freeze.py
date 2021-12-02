@@ -28,16 +28,31 @@ def do_freeze(ch, argument):
         victim.act.rem_bit(merc.PLR_FREEZE)
         victim.send("You can play again.\n")
         ch.send("FREEZE removed.\n")
-        handler_game.wiznet("$N thaws %s." % victim.name, ch, None, merc.WIZ_PENALTIES, merc.WIZ_SECURE, 0)
+        handler_game.wiznet(
+            "$N thaws %s." % victim.name,
+            ch,
+            None,
+            merc.WIZ_PENALTIES,
+            merc.WIZ_SECURE,
+            0,
+        )
     else:
         state_checks.SET_BIT(victim.act, merc.PLR_FREEZE)
         victim.send("You can't do ANYthing!\n")
         ch.send("FREEZE set.\n")
-        handler_game.wiznet("$N puts %s in the deep freeze." % victim.name, ch, None, merc.WIZ_PENALTIES,
-                            merc.WIZ_SECURE, 0)
+        handler_game.wiznet(
+            "$N puts %s in the deep freeze." % victim.name,
+            ch,
+            None,
+            merc.WIZ_PENALTIES,
+            merc.WIZ_SECURE,
+            0,
+        )
 
     victim.save(force=True)
     return
 
 
-interp.register_command(interp.cmd_type('freeze', do_freeze, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type("freeze", do_freeze, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)
+)

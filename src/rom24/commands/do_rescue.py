@@ -38,17 +38,17 @@ def do_rescue(ch, argument):
     if state_checks.IS_NPC(fch) and not ch.is_same_group(victim):
         ch.send("Kill stealing is not permitted.\n")
         return
-    state_checks.WAIT_STATE(ch, const.skill_table['rescue'].beats)
-    if random.randint(1, 99) > ch.get_skill('rescue'):
+    state_checks.WAIT_STATE(ch, const.skill_table["rescue"].beats)
+    if random.randint(1, 99) > ch.get_skill("rescue"):
         ch.send("You fail the rescue.\n")
         if ch.is_pc:
-            ch.check_improve( 'rescue', False, 1)
+            ch.check_improve("rescue", False, 1)
         return
     handler_game.act("You rescue $N!", ch, None, victim, merc.TO_CHAR)
     handler_game.act("$n rescues you!", ch, None, victim, merc.TO_VICT)
     handler_game.act("$n rescues $N!", ch, None, victim, merc.TO_NOTVICT)
     if ch.is_pc:
-        ch.check_improve( 'rescue', True, 1)
+        ch.check_improve("rescue", True, 1)
 
     fight.stop_fighting(fch, False)
     fight.stop_fighting(victim, False)
@@ -59,4 +59,6 @@ def do_rescue(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('rescue', do_rescue, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 0))
+interp.register_command(
+    interp.cmd_type("rescue", do_rescue, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 0)
+)

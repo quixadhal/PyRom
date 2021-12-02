@@ -1,4 +1,3 @@
-
 import collections
 import random
 import logging
@@ -31,14 +30,21 @@ def move_char(ch, door, follow):
         ch.send("Alas, you cannot go that way.\n")
         return
     to_room = instance.rooms[pexit.to_room]
-    if pexit.exit_info.is_set(merc.EX_CLOSED) \
-            and (not ch.is_affected(merc.AFF_PASS_DOOR)
-                 or pexit.exit_info.is_set(merc.EX_NOPASS)) \
-            and not state_checks.IS_TRUSTED(ch, merc.L7):
+    if (
+        pexit.exit_info.is_set(merc.EX_CLOSED)
+        and (
+            not ch.is_affected(merc.AFF_PASS_DOOR)
+            or pexit.exit_info.is_set(merc.EX_NOPASS)
+        )
+        and not state_checks.IS_TRUSTED(ch, merc.L7)
+    ):
         handler_game.act("The $d is closed.", ch, None, pexit.keyword, merc.TO_CHAR)
         return
-    if ch.is_affected(merc.AFF_CHARM) \
-            and ch.master and in_room == instance.characters[ch.master].in_room:
+    if (
+        ch.is_affected(merc.AFF_CHARM)
+        and ch.master
+        and in_room == instance.characters[ch.master].in_room
+    ):
         ch.send("What?  And leave your beloved master?\n")
         return
     if not ch.is_room_owner(to_room) and to_room.is_private():
@@ -53,22 +59,27 @@ def move_char(ch, door, follow):
                     if guild != ch.guild and to_room.instance_id == room.instance_id:
                         ch.send("You aren't allowed in there.\n")
                         return
-        if in_room.sector_type == merc.SECT_AIR \
-                or to_room.sector_type == merc.SECT_AIR:
-            if not ch.is_affected(merc.AFF_FLYING) \
-                    and not ch.is_immortal():
+        if in_room.sector_type == merc.SECT_AIR or to_room.sector_type == merc.SECT_AIR:
+            if not ch.is_affected(merc.AFF_FLYING) and not ch.is_immortal():
                 ch.send("You can't fly.\n")
                 return
-        if (in_room.sector_type == merc.SECT_WATER_NOSWIM
-            or to_room.sector_type == merc.SECT_WATER_NOSWIM) \
-                and not ch.is_affected(merc.AFF_FLYING):
+        if (
+            in_room.sector_type == merc.SECT_WATER_NOSWIM
+            or to_room.sector_type == merc.SECT_WATER_NOSWIM
+        ) and not ch.is_affected(merc.AFF_FLYING):
             # Look for a boat.
-            boats = [item_id for item_id in ch.inventory if instance.items[item_id].item_type == merc.ITEM_BOAT]
+            boats = [
+                item_id
+                for item_id in ch.inventory
+                if instance.items[item_id].item_type == merc.ITEM_BOAT
+            ]
             if not boats and not ch.is_immortal():
                 ch.send("You need a boat to go there.\n")
                 return
-        move = merc.movement_loss[min(merc.SECT_MAX - 1, in_room.sector_type)] + merc.movement_loss[
-            min(merc.SECT_MAX - 1, to_room.sector_type)]
+        move = (
+            merc.movement_loss[min(merc.SECT_MAX - 1, in_room.sector_type)]
+            + merc.movement_loss[min(merc.SECT_MAX - 1, to_room.sector_type)]
+        )
         move /= 2  # i.e. the average */
         # conditional effects */
         if ch.is_affected(merc.AFF_FLYING) or ch.is_affected(merc.AFF_HASTE):
@@ -80,11 +91,15 @@ def move_char(ch, door, follow):
             return
         state_checks.WAIT_STATE(ch, 1)
         ch.move -= move
-    if not ch.is_affected(merc.AFF_SNEAK) and (not ch.is_npc() and ch.invis_level < merc.LEVEL_HERO):
+    if not ch.is_affected(merc.AFF_SNEAK) and (
+        not ch.is_npc() and ch.invis_level < merc.LEVEL_HERO
+    ):
         handler_game.act("$n leaves $T.", ch, None, merc.dir_name[door], merc.TO_ROOM)
     ch.in_room.get(ch)
     to_room.put(ch)
-    if not ch.is_affected(merc.AFF_SNEAK) and (not ch.is_npc() and ch.invis_level < merc.LEVEL_HERO):
+    if not ch.is_affected(merc.AFF_SNEAK) and (
+        not ch.is_npc() and ch.invis_level < merc.LEVEL_HERO
+    ):
         handler_game.act("$n has arrived.", ch, None, None, merc.TO_ROOM)
     ch.do_look("auto")
     if in_room.instance_id == to_room.instance_id:  # no circular follows */
@@ -92,16 +107,27 @@ def move_char(ch, door, follow):
 
     for fch_id in in_room.people[:]:
         fch = instance.characters[fch_id]
-        if fch.master == ch.instance_id and fch.is_affected(merc.AFF_CHARM) and fch.position < merc.POS_STANDING:
+        if (
+            fch.master == ch.instance_id
+            and fch.is_affected(merc.AFF_CHARM)
+            and fch.position < merc.POS_STANDING
+        ):
             fch.do_stand("")
 
-        if fch.master == ch.instance_id and fch.position == merc.POS_STANDING \
-                and fch.can_see_room(to_room.instance_id):
-            if state_checks.IS_SET(ch.in_room.room_flags, merc.ROOM_LAW) \
-                    and (fch.is_npc()
-                         and fch.act.is_set(merc.ACT_AGGRESSIVE)):
-                handler_game.act("You can't bring $N into the city.", ch, None, fch, merc.TO_CHAR)
-                handler_game.act("You aren't allowed in the city.", fch, None, None, merc.TO_CHAR)
+        if (
+            fch.master == ch.instance_id
+            and fch.position == merc.POS_STANDING
+            and fch.can_see_room(to_room.instance_id)
+        ):
+            if state_checks.IS_SET(ch.in_room.room_flags, merc.ROOM_LAW) and (
+                fch.is_npc() and fch.act.is_set(merc.ACT_AGGRESSIVE)
+            ):
+                handler_game.act(
+                    "You can't bring $N into the city.", ch, None, fch, merc.TO_CHAR
+                )
+                handler_game.act(
+                    "You aren't allowed in the city.", fch, None, None, merc.TO_CHAR
+                )
                 continue
             handler_game.act("You follow $N.", fch, None, ch, merc.TO_CHAR)
             move_char(fch, door, True)
@@ -124,7 +150,13 @@ def nuke_pets(ch):
     if ch.pet:
         stop_follower(ch.pet)
         if instance.characters[ch.pet].in_room:
-            handler_game.act("$N slowly fades away.", ch, None, instance.characters[ch.pet], merc.TO_NOTVICT)
+            handler_game.act(
+                "$N slowly fades away.",
+                ch,
+                None,
+                instance.characters[ch.pet],
+                merc.TO_NOTVICT,
+            )
         instance.characters[ch.pet].extract(True)
     ch.pet = None
     return
@@ -152,11 +184,23 @@ def stop_follower(ch):
 
     if ch.is_affected(merc.AFF_CHARM):
         ch.affected_by.rem_bit(merc.AFF_CHARM)
-        ch.affect_strip('charm person')
+        ch.affect_strip("charm person")
 
     if instance.characters[ch.master].can_see(ch) and ch.in_room:
-        handler_game.act("$n stops following you.", ch, None, instance.characters[ch.master], merc.TO_VICT)
-        handler_game.act("You stop following $N.", ch, None, instance.characters[ch.master], merc.TO_CHAR)
+        handler_game.act(
+            "$n stops following you.",
+            ch,
+            None,
+            instance.characters[ch.master],
+            merc.TO_VICT,
+        )
+        handler_game.act(
+            "You stop following $N.",
+            ch,
+            None,
+            instance.characters[ch.master],
+            merc.TO_CHAR,
+        )
     if instance.characters[ch.master].pet == ch.instance_id:
         instance.characters[ch.master].pet = None
     ch.master = None
@@ -174,19 +218,19 @@ def show_list_to_char(clist, ch, fShort, fShowNothing):
     for item_id in clist:
         item = instance.items[item_id]
         if ch.can_see_item(item):
-                #logger.trace("Showing an item")
-                frmt = handler_item.format_item_to_char(item, ch, fShort)
-                if frmt not in item_dict:
-                    item_dict[frmt] = 1
-                else:
-                    item_dict[frmt] += 1
+            # logger.trace("Showing an item")
+            frmt = handler_item.format_item_to_char(item, ch, fShort)
+            if frmt not in item_dict:
+                item_dict[frmt] = 1
+            else:
+                item_dict[frmt] += 1
 
     if not item_dict and fShowNothing:
         if ch.is_npc() or ch.comm.is_set(merc.COMM_COMBINE):
             ch.send("     ")
         ch.send("Nothing.\n")
 
-        #* Output the formatted list.
+        # * Output the formatted list.
     for desc, count in item_dict.items():
         if ch.is_npc() or ch.comm.is_set(merc.COMM_COMBINE) and count > 1:
             ch.send("(%2d) %s\n" % (count, desc))
@@ -196,7 +240,7 @@ def show_list_to_char(clist, ch, fShort, fShowNothing):
 
 
 def show_char_to_char_0(victim, ch):
-    buf = ''
+    buf = ""
     if victim.comm.is_set(merc.COMM_AFK):
         buf += "[[AFK]] "
     if victim.is_affected(merc.AFF_INVISIBLE):
@@ -230,8 +274,12 @@ def show_char_to_char_0(victim, ch):
         return
 
     buf += state_checks.PERS(victim, ch)
-    if not victim.is_npc() and not ch.comm.is_set(merc.COMM_BRIEF) \
-            and victim.position == merc.POS_STANDING and not ch.on:
+    if (
+        not victim.is_npc()
+        and not ch.comm.is_set(merc.COMM_BRIEF)
+        and victim.position == merc.POS_STANDING
+        and not ch.on
+    ):
         buf += victim.title
 
     if victim.position == merc.POS_DEAD:
@@ -313,7 +361,9 @@ def show_char_to_char_1(victim, ch):
     if victim.description:
         ch.send(victim.description + "\n")
     else:
-        handler_game.act("You see nothing special about $M.", ch, None, victim, merc.TO_CHAR)
+        handler_game.act(
+            "You see nothing special about $M.", ch, None, victim, merc.TO_CHAR
+        )
     if victim.max_hit > 0:
         percent = (100 * victim.hit) // victim.max_hit
     else:
@@ -344,17 +394,24 @@ def show_char_to_char_1(victim, ch):
         item = instance.items[instance_id]
         if item:
             if ch.can_see_item(item):
-                if item.flags.two_handed and victim.equipped['off_hand'] == item.instance_id and 'off_hand' in location:
+                if (
+                    item.flags.two_handed
+                    and victim.equipped["off_hand"] == item.instance_id
+                    and "off_hand" in location
+                ):
                     continue
                 else:
                     if ch.can_see_item(item):
                         ch.send(merc.eq_slot_strings[location])
                         ch.send(handler_item.format_item_to_char(item, ch, True) + "\n")
-    if victim != ch and not ch.is_npc() \
-            and random.randint(1, 99) < ch.get_skill("peek"):
+    if (
+        victim != ch
+        and not ch.is_npc()
+        and random.randint(1, 99) < ch.get_skill("peek")
+    ):
         ch.send("\nYou peek at the inventory:\n")
         if ch.is_pc:
-            ch.check_improve('peek', True, 4)
+            ch.check_improve("peek", True, 4)
         show_list_to_char(victim.inventory, ch, True, True)
     return
 

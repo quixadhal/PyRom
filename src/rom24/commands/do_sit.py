@@ -7,6 +7,7 @@ from rom24 import interp
 from rom24 import merc
 from rom24 import state_checks
 
+
 def do_sit(ch, argument):
     obj = None
     if ch.position == merc.POS_FIGHTING:
@@ -23,13 +24,21 @@ def do_sit(ch, argument):
 
         if obj:
             if obj.item_type != merc.ITEM_FURNITURE or (
-                    not state_checks.IS_SET(obj.value[2], merc.SIT_ON)
-                    and not state_checks.IS_SET(obj.value[2], merc.SIT_IN)
-                    and not state_checks.IS_SET(obj.value[2], merc.SIT_AT)):
+                not state_checks.IS_SET(obj.value[2], merc.SIT_ON)
+                and not state_checks.IS_SET(obj.value[2], merc.SIT_IN)
+                and not state_checks.IS_SET(obj.value[2], merc.SIT_AT)
+            ):
                 ch.send("You can't sit on that.\n")
                 return
             if ch.on != obj and obj.count_users() >= obj.value[0]:
-                handler_game.act("There's no more room on $p.", ch, obj, None, merc.TO_CHAR, merc.POS_DEAD)
+                handler_game.act(
+                    "There's no more room on $p.",
+                    ch,
+                    obj,
+                    None,
+                    merc.TO_CHAR,
+                    merc.POS_DEAD,
+                )
                 return
             ch.on = obj
 
@@ -42,13 +51,19 @@ def do_sit(ch, argument):
             ch.send("You wake and sit up.\n")
             handler_game.act("$n wakes and sits up.", ch, None, None, merc.TO_ROOM)
         elif state_checks.IS_SET(obj.value[2], merc.SIT_AT):
-            handler_game.act("You wake and sit at $p.", ch, obj, None, merc.TO_CHAR, merc.POS_DEAD)
+            handler_game.act(
+                "You wake and sit at $p.", ch, obj, None, merc.TO_CHAR, merc.POS_DEAD
+            )
             handler_game.act("$n wakes and sits at $p.", ch, obj, None, merc.TO_ROOM)
         elif state_checks.IS_SET(obj.value[2], merc.SIT_ON):
-            handler_game.act("You wake and sit on $p.", ch, obj, None, merc.TO_CHAR, merc.POS_DEAD)
+            handler_game.act(
+                "You wake and sit on $p.", ch, obj, None, merc.TO_CHAR, merc.POS_DEAD
+            )
             handler_game.act("$n wakes and sits at $p.", ch, obj, None, merc.TO_ROOM)
         else:
-            handler_game.act("You wake and sit in $p.", ch, obj, None, merc.TO_CHAR, merc.POS_DEAD)
+            handler_game.act(
+                "You wake and sit in $p.", ch, obj, None, merc.TO_CHAR, merc.POS_DEAD
+            )
             handler_game.act("$n wakes and sits in $p.", ch, obj, None, merc.TO_ROOM)
         ch.position = merc.POS_SITTING
         return
@@ -69,7 +84,9 @@ def do_sit(ch, argument):
     elif ch.position == merc.POS_STANDING:
         if obj is None:
             ch.send("You sit down.\n")
-            handler_game.act("$n sits down on the ground.", ch, None, None, merc.TO_ROOM)
+            handler_game.act(
+                "$n sits down on the ground.", ch, None, None, merc.TO_ROOM
+            )
         elif state_checks.IS_SET(obj.value[2], merc.SIT_AT):
             handler_game.act("You sit down at $p.", ch, obj, None, merc.TO_CHAR)
             handler_game.act("$n sits down at $p.", ch, obj, None, merc.TO_ROOM)
@@ -82,4 +99,6 @@ def do_sit(ch, argument):
         ch.position = merc.POS_SITTING
 
 
-interp.register_command(interp.cmd_type('sit', do_sit, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("sit", do_sit, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)
+)

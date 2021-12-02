@@ -20,4 +20,6 @@ def do_wizlock(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('wizlock', do_wizlock, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type("wizlock", do_wizlock, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1)
+)

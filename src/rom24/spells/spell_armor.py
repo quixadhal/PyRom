@@ -22,11 +22,25 @@ def spell_armor(sn, level, ch, victim, target):
     victim.affect_add(af)
     victim.send("You feel someone protecting you.\n")
     if ch is not victim:
-        handler_game.act("$N is protected by your magic.", ch, None, victim, merc.TO_CHAR)
+        handler_game.act(
+            "$N is protected by your magic.", ch, None, victim, merc.TO_CHAR
+        )
 
 
-const.register_spell(const.skill_type("armor",
-                          {'mage': 7, 'cleric': 2, 'thief': 10, 'warrior': 5},
-                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_armor, merc.TAR_CHAR_DEFENSIVE, merc.POS_STANDING,
-                          None, const.SLOT(1), 5, 12, "", "You feel less armored.", ""))
+const.register_spell(
+    const.skill_type(
+        "armor",
+        {"mage": 7, "cleric": 2, "thief": 10, "warrior": 5},
+        {"mage": 1, "cleric": 1, "thief": 2, "warrior": 2},
+        spell_armor,
+        merc.TAR_CHAR_DEFENSIVE,
+        merc.POS_STANDING,
+        None,
+        const.SLOT(1),
+        5,
+        12,
+        "",
+        "You feel less armored.",
+        "",
+    )
+)

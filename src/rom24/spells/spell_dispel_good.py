@@ -16,7 +16,9 @@ def spell_dispel_good(sn, level, ch, victim, target):
         return
 
     if state_checks.IS_NEUTRAL(victim):
-        handler_game.act("$N does not seem to be affected.", ch, None, victim, merc.TO_CHAR)
+        handler_game.act(
+            "$N does not seem to be affected.", ch, None, victim, merc.TO_CHAR
+        )
         return
 
     if victim.hit > (ch.level * 4):
@@ -28,8 +30,20 @@ def spell_dispel_good(sn, level, ch, victim, target):
     fight.damage(ch, victim, dam, sn, merc.DAM_NEGATIVE, True)
 
 
-const.register_spell(const.skill_type("dispel good",
-                          {'mage': 53, 'cleric': 15, 'thief': 53, 'warrior': 21},
-                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_dispel_good, merc.TAR_CHAR_OFFENSIVE, merc.POS_FIGHTING,
-                          None, const.SLOT(512), 15, 12, "dispel good", "!Dispel Good!", ""))
+const.register_spell(
+    const.skill_type(
+        "dispel good",
+        {"mage": 53, "cleric": 15, "thief": 53, "warrior": 21},
+        {"mage": 1, "cleric": 1, "thief": 2, "warrior": 2},
+        spell_dispel_good,
+        merc.TAR_CHAR_OFFENSIVE,
+        merc.POS_FIGHTING,
+        None,
+        const.SLOT(512),
+        15,
+        12,
+        "dispel good",
+        "!Dispel Good!",
+        "",
+    )
+)

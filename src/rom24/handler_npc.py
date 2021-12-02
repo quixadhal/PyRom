@@ -1,4 +1,3 @@
-
 import copy
 import os
 import hashlib
@@ -23,7 +22,7 @@ class Npc(living.Living):
 
     def __init__(self, template=None, **kwargs):
         super().__init__()
-        #self.is_npc = True
+        # self.is_npc = True
         self.vnum = 0  # Needs to come before the template to setup the instance
         self.memory = None
         self.spec_fun = None
@@ -77,7 +76,11 @@ class Npc(living.Living):
 
     def __repr__(self):
         if self.instance_id:
-            return "<NPC Instance: %s ID %d template %d>" % (self.short_descr, self.instance_id, self.vnum)
+            return "<NPC Instance: %s ID %d template %d>" % (
+                self.short_descr,
+                self.instance_id,
+                self.vnum,
+            )
         else:
             return "<NPC Template: %s:%s>" % (self.short_descr, self.vnum)
 
@@ -108,14 +111,14 @@ class Npc(living.Living):
         for k, v in self.__dict__.items():
             if str(type(v)) in ("<class 'function'>", "<class 'method'>"):
                 continue
-            elif str(k) in ('desc', 'send'):
+            elif str(k) in ("desc", "send"):
                 continue
-            elif str(k) in ('_last_saved', '_md5'):
+            elif str(k) in ("_last_saved", "_md5"):
                 continue
             else:
                 tmp_dict[k] = v
 
-        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        cls_name = "__class__/" + __name__ + "." + self.__class__.__name__
         return {cls_name: outer_encoder(tmp_dict)}
 
     @classmethod
@@ -123,13 +126,13 @@ class Npc(living.Living):
         if outer_decoder is None:
             outer_decoder = json.JSONDecoder.decode
 
-        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        cls_name = "__class__/" + __name__ + "." + cls.__name__
         if cls_name in data:
             tmp_data = outer_decoder(data[cls_name])
             return cls(**tmp_data)
         return data
 
-    def save(self, force: bool=False):
+    def save(self, force: bool = False):
         if self._last_saved is None:
             self._last_saved = time.time() - settings.SAVE_LIMITER - 2
         if not force and time.time() < self._last_saved + settings.SAVE_LIMITER:
@@ -145,16 +148,18 @@ class Npc(living.Living):
             area_number = self.in_area.instance_id
         else:
             area_number = self.in_area.index
-        pathname = os.path.join(top_dir, '%d-%s' % (area_number, self.in_area.name), 'npcs')
+        pathname = os.path.join(
+            top_dir, "%d-%s" % (area_number, self.in_area.name), "npcs"
+        )
 
         os.makedirs(pathname, 0o755, True)
-        filename = os.path.join(pathname, '%d-npc.json' % number)
+        filename = os.path.join(pathname, "%d-npc.json" % number)
         # logger.info('Saving %s', filename)
         js = json.dumps(self, default=instance.to_json, indent=4, sort_keys=True)
-        md5 = hashlib.md5(js.encode('utf-8')).hexdigest()
+        md5 = hashlib.md5(js.encode("utf-8")).hexdigest()
         if self._md5 != md5:
             self._md5 = md5
-            with open(filename, 'w') as fp:
+            with open(filename, "w") as fp:
                 fp.write(js)
 
         if self.inventory:
@@ -173,10 +178,10 @@ class Npc(living.Living):
                 item.save(is_equipped=True, force=force)
 
     @classmethod
-    def load(cls, vnum: int=None, instance_id: int=None):
+    def load(cls, vnum: int = None, instance_id: int = None):
         if instance_id:
             if instance_id in instance.characters:
-                logger.warn('Instance %d of npc already loaded!', instance_id)
+                logger.warn("Instance %d of npc already loaded!", instance_id)
                 return
             pathname = settings.INSTANCE_DIR
             number = instance_id
@@ -184,18 +189,20 @@ class Npc(living.Living):
             pathname = settings.AREA_DIR
             number = vnum
         else:
-            raise ValueError('To load an NPC, you must provide either a VNUM or an Instance_ID!')
+            raise ValueError(
+                "To load an NPC, you must provide either a VNUM or an Instance_ID!"
+            )
 
-        target_file = '%d-npc.json' % number
+        target_file = "%d-npc.json" % number
         filename = None
         for a_path, a_directory, i_files in os.walk(pathname):
             if target_file in i_files:
                 filename = os.path.join(a_path, target_file)
                 break
         if not filename:
-            raise ValueError('Cannot find %s' % target_file)
+            raise ValueError("Cannot find %s" % target_file)
 
-        with open(filename, 'r') as fp:
+        with open(filename, "r") as fp:
             obj = json.load(fp, object_hook=instance.from_json)
         if isinstance(obj, Npc):
             # This just ensures that all items the player has are actually loaded.
@@ -204,5 +211,5 @@ class Npc(living.Living):
                     handler_item.Items.load(instance_id=item_id)
             return obj
         else:
-            logger.error('Could not load npc data for %d', number)
+            logger.error("Could not load npc data for %d", number)
             return None

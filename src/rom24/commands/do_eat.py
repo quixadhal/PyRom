@@ -58,4 +58,6 @@ def do_eat(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('eat', do_eat, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("eat", do_eat, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)

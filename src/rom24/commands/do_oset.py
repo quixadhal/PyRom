@@ -6,6 +6,7 @@ from rom24 import merc
 from rom24 import interp
 from rom24 import game_utils
 
+
 def do_oset(ch, argument):
     argument, arg1 = game_utils.read_word(argument)
     argument, arg2 = game_utils.read_word(argument)
@@ -66,4 +67,6 @@ def do_oset(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('oset', do_oset, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type("oset", do_oset, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1)
+)

@@ -1,4 +1,4 @@
-__author__ = 'syn'
+__author__ = "syn"
 import logging
 
 logger = logging.getLogger(__name__)
@@ -15,7 +15,12 @@ def get_obj_keeper(ch, keeper, argument):
     count = 0
     for obj_id in keeper.inventory[:]:
         obj = instance.items[obj_id]
-        if not obj.equipped_to and keeper.can_see_item(obj) and ch.can_see_item(obj) and game_utils.is_name(arg, obj.name):
+        if (
+            not obj.equipped_to
+            and keeper.can_see_item(obj)
+            and ch.can_see_item(obj)
+            and game_utils.is_name(arg, obj.name)
+        ):
             count += 1
             if count == number:
                 return obj
@@ -30,8 +35,7 @@ def obj_to_keeper(item, ch):
     spot = -1
     for i, t_item_id in enumerate(ch.inventory):
         t_item = instance.items[t_item_id]
-        if item.vnum == t_item.vnum \
-                and item.short_descr == t_item.short_descr:
+        if item.vnum == t_item.vnum and item.short_descr == t_item.short_descr:
             # if this is an unlimited item, destroy the new one */
             if t_item.inventory:
                 item.extract()
@@ -51,6 +55,7 @@ def obj_to_keeper(item, ch):
     ch.carry_number += item.get_number()
     ch.carry_weight += item.get_weight()
 
+
 def get_cost(keeper, item, fBuy):
     if not item or not instance.npc_templates[keeper.vnum].pShop:
         return 0
@@ -67,7 +72,10 @@ def get_cost(keeper, item, fBuy):
         if not item.sell_extract:
             for item2_id in keeper.inventory[:]:
                 item2 = instance.items[item2_id]
-                if item.vnum == item2_id.vnum and item.short_descr == item2_id.short_descr:
+                if (
+                    item.vnum == item2_id.vnum
+                    and item.short_descr == item2_id.short_descr
+                ):
                     if item.inventory:
                         cost /= 2
                     else:
@@ -79,7 +87,8 @@ def get_cost(keeper, item, fBuy):
             cost = cost * item.value[2] / item.value[1]
     return cost
 
-#* Shopping commands.
+
+# * Shopping commands.
 def find_keeper(ch):
     pShop = None
     for keeper_id in ch.in_room.people[:]:
@@ -91,26 +100,24 @@ def find_keeper(ch):
     if not pShop:
         ch.send("You can't do that here.\n")
         return None
-    #* Undesirables.
-    #if not IS_NPC(ch) and IS_SET(ch.act, PLR_KILLER):
+    # * Undesirables.
+    # if not IS_NPC(ch) and IS_SET(ch.act, PLR_KILLER):
     #    keeper.do_say("Killers are not welcome!")
     #    keeper.do_yell("%s the KILLER is over here!\n" % ch.name)
     #    return None
-    #if not IS_NPC(ch) and IS_SET(ch.act, PLR_THIEF):
+    # if not IS_NPC(ch) and IS_SET(ch.act, PLR_THIEF):
     #    keeper.do_say("Thieves are not welcome!")
     #    keeper.do_yell("%s the THIEF is over here!\n" % ch.name)
     #    return None
-    #* Shop hours.
+    # * Shop hours.
     if handler_game.time_info.hour < pShop.open_hour:
         keeper.do_say("Sorry, I am closed. Come back later.")
         return None
     if handler_game.time_info.hour > pShop.close_hour:
         keeper.do_say("Sorry, I am closed. Come back tomorrow.")
         return None
-    #* Invisible or hidden people.
+    # * Invisible or hidden people.
     if not keeper.can_see(ch):
         keeper.do_say("I don't trade with folks I can't see.")
         return None
     return keeper
-
-

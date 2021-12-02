@@ -26,9 +26,11 @@ def do_smote(ch, argument):
         if vch.name not in argument:
             vch.send(argument + "\n")
             continue
-        buf = game_utils.mass_replace({"%s's" % vch.name: 'your', vch.name: 'you'})
+        buf = game_utils.mass_replace({"%s's" % vch.name: "your", vch.name: "you"})
         vch.send(buf + "\n")
     return
 
 
-interp.register_command(interp.cmd_type('smote', do_smote, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("smote", do_smote, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+)

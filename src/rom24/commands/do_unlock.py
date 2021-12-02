@@ -83,9 +83,14 @@ def do_unlock(ch, argument):
 
         # unlock the other side */
         to_room = pexit.to_room
-        if to_room and to_room.exit[merc.rev_dir[door]] != 0 \
-                and to_room.exit[merc.rev_dir[door]].to_room == ch.in_room:
+        if (
+            to_room
+            and to_room.exit[merc.rev_dir[door]] != 0
+            and to_room.exit[merc.rev_dir[door]].to_room == ch.in_room
+        ):
             to_room.exit[merc.rev_dir[door]].exit_info.rem_bit(merc.EX_LOCKED)
 
 
-interp.register_command(interp.cmd_type('unlock', do_unlock, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("unlock", do_unlock, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)

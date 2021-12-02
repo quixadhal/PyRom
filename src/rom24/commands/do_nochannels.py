@@ -26,13 +26,31 @@ def do_nochannels(ch, argument):
         victim.comm = state_checks.REMOVE_BIT(victim.comm, merc.COMM_NOCHANNELS)
         victim.send("The gods have restored your channel priviliges.\n")
         ch.send("NOCHANNELS removed.\n")
-        handler_game.wiznet("$N restores channels to %s" % victim.name, ch, None, merc.WIZ_PENALTIES, merc.WIZ_SECURE, 0)
+        handler_game.wiznet(
+            "$N restores channels to %s" % victim.name,
+            ch,
+            None,
+            merc.WIZ_PENALTIES,
+            merc.WIZ_SECURE,
+            0,
+        )
     else:
         victim.comm = state_checks.SET_BIT(victim.comm, merc.COMM_NOCHANNELS)
         victim.send("The gods have revoked your channel priviliges.\n")
         ch.send("NOCHANNELS set.\n")
-        handler_game.wiznet("$N revokes %s's channels." % victim.name, ch, None, merc.WIZ_PENALTIES, merc.WIZ_SECURE, 0)
+        handler_game.wiznet(
+            "$N revokes %s's channels." % victim.name,
+            ch,
+            None,
+            merc.WIZ_PENALTIES,
+            merc.WIZ_SECURE,
+            0,
+        )
     return
 
 
-interp.register_command(interp.cmd_type('nochannels', do_nochannels, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type(
+        "nochannels", do_nochannels, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1
+    )
+)

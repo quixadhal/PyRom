@@ -10,8 +10,12 @@ from rom24 import merc
 
 
 def spell_fire_breath(sn, level, ch, victim, target):
-    handler_game.act("$n breathes forth a cone of fire.", ch, None, victim, merc.TO_NOTVICT)
-    handler_game.act("$n breathes a cone of hot fire over you! ", ch, None, victim, merc.TO_VICT)
+    handler_game.act(
+        "$n breathes forth a cone of fire.", ch, None, victim, merc.TO_NOTVICT
+    )
+    handler_game.act(
+        "$n breathes a cone of hot fire over you! ", ch, None, victim, merc.TO_VICT
+    )
     handler_game.act("You breath forth a cone of fire.", ch, None, None, merc.TO_CHAR)
 
     hpch = max(10, ch.hit)
@@ -22,7 +26,9 @@ def spell_fire_breath(sn, level, ch, victim, target):
     effects.fire_effect(victim.in_room, level, dam // 2, merc.TARGET_ROOM)
 
     for vch in victim.in_room.people[:]:
-        if fight.is_safe_spell(ch, vch, True) or (vch.is_npc() and ch.is_npc() and (ch.fighting != vch or vch.fighting != ch)):
+        if fight.is_safe_spell(ch, vch, True) or (
+            vch.is_npc() and ch.is_npc() and (ch.fighting != vch or vch.fighting != ch)
+        ):
             continue
 
         if vch == victim:  # full damage */
@@ -41,8 +47,20 @@ def spell_fire_breath(sn, level, ch, victim, target):
                 fight.damage(ch, vch, dam // 2, sn, merc.DAM_FIRE, True)
 
 
-const.register_spell(const.skill_type("fire breath",
-                          {'mage': 40, 'cleric': 45, 'thief': 50, 'warrior': 51},
-                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_fire_breath, merc.TAR_CHAR_OFFENSIVE, merc.POS_FIGHTING,
-                          None, const.SLOT(201), 200, 24, "blast of flame", "The smoke leaves your eyes.", ""))
+const.register_spell(
+    const.skill_type(
+        "fire breath",
+        {"mage": 40, "cleric": 45, "thief": 50, "warrior": 51},
+        {"mage": 1, "cleric": 1, "thief": 2, "warrior": 2},
+        spell_fire_breath,
+        merc.TAR_CHAR_OFFENSIVE,
+        merc.POS_FIGHTING,
+        None,
+        const.SLOT(201),
+        200,
+        24,
+        "blast of flame",
+        "The smoke leaves your eyes.",
+        "",
+    )
+)

@@ -80,4 +80,6 @@ def do_autolist(ch, argument):
         ch.send("You accept followers.\n")
 
 
-interp.register_command(interp.cmd_type('autolist', do_autolist, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("autolist", do_autolist, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

@@ -14,7 +14,7 @@ from rom24 import settings
 from rom24 import type_bypass
 from rom24 import bit
 
-__author__ = 'syn'
+__author__ = "syn"
 
 
 class Area(instance.Instancer, type_bypass.ObjectType, environment.Environment):
@@ -37,14 +37,18 @@ class Area(instance.Instancer, type_bypass.ObjectType, environment.Environment):
         self.high_range = 0
         self.min_vnum = 0
         self.max_vnum = 0
-        #Empty is a check for if the area contains player_characters or not for use in resets, should default True
-        #As in, this area is just loaded and has no PC objects, True
+        # Empty is a check for if the area contains player_characters or not for use in resets, should default True
+        # As in, this area is just loaded and has no PC objects, True
         self.empty = False
         self.player_chars = []
         if kwargs:
             [setattr(self, k, copy.deepcopy(v)) for k, v in kwargs.items()]
         if template:
-            [setattr(self, k, copy.deepcopy(v)) for k, v in template.__dict__.items() if k not in instance.not_to_instance]
+            [
+                setattr(self, k, copy.deepcopy(v))
+                for k, v in template.__dict__.items()
+                if k not in instance.not_to_instance
+            ]
             self.instancer()
         if self.instance_id:
             self.instance_setup()
@@ -69,15 +73,22 @@ class Area(instance.Instancer, type_bypass.ObjectType, environment.Environment):
 
     def __repr__(self):
         if self.instance_id:
-            return "<Instance: %d %d %s(%s): %d-%d>" % (self.instance_id, self.index, self.name,
-                                                        self.file_name,
-                                                        self.min_vnum,
-                                                        self.max_vnum)
+            return "<Instance: %d %d %s(%s): %d-%d>" % (
+                self.instance_id,
+                self.index,
+                self.name,
+                self.file_name,
+                self.min_vnum,
+                self.max_vnum,
+            )
         else:
-            return "<Template: %d %s(%s): %d-%d>" % (self.index, self.name,
-                                                     self.file_name,
-                                                     self.min_vnum,
-                                                     self.max_vnum)
+            return "<Template: %d %s(%s): %d-%d>" % (
+                self.index,
+                self.name,
+                self.file_name,
+                self.min_vnum,
+                self.max_vnum,
+            )
 
     @property
     def player_count(self):
@@ -86,24 +97,36 @@ class Area(instance.Instancer, type_bypass.ObjectType, environment.Environment):
     def add_pc(self, player_char):
         if player_char.is_living and not player_char.is_npc():
             if not player_char.instance_id in self.player_chars:
-                #Transition an empty area, to an occupied one, for Resets
+                # Transition an empty area, to an occupied one, for Resets
                 if self.empty:
                     self.empty = False
                     self.age = 0
                 self.player_chars += [player_char.instance_id]
             else:
-                raise ValueError('Player Character already in player_chars list! %d' % player_char.instance_id)
+                raise ValueError(
+                    "Player Character already in player_chars list! %d"
+                    % player_char.instance_id
+                )
         else:
-            raise KeyError('Entity not a player character, or is an NPC on area addition! %r' % type(player_char))
+            raise KeyError(
+                "Entity not a player character, or is an NPC on area addition! %r"
+                % type(player_char)
+            )
 
     def remove_pc(self, player_char):
         if player_char.is_living and not player_char.is_npc():
             if player_char.instance_id in self.player_chars:
                 self.player_chars.remove(player_char.instance_id)
             else:
-                raise ValueError('Player Character not in player_chars list! %d' % player_char.instance_id)
+                raise ValueError(
+                    "Player Character not in player_chars list! %d"
+                    % player_char.instance_id
+                )
         else:
-            raise KeyError('Entity not a player character, or is an NPC on area removal! %r' % type(player_char))
+            raise KeyError(
+                "Entity not a player character, or is an NPC on area removal! %r"
+                % type(player_char)
+            )
 
     def instance_setup(self):
         instance.global_instances[self.instance_id] = self
@@ -126,12 +149,12 @@ class Area(instance.Instancer, type_bypass.ObjectType, environment.Environment):
         for k, v in self.__dict__.items():
             if str(type(v)) in ("<class 'function'>", "<class 'method'>"):
                 continue
-            elif str(k) in ('_last_saved', '_md5'):
+            elif str(k) in ("_last_saved", "_md5"):
                 continue
             else:
                 tmp_dict[k] = v
 
-        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        cls_name = "__class__/" + __name__ + "." + self.__class__.__name__
         return {cls_name: outer_encoder(tmp_dict)}
 
     @classmethod
@@ -139,13 +162,13 @@ class Area(instance.Instancer, type_bypass.ObjectType, environment.Environment):
         if outer_decoder is None:
             outer_decoder = json.JSONDecoder.decode
 
-        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        cls_name = "__class__/" + __name__ + "." + cls.__name__
         if cls_name in data:
             tmp_data = outer_decoder(data[cls_name])
             return cls(**tmp_data)
         return data
 
-    def save(self, force: bool=False):
+    def save(self, force: bool = False):
         if self._last_saved is None:
             self._last_saved = time.time() - settings.SAVE_LIMITER - 2
         if not force and time.time() < self._last_saved + settings.SAVE_LIMITER:
@@ -157,23 +180,23 @@ class Area(instance.Instancer, type_bypass.ObjectType, environment.Environment):
         else:
             top_dir = settings.AREA_DIR
             number = self.index
-        pathname = os.path.join(top_dir, '%d-%s' % (number, self.name))
+        pathname = os.path.join(top_dir, "%d-%s" % (number, self.name))
 
         os.makedirs(pathname, 0o755, True)
-        filename = os.path.join(pathname, '%d-area.json' % number)
+        filename = os.path.join(pathname, "%d-area.json" % number)
         # logger.info('Saving %s', filename)
         js = json.dumps(self, default=instance.to_json, indent=4, sort_keys=True)
-        md5 = hashlib.md5(js.encode('utf-8')).hexdigest()
+        md5 = hashlib.md5(js.encode("utf-8")).hexdigest()
         if self._md5 != md5:
             self._md5 = md5
-            with open(filename, 'w') as fp:
+            with open(filename, "w") as fp:
                 fp.write(js)
 
     @classmethod
-    def load(cls, index: int=None, instance_id: int=None):
+    def load(cls, index: int = None, instance_id: int = None):
         if instance_id:
             if instance_id in instance.characters:
-                logger.warn('Instance %d of npc already loaded!', instance_id)
+                logger.warn("Instance %d of npc already loaded!", instance_id)
                 return
             top_dir = settings.INSTANCE_DIR
             number = instance_id
@@ -181,21 +204,21 @@ class Area(instance.Instancer, type_bypass.ObjectType, environment.Environment):
             top_dir = settings.AREA_DIR
             number = index
 
-        target_file = '%d-area.json' % number
+        target_file = "%d-area.json" % number
         filename = None
         for a_path, a_directory, i_files in os.walk(top_dir):
             if target_file in i_files:
                 filename = os.path.join(a_path, target_file)
                 break
         if not filename:
-            raise ValueError('Cannot find %s' % target_file)
+            raise ValueError("Cannot find %s" % target_file)
 
-        with open(filename, 'r') as fp:
+        with open(filename, "r") as fp:
             obj = json.load(fp, object_hook=instance.from_json)
         if isinstance(obj, Area):
             return obj
         else:
-            logger.error('Could not load area data for %d', number)
+            logger.error("Could not load area data for %d", number)
             return None
 
 
@@ -205,6 +228,7 @@ class ExtraDescrData:
         self.description = ""
         if kwargs:
             import copy
+
             [setattr(self, k, copy.deepcopy(v)) for k, v in kwargs.items()]
 
     def to_json(self, outer_encoder=None):
@@ -218,7 +242,7 @@ class ExtraDescrData:
             else:
                 tmp_dict[k] = v
 
-        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        cls_name = "__class__/" + __name__ + "." + self.__class__.__name__
         return {cls_name: outer_encoder(tmp_dict)}
 
     @classmethod
@@ -226,7 +250,7 @@ class ExtraDescrData:
         if outer_decoder is None:
             outer_decoder = json.JSONDecoder.decode
 
-        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        cls_name = "__class__/" + __name__ + "." + cls.__name__
         if cls_name in data:
             tmp_data = outer_decoder(data[cls_name])
             return cls(**tmp_data)
@@ -246,8 +270,13 @@ class Exit:
         self.is_broken = False
         if template:
             import copy
+
             [setattr(self, k, copy.deepcopy(v)) for k, v in template.__dict__.items()]
-            if self.to_room_vnum != -1 and not None and self.to_room_vnum in instance.instances_by_room:
+            if (
+                self.to_room_vnum != -1
+                and not None
+                and self.to_room_vnum in instance.instances_by_room
+            ):
                 self.to_room = instance.instances_by_room[self.to_room_vnum][0]
             elif self.to_room_vnum not in instance.instances_by_room:
                 self.is_broken = True
@@ -258,6 +287,7 @@ class Exit:
                 self.key = None
         if kwargs:
             import copy
+
             [setattr(self, k, copy.deepcopy(v)) for k, v in kwargs.items()]
 
     def to_json(self, outer_encoder=None):
@@ -271,7 +301,7 @@ class Exit:
             else:
                 tmp_dict[k] = v
 
-        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        cls_name = "__class__/" + __name__ + "." + self.__class__.__name__
         return {cls_name: outer_encoder(tmp_dict)}
 
     @classmethod
@@ -279,7 +309,7 @@ class Exit:
         if outer_decoder is None:
             outer_decoder = json.JSONDecoder.decode
 
-        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        cls_name = "__class__/" + __name__ + "." + cls.__name__
         if cls_name in data:
             tmp_data = outer_decoder(data[cls_name])
             return cls(**tmp_data)
@@ -308,8 +338,11 @@ class Reset:
 
     def __repr__(self):
         if not self.instance_id:
-            return "Reset Area: %s Room: %d Type: %s" % (instance.room_templates[self.room].area,
-                                                         self.room, self.command)
+            return "Reset Area: %s Room: %d Type: %s" % (
+                instance.room_templates[self.room].area,
+                self.room,
+                self.command,
+            )
 
     def to_json(self, outer_encoder=None):
         if outer_encoder is None:
@@ -322,7 +355,7 @@ class Reset:
             else:
                 tmp_dict[k] = v
 
-        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        cls_name = "__class__/" + __name__ + "." + self.__class__.__name__
         return {cls_name: outer_encoder(tmp_dict)}
 
     @classmethod
@@ -330,7 +363,7 @@ class Reset:
         if outer_decoder is None:
             outer_decoder = json.JSONDecoder.decode
 
-        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        cls_name = "__class__/" + __name__ + "." + cls.__name__
         if cls_name in data:
             tmp_data = outer_decoder(data[cls_name])
             return cls(**tmp_data)
@@ -353,7 +386,10 @@ class Shop:
             [setattr(self, k, copy.deepcopy(v)) for k, v in kwargs.items()]
 
     def __repr__(self):
-            return "Shop Mob: %s Room: %d" % (instance.characters[self.keeper].name, self.room)
+        return "Shop Mob: %s Room: %d" % (
+            instance.characters[self.keeper].name,
+            self.room,
+        )
 
     def to_json(self, outer_encoder=None):
         if outer_encoder is None:
@@ -366,7 +402,7 @@ class Shop:
             else:
                 tmp_dict[k] = v
 
-        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        cls_name = "__class__/" + __name__ + "." + self.__class__.__name__
         return {cls_name: outer_encoder(tmp_dict)}
 
     @classmethod
@@ -374,7 +410,7 @@ class Shop:
         if outer_decoder is None:
             outer_decoder = json.JSONDecoder.decode
 
-        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        cls_name = "__class__/" + __name__ + "." + cls.__name__
         if cls_name in data:
             tmp_data = outer_decoder(data[cls_name])
             return cls(**tmp_data)
@@ -401,7 +437,7 @@ class Gen:
             else:
                 tmp_dict[k] = v
 
-        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        cls_name = "__class__/" + __name__ + "." + self.__class__.__name__
         return {cls_name: outer_encoder(tmp_dict)}
 
     @classmethod
@@ -409,7 +445,7 @@ class Gen:
         if outer_decoder is None:
             outer_decoder = json.JSONDecoder.decode
 
-        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        cls_name = "__class__/" + __name__ + "." + cls.__name__
         if cls_name in data:
             tmp_data = outer_decoder(data[cls_name])
             return cls(**tmp_data)

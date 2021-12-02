@@ -10,8 +10,12 @@ from rom24 import merc
 
 
 def spell_gas_breath(sn, level, ch, victim, target):
-    handler_game.act("$n breathes out a cloud of poisonous gas! ", ch, None, None, merc.TO_ROOM)
-    handler_game.act("You breath out a cloud of poisonous gas.", ch, None, None, merc.TO_CHAR)
+    handler_game.act(
+        "$n breathes out a cloud of poisonous gas! ", ch, None, None, merc.TO_ROOM
+    )
+    handler_game.act(
+        "You breath out a cloud of poisonous gas.", ch, None, None, merc.TO_CHAR
+    )
 
     hpch = max(16, ch.hit)
     hp_dam = random.randint(hpch // 15 + 1, 8)
@@ -23,7 +27,9 @@ def spell_gas_breath(sn, level, ch, victim, target):
     for vch_id in ch.in_room.people:
 
         vch = instance.characters[vch_id]
-        if fight.is_safe_spell(ch, vch, True) or (ch.is_npc() and vch.is_npc() and (ch.fighting == vch or vch.fighting == ch)):
+        if fight.is_safe_spell(ch, vch, True) or (
+            ch.is_npc() and vch.is_npc() and (ch.fighting == vch or vch.fighting == ch)
+        ):
             continue
 
         if handler_magic.saves_spell(level, vch, merc.DAM_POISON):
@@ -34,8 +40,20 @@ def spell_gas_breath(sn, level, ch, victim, target):
             fight.damage(ch, vch, dam, sn, merc.DAM_POISON, True)
 
 
-const.register_spell(const.skill_type("gas breath",
-                          {'mage': 39, 'cleric': 43, 'thief': 47, 'warrior': 50},
-                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_gas_breath, merc.TAR_IGNORE, merc.POS_FIGHTING, None,
-                          const.SLOT(203), 175, 24, "blast of gas", "!Gas Breath!", ""))
+const.register_spell(
+    const.skill_type(
+        "gas breath",
+        {"mage": 39, "cleric": 43, "thief": 47, "warrior": 50},
+        {"mage": 1, "cleric": 1, "thief": 2, "warrior": 2},
+        spell_gas_breath,
+        merc.TAR_IGNORE,
+        merc.POS_FIGHTING,
+        None,
+        const.SLOT(203),
+        175,
+        24,
+        "blast of gas",
+        "!Gas Breath!",
+        "",
+    )
+)

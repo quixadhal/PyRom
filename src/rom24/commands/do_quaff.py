@@ -9,6 +9,7 @@ from rom24 import game_utils
 from rom24 import handler_game
 from rom24 import handler_magic
 
+
 def do_quaff(ch, argument):
     argument, arg = game_utils.read_word(argument)
     if not arg:
@@ -35,4 +36,6 @@ def do_quaff(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('quaff', do_quaff, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("quaff", do_quaff, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)

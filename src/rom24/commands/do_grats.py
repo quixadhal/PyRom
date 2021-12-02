@@ -28,11 +28,22 @@ def do_grats(ch, argument):
         ch.send("You grats '%s'\n" % argument)
         for d in merc.descriptor_list:
             victim = handler_ch.CH(d)
-            if d.is_connected(nanny.con_playing) \
-                    and d.character != ch \
-                    and not victim.comm.is_set(merc.COMM_NOGRATS)\
-                    and not victim.comm.is_set(merc.COMM_QUIET):
-                handler_game.act("$n grats '$t'", ch, argument, d.character, merc.TO_VICT, merc.POS_SLEEPING)
+            if (
+                d.is_connected(nanny.con_playing)
+                and d.character != ch
+                and not victim.comm.is_set(merc.COMM_NOGRATS)
+                and not victim.comm.is_set(merc.COMM_QUIET)
+            ):
+                handler_game.act(
+                    "$n grats '$t'",
+                    ch,
+                    argument,
+                    d.character,
+                    merc.TO_VICT,
+                    merc.POS_SLEEPING,
+                )
 
 
-interp.register_command(interp.cmd_type('grats', do_grats, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("grats", do_grats, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)
+)

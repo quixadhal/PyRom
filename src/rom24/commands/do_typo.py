@@ -14,4 +14,6 @@ def do_typo(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('typo', do_typo, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("typo", do_typo, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

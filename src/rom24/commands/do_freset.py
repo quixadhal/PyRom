@@ -15,4 +15,6 @@ def do_freset(ch, argument):
     ch.send("Area reset.\n")
 
 
-interp.register_command(interp.cmd_type('freset', do_freset, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("freset", do_freset, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

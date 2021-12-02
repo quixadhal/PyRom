@@ -30,8 +30,20 @@ def spell_energy_drain(sn, level, ch, victim, target):
     fight.damage(ch, victim, dam, sn, merc.DAM_NEGATIVE, True)
 
 
-const.register_spell(const.skill_type("energy drain",
-                          {'mage': 19, 'cleric': 22, 'thief': 26, 'warrior': 23},
-                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_energy_drain, merc.TAR_CHAR_OFFENSIVE, merc.POS_FIGHTING,
-                          None, const.SLOT(25), 35, 12, "energy drain", "!Energy Drain!", ""))
+const.register_spell(
+    const.skill_type(
+        "energy drain",
+        {"mage": 19, "cleric": 22, "thief": 26, "warrior": 23},
+        {"mage": 1, "cleric": 1, "thief": 2, "warrior": 2},
+        spell_energy_drain,
+        merc.TAR_CHAR_OFFENSIVE,
+        merc.POS_FIGHTING,
+        None,
+        const.SLOT(25),
+        35,
+        12,
+        "energy drain",
+        "!Energy Drain!",
+        "",
+    )
+)

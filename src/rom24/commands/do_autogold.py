@@ -19,4 +19,6 @@ def do_autogold(ch, argument):
         ch.act.set_bit(merc.PLR_AUTOGOLD)
 
 
-interp.register_command(interp.cmd_type('autogold', do_autogold, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("autogold", do_autogold, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

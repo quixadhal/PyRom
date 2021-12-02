@@ -19,4 +19,6 @@ def do_commands(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('commands', do_commands, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("commands", do_commands, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

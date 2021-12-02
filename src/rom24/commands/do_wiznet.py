@@ -26,11 +26,11 @@ def do_wiznet(ch, argument):
         ch.send("Signing off of Wiznet.\n")
         ch.wiznet = state_checks.REMOVE_BIT(ch.wiznet, merc.WIZ_ON)
         return
-    buf = ''
+    buf = ""
     # show wiznet status
     if "status".startswith(argument):
         if not state_checks.IS_SET(ch.wiznet, merc.WIZ_ON):
-          buf += "off "
+            buf += "off "
         for name, flag in const.wiznet_table.items():
             if state_checks.IS_SET(ch.wiznet, flag.bit):
                 buf += name + " "
@@ -38,7 +38,7 @@ def do_wiznet(ch, argument):
             return
     if "show".startswith(argument):
         # list of all wiznet options
-        buf = ''
+        buf = ""
         for name, flag in const.wiznet_table.items():
             if flag.level <= ch.trust:
                 buf += name + " "
@@ -58,4 +58,6 @@ def do_wiznet(ch, argument):
         return
 
 
-interp.register_command(interp.cmd_type('wiznet', do_wiznet, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("wiznet", do_wiznet, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+)

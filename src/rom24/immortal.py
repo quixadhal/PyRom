@@ -10,7 +10,7 @@ from rom24 import merc
 class Immortal:
     def __init__(self):
         super().__init__()
-        #Immortal
+        # Immortal
         self._trust = 0
         self.invis_level = 0
         self.incog_level = 0

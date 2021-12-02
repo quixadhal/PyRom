@@ -24,7 +24,9 @@ def do_heal(ch, argument):
     argument, arg = game_utils.read_word(argument)
     if not arg:
         # display price list
-        handler_game.act("$N says 'I offer the following spells:'", ch, None, mob, merc.TO_CHAR)
+        handler_game.act(
+            "$N says 'I offer the following spells:'", ch, None, mob, merc.TO_CHAR
+        )
         ch.send("  light: cure light wounds      10 gold\n")
         ch.send("  serious: cure serious wounds  15 gold\n")
         ch.send("  critic: cure critical wounds  25 gold\n")
@@ -92,10 +94,18 @@ def do_heal(ch, argument):
         words = "candusima"
         cost = 500
     else:
-        handler_game.act("$N says 'Type 'heal' for a list of spells.'", ch, None, mob, merc.TO_CHAR)
+        handler_game.act(
+            "$N says 'Type 'heal' for a list of spells.'", ch, None, mob, merc.TO_CHAR
+        )
         return
     if cost > (ch.gold * 100 + ch.silver):
-        handler_game.act("$N says 'You do not have enough gold for my services.'", ch, None, mob, merc.TO_CHAR)
+        handler_game.act(
+            "$N says 'You do not have enough gold for my services.'",
+            ch,
+            None,
+            mob,
+            merc.TO_CHAR,
+        )
         return
     state_checks.WAIT_STATE(ch, merc.PULSE_VIOLENCE)
 
@@ -114,4 +124,6 @@ def do_heal(ch, argument):
     spell(sn, mob.level, mob, ch, merc.TARGET_CHAR)
 
 
-interp.register_command(interp.cmd_type('heal', do_heal, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("heal", do_heal, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)

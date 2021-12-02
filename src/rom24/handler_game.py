@@ -1,5 +1,4 @@
-
-__author__ = 'syn'
+__author__ = "syn"
 
 import copy
 import json
@@ -57,7 +56,7 @@ class AFFECT_DATA:
             else:
                 tmp_dict[k] = v
 
-        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        cls_name = "__class__/" + __name__ + "." + self.__class__.__name__
         return {cls_name: outer_encoder(tmp_dict)}
 
     @classmethod
@@ -65,7 +64,7 @@ class AFFECT_DATA:
         if outer_decoder is None:
             outer_decoder = json.JSONDecoder.decode
 
-        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        cls_name = "__class__/" + __name__ + "." + cls.__name__
         if cls_name in data:
             tmp_data = outer_decoder(data[cls_name])
             return cls(**tmp_data)
@@ -97,10 +96,14 @@ class weather_data:
         self.sky = 0
         self.sunlight = 0
 
+
 time_info = time_info_data()
 weather_info = weather_data()
 
-def act(format, ch, arg1=None, arg2=None, send_to=merc.TO_ROOM, min_pos=merc.POS_RESTING):
+
+def act(
+    format, ch, arg1=None, arg2=None, send_to=merc.TO_ROOM, min_pos=merc.POS_RESTING
+):
     if not format:
         return
     if not ch or not ch.in_room:
@@ -110,11 +113,13 @@ def act(format, ch, arg1=None, arg2=None, send_to=merc.TO_ROOM, min_pos=merc.POS
     obj1 = arg1
     obj2 = arg2
 
-    he_she = ["it",  "he",  "she"]
-    him_her = ["it",  "him", "her"]
+    he_she = ["it", "he", "she"]
+    him_her = ["it", "him", "her"]
     his_her = ["its", "his", "her"]
 
-    to_players = [instance.characters[instance_id] for instance_id in ch.in_room.people[:]]
+    to_players = [
+        instance.characters[instance_id] for instance_id in ch.in_room.people[:]
+    ]
 
     if send_to is merc.TO_VICT:
         if not vch:
@@ -122,7 +127,9 @@ def act(format, ch, arg1=None, arg2=None, send_to=merc.TO_ROOM, min_pos=merc.POS
             return
         if not vch.in_room:
             return
-        to_players = [instance.characters[instance_id] for instance_id in ch.in_room.people[:]]
+        to_players = [
+            instance.characters[instance_id] for instance_id in ch.in_room.people[:]
+        ]
 
     for to in to_players:
         if not to.desc or to.position < min_pos:
@@ -138,42 +145,47 @@ def act(format, ch, arg1=None, arg2=None, send_to=merc.TO_ROOM, min_pos=merc.POS
 
         act_trans = {}
         if arg1:
-            act_trans['$t'] = str(arg1)
+            act_trans["$t"] = str(arg1)
         if arg2 and type(arg2) == str:
-            act_trans['$T'] = str(arg2)
+            act_trans["$T"] = str(arg2)
         if ch:
-            act_trans['$n'] = state_checks.PERS(ch, to)
-            act_trans['$e'] = he_she[ch.sex]
-            act_trans['$m'] = him_her[ch.sex]
-            act_trans['$s'] = his_her[ch.sex]
+            act_trans["$n"] = state_checks.PERS(ch, to)
+            act_trans["$e"] = he_she[ch.sex]
+            act_trans["$m"] = him_her[ch.sex]
+            act_trans["$s"] = his_her[ch.sex]
         if vch and isinstance(vch, living.Living):
-            act_trans['$N'] = state_checks.PERS(vch, to)
-            act_trans['$E'] = he_she[vch.sex]
-            act_trans['$M'] = him_her[vch.sex]
-            act_trans['$S'] = his_her[vch.sex]
+            act_trans["$N"] = state_checks.PERS(vch, to)
+            act_trans["$E"] = he_she[vch.sex]
+            act_trans["$M"] = him_her[vch.sex]
+            act_trans["$S"] = his_her[vch.sex]
         if obj1 and obj1.__class__ == handler_item.Items:
-            act_trans['$p'] = state_checks.OPERS(to, obj1)
+            act_trans["$p"] = state_checks.OPERS(to, obj1)
         if obj2 and obj2.__class__ == handler_item.Items:
-            act_trans['$P'] = state_checks.OPERS(to, obj2)
-        act_trans['$d'] = arg2 if not arg2 else "door"
+            act_trans["$P"] = state_checks.OPERS(to, obj2)
+        act_trans["$d"] = arg2 if not arg2 else "door"
 
         format = game_utils.mass_replace(format, act_trans)
-        to.send(format+"\n")
+        to.send(format + "\n")
     return
 
-def wiznet( string, ch, obj, flag, flag_skip, min_level):
+
+def wiznet(string, ch, obj, flag, flag_skip, min_level):
     from rom24.nanny import con_playing
+
     for d in merc.descriptor_list:
-        if   d.is_connected(con_playing) \
-        and d.character.is_immortal() \
-        and  d.character.wiznet.is_set(merc.WIZ_ON) \
-        and  (not flag or d.character.wiznet.is_set(flag)) \
-        and  (not flag_skip or not d.character.wiznet.set(flag_skip)) \
-        and  d.character.trust >= min_level \
-        and  d.character != ch:
+        if (
+            d.is_connected(con_playing)
+            and d.character.is_immortal()
+            and d.character.wiznet.is_set(merc.WIZ_ON)
+            and (not flag or d.character.wiznet.is_set(flag))
+            and (not flag_skip or not d.character.wiznet.set(flag_skip))
+            and d.character.trust >= min_level
+            and d.character != ch
+        ):
             if d.character.wiznet.set_bit(merc.WIZ_PREFIX):
-                d.send("-. ",d.character)
-            act(string,d.character,obj,ch, merc.TO_CHAR, merc.POS_DEAD)
+                d.send("-. ", d.character)
+            act(string, d.character, obj, ch, merc.TO_CHAR, merc.POS_DEAD)
+
 
 # does aliasing and other fun stuff */
 def substitute_alias(d, argument):
@@ -184,11 +196,15 @@ def substitute_alias(d, argument):
         if len(ch.prefix) + len(argument) > MAX_INPUT_LENGTH:
             ch.send("Line to long, prefix not processed.\r\n")
         else:
-            prefix = "%s %s" % (ch.prefix,argument)
+            prefix = "%s %s" % (ch.prefix, argument)
 
-    if ch.is_npc() or not ch.alias \
-    or "alias".startswith(argument) or "unalias".startswith(argument)  \
-    or "prefix".startswith(argument):
+    if (
+        ch.is_npc()
+        or not ch.alias
+        or "alias".startswith(argument)
+        or "unalias".startswith(argument)
+        or "prefix".startswith(argument)
+    ):
         ch.interpret(argument)
         return
     remains, sub = game_utils.read_word(argument)
@@ -197,4 +213,3 @@ def substitute_alias(d, argument):
         return
     buf = "%s %s" % (ch.alias[sub], remains)
     ch.interpret(buf)
-

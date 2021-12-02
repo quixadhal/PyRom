@@ -26,7 +26,14 @@ def do_restore(ch, argument):
             vch.move = vch.max_move
             fight.update_pos(vch)
             handler_game.act("$n has restored you.", ch, None, vch, merc.TO_VICT)
-        handler_game.wiznet("$N restored room %d." % ch.in_room.vnum, ch, None, merc.WIZ_RESTORE, merc.WIZ_SECURE, ch.trust)
+        handler_game.wiznet(
+            "$N restored room %d." % ch.in_room.vnum,
+            ch,
+            None,
+            merc.WIZ_RESTORE,
+            merc.WIZ_SECURE,
+            ch.trust,
+        )
         ch.send("Room restored.\n")
         return
     if ch.trust >= merc.MAX_LEVEL - 1 and arg == "all":
@@ -68,4 +75,6 @@ def do_restore(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('restore', do_restore, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type("restore", do_restore, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)
+)

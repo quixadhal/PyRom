@@ -12,4 +12,6 @@ def spell_ventriloquate(sn, level, ch, victim, target):
     for vch_id in ch.in_room.people:
         vch = instance.characters[vch_id]
         if not is_exact_name(speaker, vch.name) and state_checks.IS_AWAKE(vch):
-            vch.send(buf2 if handler_magic.saves_spell(level, vch, merc.DAM_OTHER) else buf1)
+            vch.send(
+                buf2 if handler_magic.saves_spell(level, vch, merc.DAM_OTHER) else buf1
+            )

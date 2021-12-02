@@ -19,7 +19,9 @@ def do_give(ch, argument):
     if arg1.isdigit():
         # 'give NNNN coins victim'
         amount = int(arg1)
-        if amount <= 0 or (arg2 != "coins" and arg2 != "coin" and arg2 != "gold" and arg2 != "silver"):
+        if amount <= 0 or (
+            arg2 != "coins" and arg2 != "coin" and arg2 != "gold" and arg2 != "silver"
+        ):
             ch.send("Sorry, you can't do that.\n")
             return
         silver = arg2 != "gold"
@@ -31,7 +33,7 @@ def do_give(ch, argument):
         if not victim:
             ch.send("They aren't here.\n")
             return
-        if ( not silver and ch.gold < amount) or (silver and ch.silver < amount):
+        if (not silver and ch.gold < amount) or (silver and ch.silver < amount):
             ch.send("You haven't got that much.\n")
             return
         if silver:
@@ -41,9 +43,21 @@ def do_give(ch, argument):
             ch.gold -= amount
             victim.gold += amount
 
-        handler_game.act("$n gives you %d %s." % (amount, "silver" if silver else "gold"), ch, None, victim, merc.TO_VICT)
+        handler_game.act(
+            "$n gives you %d %s." % (amount, "silver" if silver else "gold"),
+            ch,
+            None,
+            victim,
+            merc.TO_VICT,
+        )
         handler_game.act("$n gives $N some coins.", ch, None, victim, merc.TO_NOTVICT)
-        handler_game.act("You give $N %d %s." % (amount, "silver" if silver else "gold"), ch, None, victim, merc.TO_CHAR)
+        handler_game.act(
+            "You give $N %d %s." % (amount, "silver" if silver else "gold"),
+            ch,
+            None,
+            victim,
+            merc.TO_CHAR,
+        )
 
         if victim.is_npc() and victim.act.is_set(merc.ACT_IS_CHANGER):
             change = 95 * amount / 100 / 100 if silver else 95 * amount
@@ -52,15 +66,32 @@ def do_give(ch, argument):
             if silver and change > victim.gold:
                 victim.gold += change
             if change < 1 and victim.can_see(ch):
-                handler_game.act("$n tells you 'I'm sorry, you did not give me enough to change.'", victim, None, ch,
-                                 merc.TO_VICT)
+                handler_game.act(
+                    "$n tells you 'I'm sorry, you did not give me enough to change.'",
+                    victim,
+                    None,
+                    ch,
+                    merc.TO_VICT,
+                )
                 ch.reply = victim
-                victim.do_give("%d %s %s" % (amount, "silver" if silver else "gold", ch.name))
+                victim.do_give(
+                    "%d %s %s" % (amount, "silver" if silver else "gold", ch.name)
+                )
             elif victim.can_see(ch):
-                victim.do_give("%d %s %s" % (change, "gold" if silver else "silver", ch.name))
+                victim.do_give(
+                    "%d %s %s" % (change, "gold" if silver else "silver", ch.name)
+                )
                 if silver:
-                    victim.do_give("%d silver %s" % ((95 * amount / 100 - change * 100), ch.name))
-                handler_game.act("$n tells you 'Thank you, come again.'", victim, None, ch, merc.TO_VICT)
+                    victim.do_give(
+                        "%d silver %s" % ((95 * amount / 100 - change * 100), ch.name)
+                    )
+                handler_game.act(
+                    "$n tells you 'Thank you, come again.'",
+                    victim,
+                    None,
+                    ch,
+                    merc.TO_VICT,
+                )
                 ch.reply = victim
         return
     item = ch.get_item_carry(arg1, ch)
@@ -75,7 +106,13 @@ def do_give(ch, argument):
         ch.send("They aren't here.\n")
         return
     if victim.is_npc() and victim.pShop is not None:
-        handler_game.act("$N tells you 'Sorry, you'll have to sell that.'", ch, None, victim, merc.TO_CHAR)
+        handler_game.act(
+            "$N tells you 'Sorry, you'll have to sell that.'",
+            ch,
+            None,
+            victim,
+            merc.TO_CHAR,
+        )
         ch.reply = victim
         return
     if not ch.can_drop_item(item):
@@ -85,7 +122,9 @@ def do_give(ch, argument):
         handler_game.act("$N has $S hands full.", ch, None, victim, merc.TO_CHAR)
         return
     if state_checks.get_carry_weight(victim) + item.get_weight() > victim.can_carry_w():
-        handler_game.act("$N can't carry that much weight.", ch, None, victim, merc.TO_CHAR)
+        handler_game.act(
+            "$N can't carry that much weight.", ch, None, victim, merc.TO_CHAR
+        )
         return
     if not victim.can_see_item(item):
         handler_game.act("$N can't see it.", ch, None, victim, merc.TO_CHAR)
@@ -98,4 +137,6 @@ def do_give(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('give', do_give, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("give", do_give, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)

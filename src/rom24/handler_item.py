@@ -1,4 +1,3 @@
-
 import json
 import os
 import copy
@@ -24,69 +23,83 @@ from rom24 import item_flags
 
 # * One object.
 
-'''Equip "Flags":
+"""Equip "Flags":
 Keyword: internal identifier
-Value: String Representation'''
-equips_to_strings = {'left_finger': 'Left Finger',
-                     'right_finger': 'Right Finger',
-                     'neck': 'Neck',
-                     'collar': 'Collar',
-                     'body': 'Body',
-                     'head': 'Head',
-                     'legs': 'Legs',
-                     'feet': 'Feet',
-                     'hands': 'Hands',
-                     'arms': 'Arms',
-                     'about_body': 'About Body',
-                     'left_wrist': 'Left Wrist',
-                     'right_wrist': 'Right Wrist',
-                     'waist': 'Waist',
-                     'main_hand': 'Main Hand',
-                     'off_hand': 'Off Hand',
-                     'held': 'Held',
-                     'float': 'Float',
-                     'light': 'Light'}
+Value: String Representation"""
+equips_to_strings = {
+    "left_finger": "Left Finger",
+    "right_finger": "Right Finger",
+    "neck": "Neck",
+    "collar": "Collar",
+    "body": "Body",
+    "head": "Head",
+    "legs": "Legs",
+    "feet": "Feet",
+    "hands": "Hands",
+    "arms": "Arms",
+    "about_body": "About Body",
+    "left_wrist": "Left Wrist",
+    "right_wrist": "Right Wrist",
+    "waist": "Waist",
+    "main_hand": "Main Hand",
+    "off_hand": "Off Hand",
+    "held": "Held",
+    "float": "Float",
+    "light": "Light",
+}
 
-item_restriction_strings = {'no_drop': 'No Drop',
-                            'no_sac': 'No Sacrifice',
-                            'no_remove': 'No Remove',
-                            'no_uncurse': 'No Uncurse',
-                            'no_purge': 'No Purge',
-                            'anti_good': 'Anti-Good',
-                            'anti_evil': 'Anti-Evil',
-                            'anti_neutral': 'Anti-Neutral',
-                            'no_locate': 'No Locate'}
+item_restriction_strings = {
+    "no_drop": "No Drop",
+    "no_sac": "No Sacrifice",
+    "no_remove": "No Remove",
+    "no_uncurse": "No Uncurse",
+    "no_purge": "No Purge",
+    "anti_good": "Anti-Good",
+    "anti_evil": "Anti-Evil",
+    "anti_neutral": "Anti-Neutral",
+    "no_locate": "No Locate",
+}
 
-item_attribute_strings = {'magic': 'Magic',
-                          'glow': 'Glowing',
-                          'hum': 'Humming',
-                          'dark': 'Dark',
-                          'lock': 'Lock',
-                          'evil': 'Evil',
-                          'invis': 'Invisible',
-                          'bless': 'Bless',
-                          'non_metal': 'Non Metal',
-                          'had_timer': 'Had Timer',
-                          'burn_proof': 'Burn Proof',
-                          'melt_drop': 'Melt Drop',
-                          'rot_death': 'Rot Death',
-                          'vis_death': 'Vis Death',
-                          'inventory': 'Inventory',
-                          'sell_extract': 'Sell Extract',
-                          'take': 'Take'}
+item_attribute_strings = {
+    "magic": "Magic",
+    "glow": "Glowing",
+    "hum": "Humming",
+    "dark": "Dark",
+    "lock": "Lock",
+    "evil": "Evil",
+    "invis": "Invisible",
+    "bless": "Bless",
+    "non_metal": "Non Metal",
+    "had_timer": "Had Timer",
+    "burn_proof": "Burn Proof",
+    "melt_drop": "Melt Drop",
+    "rot_death": "Rot Death",
+    "vis_death": "Vis Death",
+    "inventory": "Inventory",
+    "sell_extract": "Sell Extract",
+    "take": "Take",
+}
 
-weapon_attribute_strings = {'flaming': 'Flaming',
-                            'frost': 'Frost',
-                            'vampiric': 'Vampiric',
-                            'sharp': 'Sharp',
-                            'vorpal': 'Vorpal',
-                            'two_handed': 'Two-Handed',
-                            'shocking': 'Shocking',
-                            'poison': 'Poison'}
+weapon_attribute_strings = {
+    "flaming": "Flaming",
+    "frost": "Frost",
+    "vampiric": "Vampiric",
+    "sharp": "Sharp",
+    "vorpal": "Vorpal",
+    "two_handed": "Two-Handed",
+    "shocking": "Shocking",
+    "poison": "Poison",
+}
 
 
-class Items(instance.Instancer, environment.Environment, physical.Physical, inventory.Inventory,
-            equipment.Equipment, type_bypass.ObjectType):
+class Items(
+    instance.Instancer,
+    environment.Environment,
+    physical.Physical,
+    inventory.Inventory,
+    equipment.Equipment,
+    type_bypass.ObjectType,
+):
     template_count = 0
     instance_count = 0
 
@@ -139,9 +152,13 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         if not self.instance_id:
             return "<Item Template: %s : %d>" % (self.short_descr, self.vnum)
         else:
-            return "<Item Instance: %s : ID %d VNUM %d>" % (self.short_descr, self.instance_id, self.vnum)
+            return "<Item Instance: %s : ID %d VNUM %d>" % (
+                self.short_descr,
+                self.instance_id,
+                self.vnum,
+            )
 
-    #Equipped/Equips To
+    # Equipped/Equips To
     @property
     def equipped_to(self):
         """
@@ -170,7 +187,7 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
             if used == name:
                 continue
             things.add(equips_to_strings[name])
-        return ', '.join(name for name in things)
+        return ", ".join(name for name in things)
 
     @property
     def equips_to(self):
@@ -198,7 +215,7 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
             self.flags._equips_to.clear()
         self.flags._equips_to |= set(slots)
 
-    #Item Attributes
+    # Item Attributes
     @property
     def item_attribute_names(self):
         """
@@ -209,11 +226,11 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         attributes = set({})
         for astring in self.item_attributes:
             attributes.add(item_attribute_strings[astring])
-        return ', '.join(name for name in attributes)
+        return ", ".join(name for name in attributes)
 
     @property
     def item_attributes(self):
-        #Item Attribute getter
+        # Item Attribute getter
         """
         return the item_attributes set
 
@@ -233,7 +250,7 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
             self.flags._item_attributes.clear()
         self.flags._item_attributes |= set(attr_set)
 
-    #Restrictions
+    # Restrictions
     @property
     def item_restriction_names(self):
         """
@@ -244,11 +261,11 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         restrictions = set({})
         for rstring in self.item_restrictions:
             restrictions.add(item_restriction_strings[rstring])
-        return ', '.join(name for name in restrictions)
+        return ", ".join(name for name in restrictions)
 
     @property
     def item_restrictions(self):
-        #Item Restrictions getter
+        # Item Restrictions getter
         """
         return item_restriction flags as set
 
@@ -267,7 +284,7 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
             self.flags._item_restrictions.clear()
         self.flags._item_restrictions |= set(restrictions)
 
-    #Weapons
+    # Weapons
     @property
     def weapon_attribute_names(self):
         """
@@ -278,7 +295,7 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         attributes = set({})
         for wstring in self.item_restrictions:
             attributes.add(weapon_attribute_strings[wstring])
-        return ', '.join(name for name in attributes)
+        return ", ".join(name for name in attributes)
 
     @property
     def weapon_attributes(self):
@@ -304,22 +321,34 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         if instance_object.is_item and instance_object.instance_id in self.inventory:
             self.inventory.remove(instance_object.instance_id)
             self.carry_number -= instance_object.get_number()
-            self.carry_weight -= instance_object.get_weight() * state_checks.WEIGHT_MULT(self) // 100
+            self.carry_weight -= (
+                instance_object.get_weight() * state_checks.WEIGHT_MULT(self) // 100
+            )
             instance_object.environment = None
             return instance_object
         else:
-            raise KeyError('Item to be removed from Item, not in inventory %d' % instance_object.instance_id)
+            raise KeyError(
+                "Item to be removed from Item, not in inventory %d"
+                % instance_object.instance_id
+            )
 
     def put(self, instance_object):
-        if instance_object.is_item and instance_object.instance_id not in self.inventory:
+        if (
+            instance_object.is_item
+            and instance_object.instance_id not in self.inventory
+        ):
             self.inventory += [instance_object.instance_id]
-            self.carry_weight += instance_object.get_weight() * state_checks.WEIGHT_MULT(self) // 100
+            self.carry_weight += (
+                instance_object.get_weight() * state_checks.WEIGHT_MULT(self) // 100
+            )
             self.carry_number += instance_object.get_number()
             instance_object.environment = self.instance_id
             return instance_object
         else:
-            raise KeyError('Item to be added to Item, already in inventory or wrong type '
-                           '%d, %r' % (instance_object.instance_id, type(instance_object)))
+            raise KeyError(
+                "Item to be added to Item, already in inventory or wrong type "
+                "%d, %r" % (instance_object.instance_id, type(instance_object))
+            )
 
     def instance_setup(self):
         instance.items[self.instance_id] = self
@@ -338,7 +367,7 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
     def apply_ac(self, ac_position):
         if self.item_type != merc.ITEM_ARMOR:
             return 0
-        multi = {'body': 3, 'head': 2, 'legs': 2, 'about': 2}
+        multi = {"body": 3, "head": 2, "legs": 2, "about": 2}
         for worn_on in self.equipped_to:
             if worn_on in multi.keys():
                 return multi[worn_on] * self.value[ac_position]
@@ -370,20 +399,28 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         # apply any affect vectors to the object's extra_flags
         if paf.bitvector:
             if paf.where == merc.TO_OBJECT:
-                ret_str = game_utils.item_bitvector_flag_str(paf.bitvector, 'extra flags')
+                ret_str = game_utils.item_bitvector_flag_str(
+                    paf.bitvector, "extra flags"
+                )
                 if self.item_attribute_names.intersection(ret_str):
                     self.item_attributes |= {ret_str}
                 elif self.item_restriction_names.intersection(ret_str):
                     self.item_restrictions |= {ret_str}
                 else:
-                    raise ValueError('paf set attempt failed, unable to find flag %s' % ret_str)
+                    raise ValueError(
+                        "paf set attempt failed, unable to find flag %s" % ret_str
+                    )
             elif paf.where == merc.TO_WEAPON:
                 if self.item_type == merc.ITEM_WEAPON:
-                    ret_str = game_utils.item_bitvector_flag_str(paf.bitvector, 'weapon flags')
+                    ret_str = game_utils.item_bitvector_flag_str(
+                        paf.bitvector, "weapon flags"
+                    )
                     if self.weapon_attribute_names.intersection(ret_str):
                         self.weapon_attributes |= {ret_str}
                     else:
-                        raise ValueError('paf set attempt failed, unable to find flag %s' % ret_str)
+                        raise ValueError(
+                            "paf set attempt failed, unable to find flag %s" % ret_str
+                        )
 
     def affect_remove(self, paf):
         if not self.affected:
@@ -399,20 +436,29 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         # remove flags from the object if needed */
         if paf.bitvector:
             if paf.where == merc.TO_OBJECT:
-                ret_str = game_utils.item_bitvector_flag_str(paf.bitvector, 'extra flags')
+                ret_str = game_utils.item_bitvector_flag_str(
+                    paf.bitvector, "extra flags"
+                )
                 if self.item_attribute_names.intersection(ret_str):
                     self.item_attributes -= {ret_str}
                 elif self.item_restriction_names.intersection(ret_str):
                     self.item_restrictions -= {ret_str}
                 else:
-                    raise ValueError('paf removal attempt failed, unable to find flag %s' % ret_str)
+                    raise ValueError(
+                        "paf removal attempt failed, unable to find flag %s" % ret_str
+                    )
             elif paf.where == merc.TO_WEAPON:
                 if self.item_type == merc.ITEM_WEAPON:
-                    ret_str = game_utils.item_bitvector_flag_str(paf.bitvector, 'weapon flags')
+                    ret_str = game_utils.item_bitvector_flag_str(
+                        paf.bitvector, "weapon flags"
+                    )
                     if self.weapon_attribute_names.intersection(ret_str):
                         self.weapon_attributes -= {ret_str}
                     else:
-                        raise ValueError('paf removal attempt failed, unable to find flag %s' % ret_str)
+                        raise ValueError(
+                            "paf removal attempt failed, unable to find flag %s"
+                            % ret_str
+                        )
 
         if paf not in self.affected:
             print("BUG: Affect_remove_object: cannot find paf.")
@@ -431,7 +477,10 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
             self.environment.get(self)
             for item_id in self.inventory[:]:
                 if self.instance_id not in instance.items:
-                    logger.error("Extract_obj: obj %d not found in obj_instance dict." % self.instance_id)
+                    logger.error(
+                        "Extract_obj: obj %d not found in obj_instance dict."
+                        % self.instance_id
+                    )
                     return
                 tmp = instance.items[item_id]
                 self.get(tmp)
@@ -449,6 +498,7 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         return total
 
         # Serialization
+
     def to_json(self, outer_encoder=None):
         if outer_encoder is None:
             outer_encoder = json.JSONEncoder.default
@@ -457,12 +507,12 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         for k, v in self.__dict__.items():
             if str(type(v)) in ("<class 'function'>", "<class 'method'>"):
                 continue
-            elif str(k) in ('_last_saved', '_md5'):
+            elif str(k) in ("_last_saved", "_md5"):
                 continue
             else:
                 tmp_dict[k] = v
 
-        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        cls_name = "__class__/" + __name__ + "." + self.__class__.__name__
         return {cls_name: outer_encoder(tmp_dict)}
 
     @classmethod
@@ -470,13 +520,19 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
         if outer_decoder is None:
             outer_decoder = json.JSONDecoder.decode
 
-        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        cls_name = "__class__/" + __name__ + "." + cls.__name__
         if cls_name in data:
             tmp_data = outer_decoder(data[cls_name])
             return cls(**tmp_data)
         return data
 
-    def save(self, is_equipped: bool=False, in_inventory: bool=False, player_name: str=None, force: bool=False):
+    def save(
+        self,
+        is_equipped: bool = False,
+        in_inventory: bool = False,
+        player_name: str = None,
+        force: bool = False,
+    ):
         if self._last_saved is None:
             self._last_saved = time.time() - settings.SAVE_LIMITER - 2
         if not force and time.time() < self._last_saved + settings.SAVE_LIMITER:
@@ -493,27 +549,35 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
                 area_number = self.in_area.instance_id
             else:
                 area_number = self.in_area.index
-            pathname = os.path.join(top_dir, '%d-%s' % (area_number, self.in_area.name), 'items')
+            pathname = os.path.join(
+                top_dir, "%d-%s" % (area_number, self.in_area.name), "items"
+            )
         else:
-            top_dir = os.path.join(settings.PLAYER_DIR, player_name[0].lower(), player_name.capitalize())
+            top_dir = os.path.join(
+                settings.PLAYER_DIR, player_name[0].lower(), player_name.capitalize()
+            )
             number = self.instance_id
             if is_equipped and in_inventory:
-                raise ValueError('A player item cannot be BOTH equipped AND in their inventory!')
+                raise ValueError(
+                    "A player item cannot be BOTH equipped AND in their inventory!"
+                )
             if is_equipped:
-                pathname = os.path.join(top_dir, 'equipment')
+                pathname = os.path.join(top_dir, "equipment")
             elif in_inventory:
-                pathname = os.path.join(top_dir, 'inventory')
+                pathname = os.path.join(top_dir, "inventory")
             else:
-                raise ValueError('Player items must specify if they are equipped or in their inventory!')
+                raise ValueError(
+                    "Player items must specify if they are equipped or in their inventory!"
+                )
 
         os.makedirs(pathname, 0o755, True)
-        filename = os.path.join(pathname, '%d-item.json' % number)
+        filename = os.path.join(pathname, "%d-item.json" % number)
         # logger.info('Saving %s', filename)
         js = json.dumps(self, default=instance.to_json, indent=4, sort_keys=True)
-        md5 = hashlib.md5(js.encode('utf-8')).hexdigest()
+        md5 = hashlib.md5(js.encode("utf-8")).hexdigest()
         if self._md5 != md5:
             self._md5 = md5
-            with open(filename, 'w') as fp:
+            with open(filename, "w") as fp:
                 fp.write(js)
 
         if self.inventory:
@@ -522,16 +586,23 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
                     # logger.error('Item %d is in Item %d\'s inventory, but does not exist?', item_id, self.instance_id)
                     continue
                 item = instance.global_instances[item_id]
-                item.save(is_equipped=is_equipped, in_inventory=in_inventory, player_name=player_name, force=force)
+                item.save(
+                    is_equipped=is_equipped,
+                    in_inventory=in_inventory,
+                    player_name=player_name,
+                    force=force,
+                )
 
     @classmethod
-    def load(cls, instance_id: int=None, vnum: int=None, player_name: str=None):
+    def load(cls, instance_id: int = None, vnum: int = None, player_name: str = None):
         if not vnum and not instance_id:
-            raise ValueError('You must provide either a vnum or an instance_id!')
+            raise ValueError("You must provide either a vnum or an instance_id!")
         if vnum and instance_id:
-            raise ValueError('You must provide either a vnum or an instance_id, not BOTH!')
+            raise ValueError(
+                "You must provide either a vnum or an instance_id, not BOTH!"
+            )
         if instance_id and instance_id in instance.items:
-            logger.warn('Instance %d of item already loaded!', instance_id)
+            logger.warn("Instance %d of item already loaded!", instance_id)
             return
 
         if not player_name:
@@ -542,36 +613,41 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
                 pathname = settings.AREA_DIR
                 number = vnum
         else:
-            pathname = os.path.join(settings.PLAYER_DIR, player_name[0].lower(), player_name.capitalize())
+            pathname = os.path.join(
+                settings.PLAYER_DIR, player_name[0].lower(), player_name.capitalize()
+            )
             number = instance_id
-        target_file = '%d-item.json' % number
+        target_file = "%d-item.json" % number
         filename = None
         for a_path, a_directory, i_files in os.walk(pathname):
             if target_file in i_files:
                 filename = os.path.join(a_path, target_file)
                 break
         if not filename:
-            raise ValueError('Cannot find %s' % target_file)
+            raise ValueError("Cannot find %s" % target_file)
 
         with open(filename) as fp:
             obj = json.load(fp, object_hook=instance.from_json)
         if not isinstance(obj, Items):
-            raise TypeError('Could not load instance %r!' % number)
+            raise TypeError("Could not load instance %r!" % number)
         if obj.inventory:
             obj.load_inventory(player_name)
         if obj.environment:
-            if obj.environment.is_room and obj.instance_id not in obj.environment.inventory:
+            if (
+                obj.environment.is_room
+                and obj.instance_id not in obj.environment.inventory
+            ):
                 obj.environment.put(obj)
         return obj
 
-    def load_inventory(self, player_name: str=None):
+    def load_inventory(self, player_name: str = None):
         for number in self.inventory[:]:
             if self.instance_id:
                 obj = Items.load(instance_id=number, player_name=player_name)
             else:
                 obj = Items.load(vnum=number, player_name=player_name)
             if not isinstance(obj, Items):
-                raise TypeError('Could not load instance %r!' % number)
+                raise TypeError("Could not load instance %r!" % number)
 
 
 def get_item(ch, item, this_container):
@@ -580,15 +656,26 @@ def get_item(ch, item, this_container):
         ch.send("You can't take that.\n")
         return
     if ch.carry_number + item.get_number() > ch.can_carry_n():
-        handler_game.act("$d: you can't carry that many items.", ch, None, item.name, merc.TO_CHAR)
+        handler_game.act(
+            "$d: you can't carry that many items.", ch, None, item.name, merc.TO_CHAR
+        )
         return
     if not ch.can_loot(item):
-        handler_game.act("Corpse looting is not permitted.", ch, None, None, merc.TO_CHAR)
+        handler_game.act(
+            "Corpse looting is not permitted.", ch, None, None, merc.TO_CHAR
+        )
         return
     if item.in_living:
-        if (not item.in_item or (item.in_living.instance_id != ch.instance_id)) \
-                and (state_checks.get_carry_weight(ch) + item.get_weight() > ch.can_carry_w()):
-            handler_game.act("$d: you can't carry that much weight.", ch, None, item.name, merc.TO_CHAR)
+        if (not item.in_item or (item.in_living.instance_id != ch.instance_id)) and (
+            state_checks.get_carry_weight(ch) + item.get_weight() > ch.can_carry_w()
+        ):
+            handler_game.act(
+                "$d: you can't carry that much weight.",
+                ch,
+                None,
+                item.name,
+                merc.TO_CHAR,
+            )
             return
 
     # Make sure nobody is using the item before we allow someone to get it.
@@ -598,14 +685,20 @@ def get_item(ch, item, this_container):
             if gch.on:
                 on_item = instance.items[gch.on]
                 if on_item.instance_id in item.in_room.items:
-                    handler_game.act("$N appears to be using $p.", ch, item, gch, merc.TO_CHAR)
+                    handler_game.act(
+                        "$N appears to be using $p.", ch, item, gch, merc.TO_CHAR
+                    )
                     return
     # Get things from a container.
     if this_container:
         if this_container.vnum == merc.OBJ_VNUM_PIT and ch.trust < item.level:
             ch.send("You are not powerful enough to use it.\n")
             return
-        elif this_container.vnum == merc.OBJ_VNUM_PIT and item.flags.take and item.flags.had_timer:
+        elif (
+            this_container.vnum == merc.OBJ_VNUM_PIT
+            and item.flags.take
+            and item.flags.had_timer
+        ):
             item.timer = 0
         handler_game.act("You get $p from $P.", ch, item, this_container, merc.TO_CHAR)
         handler_game.act("$n gets $p from $P.", ch, item, this_container, merc.TO_ROOM)
@@ -616,15 +709,20 @@ def get_item(ch, item, this_container):
         handler_game.act("You get $p.", ch, item, this_container, merc.TO_CHAR)
         handler_game.act("$n gets $p.", ch, item, this_container, merc.TO_ROOM)
         ch.in_room.get(item)
-    
+
     if item.item_type == merc.ITEM_MONEY:
         ch.silver += item.value[0]
         ch.gold += item.value[1]
         if ch.act.is_set(merc.PLR_AUTOSPLIT):
             # AUTOSPLIT code
-            members = len([gch for gch in ch.in_room.people[:]
-                           if not instance.characters[gch].is_affected(merc.AFF_CHARM)
-                           and instance.characters[gch].is_same_group(ch)])
+            members = len(
+                [
+                    gch
+                    for gch in ch.in_room.people[:]
+                    if not instance.characters[gch].is_affected(merc.AFF_CHARM)
+                    and instance.characters[gch].is_same_group(ch)
+                ]
+            )
             if members > 1 and (item.value[0] > 1 or item.value[1]):
                 ch.do_split("%d %d" % (item.value[0], item.value[1]))
         ch.get(item)
@@ -636,12 +734,14 @@ def get_item(ch, item, this_container):
 
 # trust levels for load and clone
 def item_check(ch, obj):
-    #TODO add real values, just guessed for now
-    if state_checks.IS_TRUSTED(ch, 60) \
-            or (state_checks.IS_TRUSTED(ch, 55) and obj.level <= 20 and obj.cost <= 1000) \
-            or (state_checks.IS_TRUSTED(ch, 53) and obj.level <= 10 and obj.cost <= 500) \
-            or (state_checks.IS_TRUSTED(ch, 52) and obj.level <= 5 and obj.cost <= 250) \
-            or (state_checks.IS_TRUSTED(ch, 51) and obj.level == 0 and obj.cost <= 100):
+    # TODO add real values, just guessed for now
+    if (
+        state_checks.IS_TRUSTED(ch, 60)
+        or (state_checks.IS_TRUSTED(ch, 55) and obj.level <= 20 and obj.cost <= 1000)
+        or (state_checks.IS_TRUSTED(ch, 53) and obj.level <= 10 and obj.cost <= 500)
+        or (state_checks.IS_TRUSTED(ch, 52) and obj.level <= 5 and obj.cost <= 250)
+        or (state_checks.IS_TRUSTED(ch, 51) and obj.level == 0 and obj.cost <= 100)
+    ):
         return True
     else:
         return False
@@ -650,7 +750,7 @@ def item_check(ch, obj):
 def format_item_to_char(item, ch, fShort):
     if type(item) == int:
         item = instance.items[item]
-    buf = ''
+    buf = ""
     if (fShort and not item.short_descr) or not item.description:
         return buf
 

@@ -25,10 +25,17 @@ def do_cast(ch, argument):
         ch.send("Cast which what where?\n")
         return
     sn = handler_magic.find_spell(ch, arg1)
-    if not sn or sn.spell_fun is None \
-            or (not ch.is_npc()
-                and (ch.level < sn.skill_level[ch.guild.name]
-                     or ch.learned.get(sn.name, 0) == 0)):
+    if (
+        not sn
+        or sn.spell_fun is None
+        or (
+            not ch.is_npc()
+            and (
+                ch.level < sn.skill_level[ch.guild.name]
+                or ch.learned.get(sn.name, 0) == 0
+            )
+        )
+    ):
         ch.send("You don't know any spells of that name.\n")
         return
     if ch.position < sn.minimum_position:
@@ -157,7 +164,7 @@ def do_cast(ch, argument):
     if random.randint(1, 99) > ch.get_skill(sn.name):
         ch.send("You lost your concentration.\n")
         if ch.is_pc:
-            ch.check_improve( sn, False, 1)
+            ch.check_improve(sn, False, 1)
         ch.mana -= mana // 2
     else:
         ch.mana -= mana
@@ -167,10 +174,16 @@ def do_cast(ch, argument):
         else:
             sn.spell_fun(sn, 3 * ch.level // 4, ch, vo, target)
             if ch.is_pc:
-                ch.check_improve( sn, True, 1)
+                ch.check_improve(sn, True, 1)
 
-    if (sn.target == merc.TAR_CHAR_OFFENSIVE or (sn.target == merc.TAR_OBJ_CHAR_OFF and target == merc.TARGET_CHAR)) \
-            and victim != ch and victim.master != ch:
+    if (
+        (
+            sn.target == merc.TAR_CHAR_OFFENSIVE
+            or (sn.target == merc.TAR_OBJ_CHAR_OFF and target == merc.TARGET_CHAR)
+        )
+        and victim != ch
+        and victim.master != ch
+    ):
         for vch_id in ch.in_room.people[:]:
             vch = instance.characters[vch_id]
             if victim == vch and not victim.fighting:
@@ -180,4 +193,6 @@ def do_cast(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('cast', do_cast, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("cast", do_cast, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)
+)

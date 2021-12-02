@@ -1,5 +1,4 @@
-
-__author__ = 'quixadhal'
+__author__ = "quixadhal"
 
 import os
 import json
@@ -11,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 from rom24 import settings
 
-'''For the instance dicts, we are not going to make another pointer, or copy, of
+"""For the instance dicts, we are not going to make another pointer, or copy, of
 the original entity. We are going to alias, or bind, the specific entity
 _instances[dict key] [entity] back to the original global_instances[dict key]
 [entity] pointer. This will give us a shared alias, not a copy. Lets us do a clean
@@ -34,7 +33,7 @@ Likewise you can effect a change TO mob from accessing either dict:
 'bob'
 >>>merc.mob_instances[mob.instance_id].name
 'bob'
-'''
+"""
 
 max_instance_id = 0
 previous_max_instance_id = 0
@@ -45,7 +44,9 @@ room_templates = {}
 npc_templates = {}
 shop_templates = {}
 
-global_instances = {}  # This is the global instance list, the heart of the game data set
+global_instances = (
+    {}
+)  # This is the global instance list, the heart of the game data set
 
 areas = {}
 items = {}
@@ -59,11 +60,11 @@ helps = {}
 socials = {}
 resets = {}
 
-'''
+"""
 Contains lists of instances,
 Key: string VNUM
 Value: list Instance_ID of object associated with Key:VNUM
-'''
+"""
 instances_by_area = {}
 instances_by_item = {}
 instances_by_room = {}
@@ -73,6 +74,7 @@ instances_by_player = {}
 
 # Things to omit from instances that are in templates.
 not_to_instance = []
+
 
 def isnamedtuple(obj):
     """
@@ -84,10 +86,12 @@ def isnamedtuple(obj):
     :return: True if obj is a namedtuple
     :rtype: bool
     """
-    return isinstance(obj, tuple) and \
-           hasattr(obj, '_fields') and \
-           hasattr(obj, '_asdict') and \
-           callable(obj._asdict)
+    return (
+        isinstance(obj, tuple)
+        and hasattr(obj, "_fields")
+        and hasattr(obj, "_asdict")
+        and callable(obj._asdict)
+    )
 
 
 def to_json(data):
@@ -118,19 +122,15 @@ def to_json(data):
             "__type__/namedtuple": {
                 "type": type(data).__name__,
                 "fields": list(data._fields),
-                "values": [to_json(getattr(data, f)) for f in data._fields]
+                "values": [to_json(getattr(data, f)) for f in data._fields],
             }
         }
 
     if isinstance(data, set):
-        return {
-            "__type__/set": [to_json(val) for val in data]
-        }
+        return {"__type__/set": [to_json(val) for val in data]}
 
     if isinstance(data, tuple):
-        return {
-            "__type__/tuple": [to_json(val) for val in data]
-        }
+        return {"__type__/tuple": [to_json(val) for val in data]}
 
     if isinstance(data, list):
         return [to_json(val) for val in data]
@@ -140,17 +140,15 @@ def to_json(data):
     if isinstance(data, dict):
         if all(isinstance(k, str) for k in data):
             return {k: to_json(v) for k, v in data.items()}
-        return {
-            "__type__/dict": [[to_json(k), to_json(v)] for k, v in data.items()]
-        }
+        return {"__type__/dict": [[to_json(k), to_json(v)] for k, v in data.items()]}
 
     # Finally, the magic part.... if it wasn't a "normal" thing, check to see
     # if it has a to_json method.  If so, use it!
-    if hasattr(data, 'to_json'):
+    if hasattr(data, "to_json"):
         return data.to_json(to_json)
 
     # And if we still get nothing useful, PUNT!
-    raise TypeError('Type %r not data-serializable' % type(data))
+    raise TypeError("Type %r not data-serializable" % type(data))
 
 
 def from_json(data):
@@ -190,17 +188,18 @@ def from_json(data):
     # If we're a dict, we can check to see if we're a custom class.
     # If we are, we need to find out class definition and make sure
     # there's a from_json() method to call.  If so, let it handle things.
-    if hasattr(data, 'keys'):
+    if hasattr(data, "keys"):
         for k in data.keys():
-            found = re.findall('__class__\/((?:\w+)\.)*(\w+)', k)
+            found = re.findall("__class__\/((?:\w+)\.)*(\w+)", k)
             if found:
                 import importlib
-                module_name = found[0][0].rstrip('.')
+
+                module_name = found[0][0].rstrip(".")
                 class_name = found[0][1]
-                if module_name != '' and class_name != '':
-                    module_ref = importlib.import_module('rom24.' + module_name)
+                if module_name != "" and class_name != "":
+                    module_ref = importlib.import_module("rom24." + module_name)
                     class_ref = getattr(module_ref, class_name)
-                    if hasattr(class_ref, 'from_json'):
+                    if hasattr(class_ref, "from_json"):
                         return class_ref.from_json(data, from_json)
 
     # If we have no idea, return whatever we are and hope someone else
@@ -210,15 +209,24 @@ def from_json(data):
 
 def save():
     os.makedirs(settings.INSTANCE_DIR, 0o755, True)
-    filename = os.path.join(settings.INSTANCE_DIR, 'list.json')
+    filename = os.path.join(settings.INSTANCE_DIR, "list.json")
     tmp_dict = {}
     for i in global_instances:
         if i in players:
             pass
         else:
-            tmp_dict[i] = [global_instances[i].__module__, global_instances[i].__class__.__name__]
-    with open(filename, 'w') as fp:
-        json.dump({'max_instance_id': max_instance_id, 'data': tmp_dict}, fp, default=to_json, indent=4, sort_keys=True)
+            tmp_dict[i] = [
+                global_instances[i].__module__,
+                global_instances[i].__class__.__name__,
+            ]
+    with open(filename, "w") as fp:
+        json.dump(
+            {"max_instance_id": max_instance_id, "data": tmp_dict},
+            fp,
+            default=to_json,
+            indent=4,
+            sort_keys=True,
+        )
 
     for i in areas:
         areas[i].save(force=True)
@@ -240,21 +248,22 @@ def save():
 
 
 def load():
-    filename = os.path.join(settings.INSTANCE_DIR, 'list.json')
+    filename = os.path.join(settings.INSTANCE_DIR, "list.json")
     if os.path.isfile(filename):
-        with open(filename, 'r') as fp:
+        with open(filename, "r") as fp:
             tmp_dict = json.load(fp, object_hook=from_json)
         global max_instance_id
         global global_instances
-        max_instance_id = tmp_dict['max_instance_id']
+        max_instance_id = tmp_dict["max_instance_id"]
         import importlib
-        for k,v in tmp_dict['data']:
+
+        for k, v in tmp_dict["data"]:
             module_ref = importlib.import_module(v[0])
             class_ref = getattr(module_ref, v[1])
-            if hasattr(class_ref, 'load'):
+            if hasattr(class_ref, "load"):
                 obj = class_ref.load(instance_id=k)
                 if isinstance(obj, class_ref):
-                    logger.info('Restored instance %d (%r)', k, repr(obj))
+                    logger.info("Restored instance %d (%r)", k, repr(obj))
 
 
 class Instancer:
@@ -283,5 +292,7 @@ class Instancer:
         global max_instance_id, global_instances
         max_instance_id += 1
         if global_instances.get(max_instance_id, None):
-            raise ValueError('houston we have a problem - instance number already in global instances')
+            raise ValueError(
+                "houston we have a problem - instance number already in global instances"
+            )
         self.instance_id = max_instance_id

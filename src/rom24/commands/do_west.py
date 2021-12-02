@@ -12,4 +12,6 @@ def do_west(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('west', do_west, merc.POS_STANDING, 0, merc.LOG_NEVER, 0))
+interp.register_command(
+    interp.cmd_type("west", do_west, merc.POS_STANDING, 0, merc.LOG_NEVER, 0)
+)

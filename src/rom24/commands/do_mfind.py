@@ -29,4 +29,6 @@ def do_mfind(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('mfind', do_mfind, merc.POS_DEAD, merc.L4, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("mfind", do_mfind, merc.POS_DEAD, merc.L4, merc.LOG_NORMAL, 1)
+)

@@ -12,4 +12,9 @@ def do_tabledump(ch, argument):
         ch.send("Dumping all tables.\n")
         database.write.write_tables(ch)
 
-interp.register_command(interp.cmd_type('tabledump', do_tabledump, merc.POS_DEAD, merc.ML, merc.LOG_ALWAYS, 1))
+
+interp.register_command(
+    interp.cmd_type(
+        "tabledump", do_tabledump, merc.POS_DEAD, merc.ML, merc.LOG_ALWAYS, 1
+    )
+)

@@ -1,7 +1,3 @@
-
-
-
-
 # RT calm spell stops all fighting in the room */
 import random
 from rom24 import const
@@ -35,12 +31,16 @@ def spell_calm(sn, level, ch, victim, target):
     if random.randint(0, chance) >= mlevel:  # hard to stop large fights */
         for vch_id in ch.in_room.people:
             vch = instance.characters[vch_id]
-            if vch.is_npc() and (vch.imm_flags.is_set(merc.IMM_MAGIC) \
-                                        or vch.act.is_set(merc.ACT_UNDEAD)):
+            if vch.is_npc() and (
+                vch.imm_flags.is_set(merc.IMM_MAGIC) or vch.act.is_set(merc.ACT_UNDEAD)
+            ):
                 return
 
-            if vch.is_affected(merc.AFF_CALM) or vch.is_affected(merc.AFF_BERSERK) \
-                    or vch.is_affected('frenzy'):
+            if (
+                vch.is_affected(merc.AFF_CALM)
+                or vch.is_affected(merc.AFF_BERSERK)
+                or vch.is_affected("frenzy")
+            ):
                 return
 
             vch.send("A wave of calm passes over you.\n")
@@ -64,8 +64,20 @@ def spell_calm(sn, level, ch, victim, target):
             vch.affect_add(af)
 
 
-const.register_spell(const.skill_type("calm",
-                          {'mage': 48, 'cleric': 16, 'thief': 50, 'warrior': 20},
-                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_calm, merc.TAR_IGNORE, merc.POS_FIGHTING, None, const.SLOT(509),
-                          30, 12, "", "You have lost your peace of mind.", ""))
+const.register_spell(
+    const.skill_type(
+        "calm",
+        {"mage": 48, "cleric": 16, "thief": 50, "warrior": 20},
+        {"mage": 1, "cleric": 1, "thief": 2, "warrior": 2},
+        spell_calm,
+        merc.TAR_IGNORE,
+        merc.POS_FIGHTING,
+        None,
+        const.SLOT(509),
+        30,
+        12,
+        "",
+        "You have lost your peace of mind.",
+        "",
+    )
+)

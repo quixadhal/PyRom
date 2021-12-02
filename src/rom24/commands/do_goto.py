@@ -19,8 +19,11 @@ def do_goto(ch, argument):
         ch.send("No such location.\n")
         return
     count = len(location.people)
-    if not ch.is_room_owner(location) and location.is_private() \
-            and (count > 1 or ch.trust < merc.MAX_LEVEL):
+    if (
+        not ch.is_room_owner(location)
+        and location.is_private()
+        and (count > 1 or ch.trust < merc.MAX_LEVEL)
+    ):
         ch.send("That room is private right now.\n")
         return
     if ch.fighting:
@@ -31,7 +34,9 @@ def do_goto(ch, argument):
             if ch.is_npc() and ch.bamfout:
                 handler_game.act("$t", ch, ch.bamfout, rch, merc.TO_VICT)
             else:
-                handler_game.act("$n leaves in a swirling mist.", ch, None, rch, merc.TO_VICT)
+                handler_game.act(
+                    "$n leaves in a swirling mist.", ch, None, rch, merc.TO_VICT
+                )
     location.put(ch.in_room.get(ch))
 
     for rch_id in ch.in_room.people[:]:
@@ -40,9 +45,13 @@ def do_goto(ch, argument):
             if ch.is_npc() and ch.bamfin:
                 handler_game.act("$t", ch, ch.bamfin, rch, merc.TO_VICT)
             else:
-                handler_game.act("$n appears in a swirling mist.", ch, None, rch, merc.TO_VICT)
+                handler_game.act(
+                    "$n appears in a swirling mist.", ch, None, rch, merc.TO_VICT
+                )
     ch.do_look("auto")
     return
 
 
-interp.register_command(interp.cmd_type('goto', do_goto, merc.POS_DEAD, merc.L8, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("goto", do_goto, merc.POS_DEAD, merc.L8, merc.LOG_NORMAL, 1)
+)

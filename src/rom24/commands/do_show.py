@@ -15,4 +15,6 @@ def do_show(ch, argument):
         ch.comm.set_bit(merc.COMM_SHOW_AFFECTS)
 
 
-interp.register_command(interp.cmd_type('show', do_show, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("show", do_show, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

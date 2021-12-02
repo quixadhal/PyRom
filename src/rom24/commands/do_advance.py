@@ -7,9 +7,10 @@ from rom24 import game_utils
 from rom24 import update
 from rom24 import interp
 
+
 def do_advance(ch, argument):
-    argument, arg1  = game_utils.read_word(argument)
-    argument, arg2  = game_utils.read_word(argument)
+    argument, arg1 = game_utils.read_word(argument)
+    argument, arg2 = game_utils.read_word(argument)
 
     if not arg1 or not arg2 or not arg2.isdigit():
         ch.send("Syntax: advance <char> <level>.\n")
@@ -63,4 +64,6 @@ def do_advance(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('advance', do_advance, merc.POS_DEAD, merc.ML, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type("advance", do_advance, merc.POS_DEAD, merc.ML, merc.LOG_ALWAYS, 1)
+)

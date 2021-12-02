@@ -15,4 +15,6 @@ def do_combine(ch, argument):
         ch.comm.set_bit(merc.COMM_COMBINE)
 
 
-interp.register_command(interp.cmd_type('combine', do_combine, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("combine", do_combine, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

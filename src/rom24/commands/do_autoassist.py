@@ -18,4 +18,6 @@ def do_autoassist(ch, argument):
         ch.act.set_bit(merc.PLR_AUTOASSIST)
 
 
-interp.register_command(interp.cmd_type('autoassist', do_autoassist, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("autoassist", do_autoassist, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

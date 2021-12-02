@@ -13,7 +13,10 @@ def spell_create_water(sn, level, ch, victim, target):
         ch.send("It contains some other liquid.\n")
         return
 
-    water = min(level * (4 if handler_game.weather_info.sky >= merc.SKY_RAINING else 2), obj.value[0] - obj.value[1])
+    water = min(
+        level * (4 if handler_game.weather_info.sky >= merc.SKY_RAINING else 2),
+        obj.value[0] - obj.value[1],
+    )
 
     if water > 0:
         obj.value[2] = LIQ_WATER
@@ -24,8 +27,20 @@ def spell_create_water(sn, level, ch, victim, target):
         handler_game.act("$p is filled.", ch, obj, None, merc.TO_CHAR)
 
 
-const.register_spell(const.skill_type("create water",
-                          {'mage': 8, 'cleric': 3, 'thief': 12, 'warrior': 11},
-                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_create_water, merc.TAR_OBJ_INV, merc.POS_STANDING, None,
-                          const.SLOT(13), 5, 12, "", "!Create Water!", ""))
+const.register_spell(
+    const.skill_type(
+        "create water",
+        {"mage": 8, "cleric": 3, "thief": 12, "warrior": 11},
+        {"mage": 1, "cleric": 1, "thief": 2, "warrior": 2},
+        spell_create_water,
+        merc.TAR_OBJ_INV,
+        merc.POS_STANDING,
+        None,
+        const.SLOT(13),
+        5,
+        12,
+        "",
+        "!Create Water!",
+        "",
+    )
+)

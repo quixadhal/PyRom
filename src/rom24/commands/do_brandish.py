@@ -13,7 +13,7 @@ from rom24 import instance
 
 
 def do_brandish(ch, argument):
-    staff = ch.get_eq('held')
+    staff = ch.get_eq("held")
     if not staff:
         ch.send("You hold nothing in your hand.\n")
         return
@@ -28,7 +28,10 @@ def do_brandish(ch, argument):
     if staff.value[2] > 0:
         handler_game.act("$n brandishes $p.", ch, staff, None, merc.TO_ROOM)
         handler_game.act("You brandish $p.", ch, staff, None, merc.TO_CHAR)
-        if ch.level < staff.level or random.randint(1, 99) >= 20 + ch.get_skill("staves") * 4 / 5:
+        if (
+            ch.level < staff.level
+            or random.randint(1, 99) >= 20 + ch.get_skill("staves") * 4 / 5
+        ):
             handler_game.act("You fail to invoke $p.", ch, staff, None, merc.TO_CHAR)
             handler_game.act("...and nothing happens.", ch, None, None, merc.TO_ROOM)
             if ch.is_pc:
@@ -52,14 +55,22 @@ def do_brandish(ch, argument):
                 else:
                     logger.error("BUG: Do_brandish: bad target for sn %s.", sn)
                     return
-                handler_magic.obj_cast_spell(staff.value[3], staff.value[0], ch, vch, None)
+                handler_magic.obj_cast_spell(
+                    staff.value[3], staff.value[0], ch, vch, None
+                )
                 if ch.is_pc:
                     ch.check_improve("staves", True, 2)
     staff.value[2] -= 1
     if staff.value[2] <= 0:
-        handler_game.act("$n's $p blazes bright and is gone.", ch, staff, None, merc.TO_ROOM)
-        handler_game.act("Your $p blazes bright and is gone.", ch, staff, None, merc.TO_CHAR)
+        handler_game.act(
+            "$n's $p blazes bright and is gone.", ch, staff, None, merc.TO_ROOM
+        )
+        handler_game.act(
+            "Your $p blazes bright and is gone.", ch, staff, None, merc.TO_CHAR
+        )
         staff.extract()
 
 
-interp.register_command(interp.cmd_type('brandish', do_brandish, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("brandish", do_brandish, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)

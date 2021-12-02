@@ -20,4 +20,6 @@ def do_recho(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('echo', do_recho, merc.POS_DEAD, merc.L6, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type("echo", do_recho, merc.POS_DEAD, merc.L6, merc.LOG_ALWAYS, 1)
+)

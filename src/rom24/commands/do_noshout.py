@@ -8,6 +8,7 @@ from rom24 import game_utils
 from rom24 import handler_game
 from rom24 import state_checks
 
+
 def do_noshout(ch, argument):
     argument, arg = game_utils.read_word(argument)
     if not arg:
@@ -27,13 +28,29 @@ def do_noshout(ch, argument):
         victim.comm = state_checks.REMOVE_BIT(victim.comm, merc.COMM_NOSHOUT)
         victim.send("You can shout again.\n")
         ch.send("NOSHOUT removed.\n")
-        handler_game.wiznet("$N restores shouts to %s." % victim.name, ch, None, merc.WIZ_PENALTIES, merc.WIZ_SECURE, 0)
+        handler_game.wiznet(
+            "$N restores shouts to %s." % victim.name,
+            ch,
+            None,
+            merc.WIZ_PENALTIES,
+            merc.WIZ_SECURE,
+            0,
+        )
     else:
         victim.comm = state_checks.SET_BIT(victim.comm, merc.COMM_NOSHOUT)
         victim.send("You can't shout!\n")
         ch.send("NOSHOUT set.\n")
-        handler_game.wiznet("$N revokes %s's shouts." % victim.name, ch, None, merc.WIZ_PENALTIES, merc.WIZ_SECURE, 0)
+        handler_game.wiznet(
+            "$N revokes %s's shouts." % victim.name,
+            ch,
+            None,
+            merc.WIZ_PENALTIES,
+            merc.WIZ_SECURE,
+            0,
+        )
     return
 
 
-interp.register_command(interp.cmd_type('noshout', do_noshout, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type("noshout", do_noshout, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1)
+)

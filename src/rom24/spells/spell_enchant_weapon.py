@@ -54,13 +54,19 @@ def spell_enchant_weapon(sn, level, ch, victim, target):
 
     # the moment of truth */
     if result < (fail // 5):  # item destroyed */
-        handler_game.act("$p shivers violently and explodes! ", ch, obj, None, merc.TO_CHAR)
-        handler_game.act("$p shivers violently and explodeds! ", ch, obj, None, merc.TO_ROOM)
+        handler_game.act(
+            "$p shivers violently and explodes! ", ch, obj, None, merc.TO_CHAR
+        )
+        handler_game.act(
+            "$p shivers violently and explodeds! ", ch, obj, None, merc.TO_ROOM
+        )
         obj.extract()
         return
 
     if result < (fail // 2):  # item disenchanted */
-        handler_game.act("$p glows brightly, then fades...oops.", ch, obj, None, merc.TO_CHAR)
+        handler_game.act(
+            "$p glows brightly, then fades...oops.", ch, obj, None, merc.TO_CHAR
+        )
         handler_game.act("$p glows brightly, then fades.", ch, obj, None, merc.TO_ROOM)
         obj.enchanted = True
         # remove all affects */
@@ -143,8 +149,20 @@ def spell_enchant_weapon(sn, level, ch, victim, target):
         obj.affected.append(paf)
 
 
-const.register_spell(const.skill_type("enchant weapon",
-                          {'mage': 17, 'cleric': 53, 'thief': 53, 'warrior': 53},
-                          {'mage': 2, 'cleric': 2, 'thief': 4, 'warrior': 4},
-                          spell_enchant_weapon, merc.TAR_OBJ_INV, merc.POS_STANDING,
-                          None, const.SLOT(24), 100, 24, "", "!Enchant Weapon!", ""))
+const.register_spell(
+    const.skill_type(
+        "enchant weapon",
+        {"mage": 17, "cleric": 53, "thief": 53, "warrior": 53},
+        {"mage": 2, "cleric": 2, "thief": 4, "warrior": 4},
+        spell_enchant_weapon,
+        merc.TAR_OBJ_INV,
+        merc.POS_STANDING,
+        None,
+        const.SLOT(24),
+        100,
+        24,
+        "",
+        "!Enchant Weapon!",
+        "",
+    )
+)

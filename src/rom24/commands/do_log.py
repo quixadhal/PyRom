@@ -14,7 +14,7 @@ def do_log(ch, argument):
         ch.send("Log whom?\n")
         return
     if arg == "all":
-        #TODO: fix this by either adding it to merc, or figuring out an alternative
+        # TODO: fix this by either adding it to merc, or figuring out an alternative
         if fLogAll:
             fLogAll = False
             ch.send("Log ALL off.\n")
@@ -39,4 +39,6 @@ def do_log(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('log', do_log, merc.POS_DEAD, merc.L1, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type("log", do_log, merc.POS_DEAD, merc.L1, merc.LOG_ALWAYS, 1)
+)

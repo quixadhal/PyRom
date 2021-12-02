@@ -53,11 +53,14 @@ def do_spells(ch, argument):
     spell_column = {}
     for sn, skill in const.skill_table.items():
         level = skill.skill_level[ch.guild.name]
-        if level < merc.LEVEL_HERO + 1 \
-                and (fAll or level <= ch.level) \
-                and level >= min_lev and level <= max_lev \
-                and skill.spell_fun is not None \
-                and sn in ch.learned:
+        if (
+            level < merc.LEVEL_HERO + 1
+            and (fAll or level <= ch.level)
+            and level >= min_lev
+            and level <= max_lev
+            and skill.spell_fun is not None
+            and sn in ch.learned
+        ):
             found = True
             level = skill.skill_level[ch.guild.name]
             if ch.level < level:
@@ -85,4 +88,6 @@ def do_spells(ch, argument):
     ch.send("\n")
 
 
-interp.register_command(interp.cmd_type('spells', do_spells, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("spells", do_spells, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

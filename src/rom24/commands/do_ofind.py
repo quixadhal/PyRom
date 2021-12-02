@@ -27,10 +27,15 @@ def do_ofind(ch, argument):
     for objTemplate in instance.item_templates.values():
         if fAll or game_utils.is_name(arg, objTemplate.name):
             found = True
-            ch.send("[[%5d]] %s(%s)\n" % (objTemplate.vnum, objTemplate.short_descr, objTemplate.name))
+            ch.send(
+                "[[%5d]] %s(%s)\n"
+                % (objTemplate.vnum, objTemplate.short_descr, objTemplate.name)
+            )
     if not found:
         ch.send("No objects by that name.\n")
     return
 
 
-interp.register_command(interp.cmd_type('ofind', do_ofind, merc.POS_DEAD, merc.L4, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("ofind", do_ofind, merc.POS_DEAD, merc.L4, merc.LOG_NORMAL, 1)
+)

@@ -10,6 +10,7 @@ from rom24 import handler_ch
 from rom24 import handler_game
 from rom24 import state_checks
 
+
 def do_shout(ch, argument):
     if not argument:
         if ch.comm.is_set(merc.COMM_SHOUTSOFF):
@@ -27,10 +28,15 @@ def do_shout(ch, argument):
     handler_game.act("You shout '$T'", ch, None, argument, merc.TO_CHAR)
     for d in merc.descriptor_list:
         victim = handler_ch.CH(d)
-        if d.is_connected(nanny.con_playing) and d.character != ch \
-                and not victim.comm.is_set(merc.COMM_SHOUTSOFF) and not state_checks.IS_SET(victim.comm,
-                                                                                                          merc.COMM_QUIET):
+        if (
+            d.is_connected(nanny.con_playing)
+            and d.character != ch
+            and not victim.comm.is_set(merc.COMM_SHOUTSOFF)
+            and not state_checks.IS_SET(victim.comm, merc.COMM_QUIET)
+        ):
             handler_game.act("$n shouts '$t'", ch, argument, d.character, merc.TO_VICT)
 
 
-interp.register_command(interp.cmd_type('shout', do_shout, merc.POS_RESTING, 3, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("shout", do_shout, merc.POS_RESTING, 3, merc.LOG_NORMAL, 1)
+)

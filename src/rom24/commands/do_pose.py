@@ -10,8 +10,8 @@ from rom24 import handler_game
 
 # All the posing stuff.
 pose_table = {
-    'to_ch': {
-        'mage': (
+    "to_ch": {
+        "mage": (
             "You sizzle with energy.",
             "You turn into a butterfly, then return to your normal shape.",
             "Blue sparks fly from your fingers.",
@@ -30,7 +30,7 @@ pose_table = {
             "A black hole swallows you.",
             "The world shimmers in time with your whistling.",
         ),
-        'cleric': (
+        "cleric": (
             "You feel very holy.",
             "You nonchalantly turn wine into water.",
             "A halo appears over your head.",
@@ -49,7 +49,7 @@ pose_table = {
             "Valentine Michael Smith offers you a glass of water.",
             "The great god Mota gives you a staff.",
         ),
-        'thief': (
+        "thief": (
             "You perform a small card trick.",
             "You wiggle your ears alternately.",
             "You nimbly tie yourself into a knot.",
@@ -68,7 +68,7 @@ pose_table = {
             "Where did you go?",
             "Click.",
         ),
-        'warrior': (
+        "warrior": (
             "You show your bulging muscles.",
             "You crack nuts between your fingers.",
             "You grizzle your teeth and look mean.",
@@ -88,8 +88,8 @@ pose_table = {
             "Atlas asks you to relieve him.",
         ),
     },
-    'to_others': {
-        'mage': (
+    "to_others": {
+        "mage": (
             "$n sizzles with energy.",
             "$n turns into a butterfly, then returns to $s normal shape.",
             "Blue sparks fly from $n's fingers.",
@@ -108,7 +108,7 @@ pose_table = {
             "A black hole swallows $n.",
             "The world shimmers in time with $n's whistling.",
         ),
-        'cleric': (
+        "cleric": (
             "$n looks very holy.",
             "$n nonchalantly turns wine into water.",
             "A halo appears over $n's head.",
@@ -127,7 +127,7 @@ pose_table = {
             "Valentine Michael Smith offers $n a glass of water.",
             "The great god Mota gives $n a staff.",
         ),
-        'thief': (
+        "thief": (
             "$n performs a small card trick.",
             "$n wiggles $s ears alternately.",
             "$n nimbly ties $mself into a knot.",
@@ -146,7 +146,7 @@ pose_table = {
             "Where did $n go?",
             "Click.",
         ),
-        'warrior': (
+        "warrior": (
             "$n shows $s bulging muscles.",
             "$n cracks nuts between $s fingers.",
             "$n grizzles $s teeth and looks mean.",
@@ -172,13 +172,19 @@ pose_table = {
 def do_pose(ch, argument):
     if ch.is_npc():
         return
-    band = merc.LEVEL_HERO // len(pose_table['to_ch'][ch.guild.name])
+    band = merc.LEVEL_HERO // len(pose_table["to_ch"][ch.guild.name])
     level = min(ch.level, merc.LEVEL_HERO) // band
     choice = random.randint(0, level)
 
-    handler_game.act(pose_table['to_ch'][ch.guild.name][choice], ch, None, None, merc.TO_CHAR)
-    handler_game.act(pose_table['to_others'][ch.guild.name][choice], ch, None, None, merc.TO_ROOM)
+    handler_game.act(
+        pose_table["to_ch"][ch.guild.name][choice], ch, None, None, merc.TO_CHAR
+    )
+    handler_game.act(
+        pose_table["to_others"][ch.guild.name][choice], ch, None, None, merc.TO_ROOM
+    )
     return
 
 
-interp.register_command(interp.cmd_type('pose', do_pose, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("pose", do_pose, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)

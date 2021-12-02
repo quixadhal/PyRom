@@ -50,10 +50,15 @@ def do_alias(ch, argument):
     ch.send("%s is now aliased to '%s'.\n" % (arg, arg2))
     return
 
+
 def do_alia(ch, argument):
     ch.send("I'm sorry, alias must be entered in full.\n")
     return
 
-interp.register_command(interp.cmd_type('alias', do_alias, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
-interp.register_command(interp.cmd_type('alia', do_alia, merc.POS_DEAD, 0, merc.LOG_NORMAL, 0))
 
+interp.register_command(
+    interp.cmd_type("alias", do_alias, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)
+interp.register_command(
+    interp.cmd_type("alia", do_alia, merc.POS_DEAD, 0, merc.LOG_NORMAL, 0)
+)

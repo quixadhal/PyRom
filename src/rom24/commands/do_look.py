@@ -24,8 +24,11 @@ def do_look(ch, argument):
     if not ch.check_blind():
         return
     room = ch.in_room
-    if not ch.is_npc() and not ch.act.is_set(merc.PLR_HOLYLIGHT) \
-            and ch.in_room.is_dark():
+    if (
+        not ch.is_npc()
+        and not ch.act.is_set(merc.PLR_HOLYLIGHT)
+        and ch.in_room.is_dark()
+    ):
         ch.send("It is pitch black ... \n")
         handler_ch.show_char_to_char(room.people, ch)
         return
@@ -36,17 +39,17 @@ def do_look(ch, argument):
     if not arg1 or arg1 == "auto":
         # 'look' or 'look auto'
         ch.send(room.name)
-        if ch.is_immortal() \
-                and (ch.is_npc()
-                     or (ch.act.is_set(merc.PLR_HOLYLIGHT)
-                         or ch.act.is_set(merc.PLR_OMNI))):
-            ch.send(" Room[[{room.instance_id}]] Template[[{room.vnum}]]".format(room=room))
+        if ch.is_immortal() and (
+            ch.is_npc()
+            or (ch.act.is_set(merc.PLR_HOLYLIGHT) or ch.act.is_set(merc.PLR_OMNI))
+        ):
+            ch.send(
+                " Room[[{room.instance_id}]] Template[[{room.vnum}]]".format(room=room)
+            )
         ch.send("\n")
-        if not arg1 or (not ch.is_npc()
-                        and not ch.comm.is_set(merc.COMM_BRIEF)):
+        if not arg1 or (not ch.is_npc() and not ch.comm.is_set(merc.COMM_BRIEF)):
             ch.send("  %s\n" % room.description)
-        if not ch.is_npc() \
-                and ch.act.is_set(merc.PLR_AUTOEXIT):
+        if not ch.is_npc() and ch.act.is_set(merc.PLR_AUTOEXIT):
             ch.send("\n")
             ch.do_exits("auto")
         handler_ch.show_list_to_char(room.items, ch, False, False)
@@ -72,10 +75,15 @@ def do_look(ch, argument):
                 amnt = "abount half-"
             else:
                 amnt = "more than half-"
-            ch.send("It's %sfilled with a %s liquid.\n" % (
-                amnt, const.liq_table[item.value[2]].color))
-        elif item_type == merc.ITEM_CONTAINER or item_type == merc.ITEM_CORPSE_NPC \
-                or item_type == merc.ITEM_CORPSE_PC:
+            ch.send(
+                "It's %sfilled with a %s liquid.\n"
+                % (amnt, const.liq_table[item.value[2]].color)
+            )
+        elif (
+            item_type == merc.ITEM_CONTAINER
+            or item_type == merc.ITEM_CORPSE_NPC
+            or item_type == merc.ITEM_CORPSE_PC
+        ):
             if state_checks.IS_SET(item.value[1], merc.CONT_CLOSED):
                 ch.send("It is closed.\n")
                 return
@@ -135,8 +143,7 @@ def do_look(ch, argument):
         ch.send("You do not see that here.\n")
         return
     # 'look direction'
-    if door not in room.exit \
-            or not room.exit[door]:
+    if door not in room.exit or not room.exit[door]:
         ch.send("Nothing special there.\n")
         return
     pexit = room.exit[door]
@@ -153,5 +160,9 @@ def do_look(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('look', do_look, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
-interp.register_command(interp.cmd_type('read', do_look, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("look", do_look, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)
+interp.register_command(
+    interp.cmd_type("read", do_look, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)

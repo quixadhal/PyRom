@@ -22,7 +22,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
-__author__ = 'quixadhal'
+__author__ = "quixadhal"
 
 import time
 import struct
@@ -65,7 +65,8 @@ class TwoFactorAuth:
     enter a 6 digit number, zero-padded.  This number can then be passed
     to the verify() method, which will return True or False.
     """
-    def __init__(self, s: str='ABCDEFGHIJKLMNOP'):
+
+    def __init__(self, s: str = "ABCDEFGHIJKLMNOP"):
         """
         Initializes the class with a secret key, using an application-wide
         default if none is provided.
@@ -75,12 +76,12 @@ class TwoFactorAuth:
         :return:
         :rtype:
         """
-        if '-' in s:
-            s = s.replace('-', '')
-        self._raw_secret = s.upper().rjust(16, 'A')[0:16]
+        if "-" in s:
+            s = s.replace("-", "")
+        self._raw_secret = s.upper().rjust(16, "A")[0:16]
         self._secret = base64.b32decode(self._raw_secret.encode())
 
-    def time_code(self, moment: int=None):
+    def time_code(self, moment: int = None):
         """
         Returns a string indicating the current valid token which will be
         generated, and which should be matched to authenticate the user.
@@ -93,14 +94,14 @@ class TwoFactorAuth:
         if moment is None:
             moment = time.time()
         moment = int(moment // 30)
-        time_bytes = struct.pack('>q', moment)
+        time_bytes = struct.pack(">q", moment)
         hash_digest = hmac.HMAC(self._secret, time_bytes, hashlib.sha1).digest()
         offset = hash_digest[-1] & 0x0F
-        truncated_digest = hash_digest[offset:offset + 4]
-        code = struct.unpack('>L', truncated_digest)[0]
+        truncated_digest = hash_digest[offset : offset + 4]
+        code = struct.unpack(">L", truncated_digest)[0]
         code &= 0x7FFFFFFF
         code %= 1000000
-        return '%06d' % code
+        return "%06d" % code
 
     def verify(self, token):
         """
@@ -118,7 +119,7 @@ class TwoFactorAuth:
         :rtype: bool
         """
         if isinstance(token, int):
-            token = '%06d' % token
+            token = "%06d" % token
         trials = [self.time_code(time.time() + offset) for offset in (-30, 0, 30)]
         if token in trials:
             return True
@@ -137,7 +138,7 @@ class TwoFactorAuth:
         :rtype: str
         """
         token = self._raw_secret.lower()
-        return '-'.join((token[0:4], token[4:8], token[8:12], token[12:16]))
+        return "-".join((token[0:4], token[4:8], token[8:12], token[12:16]))
 
     @secret.setter
     def secret(self, s: str):
@@ -149,9 +150,9 @@ class TwoFactorAuth:
         :return:
         :rtype:
         """
-        if '-' in s:
-            s = s.replace('-', '')
-        self._raw_secret = s.upper().rjust(16, 'A')[0:16]
+        if "-" in s:
+            s = s.replace("-", "")
+        self._raw_secret = s.upper().rjust(16, "A")[0:16]
         self._secret = base64.b32decode(self._raw_secret.encode())
 
     def __repr__(self):
@@ -176,10 +177,10 @@ class TwoFactorAuth:
         if outer_encoder is None:
             outer_encoder = json.JSONEncoder.default
 
-        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        cls_name = "__class__/" + __name__ + "." + self.__class__.__name__
         return {
             cls_name: {
-                'secret': outer_encoder(self._raw_secret),
+                "secret": outer_encoder(self._raw_secret),
             }
         }
 
@@ -199,14 +200,17 @@ class TwoFactorAuth:
         if outer_decoder is None:
             outer_decoder = json.JSONDecoder.decode
 
-        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        cls_name = "__class__/" + __name__ + "." + cls.__name__
         if cls_name in data:
-            return cls(s=outer_decoder(data[cls_name]['secret']))
+            return cls(s=outer_decoder(data[cls_name]["secret"]))
         return data
 
 
-def random_base32_token(length: int=16, rng=random.SystemRandom(),
-                        charset='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'):
+def random_base32_token(
+    length: int = 16,
+    rng=random.SystemRandom(),
+    charset="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567",
+):
     """
     This method just provides a quick way to obtain a proper key to
     use for a 2-factor authentication secret key.
@@ -220,5 +224,5 @@ def random_base32_token(length: int=16, rng=random.SystemRandom(),
     :return: A 16-character base32 encoded token
     :rtype: str
     """
-    token = ''.join(rng.choice(charset) for i in range(length))
-    return '-'.join((token[0:4], token[4:8], token[8:12], token[12:16]))
+    token = "".join(rng.choice(charset) for i in range(length))
+    return "-".join((token[0:4], token[4:8], token[8:12], token[12:16]))

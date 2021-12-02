@@ -25,13 +25,29 @@ def do_notell(ch, argument):
         victim.comm = state_checks.REMOVE_BIT(victim.comm, merc.COMM_NOTELL)
         victim.send("You can tell again.\n")
         ch.send("NOTELL removed.\n")
-        handler_game.wiznet("$N restores tells to %s." % victim.name, ch, None, merc.WIZ_PENALTIES, merc.WIZ_SECURE, 0)
+        handler_game.wiznet(
+            "$N restores tells to %s." % victim.name,
+            ch,
+            None,
+            merc.WIZ_PENALTIES,
+            merc.WIZ_SECURE,
+            0,
+        )
     else:
         victim.comm = state_checks.SET_BIT(victim.comm, merc.COMM_NOTELL)
         victim.send("You can't tell!\n")
         ch.send("NOTELL set.\n")
-        handler_game.wiznet("$N revokes %s's tells." % victim.name, ch, None, merc.WIZ_PENALTIES, merc.WIZ_SECURE, 0)
+        handler_game.wiznet(
+            "$N revokes %s's tells." % victim.name,
+            ch,
+            None,
+            merc.WIZ_PENALTIES,
+            merc.WIZ_SECURE,
+            0,
+        )
     return
 
 
-interp.register_command(interp.cmd_type('notell', do_notell, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type("notell", do_notell, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1)
+)

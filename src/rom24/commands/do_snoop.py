@@ -23,7 +23,14 @@ def do_snoop(ch, argument):
         return
     if victim == ch:
         ch.send("Cancelling all snoops.\n")
-        handler_game.wiznet("$N stops being such a snoop.", ch, None, merc.WIZ_SNOOPS, merc.WIZ_SECURE, ch.trust)
+        handler_game.wiznet(
+            "$N stops being such a snoop.",
+            ch,
+            None,
+            merc.WIZ_SNOOPS,
+            merc.WIZ_SECURE,
+            ch.trust,
+        )
         for d in merc.descriptor_list:
             if d.snoop_by == ch.desc:
                 d.snoop_by = None
@@ -31,8 +38,12 @@ def do_snoop(ch, argument):
     if victim.desc.snoop_by:
         ch.send("Busy already.\n")
         return
-    if not ch.is_room_owner(victim.in_room) and ch.in_room != victim.in_room \
-            and victim.in_room.is_private() and not state_checks.IS_TRUSTED(ch, merc.MAX_LEVEL):
+    if (
+        not ch.is_room_owner(victim.in_room)
+        and ch.in_room != victim.in_room
+        and victim.in_room.is_private()
+        and not state_checks.IS_TRUSTED(ch, merc.MAX_LEVEL)
+    ):
         ch.send("That character is in a private room.\n")
         return
     if victim.trust >= ch.trust or victim.comm.is_set(merc.COMM_SNOOP_PROOF):
@@ -46,10 +57,14 @@ def do_snoop(ch, argument):
                 return
             d = d.snoop_by
     victim.desc.snoop_by = ch.desc
-    buf = "$N starts snooping on %s" % (victim.short_descr if ch.is_npc() else victim.name)
+    buf = "$N starts snooping on %s" % (
+        victim.short_descr if ch.is_npc() else victim.name
+    )
     handler_game.wiznet(buf, ch, None, merc.WIZ_SNOOPS, merc.WIZ_SECURE, ch.trust)
     ch.send("Ok.\n")
     return
 
 
-interp.register_command(interp.cmd_type('snoop', do_snoop, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type("snoop", do_snoop, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1)
+)

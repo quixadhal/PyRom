@@ -25,7 +25,7 @@ def do_wake(ch, argument):
     if state_checks.IS_AWAKE(victim):
         handler_game.act("$N is already awake.", ch, None, victim, merc.TO_CHAR)
         return
-    if victim.is_affected( merc.AFF_SLEEP):
+    if victim.is_affected(merc.AFF_SLEEP):
         handler_game.act("You can't wake $M!", ch, None, victim, merc.TO_CHAR)
         return
     handler_game.act("$n wakes you.", ch, None, victim, merc.TO_VICT, merc.POS_SLEEPING)
@@ -33,4 +33,6 @@ def do_wake(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('wake', do_wake, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("wake", do_wake, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)
+)

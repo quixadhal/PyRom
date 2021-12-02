@@ -12,7 +12,9 @@ def spell_change_sex(sn, level, ch, victim, target):
         if victim == ch:
             ch.send("You've already been changed.\n")
         else:
-            handler_game.act("$N has already had $s(?) sex changed.", ch, None, victim, merc.TO_CHAR)
+            handler_game.act(
+                "$N has already had $s(?) sex changed.", ch, None, victim, merc.TO_CHAR
+            )
         return
 
     if handler_magic.saves_spell(level, victim, merc.DAM_OTHER):
@@ -30,11 +32,25 @@ def spell_change_sex(sn, level, ch, victim, target):
     af.bitvector = 0
     victim.affect_add(af)
     victim.send("You feel different.\n")
-    handler_game.act("$n doesn't look like $mself anymore...", victim, None, None, merc.TO_ROOM)
+    handler_game.act(
+        "$n doesn't look like $mself anymore...", victim, None, None, merc.TO_ROOM
+    )
 
 
-const.register_spell(const.skill_type("change sex",
-                          {'mage': 53, 'cleric': 53, 'thief': 53, 'warrior': 53},
-                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_change_sex, merc.TAR_CHAR_DEFENSIVE, merc.POS_FIGHTING,
-                          None, const.SLOT(82), 15, 12, "", "Your body feels familiar again.", ""))
+const.register_spell(
+    const.skill_type(
+        "change sex",
+        {"mage": 53, "cleric": 53, "thief": 53, "warrior": 53},
+        {"mage": 1, "cleric": 1, "thief": 2, "warrior": 2},
+        spell_change_sex,
+        merc.TAR_CHAR_DEFENSIVE,
+        merc.POS_FIGHTING,
+        None,
+        const.SLOT(82),
+        15,
+        12,
+        "",
+        "Your body feels familiar again.",
+        "",
+    )
+)

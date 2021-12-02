@@ -9,6 +9,7 @@ from rom24 import tables
 from rom24 import game_utils
 from rom24 import state_checks
 
+
 def do_mset(ch, argument):
     argument, arg1 = game_utils.read_word(argument)
     argument, arg2 = game_utils.read_word(argument)
@@ -33,14 +34,18 @@ def do_mset(ch, argument):
     # Set something.
     if arg2 == "str":
         if value < 3 or value > victim.get_max_train(merc.STAT_STR):
-            ch.send("Strength range is 3 to %d\n." % victim.get_max_train(merc.STAT_STR))
+            ch.send(
+                "Strength range is 3 to %d\n." % victim.get_max_train(merc.STAT_STR)
+            )
             return
         victim.perm_stat[merc.STAT_STR] = value
         ch.send("Str set to %d.\n" % value)
         return
     if arg2 == "int":
         if value < 3 or value > victim.get_max_train(merc.STAT_INT):
-            ch.send("Intelligence range is 3 to %d.\n" % victim.get_max_train(merc.STAT_INT))
+            ch.send(
+                "Intelligence range is 3 to %d.\n" % victim.get_max_train(merc.STAT_INT)
+            )
             return
         ch.send("Int set to %d.\n" % value)
         victim.perm_stat[merc.STAT_INT] = value
@@ -53,14 +58,18 @@ def do_mset(ch, argument):
         return
     if arg2 == "dex":
         if value < 3 or value > victim.get_max_train(merc.STAT_DEX):
-            ch.send("Dexterity range is 3 to %d.\n" % victim.get_max_train(merc.STAT_DEX))
+            ch.send(
+                "Dexterity range is 3 to %d.\n" % victim.get_max_train(merc.STAT_DEX)
+            )
             return
         ch.send("Dex set to %d.\n" % value)
         victim.perm_stat[merc.STAT_DEX] = value
         return
     if arg2 == "con":
         if value < 3 or value > victim.get_max_train(merc.STAT_CON):
-            ch.send("Constitution range is 3 to %d.\n" % victim.get_max_train(merc.STAT_CON))
+            ch.send(
+                "Constitution range is 3 to %d.\n" % victim.get_max_train(merc.STAT_CON)
+            )
             return
         ch.send("Con set to %d.\n" % value)
         victim.perm_stat[merc.STAT_CON] = value
@@ -215,4 +224,6 @@ def do_mset(ch, argument):
     ch.do_mset("")
 
 
-interp.register_command(interp.cmd_type('mset', do_mset, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type("mset", do_mset, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1)
+)

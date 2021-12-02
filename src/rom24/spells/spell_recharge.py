@@ -50,13 +50,29 @@ def spell_recharge(sn, level, ch, victim, target):
             obj.value[1] -= 1
         return
     else:  # whoops!  */
-        handler_game.act("$p glows brightly and explodes! ", ch, obj, None, merc.TO_CHAR)
-        handler_game.act("$p glows brightly and explodes! ", ch, obj, None, merc.TO_ROOM)
+        handler_game.act(
+            "$p glows brightly and explodes! ", ch, obj, None, merc.TO_CHAR
+        )
+        handler_game.act(
+            "$p glows brightly and explodes! ", ch, obj, None, merc.TO_ROOM
+        )
         obj.extract()
 
 
-const.register_spell(const.skill_type("recharge",
-                          {'mage': 9, 'cleric': 53, 'thief': 53, 'warrior': 53},
-                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_recharge, merc.TAR_OBJ_INV, merc.POS_STANDING, None,
-                          const.SLOT(517), 60, 24, "", "!Recharge!", ""))
+const.register_spell(
+    const.skill_type(
+        "recharge",
+        {"mage": 9, "cleric": 53, "thief": 53, "warrior": 53},
+        {"mage": 1, "cleric": 1, "thief": 2, "warrior": 2},
+        spell_recharge,
+        merc.TAR_OBJ_INV,
+        merc.POS_STANDING,
+        None,
+        const.SLOT(517),
+        60,
+        24,
+        "",
+        "!Recharge!",
+        "",
+    )
+)

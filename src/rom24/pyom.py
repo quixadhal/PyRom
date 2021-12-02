@@ -1,4 +1,3 @@
-
 import os
 import sys
 import logging
@@ -16,16 +15,17 @@ startup_time = time.time()
 
 def pyom():
     sys.path.append(os.getcwd())
-    logger.info('Logging system initialized.')
+    logger.info("Logging system initialized.")
     server = TelnetServer(port=PORT)
     server.on_connect = init_descriptor
     server.on_disconnect = close_socket
 
     # TODO: Fix file monitoring
     init_monitoring()
-    logger.info('Entering Game Loop')
+    logger.info("Entering Game Loop")
     game_loop(server)
-    logger.critical('System halted.')
+    logger.critical("System halted.")
+
 
 if __name__ == "__main__":
     pyom()

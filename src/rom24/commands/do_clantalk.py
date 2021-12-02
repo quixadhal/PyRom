@@ -28,10 +28,18 @@ def do_clantalk(ch, argument):
 
     ch.send("You clan '%s'\n" % argument)
     for d in merc.descriptor_list:
-        if d.is_connected(nanny.con_playing) and d.character != ch and ch.is_same_clan(d.character) \
-                and not state_checks.IS_SET(d.character.comm, merc.COMM_NOCLAN) and not state_checks.IS_SET(d.character.comm,
-                                                                                            merc.COMM_QUIET):
-            merc.act("$n clans '$t'", ch, argument, d.character, merc.TO_VICT, merc.POS_DEAD)
+        if (
+            d.is_connected(nanny.con_playing)
+            and d.character != ch
+            and ch.is_same_clan(d.character)
+            and not state_checks.IS_SET(d.character.comm, merc.COMM_NOCLAN)
+            and not state_checks.IS_SET(d.character.comm, merc.COMM_QUIET)
+        ):
+            merc.act(
+                "$n clans '$t'", ch, argument, d.character, merc.TO_VICT, merc.POS_DEAD
+            )
 
 
-interp.register_command(interp.cmd_type('clan', do_clantalk, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("clan", do_clantalk, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)
+)

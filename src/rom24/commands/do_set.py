@@ -34,4 +34,6 @@ def do_set(ch, argument):
     ch.do_set("")
 
 
-interp.register_command(interp.cmd_type('set', do_set, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type("set", do_set, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1)
+)

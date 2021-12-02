@@ -17,4 +17,6 @@ def do_replay(ch, argument):
     ch.buffer = []
 
 
-interp.register_command(interp.cmd_type('replay', do_replay, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("replay", do_replay, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)
+)

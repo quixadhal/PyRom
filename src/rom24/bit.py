@@ -1,6 +1,7 @@
 import json
 from collections import OrderedDict
 import logging
+
 logger = logging.getLogger(__name__)
 
 from rom24 import game_utils
@@ -28,7 +29,8 @@ class Bit:
     the name OR numerical value, and you can still use the numbers if you
     like.
     """
-    def __init__(self, default: int=0, flags: OrderedDict=None):
+
+    def __init__(self, default: int = 0, flags: OrderedDict = None):
         """
         The constructor allows you to specify the default value, as
         well as providing an ordered dict which will be used for
@@ -96,114 +98,156 @@ class Bit:
     def __mul__(self, other):
         if isinstance(other, int):
             return Bit(self.bits * other, self.flags)
-        raise TypeError('You can only multiply a Bit() value by an integer, not a ' + repr(other))
+        raise TypeError(
+            "You can only multiply a Bit() value by an integer, not a " + repr(other)
+        )
 
     def __rmul__(self, other):
         if isinstance(other, int):
             return Bit(other * self.bits, self.flags)
-        raise TypeError('You can only multiply a Bit() value by an integer, not a ' + repr(other))
+        raise TypeError(
+            "You can only multiply a Bit() value by an integer, not a " + repr(other)
+        )
 
     def __imul__(self, other):
         if isinstance(other, int):
             self.bits *= other
             return self
-        raise TypeError('You can only multiply a Bit() value by an integer, not a ' + repr(other))
+        raise TypeError(
+            "You can only multiply a Bit() value by an integer, not a " + repr(other)
+        )
 
     def __truediv__(self, other):
         if isinstance(other, int):
             return Bit(self.bits // other, self.flags)
-        raise TypeError('You can only divide a Bit() value by an integer, not a ' + repr(other))
+        raise TypeError(
+            "You can only divide a Bit() value by an integer, not a " + repr(other)
+        )
 
     def __rtruediv__(self, other):
         if isinstance(other, int):
             return Bit(other // self.bits, self.flags)
-        raise TypeError('You can only divide a Bit() value by an integer, not a ' + repr(other))
+        raise TypeError(
+            "You can only divide a Bit() value by an integer, not a " + repr(other)
+        )
 
     def __itruediv__(self, other):
         if isinstance(other, int):
             self.bits //= other
             return self
-        raise TypeError('You can only divide a Bit() value by an integer, not a ' + repr(other))
+        raise TypeError(
+            "You can only divide a Bit() value by an integer, not a " + repr(other)
+        )
 
     def __floordiv__(self, other):
         if isinstance(other, int):
             return Bit(self.bits // other, self.flags)
-        raise TypeError('You can only divide a Bit() value by an integer, not a ' + repr(other))
+        raise TypeError(
+            "You can only divide a Bit() value by an integer, not a " + repr(other)
+        )
 
     def __rfloordiv__(self, other):
         if isinstance(other, int):
             return Bit(other // self.bits, self.flags)
-        raise TypeError('You can only divide a Bit() value by an integer, not a ' + repr(other))
+        raise TypeError(
+            "You can only divide a Bit() value by an integer, not a " + repr(other)
+        )
 
     def __ifloordiv__(self, other):
         if isinstance(other, int):
             self.bits //= other
             return self
-        raise TypeError('You can only divide a Bit() value by an integer, not a ' + repr(other))
+        raise TypeError(
+            "You can only divide a Bit() value by an integer, not a " + repr(other)
+        )
 
     def __mod__(self, other):
         if isinstance(other, int):
             return Bit(self.bits % other, self.flags)
-        raise TypeError('You can only get the integer modulo of a Bit() value, not a ' + repr(other))
+        raise TypeError(
+            "You can only get the integer modulo of a Bit() value, not a " + repr(other)
+        )
 
     def __rmod__(self, other):
         if isinstance(other, int):
             return Bit(other % self.bits, self.flags)
-        raise TypeError('You can only get the integer modulo of a Bit() value, not a ' + repr(other))
+        raise TypeError(
+            "You can only get the integer modulo of a Bit() value, not a " + repr(other)
+        )
 
     def __imod__(self, other):
         if isinstance(other, int):
             self.bits %= other
             return self
-        raise TypeError('You can only get the integer modulo of a Bit() value, not a ' + repr(other))
+        raise TypeError(
+            "You can only get the integer modulo of a Bit() value, not a " + repr(other)
+        )
 
     def __pow__(self, power, modulo=None):
         if isinstance(power, int):
             return Bit(self.bits ** power, self.flags)
-        raise TypeError('You can only raise a Bit() value to an integer power, not a ' + repr(power))
+        raise TypeError(
+            "You can only raise a Bit() value to an integer power, not a " + repr(power)
+        )
 
     def __rpow__(self, power, modulo=None):
         if isinstance(power, int):
             return Bit(power ** self.bits, self.flags)
-        raise TypeError('You can only raise a Bit() value to an integer power, not a ' + repr(power))
+        raise TypeError(
+            "You can only raise a Bit() value to an integer power, not a " + repr(power)
+        )
 
     def __ipow__(self, power, modulo=None):
         if isinstance(power, int):
             self.bits **= power
             return self
-        raise TypeError('You can only raise a Bit() value to an integer power, not a ' + repr(power))
+        raise TypeError(
+            "You can only raise a Bit() value to an integer power, not a " + repr(power)
+        )
 
     def __lshift__(self, other):
         if isinstance(other, int):
             return Bit(self.bits << other, self.flags)
-        raise TypeError('You can only shift a Bit() value by an integer, not a ' + repr(other))
+        raise TypeError(
+            "You can only shift a Bit() value by an integer, not a " + repr(other)
+        )
 
     def __rlshift__(self, other):
         if isinstance(other, int):
             return Bit(other << self.bits, self.flags)
-        raise TypeError('You can only shift a Bit() value by an integer, not a ' + repr(other))
+        raise TypeError(
+            "You can only shift a Bit() value by an integer, not a " + repr(other)
+        )
 
     def __ilshift__(self, other):
         if isinstance(other, int):
             self.bits <<= other
             return self
-        raise TypeError('You can only shift a Bit() value by an integer, not a ' + repr(other))
+        raise TypeError(
+            "You can only shift a Bit() value by an integer, not a " + repr(other)
+        )
 
     def __rshift__(self, other):
         if isinstance(other, int):
             return Bit(self.bits >> other, self.flags)
-        raise TypeError('You can only shift a Bit() value by an integer, not a ' + repr(other))
+        raise TypeError(
+            "You can only shift a Bit() value by an integer, not a " + repr(other)
+        )
 
     def __rrshift__(self, other):
         if isinstance(other, int):
             return Bit(other >> self.bits, self.flags)
-        raise TypeError('You can only shift a Bit() value by an integer, not a ' + repr(other))
+        raise TypeError(
+            "You can only shift a Bit() value by an integer, not a " + repr(other)
+        )
 
     def __irshift__(self, other):
         if isinstance(other, int):
             self.bits >>= other
             return self
-        raise TypeError('You can only shift a Bit() value by an integer, not a ' + repr(other))
+        raise TypeError(
+            "You can only shift a Bit() value by an integer, not a " + repr(other)
+        )
 
     def __and__(self, other):
         return Bit(self.bits & self.from_name(other), self.flags)
@@ -251,7 +295,7 @@ class Bit:
         return self.bits
 
     def __getattr__(self, name):
-        if not name.startswith('is_'):
+        if not name.startswith("is_"):
             raise AttributeError
         flags = self.flags
         flag = state_checks.name_lookup(flags, name[3:])
@@ -288,7 +332,7 @@ class Bit:
         self.set_bit(default)
         return area
 
-    #lets you chose the flag table. so act/plr flags will save correctly.
+    # lets you chose the flag table. so act/plr flags will save correctly.
     def print_flags(self, flags):
         holder = self._flags
         self._flags = flags
@@ -305,7 +349,7 @@ class Bit:
             bitstring = repr(name)
         else:
             name = name.strip()
-            bitstring = name.split(' ')
+            bitstring = name.split(" ")
         bits = 0
         flags = self.flags
         for tok in flags.values():
@@ -336,11 +380,11 @@ class Bit:
         if outer_encoder is None:
             outer_encoder = json.JSONEncoder.default
 
-        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        cls_name = "__class__/" + __name__ + "." + self.__class__.__name__
         return {
             cls_name: {
-                'bits': outer_encoder(self.bits),
-                'flags': outer_encoder(self.flags),
+                "bits": outer_encoder(self.bits),
+                "flags": outer_encoder(self.flags),
             }
         }
 
@@ -360,8 +404,10 @@ class Bit:
         if outer_decoder is None:
             outer_decoder = json.JSONDecoder.decode
 
-        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        cls_name = "__class__/" + __name__ + "." + cls.__name__
         if cls_name in data:
-            return cls(default=outer_decoder(data[cls_name]['bits']),
-                       flags=outer_decoder(data[cls_name]['flags']))
+            return cls(
+                default=outer_decoder(data[cls_name]["bits"]),
+                flags=outer_decoder(data[cls_name]["flags"]),
+            )
         return data

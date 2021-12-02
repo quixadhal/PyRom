@@ -9,6 +9,7 @@ from rom24 import game_utils
 from rom24 import handler_game
 from rom24 import state_checks
 
+
 def do_put(ch, argument):
     argument, arg1 = game_utils.read_word(argument)
     argument, arg2 = game_utils.read_word(argument)
@@ -46,12 +47,12 @@ def do_put(ch, argument):
         if state_checks.WEIGHT_MULT(item) != 100:
             ch.send("You have a feeling that would be a bad idea.\n")
             return
-        if item.get_weight() + container.true_weight() > (container.value[0] * 10) \
-                or item.get_weight() > (container.value[3] * 10):
+        if item.get_weight() + container.true_weight() > (
+            container.value[0] * 10
+        ) or item.get_weight() > (container.value[3] * 10):
             ch.send("It won't fit.\n")
             return
-        if container.vnum == merc.OBJ_VNUM_PIT \
-                and not container.flags.take:
+        if container.vnum == merc.OBJ_VNUM_PIT and not container.flags.take:
             if item.timer:
                 item.flags.had_timer = True
             else:
@@ -68,12 +69,17 @@ def do_put(ch, argument):
     else:
         # 'put all container' or 'put all.obj container'
         for item in ch.inventory[:]:
-            if (len(arg1) == 3 or arg1[4:] in item.name ) \
-                    and ch.can_see_item(item) and state_checks.WEIGHT_MULT(item) == 100 \
-                    and not item.equipped_to and item != container \
-                    and ch.can_drop_item(item) \
-                    and item.get_weight() + container.true_weight() <= (container.value[0] * 10) \
-                    and item.get_weight() < (container.value[3] * 10):
+            if (
+                (len(arg1) == 3 or arg1[4:] in item.name)
+                and ch.can_see_item(item)
+                and state_checks.WEIGHT_MULT(item) == 100
+                and not item.equipped_to
+                and item != container
+                and ch.can_drop_item(item)
+                and item.get_weight() + container.true_weight()
+                <= (container.value[0] * 10)
+                and item.get_weight() < (container.value[3] * 10)
+            ):
                 if container.vnum == merc.OBJ_VNUM_PIT and not item.flags.take:
                     if item.timer:
                         item.flags.had_timer = True
@@ -82,11 +88,21 @@ def do_put(ch, argument):
                 ch.get(item)
                 container.put(item)
                 if state_checks.IS_SET(container.value[1], merc.CONT_PUT_ON):
-                    handler_game.act("$n puts $p on $P.", ch, item, container, merc.TO_ROOM)
-                    handler_game.act("You put $p on $P.", ch, item, container, merc.TO_CHAR)
+                    handler_game.act(
+                        "$n puts $p on $P.", ch, item, container, merc.TO_ROOM
+                    )
+                    handler_game.act(
+                        "You put $p on $P.", ch, item, container, merc.TO_CHAR
+                    )
                 else:
-                    handler_game.act("$n puts $p in $P.", ch, item, container, merc.TO_ROOM)
-                    handler_game.act("You put $p in $P.", ch, item, container, merc.TO_CHAR)
+                    handler_game.act(
+                        "$n puts $p in $P.", ch, item, container, merc.TO_ROOM
+                    )
+                    handler_game.act(
+                        "You put $p in $P.", ch, item, container, merc.TO_CHAR
+                    )
 
 
-interp.register_command(interp.cmd_type('put', do_put, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("put", do_put, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)

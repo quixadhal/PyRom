@@ -93,4 +93,6 @@ def do_string(ch, argument):
     ch.do_string("")
 
 
-interp.register_command(interp.cmd_type('string', do_string, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type("string", do_string, merc.POS_DEAD, merc.L5, merc.LOG_ALWAYS, 1)
+)

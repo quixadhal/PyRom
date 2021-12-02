@@ -18,12 +18,16 @@ def do_yell(ch, argument):
         return
     handler_game.act("You yell '$t'", ch, argument, None, merc.TO_CHAR)
     for d in merc.descriptor_list:
-        if d.is_connected(nanny.con_playing) \
-                and d.character != ch \
-                and d.character.in_room is not None \
-                and d.character.in_room.area == ch.in_room.area \
-                and not state_checks.IS_SET(d.character.comm, merc.COMM_QUIET):
+        if (
+            d.is_connected(nanny.con_playing)
+            and d.character != ch
+            and d.character.in_room is not None
+            and d.character.in_room.area == ch.in_room.area
+            and not state_checks.IS_SET(d.character.comm, merc.COMM_QUIET)
+        ):
             handler_game.act("$n yells '$t'", ch, argument, d.character, merc.TO_VICT)
 
 
-interp.register_command(interp.cmd_type('yell', do_yell, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("yell", do_yell, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)

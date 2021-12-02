@@ -23,9 +23,18 @@ def do_mload(ch, argument):
     victim = object_creator.create_mobile(template)
     ch.in_room.put(victim)
     handler_game.act("$n has created $N!", ch, None, victim, merc.TO_ROOM)
-    handler_game.wiznet("$N loads %s." % victim.short_descr, ch, None, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.trust)
+    handler_game.wiznet(
+        "$N loads %s." % victim.short_descr,
+        ch,
+        None,
+        merc.WIZ_LOAD,
+        merc.WIZ_SECURE,
+        ch.trust,
+    )
     ch.send("Ok.\n")
     return
 
 
-interp.register_command(interp.cmd_type('mload', do_mload, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type("mload", do_mload, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)
+)

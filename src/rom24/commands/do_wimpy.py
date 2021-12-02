@@ -24,4 +24,6 @@ def do_wimpy(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('wimpy', do_wimpy, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("wimpy", do_wimpy, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

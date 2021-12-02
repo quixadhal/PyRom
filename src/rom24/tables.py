@@ -1,13 +1,12 @@
-
 from collections import OrderedDict, namedtuple
 import logging
 
 logger = logging.getLogger(__name__)
 
-clan_type = namedtuple('clan_type', 'name, who_name, hall, independent')
+clan_type = namedtuple("clan_type", "name, who_name, hall, independent")
 clan_table = OrderedDict()
 
-position_type = namedtuple('position_type', 'name, short_name')
+position_type = namedtuple("position_type", "name, short_name")
 position_table = OrderedDict()
 
 sex_table = OrderedDict()
@@ -16,7 +15,7 @@ sex_table = OrderedDict()
 size_table = []
 
 # various flag tables */
-flag_type = namedtuple('flag_type', 'name, bit, settable')
+flag_type = namedtuple("flag_type", "name, bit, settable")
 act_flags = OrderedDict()
 plr_flags = OrderedDict()
 affect_flags = OrderedDict()

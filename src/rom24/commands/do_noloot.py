@@ -17,4 +17,6 @@ def do_noloot(ch, argument):
         ch.act.set_bit(merc.PLR_CANLOOT)
 
 
-interp.register_command(interp.cmd_type('noloot', do_noloot, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("noloot", do_noloot, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

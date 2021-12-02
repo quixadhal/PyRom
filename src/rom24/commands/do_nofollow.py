@@ -19,4 +19,6 @@ def do_nofollow(ch, argument):
         handler_ch.die_follower(ch)
 
 
-interp.register_command(interp.cmd_type('nofollow', do_nofollow, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("nofollow", do_nofollow, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

@@ -17,7 +17,7 @@ def do_zap(ch, argument):
     if not arg and not ch.fighting:
         ch.send("Zap whom or what?\n")
         return
-    wand = ch.get_eq('held')
+    wand = ch.get_eq("held")
     if not wand:
         ch.send("You hold nothing in your hand.\n")
         return
@@ -48,21 +48,41 @@ def do_zap(ch, argument):
         else:
             handler_game.act("$n zaps $P with $p.", ch, wand, obj, merc.TO_ROOM)
             handler_game.act("You zap $P with $p.", ch, wand, obj, merc.TO_CHAR)
-        if ch.level < wand.level \
-                or random.randint(1, 99) >= 20 + ch.get_skill("wands") * 4 // 5:
-            handler_game.act("Your efforts with $p produce only smoke and sparks.", ch, wand, None, merc.TO_CHAR)
-            handler_game.act("$n's efforts with $p produce only smoke and sparks.", ch, wand, None, merc.TO_ROOM)
+        if (
+            ch.level < wand.level
+            or random.randint(1, 99) >= 20 + ch.get_skill("wands") * 4 // 5
+        ):
+            handler_game.act(
+                "Your efforts with $p produce only smoke and sparks.",
+                ch,
+                wand,
+                None,
+                merc.TO_CHAR,
+            )
+            handler_game.act(
+                "$n's efforts with $p produce only smoke and sparks.",
+                ch,
+                wand,
+                None,
+                merc.TO_ROOM,
+            )
             if ch.is_pc:
-                ch.check_improve( "wands", False, 2)
+                ch.check_improve("wands", False, 2)
         else:
             handler_magic.obj_cast_spell(wand.value[3], wand.value[0], ch, victim, obj)
             if ch.is_pc:
-                ch.check_improve( "wands", True, 2)
+                ch.check_improve("wands", True, 2)
     wand.value[2] -= 1
     if wand.value[2] <= 0:
-        handler_game.act("$n's $p explodes into fragments.", ch, wand, None, merc.TO_ROOM)
-        handler_game.act("Your $p explodes into fragments.", ch, wand, None, merc.TO_CHAR)
+        handler_game.act(
+            "$n's $p explodes into fragments.", ch, wand, None, merc.TO_ROOM
+        )
+        handler_game.act(
+            "Your $p explodes into fragments.", ch, wand, None, merc.TO_CHAR
+        )
         wand.extract()
 
 
-interp.register_command(interp.cmd_type('zap', do_zap, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("zap", do_zap, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)

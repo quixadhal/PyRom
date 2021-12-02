@@ -14,8 +14,20 @@ def spell_cure_light(sn, level, ch, victim, target):
     return
 
 
-const.register_spell(const.skill_type("cure light",
-                          {'mage': 53, 'cleric': 1, 'thief': 53, 'warrior': 3},
-                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_cure_light, merc.TAR_CHAR_DEFENSIVE, merc.POS_FIGHTING,
-                          None, const.SLOT(16), 10, 12, "", "!Cure Light!", ""))
+const.register_spell(
+    const.skill_type(
+        "cure light",
+        {"mage": 53, "cleric": 1, "thief": 53, "warrior": 3},
+        {"mage": 1, "cleric": 1, "thief": 2, "warrior": 2},
+        spell_cure_light,
+        merc.TAR_CHAR_DEFENSIVE,
+        merc.POS_FIGHTING,
+        None,
+        const.SLOT(16),
+        10,
+        12,
+        "",
+        "!Cure Light!",
+        "",
+    )
+)

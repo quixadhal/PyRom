@@ -12,7 +12,6 @@ from rom24 import state_checks
 from rom24 import update
 
 
-
 def do_recall(ch, argument):
     if ch.is_npc() and not ch.act.is_set(merc.ACT_PET):
         ch.send("Only players can recall.\n")
@@ -24,7 +23,9 @@ def do_recall(ch, argument):
         return
     if ch.in_room == location:
         return
-    if state_checks.IS_SET(ch.in_room.room_flags, merc.ROOM_NO_RECALL) or ch.is_affected(merc.AFF_CURSE):
+    if state_checks.IS_SET(
+        ch.in_room.room_flags, merc.ROOM_NO_RECALL
+    ) or ch.is_affected(merc.AFF_CURSE):
         ch.send("Mota has forsaken you.\n")
         return
     victim = ch.fighting
@@ -32,14 +33,14 @@ def do_recall(ch, argument):
         skill = ch.get_skill("recall")
         if random.randint(1, 99) < 80 * skill / 100:
             if ch.is_pc:
-                ch.check_improve( "recall", False, 6)
+                ch.check_improve("recall", False, 6)
             state_checks.WAIT_STATE(ch, 4)
             ch.send("You failed!.\n")
             return
         lose = 25 if ch.desc else 50
         update.gain_exp(ch, 0 - lose)
         if ch.is_pc:
-            ch.check_improve( "recall", True, 4)
+            ch.check_improve("recall", True, 4)
         ch.send("You recall from combat!  You lose %d exps.\n" % lose)
         fight.stop_fighting(ch, True)
     ch.move /= 2
@@ -54,5 +55,9 @@ def do_recall(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type("recall", do_recall, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1))
-interp.register_command(interp.cmd_type("/", do_recall, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 0))
+interp.register_command(
+    interp.cmd_type("recall", do_recall, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)
+)
+interp.register_command(
+    interp.cmd_type("/", do_recall, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 0)
+)

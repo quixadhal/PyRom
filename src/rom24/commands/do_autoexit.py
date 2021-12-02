@@ -18,4 +18,6 @@ def do_autoexit(ch, argument):
         ch.act.set_bit(merc.PLR_AUTOEXIT)
 
 
-interp.register_command(interp.cmd_type('autoexit', do_autoexit, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("autoexit", do_autoexit, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

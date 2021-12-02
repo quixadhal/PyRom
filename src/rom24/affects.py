@@ -1,4 +1,3 @@
-
 import copy
 import json
 import logging
@@ -32,7 +31,7 @@ class Affects:
             else:
                 tmp_dict[k] = v
 
-        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        cls_name = "__class__/" + __name__ + "." + self.__class__.__name__
         return {cls_name: outer_encoder(tmp_dict)}
 
     @classmethod
@@ -40,7 +39,7 @@ class Affects:
         if outer_decoder is None:
             outer_decoder = json.JSONDecoder.decode
 
-        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        cls_name = "__class__/" + __name__ + "." + cls.__name__
         if cls_name in data:
             tmp_data = outer_decoder(data[cls_name])
             return cls(**tmp_data)
@@ -50,7 +49,9 @@ class Affects:
         if isinstance(aff, const.skill_type):
             aff = aff.name
         if type(aff) == str:
-            return True if [paf for paf in self.affected if paf.type == aff][:1] else False
+            return (
+                True if [paf for paf in self.affected if paf.type == aff][:1] else False
+            )
         return self.affected_by.is_set(aff)
 
     def affect_add(self, paf):
@@ -72,6 +73,7 @@ class Affects:
 
         self.affect_add(paf)
         return
+
     # * Remove an affect from a char.
     def affect_remove(self, paf):
         if not self.affected:
@@ -218,8 +220,12 @@ class Affects:
         # * Check for weapon wielding.
         # * Guard against recursion (for weapons with affects).
         wield = self.slots.main_hand
-        if not self.is_npc() and wield \
-                and wield.get_weight() > (const.str_app[self.stat(merc.STAT_STR)].wield * 10):
+        if (
+            not self.is_npc()
+            and wield
+            and wield.get_weight()
+            > (const.str_app[self.stat(merc.STAT_STR)].wield * 10)
+        ):
             global depth
             if depth == 0:
                 depth += 1

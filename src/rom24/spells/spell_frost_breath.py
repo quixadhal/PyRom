@@ -10,8 +10,16 @@ from rom24 import merc
 
 
 def spell_frost_breath(sn, level, ch, victim, target):
-    handler_game.act("$n breathes out a freezing cone of frost! ", ch, None, victim, merc.TO_NOTVICT)
-    handler_game.act("$n breathes a freezing cone of frost over you! ", ch, None, victim, merc.TO_VICT)
+    handler_game.act(
+        "$n breathes out a freezing cone of frost! ", ch, None, victim, merc.TO_NOTVICT
+    )
+    handler_game.act(
+        "$n breathes a freezing cone of frost over you! ",
+        ch,
+        None,
+        victim,
+        merc.TO_VICT,
+    )
     handler_game.act("You breath out a cone of frost.", ch, None, None, merc.TO_CHAR)
 
     hpch = max(12, ch.hit)
@@ -22,7 +30,9 @@ def spell_frost_breath(sn, level, ch, victim, target):
     effects.cold_effect(victim.in_room, level, dam // 2, merc.TARGET_ROOM)
 
     for vch in victim.in_room.people[:]:
-        if fight.is_safe_spell(ch, vch, True) or (vch.is_npc() and ch.is_npc() and (ch.fighting != vch or vch.fighting != ch)):
+        if fight.is_safe_spell(ch, vch, True) or (
+            vch.is_npc() and ch.is_npc() and (ch.fighting != vch or vch.fighting != ch)
+        ):
             continue
 
         if vch == victim:  # full damage */
@@ -41,8 +51,20 @@ def spell_frost_breath(sn, level, ch, victim, target):
                 fight.damage(ch, vch, dam // 2, sn, merc.DAM_COLD, True)
 
 
-const.register_spell(const.skill_type("frost breath",
-                          {'mage': 34, 'cleric': 36, 'thief': 38, 'warrior': 40},
-                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_frost_breath, merc.TAR_CHAR_OFFENSIVE, merc.POS_FIGHTING,
-                          None, const.SLOT(202), 125, 24, "blast of frost", "!Frost Breath!", ""))
+const.register_spell(
+    const.skill_type(
+        "frost breath",
+        {"mage": 34, "cleric": 36, "thief": 38, "warrior": 40},
+        {"mage": 1, "cleric": 1, "thief": 2, "warrior": 2},
+        spell_frost_breath,
+        merc.TAR_CHAR_OFFENSIVE,
+        merc.POS_FIGHTING,
+        None,
+        const.SLOT(202),
+        125,
+        24,
+        "blast of frost",
+        "!Frost Breath!",
+        "",
+    )
+)

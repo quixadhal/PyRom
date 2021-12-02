@@ -19,7 +19,10 @@ def do_affects(ch, argument):
             else:
                 ch.send("Spell: %-15s" % paf.type.name)
             if ch.level >= 20:
-                ch.send(": modifies %s by %d " % (merc.affect_loc_name(paf.location), paf.modifier))
+                ch.send(
+                    ": modifies %s by %d "
+                    % (merc.affect_loc_name(paf.location), paf.modifier)
+                )
             if paf.duration == -1:
                 ch.send("permanently")
             else:
@@ -30,4 +33,6 @@ def do_affects(ch, argument):
         ch.send("You are not affected by any spells.\n")
 
 
-interp.register_command(interp.cmd_type('affects', do_affects, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("affects", do_affects, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

@@ -14,8 +14,12 @@ def do_equipment(ch, argument):
         item = ch.get_eq(slot)
         if not item:
             continue
-        if item.flags.two_handed and ch.equipped['off_hand'] == item.instance_id and 'off_hand' in slot:
-                continue
+        if (
+            item.flags.two_handed
+            and ch.equipped["off_hand"] == item.instance_id
+            and "off_hand" in slot
+        ):
+            continue
         else:
             ch.send(merc.eq_slot_strings[slot])
             if ch.can_see_item(item):
@@ -27,4 +31,6 @@ def do_equipment(ch, argument):
         ch.send("Nothing.\n")
 
 
-interp.register_command(interp.cmd_type('equipment', do_equipment, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("equipment", do_equipment, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

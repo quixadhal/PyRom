@@ -27,6 +27,7 @@ class Pc(living.Living):
 
     def __init__(self, template=None, **kwargs):
         from rom24 import handler_item
+
         super().__init__()
         self.is_pc = True
         self.buffer = []
@@ -80,10 +81,14 @@ class Pc(living.Living):
                         self.environment = None
                 if self.inventory:
                     for instance_id in self.inventory[:]:
-                        handler_item.Items.load(instance_id=instance_id, player_name=self.name)
+                        handler_item.Items.load(
+                            instance_id=instance_id, player_name=self.name
+                        )
                 for item_id in self.equipped.values():
                     if item_id:
-                        handler_item.Items.load(instance_id=item_id, player_name=self.name)
+                        handler_item.Items.load(
+                            instance_id=item_id, player_name=self.name
+                        )
             self.instance_setup()
         if self.instance_id:
             Pc.instance_count += 1
@@ -133,14 +138,14 @@ class Pc(living.Living):
     def title(self, title):
         if self.is_npc():
             return
-        nospace = ['.', ',', '!', '?']
+        nospace = [".", ",", "!", "?"]
         if title[0] in nospace:
             self._title = title
         else:
-            self._title = ' ' + title
+            self._title = " " + title
 
     def get_age(self):
-            return 17 + (self.played + int(time.time() - self.logon)) // 72000
+        return 17 + (self.played + int(time.time() - self.logon)) // 72000
 
     # command for returning max training score
     def get_max_train(self, stat):
@@ -150,7 +155,7 @@ class Pc(living.Living):
                 max += 3
             else:
                 max += 2
-        return min(max,25)
+        return min(max, 25)
 
     # recursively adds a group given its number -- uses group_add */
     def gn_add(self, gn):
@@ -215,13 +220,21 @@ class Pc(living.Living):
         if self.is_npc():
             return
         col = 0
-        self.send("%-18s %-5s %-18s %-5s %-18s %-5s\n" % ("group", "cp", "group", "cp", "group", "cp"))
+        self.send(
+            "%-18s %-5s %-18s %-5s %-18s %-5s\n"
+            % ("group", "cp", "group", "cp", "group", "cp")
+        )
 
         for gn, group in const.group_table.items():
-            if gn not in self.gen_data.group_chosen \
-                    and gn not in self.group_known \
-                    and group.rating[self.guild.name] > 0:
-                self.send("%-18s %-5d " % (const.group_table[gn].name, group.rating[self.guild.name]))
+            if (
+                gn not in self.gen_data.group_chosen
+                and gn not in self.group_known
+                and group.rating[self.guild.name] > 0
+            ):
+                self.send(
+                    "%-18s %-5d "
+                    % (const.group_table[gn].name, group.rating[self.guild.name])
+                )
                 col += 1
                 if col % 3 == 0:
                     self.send("\n")
@@ -230,13 +243,18 @@ class Pc(living.Living):
         self.send("\n")
         col = 0
 
-        self.send("%-18s %-5s %-18s %-5s %-18s %-5s\n" % ("skill", "cp", "skill", "cp", "skill", "cp"))
+        self.send(
+            "%-18s %-5s %-18s %-5s %-18s %-5s\n"
+            % ("skill", "cp", "skill", "cp", "skill", "cp")
+        )
 
         for sn, skill in const.skill_table.items():
-            if sn not in self.gen_data.skill_chosen \
-                    and sn not in self.learned \
-                    and skill.spell_fun is None \
-                    and skill.rating[self.guild.name] > 0:
+            if (
+                sn not in self.gen_data.skill_chosen
+                and sn not in self.learned
+                and skill.spell_fun is None
+                and skill.rating[self.guild.name] > 0
+            ):
                 self.send("%-18s %-5d " % (skill.name, skill.rating[self.guild.name]))
                 col += 1
                 if col % 3 == 0:
@@ -246,14 +264,20 @@ class Pc(living.Living):
         self.send("\n")
 
         self.send("Creation points: %d\n" % self.points)
-        self.send("Experience per level: %d\n" % self.exp_per_level(self.gen_data.points_chosen))
+        self.send(
+            "Experience per level: %d\n"
+            % self.exp_per_level(self.gen_data.points_chosen)
+        )
         return
 
     def list_group_chosen(self):
         if self.is_npc():
             return
         col = 0
-        self.send("%-18s %-5s %-18s %-5s %-18s %-5s" % ("group", "cp", "group", "cp", "group", "cp\n"))
+        self.send(
+            "%-18s %-5s %-18s %-5s %-18s %-5s"
+            % ("group", "cp", "group", "cp", "group", "cp\n")
+        )
 
         for gn, group in const.group_table.items():
             if gn in self.gen_data.group_chosen and group.rating[self.guild.name] > 0:
@@ -267,7 +291,10 @@ class Pc(living.Living):
 
         col = 0
 
-        self.send("%-18s %-5s %-18s %-5s %-18s %-5s" % ("skill", "cp", "skill", "cp", "skill", "cp\n"))
+        self.send(
+            "%-18s %-5s %-18s %-5s %-18s %-5s"
+            % ("skill", "cp", "skill", "cp", "skill", "cp\n")
+        )
 
         for sn, skill in const.skill_table.items():
             if sn in self.gen_data.skill_chosen and skill.rating[self.guild.name] > 0:
@@ -280,12 +307,16 @@ class Pc(living.Living):
         self.send("\n")
 
         self.send("Creation points: %d\n" % self.gen_data.points_chosen)
-        self.send("Experience per level: %d\n" % self.exp_per_level(self.gen_data.points_chosen))
+        self.send(
+            "Experience per level: %d\n"
+            % self.exp_per_level(self.gen_data.points_chosen)
+        )
         return
 
     # this procedure handles the input parsing for the skill generator */
     def parse_gen_groups(self, argument):
         from game_utils import read_word
+
         if not argument.strip():
             return False
 
@@ -404,15 +435,17 @@ class Pc(living.Living):
         if type(sn) == str:
             sn = const.skill_table[sn]
 
-        if self.level < sn.skill_level[self.guild.name] \
-                or sn.rating[self.guild.name] == 0 \
-                or sn.name not in self.learned \
-                or self.learned[sn.name] == 100:
+        if (
+            self.level < sn.skill_level[self.guild.name]
+            or sn.rating[self.guild.name] == 0
+            or sn.name not in self.learned
+            or self.learned[sn.name] == 100
+        ):
             return  # skill is not known */
 
         # check to see if the character has a chance to learn */
         chance = 10 * const.int_app[self.stat(merc.STAT_INT)].learn
-        chance //= (multiplier * sn.rating[self.guild.name] * 4)
+        chance //= multiplier * sn.rating[self.guild.name] * 4
         chance += self.level
 
         if random.randint(1, 1000) > chance:
@@ -429,7 +462,10 @@ class Pc(living.Living):
         else:
             chance = max(5, min(self.learned[sn.name] / 2, 30))
             if random.randint(1, 99) < chance:
-                self.send("You learn from your mistakes, and your %s skill improves.\n" % sn.name)
+                self.send(
+                    "You learn from your mistakes, and your %s skill improves.\n"
+                    % sn.name
+                )
                 self.learned[sn.name] += random.randint(1, 3)
                 self.learned[sn.name] = min(self.learned[sn.name], 100)
                 update.gain_exp(self, 2 * sn.rating[self.guild.name])
@@ -475,12 +511,18 @@ class Pc(living.Living):
             handler_game.act(cmd.char_found, ch, None, victim, merc.TO_CHAR)
             handler_game.act(cmd.vict_found, ch, None, victim, merc.TO_VICT)
 
-            if not ch.is_npc() and victim.is_npc() \
-                    and not victim.is_affected(merc.AFF_CHARM) \
-                    and state_checks.IS_AWAKE(victim) and victim.desc is None:
+            if (
+                not ch.is_npc()
+                and victim.is_npc()
+                and not victim.is_affected(merc.AFF_CHARM)
+                and state_checks.IS_AWAKE(victim)
+                and victim.desc is None
+            ):
                 num = random.randint(0, 12)
                 if num in [0, 1, 2, 3, 4, 5, 6, 7, 8]:
-                    handler_game.act(cmd.others_found, victim, None, ch, merc.TO_NOTVICT)
+                    handler_game.act(
+                        cmd.others_found, victim, None, ch, merc.TO_NOTVICT
+                    )
                     handler_game.act(cmd.char_found, victim, None, ch, merc.TO_CHAR)
                     handler_game.act(cmd.vict_found, victim, None, ch, merc.TO_VICT)
 
@@ -519,10 +561,12 @@ class Pc(living.Living):
             if cmd.level > trust:
                 cmd = None
 
-        #* Log and snoop.
-        if (not self.is_npc() and self.act.is_set(merc.PLR_LOG)) \
-                or settings.LOGALL \
-                or (cmd and cmd.log == merc.LOG_ALWAYS):
+        # * Log and snoop.
+        if (
+            (not self.is_npc() and self.act.is_set(merc.PLR_LOG))
+            or settings.LOGALL
+            or (cmd and cmd.log == merc.LOG_ALWAYS)
+        ):
             if cmd and cmd.log != merc.LOG_NEVER:
                 log_buf = "Log %s: %s" % (self.name, logline)
                 handler_game.wiznet(log_buf, self, None, merc.WIZ_SECURE, 0, self.trust)
@@ -532,20 +576,19 @@ class Pc(living.Living):
             self.desc.snoop_by.send(logline)
             self.desc.snoop_by.send("\n")
         if not cmd:
-            #* Look for command in socials table.
+            # * Look for command in socials table.
             if not Pc.check_social(self, command, argument):
                 if settings.DETAILED_INVALID_COMMANDS:
-                    #TODO: Levenshtein distance over cmd_table, also add a wait_state to prevent horrors
+                    # TODO: Levenshtein distance over cmd_table, also add a wait_state to prevent horrors
                     self.send("Huh? '%s' is not a valid command." % command)
                 else:
                     self.send("Huh?\n")
             return
-        #* Pc not in position for command?
+        # * Pc not in position for command?
         if self.position < cmd.position:
             if self.position == merc.POS_DEAD:
                 self.send("Lie still; you are DEAD.\n")
-            elif self.position == merc.POS_MORTAL \
-                    or self.position == merc.POS_INCAP:
+            elif self.position == merc.POS_MORTAL or self.position == merc.POS_INCAP:
                 self.send("You are hurt far too bad for that.\n")
             elif self.position == merc.POS_STUNNED:
                 self.send("You are too stunned to do that.\n")
@@ -574,14 +617,14 @@ class Pc(living.Living):
         for k, v in self.__dict__.items():
             if str(type(v)) in ("<class 'function'>", "<class 'method'>"):
                 continue
-            elif str(k) in ('desc', 'send'):
+            elif str(k) in ("desc", "send"):
                 continue
-            elif str(k) in ('_last_saved', '_md5'):
+            elif str(k) in ("_last_saved", "_md5"):
                 continue
             else:
                 tmp_dict[k] = v
 
-        cls_name = '__class__/' + __name__ + '.' + self.__class__.__name__
+        cls_name = "__class__/" + __name__ + "." + self.__class__.__name__
         return {cls_name: outer_encoder(tmp_dict)}
 
     @classmethod
@@ -589,55 +632,58 @@ class Pc(living.Living):
         if outer_decoder is None:
             outer_decoder = json.JSONDecoder.decode
 
-        cls_name = '__class__/' + __name__ + '.' + cls.__name__
+        cls_name = "__class__/" + __name__ + "." + cls.__name__
         if cls_name in data:
             tmp_data = outer_decoder(data[cls_name])
             return cls(**tmp_data)
         return data
 
-    def save_stub(self, logout: bool=False):
+    def save_stub(self, logout: bool = False):
         if logout:
             self._last_logout = time.time()
-        pathname = os.path.join(settings.PLAYER_DIR, self.name[0].lower(), self.name.capitalize())
+        pathname = os.path.join(
+            settings.PLAYER_DIR, self.name[0].lower(), self.name.capitalize()
+        )
         os.makedirs(pathname, 0o755, True)
-        filename = os.path.join(pathname, 'login.json')
+        filename = os.path.join(pathname, "login.json")
         stub = dict({})
-        stub['name'] = self.name
-        stub['pwd'] = self.pwd
-        stub['auth'] = self.auth
-        stub['is_immortal'] = self.is_immortal()
-        stub['is_banned'] = self.act.is_set(merc.PLR_DENY)
-        stub['instance_id'] = self.instance_id
-        stub['last_login'] = self._last_login
-        stub['last_logout'] = self._last_logout
-        stub['room'] = self._saved_room_vnum
+        stub["name"] = self.name
+        stub["pwd"] = self.pwd
+        stub["auth"] = self.auth
+        stub["is_immortal"] = self.is_immortal()
+        stub["is_banned"] = self.act.is_set(merc.PLR_DENY)
+        stub["instance_id"] = self.instance_id
+        stub["last_login"] = self._last_login
+        stub["last_logout"] = self._last_logout
+        stub["room"] = self._saved_room_vnum
         js = json.dumps(stub, default=instance.to_json, indent=4, sort_keys=True)
-        with open(filename, 'w') as fp:
+        with open(filename, "w") as fp:
             fp.write(js)
 
-
     @classmethod
-    def load_stub(cls, player_name: str=None):
+    def load_stub(cls, player_name: str = None):
         if not player_name:
-            raise KeyError('Player name is required to load a player!')
+            raise KeyError("Player name is required to load a player!")
 
-        pathname = os.path.join(settings.PLAYER_DIR, player_name[0].lower(), player_name.capitalize())
-        filename = os.path.join(pathname, 'login.json')
+        pathname = os.path.join(
+            settings.PLAYER_DIR, player_name[0].lower(), player_name.capitalize()
+        )
+        filename = os.path.join(pathname, "login.json")
 
         if os.path.isfile(filename):
-            logger.info('Loading %s player stub data', player_name)
-            with open(filename, 'r') as fp:
+            logger.info("Loading %s player stub data", player_name)
+            with open(filename, "r") as fp:
                 data = json.load(fp, object_hook=instance.from_json)
             if isinstance(data, dict):
                 return data
             else:
-                logger.error('Could not load player stub file for %s', player_name)
+                logger.error("Could not load player stub file for %s", player_name)
                 return None
         else:
-            logger.error('Could not open player stub file for %s', player_name)
+            logger.error("Could not open player stub file for %s", player_name)
             return None
 
-    def save(self, logout: bool=False, force: bool=False):
+    def save(self, logout: bool = False, force: bool = False):
         if self._last_saved is None:
             self._last_saved = time.time() - settings.SAVE_LIMITER - 2
         if not force and time.time() < self._last_saved + settings.SAVE_LIMITER:
@@ -645,15 +691,17 @@ class Pc(living.Living):
 
         self._last_saved = time.time()
         self.save_stub(logout)
-        pathname = os.path.join(settings.PLAYER_DIR, self.name[0].lower(), self.name.capitalize())
+        pathname = os.path.join(
+            settings.PLAYER_DIR, self.name[0].lower(), self.name.capitalize()
+        )
         os.makedirs(pathname, 0o755, True)
-        filename = os.path.join(pathname, 'player.json')
+        filename = os.path.join(pathname, "player.json")
         # logger.info('Saving %s', filename)
         js = json.dumps(self, default=instance.to_json, indent=4, sort_keys=True)
-        md5 = hashlib.md5(js.encode('utf-8')).hexdigest()
+        md5 = hashlib.md5(js.encode("utf-8")).hexdigest()
         if self._md5 != md5:
             self._md5 = md5
-            with open(filename, 'w') as fp:
+            with open(filename, "w") as fp:
                 fp.write(js)
 
         if self.inventory:
@@ -672,16 +720,18 @@ class Pc(living.Living):
                 item.save(is_equipped=True, player_name=self.name, force=force)
 
     @classmethod
-    def load(cls, player_name: str=None):
+    def load(cls, player_name: str = None):
         if not player_name:
-            raise KeyError('Player name is required to load a player!')
+            raise KeyError("Player name is required to load a player!")
 
-        pathname = os.path.join(settings.PLAYER_DIR, player_name[0].lower(), player_name.capitalize())
-        filename = os.path.join(pathname, 'player.json')
+        pathname = os.path.join(
+            settings.PLAYER_DIR, player_name[0].lower(), player_name.capitalize()
+        )
+        filename = os.path.join(pathname, "player.json")
 
         if os.path.isfile(filename):
-            logger.info('Loading %s player data', player_name)
-            with open(filename, 'r') as fp:
+            logger.info("Loading %s player data", player_name)
+            with open(filename, "r") as fp:
                 obj = json.load(fp, object_hook=instance.from_json)
             if isinstance(obj, Pc):
                 obj._last_login = time.time()
@@ -689,14 +739,18 @@ class Pc(living.Living):
                 # This just ensures that all items the player has are actually loaded.
                 if obj.inventory:
                     for item_id in obj.inventory[:]:
-                        handler_item.Items.load(instance_id=item_id, player_name=player_name)
+                        handler_item.Items.load(
+                            instance_id=item_id, player_name=player_name
+                        )
                 for item_id in obj.equipped.values():
                     if item_id:
-                        handler_item.Items.load(instance_id=item_id, player_name=player_name)
+                        handler_item.Items.load(
+                            instance_id=item_id, player_name=player_name
+                        )
                 return obj
             else:
-                logger.error('Could not load player file for %s', player_name)
+                logger.error("Could not load player file for %s", player_name)
                 return None
         else:
-            logger.error('Could not open player file for %s', player_name)
+            logger.error("Could not open player file for %s", player_name)
             return None

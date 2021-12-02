@@ -37,18 +37,25 @@ def do_order(ch, argument):
         if victim == ch:
             ch.send("Aye aye, right away!\n")
             return
-        if not victim.is_affected( merc.AFF_CHARM) or victim.master != ch \
-                or (state_checks.IS_IMMORTAL(victim) and victim.trust >= ch.trust):
+        if (
+            not victim.is_affected(merc.AFF_CHARM)
+            or victim.master != ch
+            or (state_checks.IS_IMMORTAL(victim) and victim.trust >= ch.trust)
+        ):
             ch.send("Do it yourself!\n")
             return
     found = False
     for och_id in ch.in_room.people[:]:
         och = instance.characters[och_id]
-        if state_checks.IS_AFFECTED(och, merc.AFF_CHARM) \
-                and och.master == ch \
-                and (fAll or och == victim):
+        if (
+            state_checks.IS_AFFECTED(och, merc.AFF_CHARM)
+            and och.master == ch
+            and (fAll or och == victim)
+        ):
             found = True
-            handler_game.act("$n orders you to '%s'." % argument, ch, None, och, merc.TO_VICT)
+            handler_game.act(
+                "$n orders you to '%s'." % argument, ch, None, och, merc.TO_VICT
+            )
             och.interpret(argument)
 
     if found:
@@ -59,4 +66,6 @@ def do_order(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('order', do_order, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("order", do_order, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)

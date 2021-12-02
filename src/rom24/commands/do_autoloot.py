@@ -18,4 +18,6 @@ def do_autoloot(ch, argument):
         ch.act.set_bit(merc.PLR_AUTOLOOT)
 
 
-interp.register_command(interp.cmd_type('autoloot', do_autoloot, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("autoloot", do_autoloot, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

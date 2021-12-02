@@ -71,7 +71,11 @@ def acid_effect(vo, level, dam, target):
 
         chance -= item.level * 2
 
-        if item.item_type == merc.ITEM_CONTAINER or item.item_type == merc.ITEM_CORPSE_PC or item.item_type == merc.ITEM_CORPSE_NPC:
+        if (
+            item.item_type == merc.ITEM_CONTAINER
+            or item.item_type == merc.ITEM_CORPSE_PC
+            or item.item_type == merc.ITEM_CORPSE_NPC
+        ):
             msg = "$p fumes and dissolves."
         elif item.item_type == merc.ITEM_ARMOR:
             msg = "$p is pitted and etched."
@@ -148,10 +152,14 @@ def cold_effect(vo, level, dam, target):
         # chill touch effect */
         if not handler_magic.saves_spell(level / 4 + dam / 20, victim, merc.DAM_COLD):
             af = handler_game.AFFECT_DATA()
-            handler_game.act("$n turns blue and shivers.", victim, None, None, merc.TO_ROOM)
-            handler_game.act("A chill sinks deep into your bones.", victim, None, None, merc.TO_CHAR)
+            handler_game.act(
+                "$n turns blue and shivers.", victim, None, None, merc.TO_ROOM
+            )
+            handler_game.act(
+                "A chill sinks deep into your bones.", victim, None, None, merc.TO_CHAR
+            )
             af.where = merc.TO_AFFECTS
-            af.type = 'chill touch'
+            af.type = "chill touch"
             af.level = level
             af.duration = 6
             af.location = merc.APPLY_STR
@@ -170,9 +178,7 @@ def cold_effect(vo, level, dam, target):
         return
     if target == merc.TARGET_ITEM:  # toast an object */
         item = vo
-        if item.flags.burn_proof \
-                or item.flags.no_purge \
-                or random.randint(0, 4) == 0:
+        if item.flags.burn_proof or item.flags.no_purge or random.randint(0, 4) == 0:
             return
         chance = level // 4 + dam // 10
         if chance > 25:
@@ -216,13 +222,22 @@ def fire_effect(vo, level, dam, target):
     if target == merc.TARGET_CHAR:  # do the effect on a victim */
         victim = vo
         # chance of blindness */
-        if not victim.is_affected(merc.AFF_BLIND) and not handler_magic.saves_spell(level / 4 + dam / 20, victim,
-                                                                                    merc.DAM_FIRE):
-            handler_game.act("$n is blinded by smoke!", victim, None, None, merc.TO_ROOM)
-            handler_game.act("Your eyes tear up from smoke...you can't see a thing!", victim, None, None, merc.TO_CHAR)
+        if not victim.is_affected(merc.AFF_BLIND) and not handler_magic.saves_spell(
+            level / 4 + dam / 20, victim, merc.DAM_FIRE
+        ):
+            handler_game.act(
+                "$n is blinded by smoke!", victim, None, None, merc.TO_ROOM
+            )
+            handler_game.act(
+                "Your eyes tear up from smoke...you can't see a thing!",
+                victim,
+                None,
+                None,
+                merc.TO_CHAR,
+            )
             af = handler_game.AFFECT_DATA()
             af.where = merc.TO_AFFECTS
-            af.type = 'fire breath'
+            af.type = "fire breath"
             af.level = level
             af.duration = random.randint(0, level / 10)
             af.location = merc.APPLY_HITROLL
@@ -312,14 +327,16 @@ def poison_effect(vo, level, dam, target):
     if target == merc.TARGET_CHAR:  # do the effect on a victim */
         victim = vo
         # chance of poisoning */
-        if not handler_magic.saves_spell(level // 4 + dam // 20, victim, merc.DAM_POISON):
+        if not handler_magic.saves_spell(
+            level // 4 + dam // 20, victim, merc.DAM_POISON
+        ):
             af = handler_game.AFFECT_DATA()
 
             victim.send("You feel poison coursing through your veins.\n\r")
             handler_game.act("$n looks very ill.", victim, None, None, merc.TO_ROOM)
 
             af.where = merc.TO_AFFECTS
-            af.type = 'poison'
+            af.type = "poison"
             af.level = level
             af.duration = level // 2
             af.location = merc.APPLY_STR
@@ -371,7 +388,9 @@ def shock_effect(vo, level, dam, target):
     if target == merc.TARGET_CHAR:
         victim = vo
         # daze and confused? */
-        if not handler_magic.saves_spell(level // 4 + dam // 20, victim, merc.DAM_LIGHTNING):
+        if not handler_magic.saves_spell(
+            level // 4 + dam // 20, victim, merc.DAM_LIGHTNING
+        ):
             victim.send("Your muscles stop responding.\n\r")
             state_checks.DAZE_STATE(victim, max(12, level // 4 + dam / 20))
         # toast some gear */
@@ -396,8 +415,7 @@ def shock_effect(vo, level, dam, target):
 
         chance -= item.level * 2
 
-        if item.item_type == merc.ITEM_WAND \
-                or item.item_type == merc.ITEM_STAFF:
+        if item.item_type == merc.ITEM_WAND or item.item_type == merc.ITEM_STAFF:
             chance += 10
             msg = "$p overloads and explodes!"
         elif item.item_type == merc.ITEM_JEWELRY:

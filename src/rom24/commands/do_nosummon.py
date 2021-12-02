@@ -6,6 +6,7 @@ from rom24 import merc
 from rom24 import interp
 from rom24 import state_checks
 
+
 def do_nosummon(ch, argument):
     if ch.is_npc():
         if state_checks.IS_SET(ch.imm_flags, merc.IMM_SUMMON):
@@ -23,4 +24,6 @@ def do_nosummon(ch, argument):
             ch.act.set_bit(merc.PLR_NOSUMMON)
 
 
-interp.register_command(interp.cmd_type('nosummon', do_nosummon, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("nosummon", do_nosummon, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

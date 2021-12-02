@@ -10,7 +10,12 @@ from rom24 import interp
 from rom24 import state_checks
 
 
-distance = ["right here.", "nearby to the %s.", "not far %s.", "off in the distance %s."]
+distance = [
+    "right here.",
+    "nearby to the %s.",
+    "not far %s.",
+    "off in the distance %s.",
+]
 
 # Thanks to Zrin for auto-exit part.
 def do_scan(ch, argument):
@@ -43,12 +48,16 @@ def do_scan(ch, argument):
         ch.send("Which way do you want to scan?\n")
         return
 
-    handler_game.act("You peer intently $T.", ch, None, merc.dir_name[door], merc.TO_CHAR)
-    handler_game.act("$n peers intently $T.", ch, None, merc.dir_name[door], merc.TO_ROOM)
+    handler_game.act(
+        "You peer intently $T.", ch, None, merc.dir_name[door], merc.TO_CHAR
+    )
+    handler_game.act(
+        "$n peers intently $T.", ch, None, merc.dir_name[door], merc.TO_ROOM
+    )
 
     scan_room = ch.in_room
 
-    for depth in range(1,4):
+    for depth in range(1, 4):
         pexit = scan_room.exit[door]
         if pexit:
             scan_room = instance.rooms[pexit.to_room]
@@ -56,16 +65,21 @@ def do_scan(ch, argument):
 
     return
 
+
 def scan_list(scan_room, ch, depth, door):
     if not scan_room:
         return
 
     for person_id in scan_room.people:
         person = instance.characters[person_id]
-        if person == ch: continue
-        if person.is_pc and person.invis_level > ch.trust: continue
-        if ch.can_see(person): scan_ch(person, ch, depth, door)
+        if person == ch:
+            continue
+        if person.is_pc and person.invis_level > ch.trust:
+            continue
+        if ch.can_see(person):
+            scan_ch(person, ch, depth, door)
     return
+
 
 def scan_ch(victim, ch, depth, door):
     buf = state_checks.PERS(victim, ch)
@@ -78,4 +92,7 @@ def scan_ch(victim, ch, depth, door):
     ch.send(buf)
     return
 
-interp.register_command(interp.cmd_type('scan', do_scan, merc.POS_STANDING, 0, merc.LOG_NORMAL, 1))
+
+interp.register_command(
+    interp.cmd_type("scan", do_scan, merc.POS_STANDING, 0, merc.LOG_NORMAL, 1)
+)

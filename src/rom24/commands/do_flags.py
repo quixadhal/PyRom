@@ -7,9 +7,9 @@ from rom24 import merc
 from rom24 import game_utils
 from rom24 import tables
 
-__author__ = 'venom'
+__author__ = "venom"
 
-#int flag_lookup args( ( const char *name, const struct flag_type *flag_table) );
+# int flag_lookup args( ( const char *name, const struct flag_type *flag_table) );
 
 
 def do_flags(ch, argument):
@@ -17,18 +17,18 @@ def do_flags(ch, argument):
     frem = None
     fequals = None
 
-    if '+' in argument:
-        argument.strip('+')
+    if "+" in argument:
+        argument.strip("+")
         fadd = True
-    elif '-' in argument:
-        argument.strip('-')
+    elif "-" in argument:
+        argument.strip("-")
         frem = True
-    elif '=' in argument:
-        argument.strip('=')
+    elif "=" in argument:
+        argument.strip("=")
         fequals = True
 
     victim = None
-    
+
     f_argument, arg1 = game_utils.read_word(argument)
     f_argument, arg2 = game_utils.read_word(f_argument)
     f_argument, arg3 = game_utils.read_word(f_argument)
@@ -61,22 +61,22 @@ def do_flags(ch, argument):
         ch.send("Which flags do you wish to change?\n")
         return
 
-    if arg1 in ('mob', 'npc', 'character', 'char'):
+    if arg1 in ("mob", "npc", "character", "char"):
         victim = ch.get_char_world(arg2)
     else:
-        ch.send('You cannot find them.')
+        ch.send("You cannot find them.")
         return
 
-    if arg3.startswith('act'):
+    if arg3.startswith("act"):
         if not victim.is_npc():
             ch.send("Use plr for PCs.\n")
             return
         for comp_flag in tables.act_flags.values():
             if not in_flags:
-                ch.send('No flags to set.')
+                ch.send("No flags to set.")
                 return
             if not comp_flag.name in in_flags:
-                ch.send('Flag %s does not exist' % comp_flag.name)
+                ch.send("Flag %s does not exist" % comp_flag.name)
                 in_flags.discard(comp_flag.name)
                 continue
             else:
@@ -87,15 +87,19 @@ def do_flags(ch, argument):
                     victim.act.set_bit(comp_flag.bit)
                 elif frem:
                     victim.act.rem_bit(comp_flag.bit)
-        ch.send('Act flags: {disp_flags}\n Have been set.'.format(disp_flags=(item for item in in_flags)))
+        ch.send(
+            "Act flags: {disp_flags}\n Have been set.".format(
+                disp_flags=(item for item in in_flags)
+            )
+        )
 
-    if arg3.startswith('plr'):
+    if arg3.startswith("plr"):
         if victim.is_npc():
             ch.send("Use act for NPCs.\n")
             return
         for comp_flag in in_flags:
             if not comp_flag not in tables.plr_flags:
-                ch.send('Flag %s does not exist' % comp_flag.name)
+                ch.send("Flag %s does not exist" % comp_flag.name)
                 in_flags.discard(comp_flag.name)
                 continue
             else:
@@ -106,15 +110,19 @@ def do_flags(ch, argument):
                     victim.act.set_bit(tables.plr_flags[comp_flag].bit)
                 elif frem:
                     victim.act.rem_bit(tables.plr_flags[comp_flag].bit)
-        ch.send('Plr flags: {disp_flags}\n Have been set.'.format(disp_flags=(item for item in in_flags)))
+        ch.send(
+            "Plr flags: {disp_flags}\n Have been set.".format(
+                disp_flags=(item for item in in_flags)
+            )
+        )
 
-    if arg3.startswith('aff'):
+    if arg3.startswith("aff"):
         for comp_flag in tables.affect_flags.values():
             if not in_flags:
-                ch.send('No flags to set.')
+                ch.send("No flags to set.")
                 return
             if not comp_flag.name in in_flags:
-                ch.send('Flag %s does not exist' % comp_flag.name)
+                ch.send("Flag %s does not exist" % comp_flag.name)
                 in_flags.discard(comp_flag.name)
                 continue
             else:
@@ -125,15 +133,19 @@ def do_flags(ch, argument):
                     victim.affected_by.set_bit(comp_flag.bit)
                 elif frem:
                     victim.affected_by.rem_bit(comp_flag.bit)
-        ch.send('Affect flags: {disp_flags}\n Have been set.'.format(disp_flags=(item for item in in_flags)))
+        ch.send(
+            "Affect flags: {disp_flags}\n Have been set.".format(
+                disp_flags=(item for item in in_flags)
+            )
+        )
 
-    if arg3.startswith('vuln'):
+    if arg3.startswith("vuln"):
         for comp_flag in tables.imm_flags.values():
             if not in_flags:
-                ch.send('No flags to set.')
+                ch.send("No flags to set.")
                 return
             if not comp_flag.name in in_flags:
-                ch.send('Flag %s does not exist' % comp_flag.name)
+                ch.send("Flag %s does not exist" % comp_flag.name)
                 in_flags.discard(comp_flag.name)
                 continue
             else:
@@ -144,15 +156,19 @@ def do_flags(ch, argument):
                     victim.vuln_flags.set_bit(comp_flag.bit)
                 elif frem:
                     victim.vuln_flags.rem_bit(comp_flag.bit)
-        ch.send('Vuln flags: {disp_flags}\n Have been set.'.format(disp_flags=(item for item in in_flags)))
+        ch.send(
+            "Vuln flags: {disp_flags}\n Have been set.".format(
+                disp_flags=(item for item in in_flags)
+            )
+        )
 
-    if arg3.startswith('immunity'):
+    if arg3.startswith("immunity"):
         for comp_flag in tables.imm_flags.values():
             if not in_flags:
-                ch.send('No flags to set.')
+                ch.send("No flags to set.")
                 return
             if not comp_flag.name in in_flags:
-                ch.send('Flag %s does not exist' % comp_flag.name)
+                ch.send("Flag %s does not exist" % comp_flag.name)
                 in_flags.discard(comp_flag.name)
                 continue
             else:
@@ -163,15 +179,19 @@ def do_flags(ch, argument):
                     victim.imm_flags.set_bit(comp_flag.bit)
                 elif frem:
                     victim.imm_flags.rem_bit(comp_flag.bit)
-        ch.send('Immunity flags: {disp_flags}\n Have been set.'.format(disp_flags=(item for item in in_flags)))
+        ch.send(
+            "Immunity flags: {disp_flags}\n Have been set.".format(
+                disp_flags=(item for item in in_flags)
+            )
+        )
 
-    if arg3.startswith('resist'):
+    if arg3.startswith("resist"):
         for comp_flag in tables.imm_flags.values():
             if not in_flags:
-                ch.send('No flags to set.')
+                ch.send("No flags to set.")
                 return
             if not comp_flag.name in in_flags:
-                ch.send('Flag %s does not exist' % comp_flag.name)
+                ch.send("Flag %s does not exist" % comp_flag.name)
                 in_flags.discard(comp_flag.name)
                 continue
             else:
@@ -182,18 +202,22 @@ def do_flags(ch, argument):
                     victim.res_flags.set_bit(comp_flag.bit)
                 elif frem:
                     victim.res_flags.rem_bit(comp_flag.bit)
-        ch.send('Resist flags: {disp_flags}\n Have been set.'.format(disp_flags=(item for item in in_flags)))
+        ch.send(
+            "Resist flags: {disp_flags}\n Have been set.".format(
+                disp_flags=(item for item in in_flags)
+            )
+        )
 
-    if arg3.startswith('form'):
+    if arg3.startswith("form"):
         if not victim.is_npc():
             ch.send("Form can't be set on PCs.\n")
             return
         for comp_flag in tables.form_flags.values():
             if not in_flags:
-                ch.send('No flags to set.')
+                ch.send("No flags to set.")
                 return
             if not comp_flag.name in in_flags:
-                ch.send('Flag %s does not exist' % comp_flag.name)
+                ch.send("Flag %s does not exist" % comp_flag.name)
                 in_flags.discard(comp_flag.name)
                 continue
             else:
@@ -204,18 +228,22 @@ def do_flags(ch, argument):
                     victim.form_flags.set_bit(comp_flag.bit)
                 elif frem:
                     victim.form_flags.rem_bit(comp_flag.bit)
-        ch.send('Form flags: {disp_flags}\n Have been set.'.format(disp_flags=(item for item in in_flags)))
+        ch.send(
+            "Form flags: {disp_flags}\n Have been set.".format(
+                disp_flags=(item for item in in_flags)
+            )
+        )
 
-    if arg3.startswith('parts'):
+    if arg3.startswith("parts"):
         if not victim.is_npc():
             ch.send("Parts can't be set on PCs.\n")
             return
         for comp_flag in tables.part_flags.values():
             if not in_flags:
-                ch.send('No flags to set.')
+                ch.send("No flags to set.")
                 return
             if not comp_flag.name in in_flags:
-                ch.send('Flag %s does not exist' % comp_flag.name)
+                ch.send("Flag %s does not exist" % comp_flag.name)
                 in_flags.discard(comp_flag.name)
                 continue
             else:
@@ -226,18 +254,22 @@ def do_flags(ch, argument):
                     victim.parts.set_bit(comp_flag.bit)
                 elif frem:
                     victim.parts.rem_bit(comp_flag.bit)
-        ch.send('Parts flags: {disp_flags}\n Have been set.'.format(disp_flags=(item for item in in_flags)))
+        ch.send(
+            "Parts flags: {disp_flags}\n Have been set.".format(
+                disp_flags=(item for item in in_flags)
+            )
+        )
 
-    if arg3.startswith('comm'):
+    if arg3.startswith("comm"):
         if victim.is_npc():
             ch.send("Comm can't be set on NPCs.\n")
             return
         for comp_flag in tables.comm_flags.values():
             if not in_flags:
-                ch.send('No flags to set.')
+                ch.send("No flags to set.")
                 return
             if not comp_flag.name in in_flags:
-                ch.send('Flag %s does not exist' % comp_flag.name)
+                ch.send("Flag %s does not exist" % comp_flag.name)
                 in_flags.discard(comp_flag.name)
                 continue
             else:
@@ -248,6 +280,13 @@ def do_flags(ch, argument):
                     victim.comm.set_bit(comp_flag.bit)
                 elif frem:
                     victim.comm.rem_bit(comp_flag.bit)
-        ch.send('Comm flags: {disp_flags}\n Have been set.'.format(disp_flags=(item for item in in_flags)))
+        ch.send(
+            "Comm flags: {disp_flags}\n Have been set.".format(
+                disp_flags=(item for item in in_flags)
+            )
+        )
 
-interp.register_command(interp.cmd_type('flag', do_flags, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+
+interp.register_command(
+    interp.cmd_type("flag", do_flags, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)

@@ -1,5 +1,3 @@
-
-
 import time
 import collections
 import logging
@@ -8,8 +6,8 @@ logger = logging.getLogger(__name__)
 
 from rom24 import state_checks
 
-#Merc Setup
-#Letter->Bit conversion
+# Merc Setup
+# Letter->Bit conversion
 A = 1
 B = 1 << 1
 C = 1 << 2
@@ -63,22 +61,22 @@ xx = 1 << 49
 yy = 1 << 50
 zz = 1 << 51
 
-#Boot Time, Current Time
+# Boot Time, Current Time
 boot_time = time.time()
 current_time = 0
 
-#Old Style Lists
+# Old Style Lists
 descriptor_list = []
 shop_list = []
 help_list = []
 greeting_list = []
 social_list = []
 
-'''
+"""
 Game Defines
-'''
+"""
 
-#Wiznet Flags
+# Wiznet Flags
 WIZ_ON = A
 WIZ_TICKS = B
 WIZ_LOGINS = C
@@ -107,52 +105,52 @@ MAX_SKILL = 150
 MAX_GROUP = 30
 MAX_LEVEL = 60
 MAX_ALIAS = 10
-LEVEL_HERO = (MAX_LEVEL - 9)
-LEVEL_IMMORTAL = (MAX_LEVEL - 8)
+LEVEL_HERO = MAX_LEVEL - 9
+LEVEL_IMMORTAL = MAX_LEVEL - 8
 
-ML = MAX_LEVEL   # implementor */
-L1 = MAX_LEVEL - 1   # creator */
-L2 = MAX_LEVEL - 2   # supreme being */
-L3 = MAX_LEVEL - 3   # deity */
-L4 = MAX_LEVEL - 4   # god */
-L5 = MAX_LEVEL - 5   # immortal */
-L6 = MAX_LEVEL - 6   # demigod */
-L7 = MAX_LEVEL - 7   # angel */
-L8 = MAX_LEVEL - 8   # avatar */
+ML = MAX_LEVEL  # implementor */
+L1 = MAX_LEVEL - 1  # creator */
+L2 = MAX_LEVEL - 2  # supreme being */
+L3 = MAX_LEVEL - 3  # deity */
+L4 = MAX_LEVEL - 4  # god */
+L5 = MAX_LEVEL - 5  # immortal */
+L6 = MAX_LEVEL - 6  # demigod */
+L7 = MAX_LEVEL - 7  # angel */
+L8 = MAX_LEVEL - 8  # avatar */
 IM = LEVEL_IMMORTAL  # avatar */
 HE = LEVEL_HERO  # hero */
 
-#TODO: RemoveDebug - switch to false
+# TODO: RemoveDebug - switch to false
 GDCF = True
 GDF = True
 
-#Global Constants
+# Global Constants
 PULSE_PER_SECOND = 4
 MILLISECONDS_PER_PULSE = float(1000.0 / PULSE_PER_SECOND)
-PULSE_VIOLENCE = (3 * PULSE_PER_SECOND)
-PULSE_MOBILE = (4 * PULSE_PER_SECOND)
-PULSE_MUSIC = (6 * PULSE_PER_SECOND)
-PULSE_TICK = (60 * PULSE_PER_SECOND)
-PULSE_AREA = (120 * PULSE_PER_SECOND)
+PULSE_VIOLENCE = 3 * PULSE_PER_SECOND
+PULSE_MOBILE = 4 * PULSE_PER_SECOND
+PULSE_MUSIC = 6 * PULSE_PER_SECOND
+PULSE_TICK = 60 * PULSE_PER_SECOND
+PULSE_AREA = 120 * PULSE_PER_SECOND
 
-#Time - Quarter of Day
+# Time - Quarter of Day
 SUN_DARK = 0
 SUN_RISE = 1
 SUN_LIGHT = 2
 SUN_SET = 3
 
-#Weather Defines
+# Weather Defines
 SKY_CLOUDLESS = 0
 SKY_CLOUDY = 1
 SKY_RAINING = 2
 SKY_LIGHTNING = 3
 
-#Dice Numbers
+# Dice Numbers
 DICE_NUMBER = 0
 DICE_TYPE = 1
 DICE_BONUS = 2
 
-#Target types
+# Target types
 TAR_IGNORE = 0
 TAR_CHAR_OFFENSIVE = 1
 TAR_CHAR_DEFENSIVE = 2
@@ -166,19 +164,19 @@ TARGET_ITEM = 1
 TARGET_ROOM = 2
 TARGET_NONE = 3
 
-#To types for act function
+# To types for act function
 TO_ROOM = 0
 TO_NOTVICT = 1
 TO_VICT = 2
 TO_CHAR = 3
 TO_ALL = 4
 
-#Log types
+# Log types
 LOG_NORMAL = 0
 LOG_ALWAYS = 1
 LOG_NEVER = 2
 
-#Damage classes
+# Damage classes
 DAM_NONE = 0
 DAM_BASH = 1
 DAM_PIERCE = 2
@@ -202,10 +200,10 @@ DAM_SOUND = 19
 
 PAGELEN = 22
 
-#Pc Tracking
+# Pc Tracking
 max_on = 0
 
-#Where definitions
+# Where definitions
 TO_AFFECTS = 0
 TO_OBJECT = 1
 TO_IMMUNE = 2
@@ -213,17 +211,17 @@ TO_RESIST = 3
 TO_VULN = 4
 TO_WEAPON = 5
 
-#Vulnerability States
+# Vulnerability States
 IS_NORMAL = 0
 IS_IMMUNE = 1
 IS_RESISTANT = 2
 IS_VULNERABLE = 3
 
-#Hit or Undefined
+# Hit or Undefined
 TYPE_UNDEFINED = -1
 TYPE_HIT = 1000
 
-#Affected by Bits
+# Affected by Bits
 AFF_BLIND = A
 AFF_INVISIBLE = B
 AFF_DETECT_EVIL = C
@@ -256,34 +254,38 @@ AFF_REGENERATION = cc
 AFF_SLOW = dd
 
 
-'''
+"""
 Character Defines
-'''
+"""
 
 
-''' Equipment Slot Strings - for use with displaying EQ to characters '''
+""" Equipment Slot Strings - for use with displaying EQ to characters """
 
-eq_slot_strings = collections.OrderedDict([('light', '<used as light>     '),
-                                           ('left_finger', '<worn on finger>    '),
-                                           ('right_finger', '<worn on finger>    '),
-                                           ('neck', '<worn around neck>  '),
-                                           ('collar', '<worn around neck>  '),
-                                           ('body', '<worn on torso>     '),
-                                           ('head', '<worn on head>      '),
-                                           ('legs', '<worn on legs>      '),
-                                           ('feet', '<worn on feet>      '),
-                                           ('hands', '<worn on hands>     '),
-                                           ('arms', '<worn on arms>      '),
-                                           ('off_hand', '<worn as shield>    '),
-                                           ('about_body', '<worn about body>   '),
-                                           ('waist', '<worn about waist>  '),
-                                           ('left_wrist', '<worn around wrist> '),
-                                           ('right_wrist', '<worn around wrist> '),
-                                           ('main_hand', '<wielded>           '),
-                                           ('held', '<held>              '),
-                                           ('float', '<floating nearby>   ')])
+eq_slot_strings = collections.OrderedDict(
+    [
+        ("light", "<used as light>     "),
+        ("left_finger", "<worn on finger>    "),
+        ("right_finger", "<worn on finger>    "),
+        ("neck", "<worn around neck>  "),
+        ("collar", "<worn around neck>  "),
+        ("body", "<worn on torso>     "),
+        ("head", "<worn on head>      "),
+        ("legs", "<worn on legs>      "),
+        ("feet", "<worn on feet>      "),
+        ("hands", "<worn on hands>     "),
+        ("arms", "<worn on arms>      "),
+        ("off_hand", "<worn as shield>    "),
+        ("about_body", "<worn about body>   "),
+        ("waist", "<worn about waist>  "),
+        ("left_wrist", "<worn around wrist> "),
+        ("right_wrist", "<worn around wrist> "),
+        ("main_hand", "<wielded>           "),
+        ("held", "<held>              "),
+        ("float", "<floating nearby>   "),
+    ]
+)
 
-#Immunity Bits
+# Immunity Bits
 IMM_SUMMON = A
 IMM_CHARM = B
 IMM_MAGIC = C
@@ -308,7 +310,7 @@ IMM_WOOD = X
 IMM_SILVER = Y
 IMM_IRON = Z
 
-#Resist Bits
+# Resist Bits
 RES_SUMMON = A
 RES_CHARM = B
 RES_MAGIC = C
@@ -333,7 +335,7 @@ RES_WOOD = X
 RES_SILVER = Y
 RES_IRON = Z
 
-#Vulnerable Bits
+# Vulnerable Bits
 VULN_SUMMON = A
 VULN_CHARM = B
 VULN_MAGIC = C
@@ -358,19 +360,19 @@ VULN_WOOD = X
 VULN_SILVER = Y
 VULN_IRON = Z
 
-#Sexes
+# Sexes
 SEX_NEUTRAL = 0
 SEX_MALE = 1
 SEX_FEMALE = 2
 
-#Stats
+# Stats
 STAT_STR = 0
 STAT_INT = 1
 STAT_WIS = 2
 STAT_DEX = 3
 STAT_CON = 4
 
-#Sizes
+# Sizes
 SIZE_TINY = 0
 SIZE_SMALL = 1
 SIZE_MEDIUM = 2
@@ -384,7 +386,7 @@ AC_BASH = 1
 AC_SLASH = 2
 AC_EXOTIC = 3
 
-#Positions
+# Positions
 POS_DEAD = 0
 POS_MORTAL = 1
 POS_INCAP = 2
@@ -396,7 +398,7 @@ POS_FIGHTING = 7
 POS_STANDING = 8
 
 # ACT bits for players.
-PLR_IS_NPC = A     # Don't EVER set.  */
+PLR_IS_NPC = A  # Don't EVER set.  */
 
 # RT auto flags */
 PLR_AUTOASSIST = C
@@ -421,13 +423,13 @@ PLR_THIEF = Z
 PLR_KILLER = aa
 PLR_OMNI = bb
 
-#Player Conditions
+# Player Conditions
 COND_DRUNK = 0
 COND_FULL = 1
 COND_THIRST = 2
 COND_HUNGER = 3
 
-#RT Comm Flags
+# RT Comm Flags
 COMM_QUIET = A
 COMM_DEAF = B
 COMM_NOWIZ = C
@@ -439,7 +441,7 @@ COMM_NOCLAN = H
 COMM_NOQUOTE = I
 COMM_SHOUTSOFF = J
 
-#Display Flags
+# Display Flags
 COMM_COMPACT = L
 COMM_BRIEF = M
 COMM_PROMPT = N
@@ -448,7 +450,7 @@ COMM_TELNET_GA = P
 COMM_SHOW_AFFECTS = Q
 COMM_NOGRATS = R
 
-#Comm Penalties
+# Comm Penalties
 COMM_NOEMOTE = T
 COMM_NOSHOUT = U
 COMM_NOTELL = V
@@ -456,7 +458,7 @@ COMM_NOCHANNELS = W
 COMM_SNOOP_PROOF = Y
 COMM_AFK = Z
 
-#Assist Bits
+# Assist Bits
 ASSIST_ALL = P
 ASSIST_ALIGN = Q
 ASSIST_RACE = R
@@ -464,16 +466,16 @@ ASSIST_PLAYERS = S
 ASSIST_GUARD = T
 ASSIST_VNUM = U
 
-#ACT Bits for NPCs
+# ACT Bits for NPCs
 ACT_IS_NPC = A  # Auto set for mobs    */
 ACT_SENTINEL = B  # Stays in one room    */
 ACT_SCAVENGER = C  # Picks up objects */
-ACT_AGGRESSIVE = F   # Attacks PC's     */
-ACT_STAY_AREA = G    # Won't leave area */
+ACT_AGGRESSIVE = F  # Attacks PC's     */
+ACT_STAY_AREA = G  # Won't leave area */
 ACT_WIMPY = H
-ACT_PET = I     # Auto set for pets    */
-ACT_TRAIN = J     # Can train PC's   */
-ACT_PRACTICE = K     # Can practice PC's    */
+ACT_PET = I  # Auto set for pets    */
+ACT_TRAIN = J  # Can train PC's   */
+ACT_PRACTICE = K  # Can practice PC's    */
 ACT_UNDEAD = O
 ACT_CLERIC = Q
 ACT_MAGE = R
@@ -488,7 +490,7 @@ ACT_GAIN = bb
 ACT_UPDATE_ALWAYS = cc
 ACT_IS_CHANGER = dd
 
-#Offensive Bits
+# Offensive Bits
 OFF_AREA_ATTACK = A
 OFF_BACKSTAB = B
 OFF_BASH = C
@@ -505,14 +507,14 @@ OFF_TAIL = M
 OFF_TRIP = N
 OFF_CRUSH = O
 
-#Body Form Bits, descriptive
+# Body Form Bits, descriptive
 FORM_EDIBLE = A
 FORM_POISON = B
 FORM_MAGICAL = C
 FORM_INSTANT_DECAY = D
 FORM_OTHER = E  # defined by material bit */
 
-#Character Form Bits
+# Character Form Bits
 FORM_ANIMAL = G
 FORM_SENTIENT = H
 FORM_UNDEAD = I
@@ -535,7 +537,7 @@ FORM_AMPHIBIAN = aa
 FORM_FISH = bb
 FORM_COLD_BLOOD = cc
 
-#Body Parts Bits
+# Body Parts Bits
 PART_HEAD = A
 PART_ARMS = B
 PART_LEGS = C
@@ -554,26 +556,26 @@ PART_FINS = O
 PART_WINGS = P
 PART_TAIL = Q
 
-#Parts Combat Bits
+# Parts Combat Bits
 PART_CLAWS = U
 PART_FANGS = V
 PART_HORNS = W
 PART_SCALES = X
 PART_TUSKS = Y
 
-#NPC Memory Flags
+# NPC Memory Flags
 MEM_CUSTOMER = A
 MEM_SELLER = B
 MEM_HOSTILE = C
 MEM_AFRAID = D
 
 
-'''
+"""
 Room Defines
-'''
+"""
 
 
-#Room Sector Types
+# Room Sector Types
 SECT_INSIDE = 0
 SECT_CITY = 1
 SECT_FIELD = 2
@@ -587,7 +589,7 @@ SECT_AIR = 9
 SECT_DESERT = 10
 SECT_MAX = 11
 
-#Directions
+# Directions
 DIR_NORTH = 0
 DIR_EAST = 1
 DIR_SOUTH = 2
@@ -595,12 +597,12 @@ DIR_WEST = 3
 DIR_UP = 4
 DIR_DOWN = 5
 
-#Movement
+# Movement
 dir_name = ["north", "east", "south", "west", "up", "down"]
 rev_dir = [2, 3, 0, 1, 5, 4]
 movement_loss = [1, 2, 2, 3, 4, 6, 4, 1, 6, 10, 6]
 
-#Static Room VNUMs
+# Static Room VNUMs
 ROOM_VNUM_LIMBO = 2
 ROOM_VNUM_CHAT = 1200
 ROOM_VNUM_TEMPLE = 3001
@@ -611,7 +613,7 @@ ROOM_VNUM_CIRCLE = 4400
 ROOM_VNUM_DEMISE = 4201
 ROOM_VNUM_HONOR = 4300
 
-#Room Flags
+# Room Flags
 ROOM_DARK = A
 ROOM_NO_MOB = C
 ROOM_INDOORS = D
@@ -627,7 +629,7 @@ ROOM_NEWBIES_ONLY = R
 ROOM_LAW = S
 ROOM_NOWHERE = T
 
-#Exit Flags
+# Exit Flags
 EX_ISDOOR = A
 EX_CLOSED = B
 EX_LOCKED = C
@@ -640,12 +642,12 @@ EX_NOCLOSE = K
 EX_NOLOCK = L
 
 
-'''
+"""
 Item Defines
-'''
+"""
 
 
-#Apply Types
+# Apply Types
 APPLY_NONE = 0
 APPLY_STR = 1
 APPLY_DEX = 2
@@ -674,38 +676,38 @@ APPLY_SAVING_BREATH = 23
 APPLY_SAVING_SPELL = 24
 APPLY_SPELL_AFFECT = 25
 
-#Item types
-ITEM_LIGHT = 'light'
-ITEM_SCROLL = 'scroll'
-ITEM_WAND = 'wand'
-ITEM_STAFF = 'staff'
-ITEM_WEAPON = 'weapon'
-ITEM_TREASURE = 'treasure'
-ITEM_ARMOR = 'armor'
-ITEM_POTION = 'potion'
-ITEM_CLOTHING = 'clothing'
-ITEM_FURNITURE = 'furniture'
-ITEM_TRASH = 'trash'
-ITEM_CONTAINER = 'container'
-ITEM_DRINK_CON = 'drink'
-ITEM_KEY = 'key'
-ITEM_FOOD = 'food'
-ITEM_MONEY = 'money'
-ITEM_BOAT = 'boat'
-ITEM_CORPSE_NPC = 'npc_corpse'
-ITEM_CORPSE_PC = 'pc_corpse'
-ITEM_FOUNTAIN = 'fountain'
-ITEM_PILL = 'pill'
-ITEM_PROTECT = 'protect'
-ITEM_MAP = 'map'
-ITEM_PORTAL = 'portal'
-ITEM_WARP_STONE = 'warp_stone'
-ITEM_ROOM_KEY = 'room_key'
-ITEM_GEM = 'gem'
-ITEM_JEWELRY = 'jewelry'
-ITEM_JUKEBOX = 'jukebox'
+# Item types
+ITEM_LIGHT = "light"
+ITEM_SCROLL = "scroll"
+ITEM_WAND = "wand"
+ITEM_STAFF = "staff"
+ITEM_WEAPON = "weapon"
+ITEM_TREASURE = "treasure"
+ITEM_ARMOR = "armor"
+ITEM_POTION = "potion"
+ITEM_CLOTHING = "clothing"
+ITEM_FURNITURE = "furniture"
+ITEM_TRASH = "trash"
+ITEM_CONTAINER = "container"
+ITEM_DRINK_CON = "drink"
+ITEM_KEY = "key"
+ITEM_FOOD = "food"
+ITEM_MONEY = "money"
+ITEM_BOAT = "boat"
+ITEM_CORPSE_NPC = "npc_corpse"
+ITEM_CORPSE_PC = "pc_corpse"
+ITEM_FOUNTAIN = "fountain"
+ITEM_PILL = "pill"
+ITEM_PROTECT = "protect"
+ITEM_MAP = "map"
+ITEM_PORTAL = "portal"
+ITEM_WARP_STONE = "warp_stone"
+ITEM_ROOM_KEY = "room_key"
+ITEM_GEM = "gem"
+ITEM_JEWELRY = "jewelry"
+ITEM_JUKEBOX = "jukebox"
 
-#Weapon Types
+# Weapon Types
 WEAPON_EXOTIC = 0
 WEAPON_SWORD = 1
 WEAPON_DAGGER = 2
@@ -716,7 +718,7 @@ WEAPON_FLAIL = 6
 WEAPON_WHIP = 7
 WEAPON_POLEARM = 8
 
-#Item constants
+# Item constants
 OBJ_VNUM_SILVER_ONE = 1
 OBJ_VNUM_GOLD_ONE = 2
 OBJ_VNUM_GOLD_SOME = 3
@@ -752,14 +754,14 @@ OBJ_VNUM_SCHOOL_BANNER = 3716
 OBJ_VNUM_MAP = 3162
 OBJ_VNUM_WHISTLE = 2116
 
-#Gate Flags
+# Gate Flags
 GATE_NORMAL_EXIT = A
 GATE_NOCURSE = B
 GATE_GOWITH = C
 GATE_BUGGY = D
 GATE_RANDOM = E
 
-#Furniture Flags
+# Furniture Flags
 STAND_AT = A
 STAND_ON = B
 STAND_IN = C
@@ -777,7 +779,7 @@ PUT_ON = N
 PUT_IN = O
 PUT_INSIDE = P
 
-#Container Values (EG, Bags, etc)
+# Container Values (EG, Bags, etc)
 CONT_CLOSEABLE = 1
 CONT_PICKPROOF = 2
 CONT_CLOSED = 4
@@ -785,82 +787,90 @@ CONT_LOCKED = 8
 CONT_PUT_ON = 16
 
 
-'''
+"""
 Conversion Maps
-'''
+"""
 
 
-#Item Bits
-rom_wear_flag_map = {'A': 'Take',
-                     'B': 'Finger',
-                     'C': 'Neck',
-                     'D': 'Body',
-                     'E': 'Head',
-                     'F': 'Legs',
-                     'G': 'Feet',
-                     'H': 'Hands',
-                     'I': 'Arms',
-                     'J': 'Shield',
-                     'K': 'About',
-                     'L': 'Waist',
-                     'M': 'Wrist',
-                     'N': 'Main Hand',
-                     'O': 'Off Hand',
-                     'P': 'No Sac',
-                     'Q': 'Float'}
+# Item Bits
+rom_wear_flag_map = {
+    "A": "Take",
+    "B": "Finger",
+    "C": "Neck",
+    "D": "Body",
+    "E": "Head",
+    "F": "Legs",
+    "G": "Feet",
+    "H": "Hands",
+    "I": "Arms",
+    "J": "Shield",
+    "K": "About",
+    "L": "Waist",
+    "M": "Wrist",
+    "N": "Main Hand",
+    "O": "Off Hand",
+    "P": "No Sac",
+    "Q": "Float",
+}
 
-rom_wear_loc_map = {-1: None,
-                    0: 'Light',
-                    1: 'Left Finger',
-                    2: 'Right Finger',
-                    3: 'Neck',
-                    4: 'Collar',
-                    5: 'Body',
-                    6: 'Head',
-                    7: 'Legs',
-                    8: 'Feet',
-                    9: 'Hands',
-                    10: 'Arms',
-                    11: 'Off Hand',
-                    12: 'About',
-                    13: 'Waist',
-                    14: 'Left Wrist',
-                    15: 'Right Wrist',
-                    16: 'Main Hand',
-                    17: 'Held',
-                    18: 'Float'}
+rom_wear_loc_map = {
+    -1: None,
+    0: "Light",
+    1: "Left Finger",
+    2: "Right Finger",
+    3: "Neck",
+    4: "Collar",
+    5: "Body",
+    6: "Head",
+    7: "Legs",
+    8: "Feet",
+    9: "Hands",
+    10: "Arms",
+    11: "Off Hand",
+    12: "About",
+    13: "Waist",
+    14: "Left Wrist",
+    15: "Right Wrist",
+    16: "Main Hand",
+    17: "Held",
+    18: "Float",
+}
 
 # * Equpiment wear locations.
 # * Used in #RESETS.
 
-wear_num_to_str = collections.OrderedDict([(-1, 'none'),
-                                           (0, 'light'),
-                                           (1, 'left_finger'),
-                                           (2, 'right_finger'),
-                                           (3, 'neck'),
-                                           (4, 'collar'),
-                                           (5, 'body'),
-                                           (6, 'head'),
-                                           (7, 'legs'),
-                                           (8, 'feet'),
-                                           (9, 'hands'),
-                                           (10, 'arms'),
-                                           (11, 'unused'),
-                                           (12, 'about'),
-                                           (13, 'waist'),
-                                           (14, 'left_wrist'),
-                                           (15, 'right_wrist'),
-                                           (16, 'main_hand'),
-                                           (17, 'off_hand'),
-                                           (18, 'float')])
+wear_num_to_str = collections.OrderedDict(
+    [
+        (-1, "none"),
+        (0, "light"),
+        (1, "left_finger"),
+        (2, "right_finger"),
+        (3, "neck"),
+        (4, "collar"),
+        (5, "body"),
+        (6, "head"),
+        (7, "legs"),
+        (8, "feet"),
+        (9, "hands"),
+        (10, "arms"),
+        (11, "unused"),
+        (12, "about"),
+        (13, "waist"),
+        (14, "left_wrist"),
+        (15, "right_wrist"),
+        (16, "main_hand"),
+        (17, "off_hand"),
+        (18, "float"),
+    ]
+)
 
 
-'''
+"""
 Legacy Bits n Bobs
-'''
+"""
 
 
-#legacy WEAR locations
+# legacy WEAR locations
 WEAR_NONE = -1
 WEAR_LIGHT = 0
 WEAR_FINGER_L = 1
@@ -928,7 +938,7 @@ ITEM_HOLD = O
 ITEM_NO_SAC = P
 ITEM_WEAR_FLOAT = Q
 
-#Weapon Types - Legacy
+# Weapon Types - Legacy
 WEAPON_FLAMING = A
 WEAPON_FROST = B
 WEAPON_VAMPIRIC = C
@@ -940,30 +950,32 @@ WEAPON_POISON = H
 
 # Return ascii name of an affect location.
 def affect_loc_name(location):
-    affect_loc = {APPLY_NONE: "none",
-                  APPLY_STR: "strength",
-                  APPLY_DEX: "dexterity",
-                  APPLY_INT: "intelligence",
-                  APPLY_WIS: "wisdom",
-                  APPLY_CON: "constitution",
-                  APPLY_SEX: "sex",
-                  APPLY_CLASS: "class",
-                  APPLY_LEVEL: "level",
-                  APPLY_AGE: "age",
-                  APPLY_MANA: "mana",
-                  APPLY_HIT: "hp",
-                  APPLY_MOVE: "moves",
-                  APPLY_GOLD: "gold",
-                  APPLY_EXP: "experience",
-                  APPLY_AC: "armor class",
-                  APPLY_HITROLL: "hit roll",
-                  APPLY_DAMROLL: "damage roll",
-                  APPLY_SAVES: "saves",
-                  APPLY_SAVING_ROD: "save vs rod",
-                  APPLY_SAVING_PETRI: "save vs petrification",
-                  APPLY_SAVING_BREATH: "save vs breath",
-                  APPLY_SAVING_SPELL: "save vs spell",
-                  APPLY_SPELL_AFFECT: "none"}
+    affect_loc = {
+        APPLY_NONE: "none",
+        APPLY_STR: "strength",
+        APPLY_DEX: "dexterity",
+        APPLY_INT: "intelligence",
+        APPLY_WIS: "wisdom",
+        APPLY_CON: "constitution",
+        APPLY_SEX: "sex",
+        APPLY_CLASS: "class",
+        APPLY_LEVEL: "level",
+        APPLY_AGE: "age",
+        APPLY_MANA: "mana",
+        APPLY_HIT: "hp",
+        APPLY_MOVE: "moves",
+        APPLY_GOLD: "gold",
+        APPLY_EXP: "experience",
+        APPLY_AC: "armor class",
+        APPLY_HITROLL: "hit roll",
+        APPLY_DAMROLL: "damage roll",
+        APPLY_SAVES: "saves",
+        APPLY_SAVING_ROD: "save vs rod",
+        APPLY_SAVING_PETRI: "save vs petrification",
+        APPLY_SAVING_BREATH: "save vs breath",
+        APPLY_SAVING_SPELL: "save vs spell",
+        APPLY_SPELL_AFFECT: "none",
+    }
     location = affect_loc.get(location, None)
     if not location:
         logger.error("Affect_location_name: unknown location %d.", location)
@@ -1339,7 +1351,7 @@ def form_bit_name(form_flags):
 
 
 def part_bit_name(part_flags):
-    buf = ''
+    buf = ""
     if part_flags & PART_HEAD:
         buf += " head"
     if part_flags & PART_ARMS:
@@ -1386,7 +1398,7 @@ def part_bit_name(part_flags):
 
 
 def weapon_bit_name(weapon_flags):
-    buf = ''
+    buf = ""
     if weapon_flags & WEAPON_FLAMING:
         buf += " flaming"
     if weapon_flags & WEAPON_FROST:
@@ -1407,7 +1419,7 @@ def weapon_bit_name(weapon_flags):
 
 
 def cont_bit_name(cont_flags):
-    buf = ''
+    buf = ""
     if cont_flags & CONT_CLOSEABLE:
         buf += " closable"
     if cont_flags & CONT_PICKPROOF:
@@ -1420,7 +1432,7 @@ def cont_bit_name(cont_flags):
 
 
 def off_bit_name(off_flags):
-    buf = ''
+    buf = ""
     if off_flags & OFF_AREA_ATTACK:
         buf += " area attack"
     if off_flags & OFF_BACKSTAB:

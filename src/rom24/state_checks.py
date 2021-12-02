@@ -1,5 +1,4 @@
-
-__author__ = 'syn'
+__author__ = "syn"
 import time
 import logging
 
@@ -20,8 +19,8 @@ def REMOVE_BIT(var, bit):
     return var & ~bit
 
 
-#utility functions
-def name_lookup(pdict, arg, key='name'):
+# utility functions
+def name_lookup(pdict, arg, key="name"):
     for i, n in pdict.items():
         if getattr(n, key) == arg:
             return i
@@ -105,16 +104,21 @@ def IS_AWAKE(ch):
 
 def GET_AC(ch, ptype):
     from rom24.const import dex_app
-    return ch.armor[ptype] + (dex_app[ch.stat(merc.STAT_DEX)].defensive if IS_AWAKE(ch) else 0)
+
+    return ch.armor[ptype] + (
+        dex_app[ch.stat(merc.STAT_DEX)].defensive if IS_AWAKE(ch) else 0
+    )
 
 
 def GET_HITROLL(ch):
     from rom24.const import str_app
+
     return ch.hitroll + str_app[ch.stat(merc.STAT_STR)].tohit
 
 
 def GET_DAMROLL(ch):
     from rom24.const import str_app
+
     return ch.damroll + str_app[ch.stat(merc.STAT_STR)].todam
 
 
@@ -134,7 +138,8 @@ def get_carry_weight(ch):
     return ch.carry_weight + (ch.silver // 10 + (ch.gold * 2 // 5))
 
 
- # Object macros.
+# Object macros.
+
 
 def CAN_WEAR(item, part):
     return IS_SET(item.wear_flags, part)
@@ -146,6 +151,7 @@ def IS_WEAPON_STAT(item, stat):
 
 def WEIGHT_MULT(item):
     return item.value[4] if item.item_type is merc.ITEM_CONTAINER else 100
+
 
 def check_blind(ch):
     if not IS_NPC(ch) and IS_SET(ch.act, merc.PLR_HOLYLIGHT):

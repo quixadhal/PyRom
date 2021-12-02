@@ -37,9 +37,13 @@ def do_oload(ch, argument):
     else:
         ch.in_room.put(item)
     handler_game.act("$n has created $p!", ch, item, None, merc.TO_ROOM)
-    handler_game.wiznet("$N loads $p.", ch, item, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.trust)
+    handler_game.wiznet(
+        "$N loads $p.", ch, item, merc.WIZ_LOAD, merc.WIZ_SECURE, ch.trust
+    )
     ch.send("Ok.\n")
     return
 
 
-interp.register_command(interp.cmd_type('oload', do_oload, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type("oload", do_oload, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)
+)

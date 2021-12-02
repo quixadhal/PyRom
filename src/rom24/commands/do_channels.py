@@ -84,4 +84,6 @@ def do_channels(ch, argument):
         ch.send("You cannot show emotions.\n")
 
 
-interp.register_command(interp.cmd_type('channels', do_channels, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("channels", do_channels, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

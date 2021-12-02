@@ -22,8 +22,9 @@ def do_close(ch, argument):
     if obj:
         # portal stuff */
         if obj.item_type == merc.ITEM_PORTAL:
-            if not state_checks.IS_SET(obj.value[1], merc.EX_ISDOOR) or state_checks.IS_SET(obj.value[1],
-                                                                                            merc.EX_NOCLOSE):
+            if not state_checks.IS_SET(
+                obj.value[1], merc.EX_ISDOOR
+            ) or state_checks.IS_SET(obj.value[1], merc.EX_NOCLOSE):
                 ch.send("You can't do that.\n")
                 return
             if state_checks.IS_SET(obj.value[1], merc.EX_CLOSED):
@@ -65,7 +66,11 @@ def do_close(ch, argument):
             pexit_rev.exit_info.set_bit(merc.EX_CLOSED)
             for rch_id in to_room.people[:]:
                 rch = instance.characters[rch_id]
-                handler_game.act("The $d closes.", rch, None, pexit_rev.keyword, merc.TO_CHAR)
+                handler_game.act(
+                    "The $d closes.", rch, None, pexit_rev.keyword, merc.TO_CHAR
+                )
 
 
-interp.register_command(interp.cmd_type('close', do_close, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("close", do_close, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)

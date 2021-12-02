@@ -19,4 +19,6 @@ def do_areas(ch, argument):
             ch.send("\n")
 
 
-interp.register_command(interp.cmd_type('areas', do_areas, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("areas", do_areas, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

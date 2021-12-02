@@ -24,4 +24,6 @@ def do_load(ch, argument):
     ch.do_load("")
 
 
-interp.register_command(interp.cmd_type('load', do_load, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type("load", do_load, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)
+)

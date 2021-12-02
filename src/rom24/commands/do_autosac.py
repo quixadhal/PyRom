@@ -17,4 +17,6 @@ def do_autosac(ch, argument):
         ch.act.set_bit(merc.PLR_AUTOSAC)
 
 
-interp.register_command(interp.cmd_type('autosac', do_autosac, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("autosac", do_autosac, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

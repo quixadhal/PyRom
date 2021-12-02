@@ -27,4 +27,6 @@ def do_pecho(ch, argument):
     ch.send("\n")
 
 
-interp.register_command(interp.cmd_type('pecho', do_pecho, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type("pecho", do_pecho, merc.POS_DEAD, merc.L4, merc.LOG_ALWAYS, 1)
+)

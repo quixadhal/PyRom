@@ -32,7 +32,9 @@ def do_violate(ch, argument):
             if ch.pcdata and ch.bamfout:
                 handler_game.act("$t", ch, ch.bamfout, rch, merc.TO_VICT)
             else:
-                handler_game.act("$n leaves in a swirling mist.", ch, None, rch, merc.TO_VICT)
+                handler_game.act(
+                    "$n leaves in a swirling mist.", ch, None, rch, merc.TO_VICT
+                )
     ch.get()
     ch.put(location)
 
@@ -42,9 +44,13 @@ def do_violate(ch, argument):
             if ch.pcdata and ch.bamfin:
                 handler_game.act("$t", ch, ch.bamfin, rch, merc.TO_VICT)
             else:
-                handler_game.act("$n appears in a swirling mist.", ch, None, rch, merc.TO_VICT)
+                handler_game.act(
+                    "$n appears in a swirling mist.", ch, None, rch, merc.TO_VICT
+                )
     ch.do_look("auto")
     return
 
 
-interp.register_command(interp.cmd_type('violate', do_violate, merc.POS_DEAD, merc.ML, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type("violate", do_violate, merc.POS_DEAD, merc.ML, merc.LOG_ALWAYS, 1)
+)

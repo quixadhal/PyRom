@@ -18,7 +18,7 @@ def do_sneak(ch, argument):
 
     if random.randint(1, 99) < ch.get_skill("sneak"):
         if ch.is_pc:
-            ch.check_improve( "sneak", True, 3)
+            ch.check_improve("sneak", True, 3)
         af = handler_game.AFFECT_DATA()
         af.where = merc.TO_AFFECTS
         af.type = "sneak"
@@ -30,8 +30,10 @@ def do_sneak(ch, argument):
         ch.affect_add(af)
     else:
         if ch.is_pc:
-            ch.check_improve( "sneak", False, 3)
+            ch.check_improve("sneak", False, 3)
     return
 
 
-interp.register_command(interp.cmd_type('sneak', do_sneak, merc.POS_STANDING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("sneak", do_sneak, merc.POS_STANDING, 0, merc.LOG_NORMAL, 1)
+)

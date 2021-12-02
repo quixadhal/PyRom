@@ -32,13 +32,20 @@ def do_examine(ch, argument):
                 else:
                     buf = "There are %d silver coins in the pile.\n" % obj.value[0]
             else:
-                buf = "There are %d gold and %d silver coins in the pile.\n" % (obj.value[1], obj.value[0])
+                buf = "There are %d gold and %d silver coins in the pile.\n" % (
+                    obj.value[1],
+                    obj.value[0],
+                )
             ch.send(buf)
-        elif obj.item_type == merc.ITEM_DRINK_CON \
-                or obj.item_type == merc.ITEM_CONTAINER \
-                or obj.item_type == merc.ITEM_CORPSE_NPC \
-                or obj.item_type == merc.ITEM_CORPSE_PC:
+        elif (
+            obj.item_type == merc.ITEM_DRINK_CON
+            or obj.item_type == merc.ITEM_CONTAINER
+            or obj.item_type == merc.ITEM_CORPSE_NPC
+            or obj.item_type == merc.ITEM_CORPSE_PC
+        ):
             ch.do_look("in %s" % arg)
 
 
-interp.register_command(interp.cmd_type('examine', do_examine, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("examine", do_examine, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)

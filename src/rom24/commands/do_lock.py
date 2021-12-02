@@ -19,8 +19,9 @@ def do_lock(ch, argument):
     if obj:
         # portal stuff
         if obj.item_type == merc.ITEM_PORTAL:
-            if not state_checks.IS_SET(obj.value[1], merc.EX_ISDOOR) or state_checks.IS_SET(obj.value[1],
-                                                                                            merc.EX_NOCLOSE):
+            if not state_checks.IS_SET(
+                obj.value[1], merc.EX_ISDOOR
+            ) or state_checks.IS_SET(obj.value[1], merc.EX_NOCLOSE):
                 ch.send("You can't do that.\n")
                 return
             if not state_checks.IS_SET(obj.value[1], merc.EX_CLOSED):
@@ -82,9 +83,14 @@ def do_lock(ch, argument):
         handler_game.act("$n locks the $d.", ch, None, pexit.keyword, merc.TO_ROOM)
         # lock the other side
         to_room = pexit.to_room
-        if to_room and to_room.exit[merc.rev_dir[door]] != 0 \
-                and to_room.exit[merc.rev_dir[door]].to_room == ch.in_room:
+        if (
+            to_room
+            and to_room.exit[merc.rev_dir[door]] != 0
+            and to_room.exit[merc.rev_dir[door]].to_room == ch.in_room
+        ):
             to_room.exit[merc.rev_dir[door]].exit_info.set_bit(merc.EX_LOCKED)
 
 
-interp.register_command(interp.cmd_type('lock', do_lock, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("lock", do_lock, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)

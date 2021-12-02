@@ -16,4 +16,6 @@ def do_afk(ch, argument):
         ch.comm.set_bit(merc.COMM_AFK)
 
 
-interp.register_command(interp.cmd_type('afk', do_afk, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("afk", do_afk, merc.POS_SLEEPING, 0, merc.LOG_NORMAL, 1)
+)

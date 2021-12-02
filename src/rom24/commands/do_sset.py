@@ -13,7 +13,7 @@ def do_sset(ch, argument):
     """Set a skill to a specific level.
 
     Example:
-    
+
         <26hp 128m 454mv> sset bub dagger 100
         Skill set.
 
@@ -72,4 +72,6 @@ def do_sset(ch, argument):
     ch.send("Skill set.\n")
 
 
-interp.register_command(interp.cmd_type('sset', do_sset, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1))
+interp.register_command(
+    interp.cmd_type("sset", do_sset, merc.POS_DEAD, merc.L2, merc.LOG_ALWAYS, 1)
+)

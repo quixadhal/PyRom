@@ -10,18 +10,18 @@
 #   WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #   License for the specific language governing permissions and limitations
 #   under the License.
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Changes made by pR0Ps.CM[at]gmail[dot]com on 18/07/2012
 # -Updated for use with Python 3.x
 # -Repackaged into a single file to simplify distribution
 # -Other misc fixes and changes
 #
 # Report any bugs in this implementation to me (email above)
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Additional changes by Quixadhal on 2014.06.16
 # -Re-split code into multiple files, for ease of maintenance
 # -Rewrote terminal system
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 """
 Handle Asynchronous Telnet Connections.
@@ -39,13 +39,13 @@ from rom24.miniboa.telnet import ConnectionLost
 
 
 ## Cap sockets to 512 on Windows because winsock can only process 512 at time
-if sys.platform == 'win32':
+if sys.platform == "win32":
     MAX_CONNECTIONS = 500
 ## Cap sockets to 1000 on Linux because you can only have 1024 file descriptors
 else:
     MAX_CONNECTIONS = 1000
 
-#--[ Telnet Server ]-----------------------------------------------------------
+# --[ Telnet Server ]-----------------------------------------------------------
 
 
 ## Default connection handler
@@ -53,7 +53,9 @@ def _on_connect(client):
     """
     Placeholder new connection handler.
     """
-    logger.info("++ Opened connection to {}, sending greeting...".format(client.addrport()))
+    logger.info(
+        "++ Opened connection to {}, sending greeting...".format(client.addrport())
+    )
     client.send("Greetings from Miniboa-py3!\n")
 
 
@@ -70,9 +72,15 @@ class TelnetServer(object):
     Poll sockets for new connections and sending/receiving data from clients.
     """
 
-    def __init__(self, port=23, address='', on_connect=_on_connect,
-                 on_disconnect=_on_disconnect, max_connections=MAX_CONNECTIONS,
-                 timeout=0.05):
+    def __init__(
+        self,
+        port=23,
+        address="",
+        on_connect=_on_connect,
+        on_disconnect=_on_disconnect,
+        max_connections=MAX_CONNECTIONS,
+        timeout=0.05,
+    ):
         """
         Create a new Telnet Server.
 
@@ -173,8 +181,7 @@ class TelnetServer(object):
 
         ## Get active socket file descriptors from select.select()
         try:
-            rlist, slist, elist = select.select(recv_list, send_list, [],
-                                                self.timeout)
+            rlist, slist, elist = select.select(recv_list, send_list, [], self.timeout)
         except select.error as err:
             ## If we can't even use select(), game over man, game over
             logger.critical("SELECT socket error '{}'".format(str(err)))
@@ -193,7 +200,7 @@ class TelnetServer(object):
                     logger.error("ACCEPT socket error '{}:{}'.".format(err[0], err[1]))
                     continue
 
-                #Check for maximum connections
+                # Check for maximum connections
                 if self.client_count() >= self.max_connections:
                     logger.warning("Refusing new connection, maximum already in use.")
                     sock.close()

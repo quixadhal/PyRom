@@ -14,7 +14,7 @@ from rom24 import update
 from rom24 import instance
 
 
-def do_flee( ch, argument ):
+def do_flee(ch, argument):
     victim = ch.fighting
     if not victim:
         if ch.position == merc.POS_FIGHTING:
@@ -26,12 +26,18 @@ def do_flee( ch, argument ):
     for attempt in range(6):
         door = handler_room.number_door()
         pexit = was_in.exit[door]
-        if not pexit \
-                or not pexit.to_room \
-                or pexit.exit_info.is_set(merc.EX_CLOSED) \
-                or random.randint(0, ch.daze) != 0 \
-                or (ch.is_npc()
-                    and state_checks.IS_SET(instance.rooms[pexit.to_room].room_flags, merc.ROOM_NO_MOB)):
+        if (
+            not pexit
+            or not pexit.to_room
+            or pexit.exit_info.is_set(merc.EX_CLOSED)
+            or random.randint(0, ch.daze) != 0
+            or (
+                ch.is_npc()
+                and state_checks.IS_SET(
+                    instance.rooms[pexit.to_room].room_flags, merc.ROOM_NO_MOB
+                )
+            )
+        ):
             continue
 
         handler_ch.move_char(ch, door, False)
@@ -44,7 +50,9 @@ def do_flee( ch, argument ):
 
         if not ch.is_npc():
             ch.send("You flee from combat!\n")
-            if ch.guild.name == 'thief' and (random.randint(1, 99) < 3 * (ch.level // 2)):
+            if ch.guild.name == "thief" and (
+                random.randint(1, 99) < 3 * (ch.level // 2)
+            ):
                 ch.send("You snuck away safely.\n")
             else:
                 ch.send("You lost 10 exp.\n")
@@ -56,4 +64,6 @@ def do_flee( ch, argument ):
     return
 
 
-interp.register_command(interp.cmd_type('flee', do_flee, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("flee", do_flee, merc.POS_FIGHTING, 0, merc.LOG_NORMAL, 1)
+)

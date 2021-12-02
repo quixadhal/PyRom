@@ -1,4 +1,3 @@
-
 import random
 import logging
 
@@ -30,6 +29,7 @@ class Grouping:
         self.pet = None
         self.group = None
         self._clan = ""
+
     # * It is very important that this be an equivalence relation:
     # * (1) A ~ A
     # * (2) if A ~ B then B ~ A
@@ -64,11 +64,15 @@ class Grouping:
 
         if self.is_affected(merc.AFF_CHARM):
             self.affected_by.rem_bit(merc.AFF_CHARM)
-            self.affect_strip('charm person')
+            self.affect_strip("charm person")
 
         if instance.characters[self.master].can_see(self) and self.in_room:
-            handler_game.act("$n stops following you.", self, None, self.master, merc.TO_VICT)
-            handler_game.act("You stop following $N.", self, None, self.master, merc.TO_CHAR)
+            handler_game.act(
+                "$n stops following you.", self, None, self.master, merc.TO_VICT
+            )
+            handler_game.act(
+                "You stop following $N.", self, None, self.master, merc.TO_CHAR
+            )
         if instance.characters[self.master].pet == self.instance_id:
             instance.characters[self.master].pet = None
         self.master = None
@@ -132,7 +136,9 @@ class Fight:
         if type(value) is int:
             value = instance.characters.get(value, None)  # Ensure fighting exists.
         if value and not isinstance(value, Fight):
-            logger.error("Instance fighting non combat. %s fighting %s", self.name, value.name)
+            logger.error(
+                "Instance fighting non combat. %s fighting %s", self.name, value.name
+            )
             return
         if value:
             value = value.instance_id
@@ -162,23 +168,25 @@ class Fight:
             elif self.vuln_flags.is_set(merc.VULN_MAGIC):
                 defence = merc.IS_VULNERABLE
 
-        bit = {merc.DAM_BASH: merc.IMM_BASH,
-               merc.DAM_PIERCE: merc.IMM_PIERCE,
-               merc.DAM_SLASH: merc.IMM_SLASH,
-               merc.DAM_FIRE: merc.IMM_FIRE,
-               merc.DAM_COLD: merc.IMM_COLD,
-               merc.DAM_LIGHTNING: merc.IMM_LIGHTNING,
-               merc.DAM_ACID: merc.IMM_ACID,
-               merc.DAM_POISON: merc.IMM_POISON,
-               merc.DAM_NEGATIVE: merc.IMM_NEGATIVE,
-               merc.DAM_HOLY: merc.IMM_HOLY,
-               merc.DAM_ENERGY: merc.IMM_ENERGY,
-               merc.DAM_MENTAL: merc.IMM_MENTAL,
-               merc.DAM_DISEASE: merc.IMM_DISEASE,
-               merc.DAM_DROWNING: merc.IMM_DROWNING,
-               merc.DAM_LIGHT: merc.IMM_LIGHT,
-               merc.DAM_CHARM: merc.IMM_CHARM,
-               merc.DAM_SOUND: merc.IMM_SOUND}
+        bit = {
+            merc.DAM_BASH: merc.IMM_BASH,
+            merc.DAM_PIERCE: merc.IMM_PIERCE,
+            merc.DAM_SLASH: merc.IMM_SLASH,
+            merc.DAM_FIRE: merc.IMM_FIRE,
+            merc.DAM_COLD: merc.IMM_COLD,
+            merc.DAM_LIGHTNING: merc.IMM_LIGHTNING,
+            merc.DAM_ACID: merc.IMM_ACID,
+            merc.DAM_POISON: merc.IMM_POISON,
+            merc.DAM_NEGATIVE: merc.IMM_NEGATIVE,
+            merc.DAM_HOLY: merc.IMM_HOLY,
+            merc.DAM_ENERGY: merc.IMM_ENERGY,
+            merc.DAM_MENTAL: merc.IMM_MENTAL,
+            merc.DAM_DISEASE: merc.IMM_DISEASE,
+            merc.DAM_DROWNING: merc.IMM_DROWNING,
+            merc.DAM_LIGHT: merc.IMM_LIGHT,
+            merc.DAM_CHARM: merc.IMM_CHARM,
+            merc.DAM_SOUND: merc.IMM_SOUND,
+        }
 
         if dam_type not in bit:
             return defence
@@ -210,9 +218,19 @@ class Communication:
         self.comm = bit.Bit(merc.COMM_COMBINE | merc.COMM_PROMPT, tables.comm_flags)
 
 
-class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
-             environment.Environment, affects.Affects, Communication,
-             inventory.Inventory, instance.Instancer, type_bypass.ObjectType, equipment.Equipment):
+class Living(
+    immortal.Immortal,
+    Fight,
+    Grouping,
+    physical.Physical,
+    environment.Environment,
+    affects.Affects,
+    Communication,
+    inventory.Inventory,
+    instance.Instancer,
+    type_bypass.ObjectType,
+    equipment.Equipment,
+):
     def __init__(self):
         super().__init__()
         self.is_living = True
@@ -220,7 +238,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         self.version = 5
         self.level = 0
         self.act = bit.Bit(merc.PLR_NOSUMMON, [tables.act_flags, tables.plr_flags])
-        self._race = 'human'
+        self._race = "human"
         self._guild = None
         self.sex = 0
         self.level = 0
@@ -251,7 +269,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         try:
             return const.race_table[self._race]
         except KeyError:
-            return const.race_table['human']
+            return const.race_table["human"]
 
     @race.setter
     def race(self, value):
@@ -278,15 +296,23 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             self.carry_weight -= instance_object.get_weight()
             instance_object.environment = None
             return instance_object
-        elif instance_object.is_item and instance_object.instance_id in self.equipped.values():
-            raise KeyError('Item is in equipped dict, not inventory! %d' % instance_object.instance_id)
+        elif (
+            instance_object.is_item
+            and instance_object.instance_id in self.equipped.values()
+        ):
+            raise KeyError(
+                "Item is in equipped dict, not inventory! %d"
+                % instance_object.instance_id
+            )
         else:
             if not instance_object.is_item:
-                raise TypeError('Non-item object attempted '
-                                'to be removed from character object - %s' % type(instance_object))
+                raise TypeError(
+                    "Non-item object attempted "
+                    "to be removed from character object - %s" % type(instance_object)
+                )
 
     def put(self, instance_object):
-        #if instance_object.is_item:
+        # if instance_object.is_item:
         self.inventory += [instance_object.instance_id]
         instance_object.environment = self.instance_id
         if not instance_object.instance_id in self.equipped.values():
@@ -294,8 +320,10 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             self.carry_weight += instance_object.get_weight()
             return instance_object
         else:
-            raise KeyError('Item is in equipped dict, run, screaming! %d' % instance_object.instance_id)
-
+            raise KeyError(
+                "Item is in equipped dict, run, screaming! %d"
+                % instance_object.instance_id
+            )
 
     def send(self, pstr):
         pass
@@ -314,7 +342,9 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         elif val is False:
             self.act.set_bit(merc.ACT_IS_NPC)
         else:
-            raise ValueError(f"Invalid bit set for is_pc: {val}.  Values can only be true or false.")
+            raise ValueError(
+                f"Invalid bit set for is_pc: {val}.  Values can only be true or false."
+            )
 
     def is_good(self):
         return self.alignment >= 350
@@ -337,7 +367,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             return False
         return True
 
-    #/* command for retrieving stats */
+    # /* command for retrieving stats */
     def stat(self, stat):
         stat_max = 0
         if self.is_npc() or self.level > merc.LEVEL_IMMORTAL:
@@ -349,7 +379,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                 stat_max += 2
             if self.race == const.race_table["human"]:
                 stat_max += 1
-            stat_max = min(stat_max, 25);
+            stat_max = min(stat_max, 25)
         return max(3, min(self.perm_stat[stat] + self.mod_stat[stat], stat_max))
 
     def exp_per_level(self, points):
@@ -359,8 +389,13 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         inc = 500
 
         if points < 40:
-            return 1000 * const.pc_race_table[self.race.name].class_mult[self.guild.name] // 100 if \
-                const.pc_race_table[self.race.name].class_mult[self.guild.name] else 1
+            return (
+                1000
+                * const.pc_race_table[self.race.name].class_mult[self.guild.name]
+                // 100
+                if const.pc_race_table[self.race.name].class_mult[self.guild.name]
+                else 1
+            )
         # processing */
         points -= 40
 
@@ -372,16 +407,22 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                 inc *= 2
                 points -= 10
         expl += points * inc // 10
-        return expl * const.pc_race_table[self.race.name].class_mult[self.guild.name] // 100
+        return (
+            expl
+            * const.pc_race_table[self.race.name].class_mult[self.guild.name]
+            // 100
+        )
 
     def reset(self):
         if self.is_npc():
             return
 
-        if self.perm_hit == 0 \
-                or self.perm_mana == 0 \
-                or self.perm_move == 0 \
-                or self.last_level == 0:
+        if (
+            self.perm_hit == 0
+            or self.perm_mana == 0
+            or self.perm_move == 0
+            or self.last_level == 0
+        ):
             # do a FULL reset */
             for loc in self.equipped.keys():
                 item = self.get_eq(loc)
@@ -534,23 +575,25 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             return False
         if self.trust < victim.incog_level and self.in_room != victim.in_room:
             return False
-        if (not self.is_npc()
-            and self.act.is_set(merc.PLR_HOLYLIGHT)) \
-                or (self.is_npc()
-                    and self.is_immortal()):
+        if (not self.is_npc() and self.act.is_set(merc.PLR_HOLYLIGHT)) or (
+            self.is_npc() and self.is_immortal()
+        ):
             return True
         if self.is_affected(merc.AFF_BLIND):
             return False
         if self.in_room.is_dark() and not self.is_affected(merc.AFF_INFRARED):
             return False
-        if victim.is_affected(merc.AFF_INVISIBLE) \
-                and not self.is_affected(merc.AFF_DETECT_INVIS):
+        if victim.is_affected(merc.AFF_INVISIBLE) and not self.is_affected(
+            merc.AFF_DETECT_INVIS
+        ):
             return False
         # sneaking */
 
-        if victim.is_affected(merc.AFF_SNEAK) \
-                and not self.is_affected(merc.AFF_DETECT_HIDDEN) \
-                and victim.fighting is None:
+        if (
+            victim.is_affected(merc.AFF_SNEAK)
+            and not self.is_affected(merc.AFF_DETECT_HIDDEN)
+            and victim.fighting is None
+        ):
             chance = victim.get_skill("sneak")
             chance += victim.stat(merc.STAT_DEX) * 3 // 2
             chance -= self.stat(merc.STAT_INT) * 2
@@ -559,24 +602,24 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             if random.randint(1, 99) < chance:
                 return False
 
-        if victim.is_affected(merc.AFF_HIDE) \
-                and not self.is_affected(merc.AFF_DETECT_HIDDEN) \
-                and victim.fighting is None:
+        if (
+            victim.is_affected(merc.AFF_HIDE)
+            and not self.is_affected(merc.AFF_DETECT_HIDDEN)
+            and victim.fighting is None
+        ):
             return False
 
         return True
 
     # * True if char can see obj.
     def can_see_item(self, item):
-        if not self.is_npc() \
-                and self.act.is_set(merc.PLR_HOLYLIGHT):
+        if not self.is_npc() and self.act.is_set(merc.PLR_HOLYLIGHT):
             return True
         if type(item) == int:
             item = instance.items.get(item, None)
         if item.flags.vis_death:
             return False
-        if self.is_affected(merc.AFF_BLIND) \
-                and item.item_type != merc.ITEM_POTION:
+        if self.is_affected(merc.AFF_BLIND) and item.item_type != merc.ITEM_POTION:
             return False
         if item.flags.light and item.value[2] != 0:
             return True
@@ -584,8 +627,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             return False
         if item.flags.glow:
             return True
-        if self.in_room.is_dark() \
-                and not self.is_affected(merc.AFF_DARK_VISION):
+        if self.in_room.is_dark() and not self.is_affected(merc.AFF_DARK_VISION):
             return False
         return True
 
@@ -598,13 +640,26 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         if not room:
             logger.error("No room found for room_id: %s", room_id)
             return False
-        if state_checks.IS_SET(room.room_flags, merc.ROOM_IMP_ONLY) and self.trust < merc.MAX_LEVEL:
+        if (
+            state_checks.IS_SET(room.room_flags, merc.ROOM_IMP_ONLY)
+            and self.trust < merc.MAX_LEVEL
+        ):
             return False
-        if state_checks.IS_SET(room.room_flags, merc.ROOM_GODS_ONLY) and not self.is_immortal():
+        if (
+            state_checks.IS_SET(room.room_flags, merc.ROOM_GODS_ONLY)
+            and not self.is_immortal()
+        ):
             return False
-        if state_checks.IS_SET(room.room_flags, merc.ROOM_HEROES_ONLY) and not self.is_immortal():
+        if (
+            state_checks.IS_SET(room.room_flags, merc.ROOM_HEROES_ONLY)
+            and not self.is_immortal()
+        ):
             return False
-        if state_checks.IS_SET(room.room_flags, merc.ROOM_NEWBIES_ONLY) and self.level > 5 and not self.is_immortal():
+        if (
+            state_checks.IS_SET(room.room_flags, merc.ROOM_NEWBIES_ONLY)
+            and self.level > 5
+            and not self.is_immortal()
+        ):
             return False
         if not self.is_immortal() and room.clan and self.clan != room.clan:
             return False
@@ -613,12 +668,12 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
     # Extract a char from the world.
     def extract(self, fPull):
         if not self.in_room:
-            logger.warn('Character being extracted is not in a room.')
+            logger.warn("Character being extracted is not in a room.")
 
         # nuke_pets(ch)
         self.pet = None  # just in case
 
-        #if fPull:
+        # if fPull:
         #    die_follower( ch )
         fight.stop_fighting(self, True)
 
@@ -669,8 +724,11 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         if word == "self":
             return ch
         number, arg = game_utils.number_argument(argument)
-        ch_list = [instance.characters[rch_id] for rch_id in ch.in_room.people[:]
-                   if game_utils.is_name(word, instance.characters[rch_id].name)]
+        ch_list = [
+            instance.characters[rch_id]
+            for rch_id in ch.in_room.people[:]
+            if game_utils.is_name(word, instance.characters[rch_id].name)
+        ]
         if ch_list:
             try:
                 if ch.can_see(ch_list[number - 1]):
@@ -686,8 +744,11 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             return wch
         number, arg = game_utils.number_argument(argument)
         arg = arg.lower()
-        ch_list = [instance.characters[wch_id] for wch_id in sorted(instance.characters.keys())
-                   if game_utils.is_name(arg, instance.characters[wch_id].name)]
+        ch_list = [
+            instance.characters[wch_id]
+            for wch_id in sorted(instance.characters.keys())
+            if game_utils.is_name(arg, instance.characters[wch_id].name)
+        ]
         if ch_list:
             try:
                 if ch.can_see(ch_list[number - 1]):
@@ -700,7 +761,11 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
     def get_item_list(ch, argument, contents):
         number, arg = game_utils.number_argument(argument)
         arg = arg.lower()
-        item_list = [instance.items[item_id] for item_id in contents if game_utils.is_name(arg, instance.items[item_id].name)]
+        item_list = [
+            instance.items[item_id]
+            for item_id in contents
+            if game_utils.is_name(arg, instance.items[item_id].name)
+        ]
         if item_list:
             try:
                 if ch.can_see_item(item_list[number - 1]):
@@ -729,12 +794,12 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             if item_id:
                 item = instance.items[item_id]
                 if ch.can_see_item(item) and game_utils.is_name(arg, item.name.lower()):
-                    #print('inside')
+                    # print('inside')
                     count += 1
                     if count == number:
-                        #print(item.name, '\n')
-                        #print(item.instance_id, '\n')
-                        #print(ch.equipped['main_hand'])
+                        # print(item.name, '\n')
+                        # print(item.instance_id, '\n')
+                        # print(ch.equipped['main_hand'])
                         return item
             else:
                 continue
@@ -760,8 +825,11 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             return item
         number, arg = game_utils.number_argument(argument)
         arg = arg.lower()
-        item_list = [instance.items[item_id] for item_id in sorted(instance.items.keys())
-                     if game_utils.is_name(arg, instance.items[item_id].name)]
+        item_list = [
+            instance.items[item_id]
+            for item_id in sorted(instance.items.keys())
+            if game_utils.is_name(arg, instance.items[item_id].name)
+        ]
         if item_list:
             try:
                 if ch.can_see_item(item_list[number - 1]):
@@ -774,8 +842,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
     def can_drop_item(self, item):
         if not item.flags.no_drop:
             return True
-        if not self.is_npc() \
-                and self.level >= merc.LEVEL_IMMORTAL:
+        if not self.is_npc() and self.level >= merc.LEVEL_IMMORTAL:
             return True
         return False
 
@@ -786,35 +853,41 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             logger.error("BUG: Bad sn %s in get_skill." % sn)
             skill = 0
         elif self.is_pc:
-            if self.level < const.skill_table[sn].skill_level[self.guild.name] or sn not in self.learned:
+            if (
+                self.level < const.skill_table[sn].skill_level[self.guild.name]
+                or sn not in self.learned
+            ):
                 skill = 0
             else:
                 skill = self.learned[sn]
         else:  # mobiles */
             if const.skill_table[sn].spell_fun is not None:
                 skill = 40 + 2 * self.level
-            elif sn == 'sneak' or sn == 'hide':
+            elif sn == "sneak" or sn == "hide":
                 skill = self.level * 2 + 20
-            elif (sn == 'dodge' and self.off_flags.is_set(merc.OFF_DODGE)) \
-                    or (sn == 'parry' and self.off_flags.is_set(merc.OFF_PARRY)):
+            elif (sn == "dodge" and self.off_flags.is_set(merc.OFF_DODGE)) or (
+                sn == "parry" and self.off_flags.is_set(merc.OFF_PARRY)
+            ):
                 skill = self.level * 2
-            elif sn == 'shield block':
+            elif sn == "shield block":
                 skill = 10 + 2 * self.level
-            elif sn == 'second attack' \
-                    and (self.act.is_set(merc.ACT_WARRIOR)
-                         or self.act.is_set(merc.ACT_THIEF)):
+            elif sn == "second attack" and (
+                self.act.is_set(merc.ACT_WARRIOR) or self.act.is_set(merc.ACT_THIEF)
+            ):
                 skill = 10 + 3 * self.level
-            elif sn == 'third attack' and self.act.is_set(merc.ACT_WARRIOR):
+            elif sn == "third attack" and self.act.is_set(merc.ACT_WARRIOR):
                 skill = 4 * self.level - 40
-            elif sn == 'hand to hand':
+            elif sn == "hand to hand":
                 skill = 40 + 2 * self.level
             elif sn == "trip" and self.off_flags.is_set(merc.OFF_TRIP):
                 skill = 10 + 3 * self.level
             elif sn == "bash" and self.off_flags.is_set(merc.OFF_BASH):
                 skill = 10 + 3 * self.level
-            elif sn == "disarm" and (self.off_flags.is_set(merc.OFF_DISARM)
-                                     or self.act.is_set(merc.ACT_WARRIOR)
-                                     or self.act.is_set(merc.ACT_THIEF)):
+            elif sn == "disarm" and (
+                self.off_flags.is_set(merc.OFF_DISARM)
+                or self.act.is_set(merc.ACT_WARRIOR)
+                or self.act.is_set(merc.ACT_THIEF)
+            ):
                 skill = 20 + 3 * self.level
             elif sn == "berserk" and self.off_flags.is_set(merc.OFF_BERSERK):
                 skill = 3 * self.level
@@ -826,7 +899,16 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                 skill = 40 + self.level
             elif sn == "recall":
                 skill = 40 + self.level
-            elif sn in ["sword", "dagger", "spear", "mace", "axe", "flail", "whip", "polearm"]:
+            elif sn in [
+                "sword",
+                "dagger",
+                "spear",
+                "mace",
+                "axe",
+                "flail",
+                "whip",
+                "polearm",
+            ]:
                 skill = 40 + 5 * self.level // 2
             else:
                 skill = 0
@@ -842,7 +924,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
 
     # for returning weapon information */
     def get_weapon_sn(self):
-        wield = self.get_eq('main_hand')
+        wield = self.get_eq("main_hand")
         if not wield or wield.item_type != merc.ITEM_WEAPON:
             sn = "hand to hand"
             return sn
@@ -877,7 +959,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         silver = min(self.silver, cost)
         gold = 0
         if silver < cost:
-            gold = ((cost - silver + 99) // 100)
+            gold = (cost - silver + 99) // 100
             silver = cost - 100 * gold
         self.gold -= gold
         self.silver -= silver
@@ -918,10 +1000,10 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         :rtype: nothing
         """
         # redundant anc causes bugs!
-        #if not aff_object.enchanted:
-         #   for paf in merc.itemTemplate[aff_object.vnum].affected:
-          #      if paf.location != merc.APPLY_SPELL_AFFECT:
-           #         self.affect_modify(paf, True)
+        # if not aff_object.enchanted:
+        #   for paf in merc.itemTemplate[aff_object.vnum].affected:
+        #      if paf.location != merc.APPLY_SPELL_AFFECT:
+        #         self.affect_modify(paf, True)
 
         for paf in aff_object.affected:
             if paf.location == merc.APPLY_SPELL_AFFECT:
@@ -932,10 +1014,10 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
     def raw_equip(self, item, to_location):
         self.equipped[to_location] = item.instance_id
         item.environment = self.instance_id
-        if item.flags.two_handed and 'main_hand' in item.equipped_to:
-            self.equipped['off_hand'] = item.instance_id
+        if item.flags.two_handed and "main_hand" in item.equipped_to:
+            self.equipped["off_hand"] = item.instance_id
         for i in range(4):
-                self.armor[i] -= item.apply_ac(i)
+            self.armor[i] -= item.apply_ac(i)
         self.apply_affect(item)
         if item.flags.light and item.value[2] != 0 and self.in_room:
             self.in_room.available_light += 1
@@ -952,10 +1034,17 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         #         logger.exception("Encountered an exception trying to get the item from the environment.")
         #         return
 
-        if (item.flags.anti_evil and self.is_evil()) or (item.flags.anti_good and self.is_good()) \
-                or (item.flags.anti_neutral and self.is_neutral()):
-            handler_game.act("You are zapped by $p and drop it.", self, item, None, merc.TO_CHAR)
-            handler_game.act("$n is zapped by $p and drops it.", self, item, None, merc.TO_ROOM)
+        if (
+            (item.flags.anti_evil and self.is_evil())
+            or (item.flags.anti_good and self.is_good())
+            or (item.flags.anti_neutral and self.is_neutral())
+        ):
+            handler_game.act(
+                "You are zapped by $p and drop it.", self, item, None, merc.TO_CHAR
+            )
+            handler_game.act(
+                "$n is zapped by $p and drops it.", self, item, None, merc.TO_ROOM
+            )
             self.get(item)
             self.in_room.put(item)
             return False
@@ -963,32 +1052,38 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             if not self.unequip(loc):
                 return False
         if not self.is_npc():
-            if loc == 'main_hand':
+            if loc == "main_hand":
 
-                if item.get_weight() > (const.str_app[self.stat(merc.STAT_STR)].wield * 10):
+                if item.get_weight() > (
+                    const.str_app[self.stat(merc.STAT_STR)].wield * 10
+                ):
                     if wverbose:
-                        self.send('That weapon is too heavy for you to wield.\n')
+                        self.send("That weapon is too heavy for you to wield.\n")
                     return False
                 elif item.flags.two_handed:
                     if self.slots.off_hand and self.size < merc.SIZE_LARGE:
                         if wverbose:
-                            self.send('You need two hands free for that weapon.\n')
+                            self.send("You need two hands free for that weapon.\n")
 
                         return False
                     elif self.size < merc.SIZE_LARGE:
 
                         if wverbose:
-                            self.send('That weapon is too large for you to wield.\n')
+                            self.send("That weapon is too large for you to wield.\n")
 
                         return False
                     else:
                         return True
                 else:
                     return True
-            elif loc == 'off_hand':
-                if self.slots.main_hand and item.flags.two_handed and self.size < merc.SIZE_LARGE:
+            elif loc == "off_hand":
+                if (
+                    self.slots.main_hand
+                    and item.flags.two_handed
+                    and self.size < merc.SIZE_LARGE
+                ):
                     if wverbose:
-                        self.send('Your hands are tied up with your weapon!\n')
+                        self.send("Your hands are tied up with your weapon!\n")
                     return False
                 else:
                     return True
@@ -998,7 +1093,14 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             return True
 
     # * Equip a char with an obj.
-    def equip(self, item, replace: bool=False, verbose: bool=False, verbose_all: bool=False, to_loc: str=None):
+    def equip(
+        self,
+        item,
+        replace: bool = False,
+        verbose: bool = False,
+        verbose_all: bool = False,
+        to_loc: str = None,
+    ):
         """
 
         :type item: int or Items
@@ -1025,9 +1127,13 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             possible_slots = item.equips_to & self.slots.available
             if len(possible_slots) > 0:
                 if not verbose:
-                    success = self.can_equip(item, [k for k in possible_slots][0], False, False)
+                    success = self.can_equip(
+                        item, [k for k in possible_slots][0], False, False
+                    )
                 else:
-                    success = self.can_equip(item, [k for k in possible_slots][0], False, True)
+                    success = self.can_equip(
+                        item, [k for k in possible_slots][0], False, True
+                    )
                 if not success:
                     return
                 else:
@@ -1042,9 +1148,13 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                     overlap = item.equips_to & all_slots
                     if len(overlap) > 0:
                         if not verbose:
-                            success = self.can_equip(item, [k for k in overlap][0], True, False)
+                            success = self.can_equip(
+                                item, [k for k in overlap][0], True, False
+                            )
                         else:
-                            success = self.can_equip(item, [k for k in overlap][0], True, False)
+                            success = self.can_equip(
+                                item, [k for k in overlap][0], True, False
+                            )
                         if not success:
                             return
                         else:
@@ -1071,23 +1181,27 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         :rtype: none
         Taken from unequip to shorten it, searches for Affects, and removes as needed
         """
-        #if aff_object.is_item and not aff_object.enchanted:
-            #No idea why ROM was going back to the template for this one.. but to make it accurate, for now.
-            #for paf in merc.itemTemplate[aff_object.vnum].affected:
-             #       if paf.location == merc.APPLY_SPELL_AFFECT:
-              #          for lpaf in self.affected[:]:
-               #             if lpaf.type == paf.type and lpaf.level == paf.level \
-                #                    and lpaf.location == merc.APPLY_SPELL_AFFECT:
-                 #               self.affect_remove(lpaf)
-                  #              break
-                   # else:
-                    #    self.affect_modify(paf, False)
-                     #   self.affect_check(paf.where, paf.bitvector)
+        # if aff_object.is_item and not aff_object.enchanted:
+        # No idea why ROM was going back to the template for this one.. but to make it accurate, for now.
+        # for paf in merc.itemTemplate[aff_object.vnum].affected:
+        #       if paf.location == merc.APPLY_SPELL_AFFECT:
+        #          for lpaf in self.affected[:]:
+        #             if lpaf.type == paf.type and lpaf.level == paf.level \
+        #                    and lpaf.location == merc.APPLY_SPELL_AFFECT:
+        #               self.affect_remove(lpaf)
+        #              break
+        # else:
+        #    self.affect_modify(paf, False)
+        #   self.affect_check(paf.where, paf.bitvector)
         for paf in aff_object.affected:
             if paf.location == merc.APPLY_SPELL_AFFECT:
                 logger.error("Bug: Norm-Apply")
                 for lpaf in self.affected:
-                    if lpaf.type == paf.type and lpaf.level == paf.level and lpaf.location == merc.APPLY_SPELL_AFFECT:
+                    if (
+                        lpaf.type == paf.type
+                        and lpaf.level == paf.level
+                        and lpaf.location == merc.APPLY_SPELL_AFFECT
+                    ):
                         logger.error("bug: location = %d" % lpaf.location)
                         logger.error("bug: type = %d" % lpaf.type)
                         self.affect_remove(lpaf)
@@ -1097,7 +1211,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                 self.affect_check(paf.where, paf.bitvector)
 
     # Unequip a char with an obj.
-    def unequip(self, unequip_from, forced: bool=True, silent: bool=False):
+    def unequip(self, unequip_from, forced: bool = True, silent: bool = False):
         """
         :param unequip_from:
         :type unequip_from:
@@ -1116,21 +1230,21 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                 item = instance.items[self.equipped[unequip_from]]
             except:
                 return False
-        elif hasattr(unequip_from, 'is_item') and unequip_from.is_item:
+        elif hasattr(unequip_from, "is_item") and unequip_from.is_item:
             item = unequip_from
         else:
             return False
 
         if not item.is_item:
-            raise TypeError('Expected item on unequip, got %r' % type(item))
+            raise TypeError("Expected item on unequip, got %r" % type(item))
         if not forced:
             return False
         if item.flags.no_remove:
             handler_game.act("You can't remove $p.", self, item, None, merc.TO_CHAR)
             return False
-        #AC Removal preceeds the actual clearing of the item from the character equipped dict, and list
-        #This is because, apply_ac relies on the item being equipped to figure out its position on the character
-        #To determine what to actually apply, or remove.
+        # AC Removal preceeds the actual clearing of the item from the character equipped dict, and list
+        # This is because, apply_ac relies on the item being equipped to figure out its position on the character
+        # To determine what to actually apply, or remove.
         self.raw_unequip(item)
         if not silent:
             handler_game.act("$n stops using $p.", self, item, None, merc.TO_ROOM)
@@ -1143,11 +1257,16 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         for i in range(4):
             self.armor[i] += item.apply_ac(i)
         if item.flags.two_handed and self.slots.off_hand:
-            self.equipped['off_hand'] = None
+            self.equipped["off_hand"] = None
         self.equipped[item.equipped_to] = None
         self.inventory += [item.instance_id]
         self.remove_affect(item)
-        if item.flags.light and item.value[2] != 0 and self.in_room and self.in_room.available_light > 0:
+        if (
+            item.flags.light
+            and item.value[2] != 0
+            and self.in_room
+            and self.in_room.available_light > 0
+        ):
             self.in_room.available_light -= 1
         return
 
@@ -1160,71 +1279,119 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         :return:
         :rtype:
         """
-        if slot == 'light':
-            handler_game.act("$n lights $p and holds it.", self, item, None, merc.TO_ROOM)
-            handler_game.act("You light $p and hold it.", self, item, None, merc.TO_CHAR)
+        if slot == "light":
+            handler_game.act(
+                "$n lights $p and holds it.", self, item, None, merc.TO_ROOM
+            )
+            handler_game.act(
+                "You light $p and hold it.", self, item, None, merc.TO_CHAR
+            )
             return
-        elif slot == 'left_finger':
-            handler_game.act("$n wears $p on $s left finger.", self, item, None, merc.TO_ROOM)
-            handler_game.act("You wear $p on your left finger.", self, item, None, merc.TO_CHAR)
+        elif slot == "left_finger":
+            handler_game.act(
+                "$n wears $p on $s left finger.", self, item, None, merc.TO_ROOM
+            )
+            handler_game.act(
+                "You wear $p on your left finger.", self, item, None, merc.TO_CHAR
+            )
             return
-        elif slot == 'right_finger':
-            handler_game.act("$n wears $p on $s right finger.", self, item, None, merc.TO_ROOM)
-            handler_game.act("You wear $p on your right finger.", self, item, None, merc.TO_CHAR)
+        elif slot == "right_finger":
+            handler_game.act(
+                "$n wears $p on $s right finger.", self, item, None, merc.TO_ROOM
+            )
+            handler_game.act(
+                "You wear $p on your right finger.", self, item, None, merc.TO_CHAR
+            )
             return
-        elif slot == 'neck':
-            handler_game.act("$n wears $p around $s neck.", self, item, None, merc.TO_ROOM)
-            handler_game.act("You wear $p around your neck.", self, item, None, merc.TO_CHAR)
+        elif slot == "neck":
+            handler_game.act(
+                "$n wears $p around $s neck.", self, item, None, merc.TO_ROOM
+            )
+            handler_game.act(
+                "You wear $p around your neck.", self, item, None, merc.TO_CHAR
+            )
             return
-        elif slot == 'collar':
-            handler_game.act("$n wears $p around $s collar.", self, item, None, merc.TO_ROOM)
-            handler_game.act("You wear $p around your collar.", self, item, None, merc.TO_CHAR)
+        elif slot == "collar":
+            handler_game.act(
+                "$n wears $p around $s collar.", self, item, None, merc.TO_ROOM
+            )
+            handler_game.act(
+                "You wear $p around your collar.", self, item, None, merc.TO_CHAR
+            )
             return
-        elif slot == 'body':
+        elif slot == "body":
             handler_game.act("$n wears $p on $s torso.", self, item, None, merc.TO_ROOM)
-            handler_game.act("You wear $p on your torso.", self, item, None, merc.TO_CHAR)
+            handler_game.act(
+                "You wear $p on your torso.", self, item, None, merc.TO_CHAR
+            )
             return
-        elif slot == 'head':
+        elif slot == "head":
             handler_game.act("$n wears $p on $s head.", self, item, None, merc.TO_ROOM)
-            handler_game.act("You wear $p on your head.", self, item, None, merc.TO_CHAR)
+            handler_game.act(
+                "You wear $p on your head.", self, item, None, merc.TO_CHAR
+            )
             return
-        elif slot == 'legs':
+        elif slot == "legs":
             handler_game.act("$n wears $p on $s legs.", self, item, None, merc.TO_ROOM)
-            handler_game.act("You wear $p on your legs.", self, item, None, merc.TO_CHAR)
+            handler_game.act(
+                "You wear $p on your legs.", self, item, None, merc.TO_CHAR
+            )
             return
-        elif slot == 'feet':
+        elif slot == "feet":
             handler_game.act("$n wears $p on $s feet.", self, item, None, merc.TO_ROOM)
-            handler_game.act("You wear $p on your feet.", self, item, None, merc.TO_CHAR)
+            handler_game.act(
+                "You wear $p on your feet.", self, item, None, merc.TO_CHAR
+            )
             return
-        elif slot == 'hands':
+        elif slot == "hands":
             handler_game.act("$n wears $p on $s hands.", self, item, None, merc.TO_ROOM)
-            handler_game.act("You wear $p on your hands.", self, item, None, merc.TO_CHAR)
+            handler_game.act(
+                "You wear $p on your hands.", self, item, None, merc.TO_CHAR
+            )
             return
-        elif slot == 'arms':
+        elif slot == "arms":
             handler_game.act("$n wears $p on $s arms.", self, item, None, merc.TO_ROOM)
-            handler_game.act("You wear $p on your arms.", self, item, None, merc.TO_CHAR)
+            handler_game.act(
+                "You wear $p on your arms.", self, item, None, merc.TO_CHAR
+            )
             return
-        elif slot == 'about_body':
-            handler_game.act("$n wears $p about $s torso.", self, item, None, merc.TO_ROOM)
-            handler_game.act("You wear $p about your torso.", self, item, None, merc.TO_CHAR)
+        elif slot == "about_body":
+            handler_game.act(
+                "$n wears $p about $s torso.", self, item, None, merc.TO_ROOM
+            )
+            handler_game.act(
+                "You wear $p about your torso.", self, item, None, merc.TO_CHAR
+            )
             return
-        elif slot == 'waist':
-            handler_game.act("$n wears $p about $s waist.", self, item, None, merc.TO_ROOM)
-            handler_game.act("You wear $p about your waist.", self, item, None, merc.TO_CHAR)
+        elif slot == "waist":
+            handler_game.act(
+                "$n wears $p about $s waist.", self, item, None, merc.TO_ROOM
+            )
+            handler_game.act(
+                "You wear $p about your waist.", self, item, None, merc.TO_CHAR
+            )
             return
-        elif slot == 'left_wrist':
-            handler_game.act("$n wears $p around $s left wrist.", self, item, None, merc.TO_ROOM)
-            handler_game.act("You wear $p around your left wrist.", self, item, None, merc.TO_CHAR)
+        elif slot == "left_wrist":
+            handler_game.act(
+                "$n wears $p around $s left wrist.", self, item, None, merc.TO_ROOM
+            )
+            handler_game.act(
+                "You wear $p around your left wrist.", self, item, None, merc.TO_CHAR
+            )
             return
-        elif slot == 'right_wrist':
-            handler_game.act("$n wears $p around $s right wrist.", self, item, None, merc.TO_ROOM)
-            handler_game.act("You wear $p around your right wrist.", self, item, None, merc.TO_CHAR)
+        elif slot == "right_wrist":
+            handler_game.act(
+                "$n wears $p around $s right wrist.", self, item, None, merc.TO_ROOM
+            )
+            handler_game.act(
+                "You wear $p around your right wrist.", self, item, None, merc.TO_CHAR
+            )
             return
-        elif slot == 'off_hand':
+        elif slot == "off_hand":
             handler_game.act("$n wears $p as a shield.", self, item, None, merc.TO_ROOM)
             handler_game.act("You wear $p as a shield.", self, item, None, merc.TO_CHAR)
             return
-        elif slot == 'main_hand':
+        elif slot == "main_hand":
             handler_game.act("$n wields $p.", self, item, None, merc.TO_ROOM)
             handler_game.act("You wield $p.", self, item, None, merc.TO_CHAR)
             sn = self.get_weapon_sn()
@@ -1232,29 +1399,59 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                 return
             skill = self.get_weapon_skill(sn)
             if skill >= 100:
-                handler_game.act("$p feels like a part of you!", self, item, None, merc.TO_CHAR)
+                handler_game.act(
+                    "$p feels like a part of you!", self, item, None, merc.TO_CHAR
+                )
             elif skill > 85:
-                handler_game.act("You feel quite confident with $p.", self, item, None, merc.TO_CHAR)
+                handler_game.act(
+                    "You feel quite confident with $p.", self, item, None, merc.TO_CHAR
+                )
             elif skill > 70:
-                handler_game.act("You are skilled with $p.", self, item, None, merc.TO_CHAR)
+                handler_game.act(
+                    "You are skilled with $p.", self, item, None, merc.TO_CHAR
+                )
             elif skill > 50:
-                handler_game.act("Your skill with $p is adequate.", self, item, None, merc.TO_CHAR)
+                handler_game.act(
+                    "Your skill with $p is adequate.", self, item, None, merc.TO_CHAR
+                )
             elif skill > 25:
-                handler_game.act("$p feels a little clumsy in your hands.", self, item, None, merc.TO_CHAR)
+                handler_game.act(
+                    "$p feels a little clumsy in your hands.",
+                    self,
+                    item,
+                    None,
+                    merc.TO_CHAR,
+                )
             elif skill > 1:
-                handler_game.act("You fumble and almost drop $p.", self, item, None, merc.TO_CHAR)
+                handler_game.act(
+                    "You fumble and almost drop $p.", self, item, None, merc.TO_CHAR
+                )
             else:
-                handler_game.act("You don't even know which end is up on $p.", self, item, None, merc.TO_CHAR)
+                handler_game.act(
+                    "You don't even know which end is up on $p.",
+                    self,
+                    item,
+                    None,
+                    merc.TO_CHAR,
+                )
             return
-        elif slot == 'held':
+        elif slot == "held":
             handler_game.act("$n holds $p in $s hand.", self, item, None, merc.TO_ROOM)
-            handler_game.act("You hold $p in your hand.", self, item, None, merc.TO_CHAR)
+            handler_game.act(
+                "You hold $p in your hand.", self, item, None, merc.TO_CHAR
+            )
             return
-        elif slot == 'float':
-            handler_game.act("$n releases $p to float next to $m.", self, item, None, merc.TO_ROOM)
-            handler_game.act("You release $p and it floats next to you.", self, item, None, merc.TO_CHAR)
+        elif slot == "float":
+            handler_game.act(
+                "$n releases $p to float next to $m.", self, item, None, merc.TO_ROOM
+            )
+            handler_game.act(
+                "You release $p and it floats next to you.",
+                self,
+                item,
+                None,
+                merc.TO_CHAR,
+            )
             return
         else:
-            raise LookupError('Unable to find verbose wear string for %s' % slot)
-
-
+            raise LookupError("Unable to find verbose wear string for %s" % slot)

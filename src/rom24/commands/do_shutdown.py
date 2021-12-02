@@ -24,5 +24,9 @@ def do_shutdow(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('shutdown', do_shutdown, merc.POS_DEAD, merc.L1, merc.LOG_ALWAYS, 1))
-interp.register_command(interp.cmd_type('shutdow', do_shutdow, merc.POS_DEAD, merc.L1, merc.LOG_NORMAL, 0))
+interp.register_command(
+    interp.cmd_type("shutdown", do_shutdown, merc.POS_DEAD, merc.L1, merc.LOG_ALWAYS, 1)
+)
+interp.register_command(
+    interp.cmd_type("shutdow", do_shutdow, merc.POS_DEAD, merc.L1, merc.LOG_NORMAL, 0)
+)

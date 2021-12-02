@@ -17,4 +17,6 @@ def do_socials(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('socials', do_socials, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("socials", do_socials, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

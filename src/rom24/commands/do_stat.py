@@ -41,4 +41,6 @@ def do_stat(ch, argument):
     ch.send("Nothing by that name found anywhere.\n")
 
 
-interp.register_command(interp.cmd_type('stat', do_stat, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("stat", do_stat, merc.POS_DEAD, merc.IM, merc.LOG_NORMAL, 1)
+)

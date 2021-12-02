@@ -59,7 +59,7 @@ def do_buy(ch, argument):
             cost -= cost // 2 * roll // 100
             ch.send("You haggle the price down to %d coins.\n" % cost)
             if ch.is_pc:
-                ch.check_improve( "haggle", True, 4)
+                ch.check_improve("haggle", True, 4)
         ch.deduct_cost(cost)
         pet = object_creator.create_mobile(pet.pIndexData)
         pet.act = state_checks.SET_BIT(pet.act, handler_game.act_PET)
@@ -69,7 +69,10 @@ def do_buy(ch, argument):
         argument, arg = merc.read_word(argument)
         if arg:
             pet.name = "%s %s" % (pet.name, arg)
-        pet.description = "%sA neck tag says 'I belong to %s'.\n" % (pet.description, ch.name)
+        pet.description = "%sA neck tag says 'I belong to %s'.\n" % (
+            pet.description,
+            ch.name,
+        )
         pet.put(ch.in_room)
         merc.add_follower(pet, ch)
         pet.leader = ch
@@ -82,16 +85,22 @@ def do_buy(ch, argument):
         if not keeper:
             return
         number, arg = game_utils.number_argument(argument)
-        #TODO: Allow multiple purchase arguments.
-        #number = 1
-        #number, arg = merc.mult_argument(argument)
+        # TODO: Allow multiple purchase arguments.
+        # number = 1
+        # number, arg = merc.mult_argument(argument)
         obj = shop_utils.get_obj_keeper(ch, keeper, arg)
         cost = shop_utils.get_cost(keeper, obj, True)
         if number < 1 or number > 99:
             handler_game.act("$n tells you 'Get real!", keeper, None, ch, merc.TO_VICT)
             return
         if cost <= 0 or not ch.can_see_item(obj):
-            handler_game.act("$n tells you 'I don't sell that -- try 'list''.", keeper, None, ch, merc.TO_VICT)
+            handler_game.act(
+                "$n tells you 'I don't sell that -- try 'list''.",
+                keeper,
+                None,
+                ch,
+                merc.TO_VICT,
+            )
             ch.reply = keeper
             return
         items = []
@@ -103,18 +112,38 @@ def do_buy(ch, argument):
                     items.append(t_obj)
                     count += 1
             if count < number:
-                handler_game.act("$n tells you 'I don't have that many in stock.", keeper, None, ch, merc.TO_VICT)
+                handler_game.act(
+                    "$n tells you 'I don't have that many in stock.",
+                    keeper,
+                    None,
+                    ch,
+                    merc.TO_VICT,
+                )
                 ch.reply = keeper
                 return
         if (ch.silver + ch.gold * 100) < cost * number:
             if number > 1:
-                handler_game.act("$n tells you 'You can't afford to buy that many.", keeper, obj, ch, merc.TO_VICT)
+                handler_game.act(
+                    "$n tells you 'You can't afford to buy that many.",
+                    keeper,
+                    obj,
+                    ch,
+                    merc.TO_VICT,
+                )
             else:
-                handler_game.act("$n tells you 'You can't afford to buy $p'.", keeper, obj, ch, merc.TO_VICT)
+                handler_game.act(
+                    "$n tells you 'You can't afford to buy $p'.",
+                    keeper,
+                    obj,
+                    ch,
+                    merc.TO_VICT,
+                )
             ch.reply = keeper
             return
         if obj.level > ch.level:
-            handler_game.act("$n tells you 'You can't use $p yet'.", keeper, obj, ch, merc.TO_VICT)
+            handler_game.act(
+                "$n tells you 'You can't use $p yet'.", keeper, obj, ch, merc.TO_VICT
+            )
             ch.reply = keeper
             return
         if ch.carry_number + number * obj.get_number() > ch.can_carry_n():
@@ -129,14 +158,22 @@ def do_buy(ch, argument):
             cost -= obj.cost // 2 * roll // 100
             handler_game.act("You haggle with $N.", ch, None, keeper, merc.TO_CHAR)
             if ch.is_pc:
-                ch.check_improve( "haggle", True, 4)
+                ch.check_improve("haggle", True, 4)
 
         if number > 1:
             handler_game.act("$n buys $p[[%d]]." % number, ch, obj, None, merc.TO_ROOM)
-            handler_game.act("You buy $p[[%d]] for %d silver." % (number, cost * number), ch, obj, None, merc.TO_CHAR)
+            handler_game.act(
+                "You buy $p[[%d]] for %d silver." % (number, cost * number),
+                ch,
+                obj,
+                None,
+                merc.TO_CHAR,
+            )
         else:
             handler_game.act("$n buys $p.", ch, obj, None, merc.TO_ROOM)
-            handler_game.act("You buy $p for %d silver." % cost, ch, obj, None, merc.TO_CHAR)
+            handler_game.act(
+                "You buy $p for %d silver." % cost, ch, obj, None, merc.TO_CHAR
+            )
 
         ch.deduct_cost(cost * number)
         keeper.gold += cost * number / 100
@@ -145,7 +182,9 @@ def do_buy(ch, argument):
         if obj.flags.shop_inventory:
             items = []
             for count in range(number):
-                t_obj = object_creator.create_item(instance.item_templates[obj.vnum], obj.level)
+                t_obj = object_creator.create_item(
+                    instance.item_templates[obj.vnum], obj.level
+                )
                 items.append(t_obj)
         for t_obj in items[:]:
             if not obj.flags.shop_inventory:
@@ -159,4 +198,6 @@ def do_buy(ch, argument):
                 t_obj.cost = cost
 
 
-interp.register_command(interp.cmd_type('buy', do_buy, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("buy", do_buy, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)

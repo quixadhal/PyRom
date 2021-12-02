@@ -75,11 +75,15 @@ def do_who(ch, argument):
         if not ch.can_see(wch):
             continue
 
-        if wch.level < iLevelLower or wch.level > iLevelUpper \
-                or (fImmortalOnly and wch.level < merc.LEVEL_IMMORTAL) \
-                or (fClassRestrict and not rgfClass[wch.guild.name]) \
-                or (fRaceRestrict and not rgfRace[wch.race.name]) \
-                or (fClan and not wch.is_clan()) or (fClanRestrict and not rgfClan[wch.clan.name]):
+        if (
+            wch.level < iLevelLower
+            or wch.level > iLevelUpper
+            or (fImmortalOnly and wch.level < merc.LEVEL_IMMORTAL)
+            or (fClassRestrict and not rgfClass[wch.guild.name])
+            or (fRaceRestrict and not rgfRace[wch.race.name])
+            or (fClan and not wch.is_clan())
+            or (fClanRestrict and not rgfClan[wch.clan.name])
+        ):
             continue
 
         nMatch += 1
@@ -105,9 +109,13 @@ def do_who(ch, argument):
         elif wch.level == merc.MAX_LEVEL - 8:
             guild = "AVA"
         # a little formatting
-        ch.send("[[%2d %6s %s]] %s%s%s%s%s%s%s%s\n" % (
+        ch.send(
+            "[[%2d %6s %s]] %s%s%s%s%s%s%s%s\n"
+            % (
                 wch.level,
-                const.pc_race_table[wch.race.name].who_name if wch.race.name in const.pc_race_table else "     ",
+                const.pc_race_table[wch.race.name].who_name
+                if wch.race.name in const.pc_race_table
+                else "     ",
                 guild,
                 "(Incog) " if wch.incog_level >= merc.LEVEL_HERO else "",
                 "(Wizi) " if wch.invis_level >= merc.LEVEL_HERO else "",
@@ -116,9 +124,13 @@ def do_who(ch, argument):
                 "(KILLER) " if wch.act.is_set(merc.PLR_KILLER) else "",
                 "(THIEF) " if wch.act.is_set(merc.PLR_THIEF) else "",
                 wch.name,
-                "" if wch.is_npc() else wch.title))
+                "" if wch.is_npc() else wch.title,
+            )
+        )
     ch.send("\nPlayers found: %d\n" % nMatch)
     return
 
 
-interp.register_command(interp.cmd_type('who', do_who, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("who", do_who, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

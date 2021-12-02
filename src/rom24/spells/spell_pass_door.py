@@ -5,11 +5,13 @@ from rom24 import merc
 
 
 def spell_pass_door(sn, level, ch, victim, target):
-    if victim.is_affected( merc.AFF_PASS_DOOR):
+    if victim.is_affected(merc.AFF_PASS_DOOR):
         if victim == ch:
             ch.send("You are already out of phase.\n")
         else:
-            handler_game.act("$N is already shifted out of phase.", ch, None, victim, merc.TO_CHAR)
+            handler_game.act(
+                "$N is already shifted out of phase.", ch, None, victim, merc.TO_CHAR
+            )
         return
 
     af = handler_game.AFFECT_DATA()
@@ -25,8 +27,20 @@ def spell_pass_door(sn, level, ch, victim, target):
     victim.send("You turn translucent.\n")
 
 
-const.register_spell(const.skill_type("pass door",
-                          {'mage': 24, 'cleric': 32, 'thief': 25, 'warrior': 37},
-                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_pass_door, merc.TAR_CHAR_SELF, merc.POS_STANDING, None,
-                          const.SLOT(74), 20, 12, "", "You feel solid again.", ""))
+const.register_spell(
+    const.skill_type(
+        "pass door",
+        {"mage": 24, "cleric": 32, "thief": 25, "warrior": 37},
+        {"mage": 1, "cleric": 1, "thief": 2, "warrior": 2},
+        spell_pass_door,
+        merc.TAR_CHAR_SELF,
+        merc.POS_STANDING,
+        None,
+        const.SLOT(74),
+        20,
+        12,
+        "",
+        "You feel solid again.",
+        "",
+    )
+)

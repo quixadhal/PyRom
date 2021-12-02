@@ -10,20 +10,31 @@ def spell_curse(sn, level, ch, victim, target):
     if target == merc.TARGET_ITEM:
         obj = victim
         if obj.flags.evil:
-            handler_game.act("$p is already filled with evil.", ch, obj, None, merc.TO_CHAR)
+            handler_game.act(
+                "$p is already filled with evil.", ch, obj, None, merc.TO_CHAR
+            )
             return
 
         if obj.flags.bless:
             paf = state_checks.affect_find(obj.affected, const.skill_table["bless"])
-            if not handler_magic.saves_dispel(level, paf.level if paf is not None else obj.level, 0):
+            if not handler_magic.saves_dispel(
+                level, paf.level if paf is not None else obj.level, 0
+            ):
                 if paf:
                     obj.affect_remove(paf)
-                handler_game.act("$p glows with a red aura.", ch, obj, None, merc.TO_ALL)
+                handler_game.act(
+                    "$p glows with a red aura.", ch, obj, None, merc.TO_ALL
+                )
                 state_checks.REMOVE_BIT(obj.extra_flags, merc.ITEM_BLESS)
                 return
             else:
-                handler_game.act("The holy aura of $p is too powerful for you to overcome.", ch, obj, None,
-                                 merc.TO_CHAR)
+                handler_game.act(
+                    "The holy aura of $p is too powerful for you to overcome.",
+                    ch,
+                    obj,
+                    None,
+                    merc.TO_CHAR,
+                )
                 return
         af = handler_game.AFFECT_DATA()
         af.where = merc.TO_OBJECT
@@ -42,7 +53,9 @@ def spell_curse(sn, level, ch, victim, target):
         return
 
     # character curses */
-    if victim.is_affected( merc.AFF_CURSE) or handler_magic.saves_spell(level, victim, merc.DAM_NEGATIVE):
+    if victim.is_affected(merc.AFF_CURSE) or handler_magic.saves_spell(
+        level, victim, merc.DAM_NEGATIVE
+    ):
         return
     af = handler_game.AFFECT_DATA()
     af.where = merc.TO_AFFECTS
@@ -63,8 +76,20 @@ def spell_curse(sn, level, ch, victim, target):
         handler_game.act("$N looks very uncomfortable.", ch, None, victim, merc.TO_CHAR)
 
 
-const.register_spell(const.skill_type("curse",
-                          {'mage': 18, 'cleric': 18, 'thief': 26, 'warrior': 22},
-                          {'mage': 1, 'cleric': 1, 'thief': 2, 'warrior': 2},
-                          spell_curse, merc.TAR_OBJ_CHAR_OFF, merc.POS_FIGHTING, None,
-                          const.SLOT(17), 20, 12, "curse", "The curse wears off.", "$p is no longer impure."))
+const.register_spell(
+    const.skill_type(
+        "curse",
+        {"mage": 18, "cleric": 18, "thief": 26, "warrior": 22},
+        {"mage": 1, "cleric": 1, "thief": 2, "warrior": 2},
+        spell_curse,
+        merc.TAR_OBJ_CHAR_OFF,
+        merc.POS_FIGHTING,
+        None,
+        const.SLOT(17),
+        20,
+        12,
+        "curse",
+        "The curse wears off.",
+        "$p is no longer impure.",
+    )
+)

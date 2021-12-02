@@ -28,6 +28,12 @@ def do_wear(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('wield', do_wear, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
-interp.register_command(interp.cmd_type('hold', do_wear, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
-interp.register_command(interp.cmd_type('wear', do_wear, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("wield", do_wear, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)
+interp.register_command(
+    interp.cmd_type("hold", do_wear, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)
+interp.register_command(
+    interp.cmd_type("wear", do_wear, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)

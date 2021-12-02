@@ -9,13 +9,18 @@ from rom24 import miniboa
 
 
 def usage(ch):
-    ch.send('Usage: term [[ttype]] [[cols N]] [[rows N]]\n')
-    ch.send('       valid ttypes are %s.\n\n' % ', '.join(miniboa.colors.TERMINAL_TYPES))
+    ch.send("Usage: term [[ttype]] [[cols N]] [[rows N]]\n")
+    ch.send(
+        "       valid ttypes are %s.\n\n" % ", ".join(miniboa.colors.TERMINAL_TYPES)
+    )
 
 
 def do_term(ch, argument):
     if not argument:
-        ch.send('Terminal Type is %s (%d columns, %d rows)\n' % (ch.desc.terminal_type, ch.desc.columns, ch.desc.rows))
+        ch.send(
+            "Terminal Type is %s (%d columns, %d rows)\n"
+            % (ch.desc.terminal_type, ch.desc.columns, ch.desc.rows)
+        )
         return
     else:
         args = argument.split()
@@ -24,13 +29,13 @@ def do_term(ch, argument):
         got_type = False
         changed = False
         for a in args:
-            if a.lower() == 'help':
+            if a.lower() == "help":
                 usage(ch)
                 return
-            if a.lower() == 'rows':
+            if a.lower() == "rows":
                 expect_rows = True
                 continue
-            elif a.lower() == 'columns' or a.lower() == 'cols':
+            elif a.lower() == "columns" or a.lower() == "cols":
                 expect_cols = True
                 continue
             elif a.isnumeric():
@@ -43,7 +48,7 @@ def do_term(ch, argument):
                     expect_cols = False
                     changed = True
                 else:
-                    ch.send('Invalid argument: %s\n\n' % a)
+                    ch.send("Invalid argument: %s\n\n" % a)
                     usage(ch)
                     return
             elif not got_type and a.lower() in miniboa.colors.TERMINAL_TYPES:
@@ -51,11 +56,16 @@ def do_term(ch, argument):
                 got_type = True
                 changed = True
             else:
-                ch.send('Invalid argument: %s\n\n' % a)
+                ch.send("Invalid argument: %s\n\n" % a)
                 usage(ch)
                 return
         if changed:
-            ch.send('Terminal Type set to %s (%d columns, %d rows)\n' % (ch.desc.terminal_type, ch.desc.columns, ch.desc.rows))
+            ch.send(
+                "Terminal Type set to %s (%d columns, %d rows)\n"
+                % (ch.desc.terminal_type, ch.desc.columns, ch.desc.rows)
+            )
 
 
-interp.register_command(interp.cmd_type('term', do_term, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("term", do_term, merc.POS_DEAD, 0, merc.LOG_NORMAL, 1)
+)

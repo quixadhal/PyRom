@@ -10,7 +10,7 @@ from rom24 import instance
 # Thanks to Zrin for auto-exit part.
 def do_exits(ch, argument):
     fAuto = argument == "auto"
-    buf = ''
+    buf = ""
     if not ch.check_blind():
         return
     if fAuto:
@@ -21,10 +21,13 @@ def do_exits(ch, argument):
         buf += "Obvious exits:\n"
     found = False
     for door, pexit in enumerate(ch.in_room.exit):
-        if pexit \
-                and (ch.act.is_set(merc.PLR_OMNI)
-                     or (ch.can_see_room(pexit.to_room)
-                         and not pexit.exit_info.is_set(merc.EX_CLOSED))):
+        if pexit and (
+            ch.act.is_set(merc.PLR_OMNI)
+            or (
+                ch.can_see_room(pexit.to_room)
+                and not pexit.exit_info.is_set(merc.EX_CLOSED)
+            )
+        ):
             found = True
             if pexit.is_broken:
                 buf += " #%s#" % (merc.dir_name[door])
@@ -38,8 +41,10 @@ def do_exits(ch, argument):
                 if ch.act.is_set(merc.PLR_OMNI):
                     buf += "(%d)" % pto_room.vnum
             elif pto_room:
-                buf += "%-5s - %s" % (merc.dir_name[door].capitalize(),
-                                      "Too dark to tell" if pto_room.is_dark() else pto_room.name)
+                buf += "%-5s - %s" % (
+                    merc.dir_name[door].capitalize(),
+                    "Too dark to tell" if pto_room.is_dark() else pto_room.name,
+                )
                 if ch.is_immortal():
                     buf += " (room %d)\n" % pto_room.vnum
                 else:
@@ -52,4 +57,6 @@ def do_exits(ch, argument):
     return
 
 
-interp.register_command(interp.cmd_type('exits', do_exits, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1))
+interp.register_command(
+    interp.cmd_type("exits", do_exits, merc.POS_RESTING, 0, merc.LOG_NORMAL, 1)
+)
