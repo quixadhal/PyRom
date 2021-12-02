@@ -1,6 +1,7 @@
 ## Welcome to the Pyom project! ##
 
 ![pytest](https://github.com/bubthegreat/rom24/actions/workflows/pytest.yml/badge.svg)
+![mypy](https://github.com/bubthegreat/rom24/actions/workflows/mypy.yml/badge.svg)
 
 *rom24* is a re-authoring of the *Rom DikuMUD* derivative using python3.
 We've tried to use as few external modules as
