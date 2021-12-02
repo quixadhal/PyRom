@@ -37,13 +37,13 @@ def do_owhere(ch, argument):
             content = content.in_item
 
         if content.in_living and ch.can_see(content.in_living) and content.in_living.in_room:
-            ch.send("%3d) %s is carried by %s [[Room %d]]\n" % (
-                number, item.short_descr, state_checks.PERS(content.in_living, ch), content.in_living.in_room.vnum ))
+            ch.send("%3d) %s (%s) is carried by %s [[Room %d]]\n" % (
+                number,item.short_descr, item.vnum, state_checks.PERS(content.in_living, ch), content.in_living.in_room.vnum ))
         elif content.in_room and ch.can_see_room(content.in_room.instance_id):
-            ch.send("%3d) %s is in %s [[Room %d]]\n" % (
-                number, item.short_descr, content.in_room.name, content.in_room.vnum))
+            ch.send("%3d) %s (%s) is in %s [[Room %d]]\n" % (
+                number, item.short_descr, item.vnum, content.in_room.name, content.in_room.vnum))
         else:
-            ch.send("%3d) %s is somewhere\n" % (number, item.short_descr))
+            ch.send("%3d) %s (%s) is somewhere\n" % (number, item.short_descr, item.vnum))
 
         if number >= max_found:
             break

@@ -941,7 +941,6 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             self.in_room.available_light += 1
 
     def can_equip(self, item, loc, should_replace=False, wverbose=False):
-        logger.debug("Checking if user %s can equip %s at %s", self.name, item, loc)
         # if item.environment:
         #     logger.debug("item.environment: %s", item.environment)
         #     try:
