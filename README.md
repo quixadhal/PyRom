@@ -19,7 +19,7 @@ cd PyRom
 pip install -e .
 rom24
 ```
-Normal python install via pip should get things started.  
+Normal python install via pip should get things started.
 
 The more up-to-date home of the project that this was not forked from is [here](https://bitbucket.org/mudbytes/pyom).
 
@@ -45,3 +45,9 @@ For the love of god, someone please help - I'm doing this because it's fun, but 
 Even if you just pull it and test it locally to open bugs, opening bugs is awesome and appreciated.  If you're interested in becoming an owner on the repo, send me an email at bubthegreat@gmail.com
 
 The typing is incredibly loose with lots of Any getting thrown around - as we add more typing, we'll find more bugs ahead of time.  We're using black for formatting to keep formatting consistent.
+
+If you're going to contribute, please use the pre-commit hooks.  It's got some things that will keep consistent formatting, clean up line endings, etc.
+```
+pip install -r requirements.txt
+pre-commit install
+```
