@@ -1123,7 +1123,6 @@ class Living(
             self.raw_equip(item, to_loc)
             return
         else:
-
             possible_slots = item.equips_to & self.slots.available
             if len(possible_slots) > 0:
                 if not verbose:

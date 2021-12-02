@@ -4,8 +4,8 @@ import json
 
 logger = logging.getLogger(__name__)
 
-from database.tracker import tables
-from settings import DATA_EXTN, DATA_DIR
+from rom24.database.tracker import tables
+from rom24.settings import DATA_EXTN, DATA_DIR
 
 
 def write_tables(listener=None, loc=DATA_DIR, extn=DATA_EXTN):

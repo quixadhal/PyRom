@@ -23,7 +23,7 @@ def do_authenticator(ch, argument):
         ch.send("Usage:  authenticator <on|off> <password> [token]\n")
         if ch.auth:
             import time
-            import sys_utils
+            from rom24 import sys_utils
 
             trials = [
                 ch.auth.time_code(time.time() + offset) for offset in (-30, 0, 30)

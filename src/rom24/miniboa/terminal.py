@@ -50,10 +50,11 @@ terminal-like systems
 """
 
 import logging
+import re
+from typing import *
 
 logger = logging.getLogger(__name__)
 
-import re
 
 from rom24.miniboa.colors import TERMINAL_TYPES, COLOR_MAP
 
@@ -112,7 +113,7 @@ class Xlator(dict):
         return self._make_regex().sub(self, text)
 
 
-def color_convert(text: str or None, input_type="pyom", output_type="ansi"):
+def color_convert(text: Optional[str] = None, input_type="pyom", output_type="ansi"):
     """
     Given a chunk of text, replace color tokens of the specified input type
     with the appropriate color codes for the given output terminal type

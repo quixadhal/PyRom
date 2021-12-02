@@ -6,6 +6,7 @@ import time
 import collections
 import random
 import logging
+from typing import *
 
 logger = logging.getLogger(__name__)
 
@@ -318,7 +319,7 @@ def item_bitvector_flag_str(bits: int, in_type="extra flags"):
 
 
 def item_flags_from_bits(
-    bits: int, out_data: collections.namedtuple, in_type="wear flags"
+    bits: int, out_data: Any, in_type="wear flags"
 ):
     if not out_data or not bits or not in_type:
         return None

@@ -33,6 +33,8 @@ import random
 import json
 import logging
 
+from typing import Optional
+
 logger = logging.getLogger(__name__)
 
 from rom24 import instance
@@ -81,7 +83,7 @@ class TwoFactorAuth:
         self._raw_secret = s.upper().rjust(16, "A")[0:16]
         self._secret = base64.b32decode(self._raw_secret.encode())
 
-    def time_code(self, moment: int = None):
+    def time_code(self, moment: float):
         """
         Returns a string indicating the current valid token which will be
         generated, and which should be matched to authenticate the user.
@@ -91,9 +93,7 @@ class TwoFactorAuth:
         :return: A 6-digit authentication token
         :rtype: str
         """
-        if moment is None:
-            moment = time.time()
-        moment = int(moment // 30)
+        moment = moment // 30
         time_bytes = struct.pack(">q", moment)
         hash_digest = hmac.HMAC(self._secret, time_bytes, hashlib.sha1).digest()
         offset = hash_digest[-1] & 0x0F

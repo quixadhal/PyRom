@@ -46,6 +46,7 @@ to make it easier to edit the actual terminal code
 """
 
 import logging
+from typing import *
 
 logger = logging.getLogger(__name__)
 
@@ -63,9 +64,19 @@ TERMINAL_TYPES = (
     "mxp",
 )
 
-ColorToken = namedtuple("ColorToken", TERMINAL_TYPES)
+ColorToken = namedtuple("ColorToken", (
+    "unknown",
+    "pyom",
+    "rom",
+    "smaug",
+    "imc2",
+    "ansi",
+    "greyscale",
+    "i3",
+    "mxp",
+))
 
-COLOR_MAP = {}
+COLOR_MAP: Dict[str, Any] = {}
 
 COLOR_MAP["unknown"] = {}
 

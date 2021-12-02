@@ -19,7 +19,7 @@ from rom24 import world_classes
 from rom24 import merc
 from rom24 import state_checks
 
-serializer_list = []
+serializer_list: list = []
 
 
 class AREA_SERIALIZER:
@@ -103,6 +103,7 @@ interp.register_command(
     interp.cmd_type("apickle", do_apickle, merc.POS_DEAD, merc.ML, merc.LOG_ALWAYS, 1)
 )
 
+# Not sure what was happening here - commented out because it's just broken.
 
 # to_Pickle()
 #     os.makedirs(settings.HELP_DIR, 0o755, True)

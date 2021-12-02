@@ -876,62 +876,6 @@ class ItemFlags:
             self._item_restrictions -= {func_name}
 
     # Weapon Attributes
-    @property
-    def no_remove(self):
-        """
-        TODO: write documentation
-        """
-        func_name = sys._getframe().f_code.co_name
-        return func_name if func_name in self._item_restrictions else False
-
-    @no_remove.setter
-    def no_remove(self, has_restr):
-        """
-        TODO: write documentation
-        """
-        func_name = sys._getframe().f_code.co_name
-        if has_restr:
-            self._item_restrictions |= {func_name}
-        else:
-            self._item_restrictions -= {func_name}
-
-    @property
-    def no_uncurse(self):
-        """
-        TODO: write documentation
-        """
-        func_name = sys._getframe().f_code.co_name
-        return func_name if func_name in self._item_restrictions else False
-
-    @no_uncurse.setter
-    def no_uncurse(self, has_restr):
-        """
-        TODO: write documentation
-        """
-        func_name = sys._getframe().f_code.co_name
-        if has_restr:
-            self._item_restrictions |= {func_name}
-        else:
-            self._item_restrictions -= {func_name}
-
-    @property
-    def no_purge(self):
-        """
-        TODO: write documentation
-        """
-        func_name = sys._getframe().f_code.co_name
-        return func_name if func_name in self._item_restrictions else False
-
-    @no_purge.setter
-    def no_purge(self, has_restr):
-        """
-        TODO: write documentation
-        """
-        func_name = sys._getframe().f_code.co_name
-        if has_restr:
-            self._item_restrictions |= {func_name}
-        else:
-            self._item_restrictions -= {func_name}
 
     @property
     def two_handed(self):

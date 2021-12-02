@@ -1,5 +1,6 @@
 from collections import OrderedDict
 import logging
+from typing import *
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +20,7 @@ class cmd_type:
 
 
 # These commands don't need to be here but are, for order. These will always match first with prefixes.
-cmd_table = OrderedDict()
+cmd_table: Dict[str, Any] = OrderedDict()
 
 cmd_table["north"] = None
 cmd_table["east"] = None

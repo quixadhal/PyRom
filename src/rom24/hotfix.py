@@ -2,12 +2,13 @@ import os
 import importlib
 import traceback
 import logging
+from typing import *
 
 logger = logging.getLogger(__name__)
 
 # dictionary of files to track. will be key'd by file name and the value will be modified unix timestamp
-tracked_files = {}
-modified_files = {}
+tracked_files: Dict[str, int] = {}
+modified_files: Dict[str, int] = {}
 
 
 # Looks like we need to fix the directory for this init so that it will find the commands.

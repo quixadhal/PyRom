@@ -1,6 +1,7 @@
 import hashlib
 import os
 import logging
+from typing import *
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +33,7 @@ class CharDummy:
         pass
 
 
-ch_selections = {}
+ch_selections: dict = {}
 retries = 0
 
 

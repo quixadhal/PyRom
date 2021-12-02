@@ -174,7 +174,7 @@ class Items(
             return None
 
     @property
-    def equips_to_names(self, check_occupied=False):
+    def equips_to_names(self, check_occupied: bool = False):
         """
         return equips_to flags as string
 

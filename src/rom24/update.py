@@ -429,7 +429,7 @@ def weather_update():
         handler_game.weather_info.sky = merc.SKY_CLOUDLESS
 
     if buf:
-        import nanny
+        from rom24 import nanny
 
         for char in instance.players.items():
             if (

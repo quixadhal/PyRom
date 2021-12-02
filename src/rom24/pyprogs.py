@@ -13,7 +13,7 @@ from rom24 import merc
 from rom24 import settings
 from rom24 import instance
 
-signals = {"say": []}
+signals: dict = {"say": []}
 
 
 def emit_signal(signal, actor=None, victim=None, argument=None, audience=None):

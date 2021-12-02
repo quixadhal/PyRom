@@ -64,7 +64,7 @@ def _on_disconnect(client):
     """
     Placeholder lost connection handler.
     """
-    logger.info("-- Lost connection to %s".format(client.addrport()))
+    logger.info("-- Lost connection to %s", client.addrport())
 
 
 class TelnetServer(object):

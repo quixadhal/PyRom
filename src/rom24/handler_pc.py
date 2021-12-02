@@ -315,7 +315,7 @@ class Pc(living.Living):
 
     # this procedure handles the input parsing for the skill generator */
     def parse_gen_groups(self, argument):
-        from game_utils import read_word
+        from rom24.game_utils import read_word
 
         if not argument.strip():
             return False

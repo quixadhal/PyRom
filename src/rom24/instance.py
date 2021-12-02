@@ -5,6 +5,7 @@ import json
 from collections import OrderedDict, namedtuple
 import re
 import logging
+from typing import *
 
 logger = logging.getLogger(__name__)
 
@@ -38,42 +39,42 @@ Likewise you can effect a change TO mob from accessing either dict:
 max_instance_id = 0
 previous_max_instance_id = 0
 
-area_templates = {}
-item_templates = {}
-room_templates = {}
-npc_templates = {}
-shop_templates = {}
+area_templates: Dict[str, Any] = {}
+item_templates: Dict[str, Any] = {}
+room_templates: Dict[str, Any] = {}
+npc_templates: Dict[str, Any] = {}
+shop_templates: Dict[str, Any] = {}
 
 global_instances = (
     {}
 )  # This is the global instance list, the heart of the game data set
 
-areas = {}
-items = {}
-rooms = {}
-npcs = {}
-shops = {}
-players = {}
-characters = {}  # This is PC and NPC combined
+areas: Dict[str, Any] = {}
+items: Dict[int, Any] = {}
+rooms: Dict[str, Any] = {}
+npcs: Dict[str, Any] = {}
+shops: Dict[str, Any] = {}
+players: Dict[str, Any] = {}
+characters: Dict[str, Any] = {}  # This is PC and NPC combined
 
-helps = {}
-socials = {}
-resets = {}
+helps: Dict[str, Any] = {}
+socials: Dict[str, Any] = {}
+resets: Dict[str, Any] = {}
 
 """
 Contains lists of instances,
 Key: string VNUM
 Value: list Instance_ID of object associated with Key:VNUM
 """
-instances_by_area = {}
-instances_by_item = {}
-instances_by_room = {}
-instances_by_npc = {}
-instances_by_shop = {}
-instances_by_player = {}
+instances_by_area: Dict[str, Any] = {}
+instances_by_item: Dict[str, Any] = {}
+instances_by_room: Dict[str, Any] = {}
+instances_by_npc: Dict[str, Any] = {}
+instances_by_shop: Dict[str, Any] = {}
+instances_by_player: Dict[str, Any] = {}
 
 # Things to omit from instances that are in templates.
-not_to_instance = []
+not_to_instance: list = []
 
 
 def isnamedtuple(obj):
