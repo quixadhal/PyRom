@@ -10,7 +10,7 @@ from rom24 import miniboa
 
 def usage(ch):
     ch.send('Usage: term [[ttype]] [[cols N]] [[rows N]]\n')
-    ch.send('       valid ttypes are %s.\n\n' % ', '.join(miniboa.TERMINAL_TYPES))
+    ch.send('       valid ttypes are %s.\n\n' % ', '.join(miniboa.colors.TERMINAL_TYPES))
 
 
 def do_term(ch, argument):
@@ -46,7 +46,7 @@ def do_term(ch, argument):
                     ch.send('Invalid argument: %s\n\n' % a)
                     usage(ch)
                     return
-            elif not got_type and a.lower() in miniboa.TERMINAL_TYPES:
+            elif not got_type and a.lower() in miniboa.colors.TERMINAL_TYPES:
                 ch.desc.terminal_type = a.lower()
                 got_type = True
                 changed = True

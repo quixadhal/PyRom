@@ -9,7 +9,6 @@ from rom24 import instance
 
 
 def do_smote(ch, argument):
-    matches = 0
     if not ch.is_npc() and ch.comm.is_set(merc.COMM_NOEMOTE):
         ch.send("You can't show your emotions.\n")
         return

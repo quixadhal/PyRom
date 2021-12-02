@@ -37,4 +37,4 @@ def do_at(ch, argument):
             break
 
 
-interp.register_command(interp.cmd_type('at', do_at, merc.POS_DEAD, merc.L6, merc.LOG_NORMAL, 1))
+interp.register_command(interp.cmd_type('doat', do_at, merc.POS_DEAD, merc.L6, merc.LOG_NORMAL, 1))

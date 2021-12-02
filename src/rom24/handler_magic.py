@@ -10,6 +10,7 @@ from rom24 import merc
 from rom24 import handler_game
 from rom24 import state_checks
 from rom24 import game_utils
+from rom24 import instance
 
 #Magic functions
 def say_spell(ch, spell):

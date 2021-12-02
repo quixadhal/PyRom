@@ -296,17 +296,7 @@ def g_e_reset(pReset, last, level, npc):
             limit = pReset.arg2
 
         if itemTemplate.count < limit or random.randint(0, 4) == 0:
-            item = object_creator.create_item(itemTemplate,
-                                              min(game_utils.number_fuzzy(level), merc.LEVEL_HERO - 1))
-            # error message if it is too high */
-            if item.level > npc.level + 3 \
-                    or (item.item_type == merc.ITEM_WEAPON
-                        and pReset.command == 'E'
-                        and item.level < npc.level - 5
-                        and item.level < 45):
-                logger.error("Err: obj %s (%d) -- %d, mob %s (%d) -- %d",
-                             item.short_descr, item.vnum, item.level,
-                             npc.short_descr, npc.vnum, npc.level)
+            item = object_creator.create_item(itemTemplate, min(game_utils.number_fuzzy(level), merc.LEVEL_HERO - 1))
         else:
             return last, level, npc
     npc.put(item)

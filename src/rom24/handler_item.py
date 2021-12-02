@@ -573,9 +573,6 @@ class Items(instance.Instancer, environment.Environment, physical.Physical, inve
             if not isinstance(obj, Items):
                 raise TypeError('Could not load instance %r!' % number)
 
-images = ['*.jpg', '*.jpeg', '*.png', '*.tif', '*.tiff']
-matches = []
-
 
 def get_item(ch, item, this_container):
     # variables for AUTOSPLIT
@@ -593,6 +590,8 @@ def get_item(ch, item, this_container):
                 and (state_checks.get_carry_weight(ch) + item.get_weight() > ch.can_carry_w()):
             handler_game.act("$d: you can't carry that much weight.", ch, None, item.name, merc.TO_CHAR)
             return
+
+    # Make sure nobody is using the item before we allow someone to get it.
     if item.in_room:
         for gch_id in item.in_room.people[:]:
             gch = instance.characters[gch_id]
@@ -601,6 +600,7 @@ def get_item(ch, item, this_container):
                 if on_item.instance_id in item.in_room.items:
                     handler_game.act("$N appears to be using $p.", ch, item, gch, merc.TO_CHAR)
                     return
+    # Get things from a container.
     if this_container:
         if this_container.vnum == merc.OBJ_VNUM_PIT and ch.trust < item.level:
             ch.send("You are not powerful enough to use it.\n")
@@ -611,10 +611,12 @@ def get_item(ch, item, this_container):
         handler_game.act("$n gets $p from $P.", ch, item, this_container, merc.TO_ROOM)
         item.flags.had_timer = False
         this_container.get(item)
+    # Get a normal thing.
     else:
         handler_game.act("You get $p.", ch, item, this_container, merc.TO_CHAR)
         handler_game.act("$n gets $p.", ch, item, this_container, merc.TO_ROOM)
         ch.in_room.get(item)
+    
     if item.item_type == merc.ITEM_MONEY:
         ch.silver += item.value[0]
         ch.gold += item.value[1]

@@ -1021,11 +1021,32 @@ is only usable by creators and implementors.  Restore should be used sparingly
 or not at all.
 ~
 
+56 DEBUG~
+Syntax: debug <command> <arguments>
+
+Safely execute commands and get valuable debugging information.
+~
+
 57 SLAY~
 Syntax: slay <character>
 
 Slay kills a character in cold blood, no saving throw.  Best not to use this
 command on players if you enjoy being a god.
+~
+
+57 OWHERE~
+Syntax: owhere <key word>
+
+owhere command will allow you to find the vnum and location of keywords.  The
+result is the short description, vnum, and then the room or mob that carries It
+along with the room vnum.  
+
+<551hp 218m 454mv> owhere vorpal
+  1) the Vorpal Blade (10407) is carried by skeletal warrior [Room 10426]
+  2) the Vorpal Blade (10407) is carried by skeletal warrior [Room 10428]
+
+see also: OLOAD
+
 ~
 
 55 TRANSFER TELEPORT~
@@ -1040,8 +1061,8 @@ should almost never be used, as 100 players popping into one room can have
 horrible effects on slow links. Teleport is a synonym for transfer. 
 ~
 
-54 AT~
-Syntax: at <location> <command>
+54 DOAT~
+Syntax: doat <location> <command>
 
 At executes the given command (which may have arguments) at the given
 location.  The location may be specified as a vnum, as the name of

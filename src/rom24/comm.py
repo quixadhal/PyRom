@@ -242,6 +242,7 @@ def game_loop(server):
     logger.info("Pyom is ready to rock on port %d", server.port)
 
     done = False
+    errors = 0
     while not done:
         try:
             server.poll()
@@ -249,3 +250,7 @@ def game_loop(server):
             update_handler()
         except Exception as e:
             logger.exception("Exception %s caught - continuing loop.", e)
+            # Protect us from infinite errors.
+            errors += 1
+            if errors > 50:
+                done = True

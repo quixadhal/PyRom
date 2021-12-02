@@ -12,6 +12,7 @@ from rom24 import instance
 
 
 def do_get(ch, argument):
+    logger.info("%s tried to get %s", ch.name, argument)
     argument, arg1 = game_utils.read_word(argument)
     argument, arg2 = game_utils.read_word(argument)
     if arg2 == "from":
@@ -21,6 +22,7 @@ def do_get(ch, argument):
     if not arg1:
         ch.send("Get what?\n")
         return
+    
     if not arg2:
         if not arg1.startswith('all'):
             # 'get obj'
@@ -28,6 +30,7 @@ def do_get(ch, argument):
             if not item:
                 handler_game.act("I see no $T here.", ch, None, arg1, merc.TO_CHAR)
                 return
+            logger.info("Handling get item for %s", item)
             handler_item.get_item(ch, item, None)
         else:
             # 'get all' or 'get all.obj'
