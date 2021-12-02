@@ -28,7 +28,6 @@ The more up-to-date home of the project that this was not forked from is [here](
 * Straighten out legacy loads vs. new loads and remove anything legacy
 * Make data consistently relative and make it deployable in docker with volumes
 * Add docker and compose for simple local build and testing
-* Start adding basic type checking
 * start adding some unit testing
 * Move to a more functional paradigm for as much as possible to improve iteration speed (less stateful class shenanigans is better imho)
 * Add docstrings to everything as I figure out what the hell it's doing
@@ -44,3 +43,5 @@ The more up-to-date home of the project that this was not forked from is [here](
 For the love of god, someone please help - I'm doing this because it's fun, but it's more fun to do it together!  Just PR changes - I'm not going to be very picky as long as they're an improvement.
 
 Even if you just pull it and test it locally to open bugs, opening bugs is awesome and appreciated.  If you're interested in becoming an owner on the repo, send me an email at bubthegreat@gmail.com
+
+The typing is incredibly loose with lots of Any getting thrown around - as we add more typing, we'll find more bugs ahead of time.  We're using black for formatting to keep formatting consistent.
