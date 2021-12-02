@@ -10,7 +10,7 @@ COMMANDS = ["rom24=rom24.pyom:pyom"]
 
 setup(
     name="rom24",
-    version="0.0.1.alpha0",
+    version="0.0.1.alpha1",
     author="Micheal Taylor",
     author_email="bubthegreat@gmail.com",
     url="",
