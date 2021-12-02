@@ -2,3 +2,4 @@ psutil
 ipdb
 mypy
 black
+pytest
