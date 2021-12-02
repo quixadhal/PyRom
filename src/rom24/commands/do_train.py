@@ -5,6 +5,7 @@ logger = logging.getLogger(__name__)
 from rom24 import handler_game
 from rom24 import merc
 from rom24 import interp
+from rom24 import instance
 
 
 def do_train(ch, argument):

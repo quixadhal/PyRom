@@ -58,7 +58,7 @@ def saves_dispel(dis_level, spell_level, duration):
     return random.randint(1,99) < save
 
 def check_dispel(dis_level, victim, skill):
-    from const import skill_table
+    from rom24.const import skill_table
     if state_checks.is_affected(victim, skill):
         for af in victim.affected[:]:
             if af.type == skill:
@@ -82,7 +82,7 @@ def mana_cost (ch, min_mana, level):
 
 def find_spell(ch, name):
     #* finds a spell the character can cast if possible */
-    from const import skill_table
+    from rom24.const import skill_table
     found = None
     if ch.is_npc():
         return state_checks.prefix_lookup(skill_table,name)

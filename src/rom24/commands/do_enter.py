@@ -8,6 +8,7 @@ from rom24 import merc
 from rom24 import interp
 from rom24 import handler_room
 from rom24 import state_checks
+from rom24 import instance
 
 
 # RT Enter portals

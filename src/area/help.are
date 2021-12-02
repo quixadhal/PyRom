@@ -945,6 +945,21 @@ given.  Use string to change the strings on an object or mobile.
 (see also string, stat)
 ~
 
+58 SSET~
+Syntax: sset mob   <mobile> <field> <value>
+	sset <char> <name> <rating>
+	sset <char> all <rating>
+
+The sset command is a shortcut for `set skill`.
+(see also set)
+~
+
+58 at~
+Syntax: at 
+
+THIS NEEDS A HELPFILE
+~
+
 55 STRING~
 Syntax: string obj <field> <string>
 	string mob <field> <string>

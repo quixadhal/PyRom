@@ -8,6 +8,7 @@ from rom24 import comm
 from rom24 import interp
 from rom24 import game_utils
 from rom24 import state_checks
+from rom24 import instance
 
 def do_purge(ch, argument):
     argument, arg = game_utils.read_word(argument)

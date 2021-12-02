@@ -898,7 +898,7 @@ def stop_fighting(ch, fBoth):
 def make_corpse(ch):
     if ch.is_npc():
         name = ch.short_descr
-        corpse = object_creator.create_item(item_templates[OBJ_VNUM_CORPSE_NPC], 0)
+        corpse = object_creator.create_item(instance.item_templates[OBJ_VNUM_CORPSE_NPC], 0)
         corpse.timer = random.randint(3, 6)
         if ch.gold > 0:
             corpse.put(object_creator.create_money(ch.gold, ch.silver))
@@ -907,7 +907,7 @@ def make_corpse(ch):
         corpse.cost = 0
     else:
         name = ch.name
-        corpse = object_creator.create_item(item_templates[OBJ_VNUM_CORPSE_PC], 0)
+        corpse = object_creator.create_item(instance.item_templates[OBJ_VNUM_CORPSE_PC], 0)
         corpse.timer = random.randint(25, 40)
         ch.act.rem_bit(PLR_CANLOOT)
         if not ch.is_clan():
@@ -1004,7 +1004,7 @@ def death_cry(ch):
     handler_game.act(msg, ch, None, None, TO_ROOM)
     if vnum != 0:
         name = ch.short_descr if ch.is_npc() else ch.name
-        item = object_creator.create_item(item_templates[vnum], 0)
+        item = object_creator.create_item(instance.item_templates[vnum], 0)
         item.timer = random.randint(4, 7)
 
         item.short_descr = item.short_descr % name

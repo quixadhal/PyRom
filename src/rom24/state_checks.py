@@ -104,17 +104,17 @@ def IS_AWAKE(ch):
 
 
 def GET_AC(ch, ptype):
-    from const import dex_app
+    from rom24.const import dex_app
     return ch.armor[ptype] + (dex_app[ch.stat(merc.STAT_DEX)].defensive if IS_AWAKE(ch) else 0)
 
 
 def GET_HITROLL(ch):
-    from const import str_app
+    from rom24.const import str_app
     return ch.hitroll + str_app[ch.stat(merc.STAT_STR)].tohit
 
 
 def GET_DAMROLL(ch):
-    from const import str_app
+    from rom24.const import str_app
     return ch.damroll + str_app[ch.stat(merc.STAT_STR)].todam
 
 

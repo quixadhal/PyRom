@@ -8,6 +8,7 @@ from rom24 import game_utils
 from rom24 import handler_game
 from rom24 import handler_room
 from rom24 import state_checks
+from rom24 import instance
 
 
 def do_open(ch, argument):

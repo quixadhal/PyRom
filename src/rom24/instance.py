@@ -200,7 +200,6 @@ def from_json(data):
                 if module_name != '' and class_name != '':
                     module_ref = importlib.import_module('rom24.' + module_name)
                     class_ref = getattr(module_ref, class_name)
-                    logger.debug("class_ref: %s", class_ref)
                     if hasattr(class_ref, 'from_json'):
                         return class_ref.from_json(data, from_json)
 

@@ -400,22 +400,30 @@ class Progs:
         exec_stop = time.time()
         logger.debug("Script took % 0.3fms", (exec_stop-exec_start) * 1000.0)
 
-test_prog = """if actor.perm_hit > 20:
-    if actor.perm_hit > 30:
-        actor.do_say("I'm pretty much god.")
-    else:
-        actor.do_say("I'm a beast!")
-else:
-    actor.do_say("I'm a wimp!")
-if actor.guild.name == 'mage':
-    actor.do_say("I'm a mage tho, so don't mess with me.")
-elif actor.guild.name == 'thief':
-    actor.do_say("I'm a thief, hold your wallet!")
-else:
-    actor.do_say("I'm not sure what I am.")
-if not actor.act.is_set(PLR_CANLOOT):
-    actor.do_say("And I can't loot!")
-for vict in char_list:
-    actor.do_say(vict.name)
-"""
-register_prog('say', Progs(test_prog))
+
+# TODO: Find out more about how this works - when I say anything, it also progged the scripts below, but 
+#       it doesn't look like it's as simple as triggering it on anything, it looks like it has to trigger
+#       on valid commands.  Commenting it out for now.
+
+
+# test_prog = """if actor.perm_hit > 20:
+#     if actor.perm_hit > 30:
+#         actor.do_say("I'm pretty much god.")
+#     else:
+#         actor.do_say("I'm a beast!")
+#     else:
+#         actor.do_say("I'm a wimp!")
+    
+#     if actor.guild.name == 'mage':
+#         actor.do_say("I'm a mage tho, so don't mess with me.")
+#     elif actor.guild.name == 'thief':
+#         actor.do_say("I'm a thief, hold your wallet!")
+#     else:
+#         actor.do_say("I'm not sure what I am.")
+
+#     if not actor.act.is_set(PLR_CANLOOT):
+#         actor.do_say("And I can't loot!")
+#     for vict in char_list:
+#         actor.do_say(vict.name)
+# """
+# register_prog('say', Progs(test_prog))

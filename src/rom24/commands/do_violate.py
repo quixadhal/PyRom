@@ -9,6 +9,7 @@ from rom24 import merc
 from rom24 import interp
 from rom24 import fight
 from rom24 import game_utils
+from rom24 import instance
 
 
 def do_violate(ch, argument):

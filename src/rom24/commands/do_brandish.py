@@ -9,6 +9,7 @@ from rom24 import handler_magic
 from rom24 import interp
 from rom24 import const
 from rom24 import state_checks
+from rom24 import instance
 
 
 def do_brandish(ch, argument):

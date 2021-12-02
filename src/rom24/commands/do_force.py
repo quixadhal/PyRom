@@ -7,6 +7,7 @@ from rom24 import interp
 from rom24 import game_utils
 from rom24 import handler_game
 from rom24 import state_checks
+from rom24 import instance
 
 
 # Thanks to Grodyn for pointing out bugs in this function.
@@ -57,7 +58,7 @@ def do_force(ch, argument):
                 and victim.in_room.is_private() and not state_checks.IS_TRUSTED(ch, merc.MAX_LEVEL):
             ch.send("That character is in a private room.\n")
             return
-        if victim.is_pc() and victim.trust >= ch.trust:
+        if victim.is_pc and victim.trust >= ch.trust:
             ch.send("Do it yourself!\n")
             return
         if not victim.is_npc() and ch.trust < merc.MAX_LEVEL - 3:

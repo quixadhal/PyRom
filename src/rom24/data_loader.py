@@ -30,7 +30,7 @@ def load_areas():
     fp = open(settings.AREA_LIST_FILE, 'r')
     area = fp.readline().strip()
     while area != "$":
-        logger.debug("Loading area %s", area)
+        logger.info("Loading area %s", area)
         afp = open(os.path.join(settings.AREA_DIR, area), 'r')
         index += 1
         load_area(afp.read(), index)
@@ -58,7 +58,6 @@ def load_area(area, index):
             area, pArea.max_vnum = game_utils.read_int(area)
             instance.area_templates[pArea.name] = pArea
             area_instance = world_classes.Area(pArea)
-            logger.info("    Loading %s", area_instance)
 
         elif w == "#HELPS":
             area = load_helps(area)

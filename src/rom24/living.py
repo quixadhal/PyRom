@@ -303,8 +303,18 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
     def is_npc(self):
         return self.act.is_set(merc.ACT_IS_NPC)
 
+    @property
     def is_pc(self):
         return not self.act.is_set(merc.ACT_IS_NPC)
+
+    @is_pc.setter
+    def is_pc(self, val):
+        if val is True:
+            self.act.rem_bit(merc.ACT_IS_NPC)
+        elif val is False:
+            self.act.set_bit(merc.ACT_IS_NPC)
+        else:
+            raise ValueError(f"Invalid bit set for is_pc: {val}.  Values can only be true or false.")
 
     def is_good(self):
         return self.alignment >= 350
@@ -580,12 +590,14 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
         return True
 
     def can_see_room(self, room_id):
+        if self.is_immortal():
+            return True
         if not room_id:
-            if self.is_immortal():
-                return True
-            else:
-                return False
-        room = instance.rooms[room_id]
+            return False
+        room = instance.rooms.get(room_id)
+        if not room:
+            logger.error("No room found for room_id: %s", room_id)
+            return False
         if state_checks.IS_SET(room.room_flags, merc.ROOM_IMP_ONLY) and self.trust < merc.MAX_LEVEL:
             return False
         if state_checks.IS_SET(room.room_flags, merc.ROOM_GODS_ONLY) and not self.is_immortal():
@@ -774,8 +786,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
             logger.error("BUG: Bad sn %s in get_skill." % sn)
             skill = 0
         elif self.is_pc:
-            if self.level < const.skill_table[sn].skill_level[self.guild.name] \
-                    or sn not in self.learned:
+            if self.level < const.skill_table[sn].skill_level[self.guild.name] or sn not in self.learned:
                 skill = 0
             else:
                 skill = self.learned[sn]
@@ -824,8 +835,7 @@ class Living(immortal.Immortal, Fight, Grouping, physical.Physical,
                 skill //= 2
             else:
                 skill = 2 * skill // 3
-        if self.is_pc \
-                and self.condition[merc.COND_DRUNK] > 10:
+        if self.is_pc and self.condition[merc.COND_DRUNK] > 10:
             skill = 9 * skill // 10
 
         return max(0, min(skill, 100))

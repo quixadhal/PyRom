@@ -8,6 +8,7 @@ from rom24 import interp
 from rom24 import game_utils
 from rom24 import handler_item
 from rom24 import state_checks
+from rom24 import instance
 
 
 def do_get(ch, argument):

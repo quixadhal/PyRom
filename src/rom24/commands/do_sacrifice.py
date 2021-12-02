@@ -7,7 +7,7 @@ from rom24 import merc
 from rom24 import interp
 from rom24 import game_utils
 from rom24 import handler_game
-
+from rom24 import instance
 
 def do_sacrifice(ch, argument):
     argument, arg = game_utils.read_word(argument)

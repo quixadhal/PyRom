@@ -9,6 +9,7 @@ from rom24 import const
 from rom24 import magic
 from rom24 import game_utils
 from rom24 import handler_game
+from rom24 import instance
 
 #TODO: Known broken. Probably needs some significant cleanup, doesn't appear to be granting skills properly. Needs more testing with non-immortal characters.
 def do_gain(ch, argument):

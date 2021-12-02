@@ -78,7 +78,7 @@ def reload_files(ch):
     # infer the module from the file path though.
     for fp, mod in modified_files.copy().items():
         import_path = fp.split('src')[-1]
-        module_name = import_path.replace('/', '.').lstrip('.').rstrip('.py')
+        module_name = import_path.replace('/', '.').lstrip('.').split('.py')[0]
         module = importlib.import_module(module_name)
         logger.warn('Reloading %s from %s', module, fp)
         try:

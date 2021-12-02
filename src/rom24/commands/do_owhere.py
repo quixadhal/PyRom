@@ -21,15 +21,25 @@ def do_owhere(ch, argument):
         if not ch.can_see_item(item) or not game_utils.is_name(argument, item.name) or ch.level < item.level:
             continue
         found = True
+        logger.info("owhere command found an item for %s: %s", argument, item)
         number += 1
-        content = item.in_item
-        while content.in_item:
+        logger.debug("item: %s", item)
+        content = item.in_item if item.in_item else item
+        logger.debug("content: %s", content)
+        logger.debug("content.in_room: %s", content.in_room)
+        logger.debug("content.in_living: %s", content.in_living)
+
+        # Check for our highest level of container to determine where it is in the world - this
+        # logic goes through and if a mob had a sword in a bag, it would iterate from the bag to the mob
+        # and then to the room around it to give a creature or a room.
+
+        while content and content.in_item:
             content = content.in_item
 
         if content.in_living and ch.can_see(content.in_living) and content.in_living.in_room:
             ch.send("%3d) %s is carried by %s [[Room %d]]\n" % (
                 number, item.short_descr, state_checks.PERS(content.in_living, ch), content.in_living.in_room.vnum ))
-        elif content.in_room and ch.can_see_room(content.in_room):
+        elif content.in_room and ch.can_see_room(content.in_room.instance_id):
             ch.send("%3d) %s is in %s [[Room %d]]\n" % (
                 number, item.short_descr, content.in_room.name, content.in_room.vnum))
         else:
@@ -37,6 +47,7 @@ def do_owhere(ch, argument):
 
         if number >= max_found:
             break
+
     if not found:
         ch.send("Nothing like that in heaven or earth.\n")
 

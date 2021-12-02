@@ -491,6 +491,7 @@ class Pc(living.Living):
         return True
 
     def interpret(self, argument):
+        logger.debug("Char %s ran %s", self.name, argument)
 
         # Strip leading spaces.
         argument = argument.lstrip()

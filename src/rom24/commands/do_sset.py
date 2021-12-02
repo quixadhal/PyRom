@@ -10,6 +10,28 @@ from rom24 import state_checks
 
 
 def do_sset(ch, argument):
+    """Set a skill to a specific level.
+
+    Example:
+    
+        <26hp 128m 454mv> sset bub dagger 100
+        Skill set.
+
+        <26hp 128m 454mv> skill
+
+        Level  1: mace                 1%      trip                 1%
+                backstab             1%      wands                1%
+                dodge                1%      peek                 1%
+                recall              50%      dagger             100%
+                sword                1%      scrolls              1%
+                staves               1%      hide                 1%
+        Level  5: steal                1%
+        Level 12: second attack        1%      disarm               1%
+        Level  7: pick lock            1%
+        Level  4: sneak                1%
+
+        <26hp 128m 454mv>
+    """
     argument, arg1 = game_utils.read_word(argument)
     argument, arg2 = game_utils.read_word(argument)
     argument, arg3 = game_utils.read_word(argument)

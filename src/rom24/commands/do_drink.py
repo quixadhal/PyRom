@@ -8,6 +8,7 @@ from rom24 import interp
 from rom24 import update
 from rom24 import game_utils
 from rom24 import handler_game
+from rom24 import instance
 
 
 def do_drink(ch, argument):
