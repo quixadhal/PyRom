@@ -3,3 +3,4 @@ ipdb
 mypy
 black
 pytest
+pre-commit
