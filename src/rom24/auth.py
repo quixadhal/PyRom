@@ -178,11 +178,7 @@ class TwoFactorAuth:
             outer_encoder = json.JSONEncoder.default
 
         cls_name = "__class__/" + __name__ + "." + self.__class__.__name__
-        return {
-            cls_name: {
-                "secret": outer_encoder(self._raw_secret),
-            }
-        }
+        return {cls_name: {"secret": outer_encoder(self._raw_secret)}}
 
     @classmethod
     def from_json(cls, data, outer_decoder=None):

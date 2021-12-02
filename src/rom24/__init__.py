@@ -48,20 +48,10 @@ class ErrorFilter(logging.Filter):
 LOGGING_CONFIG = {
     "version": 1,
     "disable_existing_loggers": False,
-    "filters": {
-        "errorfilter": {
-            "()": ErrorFilter,
-        },
-    },
+    "filters": {"errorfilter": {"()": ErrorFilter}},
     "formatters": {
-        "verbose": {
-            "datefmt": LOGGING_DATE_FORMAT,
-            "format": VERBOSE_LOGGING_FORMAT,
-        },
-        "normal": {
-            "datefmt": LOGGING_DATE_FORMAT,
-            "format": NORMAL_LOGGING_FORMAT,
-        },
+        "verbose": {"datefmt": LOGGING_DATE_FORMAT, "format": VERBOSE_LOGGING_FORMAT},
+        "normal": {"datefmt": LOGGING_DATE_FORMAT, "format": NORMAL_LOGGING_FORMAT},
     },
     "handlers": {
         "console": {
@@ -89,14 +79,7 @@ LOGGING_CONFIG = {
         },
     },
     "loggers": {
-        LIBRARY_NAME: {
-            "handlers": [
-                "console",
-                "info",
-                "error",
-            ],
-            "level": LOGGING_LEVEL,
-        },
+        LIBRARY_NAME: {"handlers": ["console", "info", "error"], "level": LOGGING_LEVEL}
     },
 }
 
@@ -104,14 +87,7 @@ if LOG_ALL_THE_THINGS:
     # This will log everything from all libraries (altering the root logger).  Use when
     # troubleshooting third party libraries rather than your own.
     LOGGING_CONFIG["loggers"] = {
-        "": {
-            "handlers": [
-                "console",
-                "info",
-                "error",
-            ],
-            "level": 0,
-        },
+        "": {"handlers": ["console", "info", "error"], "level": 0}
     }
 
 

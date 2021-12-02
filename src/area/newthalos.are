@@ -189,7 +189,7 @@ oldstyle Nabil shopkeeper~
 Nabil~
 Nabil, purveyor of exotic pets, is waiting to serve you.
 ~
-A large, well-fed shopkeeper, Nabil is adept at finding animals from all 
+A large, well-fed shopkeeper, Nabil is adept at finding animals from all
 parts of the world. He welcomes you warmly and offers to show you a pair
 of priceless parrots.
 ~
@@ -791,7 +791,7 @@ oldstyle harem girl~
 a harem girl~
 A lovely, veiled harem girl stands here.
 ~
-You see a dark skinned beauty, wearing almost transparent silks and 
+You see a dark skinned beauty, wearing almost transparent silks and
 light blue viel. Her loyalty to the sultan is unwavering.
 ~
 human~
@@ -2556,7 +2556,7 @@ D3
 S
 #9511
 Outside the Southern Gate of New Thalos~
-You see before you the expanse of the Sands of Sorrow.  The shifting sands 
+You see before you the expanse of the Sands of Sorrow.  The shifting sands
 stretch on endlessly to the south, hiding treasure and adventure.
 ~
 0 0 1
@@ -4644,7 +4644,7 @@ You stand in a large building decorated with black marble and red satin.
 A lavishly flourished sign details several exotics creatures and Nabil's
 smiling face.  Cages crowd the room, some large, some small, and filled with
 animals from the four corners of the world.  Various feeding and grooming
-supplies fill the back half of the room, along with an assortment of 
+supplies fill the back half of the room, along with an assortment of
 leashes for everything from giant rats to minotaur lizards.
 ~
 0 DEFGM 0
@@ -5291,7 +5291,7 @@ North-West Tower~
 You stand on one of the four towers guarding the city. The view from here
 is great! To the west you see the tall mountains that make up the divide
 between here an Midgaard. The Ishtar river slowly flows from that direction.
-South you can see the entire city of New Thalos and the Sands of Sorrow 
+South you can see the entire city of New Thalos and the Sands of Sorrow
 to the south.
 ~
 0 D 0
@@ -7115,7 +7115,7 @@ D 0 9617   2    1	* Base of the Tower south
 M 0 9512   1 9621  1	* Nabil
 M 0 3097   1 9706  1
 M 0 3096   1 9706  1
-M 0 3095   1 9706  1 
+M 0 3095   1 9706  1
 M 0 9544  20 9622  2	* the vulture
 M 0 9515   1 9622  1	* Butch the meatcutter
 E 1 9584   1   16	*   a meat cleaver
@@ -7200,7 +7200,7 @@ M 0 9583   1 9638  1	* Patch the bartender
 G 1 9577  10     	*   a shot
 G 1 9576  10     	*   a barrel of beer
 G 1 9575  10     	*   a flaming scorpion
-O 1 3200   -1 9638 
+O 1 3200   -1 9638
 M 0 9566   1 9644  1	* the blacksmith
 G 1 9589 100     	*   a riding crop
 G 1 9588  10     	*   a saddle

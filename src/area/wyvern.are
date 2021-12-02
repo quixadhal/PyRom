@@ -674,7 +674,7 @@ S
 West Side of Moat~
 You stand on the west side of a moat that encircles two towers, each
 over 50 feet high. You will need a boat to go east across the moat. A
-rugged path heads west, and another one heads north to a cluster of low 
+rugged path heads west, and another one heads north to a cluster of low
 buildings.
 ~
 0 0 2
@@ -834,7 +834,7 @@ D0
 S
 #1623
 Tower Foyer~
-You are on a foyer on the west side of the structure. The moat is west of 
+You are on a foyer on the west side of the structure. The moat is west of
 here. There is also a large door eastward into the structure.  You notice that
 the walls are ornately decorated with very life-like stone gargoyles.
 ~
@@ -1110,9 +1110,9 @@ D0
 S
 #1640
 Second Level of the Western Tower~
-You are in the center of the western tower's second floor.  A large spiral 
+You are in the center of the western tower's second floor.  A large spiral
 staircase of 29 steps connects this level with the third.  There are doors
-to the east and west.  Except for a torch bracket in each corner, the 
+to the east and west.  Except for a torch bracket in each corner, the
 room is barren.
 ~
 0 D 1
@@ -1143,7 +1143,7 @@ D1
 S
 #1642
 The Spiral Stairs~
-You are on a large spiral staircase of 29 steps, leading between the 
+You are on a large spiral staircase of 29 steps, leading between the
 second and third floors.  You can go up or down.
 ~
 0 D 2
@@ -1257,7 +1257,7 @@ D5
 S
 #1649
 On the Catwalk~
-You are outdoors on a catwalk between the turrets of the eastern and 
+You are outdoors on a catwalk between the turrets of the eastern and
 western towers.  There is a 40 foot drop to the north and south.  You have
 a fabulous view of the surrounding countryside, which consists of a bleak
 wilderness.  At the east end of the catwalk is a small opening leading
@@ -1345,7 +1345,7 @@ You are at a crossroads to the wilderness areas east and north of here,
 and the more civilized areas to the west. The main road is west, an
 older road continues east, and a simple trail heads north.  To the south,
 an old ram-shackle building is being used as a trading post for the
-surrounding wilderness. 
+surrounding wilderness.
 ~
 0 0 3
 D0

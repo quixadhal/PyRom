@@ -27,8 +27,8 @@ oldstyle draconian~
 the Draconian~
 The Draconian is standing here.
 ~
-This horrible creature is a bizarre cross between a man and a dragon.  He 
-has black scales and a seven foot wingspan.  He scowls at you and hefts his 
+This horrible creature is a bizarre cross between a man and a dragon.  He
+has black scales and a seven foot wingspan.  He scowls at you and hefts his
 spear as you enter the room.
 ~
 human~
@@ -71,10 +71,10 @@ stand stand male 30
 #2204
 oldstyle cleric draconian~
 the holy Draconian~
-A Draconian is here, deep in thought.          
+A Draconian is here, deep in thought.
 ~
-A Draconian stands here, dressed in simple robes.  Around his neck you 
-notice a golden medallion in the shape of a five headed dragon.  
+A Draconian stands here, dressed in simple robes.  Around his neck you
+notice a golden medallion in the shape of a five headed dragon.
 ~
 human~
 ABCFQ DH -900 0
@@ -86,11 +86,11 @@ stand stand male 20
 #2205
 oldstyle king draconian~
 the Draconian King~
-A Draconian wearing fine clothes is here, pondering his greatness.          
+A Draconian wearing fine clothes is here, pondering his greatness.
 ~
-The king of the draconians sits here on a golden throne.  He looks as 
-though he could crush your head with a single blow.  Yet you sense that he 
-is controlled by a greater power. 
+The king of the draconians sits here on a golden throne.  He looks as
+though he could crush your head with a single blow.  Yet you sense that he
+is controlled by a greater power.
 ~
 human~
 ABC DH -900 0
@@ -102,11 +102,11 @@ stand stand male 40
 #2206
 oldstyle concubine draconian~
 a concubine~
-A concubine is resting here. 
+A concubine is resting here.
 ~
-This is a concubine of the king.  She is lounging here, wearing nothing at 
-all.  You find yourself strangely repulsed as she draws a knife and 
-prepares to defend herself. 
+This is a concubine of the king.  She is lounging here, wearing nothing at
+all.  You find yourself strangely repulsed as she draws a knife and
+prepares to defend herself.
 ~
 human~
 AB 0 -500 0
@@ -118,7 +118,7 @@ stand stand female 5
 #2207
 oldstyle bodyguard draconian~
 A bodyguard~
-A bodyguard is here, staring at you menacingly. 
+A bodyguard is here, staring at you menacingly.
 ~
 This creature has devoted its life to defending the king.  Your intrusion has
 not pleased it.
@@ -148,10 +148,10 @@ stand stand female 2500
 #2221
 oldstyle dragon red~
 the Great Red Dragon~
-A red dragon is here, contemplating your existence. 
+A red dragon is here, contemplating your existence.
 ~
 This huge red dragon dominates the chamber.  As you turn to flee, he grins at
-you and invites you to stay ... forever! 
+you and invites you to stay ... forever!
 ~
 dragon~
 ABCF DF -1000 0
@@ -164,7 +164,7 @@ F res H
 #2222
 oldstyle dragon black~
 the Great Black Dragon~
-A black dragon is here, laughing at your insolence. 
+A black dragon is here, laughing at your insolence.
 ~
 This huge black wyrm laughs at your puny weapons.  You realize that he is not
 going to roll over and die for you.
@@ -181,7 +181,7 @@ F vul I
 #2223
 oldstyle dragon white~
 the Great White Dragon~
-A white dragon is here, waiting for you. 
+A white dragon is here, waiting for you.
 ~
 This dragon towers over you.  Recalling your previous experiences with white
 dragons, you are not afraid.  She smiles at you and says 'I think you will find
@@ -199,10 +199,10 @@ F vul I
 #2225
 oldstyle dragon green~
 the Ancient Green Dragon~
-A green dragon is here, looking distraught. 
+A green dragon is here, looking distraught.
 ~
-This huge beast appears to be the most directly related to the draconians. 
-She looks at you with sorrow in her eyes and says 'You have slaughtered my 
+This huge beast appears to be the most directly related to the draconians.
+She looks at you with sorrow in her eyes and says 'You have slaughtered my
 children.  Prepare to die.'
 ~
 dragon~
@@ -217,7 +217,7 @@ F vul I
 #2226
 oldstyle hydra~
 a large hydra~
-A hydra is here, blocking the doorway. 
+A hydra is here, blocking the doorway.
 ~
 A hydra is here, guarding the entrance to a sealed vault.  You have the feeling
 it isn't happy to see you.
@@ -232,7 +232,7 @@ stand stand none 250
 #2227
 oldstyle slave human~
 A human slave~
-A Human slave is here, hard at work.          
+A Human slave is here, hard at work.
 ~
 He looks like he's under a lot of stress.  He would probably like it if you
 left him alone.
@@ -262,9 +262,9 @@ stand stand none 75
 #2241
 oldstyle dragon phase~
 the phase dragon~
-A Phase Dragon is darting around the room.          
+A Phase Dragon is darting around the room.
 ~
-This small dragon looks like he's up to no good. 
+This small dragon looks like he's up to no good.
 ~
 dragon~
 ACFGH DF -300 0
@@ -276,10 +276,10 @@ stand stand male 250
 #2242
 oldstyle fool draconian~
 the draconian fool~
-A Fool is here, making fun of you.          
+A Fool is here, making fun of you.
 ~
-This dragon man looks VERY foolish, dressed in a green and blue striped 
-suit.  As you enter the room, he points at you and laughs. 
+This dragon man looks VERY foolish, dressed in a green and blue striped
+suit.  As you enter the room, he points at you and laughs.
 ~
 human~
 AGHS DF 0 0
@@ -291,10 +291,10 @@ stand stand male 25
 #2243
 oldstyle queen draconian~
 the Draconian Queen~
-A Female Draconian sits, here, looking very important.          
+A Female Draconian sits, here, looking very important.
 ~
-This draconian looks VERY busy as she orders her slaves around.  You think 
-it might be a good idea to leave her alone. 
+This draconian looks VERY busy as she orders her slaves around.  You think
+it might be a good idea to leave her alone.
 ~
 human~
 ABC DFH -600 0
@@ -705,55 +705,55 @@ S
 #2202
 The Foyer~
 This is the entrance to the Tower.  The hallway continues to the north,
-leading towards a staircase.  You notice a grim painting on the wall,  and 
+leading towards a staircase.  You notice a grim painting on the wall,  and
 quickly look away.
 ~
 0 CD 0
 D0
-You see a long hallway. 
+You see a long hallway.
 ~
 ~
 0 -1 2203
 D2
-You see the gate. 
+You see the gate.
 ~
 ~
 0 -1 2201
 E
 painting~
-This painting depicts the grisly death of a foolish human.  You hope you do 
+This painting depicts the grisly death of a foolish human.  You hope you do
 not share his fate.
 ~
 S
 #2203
 Hallway~
-This hallway seems to stretch on forever.  You notice a stairway in  
-the distance. 
+This hallway seems to stretch on forever.  You notice a stairway in
+the distance.
 ~
 0 D 0
 D0
-The hall continues. 
+The hall continues.
 ~
 ~
 0 -1 2204
 D2
-You see the foyer. 
+You see the foyer.
 ~
 ~
 0 -1 2202
 S
 #2204
 Hallway~
-You trudge down the hallway.  You notice doors to the east and west. 
+You trudge down the hallway.  You notice doors to the east and west.
 ~
 0 D 0
 D0
-The hall continues. 
+The hall continues.
 ~
 ~
 0 -1 2207
 D1
-You see a door.  You notice a sign. 
+You see a door.  You notice a sign.
 ~
 door~
 1 -1 2205
@@ -763,7 +763,7 @@ The hall continues.
 ~
 0 -1 2203
 D3
-You see an oak door.  There is an inscription on it. 
+You see an oak door.  There is an inscription on it.
 ~
 oak~
 1 -1 2206
@@ -773,13 +773,13 @@ It says "STORAGE"
 ~
 E
 sign~
-The sign says "NURSERY" in bold letters.     
+The sign says "NURSERY" in bold letters.
 ~
 S
 #2205
 Nursery~
 It looks like a tornado has been through here.  Toys are scattered everywhere,
-and a small group of dragon hatchlings are fighting over a bone. 
+and a small group of dragon hatchlings are fighting over a bone.
 ~
 0 D 1
 D1
@@ -788,7 +788,7 @@ You see a large stone door.
 door stone~
 2 2297 2223
 D3
-You see the hallway. 
+You see the hallway.
 ~
 ~
 1 -1 2204
@@ -799,28 +799,28 @@ This room is covered with dust, it looks as if no one has been here in ages.
 ~
 0 D 1
 D1
-You see the hallway. 
+You see the hallway.
 ~
 ~
 1 -1 2204
 D5
-You see nothing special. 
+You see nothing special.
 ~
 trapdoor~
 1 -1 2208
 E
 dust~
-As you look closely at the dust, you notice the outline of a trapdoor!       
+As you look closely at the dust, you notice the outline of a trapdoor!
 ~
 S
 #2207
 End of the Hallway~
 You have finally reached the end of the hallway.  A huge staircase leads up.
-You see a sign at the base of the staircase. 
+You see a sign at the base of the staircase.
 ~
 0 D 0
 D2
-The hall continues. 
+The hall continues.
 ~
 ~
 0 -1 2204
@@ -832,15 +832,15 @@ The second floor.
 E
 sign~
 The sign reads:
-    This area is kind of tough.  You probably shouldn't go up these stairs 
-    alone if you are under 18th level, or at all if you under 14th level.  
+    This area is kind of tough.  You probably shouldn't go up these stairs
+    alone if you are under 18th level, or at all if you under 14th level.
     Have fun! -- Wench
 ~
 S
 #2208
 Guardian's Room~
-You climb down the rickety stairs and find yourself face to face with a 
-gargantuan hydra.  How fast can you climb UP stairs? 
+You climb down the rickety stairs and find yourself face to face with a
+gargantuan hydra.  How fast can you climb UP stairs?
 ~
 0 D 1
 D2
@@ -849,20 +849,20 @@ A large grey door.
 grey~
 1 2234 2209
 D4
-You see the storage room. 
+You see the storage room.
 ~
 door trap trapdoor~
 1 -1 2206
 S
 #2209
 The Treasure Room~
-You have made it past the hydra into the vault.  You are astounded by 
+You have made it past the hydra into the vault.  You are astounded by
 the treasure here.  Not only are you now rich, you can probably rest here
 safely.  The west wall seems to have a large door made entirely of ruby.
 ~
 0 CD 1
 D0
-You see nothing special. 
+You see nothing special.
 ~
 grey~
 2 2234 2208
@@ -901,7 +901,7 @@ You see nothing special.
 ~
 0 -1 2210
 D1
-You see a wooden door. 
+You see a wooden door.
 ~
 door wooden~
 1 -1 2212
@@ -914,7 +914,7 @@ S
 #2212
 Hall O' Pleasure~
 You stop dead in your tracks as you enter this ornately decorated room - it
-is populated with the king's harem.  
+is populated with the king's harem.
 ~
 0 D 1
 D3
@@ -1022,7 +1022,7 @@ S
 #2219
 Crypt~
 You are in a large room which continues to the west.  You notice many
-coffins here.  Open coffins reveal remains of something other than man.  
+coffins here.  Open coffins reveal remains of something other than man.
 The smell of reptile is very strong here.
 ~
 0 D 1
@@ -1063,7 +1063,7 @@ You the cave opening.
 S
 #2222
 The Crypt Ends~
-You have come to the end of the Crypt.  It seems deserted.  There is a 
+You have come to the end of the Crypt.  It seems deserted.  There is a
 strange coffin lying against the wall.
 ~
 0 D 1
@@ -1261,7 +1261,7 @@ S
 Tunnel~
 This tunnel seems to stretch for miles.  You try to distinguish the end but
 your eyes soon tire from the strain.  The smell here has increased two fold.
-The tunnel continues to go to the east.  The wine cellar lies back to the 
+The tunnel continues to go to the east.  The wine cellar lies back to the
 west.
 ~
 0 AI 2
@@ -1325,7 +1325,7 @@ trapdoor
 S
 #2237
 The Bridge~
-You are walking along an old wooden bridge.  Its not that secure.  You 
+You are walking along an old wooden bridge.  Its not that secure.  You
 might want to hurry along.  To the south, on the other side of the bridge,
 lies a small opening.
 ~
@@ -1361,7 +1361,7 @@ clearing
 S
 #2239
 Clearing~
-You stand out in a clearing.  Mountains are all around you.  There is a 
+You stand out in a clearing.  Mountains are all around you.  There is a
 well in the middle of the clearing.  Lying against the well is a sign.  A
 path leads up the mountain.  The small opening is back to the north.
 ~
@@ -1385,7 +1385,7 @@ E
 sign~
 The sign reads:
          This is a bottomless pit cleverly disguised as a well.  People have
-fallen in and never been heard from again.  Trust me, you don't want to go 
+fallen in and never been heard from again.  Trust me, you don't want to go
 down there.
                         The All Powerful Well Keeper
 ~
@@ -1420,7 +1420,7 @@ S
 #2241
 A cave opening~
 You stand before a huge cave opening.  You hearing heavy breathing from
-within the cave.  There are a few skeletons lying about.  The cave lies to 
+within the cave.  There are a few skeletons lying about.  The cave lies to
 the south.  The path is back to the east.
 ~
 0 0 2
@@ -1459,7 +1459,7 @@ the world.  To your north lies a huge platinum door.  You hear very pronounced
 grumbling from behind the doors.  It sounds like something huge and hungry.
 But if you don't have the key you don't have to worry because you can't get in.
 If you do have the key I would suggest not going in.  Some believe the Five
-Headed dragon Tiamat was imprisoned here by the gods.  But who believes in 
+Headed dragon Tiamat was imprisoned here by the gods.  But who believes in
 fairy tales.  Well, if you're scared, you can always go down the mountain.
 ~
 0 0 2

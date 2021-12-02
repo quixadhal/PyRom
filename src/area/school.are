@@ -2063,7 +2063,7 @@ S
 #3758
 Furey's Training Room~
 You are in Furey's Training Room.  Around you are all sorts of physical
-and mental training tools.  The whole room is filled with magic, holiness, 
+and mental training tools.  The whole room is filled with magic, holiness,
 and sweat.  There is a sign on the wall.
 ~
 0 CDR 1
@@ -2074,9 +2074,9 @@ You see the room you came from, and the room you should go to.
 0 0 3757
 E
 sign~
-Welcome to Furey's Training Room.  Here you can train your attributes.  To 
+Welcome to Furey's Training Room.  Here you can train your attributes.  To
 train an attribute, you need enough practices.  To find out how many practice
-sessions you have, type 'train' while you are in this room.  To train for a 
+sessions you have, type 'train' while you are in this room.  To train for a
 specific attribute, type 'train <attr>' where attr is the first 3 letters of
 the attribute you want increased.  Type 'help train' for more information.
 ~

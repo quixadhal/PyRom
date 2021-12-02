@@ -172,7 +172,7 @@ Hassan is here, waiting to dispense some justice.
 Big. Very big.
 Stupid. Very stupid.
 
-Hassan, the guardian of  the Temple of Mota, towers over you.  He's over 12 
+Hassan, the guardian of  the Temple of Mota, towers over you.  He's over 12
 feet tall, every inch of it muscle. It would be a Bad Thing to commit a crime
 in his presence.
 ~
@@ -896,7 +896,7 @@ Melancholy~
 Melancholy is here, digging through a pile of scrolls, papers, and maps.
 ~
 Ragged brown hair frames a ghostly, pale face.  Puffy eyelids surround two
-sky blue, haunting eyes.  An old, brown robe is wrapped around her frail 
+sky blue, haunting eyes.  An old, brown robe is wrapped around her frail
 frame.  She looks up from her pile of papers and maps and looks inquiringly
 at you, smiling faintly.
 ~
@@ -912,7 +912,7 @@ lister green tree snake~
 Lister~
 A green tree snake is sitting here on a pile of books.
 ~
-This is Melancholy's pet tree snake, Lister.  Something seems odd about his 
+This is Melancholy's pet tree snake, Lister.  Something seems odd about his
 jaw, almost as if he were smiling at you.  He's quite friendly, but don't
 get him drunk.
 ~
@@ -2032,7 +2032,7 @@ map midgaard~
 .
                         * * * MIDGAARD * * *
                          = = ========== = =
- 
+
                                      Rainbow Bridge (Asgard and Valhalla)
                                     /
           North            Temple Altar   Mud School <--- ** NEWBIES **
@@ -2073,7 +2073,7 @@ Haon-Dor   |     Guild           |                 Guild     Wall Road
 ~
 #3163
 map thera~
-a map of Thera~ 
+a map of Thera~
 A rolled up map is here.~
 paper~
 map 0 A
@@ -2084,7 +2084,7 @@ map thera~
 .
                          * * * Northern Thera  * * *
                           = = ================== = =
- 
+
                                                    Moria
                              Olympus          New    |    Dwarven--Mines
 Mage            Elven Valley    |     Ofcol--Ofcol   +----Kingdom
@@ -2109,7 +2109,7 @@ Grove---Galaxy              Midgaard   G'harne       |            \Holy
         (Harpies)               |      \           \       Elemental
                             Miden'nir   Church   Mega-City  Canyon
                             (Goblins)  Catacombs    One
- 
+
 This map shows just about all the major areas on ROM.  This map is NOT drawn
 to scale, some of the directions were changed to make everything fit.  This
 map shows the GENERAL location of an area with respect to the other areas.
@@ -2128,7 +2128,7 @@ map southern midgaard~
 .
                          * * * SOUTHERN MIDGAARD * * *
                           = = =================== = =
- 
+
  West                          South             Kate's                   East
 Bridge                         Bridge            Diner                   Bridge
   |                              |                 |                       |
@@ -2180,7 +2180,7 @@ map dwarven kingdom dwarf~
 .
                          * * * The Dwarven Kingdom * * *
                           = = ===================== = =
- 
+
                     Dwarven
                     Hospital
                        |                                              *Path to
@@ -2212,7 +2212,7 @@ Bakery    of Shop                       Barracks              Path
               Midgaard <----Cross          Dwarven            South
                             Roads          Drop-off
                                           (Day-Care)
- 
+
 *key required
 ~
 #3166
@@ -2334,7 +2334,7 @@ map olympus~
 .
                                *****OLYMPUS*****
                                =================
- 
+
                                    Bedroom
                                       |
                                    Northern
@@ -2863,7 +2863,7 @@ appearance, and most of the walls are covered by ancient wall paintings
 picturing gods, giants and peasants.
    Large steps lead down through the grand temple gate, descending the huge
 mound upon which the temple is built and ends on the temple square below.
-   Equally large steps lead UP through a small door into the ENTRANCE to MUD 
+   Equally large steps lead UP through a small door into the ENTRANCE to MUD
 SCHOOL.  (type 'up' to go to MUD SCHOOL.)  A small plaque is on this wall.
 ~
 0 CDS 0
@@ -3412,7 +3412,7 @@ S
 #3024
 Eastern End of Poor Alley~
 You are at the poor alley. South of here is the Grubby Inn and to the
-east you see common square. Melancholy's map shop is north. The alley continues 
+east you see common square. Melancholy's map shop is north. The alley continues
 further west.
 ~
 0 S 1
@@ -3921,9 +3921,9 @@ The alley leads west.
 S
 #3046
 Eastern end of Alley~
-You are standing at the eastern end of the alley,  near the city walls.  
-Wall road loops around the city to your east, and you can see an old 
-three-story warehouse to the south.  The Fountain of Youth Apothecary is 
+You are standing at the eastern end of the alley,  near the city walls.
+Wall road loops around the city to your east, and you can see an old
+three-story warehouse to the south.  The Fountain of Youth Apothecary is
 north.
 ~
 0 S 1
@@ -4257,7 +4257,7 @@ S
 Promenade~
 The river gently flows west just north of here.  The promenade continues
 both east and west.  A rickety bridge crosses the river to the north, towards
-the city dump (fortunately, the wind is blowing towards the dump today). 
+the city dump (fortunately, the wind is blowing towards the dump today).
 South of here you see the entrance to the park, and a small building seems
 to be just west of the entrance.  Austral Square, home of Kate's Diner, lies
 to your east.
@@ -4318,7 +4318,7 @@ S
 #3104
 Northeast end of Concourse~
 You are at the Concourse.  The city wall is just east and Austral Square,
-home of Kate's Diner, is west.  Looking across the river you see an old  
+home of Kate's Diner, is west.  Looking across the river you see an old
 warehouse.  A strong stone bridge crosses the river to the north, where the
 concourse becomes wall road.  The Concourse continues south along the wall.
 ~
@@ -4755,9 +4755,9 @@ The fresh young leaves of the elm tree wave gently in the wind.
 E
 sign~
 The sign says :-
- 
+
                           Graveyard of Midgaard
- 
+
     Many brave adventurers have found their final resting place here.
           Please show respect and do not desecrate their tombs.
 ~
@@ -4813,7 +4813,7 @@ S
 #3128
 On the Concourse~
 You are walking around the scenic concourse as it continues its path around
-the city of Midgaard.  The south gate of the city lies to your east, and the 
+the city of Midgaard.  The south gate of the city lies to your east, and the
 southwestern corner of the city wall is west.  Emerald Avenue stretches out
 to the north.
 ~
@@ -4885,7 +4885,7 @@ D2
 S
 #3132
 Emerald Avenue~
-You are standing on the north end of Emerald Avenue.  To the north is 
+You are standing on the north end of Emerald Avenue.  To the north is
 Austral Square and Kate's Diner, to the east is the small street Penny Lane.
 ~
 0 S 1
@@ -5144,12 +5144,12 @@ S
 #3160
 Melancholy's Maps~
 As you walk in, a sudden gust of wind enters the shop and sends several
-scraps of paper fly around the room.  You blink as the dust you've stirred 
-up stings your eyes, and take a look around the shop.  This shop is cluttered 
-with old pieces of parchment, stacks of books, and odd scraps.  A desk with 
-slightly less clutter than the rest of the shop is in front of you.  A scroll 
-case full of scrolls is behind the desk.  A bookcase is to the right of you, 
-and to the left is a window overlooking the Common Square.  A small door, 
+scraps of paper fly around the room.  You blink as the dust you've stirred
+up stings your eyes, and take a look around the shop.  This shop is cluttered
+with old pieces of parchment, stacks of books, and odd scraps.  A desk with
+slightly less clutter than the rest of the shop is in front of you.  A scroll
+case full of scrolls is behind the desk.  A bookcase is to the right of you,
+and to the left is a window overlooking the Common Square.  A small door,
 half hidden by a stack of books, leads to a room in the back of the shop.
 ~
 0 BCS 0
@@ -5175,12 +5175,12 @@ quite a few tomes written by someone named "Anson MacDonald".
 S
 #3161
 Melancholy's Room~
-A faint smell of incense teases your nose as you enter this room.  You 
+A faint smell of incense teases your nose as you enter this room.  You
 step onto a soft bearskin rug and look around.  A simple bed lies against
 the far wall.  At the foot of it is a sturdy, ironbound chest, most likely
 full of Melancholy's trappings from her adventuring days.  On a small table
 under a window to the east is a vase with a single white rose.  Other than
-that, the room is quite bare.  
+that, the room is quite bare.
 ~
 0 BCJS 0
 D2
@@ -5289,7 +5289,7 @@ D1
 ~
 0 -1 3204
 D2
-You see the landing in the back of Kate's Diner. 
+You see the landing in the back of Kate's Diner.
 ~
 ~
 0 -1 3150
@@ -5301,7 +5301,7 @@ S
 #3204
 On the River~
 You see the warehouse on the northern riverbank.  East of here the river
-passes under the eastern bridge and through the city wall. The banks of the 
+passes under the eastern bridge and through the city wall. The banks of the
 levee are west, in the direction of the current.
 ~
 0 S 7
@@ -5352,9 +5352,9 @@ You see an intersection with a dark alley.
 S
 #3251
 Wall Road~
-You are walking along the eastern wall of the city, on a road extending 
-between the east gate and a bridge to the south.  A dark, dirty alley lies west 
-of here.  You step carefully around a pool of liquid...who knows what it could 
+You are walking along the eastern wall of the city, on a road extending
+between the east gate and a bridge to the south.  A dark, dirty alley lies west
+of here.  You step carefully around a pool of liquid...who knows what it could
 be in a place this foul...
 ~
 0 S 1
@@ -5379,7 +5379,7 @@ S
 Wall Road~
 The walls of Midgaard tower above you to the east, keeping the city safe
 from its enemies...you hope.  An intersection with a dark alley lies north,
-and a bridge over the Midgaard river is south.  Beyond the bridge wall road 
+and a bridge over the Midgaard river is south.  Beyond the bridge wall road
 turns in the concourse.
 ~
 0 S 1
@@ -5422,9 +5422,9 @@ S
 #3254
 The South Bridge~
 You are standing on a small, rickety bridge leading from the Midgaard
-City Dump to the much more attractive promenade of the southern parts of 
+City Dump to the much more attractive promenade of the southern parts of
 Midgaard.  You can smell the stench of the dump to the north, the fresher
-air of the promenade seems preferable.  Below you are the swift-moving 
+air of the promenade seems preferable.  Below you are the swift-moving
 currents of the Midgaard river.
 ~
 0 S 1
@@ -5468,7 +5468,7 @@ Outside the South Gate of Midgaard~
 You are standing outside the strong wooden gate on the southern walls of
 Midgaard.  Guards eye you suspiciously from the two towers on either side of
 the gate, as they stand watch to protect the city from the goblins of this
-forest.  The trees and goblins of the Miden'nir are south, the gate back to 
+forest.  The trees and goblins of the Miden'nir are south, the gate back to
 Migaard lies north.
 ~
 0 S 3
@@ -5485,7 +5485,7 @@ The green forests of the Miden'nir are south, hiding countless goblin warriors.
 S
 #3257
 Wall Road~
-You are walking along wall road, just north of the west gate of Midgaard.  
+You are walking along wall road, just north of the west gate of Midgaard.
 The road continues along the western wall to the north, towards an intersection
 with a busy Clan street.
 ~
@@ -5546,7 +5546,7 @@ S
 #3260
 The Northwest Corner~
 You are standing beneath the northwestern corner of the city wall, on a turn
-in wall road.  You can head south, towards the west gate, or east, to the 
+in wall road.  You can head south, towards the west gate, or east, to the
 north gate.
 ~
 0 S 1
@@ -5581,7 +5581,7 @@ S
 #3262
 Inside the North Gate of Midgaard~
 Two small towers surround a strong wooden gate, connected by a small stone
-bridge set with murder holes.  This gate is not as heavily guarded as the 
+bridge set with murder holes.  This gate is not as heavily guarded as the
 others, as the plains outside are safe to travel.  You can leave midgaard to
 the north, or continues along wall road to the west and east.  A teeming clan
 street is visible to the south, and beyond that the graceful spires of the
@@ -5642,8 +5642,8 @@ Wall road continues to the west, along the northern wall of the city.
 S
 #3265
 Wall Road~
-Just south of you is an intersection with a crowded clan street.  The 
-eastern wall of Midgaard is beside you, and to the north you can see the 
+Just south of you is an intersection with a crowded clan street.  The
+eastern wall of Midgaard is beside you, and to the north you can see the
 northeast corner of the city wall.
 ~
 0 S 1
@@ -5660,7 +5660,7 @@ You see an intersection with a crowded street.
 S
 #3266
 Wall Road~
-Here, wall road meets up with a busy clan street heading off towards the 
+Here, wall road meets up with a busy clan street heading off towards the
 west, and the far wall of the city.  You can smell spices, perfume, freshly
 cured hide, and other strange scents, all mingle together in one heady aroma.
 Wall road continues to the north and south.
@@ -5702,9 +5702,9 @@ You see the well-guarded east gate of Midgaard.
 S
 #3268
 Outside the North Gate of Midgaard~
-You stand outside the north gate of the walled city of Midgaard.  A dusty 
-trail is visibile to the north, it stretches around the walls of the city.  
-Further north are the wide expanses of the northern plains, leading to the 
+You stand outside the north gate of the walled city of Midgaard.  A dusty
+trail is visibile to the north, it stretches around the walls of the city.
+Further north are the wide expanses of the northern plains, leading to the
 village of Ofcol.  You can return to Midgaard to the south.
 ~
 0 S 2
@@ -5722,7 +5722,7 @@ S
 #3270
 On the Concourse~
 The strong stone walls of Midgaard rise up to the west, keeping evil at bay.
-The concourse heads towards a bridge to the north, and continues south 
+The concourse heads towards a bridge to the north, and continues south
 alongside a beautiful park.
 ~
 0 S 1
@@ -5758,7 +5758,7 @@ S
 #3272
 On the Concourse at Penny Lane~
 You are on a road leading around the inner walls of Midgaard.  To the north,
-the concourse heads towards a bridge into northern Midgaard.  To the south, 
+the concourse heads towards a bridge into northern Midgaard.  To the south,
 you can see an intersection with Elm Street.  The quaint paved streets of
 Penny Lane lie west.
 ~
@@ -5804,7 +5804,7 @@ You see Elm Street and the graveyard entrance.
 S
 #3301
 Clan Road~
-You are standing on the western end of Clan Road.  The traffic here  
+You are standing on the western end of Clan Road.  The traffic here
 is light.  This is a quieter section of Midgaard.  You can hear the sound of
 haggling coming from the east.
 ~
@@ -5822,8 +5822,8 @@ Wall Road is to the west.
 S
 #3302
 Clan Road~
-You are walking along Clan Road.  To the south of you is the money changer.  
-Clan Road continues on to the east and the west.  
+You are walking along Clan Road.  To the south of you is the money changer.
+Clan Road continues on to the east and the west.
 ~
 0 S 1
 D1
@@ -5845,7 +5845,7 @@ S
 #3303
 Clan Road~
 The shops on this stretch of Clan road are long-closed and boarded up.
-Not much traffic passes through this part, as there is nothing to buy.  
+Not much traffic passes through this part, as there is nothing to buy.
 ~
 0 S 1
 D1
@@ -5878,7 +5878,7 @@ Clan Road continues to the west.
 S
 #3315
 Clan Road~
-Clan Road seems to widen here slightly, allowing more traffic to 
+Clan Road seems to widen here slightly, allowing more traffic to
 travel through the area.  To the south is another entrance to the busy
 pub.  This door is also open wide and spilling forth the sounds of
 happy patrons.  Clan Road continues to the east and west.
@@ -5902,9 +5902,9 @@ Clan Road continues to the west.
 S
 #3316
 Clan Road~
-You are at the eastern end of Clan Road.  To the east of you, the  
+You are at the eastern end of Clan Road.  To the east of you, the
 tall wall around the city looms up before you and casts its shadow on
-you.  Clan Road continues to the west.  
+you.  Clan Road continues to the west.
 ~
 0 S 1
 D1
@@ -5920,8 +5920,8 @@ Clan Road continues to the west.
 S
 #3334
 A Money Changer's Room~
-A few strategically placed lanterns keep this place well-lit in the 
-absence of any windows.  The room is surprisingly well appointed with  
+A few strategically placed lanterns keep this place well-lit in the
+absence of any windows.  The room is surprisingly well appointed with
 tapestries hanging on the walls.  You'd wager your life the moneylender's
 guards are behind them, as there are none here.  The moneylender himself
 works from behind a large desk, no doubt holding a fortune in gold and silver.
@@ -6223,7 +6223,7 @@ G 1 3150  -1     	*   a cup of cinnamon coffee
 G 1 3100  -1     	*   a cup of tea
 M 0 3160   1 3160  1	* Melancholy
 G 1 3168  -1     	*   a map of Olympus
-G 1 3167  -1     	*   a map of New Thalos 
+G 1 3167  -1     	*   a map of New Thalos
 G 1 3166  -1     	*   a map of the first level of Moria
 G 1 3165  -1     	*   a map of the Dwarven Kingdom
 G 1 3164  -1     	*   a map of southern Midgaard

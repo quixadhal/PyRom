@@ -6,9 +6,7 @@ from setuptools import setup
 
 REQUIREMENTS = [requirement for requirement in open("requirements.txt").readlines()]
 
-COMMANDS = [
-    "rom24=rom24.pyom:pyom",
-]
+COMMANDS = ["rom24=rom24.pyom:pyom"]
 
 setup(
     name="rom24",
@@ -18,10 +16,8 @@ setup(
     url="",
     include_package_data=True,
     description="Attempt at properly packaging rom24 python.",
-    packages=find_packages('src'),
-    package_dir={
-        '': 'src',
-    },
+    packages=find_packages("src"),
+    package_dir={"": "src"},
     python_requires=">=3.6.6",
     entry_points={"console_scripts": COMMANDS},
     install_requires=REQUIREMENTS,

@@ -27,7 +27,7 @@ the Old Treant~
 A huge, gnarled tree stands here, battered by age and nature.
 ~
 The old tree looks as though the wind has battered and torn at it for years.
-Very few leaves remain. Its limbs are crooked and gnarled. It moans as the 
+Very few leaves remain. Its limbs are crooked and gnarled. It moans as the
 wind pushes it back and forth.
 ~
 human~
@@ -536,7 +536,7 @@ A
 18 1
 E
 gloves combat~
-These gloves are plated with metal plates that provide strength and 
+These gloves are plated with metal plates that provide strength and
 protection.
 ~
 #2301
@@ -1682,7 +1682,7 @@ This is a small intersection. Paths lead east, west, and south. You are struck
 by the carnage here when you enter the clearing. There appears to have been a
 great battle here. Blood is everywhere and the ground is all torn up. Pieces
 of beaten armour and broken blades lie all around. Examining the tracks here
-lead you to believe that the dead and wounded were dragged off in two 
+lead you to believe that the dead and wounded were dragged off in two
 directions, south and east.
 ~
 0 A 4
@@ -2039,7 +2039,7 @@ D1
 S
 #2324
 The Blood Sea Portal~
-You stand on a small pedestal like altar that has been built on the shore 
+You stand on a small pedestal like altar that has been built on the shore
 here. Standing here, you can look out across the sea. You can almost imagine
 that you see a far away island. Dominating the altar is a small blue portal of
 light. It is possible to walk south into the portal. The shore itself extends
@@ -2430,8 +2430,8 @@ S
 #2343
 Inside the gates~
 You stand just north of the gates to the village. Looking around, you see many
-crude huts and cooking fires. To the north, you see a huge fire pit. Behind 
-it, there appears to be a hut of sorts. Small paths lead east and west among 
+crude huts and cooking fires. To the north, you see a huge fire pit. Behind
+it, there appears to be a hut of sorts. Small paths lead east and west among
 the crude huts. The gates to the south provide an exit from the village.
 ~
 0 0 1
@@ -2552,7 +2552,7 @@ The throne room~
 You stand in a large, crudely decorated throne room. A huge throne adorned
 with humanoid skulls sits against the west wall. A crude, blood stained altar
 is against the east wall. A doorway is directly to the north, long strands of
-beads blocking the view of the other side. Crude torches light the hall and 
+beads blocking the view of the other side. Crude torches light the hall and
 smoke clings to the ceiling.
 ~
 0 D 0
@@ -2827,7 +2827,7 @@ Before the gates of Mahn-Tor~
 You stand at the edge of a high cliff. Directly south, set back off the
 cliff's edge, you see a huge pair of gates. These gates appear to be carved
 almost completely out of ice. A huge city and keep appear to be on the other
-side of these gates. There is also a possibility of climbing down the cliff 
+side of these gates. There is also a possibility of climbing down the cliff
 face.
 ~
 0 0 5
@@ -3773,7 +3773,7 @@ E 1 2309   3   16	*   a shortsword named "Nightbringer"
 M 0 2327   1 2374  1	* Tyrgoth
 E 1 2310  10    6	*   a golden helm and visor
 E 1 2311   5    5	*   a gilded gold breast plate
-E 1 2312  15    4	*   a billowing white cape 
+E 1 2312  15    4	*   a billowing white cape
 E 1 2313  20   11	*   a huge tower shield
 E 1 2314   3   16	*   a huge mace named "Dawnbringer"
 M 0 2328   1 2391  1	* Amyrok

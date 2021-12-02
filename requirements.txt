@@ -1,6 +1,6 @@
-psutil
+black
 ipdb
 mypy
-black
-pytest
 pre-commit
+psutil
+pytest

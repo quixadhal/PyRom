@@ -10,7 +10,7 @@ oldstyle troll~
 a swamp troll~
 A swamp troll charges towards you.
 ~
-This huge behemoth towers to a height of 15 feet.  He sneers at you 
+This huge behemoth towers to a height of 15 feet.  He sneers at you
 as he approaches and raises two black taloned claws to strike you.
 ~
 troll~
@@ -84,7 +84,7 @@ a huge hairy beast~
 A huge hairy beast shambles towards you with death in his eyes.
 ~
 This huge beast stands about 20 feet in height and has huge green clawed
-appendages. 
+appendages.
 ~
 human~
 ACFG DF -450 0
@@ -425,10 +425,10 @@ A gloomy path leads down the hill into the swamp.
 S
 #8305
 An Oozing Bog~
-You stand in an oozing quagmire.  A creaking beat fills the air, 
+You stand in an oozing quagmire.  A creaking beat fills the air,
 accompanied by groans and soughing of the air.  Several large winged
 beasts flap over you and send chilling glares your way.  You feel out
-of place, and feel that the occupants of this realm will soon 
+of place, and feel that the occupants of this realm will soon
 have you for a feast.
 ~
 0 A 5
@@ -541,8 +541,8 @@ S
 #8310
 Gloomy Path Through the Marsh.~
 To the north lies a hill, shrouded in dark clouds, and to the south lies
-a huge patch of vegetation.  You sense an evil presence and notice 
-a beast flying overhead to the south east, towards what looks to be a 
+a huge patch of vegetation.  You sense an evil presence and notice
+a beast flying overhead to the south east, towards what looks to be a
 huge fortress, half buried in the marsh.
 ~
 0 A 6
@@ -615,7 +615,7 @@ S
 #8313
 By the Monolith.~
 You are standing near a monolith which protrudes some 20 feet from the
-marsh into the air.  Its black obsidian surface shines darkly in the 
+marsh into the air.  Its black obsidian surface shines darkly in the
 strange, almost unearthly light that enters through the clouds above.
 ~
 0 A 5
@@ -669,9 +669,9 @@ This is a huge obsidian stone block stuck in the marsh.
 S
 #8315
 Northern Lake Side.~
-Floating on this boiling lake is not what you would consider an enjoyable 
-experience.  Many a creature bumps the bottom of your boat, and glares 
-at you through unblinking eyes from the waters below.  The southern 
+Floating on this boiling lake is not what you would consider an enjoyable
+experience.  Many a creature bumps the bottom of your boat, and glares
+at you through unblinking eyes from the waters below.  The southern
 portion of the lake looks calm and serene compared to this wild place.
 ~
 0 A 7

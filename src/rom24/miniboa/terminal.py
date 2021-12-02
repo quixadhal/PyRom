@@ -58,9 +58,7 @@ logger = logging.getLogger(__name__)
 
 from rom24.miniboa.colors import TERMINAL_TYPES, COLOR_MAP
 
-_TTYPE_MAP = {
-    "tinyfugue": "ansi",
-}
+_TTYPE_MAP = {"tinyfugue": "ansi"}
 
 _PARA_BREAK = re.compile(r"(\n\s*\n)", re.MULTILINE)
 

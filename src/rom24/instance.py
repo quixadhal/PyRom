@@ -1,16 +1,3 @@
-__author__ = "quixadhal"
-
-import os
-import json
-from collections import OrderedDict, namedtuple
-import re
-import logging
-from typing import *
-
-logger = logging.getLogger(__name__)
-
-from rom24 import settings
-
 """For the instance dicts, we are not going to make another pointer, or copy, of
 the original entity. We are going to alias, or bind, the specific entity
 _instances[dict key] [entity] back to the original global_instances[dict key]
@@ -35,6 +22,18 @@ Likewise you can effect a change TO mob from accessing either dict:
 >>>merc.mob_instances[mob.instance_id].name
 'bob'
 """
+
+import os
+import json
+from collections import OrderedDict, namedtuple
+import re
+import logging
+from typing import *
+
+logger = logging.getLogger(__name__)
+
+from rom24 import settings
+
 
 max_instance_id = 0
 previous_max_instance_id = 0
@@ -61,11 +60,9 @@ helps: Dict[str, Any] = {}
 socials: Dict[str, Any] = {}
 resets: Dict[str, Any] = {}
 
-"""
-Contains lists of instances,
-Key: string VNUM
-Value: list Instance_ID of object associated with Key:VNUM
-"""
+# Contains lists of instances,
+# Key: string VNUM
+# Value: list Instance_ID of object associated with Key:VNUM
 instances_by_area: Dict[str, Any] = {}
 instances_by_item: Dict[str, Any] = {}
 instances_by_room: Dict[str, Any] = {}

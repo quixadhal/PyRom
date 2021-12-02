@@ -86,7 +86,7 @@ And the man pages, outdate.
 -By Liralen
 ~
 -1 ROM~
-ROM started in early February 1993, using Merc 1.0 code. In July of 1993,  
+ROM started in early February 1993, using Merc 1.0 code. In July of 1993,
 ROM II was started, eventually replacing the original ROM.  ROM was up for
 a little over a year, after which the code (version 2.3) was released,
 and various other ROM muds were started, including Rivers of Mud under
@@ -174,7 +174,7 @@ fraught with misconceptions, poor examples, and outrageous hypocrisies. :)
 ~
 
 -1 SOCIALS~
- 
+
 This is a complete list of socials for this MUD:
 Compiled originally by: Sara
 accuse       adjust      air          apologize     applaud     babble
@@ -212,12 +212,12 @@ tank	     starve	 aargh	      homework	    puff	differ
 yae	     lightbulb   voodoo       ogg	    confused	beam
 bite	     discodance  scuff        whap	    lag		chortle
 zerbert      twitch
- 
+
 ~
 
 -1 MERC~
-This mud is based on Merc 2.1, created by Furey, Hatchet, and Kahn.  
-Merc 2.1 is available as Merc_21.tar.gz from ftp.tcp.com and 
+This mud is based on Merc 2.1, created by Furey, Hatchet, and Kahn.
+Merc 2.1 is available as Merc_21.tar.gz from ftp.tcp.com and
 ftp.math.okstate.edu.
 E-mail to 'majordomo@webnexus.com' to join the merc mailing list.
 
@@ -255,16 +255,16 @@ THIS IS A MUD BASED ON.....
                ROM 2.4 copyright (c) 1993-1998 Russ Taylor
 
 By what name do you wish to be known? ~
- 
--1 MOTD~ 
-* You are responsible for knowing the rules (type 'rules').  Ignorance of 
+
+-1 MOTD~
+* You are responsible for knowing the rules (type 'rules').  Ignorance of
   the rules is no excuse.
 * Important commands: help, commands, news, notes
 * Use the delete command to erase unwanted characters
-  
+
 [Hit Return to continue]
-~ 
- 
+~
+
 52 IMOTD~
 Welcome Immortal!
 
@@ -285,7 +285,7 @@ This is a partial list of what a god of any given level should be doing. It is
 not complete yet.
 
 Angels:(52-54)
-Angels and higher level gods may not assist mortals directly in any way.  
+Angels and higher level gods may not assist mortals directly in any way.
 An Angel's main job is to help with quests (via switch), or possibly run
 small quest of their own -- but the rewards should be minimal.
 
@@ -311,7 +311,7 @@ Not fufilling the roles of your office can result in demotion or deletion.
 ~
 
 -1 PKILL PKILLING PKILLER 'PLAYER KILLING' PSTEAL PSTEALING 'PLAYER STEALING'~
-Player killing and player stealing are allowed to all clan members 
+Player killing and player stealing are allowed to all clan members
 (including loners), provided the victim is is within 8 levels of the
 character and is also in a clan.  This will flag you as a "killer" or
 "thief", allowing any character to attack, and also provoking action
@@ -323,38 +323,38 @@ from the city guard.
                          **********************
                          ** The Rules of ROM **
                          **********************
- 
+
 1)  Do not kill mortals, do not kill mortals, do not kill mortals.
     This includes transferring/summoning them to aggressive mobs.
- 
-2)  Do not cheat for ANY mortal in ANY way, especially your own. 
+
+2)  Do not cheat for ANY mortal in ANY way, especially your own.
     Unless of course you LIKE deletion. Yes this includes tanking,
-    healing/restoring, casting protection spells <armor, sanct>,    
+    healing/restoring, casting protection spells <armor, sanct>,
     and softening up or altering mobs.
- 
+
 3)  Do not transfer or summon mobs to mortals or mortals to mobs.
     They have legs, if they want to kill a mob, they can easilly
     go there themselves.
- 
+
 4)  DO NOT kill the shopkeepers for any reason at ALL.
- 
+
 5)  DO NOT use reboot.  <--- Note, simple English.
- 
+
 6)  Do not give out free equipment.  You don't need to win brownie
     points with the mortals.  Quest are fine but handing out items
     isn't.
- 
-7)  A note on quests: Quests are a good thing, more or less, BUT 
-    do not give out overly extravagant prizes.  Exercise some 
+
+7)  A note on quests: Quests are a good thing, more or less, BUT
+    do not give out overly extravagant prizes.  Exercise some
     common sense here folks.  Do not load items more than 4 levels
     below their normal level (i.e. no level 5 ogre gauntlets).
- 
-8)  Do not undermine the authority of a higher level god.  If you 
+
+8)  Do not undermine the authority of a higher level god.  If you
     see that someone has been frozen or nochannelled do not restore
     their priveleges.  They are being punished for a reason.
- 
-9)  Do not try to overrule each other.  
- 
+
+9)  Do not try to overrule each other.
+
 10) Trusted mortals:  Do not use your god powers to help your mortal
     character.  If you do, your trust will be taken away.
 
@@ -368,14 +368,14 @@ These are the rules of ROM.  For other matters, use common sense.
 * Your presence here is a privilege not a right. Obey any orders from gods, and
   you will be fine.  Deletion does not require a reason, appeals are to be sent
   to the implementors.
- 
+
 * Sitting around idle with a client is hazardous to your health. If we catch
   you doing it, you will lose half your playing time.
 
-* No multiple logins, multiple playing, or helping your own characters with 
+* No multiple logins, multiple playing, or helping your own characters with
   other characters you own -- by any arrangment.
- 
-* No kill stealing.  This means you cannot attack a mob someone else is 
+
+* No kill stealing.  This means you cannot attack a mob someone else is
   fighting, unless they ask you to. Also avoid attacking fleeing mobs.
 
 * Cheating will not be tolerated.  This includes accepting favors from gods
@@ -393,17 +393,17 @@ and you cannot be forced to delete.  Typing delete with an argument will
 return your character to 'safe' status if you change your mind after the
 first delete.
 ~
- 
+
 0 HEALER~
 The healer decided to grab a quick buck, and now charges for his heals.  Some
 services are still free to players of level 10 or below, however.  To see
 a full listing of the healer's services, type 'heal' at his residence. To
 receive healing, bring plenty of money, and type 'heal <spell>'.
-~ 
+~
 
 
 -1 GAIN~
-The gain command is used to learn new skills, once the proper trainer has 
+The gain command is used to learn new skills, once the proper trainer has
 been found. (Check New Thalos) The following options can be used with gain:
 
 gain list:    list all groups and skills that can be learned
@@ -413,7 +413,7 @@ gain convert: turns 10 practices into one training session
 
 Gain uses training sessions, not practices. (see 'help train')
 Gained skills and groups do NOT increase your experience per level or total
-number of creation points. 
+number of creation points.
 ~
 
 52 CLONE~
@@ -426,7 +426,7 @@ The clone command duplicates an object or mobile.  The level of item or mobile
 that may be cloned depends on your level.  The target object or mob must be in
 the same room as you, or in your posession.  Strung and set information is
 preserved by clone, as well as any spell effects and container contents or
-mobile inventory, except for items which are too high for you to clone.  
+mobile inventory, except for items which are too high for you to clone.
 Strung extended descriptions on objects are not kept, however.
 ~
 
@@ -441,7 +441,7 @@ listed where applicable.
 
 0 OUTFIT~
    The outfit command, usable by levels 5 and below, equips your character with
-a new set of sub issue gear (banner, weapon, helmet, shield, and vest), 
+a new set of sub issue gear (banner, weapon, helmet, shield, and vest),
 courtesy of the Mayor's warehouses.  Only empty equipment slots are affected.
 ~
 
@@ -457,30 +457,30 @@ autoexit  : display room exits upon entering a room
 autosplit : split up spoils from combat among your group members
 autoassit : makes you help group members in combat
 
-Typing a command sets the action , typing it again removes it. 
-~ 
+Typing a command sets the action , typing it again removes it.
+~
 -1 CLAN~
    A Clan is a collection of players, united to  follow and further
 a common cause.   Each clan has rules and  regulations, to find out
 more about clans and their 'beliefs' type "help <clan name>".  Only
 Clan  members can kill or steal from other players.  To join a Clan
 you  must be level 5 or above and level 25 or below.   Speak to the
-Clan Leader about joining.  If you go Loner before level 25 you may 
+Clan Leader about joining.  If you go Loner before level 25 you may
 join a Clan later.
-   Joining  a  Clan is a dangerous step.   Many adventurers live to 
+   Joining  a  Clan is a dangerous step.   Many adventurers live to
 kill and torture others and chances are that your paths will cross.
-Remember, attacking or killing fellow clan members *IS* illegal except to 
+Remember, attacking or killing fellow clan members *IS* illegal except to
 mutiny your Clan leader.
-   Existing  Clans may buy  special rooms and  mobiles by acquiring 
+   Existing  Clans may buy  special rooms and  mobiles by acquiring
 diamonds as payment.   To see room prices, type "help prices".  New
-Clans  may be formed by  petitioning the immortals.   Please  remember that 
+Clans  may be formed by  petitioning the immortals.   Please  remember that
 their word is final on all matters not covered by this help.
 ~
 -1 PRICES PRICE~
 New Clan Hall Rooms cost 50 diamonds.
 Boosting the mana or healing gains for a room costs 250 diamonds.
 Both in the same room costs double.
-Making the Healer or Store 
+Making the Healer or Store
  lower costs 1,000 diamonds.
 ~
 
@@ -488,17 +488,17 @@ Making the Healer or Store
 The count command displays the number of people (that you can see) logged
 into the mud.  It also displays the highest number observed that day, if
 it is higher.
-~ 
- 
+~
+
 -1 GATE~
-The gate spell is a powerful transportation magic that opens up a portal 
+The gate spell is a powerful transportation magic that opens up a portal
 between your character and another person or creature somewhere else in the
 world.  This portal will transport you and any pet you might have, but not
 other members of your group.  Monsters recieve a save against gate, and
-monster or players more than 3 levels higher than you can not be gated to at 
+monster or players more than 3 levels higher than you can not be gated to at
 all.  God rooms, private rooms, and no recall rooms cannot be gated to, and
-no recall rooms cannot be gated out of.  Finally, any god or hero is also 
-immune to gate, as well as in player who has no summon set.  Clan members 
+no recall rooms cannot be gated out of.  Finally, any god or hero is also
+immune to gate, as well as in player who has no summon set.  Clan members
 may not be gated to except by their fellow Clan members.
 ~
 

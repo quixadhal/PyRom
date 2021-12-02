@@ -519,7 +519,7 @@ The forest continues.
 S
 #3515
 Light Forest~
-The forest is light here and you can easily pick your way through the 
+The forest is light here and you can easily pick your way through the
 trail.  To the east, the forest becomes thick and darker. South, the trail
 continues.
 ~
@@ -755,7 +755,7 @@ S
 Along the Eastern Road~
 You are travelling down the eastern road between Midgaard and the eastern
 lands.  The road back to Midgaard is west of you, and a heavily guarded
-checkpoint is east.  A beautiful grove of trees is north, and a dirt path 
+checkpoint is east.  A beautiful grove of trees is north, and a dirt path
 wanders off to the south.
 ~
 0 0 1
@@ -800,7 +800,7 @@ The road continues west towards midgaard.
 S
 #3528
 Along the Eastern Road~
-You are walking along a well-travelled road, just east of a heavily 
+You are walking along a well-travelled road, just east of a heavily
 guarded checkpoint.  You have covered about half the distance between
 the city of Midgaard and New Thalos.  The air is getting drier and the heat
 more oppressive as you near the the barren wastes of the Sands of Sorrow.
@@ -839,8 +839,8 @@ S
 Near the Sands of Sorrow~
 The eastern road is losing ground to the creeping desert here.  You stagger
 in the growing heat, and wonder if you have enough water.  The endless waste
-of the Sands of Sorrows is south, and the road continues east and west.  The 
-sun paints illusions at the edge of your vision, one of them looks like a far 
+of the Sands of Sorrows is south, and the road continues east and west.  The
+sun paints illusions at the edge of your vision, one of them looks like a far
 off city...
 ~
 0 0 10
@@ -850,7 +850,7 @@ The road ahead is almost lost in the desert.
 ~
 0 -1 3531
 D3
-You see a clearer section of road. 
+You see a clearer section of road.
 ~
 ~
 0 -1 3529
@@ -880,7 +880,7 @@ The sun is hot enough to melt your armor, but salvation is at hand.  To the
 east, you see the mighty gates of New Thalos, one of the most prosperous cities
 of all of Thera.  To the south, you see the endless wasteland of the Sands
 of Sorrows, and to the west you can barely make out a faint, but well-used,
-road leading to the City of Midgaard. 
+road leading to the City of Midgaard.
 ~
 0 0 10
 D1

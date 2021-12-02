@@ -120,7 +120,7 @@ Unlike string space, permanent space grows on demand; alloc_perm() calloc's and
 carves up as many blocks as needed as the game runs.
 
 You can adjust the block size by changing MAX_PERM_BLOCK in 'db.c'.  Adjustment
-will have only a minor effect on space and time usage.  If you port Merc to a 
+will have only a minor effect on space and time usage.  If you port Merc to a
 new system with a 64k or 32k limit on calloc() size, you could simply change
 MAX_PERM_BLOCK to the largest calloc'able block on your system.
 

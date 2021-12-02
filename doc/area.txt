@@ -191,7 +191,7 @@ This provides for an escape mechanism from the usual leading-blank stripping of
 strings, so that picturesque greeting screens may be used.
 
 
-    
+
 
 === The #MOBILES section
 
@@ -448,7 +448,7 @@ other sections.
 The reset commands are:
 
     *	comment
-    M	read a mobile 
+    M	read a mobile
     O	read an object
     P	put object in object
     G	give object to mobile

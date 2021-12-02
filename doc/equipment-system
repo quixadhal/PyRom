@@ -208,4 +208,3 @@ In the case of Equip, a nested method, wear, was created to handle the brunt of 
 an item. it is not directly callable.
 
 --Will add more to this later. Syn.
-

@@ -38,7 +38,7 @@ Magic-User:
 	find familiar- extra mana, hp...if it stays alive..
 	fireball- make it into an area affect spell...
 	power word kill- VERY high level- insta-kill monsters
-		of levels below the caster-possibly 5 or more levels 
+		of levels below the caster-possibly 5 or more levels
 		below
 	chain lightning- lightning hits more than one opponent (or
 		friend)...
@@ -46,10 +46,10 @@ Magic-User:
 	conjuer elemental- make this this WORK!
 	prismatic sphere- high-level (28th, mabye)-- offers protection
 		from breath, ect..
-	polymorph- change shape into a lower level monster's...keep 
+	polymorph- change shape into a lower level monster's...keep
 		hp's and AC...could couse problems with other players
 	meteor swarm- area affect- high-level...
-	
+
 
 General ideas:
 
@@ -59,7 +59,7 @@ General ideas:
 
 -* restrict groups to alignment(good cannot group with evil)...
 
--* Martial Arts- cost more for Mages, Clerics than for Warriors and 
+-* Martial Arts- cost more for Mages, Clerics than for Warriors and
 	Thieves...
 
 -* MORE MOBS!, MORE AREAS!, MORE MAGIC ITEMS!
@@ -74,7 +74,7 @@ General ideas:
 	- castles(room) for players at high levels- players can recall
 		to it and store items temporarily...
 			castles cause chars to heal and regain mana
-			at double the normal rate...	
+			at double the normal rate...
 	- races....multi-class for non-humans...level restrict...
 	- random abitlies...cant see stats till 15th level
 	- verify feature for new players- auto e-mail and reply to 				prevent multi playing...
@@ -82,32 +82,32 @@ General ideas:
 		so the mud is never down for more then a couple of
 		hours...
 	- Make money worth something!- make quality items for sale
-		at really high prices... possibly the char could 
+		at really high prices... possibly the char could
 		buy a castle instead of leveling to get it...(50 mil?)
 	- IF there is the castle purchace option- chars must own a 				castle before they can become immort...
 	- gossip and auction chanels are good...
 	- get rid of recall...buy scrolls or recall items(more than
 		one recall)...
-	- WE NEED A BETTER BAR! 
+	- WE NEED A BETTER BAR!
 		screwdrivers, magaritas, vodka sours, lemonballs
 			AAAAAAAHHHH!
 	- no-trip...players can either prac a no-trip skill or get
 		a no-trip item(ring of free action)...
 	- class restricted eq....
-	- allow players to rename thier own eq...	
+	- allow players to rename thier own eq...
 			you could do a lot with this...
 			make the eq exclusive to the player
 			once he renames it--(this would cost
 			money-the armorer or weaponsmith could
 			do it)...
-	- setmin and setmout (for chars)- set what other players 
-		see when the char walks in or out...this 
+	- setmin and setmout (for chars)- set what other players
+		see when the char walks in or out...this
 		could also be done for money(small amount)
 
 
 I think that's all.....we might come up with a few more later...
 
-	The WhooPIe Drool Co.! 
+	The WhooPIe Drool Co.!
 		Onethumb-...Sith
 		Baka-...Orrik
 		Penn-...Ender
@@ -115,4 +115,3 @@ I think that's all.....we might come up with a few more later...
 				Merry X-mas!....well....
 					later
 					onethumb!
-

@@ -11,7 +11,7 @@ the Ofcol cityguard~
 An Ofcol cityguard is standing here, making sure there is no trouble.
 ~
 This guard is surely a trained and skilled fighter.  He is fully armed and
-armored, and he uses his equipment with a practiced precision.  Luckily for 
+armored, and he uses his equipment with a practiced precision.  Luckily for
 you, this guard will only use his deadly skills for the good of the citizens of
 Ofcol.
 ~
@@ -30,7 +30,7 @@ Diana, the Marshall of Ofcol, stands here proudly.
 Diana is a beautiful, powerfully built woman.  She wears platinum armor for
 three reasons.  The first is to show she is strong enough to withstand the
 weight.  The second is to show her rank of office.  The third is that platinum
-is the hardest metal she can find.  She is willing to defend Ofcol to her 
+is the hardest metal she can find.  She is willing to defend Ofcol to her
 death.
 ~
 human~
@@ -376,7 +376,7 @@ the Ofcol cityguard~
 An Ofcol cityguard is posted here to guard the gate.
 ~
 This guard is surely a trained and skilled fighter.  He is fully armed and
-armored, and he uses his equipment with a practiced precision.  Luckily for 
+armored, and he uses his equipment with a practiced precision.  Luckily for
 you, this guard will only use his deadly skills for the good of the citizens of
 Ofcol.
 ~
@@ -448,10 +448,10 @@ stand stand male 5
 #628
 oldstyle priestess~
 the Priestess of Ofcol~
-The Priestess of Ofcol is here, blessing you 
+The Priestess of Ofcol is here, blessing you
 with her beatific smile.
 ~
-The Priestess of Ofcol is an old woman, perfectly at peace with herself and 
+The Priestess of Ofcol is an old woman, perfectly at peace with herself and
 with the world.  She devotes all her time to help teach you the ways of her
 god, Bahamut.  The dragon symbol around her neck looks almost alive.
 ~
@@ -465,7 +465,7 @@ stand stand female 50
 #629
 oldstyle chaplain Jerrold~
 Chaplain Jerrold~
-Jerrold, the chaplain of this Citadel, is here 
+Jerrold, the chaplain of this Citadel, is here
 directing the activities of the people around here.
 ~
 He smiles at you, with the enthusiasm of a little kid.  "What're you doing just
@@ -486,7 +486,7 @@ A knight wearing the scales of a dragon stands here.
 ~
 This person looks almost like a dragon itself.  His golden scales gleam with
 power.  He smiles at you with a vicious grin.  You're happy that he doesn't
-look upset at your presence. 
+look upset at your presence.
 ~
 human~
 AB BHN 1000 0
@@ -498,7 +498,7 @@ stand stand male 50
 #631
 oldstyle dragon gold~
 The Ancient Gold Dragon~
-An old dragon shimmering with the colors of this 
+An old dragon shimmering with the colors of this
 cavern peers at you sleepily.
 ~
 This dragon's head is taller than you.  He is annoyed at your disturbance, but
@@ -530,7 +530,7 @@ stand stand male 250
 #633
 oldstyle dragonknight knight dragon~
 a Dragonknight~
-A person dressed in the scales of a gold dragon 
+A person dressed in the scales of a gold dragon
 stands here, guarding the Golden Citadel.
 ~
 This person looks like a dragon itself.  His golden scales gleam with power.
@@ -549,7 +549,7 @@ the Ofcol cityguard~
 An Ofcol cityguard is posted here to guard the gate.
 ~
 This guard is surely a trained and skilled fighter.  He is fully armed and
-armored, and he uses his equipment with a practiced precision.  Luckily for 
+armored, and he uses his equipment with a practiced precision.  Luckily for
 you, this guard will only use his deadly skills for the good of the citizens of
 Ofcol.
 ~
@@ -1329,7 +1329,7 @@ door~
 S
 #601
 The Big Intersection~
-You are in the big intersection between Raff Way and Impy Way.  Crowds 
+You are in the big intersection between Raff Way and Impy Way.  Crowds
 of people walk past you as they go on their daily tasks.  Raff Way continues
 east and west, and Impy Way runs north and south.
 ~
@@ -1385,7 +1385,7 @@ S
 #603
 The Blacksmith~
 You are in a black and smelly room.  Pieces of metal are strewn all over
-the floor, and a wave of heat from a big furnace hits you.  An anvil sits on 
+the floor, and a wave of heat from a big furnace hits you.  An anvil sits on
 one side of the room, and on the other side is a workbench.  The exit is east.
 ~
 0 D 0
@@ -1543,8 +1543,8 @@ S
 #612
 Fields~
 You are in a corn field.  You can't see far, since the corn stalks are
-taller than you are.  You remember that the end of Impy Way is east of here, 
-and you think you see a building to the north.  The field continues south and 
+taller than you are.  You remember that the end of Impy Way is east of here,
+and you think you see a building to the north.  The field continues south and
 west.
 ~
 0 0 2
@@ -1571,7 +1571,7 @@ You can make a path to the fields west.
 S
 #613
 Fields~
-You are among fruit trees in a field.  You see many apple and orange 
+You are among fruit trees in a field.  You see many apple and orange
 trees.  You can make out the corn fields north and some vegetable patches west.
 The sight of the fruit makes your mouth water.
 ~
@@ -1708,7 +1708,7 @@ You see the dirt road.
 S
 #621
 Dirt Road~
-You are on a dirt road.  To the north and south, you see some grass 
+You are on a dirt road.  To the north and south, you see some grass
 fields.  There is a pigsty west, and the dirt road continues east.
 ~
 0 0 2
@@ -2096,7 +2096,7 @@ S
 Big House~
 You are in a big house.  Evidently, the owners of this house are richer
 than the average citizen, since there is more than one room to this house.  A
-door leads to the kitchen north, and a bedroom is upstairs.  The exit is to 
+door leads to the kitchen north, and a bedroom is upstairs.  The exit is to
 the south.
 ~
 0 D 0
@@ -2118,7 +2118,7 @@ You see the bedroom.
 S
 #644
 Bedroom~
-You are in the bedroom.  There isn't much of interest except for a bed 
+You are in the bedroom.  There isn't much of interest except for a bed
 and a closet.  The stairs lead back down.
 ~
 0 D 0
@@ -2488,8 +2488,8 @@ You see the end of Swiftest Way.
 S
 #666
 Raff Way~
-You are on Raff Way.  To the west, you can see a big intersection.  To 
-the east, you see Raff Way continue toward the Golden Citadel.  There are 
+You are on Raff Way.  To the west, you can see a big intersection.  To
+the east, you see Raff Way continue toward the Golden Citadel.  There are
 beautiful flowers growing along the road here, making this more of a garden
 than a road.
 ~
@@ -2507,8 +2507,8 @@ You see the big intersection.
 S
 #667
 Raff Way~
-You are on Raff Way.  Raff Way continues west to the city of Ofcol.  To 
-the east, you see Raff Way continue toward the Golden Citadel.  There are 
+You are on Raff Way.  Raff Way continues west to the city of Ofcol.  To
+the east, you see Raff Way continue toward the Golden Citadel.  There are
 beautiful flowers growing along the road here, making this more of a garden
 than a road.
 ~
@@ -2871,7 +2871,7 @@ You are in one of the upper chambers of the Golden Citadel.  The decora-
 tions of this place surpass even those of the first floor.  Gold tiles etched
 with platinum cover the floor, walls and the ceiling.  The lights from numerous
 torches reflect from these shimmering planes, giving the illusion that you are
-standing in a gem.  Stairways lead up and down, and the hall leads south. 
+standing in a gem.  Stairways lead up and down, and the hall leads south.
 ~
 0 D 0
 D2
@@ -2893,7 +2893,7 @@ You are in one of the upper chambers of the Golden Citadel.  The decora-
 tions of this place surpass even those of the first floor.  Gold tiles etched
 with platinum cover the floor, walls and the ceiling.  The lights from numerous
 torches reflect from these shimmering planes, giving the illusion that you are
-standing in a gem.  Stairways lead up and down, and the hall leads east. 
+standing in a gem.  Stairways lead up and down, and the hall leads east.
 ~
 0 D 0
 D1
@@ -2914,8 +2914,8 @@ The Hall of the DragonLords~
 You are in a vast hall, filled with the commanders of the Golden Citadel.
 Golden tiles etched with platinum cover the floors, and weapons of all types
 are mounted on the walls of this meeting hall.  Surrounding a solid gold table
-are four sons of the Keeper of the Golden Citadel.  They smile at you and ask 
-you to join them in lunch.  Exits lead to the cardinal directions. 
+are four sons of the Keeper of the Golden Citadel.  They smile at you and ask
+you to join them in lunch.  Exits lead to the cardinal directions.
 ~
 0 D 0
 D0
@@ -2941,7 +2941,7 @@ You are in one of the upper chambers of the Golden Citadel.  The decora-
 tions of this place surpass even those of the first floor.  Gold tiles etched
 with platinum cover the floor, walls and the ceiling.  The lights from numerous
 torches reflect from these shimmering planes, giving the illusion that you are
-standing in a gem.  Stairways lead up and down, and the hall leads west. 
+standing in a gem.  Stairways lead up and down, and the hall leads west.
 ~
 0 D 0
 D3
@@ -2963,7 +2963,7 @@ You are in one of the upper chambers of the Golden Citadel.  The decora-
 tions of this place surpass even those of the first floor.  Gold tiles etched
 with platinum cover the floor, walls and the ceiling.  The lights from numerous
 torches reflect from these shimmering planes, giving the illusion that you are
-standing in a gem.  Stairways lead up and down, and the hall leads north. 
+standing in a gem.  Stairways lead up and down, and the hall leads north.
 ~
 0 D 0
 D0
@@ -3101,7 +3101,7 @@ S
 #697
 In the Shaft from the Dragon Chamber~
 You are in the shaft leading from the Dragon Chamber.  Below you lies the
-Dragon Chamber of the Golden Citadel.  Above you, you see the sky, but 
+Dragon Chamber of the Golden Citadel.  Above you, you see the sky, but
 currently, the way out is sealed by a layer of diamond that looks impenetrable.
 ~
 0 D 0

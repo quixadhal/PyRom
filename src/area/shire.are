@@ -793,7 +793,7 @@ S
 #1105
 The General Store~
 You are inside the general store.  All sorts of goodies are stacked on the
-many shelves.  Your local friendly shopkeeper is smiling patiently, waiting to 
+many shelves.  Your local friendly shopkeeper is smiling patiently, waiting to
 serve you to the best of his abilities.  The only exit is to the south.
 ~
 0 D 0
@@ -883,7 +883,7 @@ S
 Shiriff Post of the Eastern Shire~
 You are in the Shiriff Post which acts as the nucleus for the three shiriffs
 of the Eastern Shire.  As you examine the shiriffs on duty, you come to realize
-that the halflings of the Shire are not to be reckoned with.  You cower with 
+that the halflings of the Shire are not to be reckoned with.  You cower with
 awe.  A door offers passage to the east.
 ~
 0 D 0
@@ -1011,7 +1011,7 @@ S
 Shiriff Training Grounds~
 The sounds of mock battle and feigned death cries fill your ears.  Every
 which way you turn you see halfling trainees at the prime of their youth.  A
-wizened old battle instructor meets your gaze and asks if he may be of 
+wizened old battle instructor meets your gaze and asks if he may be of
 service.  The only exit lies to the west.
 ~
 0 0 0
@@ -1091,8 +1091,8 @@ S
 The Grocer's Delight~
 You tremble with ecstasy as the tempting odors of freshly made pipeweed
 bread fill your lungs.  Rumor has it that the pipeweed bread sold here can
-restore vitality.  You look around but find no one to take your order.  
-You then peep over the counter and discover a friendly grocer who is too 
+restore vitality.  You look around but find no one to take your order.
+You then peep over the counter and discover a friendly grocer who is too
 short to be seen over the counter.  The only exit is to the north.
 ~
 0 D 0
@@ -1289,7 +1289,7 @@ To the south runs Bywater Road.
 S
 #1132
 Delving Lane~
-Delving Lane runs north and south in this small borough of the Shire.  To 
+Delving Lane runs north and south in this small borough of the Shire.  To
 the south stands Brandywine Bridge.  The Green Dragon, the undisputed leader
 in the art of innkeeping, offers rest and comfort to the east.  You hear the
 bray of horses from the west.
@@ -1313,7 +1313,7 @@ Brandywine Bridge offers safe passage across the tumultuous river.
 S
 #1133
 Delving Lane~
-Delving Lane runs north and south in this small borough of the Shire.  A 
+Delving Lane runs north and south in this small borough of the Shire.  A
 large, imposing building lies to the east.  You hear the bray of horses from
 the west.
 ~
@@ -1477,7 +1477,7 @@ S
 #1141
 Gamgee Residence~
 You stand inside a modest home.  You deduce that this is indeed the home
-of whomever owns the surrounding lands.  The air is somewhat musty and 
+of whomever owns the surrounding lands.  The air is somewhat musty and
 the smell reminds you of a stable.  As you look around disdainfully, you
 think to yourself that this is more of a shack than a proper residence and
 you long for the urban riches of the Shire proper.
@@ -1684,7 +1684,7 @@ Above a great oak door you see a sign which reads 'Shirriff Post'.
 S
 #1152
 A dark tunnel~
-You stand inside a small underground tunnel.  The ceiling is so low that 
+You stand inside a small underground tunnel.  The ceiling is so low that
 you must crouch to avoid hitting your head.  The tunnel continues north and
 south.  To the west lies a small home.  All you can see is darkness.
 ~
@@ -1707,7 +1707,7 @@ You see a halfling hole.
 S
 #1153
 Shiriff Post of the Lower Shire~
-You are in the shiriff Post which acts as the nucleus for the three shiriffs 
+You are in the shiriff Post which acts as the nucleus for the three shiriffs
 of the Lower Shire.  As you examine the shiriffs on duty, you come to realize
 that the halflings of the Shire are not to be reckoned with.  You cower with
 awe.  The only exit is to the east.
@@ -1764,8 +1764,8 @@ A trapdoor on the ceiling reveals a passageway.
 S
 #1157
 The Inn of the Green Dragon~
-You are standing in the Inn of the Green dragon.  Large paintings of 
-halflings at work, and halflings at play adorn the walls.  Comfortable 
+You are standing in the Inn of the Green dragon.  Large paintings of
+halflings at work, and halflings at play adorn the walls.  Comfortable
 benches and seats line the walls.  A stairway leads down.
 ~
 0 DE 0

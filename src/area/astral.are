@@ -25,7 +25,7 @@ oldstyle nightmare~
 A pitch-black nightmare~
 A nightmare is here, kicking at you with its flaming hooves.
 ~
-The nightmare is a wholly evil being, sent out by the rulers of the lower 
+The nightmare is a wholly evil being, sent out by the rulers of the lower
 planes to torment mortals.  It vaguely resembles a horse, with a hide blacker
 than the darkest night, and hooves that burn with unholy fires.
 ~
@@ -41,7 +41,7 @@ oldstyle night hag~
 An evil night hag~
 A night hag reaches out to steal your soul.
 ~
-You see a shadowy creature with long talons and an evil grin, whose sole 
+You see a shadowy creature with long talons and an evil grin, whose sole
 purpose is to hunt down and slay mortals in order to obtain souls for her foul
 master to torment.
 ~
@@ -763,7 +763,7 @@ You can see the Temple of Midgaard below you.
 0 -1 1036
 E
 rainbow~
-The rainbow softly glows with beams of light, in colours that defie 
+The rainbow softly glows with beams of light, in colours that defie
 description.
 ~
 S
@@ -786,14 +786,14 @@ The rainbow extends below you towards Midgaard.
 0 -1 7700
 E
 rainbow~
-The rainbow softly glows with beams of light, in colours that defie 
+The rainbow softly glows with beams of light, in colours that defie
 description.
 ~
 S
 #7702
 On the Rainbow~
 You are standing on the rainbow, surrounded by many beams of multicoloured
-light.  Through the bottom of the rainbow you see the City of Midgaard and the 
+light.  Through the bottom of the rainbow you see the City of Midgaard and the
 land surrounding it.  It seems to be miles below you.
 ~
 0 0 5
@@ -820,7 +820,7 @@ light.  The rainbow extends above and below you as far as you can see.
 ~
 0 0 5
 D4
-The rainbow extends far above you.  You see a glowing white light at the 
+The rainbow extends far above you.  You see a glowing white light at the
 rainbow's end.
 ~
 ~
@@ -866,7 +866,7 @@ intangible -- your hand passes right through them.
 ~
 E
 rainbow~
-The rainbow brilliantly glows with beams of blinding light, in colours that 
+The rainbow brilliantly glows with beams of blinding light, in colours that
 sweep together and merge before your eyes.
 ~
 S
@@ -874,7 +874,7 @@ S
 The Glowing Bridge at the Rainbow's End~
 After a long climb you have reached the end of the rainbow.  The brilliant
 colours have twisted and merged into a beautiful glowing bridge that leads
-toward a massive white gate to the north.  All around you is a soft, peaceful 
+toward a massive white gate to the north.  All around you is a soft, peaceful
 glow interrupted only by the passing of starlike dust motes before your eyes.
 ~
 0 0 1
@@ -931,18 +931,18 @@ below you.
 0 -1 7705
 E
 plaque~
-The plaque reads: 
+The plaque reads:
 
-Let this gate stand to protect mortal man for all time against the perils of 
+Let this gate stand to protect mortal man for all time against the perils of
 the outer planes of existence and the creatures fair and foul that dwell within.
 
-(The Astral Plane and Githyanki Keep were written by Andersen.) 
+(The Astral Plane and Githyanki Keep were written by Andersen.)
 ~
 E
 gate~
-You see a huge, glowing gate wrought from an incredibly hard translucent 
-material.  Each of the intricately carved bars of this mighty gate are about 
-as thick as a man's wrist, rising from the floor to a height of forty feet.  
+You see a huge, glowing gate wrought from an incredibly hard translucent
+material.  Each of the intricately carved bars of this mighty gate are about
+as thick as a man's wrist, rising from the floor to a height of forty feet.
 A plaque is inset into the wall next to one side of the gate.
 ~
 S
@@ -997,7 +997,7 @@ S
 Exploring the Astral Plane~
 You find yourself floating in a field of blackness, filled with tiny tendrils
 of silvery light and insubstantial shining motes of dust.  The weightlessness
-of this environment is very disorienting, and it is difficult to maintain your 
+of this environment is very disorienting, and it is difficult to maintain your
 bearings and sense of direction.
 ~
 0 0 2
@@ -1031,7 +1031,7 @@ S
 Exploring the Astral Plane~
 You find yourself floating in a field of blackness, filled with tiny tendrils
 of silvery light and insubstantial shining motes of dust.  The weightlessness
-of this environment is very disorienting, and it is difficult to maintain your 
+of this environment is very disorienting, and it is difficult to maintain your
 bearings and sense of direction.
 ~
 0 0 2
@@ -1065,7 +1065,7 @@ S
 Exploring the Astral Plane~
 You find yourself floating in a field of blackness, filled with tiny tendrils
 of silvery light and insubstantial shining motes of dust.  The weightlessness
-of this environment is very disorienting, and it is difficult to maintain your 
+of this environment is very disorienting, and it is difficult to maintain your
 bearings and sense of direction.
 ~
 0 0 2
@@ -1099,7 +1099,7 @@ S
 Exploring the Astral Plane~
 You find yourself floating in a field of blackness, filled with tiny tendrils
 of silvery light and insubstantial shining motes of dust.  The weightlessness
-of this environment is very disorienting, and it is difficult to maintain your 
+of this environment is very disorienting, and it is difficult to maintain your
 bearings and sense of direction.
 ~
 0 0 2
@@ -1133,7 +1133,7 @@ S
 Exploring the Astral Plane~
 You find yourself floating in a field of blackness, filled with tiny tendrils
 of silvery light and insubstantial shining motes of dust.  The weightlessness
-of this environment is very disorienting, and it is difficult to maintain your 
+of this environment is very disorienting, and it is difficult to maintain your
 bearings and sense of direction.
 ~
 0 0 2
@@ -1245,7 +1245,7 @@ S
 Roaming the Astral Plane~
 You find yourself floating in a field of blackness, filled with tiny tendrils
 of silvery light and insubstantial shining motes of dust.  The weightlessness
-of this environment is somewhat disorienting, though your instincts say you are 
+of this environment is somewhat disorienting, though your instincts say you are
 close to home.
    All exits lead off into the astral field.
 ~
@@ -1285,7 +1285,7 @@ S
 Roaming the Astral Plane~
 You find yourself floating in a field of blackness, filled with tiny tendrils
 of silvery light and insubstantial shining motes of dust.  The weightlessness
-of this environment is somewhat disorienting, though your instincts say you are 
+of this environment is somewhat disorienting, though your instincts say you are
 close to home.
    All exits lead off into the astral field.
 ~
@@ -1325,7 +1325,7 @@ S
 Roaming the Astral Plane~
 You find yourself floating in a field of blackness, filled with tiny tendrils
 of silvery light and insubstantial shining motes of dust.  The weightlessness
-of this environment is somewhat disorienting, though your instincts say you are 
+of this environment is somewhat disorienting, though your instincts say you are
 close to home.
    All exits lead off into the astral field.
 ~
@@ -1760,7 +1760,7 @@ S
 Traversing the Astral Plane~
 You find yourself deep within in a dark field filled with tiny tendrils
 of silvery light and insubstantial shining motes of dust.  The weightlessness
-of this environment is extremely disorienting, and you are having trouble 
+of this environment is extremely disorienting, and you are having trouble
 keeping your sense of direction.
    All exits lead off into the astral field.
 ~
@@ -1800,7 +1800,7 @@ S
 Traversing the Astral Plane~
 You find yourself deep within in a dark field filled with tiny tendrils
 of silvery light and insubstantial shining motes of dust.  The weightlessness
-of this environment is extremely disorienting, and you are having trouble 
+of this environment is extremely disorienting, and you are having trouble
 keeping your sense of direction.
    All exits lead off into the astral field.
 ~
@@ -1840,7 +1840,7 @@ S
 Traversing the Astral Plane~
 You find yourself deep within in a dark field filled with tiny tendrils
 of silvery light and insubstantial shining motes of dust.  The weightlessness
-of this environment is extremely disorienting, and you are having trouble 
+of this environment is extremely disorienting, and you are having trouble
 keeping your sense of direction.
    All exits lead off into the astral field.
 ~
@@ -1880,7 +1880,7 @@ S
 Traversing the Astral Plane~
 You find yourself deep within in a dark field filled with tiny tendrils
 of silvery light and insubstantial shining motes of dust.  The weightlessness
-of this environment is extremely disorienting, and you are having trouble 
+of this environment is extremely disorienting, and you are having trouble
 keeping your sense of direction.
    All exits lead off into the astral field.
 ~
@@ -1920,7 +1920,7 @@ S
 Traversing the Astral Plane~
 You find yourself deep within in a dark field filled with tiny tendrils
 of silvery light and insubstantial shining motes of dust.  The weightlessness
-of this environment is extremely disorienting, and you are having trouble 
+of this environment is extremely disorienting, and you are having trouble
 keeping your sense of direction.
    All exits lead off into the astral field.
 ~
@@ -1960,7 +1960,7 @@ S
 Lost in the Astral Plane~
 You find yourself in in a field of blackness, filled with tiny tendrils
 of silvery light and insubstantial shining motes of dust.  The weightlessness
-of this environment is incredibly disorienting, and you are having trouble 
+of this environment is incredibly disorienting, and you are having trouble
 keeping your senses straight.
    All exits lead off into the astral field.
 ~
@@ -1995,7 +1995,7 @@ S
 Lost in the Astral Plane~
 You find yourself in in a field of blackness, filled with tiny tendrils
 of silvery light and insubstantial shining motes of dust.  The weightlessness
-of this environment is incredibly disorienting, and you are having trouble 
+of this environment is incredibly disorienting, and you are having trouble
 keeping your senses straight.
    All exits lead off into the astral field.
 ~
@@ -2030,7 +2030,7 @@ S
 Lost in the Astral Plane~
 You find yourself in in a field of blackness, filled with tiny tendrils
 of silvery light and insubstantial shining motes of dust.  The weightlessness
-of this environment is incredibly disorienting, and you are having trouble 
+of this environment is incredibly disorienting, and you are having trouble
 keeping your senses straight.
    All exits lead off into the astral field.
 ~
@@ -2555,7 +2555,7 @@ A grey road~
 The ground beneath your feet is a uniformly grey cobblestone.  A dull red
 sun hangs in an orange sky above your head; you hear none of the sounds you
 would commonly associate with a normal city.
-  The cobblestone road continues to the east and west.  To the north you see a 
+  The cobblestone road continues to the east and west.  To the north you see a
 massive building and a pair of large doors.
 ~
 0 0 1
@@ -2753,7 +2753,7 @@ S
 #7762
 A small building~
 You have stepped inside a dimly lit building, which apparently serves as
-living quarters for several githyanki gish.  The walls are heavy stone blocks, 
+living quarters for several githyanki gish.  The walls are heavy stone blocks,
 covered with panels of strangely knotted and twisted wood.  A couple of candles
 burn dimly in sconces here and there.
 ~
@@ -2771,7 +2771,7 @@ S
 #7763
 A small building~
 You have stepped inside a dimly lit building, which apparently serves as
-living quarters for several githyanki gish.  The walls are heavy stone blocks, 
+living quarters for several githyanki gish.  The walls are heavy stone blocks,
 covered with panels of strangely knotted and twisted wood.  A couple of candles
 burn dimly in sconces here and there.
 ~
@@ -2807,7 +2807,7 @@ S
 #7765
 The Githyanki Weaponry~
 A large chamber, full of weapons in various states of completion.  Strange
-glowing blocks of silvery metal are being pounded and rolled out into deadly 
+glowing blocks of silvery metal are being pounded and rolled out into deadly
 razor-sharp knives, daggers, and swords.
    Sounds of hammering and blasts of heat and strange smells come from the open
 doorway to the north.  An iron door stands to the west.
@@ -2832,7 +2832,7 @@ S
 The Forge~
 In the center of the room is a massive furnace which emits great gouts of
 heat and a strange smell which comes from the melting of the silvery metal used
-by the githyanki.  A large trough of icy water stands to the west, used for 
+by the githyanki.  A large trough of icy water stands to the west, used for
 quenching hot metal.
    Doorways stand to the north and south.  The furnace door lies to the east.
 ~
@@ -2915,7 +2915,7 @@ S
 #7769
 A guard station~
 You are standing in a small, fairly empty building that serves as the prison
-for the keep.  The building is small because the githyanki do not make a habit 
+for the keep.  The building is small because the githyanki do not make a habit
 of taking prisoners, and those that they do capture do not last long.
    The cellblock lies to the west and the grey stone road is to the east.
 ~

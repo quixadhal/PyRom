@@ -1,3 +1,4 @@
+"""Lots of bits and shifts.  All the binary operations you could ever want."""
 import time
 import collections
 import logging
@@ -72,9 +73,7 @@ help_list: list = []
 greeting_list: list = []
 social_list: list = []
 
-"""
-Game Defines
-"""
+# Game Defines
 
 # Wiznet Flags
 WIZ_ON = A
@@ -254,12 +253,10 @@ AFF_REGENERATION = cc
 AFF_SLOW = dd
 
 
-"""
-Character Defines
-"""
+## Character Defines
 
 
-""" Equipment Slot Strings - for use with displaying EQ to characters """
+# Equipment Slot Strings - for use with displaying EQ to characters
 
 eq_slot_strings = collections.OrderedDict(
     [
@@ -569,11 +566,7 @@ MEM_SELLER = B
 MEM_HOSTILE = C
 MEM_AFRAID = D
 
-
-"""
-Room Defines
-"""
-
+#### Room Defines
 
 # Room Sector Types
 SECT_INSIDE = 0
@@ -642,9 +635,7 @@ EX_NOCLOSE = K
 EX_NOLOCK = L
 
 
-"""
-Item Defines
-"""
+# Item Defines
 
 
 # Apply Types
@@ -787,9 +778,7 @@ CONT_LOCKED = 8
 CONT_PUT_ON = 16
 
 
-"""
-Conversion Maps
-"""
+# Conversion Maps
 
 
 # Item Bits
@@ -865,9 +854,7 @@ wear_num_to_str = collections.OrderedDict(
 )
 
 
-"""
-Legacy Bits n Bobs
-"""
+# Legacy Bits n Bobs
 
 
 # legacy WEAR locations

@@ -1,3 +1,5 @@
+"""All item handlers we could ever need."""
+
 import json
 import os
 import copy
@@ -21,11 +23,10 @@ from rom24 import merc
 from rom24 import state_checks
 from rom24 import item_flags
 
-# * One object.
+# Equip "Flags":
+# Keyword: internal identifier
+# Value: String Representation
 
-"""Equip "Flags":
-Keyword: internal identifier
-Value: String Representation"""
 equips_to_strings = {
     "left_finger": "Left Finger",
     "right_finger": "Right Finger",

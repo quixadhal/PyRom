@@ -102,7 +102,7 @@ oldstyle magic carpet~
 The magic carpet~
 A small woven carpet lies under your feet.
 ~
-The carpet is simply beautiful, made from intricately woven silken material.  
+The carpet is simply beautiful, made from intricately woven silken material.
 It seems to rise up at the touch of your feet.  Wait, it is rising, a few feet
 above the ground!  In fact, it seems to be ALIVE!
 ~
@@ -149,7 +149,7 @@ oldstyle efreeti efreet~
 The efreeti~
 The efreeti stands here, sheathed in a column of fire.
 ~
-The efreeti is a mighty being formed from living fire.  He gazes down at you 
+The efreeti is a mighty being formed from living fire.  He gazes down at you
 with disdain and scorn, arms folded across his mighty chest.
 ~
 human~
@@ -182,7 +182,7 @@ The djinn issues forth from the confines of a small lamp.
 ~
 The djinn is a mighty being formed from the air itself and frequently
 imprisoned in a small lamp, used to do the bidding of those who find him.
-He smiles down at you congenially, arms folded across his blue-tinged 
+He smiles down at you congenially, arms folded across his blue-tinged
 skin, and strokes his goatee.
 ~
 human~
@@ -216,7 +216,7 @@ A gynosphinx sits here, befuddled by a riddle.
 ~
 The gynosphinx is a crafty but gentle creature, having the body of a
 beautiful dark-skinned woman from the waist up, a feathery set of wings
-and the hind legs of a mighty cat.  Right now she is confused, having 
+and the hind legs of a mighty cat.  Right now she is confused, having
 just heard a puzzling riddle from a cousin criosphinx.
 ~
 human~
@@ -249,7 +249,7 @@ A mighty androsphinx tosses its lion-like mane.
 ~
 The mighty androsphinx is a huge creature, with the body of a lion whose
 face  is quite man-like, perhaps even handsome, and a massive pair of feathered
-wings.  Tales are told of pharoahs that were rendered permanently deaf by the 
+wings.  Tales are told of pharoahs that were rendered permanently deaf by the
 mighty roar of this sphinx.
 ~
 human~
@@ -265,7 +265,7 @@ The great sphinx~
 A mighty sphinx rests here in the sand, dormant now for centuries.
 The great sphinx appears to be indestructible!
 ~
-The great sphinx towers tens of feet above you, resting here in a state of 
+The great sphinx towers tens of feet above you, resting here in a state of
 dormancy.  It has become almost indistinguishable from the sand that surrounds
 it, although you can still make out the features of the handsome face that once
 advised many rulers.
@@ -285,7 +285,7 @@ You have awakened the mighty servant to the pharoahs, Ramses.
 As your light spills over his face and body, you can see his features begin
 to fill out, swell, and harden, until an apparently healthy man stands before
 you, clad only in the raiments he was left in when he last slept.  His hair is
-a soft black, his skin a deep chocolate, and his tall frame is totally still, 
+a soft black, his skin a deep chocolate, and his tall frame is totally still,
 his chest not even moving to breathe.
 ~
 human~
@@ -573,7 +573,7 @@ money 0 A
 0 200 0 P
 E
 treasure~
-The treasure is incredibly large, filled with gold coins and valuables, more 
+The treasure is incredibly large, filled with gold coins and valuables, more
 wealth than you could ever possibly imagine accumulated in one place.
 ~
 #8719
@@ -608,7 +608,7 @@ A
 1 -3
 E
 curse mummy~
-Rumor has it that whomever disturbs the grave of the mummy shall be 
+Rumor has it that whomever disturbs the grave of the mummy shall be
 cursed for all eternity, and that the descendents of that person shall
 likewise be cursed for ten generations to follow.
 ~
@@ -676,8 +676,8 @@ A
 20 -2
 E
 sun wand~
-This small brass shaft is a holy weapon used by the ancient people of 
-this land to defend against the deadliest of foes.  It shines with the 
+This small brass shaft is a holy weapon used by the ancient people of
+this land to defend against the deadliest of foes.  It shines with the
 brilliant blazing light of the sun.
 ~
 #8725
@@ -728,7 +728,7 @@ A
 E
 sphinxian leggings~
 These magically fashioned leggings impart the strength and stamina
-of the mightiest of the ancient sphinxes.  You feel ancient power 
+of the mightiest of the ancient sphinxes.  You feel ancient power
 emanating from them; they seem to be almost alive.
 ~
 #0
@@ -961,13 +961,13 @@ This area (Great Pyramid) written by Andersen.
 E
 stones~
 As you look closer you can make out a crack in the center of the stones
-beneath your feet.  With some effort you might be able to lift that 
+beneath your feet.  With some effort you might be able to lift that
 section up and get inside!
 ~
 S
 #8707
 Climbing the Great Pyramid~
-Here the elements have carved away at the sides of the pyramid quite a 
+Here the elements have carved away at the sides of the pyramid quite a
 bit.  You aren't so sure of your footing anymore...
 
 Suddenly the wind picks up, and you lose your balance!
@@ -998,13 +998,13 @@ You see a small dusty chamber.
 E
 stones~
 As you look closer you can make out a crack in the center of the stones
-above your head.  With some effort you might be able to lift that 
+above your head.  With some effort you might be able to lift that
 section up and get outside!
 ~
 S
 #8709
 A Musty Chamber~
-You are standing in a dank, musty chamber just inside the pyramid. 
+You are standing in a dank, musty chamber just inside the pyramid.
 Footprints and other strange marks are set into the dusty floor here.
 It would seem that some of the tenants of this monument are still alive.
    Exits lead in all directions.   The door to the west is covered with
@@ -1071,7 +1071,7 @@ S
 #8711
 The Chamber of the Efreet~
 You make your way across the fire pool, and into a small stone chamber.
-Here the flames are nearly as high as your head, singeing your face and 
+Here the flames are nearly as high as your head, singeing your face and
 evaporating your sweat instantaneously.
 ~
 0 D 7
@@ -1107,7 +1107,7 @@ S
 #8713
 A Tiny Crawlway~
 You are on your hands and knees, inside a small crawlway that winds
-through the inside of the pyramid.  The crawlway is thick with sand, dust, 
+through the inside of the pyramid.  The crawlway is thick with sand, dust,
 and markings of the passage of other creatures.
 ~
 0 AD 0
@@ -1125,7 +1125,7 @@ S
 #8714
 A Tiny Crawlway~
 You are on your hands and knees, inside a small crawlway that winds
-through the inside of the pyramid.  The crawlway is thick with sand, dust, 
+through the inside of the pyramid.  The crawlway is thick with sand, dust,
 and markings of the passage of other creatures.
 ~
 0 AD 0
@@ -1180,7 +1180,7 @@ The crawlway gets a little larger to the north.
 S
 #8717
 A Slippery Hole~
-The sides of this hole are slippery-smooth.  You lower yourself in, and 
+The sides of this hole are slippery-smooth.  You lower yourself in, and
 proceed to move downward... when suddenly you lose your purchase!
 
 You fall for what seems like an eternity, and smash into the stones below...
@@ -1198,7 +1198,7 @@ You see a rocky crevasse that proceeds deep under the pyramid.
 0 -1 8719
 E
 bones~
-The bones have whitened and cracked in the dry air, apparently the remains 
+The bones have whitened and cracked in the dry air, apparently the remains
 of adventurers, thieves, and creatures that did not survive the fall.
 ~
 E
@@ -1220,7 +1220,7 @@ You see a rocky crevasse that proceeds deep under the pyramid.
 0 -1 8719
 E
 bones~
-The bones have whitened and cracked in the dry air, apparently the remains 
+The bones have whitened and cracked in the dry air, apparently the remains
 of adventurers, thieves, and creatures that did not survive the fall.
 ~
 E
@@ -1273,7 +1273,7 @@ man old~
 The old man looks like he has been trapped down here far too long, and
 has begun to lose his mind.  He moves about slowly, cackling to himself.
 
-He turns to you and shouts, 'nope measse!  nope measse!', then turns 
+He turns to you and shouts, 'nope measse!  nope measse!', then turns
 back and stares into the fire.
 
 'What a strange person,' you think to yourself.
@@ -1377,7 +1377,7 @@ You see a tomb.
 S
 #8725
 A Looted Tomb~
-The floor of this small tomb is littered with the lids of 
+The floor of this small tomb is littered with the lids of
 smashed sarcophagi, bits of treasure dropped by thieves and
 looters, and corpses pulled from their resting places.
 ~
@@ -1427,7 +1427,7 @@ E
 coffin lid~
 The coffin is sculpted into the form of a man, standing several heads above
 you, and clad in the garments of pharoahs.  It has apparently been untouched
-by the ravages of time and the activities of looters.  Several markings on the 
+by the ravages of time and the activities of looters.  Several markings on the
 side indicate spots where unsuccessful attempts were made to open the coffin.
 
 You can't see any way to open it.
@@ -1503,8 +1503,8 @@ S
 #8730
 The Ancient Hall~
 Here the air is deathly still, motes of dust thickly obscuring your
-vision.  Several stone statues line the walls of the hall, depicting the 
-gods of an ancient society.  Strange glyphs and sigils cover the walls, a 
+vision.  Several stone statues line the walls of the hall, depicting the
+gods of an ancient society.  Strange glyphs and sigils cover the walls, a
 peculiar pictorial form of written language that you don't understand.
    Some steps lead to a raised dais to the south.
 ~
@@ -1639,7 +1639,7 @@ S
 #8737
 A Dank Chamber~
 This chamber has a dank, dusty, musty smell to it.  Small footprints
-in the dust betray the recent passage of some sort of creatures.  A hole 
+in the dust betray the recent passage of some sort of creatures.  A hole
 in the floor lies to the west and a stairway is to the east.
 ~
 0 D 0
@@ -1829,8 +1829,8 @@ S
 A Rubble-Strewn Hallway~
 This hallway formerly had a beautiful arch to the ceiling, now
 collapsed under the weight of the slowly settling stones of the
-pyramid.  Now, a massive pile of rubble leads up into a hole high 
-in the northern portion of the hallway.  To the south, through the 
+pyramid.  Now, a massive pile of rubble leads up into a hole high
+in the northern portion of the hallway.  To the south, through the
 rubble and fallen stones you see a sandstone crypt.
 ~
 0 ACD 0

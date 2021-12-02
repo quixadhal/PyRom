@@ -223,7 +223,7 @@ Several nasty memory allocation bugs were fixed.  These didn't show up on SunOS
 or Ultrix, but crashed Linux, NextOS, and many other OS's.  Thanks to Vic for
 debugging help.
 
-The bug where getting killed with an 'armor' spell on left one's AC at 120 
+The bug where getting killed with an 'armor' spell on left one's AC at 120
 (instead of 100) has been fixed.
 
 The server emits a telnet GA sequence at the end of the prompt.

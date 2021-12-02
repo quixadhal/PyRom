@@ -86,7 +86,7 @@ oldstyle deer~
 a deer~
 A deer is here, staring back at you.
 ~
-The deer looks angered at your intrusion.  He butts his head against you, 
+The deer looks angered at your intrusion.  He butts his head against you,
 albeit ineffectively.
 ~
 human~
@@ -227,7 +227,7 @@ trash 0 AO
 0 10 0 P
 E
 paper wad~
-It looks old and worn, but You can still make out a faint lettering on it, 
+It looks old and worn, but You can still make out a faint lettering on it,
 written in a strange, alien hand:
 
 o    WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING!   o
@@ -391,7 +391,7 @@ S
 A clearing in the woods~
 You are standing in a clearing in the light woods. Somehow, this place
 seems powerfully DIFFERENT from the rest of the forest, as if something is
-severely strained in the fabric of reality here.  There is a small tablet 
+severely strained in the fabric of reality here.  There is a small tablet
 on one of the trees.
 ~
 0 C 3
@@ -757,10 +757,10 @@ S
 The greenhouse~
 This is Dragons' greenhouse. Green light filters in slantwise through the
 plants, giving the room a subtropical ambience. It is not really hot in here,
-though, rather a pleasantly warm temperature. The walls are all windows, except 
-the eastern one joining the greenhouse to the main building, but it is hard to 
+though, rather a pleasantly warm temperature. The walls are all windows, except
+the eastern one joining the greenhouse to the main building, but it is hard to
 see out for all the greenery here. There is a set of easy-chairs and a glass
-coffee table. To the south, there is a wide double door out to a sunlit 
+coffee table. To the south, there is a wide double door out to a sunlit
 terrace.
 ~
 0 DJ 0
@@ -798,13 +798,13 @@ painting paintings~
 There are many, many beautiful paintings of famous dragons of history and
 literature. There is a big one of Smaug, a group picture of Cuspidorian Toxic
 Dragons, a rather fearsome picture of Norse Chaos incarnate, a grainy black-
-and-white photograph of Vorgulremik the Steel Dragon, a romantic picture of 
+and-white photograph of Vorgulremik the Steel Dragon, a romantic picture of
 Dalvenjah the Mindijaran and Allan the man become dragon. There are three
 empty frames labeled 'The Chimerical', 'The Mythical' and 'The Hypothetical',
-A panoramic picture of Strabo flying between the worlds dominate one wall, 
-while a dragons-eye view of Pern (with dragons in the foreground, of course) 
-fills another. There even are a few rare medieval renditions of the great 
-beast of the Revelation. Over the head of the table hangs a rather modest 
+A panoramic picture of Strabo flying between the worlds dominate one wall,
+while a dragons-eye view of Pern (with dragons in the foreground, of course)
+fills another. There even are a few rare medieval renditions of the great
+beast of the Revelation. Over the head of the table hangs a rather modest
 portrait of a silver Dragon, sparkling with blue lightening, looking amused.
 ~
 S
@@ -852,7 +852,7 @@ A wide road lies to the south.
 S
 #8951
 Inside the grove~
-As you walk among the stately oaks of this grove, you feel at peace and 
+As you walk among the stately oaks of this grove, you feel at peace and
 in harmony with this beautiful forest.  If only the rest of the lands were
 so tranquil.  The trail turns towards the east, leading into the secluded
 trees of the druids' holy grove, and a path back to the eastern road lies
@@ -873,7 +873,7 @@ S
 #8999
 The fog~
 You are in a grey fog, falling, screaming in pain as you realize
-that you are being torn to nothing, atom by atom, falling and falling 
+that you are being torn to nothing, atom by atom, falling and falling
 and falling ...
 ...
 .

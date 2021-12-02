@@ -355,4 +355,3 @@ Kernighan and Plaugher, _The Elements of Programming Style_.
 Kernighan and Ritchie, _The C Programming Language_.
 
 Brooks, _The Mythical Man Month_
-

@@ -17,14 +17,14 @@ For more information, see the help files for each race (i.e. 'help dwarf')
 -1 DWARF DWARVES~
 Dwarves are short, stocky demi-humans, known for foul temper and great
 stamina.  Dwarves have high strength and constitution, but poor dexterity.
-They are not as smart as humans, but are usually wiser due to their long 
+They are not as smart as humans, but are usually wiser due to their long
 lifespans.  Dwarves make excellent fighters and priests, but are very poor
-mages or thieves.  
+mages or thieves.
 
 Dwarves are very resistant to poison and disease, but cannot swim, and so
 are very vulnerable to drowning.  They recieve the berserk skill for free
 (if warriors), and can see in the dark with infravision.
-~ 
+~
 
 -1 ELF ELVES~
 Elves are slightly taller than humans, but have a much lighter build.  They
@@ -34,7 +34,7 @@ best fair talent as warriors or priests.
 
 Elves resist charm spells most effectively, due to their magical nature.
 However, they are burned by the touch of iron, and so are barred from the
-use of iron or steel in their adventuring careers.  Elves are notoriously 
+use of iron or steel in their adventuring careers.  Elves are notoriously
 hard to spot, and so elven warriors and thieves recieve the sneak and hiding
 automatically. They may see in the dark with infravision.
 ~
@@ -49,7 +49,7 @@ gain more benefit from magical devices.
 
 -1 GIANT GIANTS~
 Giants are the largest of the races, ranging from 9-12 feet in height.  They
-are stronger than any other race, and almost as durable as the dwarves.  
+are stronger than any other race, and almost as durable as the dwarves.
 They aren't too bright, however, and their huge size makes them more clumsy
 than the other races.  Giants make the best warriors of any race, but are
 ill-suited for any other profession.
@@ -67,9 +67,9 @@ item skills are as follows:
 
 scrolls		The reading of magical scrolls and books (see 'help recite')
 staves		The use of staves and similar devices (see 'help brandish')
-wands		The use of wands and similar items (see 'help zap') 
+wands		The use of wands and similar items (see 'help zap')
 ~
- 
+
 -1 'GROUP HEADER'~
 The following skills and groups are available to your chacter:
 (this list may be seen again by typing list)
@@ -78,7 +78,7 @@ The following skills and groups are available to your chacter:
 -1 'GROUP HELP'~
 The following commands are available:
 list         display all groups and skills not yet bought
-learned      show all groups and skills bought 
+learned      show all groups and skills bought
 premise      brief explanation of creation points and skill groups
 add <name>   buy a skill or group
 drop <name>  discard a skill or group
@@ -93,22 +93,22 @@ Choice (add,drop,list,help)?~
 -1 'GROUPS' 'INFO' 'PREMISE'~
 The ROM skill system allows you to fully customize your new character, making
 him or her skilled in the skills you choose.  But beware, the skills you pick
-at character creation are the only skills you will ever learn.  Skills are 
+at character creation are the only skills you will ever learn.  Skills are
 paid for with creation points, and the more creation points you have, the
 harder it is to gain a level.  Furthermore, higher-cost skills are harder to
 practice.
 
 Skill groups are like package deals for characters -- sets of skills or spells
-that are closely related, and hence can be learned as a unit.  There is a 
-default skill group for each class, which can be selected for a balanced 
+that are closely related, and hence can be learned as a unit.  There is a
+default skill group for each class, which can be selected for a balanced
 selection of skills at a somewhat reduced cost.
 
-The experience breakdown is as follows: 
+The experience breakdown is as follows:
 points   exp/level     points   exp/level
 40        1000         90        6000
 50        1500         100       8000
 60	  2000         110      12000
-70        3000         120      16000 
+70        3000         120      16000
 80        4000         130      24000
 The table continues in a similar manner for higher point totals.
 ~
@@ -131,7 +131,7 @@ for class defaults, check the classes themselves.
 Mages specialize in the casting of spells, offensive ones in particular.
 Mages have the highest-powered magic of any class, and are the only classes
 able to use the draconian and enchanting spell groups.  They are also very
-skilled at the use of magical items, though their combat skills are the 
+skilled at the use of magical items, though their combat skills are the
 weakest of any class.
 
 All mages begin with skill in the dagger. Any other weapon skills must be
@@ -156,12 +156,12 @@ weather		spells for conjuring and mastering the elements
 -1 CLERIC 'CLERIC BASICS' 'CLERIC DEFAULT'~
 Clerics are the most defensively orientated of all the classes.  Most of their
 spells focus on healing or defending the faithful, with their few combat spells
-being far less powerful than those of mages. However, clerics are the best 
+being far less powerful than those of mages. However, clerics are the best
 class by far at healing magics, and they posess an impressive area of
 protective magics, as well as fair combat prowess.
 
 All clerics begin with skill in the mace.  Other weapon or shield skills must
-be purchased, many at a very dear cost.  The default skill selection for 
+be purchased, many at a very dear cost.  The default skill selection for
 clerics is as follows:
 
 skills:
@@ -187,7 +187,7 @@ thievery and covert actions, being capable of entering areas undetected where
 more powerful adventurers would fear to tread.  They are better fighters than
 clerics, but lack the wide weapon selection of warriors.
 
-All thieves begin with the dagger combat skill, and are learned in steal as 
+All thieves begin with the dagger combat skill, and are learned in steal as
 well.  Any other weapon skills must be purchased, unless the default selection
 is chosen.  This default skill package includes:
 
@@ -230,7 +230,7 @@ Each weapon skill applies to a specific group of armaments, and determines how
 well a character fights with a particular weapon.  The weaponsmaster group
 provides talent in all weapons (save exotics), from chair legs to halberds.
 If the character has the parry skill as well, he can parry incoming attacks.
-The chance of parrying is best if the character in question is skilled at 
+The chance of parrying is best if the character in question is skilled at
 both his weapon and his opponent's.
 
 The weapon skills consist of the following:
@@ -260,8 +260,8 @@ whips have an easier time getting around them.  Axes may split shields in two.
 -1 ATTACK~
 The attack spells are essentially powerful curses, fueled by divine energy
 rather than magical power (like the combat spells are). They are less powerful
-than the combat spells, but can still deal out a stinging blow.  Mages and 
-thieves cannot use this group.  The attack spell group consists of the 
+than the combat spells, but can still deal out a stinging blow.  Mages and
+thieves cannot use this group.  The attack spell group consists of the
 following spells:
 
 demonfire	a powerful, but very evil, spell
@@ -286,7 +286,7 @@ sleep		puts a foe into enchanted slumber
 
 -1 BENEDICTIONS~
 Benedictions are priestly spells, used to bestow divine favor upon your allies.
-They are often restricted to those of like alignment.  Only clerics and 
+They are often restricted to those of like alignment.  Only clerics and
 warriors may use these spells.  The benedictions spell group consists of the
 following:
 
@@ -312,12 +312,12 @@ lightning bolt	sends forth a single bolt of lightning into an enemy
 colour spray	blasts your opponent with a rainbow spray, which may blind him
 fireball	a powerful spell, great for burning your enemy to ashes
 acid blast	sends forth a stream of acid to eradicate your foes
-chain lightning	sends lightning bolts arcing through foes 
+chain lightning	sends lightning bolts arcing through foes
 ~
 
 -1 CREATION~
 The creation spell group is used to create objects, of temporary or permanent
-duration.  Skill creators can travel without food or drink, and use their 
+duration.  Skill creators can travel without food or drink, and use their
 powers to create nourishment as required.  All classes may become learned in
 this group, which contains these spells:
 
@@ -342,7 +342,7 @@ cure poison	removes the harmful effects of poison
 -1 DETECTION~
 The detection spells have may uses, all related to gathering information. They
 can be used to see hidden objects, give information about treasure, or even
-scry out the true nature of your foe.  All classes except warriors can use 
+scry out the true nature of your foe.  All classes except warriors can use
 detection spells.
 
 detect evil	reveals the aura of evil monsters
@@ -358,7 +358,7 @@ locate object	finds a specific item
 ~
 
 -1 DRACONIAN~
-The Draconian spell group deals with the magic of dragons -- in this case, 
+The Draconian spell group deals with the magic of dragons -- in this case,
 bringing forth the devastating power of their breath weapons upon your foes.
 Only mages have the mental training necessary to cast these spells, and few
 of them ever reach the level of mastery required to use them.
@@ -367,12 +367,12 @@ acid breath	 uses the black dragon's attack upon an enemy
 fire breath	 calls forth the flames of a red dragon
 frost breath	 drains the life from a foe with the power a white dragon
 gas breath	 suffocates your enemies with poison gas
-lightning breath summons the electrical fury of a blue dragon 
+lightning breath summons the electrical fury of a blue dragon
 ~
 
 -1 ENCHANTMENT~
 The enchantment spell group is used to imbue items with magical properties.
-Currently, this spell group consists of enchant weapon and enchant armor, 
+Currently, this spell group consists of enchant weapon and enchant armor,
 although more will be added in the future.  Only mages may enchant.
 
 enchant weapon	increases the hit and damage bonuses of a weapon
@@ -423,7 +423,7 @@ mass healing	casts a heal spell on each player in the room
 The illusions spells are dedicated to deception and trickery.  They can be
 used to mask appearances, or create distractions for the party.  Currently,
 the illusion group is very small, but it will be expanded in the future.
-Only thieves and mages can cast illusion spells, which consist of the 
+Only thieves and mages can cast illusion spells, which consist of the
 following:
 
 invis		turns the target invisible
@@ -441,7 +441,7 @@ curse		prevents recalling and weakens the target in combat
 energy drain	drains experience and mana, while strengthening the caster
 plague		causes the target to suffer a slow, painful death from plague
 poison		weaker than plague, but often fatal
-slow		slows your enemies down, reducing their rate of attack	
+slow		slows your enemies down, reducing their rate of attack
 weaken		drains the strength of the target
 ~
 
@@ -449,7 +449,7 @@ weaken		drains the strength of the target
 The protective spells are used to shield against harm, whether from spells or
 physical attack.  They range from the weak armor spell to the sought-after
 sanctuary charm.  Also included in this group are several spells for dispeling
-hostile magics. Any class may use this group, which consists of the following 
+hostile magics. Any class may use this group, which consists of the following
 spells:
 
 armor		provides the target with an extra layer of defense
@@ -493,7 +493,7 @@ lightning bolt	sends a bolt of electricity into the target
 ~
 
 -1 BACKSTAB~
-Backstab is the favored attack of  thieves, murderers, and other rogues.  It 
+Backstab is the favored attack of  thieves, murderers, and other rogues.  It
 can be used with any weapon type, but is most effective with piercing weapons.
 The damage inflicted by a backstab is determined by the attacker's level, his
 weapon skill, his backstab skill, and the power of his opponent.
@@ -510,12 +510,12 @@ is not generally a wise idea.
 -1 BERSERK~
 Only powerful warriors can master berserking, the ability to enter insane rage
 in combat.  Its effects are not altogether unlike the frenzy spell -- a huge
-surge of combat prowess, coupled with a disregard for personal safety.  
+surge of combat prowess, coupled with a disregard for personal safety.
 Berserking warriors are more resistant to the effects of magic.
 ~
 
 -1 DIRT 'DIRT KICKING'~
-Consider by some to be a cowardly skill, dirt kicking gives the clever 
+Consider by some to be a cowardly skill, dirt kicking gives the clever
 combatant a chance to blind his opponent by casting dirt into his eyes.  The
 blindness does not last long, but can provide an edge in combat.  Dexterity
 helps in hitting or avoiding a dirt kick.  Only warriors and thieves may
@@ -532,7 +532,7 @@ and warriors may learn this skill.
 -1 DODGE~
 In the words of one wise warrior, 'the best way to block a blow is to not
 be where it lands'.  The dodge skill honors this tradition, by improving the
-character's natural agility to the point where many blows will miss the 
+character's natural agility to the point where many blows will miss the
 target. The chance of dodging is also affected by the dexterity of the
 attacker and the target.  Any class may learn dodging.
 ~
@@ -552,8 +552,8 @@ Food, drink, and weapons may be envenomed, with varying effects. Poisoned
 food or drink puts a mild poison spell on the consumer, and is unlikely to
 be more than a minor inconvience (after all, the typical adventurer could
 drink sewer water with only a trace of the runs).  A poisoned weapon, on
-the other hand, can inflict serious damage on an opponent as the poison 
-burns through his bloodstream.  But be careful, blade venom evaporates 
+the other hand, can inflict serious damage on an opponent as the poison
+burns through his bloodstream.  But be careful, blade venom evaporates
 quickly and is rendered almost powerless by repeated blows in combat.
 ~
 
@@ -573,7 +573,7 @@ it.
 ~
 
 -1 PARRY~
-If at first you fail to dodge, block it.  Parry is useful for deflecting 
+If at first you fail to dodge, block it.  Parry is useful for deflecting
 attacks, and is succesful more often than dodge.  Parry requires a weapon for
 full success, the hand-to-hand skill may also be used, but results in reduced
 damage instead of no damage.  The best chance of parrying occurs when the
@@ -599,7 +599,7 @@ find the attack easy to avoid.  Thieves and warriors may learn trip.
 -1 'SECOND ATTACK'~
 Training in second attack allows the character a chance at additional strikes
 in combat -- allow a 100% second attack does NOT guarantee 2 attacks every
-round.  Any class may learn this skill, although clerics and mages have a 
+round.  Any class may learn this skill, although clerics and mages have a
 very hard time with it.
 ~
 
@@ -620,8 +620,8 @@ thieves may learn these skills.
 
 -1 'FAST HEALING'~
 The fast healing skill improves wound healing rates, whether walking, resting,
-or sleeping. It represents knowledge of healing herbs or just general 
-toughness and stamina.  Fast healing is checked every tick, and it is 
+or sleeping. It represents knowledge of healing herbs or just general
+toughness and stamina.  Fast healing is checked every tick, and it is
 possible for it to fail.  All class may learn this skill, but mages find it
 very difficult to master, due to their bookish lifestyle.
 ~
@@ -638,9 +638,9 @@ to use.
 -1 HAGGLE HAGGLING~
 Haggling is an indispensable skill to the trader.  It allows a character to
 match wits with a merchant, seeking to get a better price for merchandise,
-or to buy at the lowest possible cost.  Unfortunately, most merchants are 
-already very skilled at haggling, so the untrainined adventurer had best 
-guard his treasure closely.  Thieves are natural masters at haggling, 
+or to buy at the lowest possible cost.  Unfortunately, most merchants are
+already very skilled at haggling, so the untrainined adventurer had best
+guard his treasure closely.  Thieves are natural masters at haggling,
 although other classes may learn it as well.
 ~
 
@@ -653,7 +653,7 @@ common practicioners.
 
 -1 PICK 'PICK LOCK'~
 Lock picking is one of the prime skills of thieves, allowing them to gain
-access to many secured areas.  Lock picking chances are improved by  
+access to many secured areas.  Lock picking chances are improved by
 intelligence, and hindered by the difficulty of the lock. Other classes may
 learn to pick locks, but they will never find it easy.
 ~
@@ -668,22 +668,22 @@ much trouble learning to meditate.
 -1 STEAL~
 Theft is the defining skill of the thief, and is only available to that class.
 It allows items to be stolen from the inventory of monsters and characters,
-and even from shops!  But beware, shop keepers gaurd their merchandise 
+and even from shops!  But beware, shop keepers gaurd their merchandise
 carefully, and attempting to steal from a character earns you a THIEF flag
 if you are caught (making you free game for killing).
-~ 
+~
 
 -1 'DETECT GOOD'~
 Syntax: cast 'detect good'
- 
+
 This spell enables the caster to detect good characters, which will
 reveal a characteristic golden aura.
 ~
 
 -1 'DISPEL GOOD'~
 Syntax: cast 'dispel good' <victim>
- 
-Dispel good brings forth evil energies that inflict horrific torment on 
+
+Dispel good brings forth evil energies that inflict horrific torment on
 the pure of heart.  Good-aligned characters use this dark magic at their
 peril.
 ~
@@ -702,7 +702,7 @@ recharged one time successfully.
 Syntax: cast 'demonfire' <target>
 
 Demonfire is a spell of blackest evil, and as such can only be used by those
-who follow the paths of darkness.  It conjures forth demonic spirits to 
+who follow the paths of darkness.  It conjures forth demonic spirits to
 inflict terrible wounds on the enemies of the caster.
 ~
 
@@ -711,7 +711,7 @@ Syntax: cast 'ray of truth' <target>
 
 Ray of truth opens a portal to the planes of positive energy, bringing forth
 a beam of light of sufficient purity to harm or or annihilate the servants
-of evil.  It cannot harm the pure of heart, and will turn and strike 
+of evil.  It cannot harm the pure of heart, and will turn and strike
 casters who are tainted by evil.
 ~
 
@@ -730,7 +730,7 @@ secret of this material component has been lost...
 Syntax: cast 'nexus' <target>
 
 This spell is virtually identical to portal (see 'help portal'), with the
-only difference being that while portal creates a one-way gate, a nexus 
+only difference being that while portal creates a one-way gate, a nexus
 spell makes a two-sided gate.  It also lasts longer than the lower-powered
 portal spell.  Both spells require an additional power source, the secret
 of which has been lost...
@@ -739,7 +739,7 @@ of which has been lost...
 -1 'HEAT METAL'~
 Syntax: cast 'heat metal' <target>
 
-Heat metal is a powerful clerical attack spell, with effects that vary 
+Heat metal is a powerful clerical attack spell, with effects that vary
 according to the armor of the victim.  It heats up the metal equipment
 (assumed to be all weapons and armor at this point in time) on the target,
 causing him or her to drop them if possible, taking serious burns in the
@@ -756,7 +756,7 @@ blessings on the priest's allies.  All creatures of like alignment in the
 room are blessed and filled with righteous divine wrath, while those of
 opposite morals (or both good and evil in the case of neutral priests)
 are struck down by holy (or unholy might) and cursed.  The cleric suffers
-greatly from the strain of this spell, being left unable to move and 
+greatly from the strain of this spell, being left unable to move and
 drained of vitality.  Experience loss is no longer associated with the spell.
 ~
 
@@ -765,19 +765,19 @@ Syntax: cast 'frenzy' <target>
 
 The frenzy spell fills the target with righteous fury, greatly increasing
 his or her attack skill and damaging capacity.  Unfortunately, this divine
-wrath is coupled with a tendency to ignore threats to personal safety, 
+wrath is coupled with a tendency to ignore threats to personal safety,
 making the character easier to hit.  Frenzy provides immunity to the calm
-spell (see 'help calm'), and may only be used on those of the caster's 
+spell (see 'help calm'), and may only be used on those of the caster's
 alignment.
 ~
 
 -1 CALM~
-Syntax: cast 'calm' 
+Syntax: cast 'calm'
 
 One of the most useful and often overlooked abilities of the master cleric is
 the calm spell, which can put an end to all violence in a room.  Calmed
 creatures will not attack of their own volition, and are at a disadvantage
-in combat as long as the spell soothes their minds.  The more violence 
+in combat as long as the spell soothes their minds.  The more violence
 activity there is in a room, the harder the spell, and it is all or nothing --
 either all combat in the room is ended (with the exception of those who
 are immune to magic) or none is.
@@ -830,7 +830,7 @@ time.
 ~
 0 'GIANT STRENGTH'~
 Syntax: cast 'giant strength' <character>
- 
+
 This spell increases the strength of the target character.
 ~
 
@@ -839,7 +839,7 @@ Syntax : cast 'chain lightning' <target>
 
 Chain lightning is a deadly spell, producing a powerful bolt of lightning
 that arcs from target to target in the room, until its force is fully
-expended.  Allies of the caster may be hit by this spell if they are members 
+expended.  Allies of the caster may be hit by this spell if they are members
 of a clan, while the caster himself will not be struck unless no other
 viable target remains.  Chain lightning is most effective when used on
 groups of creatures.
@@ -858,7 +858,7 @@ farther away.
 ~
 
 -1 MASS HEALING~
-Syntax: cast 'mass healing' 
+Syntax: cast 'mass healing'
 
 The mass healing spell, as its name might suggest, performs a healing spell
 on all players in the room.  It also throws in a refresh spell for good
@@ -871,7 +871,7 @@ Syntax: cast 'floating disc'
 This useful spell creates a floating field of force which follows the caser
 around, allowing him or her to pile treasure high with no fear of weight
 penalties.  It lasts no more than twice the casters level in hours, and
-usually less.  It can hold 10 pounds per level of the caster, with a 
+usually less.  It can hold 10 pounds per level of the caster, with a
 maximum of five pounds per item.  The spell requires an open float location
 on the character, and the only way to remove the disc is to die or allow it
 to run out of energy.
@@ -895,8 +895,8 @@ Syntax: alias
 
 The alias command allows limited shortening of command names.  At this time,
 aliases cannot call other aliases, and cannot generate more than one command.
-Alias by itself lists your current aliases, Alias <word> lists the alias with 
-that name (if such exist), and alias with both a word and and argument 
+Alias by itself lists your current aliases, Alias <word> lists the alias with
+that name (if such exist), and alias with both a word and and argument
 produces a new alias.  You cannot alias either alias or unalias to a new
 command.  Examples of use:
 
