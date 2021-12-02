@@ -19,17 +19,28 @@ cd PyRom
 pip install -e .
 rom24
 ```
- should get things started.  If
+Normal python install via pip should get things started.  
 
-## Configuring an Implementor Character ##
+The more up-to-date home of the project that this was not forked from is [here](https://bitbucket.org/mudbytes/pyom).
 
-This isn't finished.
+## TO DO ##
 
-In case you found this elsewhere, the actual up-to-date home of the project
-is [here](https://bitbucket.org/mudbytes/pyom).
+* Straighten out legacy loads vs. new loads and remove anything legacy
+* Make data consistently relative and make it deployable in docker with volumes
+* Add docker and compose for simple local build and testing
+* Start adding basic type checking
+* start adding some unit testing
+* Move to a more functional paradigm for as much as possible to improve iteration speed (less stateful class shenanigans is better imho)
+* Add docstrings to everything as I figure out what the hell it's doing
+* Make sure licensing and credits are all still there
+* Fix lots and lots of bugs
+* Investigate sqllite or another alternative instead of straight json files for performance and sanity
+* Change to a real data structure instead of custom class json hooks
+* add debug logging everywhere under the sun so it's easier to tell why things are breaking
+* Refactor to remove circular dependencies (This is going to be a lot of work, and means stateful classes and functions will have to be redone) but will be worth it.
 
-You can also contact our project lead, Davion, via PM at [mudbytes](http://www.mudbytes.net/).
+## Contributing ##
 
-We hope you have fun with this, and find it useful!
+For the love of god, someone please help - I'm doing this because it's fun, but it's more fun to do it together!  Just PR changes - I'm not going to be very picky as long as they're an improvement.
 
-                                                                   -Quixadhal.
+Even if you just pull it and test it locally to open bugs, opening bugs is awesome and appreciated.  If you're interested in becoming an owner on the repo, send me an email at bubthegreat@gmail.com
