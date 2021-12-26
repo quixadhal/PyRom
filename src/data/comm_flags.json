@@ -1,0 +1,117 @@
+{
+    "quiet": [
+        "quiet",
+        1,
+        true
+    ],
+    "deaf": [
+        "deaf",
+        2,
+        true
+    ],
+    "nowiz": [
+        "nowiz",
+        4,
+        true
+    ],
+    "noclangossip": [
+        "noclangossip",
+        8,
+        true
+    ],
+    "nogossip": [
+        "nogossip",
+        16,
+        true
+    ],
+    "noquestion": [
+        "noquestion",
+        32,
+        true
+    ],
+    "nomusic": [
+        "nomusic",
+        64,
+        true
+    ],
+    "noclan": [
+        "noclan",
+        128,
+        true
+    ],
+    "noquote": [
+        "noquote",
+        256,
+        true
+    ],
+    "shoutsoff": [
+        "shoutsoff",
+        512,
+        true
+    ],
+    "compact": [
+        "compact",
+        2048,
+        true
+    ],
+    "brief": [
+        "brief",
+        4096,
+        true
+    ],
+    "prompt": [
+        "prompt",
+        8192,
+        true
+    ],
+    "combine": [
+        "combine",
+        16384,
+        true
+    ],
+    "telnet_ga": [
+        "telnet_ga",
+        32768,
+        true
+    ],
+    "show_affects": [
+        "show_affects",
+        65536,
+        true
+    ],
+    "nograts": [
+        "nograts",
+        131072,
+        true
+    ],
+    "noemote": [
+        "noemote",
+        524288,
+        false
+    ],
+    "noshout": [
+        "noshout",
+        1048576,
+        false
+    ],
+    "notell": [
+        "notell",
+        2097152,
+        false
+    ],
+    "nochannels": [
+        "nochannels",
+        4194304,
+        false
+    ],
+    "snoop_proof": [
+        "snoop_proof",
+        16777216,
+        false
+    ],
+    "afk": [
+        "afk",
+        33554432,
+        true
+    ]
+}

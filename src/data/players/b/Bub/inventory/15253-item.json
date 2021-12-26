@@ -1,0 +1,958 @@
+{
+    "__class__/rom24.handler_item.Items": {
+        "_environment": 15248,
+        "_equipped": null,
+        "_equipped_to": null,
+        "_equips_to": null,
+        "_room_vnum": null,
+        "affected": [],
+        "area": "Midgaard",
+        "available_light": 0,
+        "carry_number": 0,
+        "carry_weight": 0,
+        "condition": 100,
+        "cost": 500,
+        "count": 0,
+        "description": "A rolled up map is here.",
+        "enchanted": false,
+        "extra_descr": [
+            {
+                "__class__/rom24.world_classes.ExtraDescrData": {
+                    "description": ".\n                        * * * MIDGAARD * * *\n                         = = ========== = =\n\n                                     Rainbow Bridge (Asgard and Valhalla)\n                                    /\n          North            Temple Altar   Mud School <--- ** NEWBIES **\n            |   /Up        (Healer, Pit)      |           ** GO HERE **\n            | /                  |       /Entrance to\n     West---+---East             |     /  Mud School\n          / |                 Temple of       |\n    Down/   |                   Mota        Arena\n          South               (Recall)\n                                 |\n                                 |   /In the Air   /Defunct Reception\n                  Cleric         | /             /\n       Northern   Guild----Temple Square---Grunting---Bar    Northern\n       Midgaard              (Fountain)    Boar Inn          Midgaard\n     (Clan Road) Magic           |                          (Clan Road)\n           |     Shop   Bakery   |    Grocer    Weaponsmith     |\n           |       |      |      |       |           |          |\nTo    <---West---Main-Street---Market----Main-Street-+--------East--->Cross\nShire,    Gate     |      |    Square    |           |        Gate    Roads\nForest of  |     Mage  Armoury   |     Jeweler    Warrior       |\nHaon-Dor   |     Guild           |                 Guild     Wall Road\n          Wall                   |                              |\n          Road  Leather  Map     |    Grebe's  Pet   Apothecary |\n           |     Shop    Shop    |    Tavern   Shop  (Potions)  |\n           |      |       |    Common   |       |       |       |\n          Wall---Poor-Alley----Square---Dark-Alley------+----Wall Road\n          Road    |       |      |      |       |       |       |\n           |   Temple   Grubby   |   Thieves  Levee   Warehouse |\n           |  Of Stupid  Inn     |    Guild   (Boats) (Sailor)  |\n           |                    Dump            |               |\n          Wall  Mob      Sewers/ |              |             Wall\n          Road--Factory          |              |             Road\n           |                   South         Midgaard           |         To the\n         Bridge                Bridge         River---------> Bridge <--> Sands\n           |                     |                              |           of\n        Southern              Southern                       Southern     Sorrow\n        Midgaard              Midgaard                       Midgaard",
+                    "keyword": "map midgaard"
+                }
+            }
+        ],
+        "flags": {
+            "__class__/rom24.item_flags.ItemFlags": {
+                "equips_to": {
+                    "__type__/set": []
+                },
+                "item_attributes": {
+                    "__type__/set": [
+                        "take"
+                    ]
+                },
+                "item_restrictions": {
+                    "__type__/set": []
+                },
+                "weapon_attributes": {
+                    "__type__/set": []
+                }
+            }
+        },
+        "form": {
+            "__class__/rom24.bit.Bit": {
+                "bits": 0,
+                "flags": {
+                    "__type__/OrderedDict": [
+                        [
+                            "edible",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "edible",
+                                        1,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "poison",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "poison",
+                                        2,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "magical",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "magical",
+                                        4,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "instant_decay",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "instant_decay",
+                                        8,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "other",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "other",
+                                        16,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "animal",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "animal",
+                                        64,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "sentient",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "sentient",
+                                        128,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "undead",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "undead",
+                                        256,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "construct",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "construct",
+                                        512,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "mist",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "mist",
+                                        1024,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "intangible",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "intangible",
+                                        2048,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "biped",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "biped",
+                                        4096,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "centaur",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "centaur",
+                                        8192,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "insect",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "insect",
+                                        16384,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "spider",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "spider",
+                                        32768,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "crustacean",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "crustacean",
+                                        65536,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "worm",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "worm",
+                                        131072,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "blob",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "blob",
+                                        262144,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "mammal",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "mammal",
+                                        2097152,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "bird",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "bird",
+                                        4194304,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "reptile",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "reptile",
+                                        8388608,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "snake",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "snake",
+                                        16777216,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "dragon",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "dragon",
+                                        33554432,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "amphibian",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "amphibian",
+                                        67108864,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "fish",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "fish",
+                                        134217728,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "cold_blood",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "cold_blood",
+                                        268435456,
+                                        true
+                                    ]
+                                }
+                            }
+                        ]
+                    ]
+                }
+            }
+        },
+        "instance_id": 15253,
+        "inventory": [],
+        "is_area": false,
+        "is_item": true,
+        "is_living": false,
+        "is_room": false,
+        "item_type": "map",
+        "level": 0,
+        "long_descr": "",
+        "material": "paper",
+        "name": "map midgaard",
+        "new_format": true,
+        "on": null,
+        "owner": "",
+        "parts": {
+            "__class__/rom24.bit.Bit": {
+                "bits": 0,
+                "flags": {
+                    "__type__/OrderedDict": [
+                        [
+                            "head",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "head",
+                                        1,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "arms",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "arms",
+                                        2,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "legs",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "legs",
+                                        4,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "heart",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "heart",
+                                        8,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "brains",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "brains",
+                                        16,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "guts",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "guts",
+                                        32,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "hands",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "hands",
+                                        64,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "feet",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "feet",
+                                        128,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "fingers",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "fingers",
+                                        256,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "ear",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "ear",
+                                        512,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "eye",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "eye",
+                                        1024,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "long_tongue",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "long_tongue",
+                                        2048,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "eyestalks",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "eyestalks",
+                                        4096,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "tentacles",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "tentacles",
+                                        8192,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "fins",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "fins",
+                                        16384,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "wings",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "wings",
+                                        32768,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "tail",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "tail",
+                                        65536,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "claws",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "claws",
+                                        1048576,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "fangs",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "fangs",
+                                        2097152,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "horns",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "horns",
+                                        4194304,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "scales",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "scales",
+                                        8388608,
+                                        true
+                                    ]
+                                }
+                            }
+                        ],
+                        [
+                            "tusks",
+                            {
+                                "__type__/namedtuple": {
+                                    "fields": [
+                                        "name",
+                                        "bit",
+                                        "settable"
+                                    ],
+                                    "type": "flag_type",
+                                    "values": [
+                                        "tusks",
+                                        16777216,
+                                        true
+                                    ]
+                                }
+                            }
+                        ]
+                    ]
+                }
+            }
+        },
+        "reset_num": 0,
+        "short_descr": "a map of the city of Midgaard",
+        "size": 0,
+        "timer": 0,
+        "valid": false,
+        "value": [
+            1,
+            0,
+            0,
+            0,
+            0
+        ],
+        "vnum": 3162,
+        "was_in_room": null,
+        "weight": 10,
+        "zone": 0,
+        "zone_template": ""
+    }
+}

@@ -1,0 +1,87 @@
+{
+    "npc": [
+        "npc",
+        1,
+        false
+    ],
+    "autoassist": [
+        "autoassist",
+        4,
+        false
+    ],
+    "autoexit": [
+        "autoexit",
+        8,
+        false
+    ],
+    "autoloot": [
+        "autoloot",
+        16,
+        false
+    ],
+    "autosac": [
+        "autosac",
+        32,
+        false
+    ],
+    "autogold": [
+        "autogold",
+        64,
+        false
+    ],
+    "autosplit": [
+        "autosplit",
+        128,
+        false
+    ],
+    "holylight": [
+        "holylight",
+        8192,
+        false
+    ],
+    "can_loot": [
+        "can_loot",
+        32768,
+        false
+    ],
+    "nosummon": [
+        "nosummon",
+        65536,
+        false
+    ],
+    "nofollow": [
+        "nofollow",
+        131072,
+        false
+    ],
+    "permit": [
+        "permit",
+        1048576,
+        true
+    ],
+    "log": [
+        "log",
+        4194304,
+        false
+    ],
+    "deny": [
+        "deny",
+        8388608,
+        false
+    ],
+    "freeze": [
+        "freeze",
+        16777216,
+        false
+    ],
+    "thief": [
+        "thief",
+        33554432,
+        false
+    ],
+    "killer": [
+        "killer",
+        67108864,
+        false
+    ]
+}

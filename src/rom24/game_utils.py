@@ -549,7 +549,7 @@ def argument_parser(arg_string):
     num_or_count = None
     arg_num = 1
 
-    if "" is arg_string:
+    if arg_string == "":
         return None, None, None, None
 
     arg_string = arg_string.lstrip()

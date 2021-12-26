@@ -6,6 +6,7 @@ __pycache__/
 *.suo
 .idea/
 venv/
-data/
+data/players/
+data/world/instances/
 instance_tracker.txt
 *.egg-info/

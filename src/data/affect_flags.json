@@ -1,0 +1,147 @@
+{
+    "blind": [
+        "blind",
+        1,
+        true
+    ],
+    "invisible": [
+        "invisible",
+        2,
+        true
+    ],
+    "detect_evil": [
+        "detect_evil",
+        4,
+        true
+    ],
+    "detect_invis": [
+        "detect_invis",
+        8,
+        true
+    ],
+    "detect_magic": [
+        "detect_magic",
+        16,
+        true
+    ],
+    "detect_hidden": [
+        "detect_hidden",
+        32,
+        true
+    ],
+    "detect_good": [
+        "detect_good",
+        64,
+        true
+    ],
+    "sanctuary": [
+        "sanctuary",
+        128,
+        true
+    ],
+    "faerie_fire": [
+        "faerie_fire",
+        256,
+        true
+    ],
+    "infrared": [
+        "infrared",
+        512,
+        true
+    ],
+    "curse": [
+        "curse",
+        1024,
+        true
+    ],
+    "poison": [
+        "poison",
+        4096,
+        true
+    ],
+    "protect_evil": [
+        "protect_evil",
+        8192,
+        true
+    ],
+    "protect_good": [
+        "protect_good",
+        16384,
+        true
+    ],
+    "sneak": [
+        "sneak",
+        32768,
+        true
+    ],
+    "hide": [
+        "hide",
+        65536,
+        true
+    ],
+    "sleep": [
+        "sleep",
+        131072,
+        true
+    ],
+    "charm": [
+        "charm",
+        262144,
+        true
+    ],
+    "flying": [
+        "flying",
+        524288,
+        true
+    ],
+    "pass_door": [
+        "pass_door",
+        1048576,
+        true
+    ],
+    "haste": [
+        "haste",
+        2097152,
+        true
+    ],
+    "calm": [
+        "calm",
+        4194304,
+        true
+    ],
+    "plague": [
+        "plague",
+        8388608,
+        true
+    ],
+    "weaken": [
+        "weaken",
+        16777216,
+        true
+    ],
+    "dark_vision": [
+        "dark_vision",
+        33554432,
+        true
+    ],
+    "berserk": [
+        "berserk",
+        67108864,
+        true
+    ],
+    "swim": [
+        "swim",
+        134217728,
+        true
+    ],
+    "regeneration": [
+        "regeneration",
+        268435456,
+        true
+    ],
+    "slow": [
+        "slow",
+        536870912,
+        true
+    ]
+}
