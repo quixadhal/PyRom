@@ -1,0 +1,6 @@
+black
+ipdb
+mypy
+pre-commit
+psutil
+pytest
